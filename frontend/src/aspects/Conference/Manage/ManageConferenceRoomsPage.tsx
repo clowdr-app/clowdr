@@ -76,6 +76,7 @@ gql`
         roomId
 
         attendee {
+            id
             displayName
         }
     }

@@ -8122,6 +8122,16 @@ export type Float_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['Float']>>;
 };
 
+export type GenerateChatRemoteServiceIdsOutput = {
+  readonly __typename?: 'GenerateChatRemoteServiceIdsOutput';
+  readonly error?: Maybe<Scalars['String']>;
+};
+
+export type GenerateChatRemoteUserIdsOutput = {
+  readonly __typename?: 'GenerateChatRemoteUserIdsOutput';
+  readonly error?: Maybe<Scalars['String']>;
+};
+
 export type GetContentItemOutput = {
   readonly __typename?: 'GetContentItemOutput';
   readonly contentGroupTitle: Scalars['String'];
@@ -21318,8 +21328,12 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** perform the action: "generateChatRemoteServiceIds" */
+  readonly generateChatRemoteServiceIds?: Maybe<GenerateChatRemoteServiceIdsOutput>;
   /** perform the action: "generateChatRemoteToken" */
   readonly generateChatRemoteToken?: Maybe<ChatRemoteToken>;
+  /** perform the action: "generateChatRemoteUserIds" */
+  readonly generateChatRemoteUserIds?: Maybe<GenerateChatRemoteUserIdsOutput>;
   /** perform the action: "getGoogleOAuthUrl" */
   readonly getGoogleOAuthUrl?: Maybe<GetGoogleOAuthUrlOutput>;
   /** insert data into the table: "Attendee" */
@@ -32810,7 +32824,7 @@ export type UpdateRoleMutationVariables = Exact<{
 
 export type UpdateRoleMutation = { readonly __typename?: 'mutation_root', readonly update_Role?: Maybe<{ readonly __typename?: 'Role_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> }>, readonly insert_RolePermission?: Maybe<{ readonly __typename?: 'RolePermission_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }>, readonly delete_RolePermission?: Maybe<{ readonly __typename?: 'RolePermission_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any }> }> };
 
-export type RoomParticipantWithAttendeeInfoFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly conferenceId: any, readonly attendeeId: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string } };
+export type RoomParticipantWithAttendeeInfoFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly conferenceId: any, readonly attendeeId: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
 
 export type RoomWithParticipantInfoFragment = { readonly __typename?: 'Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly participants: ReadonlyArray<(
     { readonly __typename?: 'RoomParticipant' }
@@ -34313,6 +34327,7 @@ export const RoomParticipantWithAttendeeInfoFragmentDoc = gql`
   attendeeId
   roomId
   attendee {
+    id
     displayName
   }
 }

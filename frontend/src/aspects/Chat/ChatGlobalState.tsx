@@ -960,9 +960,11 @@ export class ChatState {
         try {
             if (force || (!this.isSubscribed && !this.isPinned)) {
                 const remoteChat = await this.remoteChat;
-                remoteChat?.off("messageAdded", this.messageAddedListener);
-                remoteChat?.off("messageRemoved", this.messageRemovedListener);
-                remoteChat?.off("messageUpdated", this.messageUpdatedListener);
+                remoteChat?._unsubscribe();
+                // This API has an "on" but not an "off"...WTH?!
+                // remoteChat?.off("messageAdded", this.messageAddedListener);
+                // remoteChat?.off("messageRemoved", this.messageRemovedListener);
+                // remoteChat?.off("messageUpdated", this.messageUpdatedListener);
             }
         } catch (e) {
             console.error(`Error unsubscribing from new messages: ${this.Id}`, e);

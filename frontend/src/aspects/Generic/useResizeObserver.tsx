@@ -6,7 +6,7 @@ export default function useResizeObserver<T extends Element>(
     const [observerEntries, setObserverEntries] = useState<ReadonlyArray<ResizeObserverEntry>>([]);
 
     const observer = React.useRef(
-        new ResizeObserver((entries) => {
+        new ResizeObserver((entries: ResizeObserverEntry[]) => {
             setObserverEntries(entries);
         })
     );

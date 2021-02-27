@@ -827,27 +827,46 @@ function RoomParticipantsList({ roomId }: { roomId: string }): JSX.Element {
         [roomId, roomParticipants]
     );
 
+    const [elements, setElements] = useState<JSX.Element[]>([]);
+
+    useEffect(() => {
+        setElements((oldElements) => {
+            const newElements: JSX.Element[] = [];
+            for (const participant of thisRoomParticipants) {
+                if (!oldElements.some((x) => x.key !== participant.id)) {
+                    newElements.push(<ParticipantListItem key={participant.id} attendeeId={participant.attendeeId} />);
+                }
+            }
+
+            const removeIds: string[] = [];
+            for (const element of oldElements) {
+                if (!thisRoomParticipants.some((x) => x.id === element.key)) {
+                    removeIds.push(element.key as string);
+                }
+            }
+            return [...oldElements.filter((x) => !removeIds.includes(x.key as string)), ...newElements];
+        });
+    }, [thisRoomParticipants]);
+
     return roomParticipants && roomParticipants.length > 0 ? (
-        <List fontSize="sm" width="100%">
-            {thisRoomParticipants.map((participant) => (
-                <ParticipantListItem key={participant.id} attendeeId={participant.attendeeId} />
-            ))}
-        </List>
+        <>
+            <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
+                Connected to this room
+            </Heading>
+            <List fontSize="sm" width="100%">
+                {elements}
+            </List>
+            <Divider my={4} />
+        </>
     ) : (
-        <Text fontSize="sm" fontStyle="italic">
-            Nobody is connected to this room at the moment.
-        </Text>
+        <></>
     );
 }
 
 function PresencePanel_WithConnectedParticipants({ roomId }: { roomId: string }): JSX.Element {
     return (
         <>
-            <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
-                Connected to this room
-            </Heading>
             <RoomParticipantsList roomId={roomId} />
-            <Divider my={4} />
             <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
                 Here with you
             </Heading>

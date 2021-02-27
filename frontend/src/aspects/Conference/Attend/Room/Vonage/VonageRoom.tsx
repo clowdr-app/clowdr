@@ -134,10 +134,6 @@ function VonageRoomInner({
                 }
             } catch (e) {
                 console.warn("Failed to leave room", e);
-                toast({
-                    status: "error",
-                    title: "Failed to leave room",
-                });
             }
         }
         setJoining(false);
@@ -149,7 +145,7 @@ function VonageRoomInner({
             type: VonageRoomStateActionType.SetCameraIntendedState,
             cameraEnabled: false,
         });
-    }, [connected, dispatch, onRoomJoined, toast, vonage]);
+    }, [connected, dispatch, onRoomJoined, vonage]);
 
     useEffect(() => {
         if (stop) {

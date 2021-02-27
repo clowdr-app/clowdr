@@ -129,7 +129,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                                 onPollOptionsModalOpenRef.current?.onOpen();
                             } else if (composeCtx.readyToSend) {
                                 composeCtx.send();
-                            } else if (composeCtx.blockedReason) {
+                            } else if (composeCtx.newMessage.length > 0 && composeCtx.blockedReason) {
                                 toast({
                                     id: "chat-compose-blocked-reason",
                                     isClosable: true,

@@ -55,11 +55,13 @@ function VonageRoomInner({
     getAccessToken,
     stop,
     isBackstageRoom,
+    onRoomJoined,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
     stop: boolean;
     isBackstageRoom: boolean;
+    onRoomJoined?: (_joined: boolean) => void;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
@@ -94,6 +96,9 @@ function VonageRoomInner({
 
         try {
             await vonage.connectToSession();
+            if (onRoomJoined) {
+                onRoomJoined(true);
+            }
             await vonage.publishCamera(
                 cameraPublishContainerRef.current as HTMLElement,
                 state.cameraIntendedEnabled ? state.preferredCameraId : null,
@@ -111,6 +116,7 @@ function VonageRoomInner({
         }
     }, [
         vonage,
+        onRoomJoined,
         state.cameraIntendedEnabled,
         state.preferredCameraId,
         state.microphoneIntendedEnabled,
@@ -123,6 +129,9 @@ function VonageRoomInner({
         if (connected) {
             try {
                 await vonage.disconnect();
+                if (onRoomJoined) {
+                    onRoomJoined(false);
+                }
             } catch (e) {
                 console.warn("Failed to leave room", e);
                 toast({
@@ -140,7 +149,7 @@ function VonageRoomInner({
             type: VonageRoomStateActionType.SetCameraIntendedState,
             cameraEnabled: false,
         });
-    }, [connected, dispatch, toast, vonage]);
+    }, [connected, dispatch, onRoomJoined, toast, vonage]);
 
     useEffect(() => {
         if (stop) {

@@ -1,16 +1,20 @@
 import {
     Alert,
     AlertDescription,
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
     AlertIcon,
     AlertTitle,
     Box,
     Button,
-    Center,
     Heading,
     HStack,
     ListItem,
     Text,
-    Tooltip,
     UnorderedList,
     useColorModeValue,
     useToken,
@@ -18,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
 import { RoomMode_Enum, Room_EventSummaryFragment } from "../../../../generated/graphql";
@@ -31,13 +35,17 @@ export function RoomBackstage({
     roomName,
     roomEvents,
     currentRoomEventId,
+    nextRoomEventId,
     setWatchStreamForEventId,
+    onRoomJoined,
 }: {
     showBackstage: boolean;
     roomName: string;
     roomEvents: readonly Room_EventSummaryFragment[];
     currentRoomEventId: string | null;
+    nextRoomEventId: string | null;
     setWatchStreamForEventId: (eventId: string | null) => void;
+    onRoomJoined: (joined: boolean) => void;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
@@ -91,6 +99,8 @@ export function RoomBackstage({
                         border={`1px ${borderColour} solid`}
                         width="max-content"
                         maxW="100%"
+                        w="100%"
+                        justifyContent="space-between"
                         p={4}
                         alignItems="center"
                         borderRadius="md"
@@ -98,7 +108,7 @@ export function RoomBackstage({
                         <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8} whiteSpace="normal">
                             {category}
                         </Heading>
-                        <VStack px={8} alignItems="left">
+                        <VStack px={8} alignItems="left" flexGrow={1}>
                             <Heading as="h4" size="md" textAlign="left" mt={2} mb={1} whiteSpace="normal">
                                 <Twemoji className="twemoji" text={title} />
                             </Heading>
@@ -138,14 +148,18 @@ export function RoomBackstage({
 
     const eventRooms = useMemo(
         () => (
-            <Box mt={4}>
+            <Box mt={4} w="100%">
                 {sortedEvents.map((x) =>
                     isEventNow(x) ? (
-                        <Box key={x.id}>{makeEventEl(x, "Happening now")}</Box>
+                        <Box key={x.id} mt={2} w="100%">
+                            {makeEventEl(x, "Happening now")}
+                        </Box>
                     ) : isEventSoon(x) ? (
-                        <Box key={x.id}>{makeEventEl(x, "Starting soon")}</Box>
+                        <Box key={x.id} mt={2} w="100%">
+                            {makeEventEl(x, "Starting soon")}
+                        </Box>
                     ) : x.id === selectedEventId ? (
-                        <Box key={x.id}>
+                        <Box key={x.id} mt={2} w="100%">
                             {makeEventEl(x, "Ongoing")}
                             <Alert status="warning" mb={8}>
                                 <AlertIcon />
@@ -161,7 +175,7 @@ export function RoomBackstage({
                 {sortedEvents.filter((x) => isEventNow(x) || isEventSoon(x) || selectedEventId === x.id).length ===
                 0 ? (
                     <Text textAlign="center" my={8} fontSize="lg">
-                        No current or upcoming events in this room
+                        No current or upcoming events in the speakers&apos; area.
                     </Text>
                 ) : undefined}
             </Box>
@@ -170,6 +184,9 @@ export function RoomBackstage({
     );
 
     const sharedRoomContext = useSharedRoomContext();
+
+    const [isWatchStreamConfirmOpen, setIsWatchStreamConfirmOpen] = useState<boolean>(false);
+    const cancelRef = useRef<HTMLButtonElement>(null);
 
     return showBackstage ? (
         <Box display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
@@ -201,23 +218,66 @@ export function RoomBackstage({
                         getAccessToken={() => ""}
                         disable={true}
                         isBackstageRoom={true}
+                        onRoomJoined={onRoomJoined}
                     />
                 </Box>
             ) : undefined}
-            {!selectedEventId && (
-                <Center my={4}>
-                    <Tooltip label="Watching the stream while speaking is strongly discouraged. The stream lag can cause a lot of confusion. Please stay in the speakers' area. Please do not use a second device to watch the stream while you are active in the speakers' area.">
+            {!selectedEventId ? (
+                currentRoomEventId || nextRoomEventId ? (
+                    <>
                         <Button
                             variant="outline"
                             borderColor="red.600"
                             color="red.600"
-                            onClick={() => setWatchStreamForEventId(currentRoomEventId)}
+                            onClick={() => setIsWatchStreamConfirmOpen(true)}
+                            mt={4}
                         >
                             Watch stream
                         </Button>
-                    </Tooltip>
-                </Center>
-            )}
+                        <AlertDialog
+                            isOpen={isWatchStreamConfirmOpen}
+                            leastDestructiveRef={cancelRef}
+                            onClose={() => setIsWatchStreamConfirmOpen(false)}
+                        >
+                            <AlertDialogOverlay>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                        Watch stream
+                                    </AlertDialogHeader>
+
+                                    <AlertDialogBody>
+                                        Watching the stream while speaking is strongly discouraged. The stream lag can
+                                        cause a lot of confusion. Please stay in the speakers&apos; area. Please do not
+                                        use a second device to watch the stream while you are active in the
+                                        speakers&apos; area.
+                                    </AlertDialogBody>
+
+                                    <AlertDialogFooter>
+                                        <Button ref={cancelRef} onClick={() => setIsWatchStreamConfirmOpen(false)}>
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            colorScheme="red"
+                                            onClick={() =>
+                                                currentRoomEventId
+                                                    ? setWatchStreamForEventId(currentRoomEventId)
+                                                    : setWatchStreamForEventId(nextRoomEventId)
+                                            }
+                                            ml={3}
+                                        >
+                                            Go to stream
+                                        </Button>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialogOverlay>
+                        </AlertDialog>
+                    </>
+                ) : (
+                    <Button variant="outline" borderColor="red.600" color="red.600" isDisabled={true} mt={4}>
+                        Live stream ended
+                    </Button>
+                )
+            ) : undefined}
         </Box>
     ) : (
         <></>

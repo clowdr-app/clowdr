@@ -205,24 +205,51 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     }, [currentEventData?.contentGroup?.contentItems]);
 
     const currentAttendee = useCurrentAttendee();
-    // Used to allow the user to explicitly select to watch the stream rather
-    // than entering the backstage area
+
+    const [presentingCurrentOrNextEvent, setPresentingCurrentOrNextEvent] = useState<boolean>(false);
+    useEffect(() => {
+        const isPresenterOfCurrentEvent =
+            currentRoomEvent !== null &&
+            currentRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
+        const isPresenterOfNextEvent =
+            nextRoomEvent !== null &&
+            nextRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
+
+        if (!presentingCurrentOrNextEvent && isPresenterOfCurrentEvent) {
+            setPresentingCurrentOrNextEvent(true);
+        }
+
+        if (!presentingCurrentOrNextEvent && isPresenterOfNextEvent) {
+            setPresentingCurrentOrNextEvent(true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentAttendee.id, currentRoomEvent, nextRoomEvent]);
+
+    const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);
+
     const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
     const showDefaultBreakoutRoom =
         roomEvents.length === 0 || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
     const hasBackstage = !!hlsUri;
-    const isPresenterOfCurrentEvent =
-        currentRoomEvent !== null &&
-        currentRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
-    const isPresenterOfNextEvent =
-        nextRoomEvent !== null && nextRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
-    const shouldBeBackstage =
-        isPresenterOfCurrentEvent || (withinThreeMinutesOfBroadcastEvent && isPresenterOfNextEvent);
+
     const showBackstage =
         hasBackstage &&
-        shouldBeBackstage &&
-        watchStreamForEventId !== currentRoomEvent?.id &&
-        watchStreamForEventId !== nextRoomEvent?.id;
+        (backStageRoomJoined ||
+            (presentingCurrentOrNextEvent &&
+                (!watchStreamForEventId ||
+                    (!!currentRoomEvent && watchStreamForEventId !== currentRoomEvent.id) ||
+                    (!currentRoomEvent && !!nextRoomEvent && watchStreamForEventId !== nextRoomEvent.id))));
+
+    useEffect(() => {
+        if (showBackstage) {
+            toast({
+                status: "info",
+                title: "You have been taken to the speakers' area",
+                description: "You are a presenter of a current or upcoming event",
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showBackstage]);
 
     const controlBarEl = useMemo(
         () =>
@@ -232,7 +259,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         [roomDetails, showBackstage]
     );
 
-    const roomEventsForCurrentAttendde = useMemo(
+    const roomEventsForCurrentAttendee = useMemo(
         () =>
             roomEvents.filter((event) => event.eventPeople.some((person) => person.attendeeId === currentAttendee.id)),
         [currentAttendee.id, roomEvents]
@@ -242,15 +269,17 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             <RoomBackstage
                 showBackstage={showBackstage}
                 roomName={roomDetails.name}
-                roomEvents={roomEventsForCurrentAttendde}
+                roomEvents={roomEventsForCurrentAttendee}
                 currentRoomEventId={currentRoomEvent?.id}
+                nextRoomEventId={nextRoomEvent?.id}
                 setWatchStreamForEventId={setWatchStreamForEventId}
+                onRoomJoined={setBackStageRoomJoined}
             />
         ),
-        [currentRoomEvent?.id, roomDetails.name, roomEventsForCurrentAttendde, showBackstage]
+        [currentRoomEvent?.id, nextRoomEvent, roomDetails.name, roomEventsForCurrentAttendee, showBackstage]
     );
 
-    const muteStream = shouldBeBackstage;
+    const muteStream = showBackstage;
     const playerRef = useRef<ReactPlayer | null>(null);
     const playerEl = useMemo(
         () =>

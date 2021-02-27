@@ -43,7 +43,6 @@ export default function EditProfilePitureForm({
                 allowedFileTypes,
                 maxNumberOfFiles: 1,
                 minNumberOfFiles: 1,
-                maxFileSize: 1024 * 1024,
             },
             autoProceed: false,
         });
@@ -58,15 +57,26 @@ export default function EditProfilePitureForm({
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;
         if (uppy) {
-            const invalidFiles = uppy?.getFiles().filter((file) => !validNameRegex.test(file.name));
+            const invalidFiles = uppy
+                ?.getFiles()
+                .filter((file) => !validNameRegex.test(file.name) || file.size > 1024 * 1024);
             for (const invalidFile of invalidFiles) {
-                toast({
-                    position: "top",
-                    status: "error",
-                    description:
-                        "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
-                });
-                uppy.removeFile(invalidFile.id);
+                if (invalidFile.size > 1024 * 1024) {
+                    toast({
+                        position: "top",
+                        status: "error",
+                        description: "The maximum size is 1MiB.",
+                    });
+                    uppy.removeFile(invalidFile.id);
+                } else {
+                    toast({
+                        position: "top",
+                        status: "error",
+                        description:
+                            "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
+                    });
+                    uppy.removeFile(invalidFile.id);
+                }
             }
 
             setFiles(uppy.getFiles());
@@ -171,6 +181,7 @@ export default function EditProfilePitureForm({
                                     mb={2}
                                     p={0}
                                     overflow="hidden"
+                                    backgroundColor="#222"
                                 >
                                     {files.length === 1 || attendee.profile.photoURL_350x350 ? (
                                         <Image

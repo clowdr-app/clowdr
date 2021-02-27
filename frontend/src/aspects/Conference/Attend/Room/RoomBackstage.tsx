@@ -160,7 +160,7 @@ export function RoomBackstage({
                         </Box>
                     ) : x.id === selectedEventId ? (
                         <Box key={x.id} mt={2} w="100%">
-                            {makeEventEl(x, "Ongoing")}
+                            {makeEventEl(x, "Ended")}
                             <Alert status="warning" mb={8}>
                                 <AlertIcon />
                                 This event has now finished. Once you close this room, you will not be able to rejoin

@@ -31990,7 +31990,7 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any> }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly roleName: EventPersonRole_Enum }> };
 
 export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
   originatingContentGroupId: Scalars['uuid'];
@@ -33910,6 +33910,7 @@ export const Room_EventSummaryFragmentDoc = gql`
   eventPeople {
     id
     attendeeId
+    roleName
   }
 }
     `;

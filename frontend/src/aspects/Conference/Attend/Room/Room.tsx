@@ -7,6 +7,7 @@ import {
     Heading,
     HStack,
     Spinner,
+    Tag,
     Text,
     useColorModeValue,
     useToast,
@@ -85,6 +86,7 @@ gql`
         eventPeople {
             id
             attendeeId
+            roleName
         }
     }
 
@@ -206,23 +208,14 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const currentAttendee = useCurrentAttendee();
 
-    const [presentingCurrentOrNextEvent, setPresentingCurrentOrNextEvent] = useState<boolean>(false);
-    useEffect(() => {
+    const presentingCurrentOrNextEvent = useMemo(() => {
         const isPresenterOfCurrentEvent =
             currentRoomEvent !== null &&
             currentRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
         const isPresenterOfNextEvent =
             nextRoomEvent !== null &&
             nextRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
-
-        if (!presentingCurrentOrNextEvent && isPresenterOfCurrentEvent) {
-            setPresentingCurrentOrNextEvent(true);
-        }
-
-        if (!presentingCurrentOrNextEvent && isPresenterOfNextEvent) {
-            setPresentingCurrentOrNextEvent(true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        return isPresenterOfCurrentEvent || isPresenterOfNextEvent;
     }, [currentAttendee.id, currentRoomEvent, nextRoomEvent]);
 
     const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);
@@ -231,25 +224,69 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     const showDefaultBreakoutRoom =
         roomEvents.length === 0 || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
     const hasBackstage = !!hlsUri;
+    const [hasBeenBackStage, setHasBeenBackStage] = useState<boolean>(false); // whether the user has already been backstage on this page
 
     const showBackstage =
         hasBackstage &&
         (backStageRoomJoined ||
-            (presentingCurrentOrNextEvent &&
+            ((presentingCurrentOrNextEvent || hasBeenBackStage) &&
                 (!watchStreamForEventId ||
                     (!!currentRoomEvent && watchStreamForEventId !== currentRoomEvent.id) ||
                     (!currentRoomEvent && !!nextRoomEvent && watchStreamForEventId !== nextRoomEvent.id))));
 
     useEffect(() => {
         if (showBackstage) {
+            setHasBeenBackStage(true);
+        }
+    }, [showBackstage]);
+
+    useEffect(() => {
+        if (showBackstage) {
             toast({
                 status: "info",
+                position: "bottom-right",
                 title: "You have been taken to the speakers' area",
                 description: "You are a presenter of a current or upcoming event",
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showBackstage]);
+
+    useEffect(() => {
+        if (
+            currentRoomEvent &&
+            currentRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id) &&
+            watchStreamForEventId === currentRoomEvent.id &&
+            !showBackstage
+        ) {
+            toast({
+                status: "info",
+                position: "bottom-right",
+                title: "You are a presenter of an event starting now",
+                description: (
+                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
+                        Go to the speakers&apos; area
+                    </Button>
+                ),
+            });
+        } else if (
+            nextRoomEvent &&
+            nextRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id) &&
+            !showBackstage
+        ) {
+            toast({
+                status: "info",
+                position: "bottom-right",
+                title: "You are a presenter of the next event",
+                description: (
+                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
+                        Go to the speakers&apos; area
+                    </Button>
+                ),
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRoomEvent?.id]);
 
     const controlBarEl = useMemo(
         () =>
@@ -319,6 +356,12 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const breakoutVonageRoomEl = useMemo(() => <BreakoutVonageRoom room={roomDetails} />, [roomDetails]);
 
+    const currentEventRole = currentRoomEvent?.eventPeople.find(
+        (p) => p.attendeeId && p.attendeeId === currentAttendee.id
+    )?.roleName;
+    const nextEventRole = nextRoomEvent?.eventPeople.find((p) => p.attendeeId && p.attendeeId === currentAttendee.id)
+        ?.roleName;
+
     const contentEl = useMemo(
         () => (
             <Box flexGrow={1}>
@@ -326,7 +369,14 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
                 {currentRoomEvent ? (
                     <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now)}</Text>
+                        <HStack justifyContent="space-between">
+                            <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now)}</Text>
+                            {currentEventRole ? (
+                                <Tag colorScheme="green" my={2}>
+                                    {currentEventRole}
+                                </Tag>
+                            ) : undefined}
+                        </HStack>
                         <Heading as="h3" textAlign="left" size="lg" mb={2}>
                             {currentRoomEvent.name}
                         </Heading>
@@ -344,7 +394,14 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 )}
                 {nextRoomEvent ? (
                     <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
+                        <HStack justifyContent="space-between">
+                            <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
+                            {nextEventRole ? (
+                                <Tag colorScheme="gray" my={2}>
+                                    {nextEventRole}
+                                </Tag>
+                            ) : undefined}
+                        </HStack>
                         <Heading as="h3" textAlign="left" size="lg" mb={2}>
                             {nextRoomEvent.name}
                         </Heading>
@@ -443,10 +500,10 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                             duration: 15000,
                             isClosable: true,
                             position: "bottom-right",
-                            title: "Spinoff room created",
+                            title: "Discussion room available",
                             description: (
                                 <VStack alignItems="flex-start">
-                                    <Text>You can continue the discussion asynchronously in a spinoff room.</Text>
+                                    <Text>You can continue the discussion asynchronously in a discussion room.</Text>
                                     <Button
                                         onClick={() =>
                                             history.push(
@@ -455,7 +512,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                                         }
                                         colorScheme="green"
                                     >
-                                        Join the spinoff room
+                                        Join the discusion room
                                     </Button>
                                 </VStack>
                             ),

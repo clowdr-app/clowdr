@@ -824,6 +824,7 @@ export class ChatState {
     }
 
     private messages = new Map<number, MessageState>();
+    private fetchMoreAttempts = 0;
     private lastHistoricallyFetchedMessageId = Math.pow(2, 31) - 1;
     private messagesObs = new Observable<MessageUpdate>((observer) => {
         observer({
@@ -881,9 +882,17 @@ export class ChatState {
                         .filter((msg) => !this.messages.has(msg.id))
                         .map((message) => new MessageState(this.globalState, message));
                     if (newMessageStates.length > 0) {
+                        if (result.data.chat_Message.length > 0) {
+                            this.fetchMoreAttempts = 0;
+                        } else {
+                            this.fetchMoreAttempts++;
+                        }
+
                         this.lastHistoricallyFetchedMessageId =
-                            result.data.chat_Message.length === 0
+                            result.data.chat_Message.length === 0 && this.fetchMoreAttempts >= 5
                                 ? -1
+                                : result.data.chat_Message.length === 0
+                                ? Math.max(this.lastHistoricallyFetchedMessageId, 0)
                                 : newMessageStates[newMessageStates.length - 1].id;
                         newMessageStates.forEach((state) => {
                             this.messages.set(state.id, state);

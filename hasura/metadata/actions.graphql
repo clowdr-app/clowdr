@@ -259,6 +259,8 @@ type ProfilePhotoURLResponse {
 
 type UpdateProfilePhotoResponse {
   ok : Boolean!
+  photoURL_350x350 : String
+  photoURL_50x50 : String
 }
 
 type CreateRoomDmOutput {

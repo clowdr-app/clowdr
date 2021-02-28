@@ -8,7 +8,11 @@ import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
+import {
+    AttendeeProfileDataFragment,
+    AttendeeProfileDataFragmentDoc,
+    useSubmitProfilePhotoMutation,
+} from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { AttendeeContextT } from "../../useCurrentAttendee";
@@ -17,6 +21,8 @@ gql`
     mutation SubmitProfilePhoto($attendeeId: uuid!, $s3URL: String!) {
         updateProfilePhoto(attendeeId: $attendeeId, s3URL: $s3URL) {
             ok
+            photoURL_350x350
+            photoURL_50x50
         }
     }
 `;
@@ -124,23 +130,47 @@ export default function EditProfilePitureForm({
                     }
 
                     try {
+                        const s3URL = result.successful[0].uploadURL;
                         const submitResult = await submitProfilePhoto({
                             variables: {
-                                s3URL: result.successful[0].uploadURL,
+                                s3URL,
                                 attendeeId: attendee.id,
+                            },
+                            update: (cache, result) => {
+                                if (result.data?.updateProfilePhoto) {
+                                    const data = result.data.updateProfilePhoto;
+
+                                    const id = cache.identify({
+                                        __typename: "AttendeeProfile",
+                                        attendeeId: attendee.id,
+                                    });
+
+                                    const frag = cache.readFragment<AttendeeProfileDataFragment>({
+                                        fragment: AttendeeProfileDataFragmentDoc,
+                                        fragmentName: "AttendeeProfileData",
+                                        id,
+                                    });
+
+                                    if (frag) {
+                                        cache.writeFragment({
+                                            id,
+                                            data: {
+                                                ...frag,
+                                                photoURL_350x350: data.photoURL_350x350 ?? "",
+                                                photoURL_50x50: data.photoURL_50x50 ?? "",
+                                            },
+                                            fragment: AttendeeProfileDataFragmentDoc,
+                                            fragmentName: "AttendeeProfileData",
+                                            broadcast: true,
+                                        });
+                                    }
+                                }
                             },
                         });
 
                         if (submitResult.errors || !submitResult.data?.updateProfilePhoto?.ok) {
                             throw new Error("Upload failed.");
                         }
-
-                        await new Promise<void>((resolve) =>
-                            setTimeout(async () => {
-                                await attendee.refetch();
-                                resolve();
-                            }, 1500)
-                        );
 
                         toast({
                             position: "top",
@@ -257,8 +287,35 @@ export default function EditProfilePitureForm({
                                                                 s3URL: "",
                                                                 attendeeId: attendee.id,
                                                             },
+                                                            update: (cache) => {
+                                                                const id = cache.identify({
+                                                                    __typename: "AttendeeProfile",
+                                                                    attendeeId: attendee.id,
+                                                                });
+
+                                                                const frag = cache.readFragment<
+                                                                    AttendeeProfileDataFragment
+                                                                >({
+                                                                    fragment: AttendeeProfileDataFragmentDoc,
+                                                                    fragmentName: "AttendeeProfileData",
+                                                                    id,
+                                                                });
+
+                                                                if (frag) {
+                                                                    cache.writeFragment({
+                                                                        id,
+                                                                        data: {
+                                                                            ...frag,
+                                                                            photoURL_350x350: "",
+                                                                            photoURL_50x50: "",
+                                                                        },
+                                                                        fragment: AttendeeProfileDataFragmentDoc,
+                                                                        fragmentName: "AttendeeProfileData",
+                                                                        broadcast: true,
+                                                                    });
+                                                                }
+                                                            },
                                                         });
-                                                        await attendee.refetch();
                                                     } finally {
                                                         setIsDeleting(false);
                                                     }

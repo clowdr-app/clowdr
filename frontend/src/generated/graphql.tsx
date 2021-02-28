@@ -14320,6 +14320,8 @@ export enum Transitions_Update_Column {
 export type UpdateProfilePhotoResponse = {
   readonly __typename?: 'UpdateProfilePhotoResponse';
   readonly ok: Scalars['Boolean'];
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
+  readonly photoURL_50x50?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "Uploader" */
@@ -31843,13 +31845,27 @@ export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', rea
 
 export type Timeline_EventPersonFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly name: string, readonly affiliation?: Maybe<string>, readonly roleName: EventPersonRole_Enum };
 
+export type AttendeeByIdQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type AttendeeByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
 export type UpdateAttendeeProfileMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   profile?: Maybe<AttendeeProfile_Set_Input>;
 }>;
 
 
-export type UpdateAttendeeProfileMutation = { readonly __typename?: 'mutation_root', readonly update_AttendeeProfile_by_pk?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any }> };
+export type UpdateAttendeeProfileMutation = { readonly __typename?: 'mutation_root', readonly update_AttendeeProfile_by_pk?: Maybe<(
+    { readonly __typename?: 'AttendeeProfile' }
+    & AttendeeProfileDataFragment
+  )> };
 
 export type UpdateAttendeeDisplayNameMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -31857,7 +31873,10 @@ export type UpdateAttendeeDisplayNameMutationVariables = Exact<{
 }>;
 
 
-export type UpdateAttendeeDisplayNameMutation = { readonly __typename?: 'mutation_root', readonly update_Attendee_by_pk?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any }> };
+export type UpdateAttendeeDisplayNameMutation = { readonly __typename?: 'mutation_root', readonly update_Attendee_by_pk?: Maybe<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
 
 export type SubmitProfilePhotoMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -31865,7 +31884,7 @@ export type SubmitProfilePhotoMutationVariables = Exact<{
 }>;
 
 
-export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean }> };
+export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean, readonly photoURL_350x350?: Maybe<string>, readonly photoURL_50x50?: Maybe<string> }> };
 
 export type GetRoomVonageTokenMutationVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -33236,66 +33255,48 @@ export type CreateNewConferenceMetaStructureMutation = { readonly __typename?: '
       & ContentGroupDataFragment
     )> }> };
 
-export type ConferenceBySlugQueryVariables = Exact<{
+export type ConferenceBySlug_WithUserQueryVariables = Exact<{
   slug: Scalars['String'];
-}>;
-
-
-export type ConferenceBySlugQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> };
-
-export type GroupDataFragment = { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> };
-
-export type CurrentUserGroupsRolesPermissionsQueryVariables = Exact<{
-  userId?: Maybe<Scalars['String']>;
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: (
-          { readonly __typename?: 'Group' }
-          & GroupDataFragment
-        ) }> }> }>, readonly publicGroups: ReadonlyArray<(
-    { readonly __typename?: 'Group' }
-    & GroupDataFragment
-  )> };
-
-export type PublicUserGroupsRolesPermissionsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type PublicUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly publicGroups: ReadonlyArray<(
-    { readonly __typename?: 'Group' }
-    & GroupDataFragment
-  )> };
-
-export type AttendeeProfileDataFragment = { readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean };
-
-export type AttendeeDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string, readonly profile?: Maybe<(
-    { readonly __typename?: 'AttendeeProfile' }
-    & AttendeeProfileDataFragment
-  )> };
-
-export type AttendeeByUserIdConferenceIdQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
   userId: Scalars['String'];
 }>;
 
 
-export type AttendeeByUserIdConferenceIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
-    { readonly __typename?: 'Attendee' }
-    & AttendeeDataFragment
+export type ConferenceBySlug_WithUserQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<(
+    { readonly __typename?: 'Conference' }
+    & PublicConferenceInfoFragment
+    & AuthdConferenceInfoFragment
   )> };
 
-export type AttendeeByIdQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
+export type ConferenceBySlug_WithoutUserQueryVariables = Exact<{
+  slug: Scalars['String'];
 }>;
 
 
-export type AttendeeByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
-    { readonly __typename?: 'Attendee' }
+export type ConferenceBySlug_WithoutUserQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<(
+    { readonly __typename?: 'Conference' }
+    & PublicConferenceInfoFragment
+  )> };
+
+export type AuthdConferenceInfoFragment = { readonly __typename?: 'Conference', readonly attendees: ReadonlyArray<(
+    { readonly __typename?: 'Attendee', readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: (
+        { readonly __typename?: 'Group' }
+        & GroupDataFragment
+      ) }> }
     & AttendeeDataFragment
+  )> };
+
+export type PublicConferenceInfoFragment = { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly publicGroups: ReadonlyArray<(
+    { readonly __typename?: 'Group' }
+    & GroupDataFragment
+  )> };
+
+export type GroupDataFragment = { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> };
+
+export type AttendeeProfileDataFragment = { readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean };
+
+export type AttendeeDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly profile?: Maybe<(
+    { readonly __typename?: 'AttendeeProfile' }
+    & AttendeeProfileDataFragment
   )> };
 
 export type UpdateSubtitlesMutationVariables = Exact<{
@@ -34469,6 +34470,35 @@ export const SponsorSecondaryEditor_ContentItemFragmentDoc = gql`
   updatedAt
 }
     `;
+export const AttendeeProfileDataFragmentDoc = gql`
+    fragment AttendeeProfileData on AttendeeProfile {
+  attendeeId
+  badges
+  affiliation
+  affiliationURL
+  country
+  timezoneUTCOffset
+  bio
+  website
+  github
+  twitter
+  pronouns
+  photoURL_50x50
+  photoURL_350x350
+  hasBeenEdited
+}
+    `;
+export const AttendeeDataFragmentDoc = gql`
+    fragment AttendeeData on Attendee {
+  id
+  userId
+  conferenceId
+  displayName
+  profile {
+    ...AttendeeProfileData
+  }
+}
+    ${AttendeeProfileDataFragmentDoc}`;
 export const GroupDataFragmentDoc = gql`
     fragment GroupData on Group {
   groupRoles {
@@ -34493,34 +34523,36 @@ export const GroupDataFragmentDoc = gql`
   conferenceId
 }
     `;
-export const AttendeeProfileDataFragmentDoc = gql`
-    fragment AttendeeProfileData on AttendeeProfile {
-  attendeeId
-  badges
-  affiliation
-  affiliationURL
-  country
-  timezoneUTCOffset
-  bio
-  website
-  github
-  twitter
-  pronouns
-  photoURL_50x50
-  photoURL_350x350
-  hasBeenEdited
-}
-    `;
-export const AttendeeDataFragmentDoc = gql`
-    fragment AttendeeData on Attendee {
-  id
-  userId
-  displayName
-  profile {
-    ...AttendeeProfileData
+export const AuthdConferenceInfoFragmentDoc = gql`
+    fragment AuthdConferenceInfo on Conference {
+  attendees(where: {userId: {_eq: $userId}}) {
+    ...AttendeeData
+    groupAttendees {
+      group {
+        ...GroupData
+      }
+      id
+      groupId
+      attendeeId
+    }
   }
 }
-    ${AttendeeProfileDataFragmentDoc}`;
+    ${AttendeeDataFragmentDoc}
+${GroupDataFragmentDoc}`;
+export const PublicConferenceInfoFragmentDoc = gql`
+    fragment PublicConferenceInfo on Conference {
+  id
+  name
+  shortName
+  slug
+  createdBy
+  publicGroups: groups(
+    where: {enabled: {_eq: true}, includeUnauthenticated: {_eq: true}}
+  ) {
+    ...GroupData
+  }
+}
+    ${GroupDataFragmentDoc}`;
 export const RequiredItemFieldsFragmentDoc = gql`
     fragment RequiredItemFields on RequiredContentItem {
   id
@@ -35623,16 +35655,50 @@ export function useContentGroupSummary_GetContentGroupLazyQuery(baseOptions?: Ap
 export type ContentGroupSummary_GetContentGroupQueryHookResult = ReturnType<typeof useContentGroupSummary_GetContentGroupQuery>;
 export type ContentGroupSummary_GetContentGroupLazyQueryHookResult = ReturnType<typeof useContentGroupSummary_GetContentGroupLazyQuery>;
 export type ContentGroupSummary_GetContentGroupQueryResult = Apollo.QueryResult<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>;
+export const AttendeeByIdDocument = gql`
+    query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
+  Attendee(where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useAttendeeByIdQuery__
+ *
+ * To run a query within a React component, call `useAttendeeByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttendeeByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttendeeByIdQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useAttendeeByIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
+        return Apollo.useQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
+      }
+export function useAttendeeByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
+          return Apollo.useLazyQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
+        }
+export type AttendeeByIdQueryHookResult = ReturnType<typeof useAttendeeByIdQuery>;
+export type AttendeeByIdLazyQueryHookResult = ReturnType<typeof useAttendeeByIdLazyQuery>;
+export type AttendeeByIdQueryResult = Apollo.QueryResult<AttendeeByIdQuery, AttendeeByIdQueryVariables>;
 export const UpdateAttendeeProfileDocument = gql`
     mutation UpdateAttendeeProfile($attendeeId: uuid!, $profile: AttendeeProfile_set_input = {}) {
   update_AttendeeProfile_by_pk(
     pk_columns: {attendeeId: $attendeeId}
     _set: $profile
   ) {
-    attendeeId
+    ...AttendeeProfileData
   }
 }
-    `;
+    ${AttendeeProfileDataFragmentDoc}`;
 export type UpdateAttendeeProfileMutationFn = Apollo.MutationFunction<UpdateAttendeeProfileMutation, UpdateAttendeeProfileMutationVariables>;
 
 /**
@@ -35662,10 +35728,10 @@ export type UpdateAttendeeProfileMutationOptions = Apollo.BaseMutationOptions<Up
 export const UpdateAttendeeDisplayNameDocument = gql`
     mutation UpdateAttendeeDisplayName($attendeeId: uuid!, $name: String!) {
   update_Attendee_by_pk(pk_columns: {id: $attendeeId}, _set: {displayName: $name}) {
-    id
+    ...AttendeeData
   }
 }
-    `;
+    ${AttendeeDataFragmentDoc}`;
 export type UpdateAttendeeDisplayNameMutationFn = Apollo.MutationFunction<UpdateAttendeeDisplayNameMutation, UpdateAttendeeDisplayNameMutationVariables>;
 
 /**
@@ -35696,6 +35762,8 @@ export const SubmitProfilePhotoDocument = gql`
     mutation SubmitProfilePhoto($attendeeId: uuid!, $s3URL: String!) {
   updateProfilePhoto(attendeeId: $attendeeId, s3URL: $s3URL) {
     ok
+    photoURL_350x350
+    photoURL_50x50
   }
 }
     `;
@@ -40275,203 +40343,75 @@ export function useCreateNewConferenceMetaStructureMutation(baseOptions?: Apollo
 export type CreateNewConferenceMetaStructureMutationHookResult = ReturnType<typeof useCreateNewConferenceMetaStructureMutation>;
 export type CreateNewConferenceMetaStructureMutationResult = Apollo.MutationResult<CreateNewConferenceMetaStructureMutation>;
 export type CreateNewConferenceMetaStructureMutationOptions = Apollo.BaseMutationOptions<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
-export const ConferenceBySlugDocument = gql`
-    query ConferenceBySlug($slug: String!) {
+export const ConferenceBySlug_WithUserDocument = gql`
+    query ConferenceBySlug_WithUser($slug: String!, $userId: String!) {
   Conference(where: {slug: {_eq: $slug}}) {
-    id
-    name
-    shortName
-    slug
+    ...PublicConferenceInfo
+    ...AuthdConferenceInfo
   }
 }
-    `;
+    ${PublicConferenceInfoFragmentDoc}
+${AuthdConferenceInfoFragmentDoc}`;
 
 /**
- * __useConferenceBySlugQuery__
+ * __useConferenceBySlug_WithUserQuery__
  *
- * To run a query within a React component, call `useConferenceBySlugQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useConferenceBySlug_WithUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceBySlug_WithUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useConferenceBySlugQuery({
+ * const { data, loading, error } = useConferenceBySlug_WithUserQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useConferenceBySlug_WithUserQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>) {
+        return Apollo.useQuery<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>(ConferenceBySlug_WithUserDocument, baseOptions);
+      }
+export function useConferenceBySlug_WithUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>(ConferenceBySlug_WithUserDocument, baseOptions);
+        }
+export type ConferenceBySlug_WithUserQueryHookResult = ReturnType<typeof useConferenceBySlug_WithUserQuery>;
+export type ConferenceBySlug_WithUserLazyQueryHookResult = ReturnType<typeof useConferenceBySlug_WithUserLazyQuery>;
+export type ConferenceBySlug_WithUserQueryResult = Apollo.QueryResult<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>;
+export const ConferenceBySlug_WithoutUserDocument = gql`
+    query ConferenceBySlug_WithoutUser($slug: String!) {
+  Conference(where: {slug: {_eq: $slug}}) {
+    ...PublicConferenceInfo
+  }
+}
+    ${PublicConferenceInfoFragmentDoc}`;
+
+/**
+ * __useConferenceBySlug_WithoutUserQuery__
+ *
+ * To run a query within a React component, call `useConferenceBySlug_WithoutUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceBySlug_WithoutUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferenceBySlug_WithoutUserQuery({
  *   variables: {
  *      slug: // value for 'slug'
  *   },
  * });
  */
-export function useConferenceBySlugQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
-        return Apollo.useQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
+export function useConferenceBySlug_WithoutUserQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>) {
+        return Apollo.useQuery<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>(ConferenceBySlug_WithoutUserDocument, baseOptions);
       }
-export function useConferenceBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
-          return Apollo.useLazyQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
+export function useConferenceBySlug_WithoutUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>(ConferenceBySlug_WithoutUserDocument, baseOptions);
         }
-export type ConferenceBySlugQueryHookResult = ReturnType<typeof useConferenceBySlugQuery>;
-export type ConferenceBySlugLazyQueryHookResult = ReturnType<typeof useConferenceBySlugLazyQuery>;
-export type ConferenceBySlugQueryResult = Apollo.QueryResult<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>;
-export const CurrentUserGroupsRolesPermissionsDocument = gql`
-    query CurrentUserGroupsRolesPermissions($userId: String, $conferenceId: uuid!) {
-  User(where: {id: {_eq: $userId}}) {
-    conferencesCreated(where: {id: {_eq: $conferenceId}}) {
-      id
-    }
-    attendees(where: {conferenceId: {_eq: $conferenceId}}) {
-      groupAttendees {
-        group {
-          ...GroupData
-        }
-        id
-        groupId
-        attendeeId
-      }
-      id
-      userId
-      conferenceId
-      displayName
-    }
-    id
-  }
-  publicGroups: Group(
-    where: {conferenceId: {_eq: $conferenceId}, enabled: {_eq: true}, includeUnauthenticated: {_eq: true}}
-  ) {
-    ...GroupData
-  }
-}
-    ${GroupDataFragmentDoc}`;
-
-/**
- * __useCurrentUserGroupsRolesPermissionsQuery__
- *
- * To run a query within a React component, call `useCurrentUserGroupsRolesPermissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCurrentUserGroupsRolesPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCurrentUserGroupsRolesPermissionsQuery({
- *   variables: {
- *      userId: // value for 'userId'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCurrentUserGroupsRolesPermissionsQuery(baseOptions: Apollo.QueryHookOptions<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>) {
-        return Apollo.useQuery<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>(CurrentUserGroupsRolesPermissionsDocument, baseOptions);
-      }
-export function useCurrentUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>) {
-          return Apollo.useLazyQuery<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>(CurrentUserGroupsRolesPermissionsDocument, baseOptions);
-        }
-export type CurrentUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsQuery>;
-export type CurrentUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsLazyQuery>;
-export type CurrentUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>;
-export const PublicUserGroupsRolesPermissionsDocument = gql`
-    query PublicUserGroupsRolesPermissions($conferenceId: uuid!) {
-  publicGroups: Group(
-    where: {conferenceId: {_eq: $conferenceId}, enabled: {_eq: true}, includeUnauthenticated: {_eq: true}}
-  ) {
-    ...GroupData
-  }
-}
-    ${GroupDataFragmentDoc}`;
-
-/**
- * __usePublicUserGroupsRolesPermissionsQuery__
- *
- * To run a query within a React component, call `usePublicUserGroupsRolesPermissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `usePublicUserGroupsRolesPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePublicUserGroupsRolesPermissionsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function usePublicUserGroupsRolesPermissionsQuery(baseOptions: Apollo.QueryHookOptions<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>) {
-        return Apollo.useQuery<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>(PublicUserGroupsRolesPermissionsDocument, baseOptions);
-      }
-export function usePublicUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>) {
-          return Apollo.useLazyQuery<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>(PublicUserGroupsRolesPermissionsDocument, baseOptions);
-        }
-export type PublicUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof usePublicUserGroupsRolesPermissionsQuery>;
-export type PublicUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof usePublicUserGroupsRolesPermissionsLazyQuery>;
-export type PublicUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>;
-export const AttendeeByUserIdConferenceIdDocument = gql`
-    query AttendeeByUserIdConferenceId($conferenceId: uuid!, $userId: String!) {
-  Attendee(
-    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {userId: {_eq: $userId}}]}
-  ) {
-    ...AttendeeData
-  }
-}
-    ${AttendeeDataFragmentDoc}`;
-
-/**
- * __useAttendeeByUserIdConferenceIdQuery__
- *
- * To run a query within a React component, call `useAttendeeByUserIdConferenceIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useAttendeeByUserIdConferenceIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAttendeeByUserIdConferenceIdQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useAttendeeByUserIdConferenceIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>) {
-        return Apollo.useQuery<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>(AttendeeByUserIdConferenceIdDocument, baseOptions);
-      }
-export function useAttendeeByUserIdConferenceIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>) {
-          return Apollo.useLazyQuery<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>(AttendeeByUserIdConferenceIdDocument, baseOptions);
-        }
-export type AttendeeByUserIdConferenceIdQueryHookResult = ReturnType<typeof useAttendeeByUserIdConferenceIdQuery>;
-export type AttendeeByUserIdConferenceIdLazyQueryHookResult = ReturnType<typeof useAttendeeByUserIdConferenceIdLazyQuery>;
-export type AttendeeByUserIdConferenceIdQueryResult = Apollo.QueryResult<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>;
-export const AttendeeByIdDocument = gql`
-    query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
-  Attendee(where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}) {
-    ...AttendeeData
-  }
-}
-    ${AttendeeDataFragmentDoc}`;
-
-/**
- * __useAttendeeByIdQuery__
- *
- * To run a query within a React component, call `useAttendeeByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useAttendeeByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAttendeeByIdQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useAttendeeByIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
-        return Apollo.useQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
-      }
-export function useAttendeeByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
-          return Apollo.useLazyQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
-        }
-export type AttendeeByIdQueryHookResult = ReturnType<typeof useAttendeeByIdQuery>;
-export type AttendeeByIdLazyQueryHookResult = ReturnType<typeof useAttendeeByIdLazyQuery>;
-export type AttendeeByIdQueryResult = Apollo.QueryResult<AttendeeByIdQuery, AttendeeByIdQueryVariables>;
+export type ConferenceBySlug_WithoutUserQueryHookResult = ReturnType<typeof useConferenceBySlug_WithoutUserQuery>;
+export type ConferenceBySlug_WithoutUserLazyQueryHookResult = ReturnType<typeof useConferenceBySlug_WithoutUserLazyQuery>;
+export type ConferenceBySlug_WithoutUserQueryResult = Apollo.QueryResult<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>;
 export const UpdateSubtitlesDocument = gql`
     mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
   updateSubtitles(

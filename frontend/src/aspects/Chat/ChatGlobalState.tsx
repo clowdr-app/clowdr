@@ -1288,18 +1288,21 @@ export class ChatState {
         return this.readUpToMsgId;
     }
     public setReadUpToMsgId(messageId: number, remoteMessageId: number | undefined): void {
+        const prev = this.readUpToMsgId;
         this.readUpToMsgId = Math.max(messageId, this.readUpToMsgId);
-        this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
-        this.unreadCount = 0;
-        this.unreadCountObs.publish(0);
+        if (prev !== this.readUpToMsgId) {
+            this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
+            this.unreadCount = 0;
+            this.unreadCountObs.publish(0);
 
-        this.saveReadUpToIndex_SetupTimeout();
+            this.saveReadUpToIndex_SetupTimeout();
 
-        if (remoteMessageId !== undefined) {
-            (async () => {
-                const remoteChat = await this.remoteChat;
-                await remoteChat?.updateLastConsumedMessageIndex(remoteMessageId);
-            })();
+            if (remoteMessageId !== undefined) {
+                (async () => {
+                    const remoteChat = await this.remoteChat;
+                    await remoteChat?.updateLastConsumedMessageIndex(remoteMessageId);
+                })();
+            }
         }
     }
     private saveReadUpToIndex_SetupTimeout() {

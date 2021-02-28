@@ -134,12 +134,14 @@ export default function AttendeesContextProvider({
     useEffect(() => {
         const tId = setInterval(async () => {
             const requiredAttendeeIds = new Set<string>();
+            const requiredSubIds = new Set<number>();
             let now = Date.now();
-            subscriptions.current.forEach((sub) => {
+            subscriptions.current.forEach((sub, key) => {
                 if (sub.lastNotifiedAt < now - fullRefetchInterval) {
                     const existingAttendeeData = attendees.current.get(sub.attendeeId);
                     if (!existingAttendeeData || existingAttendeeData.fetchedAt < now - fullRefetchInterval) {
                         requiredAttendeeIds.add(sub.attendeeId);
+                        requiredSubIds.add(key);
                     }
                 }
             });
@@ -155,10 +157,18 @@ export default function AttendeesContextProvider({
                             conferenceId: conference.id,
                         });
 
-                        now = Date.now();
-                        datas.data.Attendee.forEach((attendee) => {
-                            attendees.current.set(attendee.id, { attendee, fetchedAt: now });
-                        });
+                        if (filteredIds.length !== datas.data.Attendee.length && datas.data.Attendee.length === 0) {
+                            // We didn't get any of the ids back - probably deleted or some permissions issue.
+                            // In which case we want to avoid endless refetching.
+                            for (const subId of requiredSubIds) {
+                                subscriptions.current.delete(subId);
+                            }
+                        } else {
+                            now = Date.now();
+                            datas.data.Attendee.forEach((attendee) => {
+                                attendees.current.set(attendee.id, { attendee, fetchedAt: now });
+                            });
+                        }
                     }
                 }
             } catch (e) {
@@ -174,7 +184,7 @@ export default function AttendeesContextProvider({
                 }
             });
 
-            const limit = 1000;
+            const limit = 5000;
             if (checkInterval < limit) {
                 setCheckInterval((old) => Math.min(old * 1.5, limit));
             }

@@ -96,6 +96,8 @@ async function handleUpdateProfilePhoto(
     attendeeId: string,
     s3URL: Maybe<string> | undefined
 ): Promise<UpdateProfilePhotoResponse> {
+    let photoURL_350x350: string | undefined;
+    let photoURL_50x50: string | undefined;
     if (!s3URL || s3URL.length === 0) {
         await apolloClient.mutate({
             mutation: UpdateProfilePhotoDocument,
@@ -117,6 +119,9 @@ async function handleUpdateProfilePhoto(
 
         assert(process.env.AWS_CONTENT_BUCKET_ID);
 
+        photoURL_350x350 = generateSignedImageURL(process.env.AWS_CONTENT_BUCKET_ID, validatedS3URL.key, 350, 350);
+        photoURL_50x50 = generateSignedImageURL(process.env.AWS_CONTENT_BUCKET_ID, validatedS3URL.key, 50, 50);
+
         await apolloClient.mutate({
             mutation: UpdateProfilePhotoDocument,
             variables: {
@@ -125,19 +130,16 @@ async function handleUpdateProfilePhoto(
                 bucket: process.env.AWS_CONTENT_BUCKET_ID,
                 objectName: validatedS3URL.key,
                 region: process.env.AWS_REGION,
-                photoURL_350x350: generateSignedImageURL(
-                    process.env.AWS_CONTENT_BUCKET_ID,
-                    validatedS3URL.key,
-                    350,
-                    350
-                ),
-                photoURL_50x50: generateSignedImageURL(process.env.AWS_CONTENT_BUCKET_ID, validatedS3URL.key, 50, 50),
+                photoURL_350x350,
+                photoURL_50x50,
             },
         });
     }
 
     return {
         ok: true,
+        photoURL_350x350,
+        photoURL_50x50,
     };
 }
 

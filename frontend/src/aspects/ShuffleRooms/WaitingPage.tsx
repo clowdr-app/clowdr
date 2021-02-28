@@ -26,7 +26,7 @@ import {
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
-import { ConferenceInfo, useConference } from "../Conference/useConference";
+import { ConferenceInfoFragment, useConference } from "../Conference/useConference";
 import useCurrentAttendee from "../Conference/useCurrentAttendee";
 import { useRealTime } from "../Generic/useRealTime";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
@@ -115,7 +115,7 @@ function QueuedShufflePeriodBox({
 }: {
     period: ShufflePeriodDataFragment;
     lastEntry: PrefetchShuffleQueueEntryDataFragment;
-    conference: ConferenceInfo;
+    conference: ConferenceInfoFragment;
     isJoining: boolean;
     joinShuffleQueue: () => void;
     numberOfQueued: number;

@@ -92,15 +92,21 @@ function deepProfileIsEqual(x: AttendeeContextT, y: AttendeeContextT): boolean {
 }
 
 gql`
+    query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
+        Attendee(where: { id: { _eq: $attendeeId }, conferenceId: { _eq: $conferenceId } }) {
+            ...AttendeeData
+        }
+    }
+
     mutation UpdateAttendeeProfile($attendeeId: uuid!, $profile: AttendeeProfile_set_input = {}) {
         update_AttendeeProfile_by_pk(pk_columns: { attendeeId: $attendeeId }, _set: $profile) {
-            attendeeId
+            ...AttendeeProfileData
         }
     }
 
     mutation UpdateAttendeeDisplayName($attendeeId: uuid!, $name: String!) {
         update_Attendee_by_pk(pk_columns: { id: $attendeeId }, _set: { displayName: $name }) {
-            id
+            ...AttendeeData
         }
     }
 `;
@@ -209,7 +215,6 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                                 },
                             },
                         });
-                        await attendee.refetch();
                     } catch (e) {
                         console.error("Error saving profile", e);
                     }
@@ -401,7 +406,6 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                         name: editingAttendee.displayName,
                     },
                 });
-                await attendee.refetch();
                 toast({
                     title: "Name saved",
                     status: "success",
@@ -529,7 +533,7 @@ function EditCurrentProfilePage(): JSX.Element {
 
 function EditProfilePage_FetchWrapper({ attendeeId }: { attendeeId: string }): JSX.Element {
     const conference = useConference();
-    const { loading, error, data, refetch } = useAttendeeByIdQuery({
+    const { loading, error, data } = useAttendeeByIdQuery({
         variables: {
             conferenceId: conference.id,
             attendeeId,
@@ -553,9 +557,6 @@ function EditProfilePage_FetchWrapper({ attendeeId }: { attendeeId: string }): J
             attendee={{
                 ...data.Attendee[0],
                 profile: data.Attendee[0].profile,
-                refetch: async () => {
-                    await refetch();
-                },
             }}
         />
     ) : (

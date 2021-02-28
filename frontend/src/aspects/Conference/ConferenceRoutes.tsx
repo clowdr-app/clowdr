@@ -48,7 +48,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 </Route>
             ) : undefined}
 
-            {mAttendee && !mAttendee.profile.hasBeenEdited ? (
+            {mAttendee && mAttendee.profile && !mAttendee.profile.hasBeenEdited ? (
                 <Route path={rootUrl}>
                     <Redirect to={`/conference/${conference.slug}/profile/edit`} />
                 </Route>

@@ -203,7 +203,11 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             if (currentZoomItems && currentZoomItems.length > 0 && currentEventData) {
                 const versions = currentZoomItems[0].data as ContentItemDataBlob;
                 const latest = R.last(versions)?.data as ZoomBlob;
-                return { url: latest.url, name: currentEventData.name };
+                const name =
+                    currentEventData.name.length === 0
+                        ? currentEventData?.contentGroup?.title ?? null
+                        : currentEventData.name;
+                return { url: latest.url, name };
             }
 
             const nextZoomItems = nextEventData?.contentGroup?.contentItems;
@@ -215,7 +219,9 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             ) {
                 const versions = nextZoomItems[0].data as ContentItemDataBlob;
                 const latest = R.last(versions)?.data as ZoomBlob;
-                return { url: latest.url, name: nextEventData.name };
+                const name =
+                    nextEventData.name.length === 0 ? nextEventData?.contentGroup?.title ?? null : nextEventData.name;
+                return { url: latest.url, name };
             }
 
             return undefined;
@@ -620,7 +626,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                         w="100%"
                         mt={4}
                     >
-                        Go to Zoom ({maybeZoomDetails.name})
+                        Go to Zoom{maybeZoomDetails.name ? ` (${maybeZoomDetails.name})` : ""}
                     </ExternalLinkButton>
                 ) : (
                     <></>

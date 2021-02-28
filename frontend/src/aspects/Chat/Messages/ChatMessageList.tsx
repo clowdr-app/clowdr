@@ -127,7 +127,7 @@ function MessageList({
 
             if (messageElements.current.length > 0) {
                 const latest = messageElements.current[0].props.message as MessageState;
-                config.state.setReadUpToMsgId(latest.id, latest.remoteMsgId);
+                config.state.setAllMessagesRead(latest.id);
             }
 
             setLastRenderTime(Date.now());
@@ -168,12 +168,12 @@ function MessageList({
             if (shouldAutoScroll.current) {
                 ref.current?.scroll({
                     behavior: "smooth",
-                    top: 200,
+                    top: 0,
                 });
 
                 if (messageElements.current && messageElements.current.length > 0) {
                     const latest = messageElements.current[0].props.message as MessageState;
-                    config.state.setReadUpToMsgId(latest.id, latest.remoteMsgId);
+                    config.state.setAllMessagesRead(latest.id);
                 }
             }
 
@@ -256,13 +256,13 @@ function MessageList({
                 onChange={(ev) => {
                     shouldAutoScroll.current = ev.intersectionRatio > 0;
 
-                    if (messageElements.current && messageElements.current.length > 0) {
+                    if (shouldAutoScroll.current && messageElements.current && messageElements.current.length > 0) {
                         const latest = messageElements.current[0].props.message as MessageState;
-                        config.state.setReadUpToMsgId(latest.id, latest.remoteMsgId);
+                        config.state.setAllMessagesRead(latest.id);
                     }
                 }}
             >
-                <Box position="absolute" bottom="100px" l={0} m={0} p={0} h="1px" w="100%"></Box>
+                <Box m={0} p={0} h="1px" w="100%"></Box>
             </Observer>
         );
     }, [config.state]);
@@ -290,7 +290,6 @@ function MessageList({
                             ["scrollbarColor"]: `${scrollbarColour} ${scrollbarBackground}`,
                         }}
                         ref={ref}
-                        pos="relative"
                     >
                         {bottomEl}
                         {messageElements.current}

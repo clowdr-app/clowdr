@@ -36,9 +36,6 @@ import {
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
     InitialChatState_ChatFragment,
-    InsertReadUpToIndexDocument,
-    InsertReadUpToIndexMutation,
-    InsertReadUpToIndexMutationVariables,
     PinChatDocument,
     PinChatMutation,
     PinChatMutationVariables,
@@ -55,9 +52,6 @@ import {
     SelectPinnedOrSubscribedDocument,
     SelectPinnedOrSubscribedQuery,
     SelectPinnedOrSubscribedQueryVariables,
-    SelectReadUpToIndicesDocument,
-    SelectReadUpToIndicesQuery,
-    SelectReadUpToIndicesQueryVariables,
     SendChatMessageDocument,
     SendChatMessageMutation,
     SendChatMessageMutationVariables,
@@ -71,9 +65,6 @@ import {
     UnsubscribeChatDocument,
     UnsubscribeChatMutation,
     UnsubscribeChatMutationVariables,
-    UpdateReadUpToIndexDocument,
-    UpdateReadUpToIndexMutation,
-    UpdateReadUpToIndexMutationVariables,
 } from "../../generated/graphql";
 import type { Attendee } from "../Conference/useCurrentAttendee";
 import { Markdown } from "../Text/Markdown";
@@ -441,8 +432,7 @@ gql`
 export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
-        private readonly initialState: ChatMessageDataFragment | ShortChatMessageDataFragment,
-        public remoteMsgId?: number
+        private readonly initialState: ChatMessageDataFragment | ShortChatMessageDataFragment
     ) {
         if ("reactions" in initialState) {
             this.reactions = [...initialState.reactions];
@@ -584,26 +574,20 @@ export class ChatState {
 
         this.isPinned = initialState.pins.length > 0;
         this.isSubscribed = initialState.subscriptions.length > 0;
-        this.unreadCount =
-            initialState.readUpToIndices.length > 0 ? initialState.readUpToIndices[0].unreadCount ?? 0 : 0;
-        this.readUpToMsgId = initialState.readUpToIndices.length > 0 ? initialState.readUpToIndices[0].messageId : -1;
-        this.readUpTo_ExistsInDb = initialState.readUpToIndices.length > 0;
-        this.latestNotifiedIndex =
-            initialState.readUpToIndices.length > 0 ? initialState.readUpToIndices[0].notifiedUpToMessageId : -1;
+        this.unreadCount = 0;
+        this.readUpToMsgId = -1;
+        this.readUpTo_ExistsInDb = false;
+        this.latestNotifiedIndex = -1;
 
         this.remoteChat = null;
-
-        if (this.isSubscribed || this.isPinned) {
-            this.subscribeToMoreMessages();
-        }
     }
 
     public async teardown(): Promise<void> {
         await this.unsubscribeFromMoreMessages(true);
-        if (this.readUpTo_Timeout) {
-            clearTimeout(this.readUpTo_Timeout.id);
-            await this.saveReadUpToIndex();
-        }
+        // if (this.readUpTo_Timeout) {
+        //     clearTimeout(this.readUpTo_Timeout.id);
+        //     await this.saveReadUpToIndex();
+        // }
     }
 
     public get Id(): string {
@@ -733,7 +717,7 @@ export class ChatState {
         return this.isPinned;
     }
 
-    private isSubscribed: boolean;
+    public isSubscribed: boolean;
     private isSubscribedObs = new Observable<boolean>((observer) => {
         observer(this.isSubscribed);
     });
@@ -997,25 +981,19 @@ export class ChatState {
                     // Ignore - maybe system sent the message
                 }
                 newMessageStates = [
-                    new MessageState(
-                        this.globalState,
-                        {
-                            id: attrs.id,
-                            data: attrs.data,
-                            type: attrs.type,
-                            chatId: this.Id,
-                            message: msg.body,
-                            created_at: msg.dateCreated.toISOString(),
-                            senderId,
-                        },
-                        msg.index
-                    ),
+                    new MessageState(this.globalState, {
+                        id: attrs.id,
+                        data: attrs.data,
+                        type: attrs.type,
+                        chatId: this.Id,
+                        message: msg.body,
+                        created_at: msg.dateCreated.toISOString(),
+                        senderId,
+                    }),
                 ];
                 newMessageStates.forEach((msg) => {
                     this.messages.set(msg.id, msg);
                 });
-            } else {
-                existing.remoteMsgId = msg.index;
             }
         } catch (e) {
             console.error(`Error processing new messages from remote service: ${this.Id}`, e);
@@ -1079,7 +1057,7 @@ export class ChatState {
     private latestNotifiedIndex: number;
     private async computeNotifications(message: MessageState) {
         if (this.latestNotifiedIndex < message.id) {
-            if (this.readUpToMsgId < message.id) {
+            if (this.latestNotifiedIndex !== -1 && this.readUpToMsgId < message.id) {
                 const remoteChat = await this.remoteChat;
                 const remoteUnreadCount =
                     message.senderId === this.globalState.attendee.id
@@ -1092,95 +1070,96 @@ export class ChatState {
                 }
             }
 
+            const prevNotifIndex = this.latestNotifiedIndex;
             this.latestNotifiedIndex = message.id;
-            this.saveReadUpToIndex_SetupTimeout();
 
-            if (this.readUpToMsgId < message.id && this.isSubscribed) {
-                if (
-                    this.globalState.attendee.id !== message.senderId &&
-                    message.chatId !== this.globalState.suppressNotificationsForChatId &&
-                    message.type !== Chat_MessageType_Enum.DuplicationMarker &&
-                    message.type !== Chat_MessageType_Enum.Emote
-                ) {
-                    const chatPath = `/conference/${this.globalState.conference.slug}/chat/${this.Id}`;
-                    const chatName = this.Name;
-                    const chatIsDM = this.IsDM;
-                    const globalState = this.globalState;
+            if (
+                this.isSubscribed &&
+                prevNotifIndex !== -1 &&
+                this.readUpToMsgId < message.id &&
+                this.globalState.attendee.id !== message.senderId &&
+                message.chatId !== this.globalState.suppressNotificationsForChatId &&
+                message.type !== Chat_MessageType_Enum.DuplicationMarker &&
+                message.type !== Chat_MessageType_Enum.Emote
+            ) {
+                const chatPath = `/conference/${this.globalState.conference.slug}/chat/${this.Id}`;
+                const chatName = this.Name;
+                const chatIsDM = this.IsDM;
+                const globalState = this.globalState;
 
-                    this.toast({
-                        position: "top-right",
-                        description: message.message,
-                        isClosable: true,
-                        duration: 15000,
-                        render: function ChatNotification(props: RenderProps) {
-                            return (
-                                <VStack
-                                    alignItems="flex-start"
-                                    background="purple.700"
-                                    color="gray.50"
-                                    w="auto"
-                                    h="auto"
-                                    p={5}
-                                    opacity={0.95}
-                                    borderRadius={10}
-                                    position="relative"
-                                    pt={2}
+                this.toast({
+                    position: "top-right",
+                    description: message.message,
+                    isClosable: true,
+                    duration: 15000,
+                    render: function ChatNotification(props: RenderProps) {
+                        return (
+                            <VStack
+                                alignItems="flex-start"
+                                background="purple.700"
+                                color="gray.50"
+                                w="auto"
+                                h="auto"
+                                p={5}
+                                opacity={0.95}
+                                borderRadius={10}
+                                position="relative"
+                                pt={2}
+                            >
+                                <CloseButton position="absolute" top={2} right={2} onClick={props.onClose} />
+                                <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
+                                    New{" "}
+                                    {message.type === Chat_MessageType_Enum.Message
+                                        ? "message"
+                                        : message.type === Chat_MessageType_Enum.Answer
+                                        ? "answer"
+                                        : message.type === Chat_MessageType_Enum.Question
+                                        ? "question"
+                                        : "message"}
+                                </Heading>
+                                <Heading
+                                    textAlign="left"
+                                    as="h3"
+                                    fontSize="0.9rem"
+                                    fontStyle="italic"
+                                    maxW="250px"
+                                    noOfLines={1}
                                 >
-                                    <CloseButton position="absolute" top={2} right={2} onClick={props.onClose} />
-                                    <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
-                                        New{" "}
-                                        {message.type === Chat_MessageType_Enum.Message
-                                            ? "message"
-                                            : message.type === Chat_MessageType_Enum.Answer
-                                            ? "answer"
-                                            : message.type === Chat_MessageType_Enum.Question
-                                            ? "question"
-                                            : "message"}
-                                    </Heading>
-                                    <Heading
-                                        textAlign="left"
-                                        as="h3"
-                                        fontSize="0.9rem"
-                                        fontStyle="italic"
-                                        maxW="250px"
-                                        noOfLines={1}
-                                    >
-                                        {chatIsDM ? "from " : "in "}
-                                        {chatName}
-                                    </Heading>
-                                    <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
-                                        <Markdown restrictHeadingSize>{message.message}</Markdown>
-                                    </Box>
-                                    <ButtonGroup isAttached>
-                                        {globalState.openChatInSidebar ? (
-                                            <Button
-                                                colorScheme="green"
-                                                onClick={() => {
-                                                    props.onClose();
-                                                    globalState.openChatInSidebar?.(message.chatId);
-                                                    globalState.showSidebar?.();
-                                                }}
-                                            >
-                                                Go to chat
-                                            </Button>
-                                        ) : undefined}
-                                        {chatPath ? (
-                                            <Button
-                                                colorScheme="blue"
-                                                onClick={() => {
-                                                    props.onClose();
-                                                    window.open(chatPath, "_blank");
-                                                }}
-                                            >
-                                                <ExternalLinkIcon />
-                                            </Button>
-                                        ) : undefined}
-                                    </ButtonGroup>
-                                </VStack>
-                            );
-                        },
-                    });
-                }
+                                    {chatIsDM ? "from " : "in "}
+                                    {chatName}
+                                </Heading>
+                                <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
+                                    <Markdown restrictHeadingSize>{message.message}</Markdown>
+                                </Box>
+                                <ButtonGroup isAttached>
+                                    {globalState.openChatInSidebar ? (
+                                        <Button
+                                            colorScheme="green"
+                                            onClick={() => {
+                                                props.onClose();
+                                                globalState.openChatInSidebar?.(message.chatId);
+                                                globalState.showSidebar?.();
+                                            }}
+                                        >
+                                            Go to chat
+                                        </Button>
+                                    ) : undefined}
+                                    {chatPath ? (
+                                        <Button
+                                            colorScheme="blue"
+                                            onClick={() => {
+                                                props.onClose();
+                                                window.open(chatPath, "_blank");
+                                            }}
+                                        >
+                                            <ExternalLinkIcon />
+                                        </Button>
+                                    ) : undefined}
+                                </ButtonGroup>
+                            </VStack>
+                        );
+                    },
+                });
             }
         }
     }
@@ -1296,101 +1275,20 @@ export class ChatState {
     public get ReadUpToMsgId(): number {
         return this.readUpToMsgId;
     }
-    public setReadUpToMsgId(messageId: number, remoteMessageId: number | undefined): void {
-        const prev = this.readUpToMsgId;
-        this.readUpToMsgId = Math.max(messageId, this.readUpToMsgId);
-        if (prev !== this.readUpToMsgId) {
-            this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
-            this.unreadCount = 0;
-            this.unreadCountObs.publish(0);
+    public setAllMessagesRead(messageId: number): void {
+        this.readUpToMsgId = Math.max(this.readUpToMsgId, messageId);
+        this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
+        this.unreadCount = 0;
+        this.unreadCountObs.publish(0);
 
-            this.saveReadUpToIndex_SetupTimeout();
-
-            if (remoteMessageId !== undefined) {
-                (async () => {
-                    const remoteChat = await this.remoteChat;
-                    await remoteChat?.updateLastConsumedMessageIndex(remoteMessageId);
-                })();
-            }
-        }
+        (async () => {
+            const remoteChat = await this.remoteChat;
+            await remoteChat?.setAllMessagesConsumed();
+        })();
     }
-    private saveReadUpToIndex_SetupTimeout() {
-        if (!this.readUpTo_Timeout) {
-            const period = (3 + Math.random() * 2) * 1000;
-            this.readUpTo_Timeout = {
-                id: setTimeout(
-                    (async () => {
-                        this.readUpTo_Timeout = undefined;
-                        await this.saveReadUpToIndex();
-                    }) as TimerHandler,
-                    period
-                ),
-                firstTimestampMs: Date.now(),
-            };
-            // Backoff the frequency of updates if lots of messages are being sent
-        } else if (Date.now() - this.readUpTo_Timeout.firstTimestampMs < 5000) {
-            const dist = 20000 - (Date.now() - this.readUpTo_Timeout.firstTimestampMs);
-            const period = Math.max(2, Math.round(dist / 2));
-            clearTimeout(this.readUpTo_Timeout.id);
-            this.readUpTo_Timeout = {
-                id: setTimeout(
-                    (async () => {
-                        this.readUpTo_Timeout = undefined;
-                        await this.saveReadUpToIndex();
-                    }) as TimerHandler,
-                    period
-                ),
-                firstTimestampMs: this.readUpTo_Timeout.firstTimestampMs,
-            };
-        }
-    }
-    private async saveReadUpToIndex() {
-        const messageId = this.readUpToMsgId;
-        const notifiedUpToMessageId = this.latestNotifiedIndex;
-        try {
-            if (this.readUpTo_ExistsInDb) {
-                await this.globalState.apolloClient.mutate<
-                    UpdateReadUpToIndexMutation,
-                    UpdateReadUpToIndexMutationVariables
-                >({
-                    mutation: UpdateReadUpToIndexDocument,
-                    variables: {
-                        attendeeId: this.globalState.attendee.id,
-                        chatId: this.Id,
-                        messageId,
-                        notifiedUpToMessageId,
-                    },
-                });
-            } else {
-                await this.globalState.apolloClient.mutate<
-                    InsertReadUpToIndexMutation,
-                    InsertReadUpToIndexMutationVariables
-                >({
-                    mutation: InsertReadUpToIndexDocument,
-                    variables: {
-                        attendeeId: this.globalState.attendee.id,
-                        chatId: this.Id,
-                        messageId,
-                        notifiedUpToMessageId,
-                    },
-                });
-                this.readUpTo_ExistsInDb = true;
-            }
-        } catch (e) {
-            console.error(`Error saving read up to index: ${this.Id} @ ${messageId} / ${notifiedUpToMessageId}`, e);
-        }
-    }
-    public async updateReadUpToIdx(newData: {
-        count: number | undefined;
-        latestNotifiedIndex: number;
-        readUpToMsgId: number;
-    }): Promise<void> {
-        this.latestNotifiedIndex = Math.max(this.latestNotifiedIndex, newData.latestNotifiedIndex);
-        this.readUpToMsgId = Math.max(this.readUpToMsgId, newData.readUpToMsgId);
-
+    public async updateReadUpToIdx(): Promise<void> {
         const remoteChat = await this.remoteChat;
-        const remoteUnreadCount = (await remoteChat?.getUnconsumedMessagesCount()) ?? Number.POSITIVE_INFINITY;
-        const newCount = Math.min(newData.count ?? this.unreadCount, remoteUnreadCount);
+        const newCount = (await remoteChat?.getUnconsumedMessagesCount()) ?? 0;
         if (this.unreadCount !== newCount) {
             this.unreadCount = newCount;
             this.unreadCountObs.publish(this.unreadCount);
@@ -1558,15 +1456,22 @@ export class GlobalChatState {
                     if (!this.chatStates) {
                         this.chatStates = new Map();
                     }
-                    initialData.data.chat_PinnedOrSubscribed.forEach((item) => {
-                        if (item.chat) {
-                            this.chatStates?.set(item.chat.id, new ChatState(this, item.chat));
-                        }
-                    });
+                    await Promise.all(
+                        initialData.data.chat_PinnedOrSubscribed.map(async (item) => {
+                            if (item.chat) {
+                                const newState = new ChatState(this, item.chat);
+                                if (newState.isSubscribed || newState.isPinned_InternalUseOnly) {
+                                    await newState.subscribeToMoreMessages();
+                                }
+                                await newState.updateReadUpToIdx();
+                                this.chatStates?.set(item.chat.id, newState);
+                            }
+                        })
+                    );
 
                     this.chatStatesObs.publish(this.chatStates);
 
-                    await this.setupUnreadCountPolling();
+                    // await this.setupUnreadCountPolling();
                     await this.setupPinsSubsPolling();
                     // await this.setupReactionsSubscription();
                 }
@@ -1629,7 +1534,7 @@ export class GlobalChatState {
                 if (this.hasInitialised) {
                     // await this.teardownReactionsSubscription();
                     await this.teardownPinsSubsPolling();
-                    await this.teardownUnreadCountPolling();
+                    // await this.teardownUnreadCountPolling();
 
                     if (this.chatStates) {
                         await Promise.all(
@@ -1666,7 +1571,12 @@ export class GlobalChatState {
                         if (!this.chatStates) {
                             this.chatStates = new Map<string, ChatState>();
                         }
-                        this.chatStates.set(chatId, new ChatState(this, result.data.chat_Chat_by_pk));
+                        const newState = new ChatState(this, result.data.chat_Chat_by_pk);
+                        if (newState.isSubscribed || newState.isPinned_InternalUseOnly) {
+                            await newState.subscribeToMoreMessages();
+                        }
+                        await newState.updateReadUpToIdx();
+                        this.chatStates.set(chatId, newState);
                         this.chatStatesObs.publish(this.chatStates);
                     } else {
                         throw new Error("No chat returned by SelectInitialChatState query");
@@ -1680,90 +1590,90 @@ export class GlobalChatState {
         }
     }
 
-    private unreadCountPollMutex = new Mutex();
-    private unreadCountMutex = new Mutex();
-    private unreadCount_IntervalId: number | undefined;
-    private async setupUnreadCountPolling() {
-        const release = await this.unreadCountPollMutex.acquire();
+    // private unreadCountPollMutex = new Mutex();
+    // private unreadCountMutex = new Mutex();
+    // private unreadCount_IntervalId: number | undefined;
+    // private async setupUnreadCountPolling() {
+    //     const release = await this.unreadCountPollMutex.acquire();
 
-        try {
-            if (this.unreadCount_IntervalId === undefined) {
-                this.unreadCount_IntervalId = setInterval(
-                    (() => {
-                        this.pollUnreadCount();
-                    }) as TimerHandler,
-                    30 * 1000
-                );
-            }
-        } catch (e) {
-            console.error("Failed to setup polling unread count", e);
-        } finally {
-            release();
-        }
-    }
-    private async teardownUnreadCountPolling() {
-        const release = await this.unreadCountPollMutex.acquire();
+    //     try {
+    //         if (this.unreadCount_IntervalId === undefined) {
+    //             this.unreadCount_IntervalId = setInterval(
+    //                 (() => {
+    //                     this.pollUnreadCount();
+    //                 }) as TimerHandler,
+    //                 30 * 1000
+    //             );
+    //         }
+    //     } catch (e) {
+    //         console.error("Failed to setup polling unread count", e);
+    //     } finally {
+    //         release();
+    //     }
+    // }
+    // private async teardownUnreadCountPolling() {
+    //     const release = await this.unreadCountPollMutex.acquire();
 
-        try {
-            if (this.unreadCount_IntervalId === undefined) {
-                clearInterval(this.unreadCount_IntervalId);
-            }
-        } catch (e) {
-            console.error("Failed to tear down polling unread count", e);
-        } finally {
-            release();
-        }
-    }
-    private async pollUnreadCount() {
-        const release = await this.unreadCountMutex.acquire();
+    //     try {
+    //         if (this.unreadCount_IntervalId === undefined) {
+    //             clearInterval(this.unreadCount_IntervalId);
+    //         }
+    //     } catch (e) {
+    //         console.error("Failed to tear down polling unread count", e);
+    //     } finally {
+    //         release();
+    //     }
+    // }
+    // private async pollUnreadCount() {
+    //     const release = await this.unreadCountMutex.acquire();
 
-        const newDatas = new Map<
-            string,
-            { count: number | undefined; latestNotifiedIndex: number; readUpToMsgId: number }
-        >();
-        try {
-            if (this.chatStates) {
-                const chatIds = [...this.chatStates.values()]
-                    .filter((x) => x.isPinned_InternalUseOnly)
-                    .map((x) => x.Id);
-                if (chatIds.length > 0) {
-                    const result = await this.apolloClient.query<
-                        SelectReadUpToIndicesQuery,
-                        SelectReadUpToIndicesQueryVariables
-                    >({
-                        query: SelectReadUpToIndicesDocument,
-                        variables: {
-                            attendeeId: this.attendee.id,
-                            chatIds,
-                        },
-                    });
-                    if (result.data.chat_ReadUpToIndex) {
-                        for (const index of result.data.chat_ReadUpToIndex) {
-                            const chatState = this.chatStates.get(index.chatId);
-                            if (chatState) {
-                                newDatas.set(index.chatId, {
-                                    count: index.unreadCount ?? undefined,
-                                    latestNotifiedIndex: index.notifiedUpToMessageId,
-                                    readUpToMsgId: index.messageId,
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e) {
-            console.error("Failed to fetch unread counts", e);
-        } finally {
-            release();
+    //     const newDatas = new Map<
+    //         string,
+    //         { count: number | undefined; latestNotifiedIndex: number; readUpToMsgId: number }
+    //     >();
+    //     try {
+    //         if (this.chatStates) {
+    //             const chatIds = [...this.chatStates.values()]
+    //                 .filter((x) => x.isPinned_InternalUseOnly)
+    //                 .map((x) => x.Id);
+    //             if (chatIds.length > 0) {
+    //                 const result = await this.apolloClient.query<
+    //                     SelectReadUpToIndicesQuery,
+    //                     SelectReadUpToIndicesQueryVariables
+    //                 >({
+    //                     query: SelectReadUpToIndicesDocument,
+    //                     variables: {
+    //                         attendeeId: this.attendee.id,
+    //                         chatIds,
+    //                     },
+    //                 });
+    //                 if (result.data.chat_ReadUpToIndex) {
+    //                     for (const index of result.data.chat_ReadUpToIndex) {
+    //                         const chatState = this.chatStates.get(index.chatId);
+    //                         if (chatState) {
+    //                             newDatas.set(index.chatId, {
+    //                                 count: index.unreadCount ?? undefined,
+    //                                 latestNotifiedIndex: index.notifiedUpToMessageId,
+    //                                 readUpToMsgId: index.messageId,
+    //                             });
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     } catch (e) {
+    //         console.error("Failed to fetch unread counts", e);
+    //     } finally {
+    //         release();
 
-            for (const [chatId, newData] of newDatas) {
-                const chatState = this.chatStates?.get(chatId);
-                if (chatState) {
-                    await chatState.updateReadUpToIdx(newData);
-                }
-            }
-        }
-    }
+    //         for (const [chatId, newData] of newDatas) {
+    //             const chatState = this.chatStates?.get(chatId);
+    //             if (chatState) {
+    //                 await chatState.updateReadUpToIdx(newData);
+    //             }
+    //         }
+    //     }
+    // }
 
     private pinsSubsPollMutex = new Mutex();
     private pinsSubsMutex = new Mutex();
@@ -1842,7 +1752,12 @@ export class GlobalChatState {
                         fetchPolicy: "network-only",
                     });
                     for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
-                        this.chatStates.set(pinSubChat.id, new ChatState(this, pinSubChat));
+                        const newState = new ChatState(this, pinSubChat);
+                        if (newState.isSubscribed || newState.isPinned_InternalUseOnly) {
+                            await newState.subscribeToMoreMessages();
+                        }
+                        await newState.updateReadUpToIdx();
+                        this.chatStates.set(pinSubChat.id, newState);
                     }
                     this.chatStatesObs.publish(this.chatStates);
                 }

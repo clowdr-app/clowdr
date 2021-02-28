@@ -132,7 +132,15 @@ function MessageBody({
 
     const attendeeNameEl = useMemo(
         () => (
-            <HStack>
+            <HStack
+                marginTop={
+                    config.spacing === ChatSpacing.RELAXED
+                        ? "-1.5ex"
+                        : config.spacing === ChatSpacing.COMFORTABLE
+                        ? "-0.5ex"
+                        : undefined
+                }
+            >
                 <Text as="span" fontSize={smallFontSize} color={timeColour}>
                     {attendee?.displayName ?? " "}
                 </Text>

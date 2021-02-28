@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
@@ -131,31 +131,30 @@ function MessageBody({
     );
 
     const attendeeNameEl = useMemo(
-        () =>
-            message.type !== Chat_MessageType_Enum.Emote ? (
-                <HStack>
-                    <Text as="span" fontSize={smallFontSize} color={timeColour}>
-                        {attendee?.displayName ?? " "}
-                    </Text>
-                    {attendee?.profile?.badges && attendee.profile.badges.length > 0 ? (
-                        <Box
-                            fontSize={smallFontSize}
-                            color={attendee.profile.badges[0].colour}
-                            border="1px solid"
-                            borderRadius="3px"
-                            borderColor={attendee.profile.badges[0].colour}
-                            lineHeight="3.5ex"
-                            py={0}
-                            px={1}
-                            m={0}
-                            ml={2}
-                        >
-                            {attendee.profile.badges[0].name}
-                        </Box>
-                    ) : undefined}
-                </HStack>
-            ) : undefined,
-        [attendee?.displayName, attendee?.profile?.badges, message.type, smallFontSize, timeColour]
+        () => (
+            <HStack>
+                <Text as="span" fontSize={smallFontSize} color={timeColour}>
+                    {attendee?.displayName ?? " "}
+                </Text>
+                {attendee?.profile?.badges && attendee.profile.badges.length > 0 ? (
+                    <Box
+                        fontSize={smallFontSize}
+                        color={attendee.profile.badges[0].colour}
+                        border="1px solid"
+                        borderRadius="3px"
+                        borderColor={attendee.profile.badges[0].colour}
+                        lineHeight="3.5ex"
+                        py={0}
+                        px={1}
+                        m={0}
+                        ml={2}
+                    >
+                        {attendee.profile.badges[0].name}
+                    </Box>
+                ) : undefined}
+            </HStack>
+        ),
+        [attendee?.displayName, attendee?.profile?.badges, smallFontSize, timeColour]
     );
 
     const controls = useMemo(
@@ -198,9 +197,9 @@ function MessageBody({
     const emote = useMemo(
         () =>
             message.type === Chat_MessageType_Enum.Emote ? (
-                <Center fontSize={pictureSize} w="100%" pt={config.spacing}>
+                <HStack fontSize={pictureSize} w="100%" pt={config.spacing}>
                     <Twemoji className="twemoji" text={message.message} />
-                </Center>
+                </HStack>
             ) : (
                 <Markdown restrictHeadingSize>{message.message}</Markdown>
             ),
@@ -213,11 +212,11 @@ function MessageBody({
                 reactions={reactions}
                 currentAttendeeId={config.currentAttendeeId}
                 message={message}
-                fontSize={smallFontSize}
+                fontSize={config.fontSizeRange.value}
                 subscribeToReactions={subscribeToReactions}
             />
         ),
-        [config.currentAttendeeId, message, reactions, smallFontSize, subscribeToReactions]
+        [config.currentAttendeeId, config.fontSizeRange.value, message, reactions, subscribeToReactions]
     );
 
     const question = useMemo(
@@ -283,7 +282,6 @@ function MessageBody({
     const msgBody = useMemo(
         () => (
             <VStack
-                justifyContent={message.type === Chat_MessageType_Enum.Emote ? "center" : undefined}
                 alignItems="flex-start"
                 spacing={roundUpToNearest(config.spacing * 0.5, 1) + "px"}
                 p={0}
@@ -399,8 +397,8 @@ export default function MessageBox({
     const isQuestion = message.type === Chat_MessageType_Enum.Question;
     const isAnswer = message.type === Chat_MessageType_Enum.Answer;
     const bgColour = useColorModeValue(
-        isQuestion ? "blue.100" : isAnswer ? "orange.100" : "white",
-        isQuestion ? "blue.700" : isAnswer ? "green.800" : "gray.900"
+        isQuestion ? "blue.50" : isAnswer ? "green.50" : "white",
+        isQuestion ? "blue.900" : isAnswer ? "green.900" : "gray.900"
     );
 
     const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);

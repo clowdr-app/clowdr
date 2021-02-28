@@ -2,6 +2,7 @@ import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../generated/graphql";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
+import ConferencePageNotFound from "../Errors/ConferencePageNotFound";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import WaitingPage from "../ShuffleRooms/WaitingPage";
@@ -224,7 +225,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             </Route>
 
             <Route path={rootUrl}>
-                <PageNotFound />
+                <ConferencePageNotFound />
             </Route>
         </Switch>
     );

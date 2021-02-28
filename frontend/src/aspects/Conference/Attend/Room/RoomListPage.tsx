@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { Button, Heading, useDisclosure, VStack } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { Permission_Enum, RoomListRoomDetailsFragment, useGetAllRoomsQuery } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
+import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
@@ -61,7 +61,7 @@ export default function RoomListPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
+            componentIfDenied={<ConferencePageNotFound />}
             permissions={[
                 Permission_Enum.ConferenceViewAttendees,
                 Permission_Enum.ConferenceView,

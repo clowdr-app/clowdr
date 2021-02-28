@@ -6,7 +6,9 @@ import Routing from "./AppRouting";
 import { GlobalChatStateContext, GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
 import AttendeesContextProvider from "./aspects/Conference/AttendeesContext";
 import ConferenceProvider, { useMaybeConference } from "./aspects/Conference/useConference";
-import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
+import ConferenceCurrentUserActivePermissionsProvider, {
+    useConferenceCurrentUserActivePermissions,
+} from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
 import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conference/useCurrentAttendee";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
@@ -17,6 +19,7 @@ import PresenceCountProvider from "./aspects/Presence/PresenceCountProvider";
 import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
+import { Permission_Enum } from "./generated/graphql";
 // import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
 interface AppProps {
@@ -79,6 +82,8 @@ function AppPage({ rootUrl }: AppProps) {
     const conference = useMaybeConference();
     const confSlug = conference?.slug;
     const attendee = useMaybeCurrentAttendee();
+    const permissions = useConferenceCurrentUserActivePermissions();
+    const isPermittedAccess = attendee && permissions.has(Permission_Enum.ConferenceViewAttendees);
 
     const leftSidebarWidthPc = 20;
     const rightSidebarWidthPc = 20;
@@ -100,8 +105,8 @@ function AppPage({ rootUrl }: AppProps) {
     });
     const [leftOpen, setLeftOpen] = useState<boolean | null>(null);
     const [rightOpen, setRightOpen] = useState<boolean | null>(null);
-    const leftVisible = attendee && !!leftOpen;
-    const rightVisible = attendee && rightOpen && (rightDefaultVisible || !leftVisible);
+    const leftVisible = isPermittedAccess && !!leftOpen;
+    const rightVisible = isPermittedAccess && rightOpen && (rightDefaultVisible || !leftVisible);
 
     useEffect(() => {
         if (leftOpen === null && leftDefaultVisible !== undefined) {

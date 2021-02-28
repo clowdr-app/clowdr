@@ -16,10 +16,12 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Route, RouteComponentProps, Switch, useHistory } from "react-router-dom";
+import { Permission_Enum } from "../../generated/graphql";
 import AuthenticationButton from "../Auth/Buttons/AuthenticationButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
 import ColorModeButton from "../Chakra/ColorModeButton";
 import { LinkButton } from "../Chakra/LinkButton";
+import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
 import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -35,6 +37,8 @@ function MenuBar(): JSX.Element {
     const { buttons: primaryButtons } = usePrimaryMenuButtons();
     const { user } = useMaybeCurrentUser();
     const attendee = useMaybeCurrentAttendee();
+    const permissions = useConferenceCurrentUserActivePermissions();
+    const isPermittedAccess = attendee && permissions.has(Permission_Enum.ConferenceViewAttendees);
     const mainMenu = useMainMenu();
 
     const mergeItems = useBreakpointValue({ base: true, md: false });
@@ -50,7 +54,7 @@ function MenuBar(): JSX.Element {
 
     const navButton = useMemo(
         () =>
-            attendee && (
+            isPermittedAccess ? (
                 <Route path="/conference">
                     <Tooltip label={mainMenu.isLeftBarOpen ? "Close navigation" : "Open navigation"}>
                         <Button
@@ -72,9 +76,9 @@ function MenuBar(): JSX.Element {
                         </Button>
                     </Tooltip>
                 </Route>
-            ),
+            ) : undefined,
         [
-            attendee,
+            isPermittedAccess,
             leftBackgroundColour,
             leftForegroundColour,
             mainMenu.isLeftBarOpen,
@@ -85,7 +89,7 @@ function MenuBar(): JSX.Element {
 
     const chatButton = useMemo(
         () =>
-            attendee && (
+            isPermittedAccess ? (
                 <Route path="/conference">
                     <Tooltip label={mainMenu.isRightBarOpen ? "Close chats" : "Open chats"}>
                         <Button
@@ -107,9 +111,9 @@ function MenuBar(): JSX.Element {
                         </Button>
                     </Tooltip>
                 </Route>
-            ),
+            ) : undefined,
         [
-            attendee,
+            isPermittedAccess,
             mainMenu.isRightBarOpen,
             mainMenu.onRightBarClose,
             mainMenu.onRightBarOpen,

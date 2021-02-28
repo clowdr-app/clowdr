@@ -5,7 +5,7 @@ import {
     RoomPage_RoomDetailsFragment,
     useRoomPage_GetRoomDetailsQuery,
 } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
+import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
@@ -69,7 +69,7 @@ gql`
 export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
+            componentIfDenied={<ConferencePageNotFound />}
             permissions={[Permission_Enum.ConferenceViewAttendees, Permission_Enum.ConferenceManageSchedule]}
         >
             <RoomPageInner roomId={roomId} />

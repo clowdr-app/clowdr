@@ -81,7 +81,6 @@ gql`
         id
         name
         startTime
-        endTime
         room {
             id
             name
@@ -220,7 +219,7 @@ export function MainMenuProgram(): JSX.Element {
                             <>
                                 <MainMenuProgramInner
                                     linkToRoom={true}
-                                    fromMillis={filterTimes.now.getTime()}
+                                    fromMillis={0}
                                     toMillis={filterTimes.inThreeMinutes.getTime()}
                                     events={events}
                                     title="Happening now"
@@ -235,7 +234,7 @@ export function MainMenuProgram(): JSX.Element {
                                 <MainMenuProgramInner
                                     linkToRoom={false}
                                     fromMillis={filterTimes.in30Minutes.getTime()}
-                                    toMillis={filterTimes.inThreeMinutes.getTime()}
+                                    toMillis={filterTimes.inOneHour.getTime()}
                                     events={events}
                                     title="Starting in the next hour"
                                 />
@@ -267,9 +266,10 @@ export function MainMenuProgramInner({
 
     const filteredEvents = useMemo(
         () =>
-            R.sortBy((e) => e.startTime, events).filter(
-                (event) => Date.parse(event.startTime) <= toMillis && Date.parse(event.endTime) > fromMillis
-            ),
+            R.sortBy((e) => e.startTime, events).filter((event) => {
+                const startTime = Date.parse(event.startTime);
+                return startTime >= fromMillis && startTime < toMillis;
+            }),
         [events, fromMillis, toMillis]
     );
 

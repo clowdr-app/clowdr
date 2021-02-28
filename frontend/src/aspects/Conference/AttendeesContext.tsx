@@ -55,6 +55,41 @@ export function useAttendee(id: string | null | undefined): AttendeeDataFragment
     return attendee;
 }
 
+export function useAttendees(ids: string[]): AttendeeDataFragment[] {
+    const [attendees, setAttendees] = useState<AttendeeDataFragment[]>([]);
+    const attendeesCtx = useAttendeesContext();
+
+    useEffect(() => {
+        const subs: { id: number; attendee?: AttendeeDataFragment | undefined }[] = [];
+        const result: AttendeeDataFragment[] = [];
+        for (const id of ids) {
+            const sub = attendeesCtx.subscribe(id, (attendee, subId) => {
+                setAttendees((old) => {
+                    if (old?.some((x) => x.id === attendee.id)) {
+                        return old.map((x) => (x.id === attendee.id ? attendee : x));
+                    } else if (old) {
+                        return [...old, attendee];
+                    }
+                    return [attendee];
+                });
+                attendeesCtx.unsubscribe(subId);
+            });
+            subs.push(sub);
+            if (sub.attendee) {
+                result.push(sub.attendee);
+            }
+        }
+        setAttendees(result);
+        return () => {
+            for (const sub of subs) {
+                attendeesCtx.unsubscribe(sub.id);
+            }
+        };
+    }, [attendeesCtx, ids]);
+
+    return attendees;
+}
+
 interface AttendeeCacheEntry {
     fetchedAt: number;
     attendee: AttendeeDataFragment;

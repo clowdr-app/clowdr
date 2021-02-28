@@ -52,17 +52,20 @@ function ReactionsListInner({
 } & BoxProps): JSX.Element {
     const reactionsGrouped: Array<[
         string,
-        { count: number; attendeeSentThisReactionId: number | false }
+        { senderIds: string[]; attendeeSentThisReactionId: number | false }
     ]> = useMemo(() => {
         return R.sortWith(
-            [(x, y) => y[1].count - x[1].count, (x, y) => x[0].localeCompare(y[0])],
+            [(x, y) => y[1].senderIds.length - x[1].senderIds.length, (x, y) => x[0].localeCompare(y[0])],
             [
                 ...reactions
                     .reduce((acc, reaction) => {
                         if (reaction.type === Chat_ReactionType_Enum.Emoji) {
-                            const info = acc.get(reaction.symbol) ?? { count: 0, attendeeSentThisReactionId: false };
+                            const info = acc.get(reaction.symbol) ?? {
+                                senderIds: [],
+                                attendeeSentThisReactionId: false,
+                            };
                             acc.set(reaction.symbol, {
-                                count: info.count + 1,
+                                senderIds: [...info.senderIds, reaction.senderId],
                                 attendeeSentThisReactionId:
                                     info.attendeeSentThisReactionId !== false
                                         ? info.attendeeSentThisReactionId
@@ -72,7 +75,7 @@ function ReactionsListInner({
                             });
                         }
                         return acc;
-                    }, new Map<string, { count: number; attendeeSentThisReactionId: number | false }>())
+                    }, new Map<string, { senderIds: string[]; attendeeSentThisReactionId: number | false }>())
                     .entries(),
             ]
         );
@@ -86,7 +89,7 @@ function ReactionsListInner({
                     mr={2}
                     key={`reaction-${reaction}`}
                     reaction={reaction}
-                    count={info.count}
+                    senderIds={info.senderIds}
                     onClick={async () => {
                         if (info.attendeeSentThisReactionId) {
                             await message.deleteReaction(info.attendeeSentThisReactionId);

@@ -1,6 +1,14 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
-import { useAddParticipantToRoomMutation } from "../../../../generated/graphql";
+import {
+    GetRoomMembersDocument,
+    GetRoomMembersQuery,
+    GetRoomMembersQueryVariables,
+    RoomMemberFragment,
+    RoomMemberFragmentDoc,
+    RoomPersonRole_Enum,
+    useAddParticipantToRoomMutation,
+} from "../../../../generated/graphql";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { AttendeeSearch } from "./AttendeeSearch";
@@ -35,6 +43,45 @@ export function AddRoomPersonModal({
                 variables: {
                     attendeeId,
                     roomId,
+                },
+                update: (cache, result) => {
+                    if (result.data?.insert_RoomPerson_one) {
+                        const data: RoomMemberFragment = {
+                            __typename: "RoomPerson",
+                            id: result.data.insert_RoomPerson_one.id,
+                            attendeeId,
+                            roomPersonRoleName: RoomPersonRole_Enum.Participant,
+                            roomId,
+                        };
+
+                        cache.writeFragment<RoomMemberFragment>({
+                            data,
+                            fragment: RoomMemberFragmentDoc,
+                            fragmentName: "RoomMember",
+                            broadcast: true,
+                        });
+
+                        const query = cache.readQuery<GetRoomMembersQuery, GetRoomMembersQueryVariables>({
+                            query: GetRoomMembersDocument,
+                            variables: {
+                                roomId,
+                            },
+                        });
+
+                        if (query) {
+                            cache.writeQuery<GetRoomMembersQuery, GetRoomMembersQueryVariables>({
+                                query: GetRoomMembersDocument,
+                                variables: {
+                                    roomId,
+                                },
+                                broadcast: true,
+                                data: {
+                                    __typename: query.__typename,
+                                    RoomPerson: [...query.RoomPerson, data],
+                                },
+                            });
+                        }
+                    }
                 },
             });
         },

@@ -33469,17 +33469,17 @@ export type GetContentGroupChatIdQueryVariables = Exact<{
 
 export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chatId?: Maybe<any> }> };
 
-export type GetRoomMembersSubscriptionVariables = Exact<{
+export type GetRoomMembersQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type GetRoomMembersSubscription = { readonly __typename?: 'subscription_root', readonly RoomPerson: ReadonlyArray<(
+export type GetRoomMembersQuery = { readonly __typename?: 'query_root', readonly RoomPerson: ReadonlyArray<(
     { readonly __typename?: 'RoomPerson' }
     & RoomMemberFragment
   )> };
 
-export type RoomMemberFragment = { readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendeeId: any };
+export type RoomMemberFragment = { readonly __typename?: 'RoomPerson', readonly id: any, readonly roomId: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendeeId: any };
 
 export type GetRoomParticipantsSubscriptionVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -34591,6 +34591,7 @@ export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
 export const RoomMemberFragmentDoc = gql`
     fragment RoomMember on RoomPerson {
   id
+  roomId
   roomPersonRoleName
   attendeeId
 }
@@ -41166,7 +41167,7 @@ export type GetContentGroupChatIdQueryHookResult = ReturnType<typeof useGetConte
 export type GetContentGroupChatIdLazyQueryHookResult = ReturnType<typeof useGetContentGroupChatIdLazyQuery>;
 export type GetContentGroupChatIdQueryResult = Apollo.QueryResult<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>;
 export const GetRoomMembersDocument = gql`
-    subscription GetRoomMembers($roomId: uuid!) {
+    query GetRoomMembers($roomId: uuid!) {
   RoomPerson(where: {roomId: {_eq: $roomId}}) {
     ...RoomMember
   }
@@ -41174,26 +41175,30 @@ export const GetRoomMembersDocument = gql`
     ${RoomMemberFragmentDoc}`;
 
 /**
- * __useGetRoomMembersSubscription__
+ * __useGetRoomMembersQuery__
  *
- * To run a query within a React component, call `useGetRoomMembersSubscription` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomMembersSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetRoomMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetRoomMembersSubscription({
+ * const { data, loading, error } = useGetRoomMembersQuery({
  *   variables: {
  *      roomId: // value for 'roomId'
  *   },
  * });
  */
-export function useGetRoomMembersSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetRoomMembersSubscription, GetRoomMembersSubscriptionVariables>) {
-        return Apollo.useSubscription<GetRoomMembersSubscription, GetRoomMembersSubscriptionVariables>(GetRoomMembersDocument, baseOptions);
+export function useGetRoomMembersQuery(baseOptions: Apollo.QueryHookOptions<GetRoomMembersQuery, GetRoomMembersQueryVariables>) {
+        return Apollo.useQuery<GetRoomMembersQuery, GetRoomMembersQueryVariables>(GetRoomMembersDocument, baseOptions);
       }
-export type GetRoomMembersSubscriptionHookResult = ReturnType<typeof useGetRoomMembersSubscription>;
-export type GetRoomMembersSubscriptionResult = Apollo.SubscriptionResult<GetRoomMembersSubscription>;
+export function useGetRoomMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomMembersQuery, GetRoomMembersQueryVariables>) {
+          return Apollo.useLazyQuery<GetRoomMembersQuery, GetRoomMembersQueryVariables>(GetRoomMembersDocument, baseOptions);
+        }
+export type GetRoomMembersQueryHookResult = ReturnType<typeof useGetRoomMembersQuery>;
+export type GetRoomMembersLazyQueryHookResult = ReturnType<typeof useGetRoomMembersLazyQuery>;
+export type GetRoomMembersQueryResult = Apollo.QueryResult<GetRoomMembersQuery, GetRoomMembersQueryVariables>;
 export const GetRoomParticipantsDocument = gql`
     subscription GetRoomParticipants($conferenceId: uuid!, $roomId: uuid!) {
   RoomParticipant(

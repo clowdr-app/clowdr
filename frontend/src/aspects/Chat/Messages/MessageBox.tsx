@@ -162,7 +162,7 @@ function MessageBody({
                 ) : undefined}
             </HStack>
         ),
-        [attendee?.displayName, attendee?.profile?.badges, smallFontSize, timeColour]
+        [attendee?.displayName, attendee?.profile?.badges, config.spacing, smallFontSize, timeColour]
     );
 
     const controls = useMemo(

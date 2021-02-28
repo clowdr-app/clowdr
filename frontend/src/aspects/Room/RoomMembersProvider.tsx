@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client";
 import React, { useCallback, useEffect, useState } from "react";
-import { AttendeeDataFragment, useGetRoomMembersSubscription } from "../../generated/graphql";
+import { AttendeeDataFragment, useGetRoomMembersQuery } from "../../generated/graphql";
 import { useAttendeesContext } from "../Conference/AttendeesContext";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { RoomMembersContext, RoomMembersInfo, RoomMembersInfos } from "./useRoomMembers";
 
 gql`
-    subscription GetRoomMembers($roomId: uuid!) {
+    query GetRoomMembers($roomId: uuid!) {
         RoomPerson(where: { roomId: { _eq: $roomId } }) {
             ...RoomMember
         }
@@ -14,6 +14,7 @@ gql`
 
     fragment RoomMember on RoomPerson {
         id
+        roomId
         roomPersonRoleName
         attendeeId
     }
@@ -26,7 +27,7 @@ export default function RoomMembersProvider({
     roomId: string;
     children: string | React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
-    const { loading, error, data } = useGetRoomMembersSubscription({
+    const { loading, error, data } = useGetRoomMembersQuery({
         variables: {
             roomId,
         },

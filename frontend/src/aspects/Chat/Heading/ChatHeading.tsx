@@ -22,7 +22,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                         <ButtonGroup isAttached borderRadius={5} overflow="hidden">
                             <ChatPinnedQueryProvider>
                                 <PinnedButton
-                                    opacity={0.5}
+                                    opacity={0.8}
                                     _hover={{
                                         opacity: 1,
                                     }}
@@ -43,7 +43,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                             </ChatPinnedQueryProvider>
                             <ChatSubscribedQueryProvider>
                                 <SubscribedButton
-                                    opacity={0.5}
+                                    opacity={0.8}
                                     _hover={{
                                         opacity: 1,
                                     }}

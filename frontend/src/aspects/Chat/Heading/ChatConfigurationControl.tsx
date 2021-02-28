@@ -33,7 +33,7 @@ export function ChatConfigurationControls({ ...rest }: BoxProps): JSX.Element {
                             aria-label="Adjust spacing around chat content"
                             borderTopRadius={0}
                             pb="4px"
-                            opacity={0.5}
+                            opacity={0.8}
                             _hover={{
                                 opacity: 1,
                             }}
@@ -73,7 +73,7 @@ export function ChatConfigurationControls({ ...rest }: BoxProps): JSX.Element {
                             fontSize={config.fontSizeRange.value}
                             aria-label="Adjust font size"
                             borderTopRadius={0}
-                            opacity={0.5}
+                            opacity={0.8}
                             _hover={{
                                 opacity: 1,
                             }}

@@ -158,6 +158,7 @@ export default function EditProfilePitureForm({
                                                 ...frag,
                                                 photoURL_350x350: data.photoURL_350x350 ?? "",
                                                 photoURL_50x50: data.photoURL_50x50 ?? "",
+                                                hasBeenEdited: true,
                                             },
                                             fragment: AttendeeProfileDataFragmentDoc,
                                             fragmentName: "AttendeeProfileData",

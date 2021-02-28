@@ -76,11 +76,6 @@
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
-- name: SendEmailUnnotifiedMessageNotifications
-  webhook: '{{ACTION_BASE_URL}}/chat/sendEmailUnnotifiedMessageNotifications'
-  schedule: 23 */1 * * *
-  include_in_metadata: true
-  payload: {}
 - name: ProcessUploadYouTubeVideoQueue
   webhook: '{{ACTION_BASE_URL}}/google/processUploadYouTubeVideoQueue'
   schedule: '* * * * *'
@@ -104,6 +99,14 @@
     timeout_seconds: 60
     tolerance_seconds: 60
     retry_interval_seconds: 10
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+- name: SendEmailUnnotifiedMessageNotifications
+  webhook: '{{ACTION_BASE_URL}}/chat/sendEmailUnnotifiedMessageNotifications'
+  schedule: 23 */1 * * *
+  include_in_metadata: true
+  payload: {}
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET

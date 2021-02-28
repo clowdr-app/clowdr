@@ -40930,7 +40930,7 @@ export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOpti
 export const MenuScheduleDocument = gql`
     query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
   Event(
-    where: {startTime: {_lte: $inOneHour}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}}
+    where: {startTime: {_lte: $inOneHour}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, room: {}}
   ) {
     ...MenuSchedule_Event
   }
@@ -40967,7 +40967,7 @@ export type MenuScheduleQueryResult = Apollo.QueryResult<MenuScheduleQuery, Menu
 export const MenuSchedule_SearchEventsDocument = gql`
     query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
   Event(
-    where: {conferenceId: {_eq: $conferenceId}, _or: [{name: {_ilike: $search}}, {contentGroup: {_or: [{title: {_ilike: $search}}, {people: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {eventPeople: {attendee: {displayName: {_ilike: $search}}}}, {eventTags: {tag: {name: {_ilike: $search}}}}]}
+    where: {conferenceId: {_eq: $conferenceId}, room: {}, _or: [{name: {_ilike: $search}}, {contentGroup: {_or: [{title: {_ilike: $search}}, {people: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {eventPeople: {attendee: {displayName: {_ilike: $search}}}}, {eventTags: {tag: {name: {_ilike: $search}}}}]}
     limit: 10
     order_by: {startTime: asc}
   ) {

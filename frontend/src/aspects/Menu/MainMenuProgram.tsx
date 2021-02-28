@@ -34,7 +34,12 @@ import { FAIcon } from "../Icons/FAIcon";
 gql`
     query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
         Event(
-            where: { startTime: { _lte: $inOneHour }, endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId } }
+            where: {
+                startTime: { _lte: $inOneHour }
+                endTime: { _gte: $now }
+                conferenceId: { _eq: $conferenceId }
+                room: {}
+            }
         ) {
             ...MenuSchedule_Event
         }
@@ -44,6 +49,7 @@ gql`
         Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
+                room: {}
                 _or: [
                     { name: { _ilike: $search } }
                     {

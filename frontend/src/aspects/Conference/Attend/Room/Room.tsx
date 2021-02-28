@@ -192,7 +192,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     const [zoomNow, setZoomNow] = useState<number>(Date.now());
     const computeZoomNow = useCallback(() => setZoomNow(Date.now()), [setZoomNow]);
     usePolling(computeZoomNow, 30000, true);
-    const maybeZoomDetails = useMemo(() => {
+    const maybeZoomUrl = useMemo(() => {
         try {
             const currentEventData = currentRoomEvent
                 ? currentEventsData.find((e) => e.id === currentRoomEvent?.id)
@@ -203,11 +203,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             if (currentZoomItems && currentZoomItems.length > 0 && currentEventData) {
                 const versions = currentZoomItems[0].data as ContentItemDataBlob;
                 const latest = R.last(versions)?.data as ZoomBlob;
-                const name =
-                    currentEventData.name.length === 0
-                        ? currentEventData?.contentGroup?.title ?? null
-                        : currentEventData.name;
-                return { url: latest.url, name };
+                return latest.url;
             }
 
             const nextZoomItems = nextEventData?.contentGroup?.contentItems;
@@ -219,9 +215,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             ) {
                 const versions = nextZoomItems[0].data as ContentItemDataBlob;
                 const latest = R.last(versions)?.data as ZoomBlob;
-                const name =
-                    nextEventData.name.length === 0 ? nextEventData?.contentGroup?.title ?? null : nextEventData.name;
-                return { url: latest.url, name };
+                return latest.url;
             }
 
             return undefined;
@@ -617,16 +611,16 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
                 {eventStartingAlert}
 
-                {maybeZoomDetails ? (
+                {maybeZoomUrl ? (
                     <ExternalLinkButton
-                        to={maybeZoomDetails.url}
+                        to={maybeZoomUrl}
                         isExternal={true}
                         colorScheme="green"
                         size="lg"
                         w="100%"
                         mt={4}
                     >
-                        Go to Zoom{maybeZoomDetails.name ? ` (${maybeZoomDetails.name})` : ""}
+                        Go to Zoom
                     </ExternalLinkButton>
                 ) : (
                     <></>

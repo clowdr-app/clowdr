@@ -40,7 +40,6 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
             setCurrentRoomEvent(null);
         }
     }, [roomEvents]);
-    usePolling(getCurrentEvent, 10000, true);
 
     const [withinThreeMinutesOfBroadcastEvent, setWithinThreeMinutesOfBroadcastEvent] = useState<boolean>(false);
     const getWithinThreeMinutesOfEvent = useCallback(() => {
@@ -52,7 +51,6 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         });
         setWithinThreeMinutesOfBroadcastEvent(eventsSoon.length > 0);
     }, [broadcastEvents]);
-    usePolling(getWithinThreeMinutesOfEvent, 10000, true);
 
     const [secondsUntilBroadcastEvent, setSecondsUntilBroadcastEvent] = useState<number>(Number.MAX_SAFE_INTEGER);
     const computeSecondsUntilBroadcastEvent = useCallback(() => {
@@ -81,7 +79,6 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
 
         setSecondsUntilBroadcastEvent(Number.MAX_SAFE_INTEGER);
     }, [broadcastEvents]);
-    usePolling(computeSecondsUntilBroadcastEvent, 1000, true);
 
     const [secondsUntilZoomEvent, setSecondsUntilZoomEvent] = useState<number>(Number.MAX_SAFE_INTEGER);
     const computeSecondsUntilZoomEvent = useCallback(() => {
@@ -110,7 +107,12 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
 
         setSecondsUntilZoomEvent(Number.MAX_SAFE_INTEGER);
     }, [zoomEvents]);
-    usePolling(computeSecondsUntilZoomEvent, 1000, true);
+
+    const frequentUpdate = useCallback(() => {
+        computeSecondsUntilZoomEvent();
+        computeSecondsUntilBroadcastEvent();
+    }, [computeSecondsUntilBroadcastEvent, computeSecondsUntilZoomEvent]);
+    usePolling(frequentUpdate, 1000, true);
 
     const [nextRoomEvent, setNextRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
     const getNextEvent = useCallback(() => {
@@ -120,19 +122,35 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         setNextRoomEvent(futureEvents.length > 0 ? futureEvents[0] : null);
     }, [roomEvents]);
 
-    usePolling(getNextEvent, 10000, true);
+    const infrequentUpdate = useCallback(() => {
+        getWithinThreeMinutesOfEvent();
+        getCurrentEvent();
+        getNextEvent();
+    }, [getCurrentEvent, getNextEvent, getWithinThreeMinutesOfEvent]);
+    usePolling(infrequentUpdate, 10000, true);
 
     useEffect(() => {
-        getCurrentEvent();
         getWithinThreeMinutesOfEvent();
+        getCurrentEvent();
         getNextEvent();
     }, [getCurrentEvent, getNextEvent, getWithinThreeMinutesOfEvent]);
 
-    return {
-        currentRoomEvent,
-        withinThreeMinutesOfBroadcastEvent,
-        nextRoomEvent,
-        secondsUntilBroadcastEvent,
-        secondsUntilZoomEvent,
-    };
+    const result = useMemo(
+        () => ({
+            currentRoomEvent,
+            withinThreeMinutesOfBroadcastEvent,
+            nextRoomEvent,
+            secondsUntilBroadcastEvent,
+            secondsUntilZoomEvent,
+        }),
+        [
+            currentRoomEvent,
+            nextRoomEvent,
+            secondsUntilBroadcastEvent,
+            secondsUntilZoomEvent,
+            withinThreeMinutesOfBroadcastEvent,
+        ]
+    );
+
+    return result;
 }

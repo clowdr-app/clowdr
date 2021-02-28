@@ -14,10 +14,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import { formatRelative } from "date-fns";
 import type Hls from "hls.js";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Redirect, useHistory } from "react-router-dom";
 import {
@@ -27,7 +28,7 @@ import {
     RoomPrivacy_Enum,
     Room_CurrentEventSummaryFragment,
     Room_EventSummaryFragment,
-    useRoom_GetCurrentEventQuery,
+    useRoom_GetCurrentEventsQuery,
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
@@ -45,14 +46,16 @@ import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 
 gql`
-    query Room_GetCurrentEvent($currentEventId: uuid!) {
-        Event_by_pk(id: $currentEventId) {
+    query Room_GetCurrentEvents($currentEventIds: [uuid!]!) {
+        Event(where: { id: { _in: $currentEventIds } }) {
             ...Room_CurrentEventSummary
         }
     }
 
     fragment Room_CurrentEventSummary on Event {
         id
+        name
+        startTime
         contentGroup {
             id
             title
@@ -161,50 +164,66 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
 
-    const [currentEventData, setCurrentEventData] = useState<Room_CurrentEventSummaryFragment | null>(null);
-    const { refetch: refetchCurrentEventData } = useRoom_GetCurrentEventQuery({
+    const [currentEventsData, setCurrentEventsData] = useState<readonly Room_CurrentEventSummaryFragment[]>([]);
+    const { refetch: refetchCurrentEventsData } = useRoom_GetCurrentEventsQuery({
         skip: true,
         fetchPolicy: "network-only",
     });
 
     useEffect(() => {
         async function fn() {
-            if (currentRoomEvent?.id) {
-                try {
-                    const { data } = await refetchCurrentEventData({
-                        currentEventId: currentRoomEvent.id,
-                    });
+            const eventIds = [currentRoomEvent?.id, nextRoomEvent?.id].filter(notEmpty);
+            try {
+                const { data } = await refetchCurrentEventsData({
+                    currentEventIds: eventIds,
+                });
 
-                    if (data) {
-                        setCurrentEventData(data.Event_by_pk ?? null);
-                    }
-                } catch (e) {
-                    console.error("Could not fetch current event data");
+                if (data) {
+                    setCurrentEventsData(data.Event ?? []);
                 }
-            } else {
-                setCurrentEventData(null);
+            } catch (e) {
+                console.error("Could not fetch current events data");
             }
         }
         fn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentRoomEvent?.id]);
+    }, [currentRoomEvent?.id, nextRoomEvent?.id]);
 
-    const maybeCurrentEventZoomDetails = useMemo(() => {
+    const [zoomNow, setZoomNow] = useState<number>(Date.now());
+    const computeZoomNow = useCallback(() => setZoomNow(Date.now()), [setZoomNow]);
+    usePolling(computeZoomNow, 30000, true);
+    const maybeZoomDetails = useMemo(() => {
         try {
-            const zoomItems = currentEventData?.contentGroup?.contentItems;
+            const currentEventData = currentRoomEvent
+                ? currentEventsData.find((e) => e.id === currentRoomEvent?.id)
+                : undefined;
+            const nextEventData = nextRoomEvent ? currentEventsData.find((e) => e.id === nextRoomEvent?.id) : undefined;
 
-            if (!zoomItems || zoomItems.length < 1) {
-                return undefined;
+            const currentZoomItems = currentEventData?.contentGroup?.contentItems;
+            if (currentZoomItems && currentZoomItems.length > 0 && currentEventData) {
+                const versions = currentZoomItems[0].data as ContentItemDataBlob;
+                const latest = R.last(versions)?.data as ZoomBlob;
+                return { url: latest.url, name: currentEventData.name };
             }
 
-            const versions = zoomItems[0].data as ContentItemDataBlob;
+            const nextZoomItems = nextEventData?.contentGroup?.contentItems;
+            if (
+                nextZoomItems &&
+                nextZoomItems.length > 0 &&
+                nextEventData &&
+                zoomNow > Date.parse(nextEventData.startTime) - 20 * 60 * 1000
+            ) {
+                const versions = nextZoomItems[0].data as ContentItemDataBlob;
+                const latest = R.last(versions)?.data as ZoomBlob;
+                return { url: latest.url, name: nextEventData.name };
+            }
 
-            return (R.last(versions)?.data as ZoomBlob).url;
+            return undefined;
         } catch (e) {
             console.error("Error finding current event Zoom details", e);
             return undefined;
         }
-    }, [currentEventData?.contentGroup?.contentItems]);
+    }, [currentEventsData, currentRoomEvent, nextRoomEvent, zoomNow]);
 
     const currentAttendee = useCurrentAttendee();
 
@@ -541,6 +560,19 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent]);
 
+    const eventStartingAlert = useMemo(
+        () =>
+            secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
+                <Alert status="info">
+                    <AlertIcon />
+                    Event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                </Alert>
+            ) : (
+                <></>
+            ),
+        [secondsUntilZoomEvent, currentRoomEvent]
+    );
+
     return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (
         <Redirect
             to={`/conference/${conference.slug}/shuffle${
@@ -577,23 +609,18 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                     <></>
                 )}
 
-                {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 ? (
-                    <Alert status="info">
-                        <AlertIcon />
-                        Event starting in {Math.round(secondsUntilZoomEvent)} seconds
-                    </Alert>
-                ) : (
-                    <></>
-                )}
+                {eventStartingAlert}
 
-                {maybeCurrentEventZoomDetails ? (
+                {maybeZoomDetails ? (
                     <ExternalLinkButton
-                        to={maybeCurrentEventZoomDetails}
+                        to={maybeZoomDetails.url}
                         isExternal={true}
                         colorScheme="green"
                         size="lg"
+                        w="100%"
+                        mt={4}
                     >
-                        Go to Zoom ({currentRoomEvent?.name})
+                        Go to Zoom ({maybeZoomDetails.name})
                     </ExternalLinkButton>
                 ) : (
                     <></>

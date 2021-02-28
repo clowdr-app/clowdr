@@ -224,21 +224,18 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     const showDefaultBreakoutRoom =
         roomEvents.length === 0 || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
     const hasBackstage = !!hlsUri;
-    const [hasBeenBackStage, setHasBeenBackStage] = useState<boolean>(false); // whether the user has already been backstage on this page
 
+    const alreadyBackstage = useRef<boolean>(false);
+
+    const notExplictlyWatchingCurrentOrNextEvent =
+        !watchStreamForEventId ||
+        (!!currentRoomEvent && watchStreamForEventId !== currentRoomEvent.id) ||
+        (!currentRoomEvent && !!nextRoomEvent && watchStreamForEventId !== nextRoomEvent.id);
     const showBackstage =
         hasBackstage &&
-        (backStageRoomJoined ||
-            ((presentingCurrentOrNextEvent || hasBeenBackStage) &&
-                (!watchStreamForEventId ||
-                    (!!currentRoomEvent && watchStreamForEventId !== currentRoomEvent.id) ||
-                    (!currentRoomEvent && !!nextRoomEvent && watchStreamForEventId !== nextRoomEvent.id))));
-
-    useEffect(() => {
-        if (showBackstage) {
-            setHasBeenBackStage(true);
-        }
-    }, [showBackstage]);
+        notExplictlyWatchingCurrentOrNextEvent &&
+        (backStageRoomJoined || presentingCurrentOrNextEvent || alreadyBackstage.current);
+    alreadyBackstage.current = showBackstage;
 
     useEffect(() => {
         if (showBackstage) {
@@ -443,7 +440,17 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 )}
             </Box>
         ),
-        [bgColour, currentRoomEvent, nextBgColour, nextRoomEvent, now, roomDetails, roomEvents.length]
+        [
+            bgColour,
+            currentEventRole,
+            currentRoomEvent,
+            nextBgColour,
+            nextEventRole,
+            nextRoomEvent,
+            now,
+            roomDetails,
+            roomEvents.length,
+        ]
     );
 
     const [sendShuffleRoomNotification, setSendShuffleRoomNotification] = useState<boolean>(false);

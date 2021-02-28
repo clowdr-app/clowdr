@@ -80,7 +80,7 @@ export function RoomBackstage({
     const isEventSoon = useCallback(
         (event: Room_EventSummaryFragment): boolean => {
             const startTime = Date.parse(event.startTime);
-            return now >= startTime - 10 * 60 * 1000 && now <= startTime;
+            return now >= startTime - 20 * 60 * 1000 && now <= startTime;
         },
         [now]
     );
@@ -201,7 +201,7 @@ export function RoomBackstage({
                         <UnorderedList>
                             <ListItem>Each event in this room has a speakers&apos; area.</ListItem>
                             <ListItem>
-                                Each speakers&apos; area becomes available to join ten minutes before the associated
+                                Each speakers&apos; area becomes available to join twenty minutes before the associated
                                 event starts.
                             </ListItem>
                             <ListItem>Keep an eye on the chat for questions!</ListItem>

@@ -1310,7 +1310,17 @@ export class ChatState {
 }
 
 export class GlobalChatState {
-    public suppressNotificationsForChatId: string | null = null;
+    private _suppressNotificationsForChatId: string | null = null;
+    public get suppressNotificationsForChatId(): string | null {
+        return this._suppressNotificationsForChatId;
+    }
+    public set suppressNotificationsForChatId(value: string | null) {
+        this._suppressNotificationsForChatId = value;
+        this.suppressNotificationsForChatIdObs.publish(value);
+    }
+    public suppressNotificationsForChatIdObs: Observable<string | null> = new Observable((observe) => {
+        observe(this.suppressNotificationsForChatId);
+    });
     public openChatInSidebar: ((chatId: string) => void) | null = null;
     public showSidebar: (() => void) | null = null;
 

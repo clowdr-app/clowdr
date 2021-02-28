@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { MessageState } from "../ChatGlobalState";
 import { Observable } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
+import { useGlobalChatState } from "../GlobalChatStateProvider";
 import MessageBox from "./MessageBox";
 
 interface MessageListProps {
@@ -166,10 +167,12 @@ function MessageList({
             });
 
             if (shouldAutoScroll.current) {
-                ref.current?.scroll({
-                    behavior: "smooth",
-                    top: 0,
-                });
+                setTimeout(() => {
+                    ref.current?.scroll({
+                        behavior: "auto",
+                        top: 0,
+                    });
+                }, 50);
 
                 if (messageElements.current && messageElements.current.length > 0) {
                     const latest = messageElements.current[0].props.message as MessageState;
@@ -266,6 +269,18 @@ function MessageList({
             </Observer>
         );
     }, [config.state]);
+
+    const globalState = useGlobalChatState();
+    useEffect(() => {
+        return globalState.suppressNotificationsForChatIdObs.subscribe((v) => {
+            if (v === chatId) {
+                ref.current?.scroll({
+                    behavior: "auto",
+                    top: 0,
+                });
+            }
+        });
+    }, [chatId, globalState.suppressNotificationsForChatIdObs]);
 
     return (
         <Box {...rest}>

@@ -108,9 +108,16 @@ server.get("/summary", async (req, res) => {
                 const results = await Promise.all(
                     interestingKeys.map(async (key) => ({ key, userIds: await smembers(key) }))
                 );
+                const userIds = new Set<string>();
+                for (const result of results) {
+                    for (const userId of result.userIds) {
+                        userIds.add(userId);
+                    }
+                }
 
                 res.status(200).send({
-                    total: results.reduce((acc, x) => acc + x.userIds.length, 0),
+                    count_of_pages: results.reduce((acc, x) => acc + x.userIds.length, 0),
+                    count_of_unique_user_ids: userIds.size,
                     pages: results.reduce(
                         (acc, x) => ({
                             ...acc,

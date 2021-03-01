@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Button, HStack, Text, useToast } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
     EventRoomJoinRequestDetailsFragment,
     useApproveEventRoomJoinRequestMutation,
@@ -50,7 +50,8 @@ export function JoinRequest({
         setLoading(false);
     }, [approveJoinRequestMutation, joinRequest.id, toast]);
 
-    const attendee = useAttendee(joinRequest.attendeeId);
+    const joinRequestIdObj = useMemo(() => ({ attendee: joinRequest.attendeeId }), [joinRequest.attendeeId]);
+    const attendee = useAttendee(joinRequestIdObj);
 
     return (
         <HStack my={2}>

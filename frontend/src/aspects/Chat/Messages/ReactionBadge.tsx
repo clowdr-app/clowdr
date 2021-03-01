@@ -12,7 +12,8 @@ export default function ReactionBadge({
 }: { reaction: string; senderIds: string[]; onClick?: () => void } & BadgeProps): JSX.Element {
     const color = useColorModeValue("gray.900", "gray.50");
     const borderColor = useColorModeValue("gray.400", "gray.500");
-    const attendees = useAttendees(senderIds);
+    const senderIdObjs = useMemo(() => senderIds.map((x) => ({ attendee: x })), [senderIds]);
+    const attendees = useAttendees(senderIdObjs);
     const names = useMemo(() => {
         return R.sortBy((x) => x.displayName, attendees)
             .reduce((acc, attendee) => acc + ", " + attendee.displayName, "")

@@ -2,8 +2,9 @@ import assert from "assert";
 import crypto from "crypto";
 import express from "express";
 import jwksRsa from "jwks-rsa";
+import { RedisClient } from "redis";
 import socketIO, { Socket } from "socket.io";
-import redis from "socket.io-redis";
+import { createAdapter } from "socket.io-redis";
 import { authorize } from "./authorize";
 
 assert(process.env.REDIS_URL, "REDIS_URL env var not defined.");
@@ -32,7 +33,10 @@ const io = new socketIO.Server(server, {
     },
     transports: ["websocket"],
 });
-io.adapter(redis.createAdapter(process.env.REDIS_URL, { key: process.env.REDIS_KEY }));
+const redisPubClient = new RedisClient({ url: process.env.REDIS_URL });
+const redisSubClient = redisPubClient.duplicate();
+const redisClient = redisPubClient.duplicate();
+io.adapter(createAdapter({ pubClient: redisPubClient, subClient: redisSubClient, key: process.env.REDIS_KEY }));
 
 io.use(
     authorize({
@@ -49,68 +53,244 @@ io.use(
 
 function getPageKey(confSlug: string, path: string) {
     const hash = crypto.createHash("sha256");
-    hash.write(confSlug);
-    hash.write(path);
-    return hash.digest("hex");
+    hash.write(confSlug, "utf8");
+    hash.write(path, "utf8");
+    return hash.digest("hex").toLowerCase();
+}
+
+/**
+ * A Presence List contains the user ids present for that list.
+ */
+function presenceListKey(listId: string) {
+    return `PresenceList:${listId}`;
+}
+
+/**
+ * A Presence Channel is the pub/sub channel for the associated presence list.
+ */
+function presenceChannelName(listId: string) {
+    return `PresenceQueue:${listId}`;
+}
+
+/**
+ * A User Sessions list contains the session ids for a particular user present
+ * in the associated Presence List.
+ */
+function userSessionsKey(listId: string, userId: string) {
+    return `PresenceList:${listId}:UserSessions:${userId}`;
+}
+
+/**
+ * A Session List contains the list ids in which this session is currently present.
+ */
+function sessionListsKey(sessionId: string) {
+    return `SessionLists:${sessionId}`;
+}
+
+function addUserSession(listId: string, userId: string, sessionId: string) {
+    const sessionsKey = userSessionsKey(listId, userId);
+    const listsKey = sessionListsKey(sessionId);
+    redisClient.sadd(sessionsKey, sessionId);
+    redisClient.sadd(listsKey, listId);
+}
+
+function removeUserSession(listId: string, userId: string, sessionId: string, cb: (err: Error | null) => void) {
+    const sessionsKey = userSessionsKey(listId, userId);
+    const listsKey = sessionListsKey(sessionId);
+    redisClient.srem(sessionsKey, sessionId, (err) => {
+        if (err) {
+            throw err;
+        }
+
+        redisClient.srem(listsKey, listId, cb);
+    });
+}
+
+function enterPresence(listId: string, userId: string, sessionId: string) {
+    addUserSession(listId, userId, sessionId);
+    const listKey = presenceListKey(listId);
+    redisClient.sadd(listKey, userId, (err, v) => {
+        if (err) {
+            throw err;
+        }
+
+        if (v > 0) {
+            console.log(`${userId} entered ${listId}`);
+            const chan = presenceChannelName(listId);
+            io.in(chan).emit("entered", { listId, userId });
+        } else {
+            console.log(`${userId} re-entered ${listId}`);
+        }
+    });
+}
+
+function exitPresence(listId: string, userId: string, sessionId: string) {
+    const listKey = presenceListKey(listId);
+    const userKey = userSessionsKey(listId, userId);
+    removeUserSession(listId, userId, sessionId, (err) => {
+        if (err) {
+            throw err;
+        }
+
+        function attempt(attemptNum: number) {
+            if (attemptNum > 0) {
+                redisClient.watch(userKey, (watchErr) => {
+                    if (watchErr) {
+                        throw watchErr;
+                    }
+
+                    redisClient.scard(userKey, (getErr, sessionCount) => {
+                        if (getErr) {
+                            throw getErr;
+                        }
+
+                        if (sessionCount === 0) {
+                            // Attempt to remove user from the presence list
+                            redisClient
+                                .multi()
+                                .srem(listKey, userId)
+                                .exec((execErr, results) => {
+                                    if (execErr) {
+                                        attempt(attemptNum - 1);
+                                    }
+
+                                    if (!results) {
+                                        return;
+                                    }
+
+                                    const [numRemoved] = results;
+
+                                    if (numRemoved > 0) {
+                                        console.log(`${userId} left ${listId}`);
+                                        const chan = presenceChannelName(listId);
+                                        io.in(chan).emit("left", { listId, userId });
+                                    }
+                                });
+                        } else {
+                            // Validate that the session count hasn't changed
+                            redisClient.multi().exec((execErr) => {
+                                if (execErr) {
+                                    attempt(attemptNum - 1);
+                                }
+                            });
+                        }
+                    });
+                });
+            } else {
+                throw new Error(
+                    `Ran out of attempts to perform exit presence transaction! ${listId}, ${userId}, ${sessionId}`
+                );
+            }
+        }
+        attempt(5);
+    });
+}
+
+function exitAllPresences(userId: string, sessionId: string) {
+    const listsKey = sessionListsKey(sessionId);
+    redisClient.SMEMBERS(listsKey, (err, listIds) => {
+        if (err) {
+            throw err;
+        }
+
+        console.log(`${userId} exiting all presences for session ${sessionId}`, listIds);
+
+        const accumulatedErrors = [];
+        for (const listId of listIds) {
+            try {
+                exitPresence(listId, userId, sessionId);
+            } catch (e) {
+                accumulatedErrors.push(
+                    `Error exiting presence for ${listId} / ${userId} / ${sessionId}: ${e.toString()}`
+                );
+            }
+        }
+        if (accumulatedErrors.length > 0) {
+            const fullError = accumulatedErrors.reduce((acc, x) => `${acc}\n\n${x}`, "").substr(2);
+            throw new Error(fullError);
+        }
+    });
 }
 
 io.on("connection", function (socket: Socket) {
-    const userId = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
-    const conferenceSlug = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-conference-slug"];
-    console.log(`Authorized client connected: ${userId} / ${conferenceSlug}`);
+    if (!socket.decodedToken["https://hasura.io/jwt/claims"]) {
+        console.error(`Socket ${socket.id} attempted to connect with a JWT that was missing the relevant claims.`);
+        socket.disconnect();
+        return;
+    }
 
-    socket.on("disconnect", () => console.log("Client disconnected"));
+    const userId: string = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
+    if (userId) {
+        const conferenceSlug: string =
+            socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-conference-slug"] ?? "<<NO-CONFERENCE>>";
+        console.log(`Authorized client connected: ${conferenceSlug} / ${userId}`);
 
-    socket.on("enterPage", async (path: string) => {
-        // console.log(`Entered page: ${path}`);
+        socket.on("disconnect", () => {
+            console.log("Client disconnected");
 
-        if (typeof path === "string" && conferenceSlug) {
-            const pageKey = getPageKey(conferenceSlug, path);
-            await socket.join(pageKey);
+            try {
+                exitAllPresences(userId, socket.id);
+            } catch (e) {
+                console.error(`Error exiting all presences on socket ${socket.id}`, e);
+            }
+        });
 
-            io.in(pageKey).emit("present", {
-                utcMillis: Date.now(),
-                path,
-            });
-        }
-    });
+        socket.on("enterPage", async (path: string) => {
+            try {
+                if (typeof path === "string") {
+                    const pageKey = getPageKey(conferenceSlug, path);
+                    enterPresence(pageKey, userId, socket.id);
+                }
+            } catch (e) {
+                console.error(`Error entering presence on socket ${socket.id}`, e);
+            }
+        });
 
-    socket.on("leavePage", async (path: string) => {
-        // console.log(`Left page: ${path}`);
+        socket.on("leavePage", async (path: string) => {
+            try {
+                if (typeof path === "string") {
+                    const pageKey = getPageKey(conferenceSlug, path);
+                    exitPresence(pageKey, userId, socket.id);
+                }
+            } catch (e) {
+                console.error(`Error exiting presence on socket ${socket.id}`, e);
+            }
+        });
 
-        if (typeof path === "string" && conferenceSlug) {
-            const pageKey = getPageKey(conferenceSlug, path);
-            await socket.leave(pageKey);
-        }
-    });
+        socket.on("observePage", async (path: string) => {
+            try {
+                if (typeof path === "string") {
+                    const listId = getPageKey(conferenceSlug, path);
+                    const listKey = presenceListKey(listId);
+                    const chan = presenceChannelName(listId);
+                    console.log(`${userId} observed ${listId}`);
+                    await socket.join(chan);
 
-    socket.on("observePage", async (path: string) => {
-        // console.log(`Observe page: ${path}`);
+                    redisClient.smembers(listKey, (err, userIds) => {
+                        if (err) {
+                            throw err;
+                        }
 
-        if (typeof path === "string" && conferenceSlug) {
-            const pageKey = getPageKey(conferenceSlug, path);
-            await socket.join(pageKey);
-        }
-    });
+                        console.log(`Emitting presences for ${path} to ${userId} / ${socket.id}`, userIds);
+                        socket.emit("presences", { listId, userIds });
+                    });
+                }
+            } catch (e) {
+                console.error(`Error observing presence on socket ${socket.id}`, e);
+            }
+        });
 
-    socket.on("unobservePage", async (path: string) => {
-        // console.log(`Unobserve page: ${path}`);
-
-        if (typeof path === "string" && conferenceSlug) {
-            const pageKey = getPageKey(conferenceSlug, path);
-            await socket.leave(pageKey);
-        }
-    });
-
-    socket.on("present", (data: { utcMillis: number; path: string }) => {
-        // console.log(`Present: ${userId} for ${data.path}`);
-
-        if (data && data.path && typeof data.path === "string" && conferenceSlug) {
-            const pageKey = getPageKey(conferenceSlug, data.path);
-            io.in(pageKey).emit("present", {
-                utcMillis: data.utcMillis,
-                path: data.path,
-            });
-        }
-    });
+        socket.on("unobservePage", async (path: string) => {
+            try {
+                if (typeof path === "string") {
+                    const pageKey = getPageKey(conferenceSlug, path);
+                    const chan = presenceChannelName(pageKey);
+                    console.log(`${userId} unobserved ${pageKey}`);
+                    await socket.leave(chan);
+                }
+            } catch (e) {
+                console.error(`Error unobserving presence on socket ${socket.id}`, e);
+            }
+        });
+    }
 });

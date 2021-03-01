@@ -1,11 +1,10 @@
 import { Mutex } from "async-mutex";
 import io from "socket.io-client";
+import { Observable, Observer } from "../Chat/ChatGlobalState";
 
 export class PresenceState {
     private socket: SocketIOClient.Socket | undefined;
     private mutex: Mutex = new Mutex();
-
-    private static readonly PERIOD_MS = 30000;
 
     async begin(token: string): Promise<void> {
         const release = await this.mutex.acquire();
@@ -27,7 +26,10 @@ export class PresenceState {
             this.socket.on("disconnect", this.onDisconnect.bind(this));
             this.socket.on("connect_error", this.onConnectError.bind(this));
             this.socket.on("unauthorized", this.onUnauthorized.bind(this));
-            this.socket.on("present", this.onPresent.bind(this));
+
+            this.socket.on("entered", this.onEntered.bind(this));
+            this.socket.on("left", this.onLeft.bind(this));
+            this.socket.on("presences", this.onListPresent.bind(this));
         } catch (e) {
             console.error("Failed to create socket for presence service.");
             this.socket = undefined;
@@ -36,40 +38,28 @@ export class PresenceState {
         }
     }
 
-    private intervalId: number | undefined;
+    end(): void {
+        (async () => {
+            const release = await this.mutex.acquire();
+            try {
+                this.presences = {};
+                this.socket?.disconnect();
+                this.socket = undefined;
+            } catch (e) {
+                console.error("Error ending presence state", e);
+            } finally {
+                release();
+            }
+        })();
+    }
+
     private onConnect() {
         console.log("Connected to presence service");
-
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-        }
-
-        this.intervalId = setInterval(
-            (() => {
-                if (this.oldPath) {
-                    this.socket?.emit("present", { utcMillis: Date.now(), path: this.oldPath });
-                }
-
-                for (const path in this.presences) {
-                    const cutoff = Date.now() - 0.9 * PresenceState.PERIOD_MS;
-                    if (!this.presences[path]) {
-                        this.presences[path] = [];
-                    }
-                    this.presences[path] = this.presences[path].filter((x) => x >= cutoff);
-                }
-            }) as TimerHandler,
-            PresenceState.PERIOD_MS
-        );
-
         this.pageChanged(window.location.pathname);
     }
 
     private onDisconnect() {
         console.log("Disconnected from presence service");
-
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-        }
     }
 
     private onConnectError(e: any) {
@@ -86,76 +76,128 @@ export class PresenceState {
         }
     }
 
+    async sha256(message: string): Promise<string> {
+        // encode as UTF-8
+        const msgBuffer = new TextEncoder().encode(message);
+
+        // hash the message
+        const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+
+        // convert ArrayBuffer to Array
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+        // convert bytes to hex string
+        const hashHex = hashArray.map((b) => ("00" + b.toString(16)).slice(-2)).join("");
+        return hashHex.toLowerCase();
+    }
+
     private presences: {
-        [k: string]: number[];
+        [k: string]: Set<string>;
     } = {};
-    public getPresenceCount(path?: string): number {
-        path = path ?? this.oldPath;
-        if (!path) {
-            return 0;
+    private observers: {
+        [k: string]: Observable<Set<string>>;
+    } = {};
+
+    private onEntered(data: { listId: string; userId: string }) {
+        console.log("Presence:onEntered", data);
+        if (!this.presences[data.listId]) {
+            this.presences[data.listId] = new Set();
         }
-        return (this.presences[path] ?? []).length;
-    }
-    public getAllPresenceCounts(): { [k: string]: number | undefined } {
-        const result: { [k: string]: number | undefined } = {};
-
-        for (const key in this.presences) {
-            result[key] = this.presences[key].length;
+        this.presences[data.listId].add(data.userId);
+        if (this.observers[data.listId]) {
+            this.observers[data.listId].publish(this.presences[data.listId]);
         }
-
-        return result;
     }
-
-    private onPresent(data: { utcMillis: number; path: string }) {
-        // console.log(`Presence received ${data.utcMillis} for ${data.path}`);
-        const cutoff = Date.now() - 0.9 * PresenceState.PERIOD_MS;
-        this.presences[data.path] = [...(this.presences[data.path] ?? []).filter((x) => x >= cutoff), data.utcMillis];
+    private onLeft(data: { listId: string; userId: string }) {
+        console.log("Presence:onLeft", data);
+        if (this.presences[data.listId]) {
+            this.presences[data.listId].delete(data.userId);
+            if (this.observers[data.listId]) {
+                this.observers[data.listId].publish(this.presences[data.listId]);
+            }
+        }
+    }
+    private onListPresent(data: { listId: string; userIds: string[] }) {
+        console.log("Presence:onListPresent", data);
+        this.presences[data.listId] = new Set();
+        for (const userId of data.userIds) {
+            this.presences[data.listId].add(userId);
+        }
+        if (this.observers[data.listId]) {
+            this.observers[data.listId].publish(this.presences[data.listId]);
+        }
     }
 
     private oldPath: string | undefined;
-    private oldPathObserverKey: number | undefined;
-    private observerKeys: {
-        [k: string]: number[];
-    } = {};
-    private observerKeyGenerator = 1;
-
     public pageChanged(newPath: string): void {
-        const oldPath = this.oldPath;
-        const oldPathKey = this.oldPathObserverKey;
-        if (oldPath && oldPathKey) {
-            this.observerKeys[oldPath] = this.observerKeys[oldPath].filter((x) => x !== oldPathKey);
-            if (this.observerKeys[oldPath].length === 0) {
-                this.socket?.emit("leavePage", oldPath);
-            }
-        }
+        // TODO: Similar mechanism for just the conference slug
 
-        if (!this.observerKeys[newPath] || this.observerKeys[newPath].length === 0) {
-            this.observerKeys[newPath] = [];
-            this.socket?.emit("enterPage", newPath);
-        }
-        const newKey = this.observerKeyGenerator++;
-        this.observerKeys[newPath].push(newKey);
-        this.oldPathObserverKey = newKey;
+        console.log("Presence:pageChanged", newPath);
+        this.socket?.emit("leavePage", this.oldPath);
+        this.socket?.emit("enterPage", newPath);
         this.oldPath = newPath;
     }
 
-    public observePage(path: string): number {
-        if (!this.observerKeys[path] || this.observerKeys[path].length === 0) {
-            this.observerKeys[path] = [];
-            this.socket?.emit("observePage", path);
-        }
-        const newKey = this.observerKeyGenerator++;
-        this.observerKeys[path].push(newKey);
-        return newKey;
-    }
+    private observersMutex = new Mutex();
+    public observePage(
+        path: string,
+        conferenceSlug: string | undefined | null,
+        observer: Observer<Set<string>>
+    ): () => void {
+        console.log("Presence:observePage", path, conferenceSlug);
 
-    public unobservePage(key: number, path: string): void {
-        if (this.observerKeys[path]) {
-            this.observerKeys[path] = this.observerKeys[path].filter((x) => x !== key);
-            if (this.observerKeys[path].length === 0) {
-                this.socket?.emit("unobservePage", path);
+        const promise = (async () => {
+            const release = await this.observersMutex.acquire();
+
+            const confSlug = conferenceSlug ?? "<<NO-CONFERENCE>>";
+            let unsubscribe: () => void = () => {
+                // Empty
+            };
+            let listId: string | undefined;
+            try {
+                listId = await this.sha256(confSlug + path);
+                if (!this.observers[listId]) {
+                    this.observers[listId] = new Observable((observer) => {
+                        observer(this.presences[listId as string] ?? new Set());
+                    });
+                }
+                unsubscribe = this.observers[listId].subscribe(observer);
+
+                if (this.observers[listId].observers.size === 1) {
+                    this.socket?.emit("observePage", path);
+                }
+            } catch (e) {
+                console.error("Error subscribing to presence observer", e);
+            } finally {
+                release();
             }
-        }
+            return {
+                unsubscribe,
+                listId,
+            };
+        })();
+
+        return () => {
+            (async () => {
+                console.log("Presence:unobservePage", path, conferenceSlug);
+
+                const release = await this.observersMutex.acquire();
+
+                try {
+                    const info = await promise;
+                    if (info.listId) {
+                        if (this.observers[info.listId].observers.size === 0) {
+                            this.socket?.emit("unobservePage", path);
+                        }
+                    }
+                    info.unsubscribe();
+                } catch (e) {
+                    console.error("Error unsubscribing from presence observer", e);
+                } finally {
+                    release();
+                }
+            })();
+        };
     }
 }
 

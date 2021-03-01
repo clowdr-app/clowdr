@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Badge, Box, Button, HStack, Text, useToast } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
     EventPersonDetailsFragment,
     EventPersonRole_Enum,
@@ -47,7 +47,8 @@ export function EventPerson({
         }
     }, [deleteEventPersonMutation, eventPerson.id, toast]);
 
-    const attendee = useAttendee(eventPerson.attendeeId);
+    const eventPersonIdObj = useMemo(() => ({ attendee: eventPerson.attendeeId }), [eventPerson.attendeeId]);
+    const attendee = useAttendee(eventPersonIdObj);
 
     return (
         <HStack>

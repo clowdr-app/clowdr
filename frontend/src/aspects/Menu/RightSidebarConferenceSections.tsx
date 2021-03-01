@@ -30,12 +30,14 @@ import {
     Tabs,
     Text,
     Tooltip,
+    UnorderedList,
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import {
     useCreateDmMutation,
     useGetContentGroupChatIdQuery,
@@ -45,12 +47,13 @@ import {
 import { Chat } from "../Chat/Chat";
 import { ChatState } from "../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
-import { useAttendee } from "../Conference/AttendeesContext";
-import { useConference } from "../Conference/useConference";
+import { AttendeeIdSpec, useAttendee, useAttendees } from "../Conference/AttendeesContext";
+import { useConference, useMaybeConference } from "../Conference/useConference";
 import { Attendee, useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
+import { usePresenceState } from "../Presence/PresenceStateProvider";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -802,15 +805,32 @@ function ItemChatPanel({
 }
 
 function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
+    const [userIds, setUserIds] = useState<AttendeeIdSpec[]>([]);
+    const presence = usePresenceState();
+    const mConference = useMaybeConference();
+    const location = useLocation();
+
+    useEffect(() => {
+        return presence.observePage(location.pathname, mConference?.slug, (ids) => {
+            setUserIds([...ids.values()].map((x) => ({ user: x })));
+        });
+    }, [location.pathname, mConference?.slug, presence]);
+
+    const attendees = useAttendees(userIds);
+    const sortedAttendees = useMemo(() => R.sortBy((x) => x.displayName, attendees), [attendees]);
+
     return (
-        <Text fontSize="sm" fontStyle="italic">
-            Coming soon!
-        </Text>
+        <UnorderedList fontSize="sm">
+            {sortedAttendees.map((attendee) => (
+                <ListItem key={attendee.id}>{attendee.displayName}</ListItem>
+            ))}
+        </UnorderedList>
     );
 }
 
 function ParticipantListItem({ attendeeId }: { attendeeId: string }): JSX.Element {
-    const attendee = useAttendee(attendeeId);
+    const idObj = useMemo(() => ({ attendee: attendeeId }), [attendeeId]);
+    const attendee = useAttendee(idObj);
     return (
         <ListItem fontWeight="light">
             <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
@@ -853,6 +873,9 @@ function RoomParticipantsList({ roomId }: { roomId: string }): JSX.Element {
             <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
                 Connected to this room
             </Heading>
+            <Text fontStyle="italic" fontSize="sm" mb={2}>
+                Users who have joined the video/audio chat room.
+            </Text>
             <List fontSize="sm" width="100%">
                 {elements}
             </List>
@@ -870,6 +893,9 @@ function PresencePanel_WithConnectedParticipants({ roomId }: { roomId: string })
             <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
                 Here with you
             </Heading>
+            <Text fontStyle="italic" fontSize="sm" mb={2}>
+                Users with at least one tab open on this page.
+            </Text>
             <PresencePanel_WithoutConnectedParticipants />
         </>
     );

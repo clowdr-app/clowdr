@@ -32173,6 +32173,17 @@ export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly 
     & AttendeeDataFragment
   )> };
 
+export type AttendeesByUserIdQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  userIds: ReadonlyArray<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type AttendeesByUserIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
 export type GetMediaLiveChannelsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -36625,6 +36636,40 @@ export function useAttendeesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQuery>;
 export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
 export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
+export const AttendeesByUserIdDocument = gql`
+    query AttendeesByUserId($conferenceId: uuid!, $userIds: [String!]!) {
+  Attendee(where: {userId: {_in: $userIds}, conferenceId: {_eq: $conferenceId}}) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useAttendeesByUserIdQuery__
+ *
+ * To run a query within a React component, call `useAttendeesByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttendeesByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttendeesByUserIdQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      userIds: // value for 'userIds'
+ *   },
+ * });
+ */
+export function useAttendeesByUserIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>) {
+        return Apollo.useQuery<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>(AttendeesByUserIdDocument, baseOptions);
+      }
+export function useAttendeesByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>) {
+          return Apollo.useLazyQuery<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>(AttendeesByUserIdDocument, baseOptions);
+        }
+export type AttendeesByUserIdQueryHookResult = ReturnType<typeof useAttendeesByUserIdQuery>;
+export type AttendeesByUserIdLazyQueryHookResult = ReturnType<typeof useAttendeesByUserIdLazyQuery>;
+export type AttendeesByUserIdQueryResult = Apollo.QueryResult<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>;
 export const GetMediaLiveChannelsDocument = gql`
     query GetMediaLiveChannels($conferenceId: uuid!) {
   Room(where: {mediaLiveChannel: {}, conferenceId: {_eq: $conferenceId}}) {

@@ -15,7 +15,6 @@ import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu from "./aspects/Menu/MainMenu";
 import RightSidebar from "./aspects/Menu/RightSidebar";
-import PresenceCountProvider from "./aspects/Presence/PresenceCountProvider";
 import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
@@ -57,16 +56,14 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                         <ForceUserRefresh />
                         <ConferenceCurrentUserActivePermissionsProvider>
                             <CurrentAttendeeProvider>
-                                <PresenceCountProvider>
-                                    <GlobalChatStateProvider>
-                                        <AttendeesContextProvider>
-                                            <RoomParticipantsProvider>
-                                                {/* <ShuffleRoomsQueueMonitor /> */}
-                                                <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
-                                            </RoomParticipantsProvider>
-                                        </AttendeesContextProvider>
-                                    </GlobalChatStateProvider>
-                                </PresenceCountProvider>
+                                <GlobalChatStateProvider>
+                                    <AttendeesContextProvider>
+                                        <RoomParticipantsProvider>
+                                            {/* <ShuffleRoomsQueueMonitor /> */}
+                                            <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                        </RoomParticipantsProvider>
+                                    </AttendeesContextProvider>
+                                </GlobalChatStateProvider>
                             </CurrentAttendeeProvider>
                         </ConferenceCurrentUserActivePermissionsProvider>
                     </ConferenceProvider>

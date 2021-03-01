@@ -48,7 +48,8 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
 }
 
 function ParticipantGridItem({ attendeeId }: { attendeeId: string }): JSX.Element {
-    const attendee = useAttendee(attendeeId);
+    const attendeeIdObj = useMemo(() => ({ attendee: attendeeId }), [attendeeId]);
+    const attendee = useAttendee(attendeeIdObj);
     return (
         <GridItem fontWeight="light" fontSize="xs">
             <HStack alignItems="center">

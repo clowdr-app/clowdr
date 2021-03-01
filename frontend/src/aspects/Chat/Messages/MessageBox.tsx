@@ -420,7 +420,10 @@ export default function MessageBox({
         []
     );
 
-    const attendee = useAttendee(message.senderId);
+    const senderIdObj = useMemo(() => (message.senderId ? { attendee: message.senderId } : undefined), [
+        message.senderId,
+    ]);
+    const attendee = useAttendee(senderIdObj);
 
     const [subscribeToReactions, setSubscribeToReactions] = useState<boolean>(false);
     useEffect(() => {

@@ -1,31 +1,23 @@
 import { chakra, TextProps, Tooltip } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
-import usePolling from "../Generic/usePolling";
+import React, { useEffect, useState } from "react";
+import { useMaybeConference } from "../Conference/useConference";
 import FAIcon from "../Icons/FAIcon";
-import { usePresenceCount } from "./PresenceCountProvider";
+import { usePresenceState } from "./PresenceStateProvider";
 
 export default function PageCountText({ path, ...props }: { path: string } & TextProps): JSX.Element {
-    const { pageCounts, observePageCount, unobservePageCount } = usePresenceCount();
+    const presence = usePresenceState();
     const [pageCount, setPageCount] = useState<number | null>(null);
+    const mConference = useMaybeConference();
 
     useEffect(() => {
-        const observationKey = observePageCount(path);
+        return presence.observePage(path, mConference?.slug, (ids) => {
+            setPageCount(ids.size);
+        });
+    }, [mConference?.slug, path, presence]);
 
-        return () => {
-            unobservePageCount(path, observationKey);
-        };
-    }, [observePageCount, path, unobservePageCount]);
-
-    const cb = useCallback(async () => {
-        const count = pageCounts[path];
-        setPageCount(count ?? null);
-    }, [pageCounts, path]);
-    useEffect(() => {
-        cb();
-    }, [cb]);
-    usePolling(cb, 2 * 60 * 1000, true);
-
-    const pageCountLabel = pageCount ? `${pageCount} user${pageCount !== 1 ? "s" : ""} present` : undefined;
+    const pageCountLabel = pageCount
+        ? `${pageCount} user${pageCount !== 1 ? "s" : ""} with an open tab here`
+        : undefined;
 
     return pageCountLabel ? (
         <Tooltip label={pageCountLabel}>

@@ -80,7 +80,8 @@ function EventPersonListItem({
     person: EventPersonDetailsFragment;
     canControlEventPeople: boolean;
 }): JSX.Element {
-    const attendee = useAttendee(person.attendeeId);
+    const idObj = useMemo(() => (person.attendeeId ? { attendee: person.attendeeId } : undefined), [person.attendeeId]);
+    const attendee = useAttendee(idObj);
     return (
         <ListItem mt={2}>
             <EventPerson

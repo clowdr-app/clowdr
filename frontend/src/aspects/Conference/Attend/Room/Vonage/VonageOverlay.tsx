@@ -11,17 +11,17 @@ export function VonageOverlay({
     connectionData: string;
     microphoneEnabled?: boolean;
 }): JSX.Element {
-    const attendeeId = useMemo(() => {
+    const attendeeIdObj = useMemo(() => {
         try {
             const data = JSON.parse(connectionData);
-            return data["attendeeId"] ?? null;
+            return data["attendeeId"] ? { attendee: data["attendeeId"] } : null;
         } catch (e) {
             console.warn("Couldn't parse attendee ID from Vonage subscriber data");
             return null;
         }
     }, [connectionData]);
 
-    const attendee = useAttendee(attendeeId);
+    const attendee = useAttendee(attendeeIdObj);
     const profileModal = useChatProfileModal();
     const toast = useToast();
 

@@ -116,8 +116,8 @@ server.get("/summary", async (req, res) => {
                 }
 
                 res.status(200).send({
-                    count_of_pages: results.reduce((acc, x) => acc + x.userIds.length, 0),
-                    count_of_unique_user_ids: userIds.size,
+                    total_unique_tabs: results.reduce((acc, x) => acc + x.userIds.length, 0),
+                    total_unique_user_ids: userIds.size,
                     pages: results.reduce(
                         (acc, x) => ({
                             ...acc,

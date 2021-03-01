@@ -408,4 +408,4 @@ function invalidateSessions() {
     });
 }
 
-setInterval(invalidateSessions, 1000);
+setInterval(invalidateSessions, 60 * 1000);

@@ -1,3 +1,11 @@
+- name: GatherPresenceStats
+  webhook: '{{ACTION_BASE_URL}}/analytics/gatherPresenceStats'
+  schedule: '*/5 * * * *'
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
 - name: ProcessUploadYouTubeVideoQueue
   webhook: '{{ACTION_BASE_URL}}/google/processUploadYouTubeVideoQueue'
   schedule: '* * * * *'

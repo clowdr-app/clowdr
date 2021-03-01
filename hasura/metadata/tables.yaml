@@ -1,4 +1,7 @@
 - table:
+    schema: analytics
+    name: AppStats
+- table:
     schema: chat
     name: Chat
   object_relationships:

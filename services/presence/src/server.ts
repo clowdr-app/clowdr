@@ -2,7 +2,7 @@ import assert from "assert";
 import crypto from "crypto";
 import express from "express";
 import jwksRsa from "jwks-rsa";
-import { RedisClient } from "redis";
+import redis from "redis";
 import socketIO, { Socket } from "socket.io";
 import { createAdapter } from "socket.io-redis";
 import { authorize } from "./authorize";
@@ -33,7 +33,7 @@ const io = new socketIO.Server(server, {
     },
     transports: ["websocket"],
 });
-const redisPubClient = new RedisClient({ url: process.env.REDIS_URL });
+const redisPubClient = redis.createClient(process.env.REDIS_URL, {});
 const redisSubClient = redisPubClient.duplicate();
 const redisClient = redisPubClient.duplicate();
 io.adapter(createAdapter({ pubClient: redisPubClient, subClient: redisSubClient, key: process.env.REDIS_KEY }));

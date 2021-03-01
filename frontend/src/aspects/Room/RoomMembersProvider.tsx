@@ -57,7 +57,7 @@ export default function RoomMembersProvider({
         } else if (!loading && data) {
             data.RoomPerson.forEach((person) => {
                 if (person.attendeeId) {
-                    attendeesCtx.subscribe(person.attendeeId, onAttendeeUpdated);
+                    attendeesCtx.subscribe({ attendee: person.attendeeId }, onAttendeeUpdated);
                 }
             });
 

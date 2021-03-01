@@ -99,7 +99,7 @@ export class PresenceState {
     } = {};
 
     private onEntered(data: { listId: string; userId: string }) {
-        console.log("Presence:onEntered", data);
+        // console.log("Presence:onEntered", data);
         if (!this.presences[data.listId]) {
             this.presences[data.listId] = new Set();
         }
@@ -109,7 +109,7 @@ export class PresenceState {
         }
     }
     private onLeft(data: { listId: string; userId: string }) {
-        console.log("Presence:onLeft", data);
+        // console.log("Presence:onLeft", data);
         if (this.presences[data.listId]) {
             this.presences[data.listId].delete(data.userId);
             if (this.observers[data.listId]) {
@@ -118,7 +118,7 @@ export class PresenceState {
         }
     }
     private onListPresent(data: { listId: string; userIds: string[] }) {
-        console.log("Presence:onListPresent", data);
+        // console.log("Presence:onListPresent", data);
         this.presences[data.listId] = new Set();
         for (const userId of data.userIds) {
             this.presences[data.listId].add(userId);
@@ -132,7 +132,7 @@ export class PresenceState {
     public pageChanged(newPath: string): void {
         // TODO: Similar mechanism for just the conference slug
 
-        console.log("Presence:pageChanged", newPath);
+        // console.log("Presence:pageChanged", newPath);
         this.socket?.emit("leavePage", this.oldPath);
         this.socket?.emit("enterPage", newPath);
         this.oldPath = newPath;
@@ -144,7 +144,7 @@ export class PresenceState {
         conferenceSlug: string | undefined | null,
         observer: Observer<Set<string>>
     ): () => void {
-        console.log("Presence:observePage", path, conferenceSlug);
+        // console.log("Presence:observePage", path, conferenceSlug);
 
         const promise = (async () => {
             const release = await this.observersMutex.acquire();
@@ -179,7 +179,7 @@ export class PresenceState {
 
         return () => {
             (async () => {
-                console.log("Presence:unobservePage", path, conferenceSlug);
+                // console.log("Presence:unobservePage", path, conferenceSlug);
 
                 const release = await this.observersMutex.acquire();
 

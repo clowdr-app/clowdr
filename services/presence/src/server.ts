@@ -115,11 +115,11 @@ function enterPresence(listId: string, userId: string, sessionId: string) {
         }
 
         if (v > 0) {
-            console.log(`${userId} entered ${listId}`);
+            // console.log(`${userId} entered ${listId}`);
             const chan = presenceChannelName(listId);
             io.in(chan).emit("entered", { listId, userId });
         } else {
-            console.log(`${userId} re-entered ${listId}`);
+            // console.log(`${userId} re-entered ${listId}`);
         }
     });
 }
@@ -161,7 +161,7 @@ function exitPresence(listId: string, userId: string, sessionId: string) {
                                     const [numRemoved] = results;
 
                                     if (numRemoved > 0) {
-                                        console.log(`${userId} left ${listId}`);
+                                        // console.log(`${userId} left ${listId}`);
                                         const chan = presenceChannelName(listId);
                                         io.in(chan).emit("left", { listId, userId });
                                     }
@@ -193,7 +193,7 @@ function exitAllPresences(userId: string, sessionId: string) {
             throw err;
         }
 
-        console.log(`${userId} exiting all presences for session ${sessionId}`, listIds);
+        // console.log(`${userId} exiting all presences for session ${sessionId}`, listIds);
 
         const accumulatedErrors = [];
         for (const listId of listIds) {
@@ -226,7 +226,7 @@ io.on("connection", function (socket: Socket) {
         console.log(`Authorized client connected: ${conferenceSlug} / ${userId}`);
 
         socket.on("disconnect", () => {
-            console.log("Client disconnected");
+            console.log(`Client disconnected: ${conferenceSlug} / ${userId} / ${socket.id}`);
 
             try {
                 exitAllPresences(userId, socket.id);
@@ -263,7 +263,7 @@ io.on("connection", function (socket: Socket) {
                     const listId = getPageKey(conferenceSlug, path);
                     const listKey = presenceListKey(listId);
                     const chan = presenceChannelName(listId);
-                    console.log(`${userId} observed ${listId}`);
+                    // console.log(`${userId} observed ${listId}`);
                     await socket.join(chan);
 
                     redisClient.smembers(listKey, (err, userIds) => {
@@ -271,7 +271,7 @@ io.on("connection", function (socket: Socket) {
                             throw err;
                         }
 
-                        console.log(`Emitting presences for ${path} to ${userId} / ${socket.id}`, userIds);
+                        // console.log(`Emitting presences for ${path} to ${userId} / ${socket.id}`, userIds);
                         socket.emit("presences", { listId, userIds });
                     });
                 }
@@ -285,7 +285,7 @@ io.on("connection", function (socket: Socket) {
                 if (typeof path === "string") {
                     const pageKey = getPageKey(conferenceSlug, path);
                     const chan = presenceChannelName(pageKey);
-                    console.log(`${userId} unobserved ${pageKey}`);
+                    // console.log(`${userId} unobserved ${pageKey}`);
                     await socket.leave(chan);
                 }
             } catch (e) {

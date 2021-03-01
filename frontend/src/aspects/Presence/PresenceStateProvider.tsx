@@ -24,7 +24,7 @@ export function PresenceStateProvider({
 
     const location = useLocation();
     useEffect(() => {
-        console.log("Page changed", location.pathname);
+        // console.log("Page changed", location.pathname);
         State.pageChanged(location.pathname);
     }, [location.pathname]);
 

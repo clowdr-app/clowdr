@@ -5,6 +5,7 @@ import jwksRsa from "jwks-rsa";
 import redis from "redis";
 import socketIO, { Socket } from "socket.io";
 import { createAdapter } from "socket.io-redis";
+import { promisify } from "util";
 import { authorize } from "./authorize";
 
 assert(process.env.REDIS_URL, "REDIS_URL env var not defined.");
@@ -13,60 +14,6 @@ assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN env var not defined");
 assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
 const PORT = process.env.PORT || 3002;
-
-const jwksClient = jwksRsa({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 1,
-    jwksUri: `https://${process.env.AUTH0_API_DOMAIN}/.well-known/jwks.json`,
-});
-
-const INDEX = "/resources/index.html";
-const server = express();
-server.get("/flush", (req, res) => {
-    if (process.env.SECRET_FOR_FLUSHING) {
-        if (process.env.SECRET_FOR_FLUSHING === req.query["secret"]) {
-            redisClient.flushall((err, reply) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send(reply);
-                }
-            });
-        } else {
-            res.status(403).send("Secret mismatch");
-        }
-    } else {
-        res.status(403).send("No secret configured");
-    }
-});
-server.use((_req, res) => res.sendFile(INDEX, { root: __dirname }));
-const serverListening = server.listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-const io = new socketIO.Server(serverListening, {
-    cors: {
-        origin: process.env.CORS_ORIGIN,
-        methods: ["GET", "POST"],
-    },
-    transports: ["websocket"],
-});
-const redisPubClient = redis.createClient(process.env.REDIS_URL, {});
-const redisSubClient = redisPubClient.duplicate();
-const redisClient = redisPubClient.duplicate();
-io.adapter(createAdapter({ pubClient: redisPubClient, subClient: redisSubClient, key: process.env.REDIS_KEY }));
-
-io.use(
-    authorize({
-        secret: async (token) => {
-            if (token && typeof token !== "string") {
-                const key = await jwksClient.getSigningKeyAsync(token.header.kid);
-                return key.getPublicKey();
-            }
-            return "";
-        },
-        algorithms: ["RS256"],
-    })
-);
 
 function getPageKey(confSlug: string, path: string) {
     const hash = crypto.createHash("sha256");
@@ -103,6 +50,112 @@ function userSessionsKey(listId: string, userId: string) {
 function sessionListsKey(sessionId: string) {
     return `SessionLists:${sessionId}`;
 }
+
+const jwksClient = jwksRsa({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 1,
+    jwksUri: `https://${process.env.AUTH0_API_DOMAIN}/.well-known/jwks.json`,
+});
+
+const INDEX = "/resources/index.html";
+const server = express();
+server.get("/flush", (req, res) => {
+    if (process.env.SECRET_FOR_FLUSHING) {
+        if (process.env.SECRET_FOR_FLUSHING === req.query["secret"]) {
+            redisClient.flushall((err, reply) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else {
+                    res.status(200).send(reply);
+                }
+            });
+        } else {
+            res.status(403).send("Secret mismatch");
+        }
+    } else {
+        res.status(403).send("No secret configured");
+    }
+});
+server.get("/summary", async (req, res) => {
+    if (process.env.SECRET_FOR_SUMMARY) {
+        if (process.env.SECRET_FOR_SUMMARY === req.query["secret"]) {
+            const basePresenceListKey = presenceListKey("");
+
+            const scan = promisify<(...opts: string[]) => Promise<[string, string[]]>>(
+                (redisClient.scan as unknown) as any
+            ).bind(redisClient);
+            const smembers = promisify<(...opts: string[]) => Promise<string[]>>(
+                (redisClient.smembers as unknown) as any
+            ).bind(redisClient);
+            const scanAll = async (pattern: string) => {
+                const found = [];
+                let cursor = "0";
+
+                do {
+                    const reply = await scan(cursor, "MATCH", pattern);
+
+                    cursor = reply[0];
+                    found.push(...reply[1]);
+                } while (cursor !== "0");
+
+                return found;
+            };
+
+            try {
+                const keys = await scanAll(`${basePresenceListKey}*`);
+                const interestingKeys = keys.filter((key) => key.lastIndexOf(":") === basePresenceListKey.length - 1);
+                const results = await Promise.all(
+                    interestingKeys.map(async (key) => ({ key, userIds: await smembers(key) }))
+                );
+
+                res.status(200).send({
+                    total: results.reduce((acc, x) => acc + x.userIds.length, 0),
+                    pages: results.reduce(
+                        (acc, x) => ({
+                            ...acc,
+                            [x.key]: x.userIds.length,
+                        }),
+                        {}
+                    ),
+                });
+            } catch (e) {
+                res.status(500).send(e);
+            }
+        } else {
+            res.status(403).send("Secret mismatch");
+        }
+    } else {
+        res.status(403).send("No secret configured");
+    }
+});
+server.use((_req, res) => res.sendFile(INDEX, { root: __dirname }));
+const serverListening = server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const io = new socketIO.Server(serverListening, {
+    cors: {
+        origin: process.env.CORS_ORIGIN,
+        methods: ["GET", "POST"],
+    },
+    transports: ["websocket"],
+});
+const redisPubClient = redis.createClient(process.env.REDIS_URL, {});
+const redisSubClient = redisPubClient.duplicate();
+const redisClient = redisPubClient.duplicate();
+io.adapter(createAdapter({ pubClient: redisPubClient, subClient: redisSubClient, key: process.env.REDIS_KEY }));
+
+io.use(
+    authorize({
+        secret: async (token) => {
+            if (token && typeof token !== "string") {
+                const key = await jwksClient.getSigningKeyAsync(token.header.kid);
+                return key.getPublicKey();
+            }
+            return "";
+        },
+        algorithms: ["RS256"],
+    })
+);
 
 function addUserSession(listId: string, userId: string, sessionId: string) {
     const sessionsKey = userSessionsKey(listId, userId);

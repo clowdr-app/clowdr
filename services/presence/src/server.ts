@@ -22,11 +22,28 @@ const jwksClient = jwksRsa({
 });
 
 const INDEX = "/resources/index.html";
-const server = express()
-    .use((_req, res) => res.sendFile(INDEX, { root: __dirname }))
-    .listen(PORT, () => console.log(`Listening on ${PORT}`));
+const server = express();
+server.get("/flush", (req, res) => {
+    if (process.env.SECRET_FOR_FLUSHING) {
+        if (process.env.SECRET_FOR_FLUSHING === req.query["secret"]) {
+            redisClient.flushall((err, reply) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else {
+                    res.status(200).send(reply);
+                }
+            });
+        } else {
+            res.status(403).send("Secret mismatch");
+        }
+    } else {
+        res.status(403).send("No secret configured");
+    }
+});
+server.use((_req, res) => res.sendFile(INDEX, { root: __dirname }));
+const serverListening = server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const io = new socketIO.Server(server, {
+const io = new socketIO.Server(serverListening, {
     cors: {
         origin: process.env.CORS_ORIGIN,
         methods: ["GET", "POST"],
@@ -212,6 +229,8 @@ function exitAllPresences(userId: string, sessionId: string) {
     });
 }
 
+const ALL_SESSION_USER_IDS_KEY = "Presence.SessionAndUserIds";
+
 io.on("connection", function (socket: Socket) {
     if (!socket.decodedToken["https://hasura.io/jwt/claims"]) {
         console.error(`Socket ${socket.id} attempted to connect with a JWT that was missing the relevant claims.`);
@@ -221,12 +240,15 @@ io.on("connection", function (socket: Socket) {
 
     const userId: string = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
     if (userId) {
+        redisClient.SADD(ALL_SESSION_USER_IDS_KEY, `${socket.id}|${userId}`);
+
         const conferenceSlug: string =
             socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-conference-slug"] ?? "<<NO-CONFERENCE>>";
         console.log(`Authorized client connected: ${conferenceSlug} / ${userId}`);
 
         socket.on("disconnect", () => {
             console.log(`Client disconnected: ${conferenceSlug} / ${userId} / ${socket.id}`);
+            redisClient.SREM(ALL_SESSION_USER_IDS_KEY, `${socket.id}|${userId}`);
 
             try {
                 exitAllPresences(userId, socket.id);
@@ -294,3 +316,34 @@ io.on("connection", function (socket: Socket) {
         });
     }
 });
+
+function invalidateSessions() {
+    redisClient.SMEMBERS(ALL_SESSION_USER_IDS_KEY, async (err, sessionListsKeys) => {
+        if (err) {
+            console.error("Error invalidating sessions", err);
+            return;
+        }
+
+        if (!sessionListsKeys) {
+            return;
+        }
+
+        const socketIds = await io.allSockets();
+        for (const sessionListsKey of sessionListsKeys) {
+            const parts = sessionListsKey.split("|");
+            const sessionId = parts[0];
+            const userId = parts[1];
+            if (!socketIds.has(sessionId)) {
+                console.log("Found dangling session", sessionListsKey);
+                try {
+                    exitAllPresences(userId, sessionId);
+                    redisClient.SREM(ALL_SESSION_USER_IDS_KEY, sessionListsKey);
+                } catch (e) {
+                    console.error(`Error exiting all presences of dangling session ${sessionId} / ${userId}`, e);
+                }
+            }
+        }
+    });
+}
+
+setInterval(invalidateSessions, 1000);

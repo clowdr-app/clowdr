@@ -261,6 +261,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             toast({
                 status: "info",
                 position: "bottom-right",
+                isClosable: true,
                 title: "You have been taken to the speakers' area",
                 description: "You are a presenter of a current or upcoming event",
             });
@@ -278,6 +279,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             toast({
                 status: "info",
                 position: "bottom-right",
+                isClosable: true,
                 title: "You are a presenter of an event starting now",
                 description: (
                     <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
@@ -293,6 +295,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             toast({
                 status: "info",
                 position: "bottom-right",
+                isClosable: true,
                 title: "You are a presenter of the next event",
                 description: (
                     <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
@@ -528,6 +531,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                                 status: "info",
                                 duration: 5000,
                                 position: "bottom-right",
+                                isClosable: true,
                                 title: "Going to the discussion room",
                                 description: (
                                     <VStack alignItems="flex-start">

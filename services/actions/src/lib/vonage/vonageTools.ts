@@ -201,7 +201,7 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
                 await callWithRetry(async () => await Vonage.stopBroadcast(existingBroadcast.id));
             }
         } catch (e) {
-            console.error("Could not stop existing session broadcast", eventId, existingBroadcast.id);
+            console.error("Could not stop existing session broadcast", eventId, existingBroadcast.id, e);
         }
     }
 }

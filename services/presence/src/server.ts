@@ -60,14 +60,15 @@ const jwksClient = jwksRsa({
 
 const INDEX = "/resources/index.html";
 const server = express();
-server.get("/flush", (req, res) => {
+server.post("/flush", (req, res) => {
     if (process.env.SECRET_FOR_FLUSHING) {
-        if (process.env.SECRET_FOR_FLUSHING === req.query["secret"]) {
+        const providedSecret = req.query["secret"] ?? req.headers["x-hasura-presence-flush-secret"];
+        if (process.env.SECRET_FOR_FLUSHING === providedSecret) {
             redisClient.flushall((err, reply) => {
                 if (err) {
                     res.status(500).send(err);
                 } else {
-                    res.status(200).send(reply);
+                    res.status(200).send({ ok: reply });
                 }
             });
         } else {
@@ -77,9 +78,10 @@ server.get("/flush", (req, res) => {
         res.status(403).send("No secret configured");
     }
 });
-server.get("/summary", async (req, res) => {
+server.post("/summary", async (req, res) => {
     if (process.env.SECRET_FOR_SUMMARY) {
-        if (process.env.SECRET_FOR_SUMMARY === req.query["secret"]) {
+        const providedSecret = req.query["secret"] ?? req.headers["x-hasura-presence-summary-secret"];
+        if (process.env.SECRET_FOR_SUMMARY === providedSecret) {
             const basePresenceListKey = presenceListKey("");
 
             const scan = promisify<(...opts: string[]) => Promise<[string, string[]]>>(

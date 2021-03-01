@@ -101,6 +101,16 @@ type Mutation {
 }
 
 
+type Mutation {
+  presence_Flush : PresenceFlushOutput!
+}
+
+
+type Query {
+  presence_Summary : PresenceSummaryOutput
+}
+
+
 type Query {
   protectedEcho (
     message: String!
@@ -308,5 +318,15 @@ type GenerateChatRemoteServiceIdsOutput {
 
 type GenerateChatRemoteUserIdsOutput {
   error : String
+}
+
+type PresenceSummaryOutput {
+  total_unique_tabs : Int!
+  total_unique_user_ids : Int!
+  pages : jsonb
+}
+
+type PresenceFlushOutput {
+  ok : String
 }
 

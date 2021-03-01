@@ -22,6 +22,7 @@ jobs:
           # The script only checks for their presence, not their value
           HASURA_MIGRATIONS_ENABLED: true
           ACTION_BASE_URL: ${{ secrets.ACTION_BASE_URL }}
+          PRESENCE_BASE_URL: ${{ secrets.PRESENCE_BASE_URL }}
           # TODO: Regression testing - but apply this in a second job after services have been re-deployed
           # HASURA_REGRESSION_TESTS_ENABLED: true
           # HASURA_REGRESSION_TESTSUITE_ID: xxxxxx-xxx-xxxx-xxxxx-xxxxxx

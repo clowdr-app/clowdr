@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
 import { RoomMode_Enum, Room_EventSummaryFragment } from "../../../../generated/graphql";
@@ -38,6 +38,7 @@ export function RoomBackstage({
     nextRoomEventId,
     setWatchStreamForEventId,
     onRoomJoined,
+    onEventSelected,
 }: {
     showBackstage: boolean;
     roomName: string;
@@ -46,6 +47,7 @@ export function RoomBackstage({
     nextRoomEventId: string | null;
     setWatchStreamForEventId: (eventId: string | null) => void;
     onRoomJoined: (joined: boolean) => void;
+    onEventSelected: (eventId: string | null) => void;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
@@ -86,6 +88,9 @@ export function RoomBackstage({
     );
 
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+    useEffect(() => {
+        onEventSelected(selectedEventId);
+    }, [onEventSelected, selectedEventId]);
 
     const makeEventEl = useCallback(
         (event: Room_EventSummaryFragment, category: string) => {

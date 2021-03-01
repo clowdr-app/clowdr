@@ -317,6 +317,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             roomEvents.filter((event) => event.eventPeople.some((person) => person.attendeeId === currentAttendee.id)),
         [currentAttendee.id, roomEvents]
     );
+    const [backstageSelectedEventId, setBackstageSelectedEventId] = useState<string | null>(null);
     const backStageEl = useMemo(
         () => (
             <RoomBackstage
@@ -327,6 +328,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 nextRoomEventId={nextRoomEvent?.id}
                 setWatchStreamForEventId={setWatchStreamForEventId}
                 onRoomJoined={setBackStageRoomJoined}
+                onEventSelected={setBackstageSelectedEventId}
             />
         ),
         [currentRoomEvent?.id, nextRoomEvent, roomDetails.name, roomEventsForCurrentAttendee, showBackstage]
@@ -521,28 +523,57 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                             throw new Error("No matching room found");
                         }
 
-                        toast({
-                            status: "info",
-                            duration: 15000,
-                            isClosable: true,
-                            position: "bottom-right",
-                            title: "Discussion room available",
-                            description: (
-                                <VStack alignItems="flex-start">
-                                    <Text>You can continue the discussion asynchronously in a discussion room.</Text>
-                                    <Button
-                                        onClick={() =>
-                                            history.push(
-                                                `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
-                                            )
-                                        }
-                                        colorScheme="green"
-                                    >
-                                        Join the discusion room
-                                    </Button>
-                                </VStack>
-                            ),
-                        });
+                        if (showBackstage && backstageSelectedEventId === existingCurrentRoomEvent.id) {
+                            toast({
+                                status: "info",
+                                duration: 5000,
+                                position: "bottom-right",
+                                title: "Going to the discussion room",
+                                description: (
+                                    <VStack alignItems="flex-start">
+                                        <Text>You will be redirected to the discussion room in a few seconds.</Text>
+                                        <Button
+                                            onClick={() =>
+                                                history.push(
+                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
+                                                )
+                                            }
+                                            colorScheme="green"
+                                        >
+                                            Join the discusion room immediately
+                                        </Button>
+                                    </VStack>
+                                ),
+                            });
+                            setTimeout(() => {
+                                history.push(`/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`);
+                            }, 5000);
+                        } else {
+                            toast({
+                                status: "info",
+                                duration: 15000,
+                                isClosable: true,
+                                position: "bottom-right",
+                                title: "Discussion room available",
+                                description: (
+                                    <VStack alignItems="flex-start">
+                                        <Text>
+                                            You can continue the discussion asynchronously in a discussion room.
+                                        </Text>
+                                        <Button
+                                            onClick={() =>
+                                                history.push(
+                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
+                                                )
+                                            }
+                                            colorScheme="green"
+                                        >
+                                            Join the discusion room
+                                        </Button>
+                                    </VStack>
+                                ),
+                            });
+                        }
                     } catch (e) {
                         console.error(
                             "Error while moving to breakout room at end of event",

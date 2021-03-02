@@ -19,6 +19,7 @@ import { AWSJobStatus, TranscodeDetails, VideoContentBlob } from "@clowdr-app/sh
 import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
+import path from "path";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
@@ -63,6 +64,11 @@ export async function startPreviewTranscode(s3InputUrl: string, contentItemId: s
     console.log(`Creating preview MediaConvert job for ${s3InputUrl}`);
 
     assert(MediaConvert, "AWS MediaConvert client is not initialised");
+
+    const { key } = new AmazonS3URI(s3InputUrl);
+    assert(key, `Cannot parse S3 input URL: ${s3InputUrl}`);
+    const { dir } = path.parse(key);
+
     const result = await MediaConvert.createJob({
         Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
         UserMetadata: {
@@ -86,7 +92,7 @@ export async function startPreviewTranscode(s3InputUrl: string, contentItemId: s
                     CustomName: "File Group",
                     OutputGroupSettings: {
                         FileGroupSettings: {
-                            Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/`,
+                            Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${dir.length > 0 ? `${dir}/` : ""}`,
                         },
                         Type: OutputGroupType.FILE_GROUP_SETTINGS,
                     },

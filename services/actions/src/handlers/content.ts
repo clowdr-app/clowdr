@@ -60,6 +60,10 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
     // If there is a new video source URL, start transcoding
     if (
         ((oldVersion && oldVersion.data.baseType === "video" && oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
+            (oldVersion &&
+                oldVersion.data.baseType === "video" &&
+                oldVersion.data.transcode &&
+                !currentVersion.data.transcode) ||
             (!oldVersion && currentVersion.data.s3Url)) &&
         (!currentVersion.data.transcode || currentVersion.data.transcode.updatedTimestamp < currentVersion.createdAt)
     ) {

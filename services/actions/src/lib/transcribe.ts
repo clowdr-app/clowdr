@@ -51,8 +51,8 @@ gql`
 `;
 
 function replaceExtension(key: string, extension: string): string {
-    return path.format({
-        ...path.parse(key),
+    return path.posix.format({
+        ...path.posix.parse(key),
         base: undefined,
         ext: extension,
     });

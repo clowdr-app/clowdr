@@ -279,6 +279,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             toast({
                 status: "info",
                 position: "bottom-right",
+                duration: 15000,
                 isClosable: true,
                 title: "You are a presenter of an event starting now",
                 description: (
@@ -544,7 +545,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                                             }
                                             colorScheme="green"
                                         >
-                                            Join the discusion room immediately
+                                            Join the discussion room immediately
                                         </Button>
                                     </VStack>
                                 ),
@@ -572,7 +573,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                                             }
                                             colorScheme="green"
                                         >
-                                            Join the discusion room
+                                            Join the discussion room
                                         </Button>
                                     </VStack>
                                 ),

@@ -11007,6 +11007,18 @@ export enum Permission_Update_Column {
   Name = 'name'
 }
 
+export type PresenceFlushOutput = {
+  readonly __typename?: 'PresenceFlushOutput';
+  readonly ok?: Maybe<Scalars['String']>;
+};
+
+export type PresenceSummaryOutput = {
+  readonly __typename?: 'PresenceSummaryOutput';
+  readonly pages?: Maybe<Scalars['jsonb']>;
+  readonly total_unique_tabs: Scalars['Int'];
+  readonly total_unique_user_ids: Scalars['Int'];
+};
+
 export type ProfilePhotoUrlResponse = {
   readonly __typename?: 'ProfilePhotoURLResponse';
   readonly url: Scalars['String'];
@@ -15683,6 +15695,372 @@ export enum YouTubeUpload_Update_Column {
   /** column name */
   VideoTitle = 'videoTitle'
 }
+
+/** columns and relationships of "analytics.AppStats" */
+export type Analytics_AppStats = {
+  readonly __typename?: 'analytics_AppStats';
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['Int'];
+  readonly pages?: Maybe<Scalars['jsonb']>;
+  readonly total_unique_tabs: Scalars['Int'];
+  readonly total_unique_user_ids: Scalars['Int'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "analytics.AppStats" */
+export type Analytics_AppStatsPagesArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "analytics.AppStats" */
+export type Analytics_AppStats_Aggregate = {
+  readonly __typename?: 'analytics_AppStats_aggregate';
+  readonly aggregate?: Maybe<Analytics_AppStats_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Analytics_AppStats>;
+};
+
+/** aggregate fields of "analytics.AppStats" */
+export type Analytics_AppStats_Aggregate_Fields = {
+  readonly __typename?: 'analytics_AppStats_aggregate_fields';
+  readonly avg?: Maybe<Analytics_AppStats_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Analytics_AppStats_Max_Fields>;
+  readonly min?: Maybe<Analytics_AppStats_Min_Fields>;
+  readonly stddev?: Maybe<Analytics_AppStats_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Analytics_AppStats_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Analytics_AppStats_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Analytics_AppStats_Sum_Fields>;
+  readonly var_pop?: Maybe<Analytics_AppStats_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Analytics_AppStats_Var_Samp_Fields>;
+  readonly variance?: Maybe<Analytics_AppStats_Variance_Fields>;
+};
+
+
+/** aggregate fields of "analytics.AppStats" */
+export type Analytics_AppStats_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "analytics.AppStats" */
+export type Analytics_AppStats_Aggregate_Order_By = {
+  readonly avg?: Maybe<Analytics_AppStats_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Analytics_AppStats_Max_Order_By>;
+  readonly min?: Maybe<Analytics_AppStats_Min_Order_By>;
+  readonly stddev?: Maybe<Analytics_AppStats_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Analytics_AppStats_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Analytics_AppStats_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Analytics_AppStats_Sum_Order_By>;
+  readonly var_pop?: Maybe<Analytics_AppStats_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Analytics_AppStats_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Analytics_AppStats_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Analytics_AppStats_Append_Input = {
+  readonly pages?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "analytics.AppStats" */
+export type Analytics_AppStats_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Analytics_AppStats_Insert_Input>;
+  readonly on_conflict?: Maybe<Analytics_AppStats_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_AppStats_Avg_Fields = {
+  readonly __typename?: 'analytics_AppStats_avg_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Avg_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "analytics.AppStats". All fields are combined with a logical 'AND'. */
+export type Analytics_AppStats_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Analytics_AppStats_Bool_Exp>>>;
+  readonly _not?: Maybe<Analytics_AppStats_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Analytics_AppStats_Bool_Exp>>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Int_Comparison_Exp>;
+  readonly pages?: Maybe<Jsonb_Comparison_Exp>;
+  readonly total_unique_tabs?: Maybe<Int_Comparison_Exp>;
+  readonly total_unique_user_ids?: Maybe<Int_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.AppStats" */
+export enum Analytics_AppStats_Constraint {
+  /** unique or primary key constraint */
+  AppStatsPkey = 'AppStats_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Analytics_AppStats_Delete_At_Path_Input = {
+  readonly pages?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Analytics_AppStats_Delete_Elem_Input = {
+  readonly pages?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Analytics_AppStats_Delete_Key_Input = {
+  readonly pages?: Maybe<Scalars['String']>;
+};
+
+/** input type for incrementing integer column in table "analytics.AppStats" */
+export type Analytics_AppStats_Inc_Input = {
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "analytics.AppStats" */
+export type Analytics_AppStats_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly pages?: Maybe<Scalars['jsonb']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Analytics_AppStats_Max_Fields = {
+  readonly __typename?: 'analytics_AppStats_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Analytics_AppStats_Min_Fields = {
+  readonly __typename?: 'analytics_AppStats_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.AppStats" */
+export type Analytics_AppStats_Mutation_Response = {
+  readonly __typename?: 'analytics_AppStats_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Analytics_AppStats>;
+};
+
+/** input type for inserting object relation for remote table "analytics.AppStats" */
+export type Analytics_AppStats_Obj_Rel_Insert_Input = {
+  readonly data: Analytics_AppStats_Insert_Input;
+  readonly on_conflict?: Maybe<Analytics_AppStats_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.AppStats" */
+export type Analytics_AppStats_On_Conflict = {
+  readonly constraint: Analytics_AppStats_Constraint;
+  readonly update_columns: ReadonlyArray<Analytics_AppStats_Update_Column>;
+  readonly where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "analytics.AppStats" */
+export type Analytics_AppStats_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly pages?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "analytics.AppStats" */
+export type Analytics_AppStats_Pk_Columns_Input = {
+  readonly id: Scalars['Int'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Analytics_AppStats_Prepend_Input = {
+  readonly pages?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "analytics.AppStats" */
+export enum Analytics_AppStats_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Pages = 'pages',
+  /** column name */
+  TotalUniqueTabs = 'total_unique_tabs',
+  /** column name */
+  TotalUniqueUserIds = 'total_unique_user_ids',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "analytics.AppStats" */
+export type Analytics_AppStats_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly pages?: Maybe<Scalars['jsonb']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_AppStats_Stddev_Fields = {
+  readonly __typename?: 'analytics_AppStats_stddev_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Stddev_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_AppStats_Stddev_Pop_Fields = {
+  readonly __typename?: 'analytics_AppStats_stddev_pop_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Stddev_Pop_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_AppStats_Stddev_Samp_Fields = {
+  readonly __typename?: 'analytics_AppStats_stddev_samp_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Stddev_Samp_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_AppStats_Sum_Fields = {
+  readonly __typename?: 'analytics_AppStats_sum_fields';
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Sum_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.AppStats" */
+export enum Analytics_AppStats_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Pages = 'pages',
+  /** column name */
+  TotalUniqueTabs = 'total_unique_tabs',
+  /** column name */
+  TotalUniqueUserIds = 'total_unique_user_ids',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_AppStats_Var_Pop_Fields = {
+  readonly __typename?: 'analytics_AppStats_var_pop_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Var_Pop_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_AppStats_Var_Samp_Fields = {
+  readonly __typename?: 'analytics_AppStats_var_samp_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Var_Samp_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_AppStats_Variance_Fields = {
+  readonly __typename?: 'analytics_AppStats_variance_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Variance_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
 
 
 /** expression to compare columns of type bigint. All fields are combined with logical 'AND'. */
@@ -21244,6 +21622,10 @@ export type Mutation_Root = {
   readonly delete_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
   /** delete single row from the table: "YouTubeUpload" */
   readonly delete_YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
+  /** delete data from the table: "analytics.AppStats" */
+  readonly delete_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
+  /** delete single row from the table: "analytics.AppStats" */
+  readonly delete_analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
   /** delete data from the table: "chat.Chat" */
   readonly delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -21550,6 +21932,10 @@ export type Mutation_Root = {
   readonly insert_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
   /** insert a single row into the table: "YouTubeUpload" */
   readonly insert_YouTubeUpload_one?: Maybe<YouTubeUpload>;
+  /** insert data into the table: "analytics.AppStats" */
+  readonly insert_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
+  /** insert a single row into the table: "analytics.AppStats" */
+  readonly insert_analytics_AppStats_one?: Maybe<Analytics_AppStats>;
   /** insert data into the table: "chat.Chat" */
   readonly insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -21650,6 +22036,8 @@ export type Mutation_Root = {
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
   /** perform the action: "joinRoomVonageSession" */
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+  /** perform the action: "presence_Flush" */
+  readonly presence_Flush: PresenceFlushOutput;
   /** perform the action: "refreshYouTubeData" */
   readonly refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
   /** perform the action: "stopEventBroadcast" */
@@ -21874,6 +22262,10 @@ export type Mutation_Root = {
   readonly update_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
   /** update single row of the table: "YouTubeUpload" */
   readonly update_YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
+  /** update data of the table: "analytics.AppStats" */
+  readonly update_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
+  /** update single row of the table: "analytics.AppStats" */
+  readonly update_analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
   /** update data of the table: "chat.Chat" */
   readonly update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -22610,6 +23002,18 @@ export type Mutation_RootDelete_YouTubeUploadArgs = {
 /** mutation root */
 export type Mutation_RootDelete_YouTubeUpload_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_AppStatsArgs = {
+  where: Analytics_AppStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_AppStats_By_PkArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -23626,6 +24030,20 @@ export type Mutation_RootInsert_YouTubeUploadArgs = {
 export type Mutation_RootInsert_YouTubeUpload_OneArgs = {
   object: YouTubeUpload_Insert_Input;
   on_conflict?: Maybe<YouTubeUpload_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_AppStatsArgs = {
+  objects: ReadonlyArray<Analytics_AppStats_Insert_Input>;
+  on_conflict?: Maybe<Analytics_AppStats_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_AppStats_OneArgs = {
+  object: Analytics_AppStats_Insert_Input;
+  on_conflict?: Maybe<Analytics_AppStats_On_Conflict>;
 };
 
 
@@ -24875,6 +25293,32 @@ export type Mutation_RootUpdate_YouTubeUpload_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Analytics_AppStatsArgs = {
+  _append?: Maybe<Analytics_AppStats_Append_Input>;
+  _delete_at_path?: Maybe<Analytics_AppStats_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Analytics_AppStats_Delete_Elem_Input>;
+  _delete_key?: Maybe<Analytics_AppStats_Delete_Key_Input>;
+  _inc?: Maybe<Analytics_AppStats_Inc_Input>;
+  _prepend?: Maybe<Analytics_AppStats_Prepend_Input>;
+  _set?: Maybe<Analytics_AppStats_Set_Input>;
+  where: Analytics_AppStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_AppStats_By_PkArgs = {
+  _append?: Maybe<Analytics_AppStats_Append_Input>;
+  _delete_at_path?: Maybe<Analytics_AppStats_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Analytics_AppStats_Delete_Elem_Input>;
+  _delete_key?: Maybe<Analytics_AppStats_Delete_Key_Input>;
+  _inc?: Maybe<Analytics_AppStats_Inc_Input>;
+  _prepend?: Maybe<Analytics_AppStats_Prepend_Input>;
+  _set?: Maybe<Analytics_AppStats_Set_Input>;
+  pk_columns: Analytics_AppStats_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Chat_ChatArgs = {
   _set?: Maybe<Chat_Chat_Set_Input>;
   where: Chat_Chat_Bool_Exp;
@@ -25595,6 +26039,12 @@ export type Query_Root = {
   readonly YouTubeUpload_aggregate: YouTubeUpload_Aggregate;
   /** fetch data from the table: "YouTubeUpload" using primary key columns */
   readonly YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
+  /** fetch data from the table: "analytics.AppStats" */
+  readonly analytics_AppStats: ReadonlyArray<Analytics_AppStats>;
+  /** fetch aggregated fields from the table: "analytics.AppStats" */
+  readonly analytics_AppStats_aggregate: Analytics_AppStats_Aggregate;
+  /** fetch data from the table: "analytics.AppStats" using primary key columns */
+  readonly analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -25717,6 +26167,8 @@ export type Query_Root = {
   readonly job_queues_UploadYouTubeVideoJob_aggregate: Job_Queues_UploadYouTubeVideoJob_Aggregate;
   /** fetch data from the table: "job_queues.UploadYouTubeVideoJob" using primary key columns */
   readonly job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** perform the action: "presence_Summary" */
+  readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
   /** fetch data from the table: "room.ShufflePeriod" */
@@ -27155,6 +27607,32 @@ export type Query_RootYouTubeUpload_AggregateArgs = {
 /** query root */
 export type Query_RootYouTubeUpload_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootAnalytics_AppStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_AppStats_Order_By>>;
+  where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_AppStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_AppStats_Order_By>>;
+  where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_AppStats_By_PkArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -29327,6 +29805,12 @@ export type Subscription_Root = {
   readonly YouTubeUpload_aggregate: YouTubeUpload_Aggregate;
   /** fetch data from the table: "YouTubeUpload" using primary key columns */
   readonly YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
+  /** fetch data from the table: "analytics.AppStats" */
+  readonly analytics_AppStats: ReadonlyArray<Analytics_AppStats>;
+  /** fetch aggregated fields from the table: "analytics.AppStats" */
+  readonly analytics_AppStats_aggregate: Analytics_AppStats_Aggregate;
+  /** fetch data from the table: "analytics.AppStats" using primary key columns */
+  readonly analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -29449,6 +29933,8 @@ export type Subscription_Root = {
   readonly job_queues_UploadYouTubeVideoJob_aggregate: Job_Queues_UploadYouTubeVideoJob_Aggregate;
   /** fetch data from the table: "job_queues.UploadYouTubeVideoJob" using primary key columns */
   readonly job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** perform the action: "presence_Summary" */
+  readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
   /** fetch data from the table: "room.ShufflePeriod" */
@@ -30887,6 +31373,32 @@ export type Subscription_RootYouTubeUpload_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootYouTubeUpload_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_AppStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_AppStats_Order_By>>;
+  where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_AppStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_AppStats_Order_By>>;
+  where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_AppStats_By_PkArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -33544,7 +34056,6 @@ export type GetShuffleRoomQuery = { readonly __typename?: 'query_root', readonly
 
 export type ShufflePeriodsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
-  start: Scalars['timestamptz'];
   end: Scalars['timestamptz'];
 }>;
 
@@ -41314,9 +41825,9 @@ export type GetShuffleRoomQueryHookResult = ReturnType<typeof useGetShuffleRoomQ
 export type GetShuffleRoomLazyQueryHookResult = ReturnType<typeof useGetShuffleRoomLazyQuery>;
 export type GetShuffleRoomQueryResult = Apollo.QueryResult<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>;
 export const ShufflePeriodsDocument = gql`
-    query ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
+    query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
   room_ShufflePeriod(
-    where: {conferenceId: {_eq: $conferenceId}, startAt: {_lte: $start}, endAt: {_gte: $end}}
+    where: {conferenceId: {_eq: $conferenceId}, endAt: {_gte: $end}}
   ) {
     ...ShufflePeriodData
   }
@@ -41336,7 +41847,6 @@ export const ShufflePeriodsDocument = gql`
  * const { data, loading, error } = useShufflePeriodsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
- *      start: // value for 'start'
  *      end: // value for 'end'
  *   },
  * });

@@ -172,9 +172,7 @@ export function RoomBackstage({
                                 it.
                             </Alert>
                         </Box>
-                    ) : (
-                        <></>
-                    )
+                    ) : undefined
                 )}
 
                 {sortedEvents.filter((x) => isEventNow(x) || isEventSoon(x) || selectedEventId === x.id).length ===

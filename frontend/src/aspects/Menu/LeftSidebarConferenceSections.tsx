@@ -160,7 +160,7 @@ export function LeftSidebarConferenceSections_Inner({
                     to={`/conference/${confSlug}/shuffle`}
                     width="100%"
                 >
-                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
+                    <FAIcon icon="random" iconStyle="s" mr={3} />
                     Shuffle
                 </LinkButton>
             </Flex>

@@ -388,13 +388,16 @@ export default function WaitingPage(): JSX.Element {
         periods.data?.room_ShufflePeriod,
     ]);
 
-    const ongoingQueues = useMemo(() => data?.filter((x) => Date.parse(x.startAt) <= now.getTime()), [data, now]);
+    const ongoingQueues = useMemo(() => data?.filter((x) => Date.parse(x.startAt) <= 5 * 60 * 1000 + now.getTime()), [
+        data,
+        now,
+    ]);
     const upcomingQueues = useMemo(
         () =>
             data
                 ? R.sortBy(
                       (x) => Date.parse(x.startAt),
-                      data.filter((x) => Date.parse(x.startAt) > now.getTime())
+                      data.filter((x) => Date.parse(x.startAt) > 5 * 60 * 1000 + now.getTime())
                   )
                 : undefined,
         [data, now]

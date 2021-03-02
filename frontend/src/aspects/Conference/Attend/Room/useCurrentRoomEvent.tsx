@@ -6,6 +6,7 @@ import usePolling from "../../../Generic/usePolling";
 interface Result {
     currentRoomEvent: Room_EventSummaryFragment | null;
     nextRoomEvent: Room_EventSummaryFragment | null;
+    nextNextRoomEvent: Room_EventSummaryFragment | null;
     withinThreeMinutesOfBroadcastEvent: boolean;
     secondsUntilBroadcastEvent: number;
     secondsUntilZoomEvent: number;
@@ -122,11 +123,20 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         setNextRoomEvent(futureEvents.length > 0 ? futureEvents[0] : null);
     }, [roomEvents]);
 
+    const [nextNextRoomEvent, setNextNextRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
+    const getNextNextEvent = useCallback(() => {
+        const now = new Date().getTime();
+        const sortedEvents = R.sortBy((event) => event.startTime, roomEvents);
+        const futureEvents = sortedEvents.filter((event) => Date.parse(event.startTime) > now);
+        setNextNextRoomEvent(futureEvents.length > 1 ? futureEvents[1] : null);
+    }, [roomEvents]);
+
     const infrequentUpdate = useCallback(() => {
         getWithinThreeMinutesOfEvent();
         getCurrentEvent();
         getNextEvent();
-    }, [getCurrentEvent, getNextEvent, getWithinThreeMinutesOfEvent]);
+        getNextNextEvent();
+    }, [getCurrentEvent, getNextEvent, getNextNextEvent, getWithinThreeMinutesOfEvent]);
     usePolling(infrequentUpdate, 10000, true);
 
     useEffect(() => {
@@ -140,12 +150,14 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
             currentRoomEvent,
             withinThreeMinutesOfBroadcastEvent,
             nextRoomEvent,
+            nextNextRoomEvent,
             secondsUntilBroadcastEvent,
             secondsUntilZoomEvent,
         }),
         [
             currentRoomEvent,
             nextRoomEvent,
+            nextNextRoomEvent,
             secondsUntilBroadcastEvent,
             secondsUntilZoomEvent,
             withinThreeMinutesOfBroadcastEvent,

@@ -82,7 +82,7 @@ export function RoomBackstage({
     const isEventSoon = useCallback(
         (event: Room_EventSummaryFragment): boolean => {
             const startTime = Date.parse(event.startTime);
-            return now >= startTime - 20 * 60 * 1000 && now <= startTime;
+            return now >= startTime - 25 * 60 * 1000 && now <= startTime;
         },
         [now]
     );

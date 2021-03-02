@@ -141,6 +141,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     const {
         currentRoomEvent,
         nextRoomEvent,
+        nextNextRoomEvent,
         withinThreeMinutesOfBroadcastEvent,
         secondsUntilBroadcastEvent,
         secondsUntilZoomEvent,
@@ -172,7 +173,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     useEffect(() => {
         async function fn() {
-            const eventIds = [currentRoomEvent?.id, nextRoomEvent?.id].filter(notEmpty);
+            const eventIds = [currentRoomEvent?.id, nextRoomEvent?.id, nextNextRoomEvent?.id].filter(notEmpty);
             try {
                 const { data } = await refetchCurrentEventsData({
                     currentEventIds: eventIds,
@@ -187,7 +188,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         }
         fn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentRoomEvent?.id, nextRoomEvent?.id]);
+    }, [currentRoomEvent?.id, nextRoomEvent?.id, nextNextRoomEvent?.id]);
 
     const [zoomNow, setZoomNow] = useState<number>(Date.now());
     const computeZoomNow = useCallback(() => setZoomNow(Date.now()), [setZoomNow]);
@@ -227,15 +228,18 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const currentAttendee = useCurrentAttendee();
 
-    const presentingCurrentOrNextEvent = useMemo(() => {
+    const presentingCurrentOrNextOrNextNextEvent = useMemo(() => {
         const isPresenterOfCurrentEvent =
             currentRoomEvent !== null &&
             currentRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
         const isPresenterOfNextEvent =
             nextRoomEvent !== null &&
             nextRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
-        return isPresenterOfCurrentEvent || isPresenterOfNextEvent;
-    }, [currentAttendee.id, currentRoomEvent, nextRoomEvent]);
+        const isPresenterOfNextNextEvent =
+            nextNextRoomEvent !== null &&
+            nextNextRoomEvent?.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
+        return isPresenterOfCurrentEvent || isPresenterOfNextEvent || isPresenterOfNextNextEvent;
+    }, [currentAttendee.id, currentRoomEvent, nextRoomEvent, nextNextRoomEvent]);
 
     const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);
 
@@ -253,7 +257,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     const showBackstage =
         hasBackstage &&
         notExplictlyWatchingCurrentOrNextEvent &&
-        (backStageRoomJoined || presentingCurrentOrNextEvent || alreadyBackstage.current);
+        (backStageRoomJoined || presentingCurrentOrNextOrNextNextEvent || alreadyBackstage.current);
     alreadyBackstage.current = showBackstage;
 
     useEffect(() => {

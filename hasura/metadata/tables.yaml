@@ -7623,6 +7623,10 @@
               _eq: X-Hasura-Conference-Slug
 - table:
     schema: room
+    name: ShuffleAlgorithm
+  is_enum: true
+- table:
+    schema: room
     name: ShufflePeriod
   object_relationships:
   - name: conference

@@ -4,7 +4,6 @@ import {
     AlertDescription,
     AlertIcon,
     AlertTitle,
-    Box,
     Divider,
     Flex,
     Heading,
@@ -115,7 +114,7 @@ export default function ManageConferenceShufflePage(): JSX.Element {
             {!shufflePeriodsQ.error ? (
                 shufflePeriodsQ.loading && !shufflePeriodsQ.data ? (
                     <Spinner label="Loading shuffle queues" />
-                ) : pastQueues?.length || ongoingQueues?.length || upcomingQueues?.length ? (
+                ) : (
                     <>
                         <CreateQueueModal />
                         {ongoingQueues?.length ? (
@@ -158,8 +157,6 @@ export default function ManageConferenceShufflePage(): JSX.Element {
                             </>
                         ) : undefined}
                     </>
-                ) : (
-                    <Box>No data</Box>
                 )
             ) : undefined}
         </RequireAtLeastOnePermissionWrapper>

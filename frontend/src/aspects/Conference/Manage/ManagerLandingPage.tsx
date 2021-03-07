@@ -131,6 +131,14 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="yellow"
                 />
                 <RestrictedDashboardButton
+                    to="shuffle"
+                    name="Shuffle"
+                    icon="random"
+                    description="Manage the shuffle queues happening at your conference."
+                    permissions={[Permission_Enum.ConferenceManageShuffle]}
+                    colorScheme="yellow"
+                />
+                <RestrictedDashboardButton
                     to="email"
                     name="Email"
                     icon="envelope-open-text"

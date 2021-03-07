@@ -86,6 +86,7 @@ gql`
                                                             { permissionName: CONFERENCE_MANAGE_GROUPS }
                                                             { permissionName: CONFERENCE_MANAGE_CONTENT }
                                                             { permissionName: CONFERENCE_MANAGE_SCHEDULE }
+                                                            { permissionName: CONFERENCE_MANAGE_SHUFFLE }
                                                         ]
                                                     }
                                                 }
@@ -190,6 +191,25 @@ gql`
                                                 { permissionName: CONFERENCE_VIEW }
                                             ]
                                         }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+                {
+                    conferenceId: $conferenceId
+                    enabled: false
+                    name: "Social Chairs"
+                    includeUnauthenticated: false
+                    groupRoles: {
+                        data: [
+                            {
+                                role: {
+                                    data: {
+                                        conferenceId: $conferenceId
+                                        name: "Social Chair"
+                                        rolePermissions: { data: [{ permissionName: CONFERENCE_MANAGE_SHUFFLE }] }
                                     }
                                 }
                             }

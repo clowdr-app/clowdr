@@ -10901,6 +10901,8 @@ export enum Permission_Enum {
   ConferenceManageRoles = 'CONFERENCE_MANAGE_ROLES',
   /** Manage Schedule tables. */
   ConferenceManageSchedule = 'CONFERENCE_MANAGE_SCHEDULE',
+  /** Manage shuffle periods. */
+  ConferenceManageShuffle = 'CONFERENCE_MANAGE_SHUFFLE',
   /** Moderate (update only) conference attendees. */
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
@@ -21700,6 +21702,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.UploadYouTubeVideoJob" */
   readonly delete_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** delete data from the table: "room.ShuffleAlgorithm" */
+  readonly delete_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
+  /** delete single row from the table: "room.ShuffleAlgorithm" */
+  readonly delete_room_ShuffleAlgorithm_by_pk?: Maybe<Room_ShuffleAlgorithm>;
   /** delete data from the table: "room.ShufflePeriod" */
   readonly delete_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** delete single row from the table: "room.ShufflePeriod" */
@@ -22012,6 +22018,10 @@ export type Mutation_Root = {
   readonly insert_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.UploadYouTubeVideoJob" */
   readonly insert_job_queues_UploadYouTubeVideoJob_one?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** insert data into the table: "room.ShuffleAlgorithm" */
+  readonly insert_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
+  /** insert a single row into the table: "room.ShuffleAlgorithm" */
+  readonly insert_room_ShuffleAlgorithm_one?: Maybe<Room_ShuffleAlgorithm>;
   /** insert data into the table: "room.ShufflePeriod" */
   readonly insert_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** insert a single row into the table: "room.ShufflePeriod" */
@@ -22340,6 +22350,10 @@ export type Mutation_Root = {
   readonly update_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** update single row of the table: "job_queues.UploadYouTubeVideoJob" */
   readonly update_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** update data of the table: "room.ShuffleAlgorithm" */
+  readonly update_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
+  /** update single row of the table: "room.ShuffleAlgorithm" */
+  readonly update_room_ShuffleAlgorithm_by_pk?: Maybe<Room_ShuffleAlgorithm>;
   /** update data of the table: "room.ShufflePeriod" */
   readonly update_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** update single row of the table: "room.ShufflePeriod" */
@@ -23240,6 +23254,18 @@ export type Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJobArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShuffleAlgorithmArgs = {
+  where: Room_ShuffleAlgorithm_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShuffleAlgorithm_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -24308,6 +24334,20 @@ export type Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJobArgs = {
 export type Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJob_OneArgs = {
   object: Job_Queues_UploadYouTubeVideoJob_Insert_Input;
   on_conflict?: Maybe<Job_Queues_UploadYouTubeVideoJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShuffleAlgorithmArgs = {
+  objects: ReadonlyArray<Room_ShuffleAlgorithm_Insert_Input>;
+  on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShuffleAlgorithm_OneArgs = {
+  object: Room_ShuffleAlgorithm_Insert_Input;
+  on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
 };
 
 
@@ -25648,6 +25688,20 @@ export type Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Room_ShuffleAlgorithmArgs = {
+  _set?: Maybe<Room_ShuffleAlgorithm_Set_Input>;
+  where: Room_ShuffleAlgorithm_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShuffleAlgorithm_By_PkArgs = {
+  _set?: Maybe<Room_ShuffleAlgorithm_Set_Input>;
+  pk_columns: Room_ShuffleAlgorithm_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Room_ShufflePeriodArgs = {
   _inc?: Maybe<Room_ShufflePeriod_Inc_Input>;
   _set?: Maybe<Room_ShufflePeriod_Set_Input>;
@@ -26171,6 +26225,12 @@ export type Query_Root = {
   readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
+  /** fetch data from the table: "room.ShuffleAlgorithm" */
+  readonly room_ShuffleAlgorithm: ReadonlyArray<Room_ShuffleAlgorithm>;
+  /** fetch aggregated fields from the table: "room.ShuffleAlgorithm" */
+  readonly room_ShuffleAlgorithm_aggregate: Room_ShuffleAlgorithm_Aggregate;
+  /** fetch data from the table: "room.ShuffleAlgorithm" using primary key columns */
+  readonly room_ShuffleAlgorithm_by_pk?: Maybe<Room_ShuffleAlgorithm>;
   /** fetch data from the table: "room.ShufflePeriod" */
   readonly room_ShufflePeriod: ReadonlyArray<Room_ShufflePeriod>;
   /** fetch aggregated fields from the table: "room.ShufflePeriod" */
@@ -28173,6 +28233,32 @@ export type Query_RootProtectedEchoArgs = {
 
 
 /** query root */
+export type Query_RootRoom_ShuffleAlgorithmArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Order_By>>;
+  where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleAlgorithm_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Order_By>>;
+  where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleAlgorithm_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootRoom_ShufflePeriodArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -28249,9 +28335,172 @@ export type Query_RootRoom_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
+/** columns and relationships of "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm = {
+  readonly __typename?: 'room_ShuffleAlgorithm';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Aggregate = {
+  readonly __typename?: 'room_ShuffleAlgorithm_aggregate';
+  readonly aggregate?: Maybe<Room_ShuffleAlgorithm_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_ShuffleAlgorithm>;
+};
+
+/** aggregate fields of "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Aggregate_Fields = {
+  readonly __typename?: 'room_ShuffleAlgorithm_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Room_ShuffleAlgorithm_Max_Fields>;
+  readonly min?: Maybe<Room_ShuffleAlgorithm_Min_Fields>;
+};
+
+
+/** aggregate fields of "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Room_ShuffleAlgorithm_Max_Order_By>;
+  readonly min?: Maybe<Room_ShuffleAlgorithm_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Room_ShuffleAlgorithm_Insert_Input>;
+  readonly on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "room.ShuffleAlgorithm". All fields are combined with a logical 'AND'. */
+export type Room_ShuffleAlgorithm_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Room_ShuffleAlgorithm_Bool_Exp>>>;
+  readonly _not?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Room_ShuffleAlgorithm_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.ShuffleAlgorithm" */
+export enum Room_ShuffleAlgorithm_Constraint {
+  /** unique or primary key constraint */
+  ShuffleAlgorithmPkey = 'ShuffleAlgorithm_pkey'
+}
+
+export enum Room_ShuffleAlgorithm_Enum {
+  /** First-come, first-served with auto-created rooms. */
+  Fcfs = 'fcfs',
+  /** First-come, first-served with a fixed set of (manually created) rooms. Limits max participants. */
+  FcfsFixedRooms = 'fcfs_fixed_rooms',
+  /** No automation. Rooms and allocations controlled manually. */
+  None = 'none'
+}
+
+/** expression to compare columns of type room_ShuffleAlgorithm_enum. All fields are combined with logical 'AND'. */
+export type Room_ShuffleAlgorithm_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<Room_ShuffleAlgorithm_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Room_ShuffleAlgorithm_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Enum>>;
+};
+
+/** input type for inserting data into table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Room_ShuffleAlgorithm_Max_Fields = {
+  readonly __typename?: 'room_ShuffleAlgorithm_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Room_ShuffleAlgorithm_Min_Fields = {
+  readonly __typename?: 'room_ShuffleAlgorithm_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Mutation_Response = {
+  readonly __typename?: 'room_ShuffleAlgorithm_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Room_ShuffleAlgorithm>;
+};
+
+/** input type for inserting object relation for remote table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Obj_Rel_Insert_Input = {
+  readonly data: Room_ShuffleAlgorithm_Insert_Input;
+  readonly on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
+};
+
+/** on conflict condition type for table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_On_Conflict = {
+  readonly constraint: Room_ShuffleAlgorithm_Constraint;
+  readonly update_columns: ReadonlyArray<Room_ShuffleAlgorithm_Update_Column>;
+  readonly where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "room.ShuffleAlgorithm" */
+export enum Room_ShuffleAlgorithm_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "room.ShuffleAlgorithm" */
+export enum Room_ShuffleAlgorithm_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 /** columns and relationships of "room.ShufflePeriod" */
 export type Room_ShufflePeriod = {
   readonly __typename?: 'room_ShufflePeriod';
+  readonly algorithm: Room_ShuffleAlgorithm_Enum;
   /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -28391,6 +28640,7 @@ export type Room_ShufflePeriod_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Room_ShufflePeriod_Bool_Exp>>>;
   readonly _not?: Maybe<Room_ShufflePeriod_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Room_ShufflePeriod_Bool_Exp>>>;
+  readonly algorithm?: Maybe<Room_ShuffleAlgorithm_Enum_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -28425,6 +28675,7 @@ export type Room_ShufflePeriod_Inc_Input = {
 
 /** input type for inserting data into table "room.ShufflePeriod" */
 export type Room_ShufflePeriod_Insert_Input = {
+  readonly algorithm?: Maybe<Room_ShuffleAlgorithm_Enum>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
@@ -28533,6 +28784,7 @@ export type Room_ShufflePeriod_On_Conflict = {
 
 /** ordering options when selecting data from "room.ShufflePeriod" */
 export type Room_ShufflePeriod_Order_By = {
+  readonly algorithm?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
@@ -28558,6 +28810,8 @@ export type Room_ShufflePeriod_Pk_Columns_Input = {
 
 /** select columns of table "room.ShufflePeriod" */
 export enum Room_ShufflePeriod_Select_Column {
+  /** column name */
+  Algorithm = 'algorithm',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -28586,6 +28840,7 @@ export enum Room_ShufflePeriod_Select_Column {
 
 /** input type for updating data in table "room.ShufflePeriod" */
 export type Room_ShufflePeriod_Set_Input = {
+  readonly algorithm?: Maybe<Room_ShuffleAlgorithm_Enum>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly endAt?: Maybe<Scalars['timestamptz']>;
@@ -28670,6 +28925,8 @@ export type Room_ShufflePeriod_Sum_Order_By = {
 
 /** update columns of table "room.ShufflePeriod" */
 export enum Room_ShufflePeriod_Update_Column {
+  /** column name */
+  Algorithm = 'algorithm',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -29937,6 +30194,12 @@ export type Subscription_Root = {
   readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
+  /** fetch data from the table: "room.ShuffleAlgorithm" */
+  readonly room_ShuffleAlgorithm: ReadonlyArray<Room_ShuffleAlgorithm>;
+  /** fetch aggregated fields from the table: "room.ShuffleAlgorithm" */
+  readonly room_ShuffleAlgorithm_aggregate: Room_ShuffleAlgorithm_Aggregate;
+  /** fetch data from the table: "room.ShuffleAlgorithm" using primary key columns */
+  readonly room_ShuffleAlgorithm_by_pk?: Maybe<Room_ShuffleAlgorithm>;
   /** fetch data from the table: "room.ShufflePeriod" */
   readonly room_ShufflePeriod: ReadonlyArray<Room_ShufflePeriod>;
   /** fetch aggregated fields from the table: "room.ShufflePeriod" */
@@ -31939,6 +32202,32 @@ export type Subscription_RootProtectedEchoArgs = {
 
 
 /** subscription root */
+export type Subscription_RootRoom_ShuffleAlgorithmArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Order_By>>;
+  where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleAlgorithm_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Order_By>>;
+  where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleAlgorithm_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootRoom_ShufflePeriodArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -33488,6 +33777,18 @@ export type DeleteEventInfosMutationVariables = Exact<{
 
 export type DeleteEventInfosMutation = { readonly __typename?: 'mutation_root', readonly delete_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any }> }> };
 
+export type ManageShufflePeriods_ShufflePeriodFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetAttendeesPerRoom: number, readonly maxAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum, readonly completedEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count?: Maybe<number> }> }, readonly ongoingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count?: Maybe<number> }> }, readonly waitingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count?: Maybe<number> }> } };
+
+export type ManageShufflePeriods_SelectAllQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageShufflePeriods_SelectAllQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<(
+    { readonly __typename?: 'room_ShufflePeriod' }
+    & ManageShufflePeriods_ShufflePeriodFragment
+  )> };
+
 export type SendEmail_GetAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -33665,6 +33966,28 @@ export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root',
     { readonly __typename?: 'EventPerson' }
     & EventPersonInfoFragment
   )> };
+
+export type UpdateShufflePeriodMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  object: Room_ShufflePeriod_Set_Input;
+}>;
+
+
+export type UpdateShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly update_room_ShufflePeriod_by_pk?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetAttendeesPerRoom: number, readonly maxAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum }> };
+
+export type InsertShufflePeriodMutationVariables = Exact<{
+  object: Room_ShufflePeriod_Insert_Input;
+}>;
+
+
+export type InsertShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShufflePeriod_one?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetAttendeesPerRoom: number, readonly maxAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum }> };
+
+export type DeleteShufflePeriodMutationVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type DeleteShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly delete_room_ShufflePeriod_by_pk?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any }> };
 
 export type AddSponsorContentMenu_CreateContentItemMutationVariables = Exact<{
   object: ContentItem_Insert_Input;
@@ -34893,6 +35216,44 @@ export const RoomPersonInfoFragmentDoc = gql`
     displayName
   }
   roomPersonRoleName
+}
+    `;
+export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
+    fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
+  id
+  created_at
+  updated_at
+  conferenceId
+  startAt
+  endAt
+  roomDurationMinutes
+  targetAttendeesPerRoom
+  maxAttendeesPerRoom
+  waitRoomMaxDurationSeconds
+  name
+  organiserId
+  algorithm
+  completedEntries: queueEntries_aggregate(
+    where: {shuffleRoom: {isEnded: {_eq: true}}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  ongoingEntries: queueEntries_aggregate(
+    where: {shuffleRoom: {isEnded: {_eq: false}}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  waitingEntries: queueEntries_aggregate(
+    where: {allocatedShuffleRoomId: {_is_null: true}}
+  ) {
+    aggregate {
+      count
+    }
+  }
 }
     `;
 export const RoomParticipantInfoFragmentDoc = gql`
@@ -39966,6 +40327,39 @@ export function useDeleteEventInfosMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteEventInfosMutationHookResult = ReturnType<typeof useDeleteEventInfosMutation>;
 export type DeleteEventInfosMutationResult = Apollo.MutationResult<DeleteEventInfosMutation>;
 export type DeleteEventInfosMutationOptions = Apollo.BaseMutationOptions<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>;
+export const ManageShufflePeriods_SelectAllDocument = gql`
+    query ManageShufflePeriods_SelectAll($conferenceId: uuid!) {
+  room_ShufflePeriod(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageShufflePeriods_ShufflePeriod
+  }
+}
+    ${ManageShufflePeriods_ShufflePeriodFragmentDoc}`;
+
+/**
+ * __useManageShufflePeriods_SelectAllQuery__
+ *
+ * To run a query within a React component, call `useManageShufflePeriods_SelectAllQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageShufflePeriods_SelectAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageShufflePeriods_SelectAllQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageShufflePeriods_SelectAllQuery(baseOptions: Apollo.QueryHookOptions<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>) {
+        return Apollo.useQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(ManageShufflePeriods_SelectAllDocument, baseOptions);
+      }
+export function useManageShufflePeriods_SelectAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>) {
+          return Apollo.useLazyQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(ManageShufflePeriods_SelectAllDocument, baseOptions);
+        }
+export type ManageShufflePeriods_SelectAllQueryHookResult = ReturnType<typeof useManageShufflePeriods_SelectAllQuery>;
+export type ManageShufflePeriods_SelectAllLazyQueryHookResult = ReturnType<typeof useManageShufflePeriods_SelectAllLazyQuery>;
+export type ManageShufflePeriods_SelectAllQueryResult = Apollo.QueryResult<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>;
 export const SendEmail_GetAllGroupsDocument = gql`
     query SendEmail_GetAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -40444,6 +40838,127 @@ export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
 export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
 export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
+export const UpdateShufflePeriodDocument = gql`
+    mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {
+  update_room_ShufflePeriod_by_pk(pk_columns: {id: $id}, _set: $object) {
+    id
+    created_at
+    updated_at
+    conferenceId
+    startAt
+    endAt
+    roomDurationMinutes
+    targetAttendeesPerRoom
+    maxAttendeesPerRoom
+    waitRoomMaxDurationSeconds
+    name
+    organiserId
+    algorithm
+  }
+}
+    `;
+export type UpdateShufflePeriodMutationFn = Apollo.MutationFunction<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>;
+
+/**
+ * __useUpdateShufflePeriodMutation__
+ *
+ * To run a mutation, you first call `useUpdateShufflePeriodMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateShufflePeriodMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateShufflePeriodMutation, { data, loading, error }] = useUpdateShufflePeriodMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useUpdateShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>) {
+        return Apollo.useMutation<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>(UpdateShufflePeriodDocument, baseOptions);
+      }
+export type UpdateShufflePeriodMutationHookResult = ReturnType<typeof useUpdateShufflePeriodMutation>;
+export type UpdateShufflePeriodMutationResult = Apollo.MutationResult<UpdateShufflePeriodMutation>;
+export type UpdateShufflePeriodMutationOptions = Apollo.BaseMutationOptions<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>;
+export const InsertShufflePeriodDocument = gql`
+    mutation InsertShufflePeriod($object: room_ShufflePeriod_insert_input!) {
+  insert_room_ShufflePeriod_one(object: $object) {
+    id
+    created_at
+    updated_at
+    conferenceId
+    startAt
+    endAt
+    roomDurationMinutes
+    targetAttendeesPerRoom
+    maxAttendeesPerRoom
+    waitRoomMaxDurationSeconds
+    name
+    organiserId
+    algorithm
+  }
+}
+    `;
+export type InsertShufflePeriodMutationFn = Apollo.MutationFunction<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>;
+
+/**
+ * __useInsertShufflePeriodMutation__
+ *
+ * To run a mutation, you first call `useInsertShufflePeriodMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertShufflePeriodMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertShufflePeriodMutation, { data, loading, error }] = useInsertShufflePeriodMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useInsertShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>) {
+        return Apollo.useMutation<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>(InsertShufflePeriodDocument, baseOptions);
+      }
+export type InsertShufflePeriodMutationHookResult = ReturnType<typeof useInsertShufflePeriodMutation>;
+export type InsertShufflePeriodMutationResult = Apollo.MutationResult<InsertShufflePeriodMutation>;
+export type InsertShufflePeriodMutationOptions = Apollo.BaseMutationOptions<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>;
+export const DeleteShufflePeriodDocument = gql`
+    mutation DeleteShufflePeriod($id: uuid!) {
+  delete_room_ShufflePeriod_by_pk(id: $id) {
+    id
+  }
+}
+    `;
+export type DeleteShufflePeriodMutationFn = Apollo.MutationFunction<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>;
+
+/**
+ * __useDeleteShufflePeriodMutation__
+ *
+ * To run a mutation, you first call `useDeleteShufflePeriodMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteShufflePeriodMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteShufflePeriodMutation, { data, loading, error }] = useDeleteShufflePeriodMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>) {
+        return Apollo.useMutation<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>(DeleteShufflePeriodDocument, baseOptions);
+      }
+export type DeleteShufflePeriodMutationHookResult = ReturnType<typeof useDeleteShufflePeriodMutation>;
+export type DeleteShufflePeriodMutationResult = Apollo.MutationResult<DeleteShufflePeriodMutation>;
+export type DeleteShufflePeriodMutationOptions = Apollo.BaseMutationOptions<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>;
 export const AddSponsorContentMenu_CreateContentItemDocument = gql`
     mutation AddSponsorContentMenu_CreateContentItem($object: ContentItem_insert_input!) {
   insert_ContentItem_one(object: $object) {
@@ -40833,12 +41348,12 @@ export type CreateConferenceMutationOptions = Apollo.BaseMutationOptions<CreateC
 export const CreateNewConferenceMetaStructureDocument = gql`
     mutation CreateNewConferenceMetaStructure($conferenceId: uuid!, $attendeeDisplayName: String!, $userId: String!, $abstractData: jsonb!, $contentGroupListData: jsonb!) {
   insert_Attendee(
-    objects: [{displayName: $attendeeDisplayName, userId: $userId, conferenceId: $conferenceId, groupAttendees: {data: {group: {data: {conferenceId: $conferenceId, includeUnauthenticated: false, name: "Organisers", groupRoles: {data: {role: {data: {conferenceId: $conferenceId, name: "Organiser", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_NAME}, {permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_MANAGE_ROLES}, {permissionName: CONFERENCE_MANAGE_GROUPS}, {permissionName: CONFERENCE_MANAGE_CONTENT}, {permissionName: CONFERENCE_MANAGE_SCHEDULE}]}}}}}}}}}}]
+    objects: [{displayName: $attendeeDisplayName, userId: $userId, conferenceId: $conferenceId, groupAttendees: {data: {group: {data: {conferenceId: $conferenceId, includeUnauthenticated: false, name: "Organisers", groupRoles: {data: {role: {data: {conferenceId: $conferenceId, name: "Organiser", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_NAME}, {permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_MANAGE_ROLES}, {permissionName: CONFERENCE_MANAGE_GROUPS}, {permissionName: CONFERENCE_MANAGE_CONTENT}, {permissionName: CONFERENCE_MANAGE_SCHEDULE}, {permissionName: CONFERENCE_MANAGE_SHUFFLE}]}}}}}}}}}}]
   ) {
     affected_rows
   }
   insert_Group(
-    objects: [{conferenceId: $conferenceId, enabled: false, name: "Attendees", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Attendee", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Public", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Public", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Registrars", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Registrar", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Moderators", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Moderator", rolePermissions: {data: [{permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}]}}}}]}}]
+    objects: [{conferenceId: $conferenceId, enabled: false, name: "Attendees", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Attendee", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Public", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Public", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Registrars", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Registrar", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Moderators", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Moderator", rolePermissions: {data: [{permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Social Chairs", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Social Chair", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_SHUFFLE}]}}}}]}}]
   ) {
     returning {
       id

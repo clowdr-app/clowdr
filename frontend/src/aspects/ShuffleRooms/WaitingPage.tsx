@@ -30,6 +30,7 @@ import useCurrentAttendee from "../Conference/useCurrentAttendee";
 import { useRealTime } from "../Generic/useRealTime";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../Utils/useTitle";
 
 gql`
     fragment ShufflePeriodData on room_ShufflePeriod {
@@ -369,6 +370,7 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
 
 export default function WaitingPage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle("Shuffle queues");
 
     const now = useMemo(() => new Date(), []);
     const vars = useMemo(
@@ -405,19 +407,24 @@ export default function WaitingPage(): JSX.Element {
 
     useNoPrimaryMenuButtons();
 
-    return periods.loading && !periods.data ? (
-        <Spinner label="Loading shuffle room times" />
-    ) : (
-        <Grid maxW="800px" gap={4}>
-            {ongoingQueues?.map((period) => (
-                <ShufflePeriodBox key={period.id} period={period} />
-            ))}
-            {!ongoingQueues?.length ? (
-                <GridItem>No active shuffle spaces at the moment, please come back later.</GridItem>
-            ) : undefined}
-            {upcomingQueues && upcomingQueues.length > 0 ? (
-                <ShufflePeriodBox key={upcomingQueues[0].id} period={upcomingQueues[0]} />
-            ) : undefined}
-        </Grid>
+    return (
+        <>
+            {title}
+            {periods.loading && !periods.data ? (
+                <Spinner label="Loading shuffle room times" />
+            ) : (
+                <Grid maxW="800px" gap={4}>
+                    {ongoingQueues?.map((period) => (
+                        <ShufflePeriodBox key={period.id} period={period} />
+                    ))}
+                    {!ongoingQueues?.length ? (
+                        <GridItem>No active shuffle spaces at the moment, please come back later.</GridItem>
+                    ) : undefined}
+                    {upcomingQueues && upcomingQueues.length > 0 ? (
+                        <ShufflePeriodBox key={upcomingQueues[0].id} period={upcomingQueues[0]} />
+                    ) : undefined}
+                </Grid>
+            )}
+        </>
     );
 }

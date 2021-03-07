@@ -7658,9 +7658,6 @@
         - conference:
             slug:
               _eq: X-Hasura-Conference-Slug
-        - organiser:
-            userId:
-              _eq: X-Hasura-User-Id
         - _exists:
             _where:
               _and:
@@ -7669,20 +7666,21 @@
               - slug:
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
-                  _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  _eq: CONFERENCE_MANAGE_SHUFFLE
             _table:
               schema: public
               name: FlatUserPermission
-      set:
-        organiserId: x-hasura-User-Id
+        - organiser:
+            userId:
+              _eq: X-Hasura-User-Id
       columns:
+      - algorithm
+      - conferenceId
       - endAt
       - id
       - maxAttendeesPerRoom
       - name
+      - organiserId
       - roomDurationMinutes
       - startAt
       - targetAttendeesPerRoom
@@ -7696,6 +7694,7 @@
       - roomDurationMinutes
       - targetAttendeesPerRoom
       - waitRoomMaxDurationSeconds
+      - algorithm
       - name
       - created_at
       - endAt
@@ -7718,9 +7717,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
                   - CONFERENCE_VIEW_ATTENDEES
             _table:
               schema: public
@@ -7729,14 +7726,13 @@
   - role: user
     permission:
       columns:
-      - created_at
+      - algorithm
       - endAt
       - maxAttendeesPerRoom
       - name
       - roomDurationMinutes
       - startAt
       - targetAttendeesPerRoom
-      - updated_at
       - waitRoomMaxDurationSeconds
       filter:
         _and:
@@ -7752,9 +7748,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
             _table:
               schema: public
               name: FlatUserPermission
@@ -7776,9 +7770,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
             _table:
               schema: public
               name: FlatUserPermission
@@ -7813,9 +7805,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
                   - CONFERENCE_VIEW_ATTENDEES
             _table:
               schema: public
@@ -7854,9 +7844,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
                   - CONFERENCE_VIEW_ATTENDEES
             _table:
               schema: public
@@ -7897,9 +7885,7 @@
                     _eq: X-Hasura-Conference-Slug
                 - permission_name:
                     _in:
-                    - CONFERENCE_MANAGE_SCHEDULE
-                    - CONFERENCE_MANAGE_ATTENDEES
-                    - CONFERENCE_MODERATE_ATTENDEES
+                    - CONFERENCE_MANAGE_SHUFFLE
               _table:
                 schema: public
                 name: FlatUserPermission
@@ -7963,9 +7949,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
                   - CONFERENCE_VIEW_ATTENDEES
             _table:
               schema: public

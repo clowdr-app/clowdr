@@ -26,6 +26,7 @@ import ManageConferencePeoplePage from "./Manage/ManageConferencePeoplePage";
 import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
 import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
 import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";
+import ManageConferenceShufflePage from "./Manage/ManageConferenceShufflePage";
 import { ManageConferenceSponsorsPage } from "./Manage/ManageConferenceSponsorsPage";
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
@@ -68,6 +69,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                         Permission_Enum.ConferenceManageName,
                         Permission_Enum.ConferenceManageRoles,
                         Permission_Enum.ConferenceManageSchedule,
+                        Permission_Enum.ConferenceManageShuffle,
                         Permission_Enum.ConferenceModerateAttendees,
                     ]}
                     componentIfDenied={<PageNotFound />}
@@ -98,6 +100,9 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             />
             <Route path={`${rootUrl}/manage/rooms`}>
                 <ManageConferenceRoomsPage />
+            </Route>
+            <Route path={`${rootUrl}/manage/shuffle`}>
+                <ManageConferenceShufflePage />
             </Route>
             <Route path={`${rootUrl}/manage/broadcasts`}>
                 <ManageConferenceBroadcastPage />

@@ -113,7 +113,7 @@ export default function ManageConferenceShufflePage(): JSX.Element {
                 </Alert>
             ) : undefined}
             {!shufflePeriodsQ.error ? (
-                !(pastQueues?.length || ongoingQueues?.length || upcomingQueues?.length) ? (
+                shufflePeriodsQ.loading && !shufflePeriodsQ.data ? (
                     <Spinner label="Loading shuffle queues" />
                 ) : pastQueues?.length || ongoingQueues?.length || upcomingQueues?.length ? (
                     <>

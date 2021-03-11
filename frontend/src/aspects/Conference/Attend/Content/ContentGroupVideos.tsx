@@ -2,8 +2,9 @@ import { Box, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
 import { assertIsContentItemDataBlob, VideoContentBlob } from "@clowdr-app/shared-types/build/content";
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
 import AmazonS3URI from "amazon-s3-uri";
+import type Hls from "hls.js";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useAsync } from "react-async-hook";
 import ReactPlayer, { Config } from "react-player";
 import type { TrackProps } from "react-player/file";
@@ -143,7 +144,7 @@ export function ContentGroupVideo({
         }
     }, [videoContentItemData.subtitles["en_US"]]);
 
-    const subtitlesConfig = useMemo<Config | null>(() => {
+    const config = useMemo<Config | null>(() => {
         if (loading) {
             return null;
         }
@@ -160,27 +161,44 @@ export function ContentGroupVideo({
         return {
             file: {
                 tracks: [track],
+                hlsVersion: "1.0.0-rc.4",
+                hlsOptions: {
+                    subtitleDisplay: false,
+                    maxBufferLength: 0.05,
+                    maxBufferSize: 500,
+                },
             },
         };
     }, [error, loading, subtitlesUrl]);
 
+    const playerRef = useRef<ReactPlayer | null>(null);
     const player = useMemo(() => {
         // Only render the player once both the video URL and the subtitles config are available
         // react-player memoizes internally and only re-renders if the url or key props change.
-        return !previewTranscodeUrl || !subtitlesConfig ? undefined : (
+        return !previewTranscodeUrl || !config ? undefined : (
             <ReactPlayer
                 url={previewTranscodeUrl}
                 controls={true}
                 width="100%"
                 height="auto"
                 maxHeight="100%"
-                onPlay={onPlay}
+                onPlay={() => {
+                    if (onPlay) {
+                        onPlay();
+                    }
+                    const hlsPlayer = playerRef.current?.getInternalPlayer("hls") as Hls;
+                    if (hlsPlayer) {
+                        hlsPlayer.config.maxBufferLength = 30;
+                        hlsPlayer.config.maxBufferSize = 60 * 1000 * 1000;
+                    }
+                }}
                 onPause={onPause}
-                config={subtitlesConfig}
+                config={{ ...config }}
+                ref={playerRef}
                 style={{ borderRadius: "10px", overflow: "hidden" }}
             />
         );
-    }, [onPause, onPlay, previewTranscodeUrl, subtitlesConfig]);
+    }, [onPause, onPlay, previewTranscodeUrl, config]);
 
     return (
         <>
@@ -191,7 +209,7 @@ export function ContentGroupVideo({
                     ? "Presentation"
                     : title}
             </Heading>
-            {videoContentItemData.s3Url && (!previewTranscodeUrl || !subtitlesConfig) ? (
+            {videoContentItemData.s3Url && (!previewTranscodeUrl || !config) ? (
                 <>
                     <Spinner />
                     <Text mb={2}>Video is still being processed.</Text>

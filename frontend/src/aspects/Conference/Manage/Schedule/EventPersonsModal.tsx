@@ -4,7 +4,6 @@ import {
     Button,
     Center,
     FormLabel,
-    HStack,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -155,22 +154,20 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                 }: CellProps<Partial<EventPersonInfoFragment>, ContentPersonInfoFragment | undefined>) {
                     if (isInCreate) {
                         return (
-                            <HStack>
-                                <Select
-                                    value={value?.id ?? ""}
-                                    onChange={(ev) => onChange?.(contentPeople.find((x) => x.id === ev.target.value))}
-                                    onBlur={onBlur}
-                                >
-                                    <option value="">Select a person</option>
-                                    {options}
-                                </Select>
-                            </HStack>
+                            <Select
+                                value={value?.id ?? ""}
+                                onChange={(ev) => onChange?.(contentPeople.find((x) => x.id === ev.target.value))}
+                                onBlur={onBlur}
+                            >
+                                <option value="">Select a person</option>
+                                {options}
+                            </Select>
                         );
                     } else {
                         return (
                             <>
                                 {value
-                                    ? `${value.name} ${value.affiliation ? `(${value.affiliation})` : ""}`
+                                    ? `${value.name}${value.affiliation ? ` (${value.affiliation})` : ""}`
                                     : "Person not found"}
                             </>
                         );

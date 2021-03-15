@@ -141,7 +141,7 @@ const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "
 
 export default function ManageConferencePeoplePage(): JSX.Element {
     const conference = useConference();
-    const title = useTitle(`Manage people at ${conference.shortName}`);
+    const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
     useDashboardPrimaryMenuButtons();
 
@@ -370,7 +370,7 @@ export default function ManageConferencePeoplePage(): JSX.Element {
                 Manage {conference.shortName}
             </Heading>
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                People
+                Registrants
             </Heading>
             {(loadingAllGroups && !allGroups) || (loadingAllAttendees && !allAttendeesMap) ? (
                 <Spinner />

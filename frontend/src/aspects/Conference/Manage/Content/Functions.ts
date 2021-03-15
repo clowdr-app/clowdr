@@ -39,6 +39,7 @@ export function convertContentToDescriptors(
                     affiliation: person.affiliation,
                     email: person.email,
                     originatingDataId: person.originatingDataId,
+                    attendeeId: person.attendeeId,
                 },
             ])
         ),

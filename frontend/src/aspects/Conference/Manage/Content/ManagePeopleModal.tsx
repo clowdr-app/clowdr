@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -10,11 +11,15 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Select,
 } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type { ContentPersonInfoFragment } from "../../../../generated/graphql";
+import {
+    ManageContentPeople_AttendeeFragment,
+    useManageContentPeople_SelectAllAttendeesQuery,
+} from "../../../../generated/graphql";
 import { TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
@@ -24,10 +29,32 @@ import CRUDTable, {
     SortDirection,
 } from "../../../CRUDTable2/CRUDTable2";
 import { maybeCompare } from "../../../Utils/maybeSort";
+import { useConference } from "../../useConference";
 import type { ContentPersonDescriptor } from "./Types";
 
 // TODO: Handle duplicate email addresses (edit/create)
 // TODO: Handle duplicate name+affiliation (edit/create)
+
+gql`
+    fragment ManageContentPeople_Attendee on Attendee {
+        id
+        displayName
+        user {
+            id
+            email
+        }
+        profile {
+            attendeeId
+            affiliation
+        }
+    }
+
+    query ManageContentPeople_SelectAllAttendees($conferenceId: uuid!) {
+        Attendee(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ManageContentPeople_Attendee
+        }
+    }
+`;
 
 interface Props {
     isOpen: boolean;
@@ -47,20 +74,28 @@ export default function ManagePersonsModal({
     updatePerson,
     deletePerson,
 }: Props): JSX.Element {
-    // const conference = useConference();
+    const conference = useConference();
 
-    // TODO: Attendee options
-    // const options = useMemo(() => {
-    //     return [...contentPeople]
-    //         .sort((x, y) => x.name.localeCompare(y.name))
-    //         .map((person) => (
-    //             <option key={person.id} value={person.id}>
-    //                 {person.name}
-    //             </option>
-    //         ));
-    // }, [contentPeople]);
+    const { data: attendeesData } = useManageContentPeople_SelectAllAttendeesQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
 
-    const row: RowSpecification<ContentPersonInfoFragment> = useMemo(
+    const attendees = useMemo(() => (attendeesData ? [...attendeesData.Attendee] : []), [attendeesData]);
+    const attendeeOptions = useMemo(() => {
+        return attendees
+            .sort((x, y) => x.displayName.localeCompare(y.displayName))
+            .map((person) => (
+                <option key={person.id} value={person.id}>
+                    {person.displayName}
+                    {person.profile?.affiliation ? ` (${person.profile.affiliation})` : ""}
+                    {person.user?.email ? ` <${person.user.email}>` : ""}
+                </option>
+            ));
+    }, [attendees]);
+
+    const row: RowSpecification<ContentPersonDescriptor> = useMemo(
         () => ({
             getKey: (record) => record.id,
             canSelect: (_record) => true,
@@ -71,12 +106,12 @@ export default function ManagePersonsModal({
         []
     );
 
-    const columns: ColumnSpecification<ContentPersonInfoFragment>[] = useMemo(
+    const columns: ColumnSpecification<ContentPersonDescriptor>[] = useMemo(
         () => [
             {
                 id: "name",
                 defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader(props: ColumnHeaderProps<ContentPersonInfoFragment>) {
+                header: function NameHeader(props: ColumnHeaderProps<ContentPersonDescriptor>) {
                     return props.isInCreate ? (
                         <FormLabel>Name</FormLabel>
                     ) : (
@@ -89,14 +124,14 @@ export default function ManagePersonsModal({
                 set: (record, value: string | undefined) => {
                     record.name = value;
                 },
-                filterFn: (rows: Array<ContentPersonInfoFragment>, filterValue: string) => {
+                filterFn: (rows: Array<ContentPersonDescriptor>, filterValue: string) => {
                     return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
                 },
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
                 cell: function ContentPersonCell(
-                    props: CellProps<Partial<ContentPersonInfoFragment>, string | undefined>
+                    props: CellProps<Partial<ContentPersonDescriptor>, string | undefined>
                 ) {
                     return (
                         <Input
@@ -113,7 +148,7 @@ export default function ManagePersonsModal({
             {
                 id: "affiliation",
                 defaultSortDirection: SortDirection.Asc,
-                header: function AffiliationHeader(props: ColumnHeaderProps<ContentPersonInfoFragment>) {
+                header: function AffiliationHeader(props: ColumnHeaderProps<ContentPersonDescriptor>) {
                     return props.isInCreate ? (
                         <FormLabel>Affiliation</FormLabel>
                     ) : (
@@ -126,7 +161,7 @@ export default function ManagePersonsModal({
                 set: (record, value: string | undefined) => {
                     record.affiliation = value;
                 },
-                filterFn: (rows: Array<ContentPersonInfoFragment>, filterValue: string) => {
+                filterFn: (rows: Array<ContentPersonDescriptor>, filterValue: string) => {
                     return rows.filter((row) =>
                         row.affiliation
                             ? row.affiliation.toLowerCase().includes(filterValue.toLowerCase())
@@ -137,7 +172,7 @@ export default function ManagePersonsModal({
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
                 cell: function ContentPersonCell(
-                    props: CellProps<Partial<ContentPersonInfoFragment>, string | undefined>
+                    props: CellProps<Partial<ContentPersonDescriptor>, string | undefined>
                 ) {
                     return (
                         <Input
@@ -153,7 +188,7 @@ export default function ManagePersonsModal({
             },
             {
                 id: "email",
-                header: function AffiliationHeader(props: ColumnHeaderProps<ContentPersonInfoFragment>) {
+                header: function AffiliationHeader(props: ColumnHeaderProps<ContentPersonDescriptor>) {
                     return props.isInCreate ? (
                         <FormLabel>Email</FormLabel>
                     ) : (
@@ -166,7 +201,7 @@ export default function ManagePersonsModal({
                 set: (record, value: string | undefined) => {
                     record.email = value;
                 },
-                filterFn: (rows: Array<ContentPersonInfoFragment>, filterValue: string) => {
+                filterFn: (rows: Array<ContentPersonDescriptor>, filterValue: string) => {
                     return rows.filter((row) =>
                         row.email ? row.email.toLowerCase().includes(filterValue.toLowerCase()) : filterValue === ""
                     );
@@ -175,7 +210,7 @@ export default function ManagePersonsModal({
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
                 cell: function ContentPersonCell(
-                    props: CellProps<Partial<ContentPersonInfoFragment>, string | undefined>
+                    props: CellProps<Partial<ContentPersonDescriptor>, string | undefined>
                 ) {
                     return (
                         <Input
@@ -189,62 +224,52 @@ export default function ManagePersonsModal({
                     );
                 },
             },
-            // {
-            //     id: "Attendee",
-            //     header: function AttendeeHeader(props: ColumnHeaderProps<ContentPersonInfoFragment>) {
-            //         return props.isInCreate ? (
-            //             <FormLabel>Attendee</FormLabel>
-            //         ) : (
-            //             <Button size="xs" onClick={props.onClick}>
-            //                 Attendee{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
-            //             </Button>
-            //         );
-            //     },
-            //     get: (data) => contentPeople.find((x) => x.id === data.personId),
-            //     set: (record, value: ContentPersonInfoFragment | undefined) => {
-            //         record.personId = value?.id;
-            //     },
-            //     sort: (x: ContentPersonInfoFragment | undefined, y: ContentPersonInfoFragment | undefined) =>
-            //         x && y
-            //             ? x.name.localeCompare(y.name) ||
-            //               maybeCompare(x.affiliation, y.affiliation, (a, b) => a.localeCompare(b))
-            //             : x
-            //             ? 1
-            //             : y
-            //             ? -1
-            //             : 0,
-            //     cell: function ContentPersonCell({
-            //         isInCreate,
-            //         value,
-            //         onChange,
-            //         onBlur,
-            //     }: CellProps<Partial<EventPersonInfoFragment>, ContentPersonInfoFragment | undefined>) {
-            //         if (isInCreate) {
-            //             return (
-            //                 <HStack>
-            //                     <Select
-            //                         value={value?.id ?? ""}
-            //                         onChange={(ev) => onChange?.(contentPeople.find((x) => x.id === ev.target.value))}
-            //                         onBlur={onBlur}
-            //                     >
-            //                         <option value="">Select a person</option>
-            //                         {options}
-            //                     </Select>
-            //                 </HStack>
-            //             );
-            //         } else {
-            //             return (
-            //                 <>
-            //                     {value
-            //                         ? `${value.name} ${value.affiliation ? `(${value.affiliation})` : ""}`
-            //                         : "Person not found"}
-            //                 </>
-            //             );
-            //         }
-            //     },
-            // },
+            {
+                id: "Registrant",
+                header: function RegistrantHeader(props: ColumnHeaderProps<ContentPersonDescriptor>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Registrant</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Registrant{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => attendees.find((x) => x.id === data.attendeeId),
+                set: (record, value: ManageContentPeople_AttendeeFragment | undefined) => {
+                    record.attendeeId = value?.id;
+                },
+                sort: (
+                    x: ManageContentPeople_AttendeeFragment | undefined,
+                    y: ManageContentPeople_AttendeeFragment | undefined
+                ) =>
+                    x && y
+                        ? x.displayName.localeCompare(y.displayName) ||
+                          maybeCompare(x.profile?.affiliation, y.profile?.affiliation, (a, b) => a.localeCompare(b))
+                        : x
+                        ? 1
+                        : y
+                        ? -1
+                        : 0,
+                cell: function ContentPersonCell({
+                    value,
+                    onChange,
+                    onBlur,
+                }: CellProps<Partial<ContentPersonDescriptor>, ManageContentPeople_AttendeeFragment | undefined>) {
+                    return (
+                        <Select
+                            value={value?.id ?? ""}
+                            onChange={(ev) => onChange?.(attendees.find((x) => x.id === ev.target.value))}
+                            onBlur={onBlur}
+                        >
+                            <option value="">Select a registrant</option>
+                            {attendeeOptions}
+                        </Select>
+                    );
+                },
+            },
         ],
-        []
+        [attendeeOptions, attendees]
     );
 
     const data = useMemo(() => [...persons.values()], [persons]);
@@ -269,7 +294,7 @@ export default function ManagePersonsModal({
                                         id: uuidv4(),
                                     }),
                                     makeWhole: (d) =>
-                                        d.name && d.affiliation ? (d as ContentPersonInfoFragment) : undefined,
+                                        d.name && d.affiliation ? (d as ContentPersonDescriptor) : undefined,
                                     start: (record) => {
                                         assert(record.name);
                                         assert(record.affiliation);

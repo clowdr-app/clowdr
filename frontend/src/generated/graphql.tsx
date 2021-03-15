@@ -32972,6 +32972,18 @@ export type ContentGroup_CreateRoomMutationVariables = Exact<{
 
 export type ContentGroup_CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly createContentGroupRoom?: Maybe<{ readonly __typename?: 'CreateContentGroupRoomOutput', readonly roomId?: Maybe<string>, readonly message?: Maybe<string> }> };
 
+export type ManageContentPeople_AttendeeFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly user?: Maybe<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string> }>, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }> };
+
+export type ManageContentPeople_SelectAllAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContentPeople_SelectAllAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & ManageContentPeople_AttendeeFragment
+  )> };
+
 export type SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -33002,7 +33014,7 @@ export type ContentItemInfoFragment = { readonly __typename?: 'ContentItem', rea
 
 export type OriginatingDataInfoFragment = { readonly __typename?: 'OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> };
 
-export type ContentPersonInfoFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any> };
+export type ContentPersonInfoFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly attendeeId?: Maybe<any> };
 
 export type ContentGroupTagInfoFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tagId: any, readonly contentGroupId: any };
 
@@ -33250,6 +33262,7 @@ export type UpdatePersonMutationVariables = Exact<{
   affiliation?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
+  attendeeId?: Maybe<Scalars['uuid']>;
 }>;
 
 
@@ -34856,6 +34869,20 @@ export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
   value
 }
     `;
+export const ManageContentPeople_AttendeeFragmentDoc = gql`
+    fragment ManageContentPeople_Attendee on Attendee {
+  id
+  displayName
+  user {
+    id
+    email
+  }
+  profile {
+    attendeeId
+    affiliation
+  }
+}
+    `;
 export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
     fragment SubmissionRequestsModal_ConferenceConfiguration on ConferenceConfiguration {
   id
@@ -34872,6 +34899,7 @@ export const ContentPersonInfoFragmentDoc = gql`
   affiliation
   email
   originatingDataId
+  attendeeId
 }
     `;
 export const UploaderInfoFragmentDoc = gql`
@@ -37871,6 +37899,39 @@ export function useContentGroup_CreateRoomMutation(baseOptions?: Apollo.Mutation
 export type ContentGroup_CreateRoomMutationHookResult = ReturnType<typeof useContentGroup_CreateRoomMutation>;
 export type ContentGroup_CreateRoomMutationResult = Apollo.MutationResult<ContentGroup_CreateRoomMutation>;
 export type ContentGroup_CreateRoomMutationOptions = Apollo.BaseMutationOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
+export const ManageContentPeople_SelectAllAttendeesDocument = gql`
+    query ManageContentPeople_SelectAllAttendees($conferenceId: uuid!) {
+  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContentPeople_Attendee
+  }
+}
+    ${ManageContentPeople_AttendeeFragmentDoc}`;
+
+/**
+ * __useManageContentPeople_SelectAllAttendeesQuery__
+ *
+ * To run a query within a React component, call `useManageContentPeople_SelectAllAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContentPeople_SelectAllAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContentPeople_SelectAllAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContentPeople_SelectAllAttendeesQuery(baseOptions: Apollo.QueryHookOptions<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>) {
+        return Apollo.useQuery<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>(ManageContentPeople_SelectAllAttendeesDocument, baseOptions);
+      }
+export function useManageContentPeople_SelectAllAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>(ManageContentPeople_SelectAllAttendeesDocument, baseOptions);
+        }
+export type ManageContentPeople_SelectAllAttendeesQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllAttendeesQuery>;
+export type ManageContentPeople_SelectAllAttendeesLazyQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllAttendeesLazyQuery>;
+export type ManageContentPeople_SelectAllAttendeesQueryResult = Apollo.QueryResult<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>;
 export const SubmissionRequestsModal_GetConferenceConfigurationsDocument = gql`
     query SubmissionRequestsModal_GetConferenceConfigurations($conferenceId: uuid!) {
   ConferenceConfiguration(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -38607,10 +38668,10 @@ export type UpdateGroupHallwayMutationHookResult = ReturnType<typeof useUpdateGr
 export type UpdateGroupHallwayMutationResult = Apollo.MutationResult<UpdateGroupHallwayMutation>;
 export type UpdateGroupHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateGroupHallwayMutation, UpdateGroupHallwayMutationVariables>;
 export const UpdatePersonDocument = gql`
-    mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String = null, $email: String = null, $originatingDataId: uuid = null) {
+    mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String = null, $email: String = null, $originatingDataId: uuid = null, $attendeeId: uuid = null) {
   update_ContentPerson_by_pk(
     pk_columns: {id: $id}
-    _set: {name: $name, affiliation: $affiliation, email: $email, originatingDataId: $originatingDataId}
+    _set: {name: $name, affiliation: $affiliation, email: $email, originatingDataId: $originatingDataId, attendeeId: $attendeeId}
   ) {
     ...ContentPersonInfo
   }
@@ -38636,6 +38697,7 @@ export type UpdatePersonMutationFn = Apollo.MutationFunction<UpdatePersonMutatio
  *      affiliation: // value for 'affiliation'
  *      email: // value for 'email'
  *      originatingDataId: // value for 'originatingDataId'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */

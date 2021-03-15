@@ -1394,7 +1394,7 @@ export default function CRUDTable<T>({
                 }}
                 dependentData={dependentData}
             />
-            <Flex justifyContent="center" alignItems="center" gridGap={2} flexDir="row" flexWrap="wrap">
+            <Flex justifyContent="center" alignItems="center" gridGap={2} flexDir="row" flexWrap="wrap" mb="4px">
                 <ButtonGroup>
                     <Button onClick={() => goToPage(0)} disabled={!canPreviousPage}>
                         {"<<"}

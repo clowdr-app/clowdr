@@ -28,7 +28,6 @@ export type EventDescriptor = {
     durationSeconds: number;
     endTime?: string | null;
 
-    people: EventPersonDescriptor[];
     tagIds: Set<string>;
 };
 

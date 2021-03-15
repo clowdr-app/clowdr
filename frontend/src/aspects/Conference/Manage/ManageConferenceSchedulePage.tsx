@@ -33,8 +33,8 @@ import { DateTime } from "luxon";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    AttendeeInfoFragment,
     ContentGroupFullNestedInfoFragment,
+    ContentPersonInfoFragment,
     EventInfoFragment,
     EventInfoFragmentDoc,
     Permission_Enum,
@@ -926,7 +926,7 @@ function EditableScheduleTable(): JSX.Element {
             />
             <EventSecondaryEditor
                 yellowC={yellow}
-                attendees={wholeSchedule.data?.Attendee ?? []}
+                contentPeople={wholeSchedule.data?.ContentPerson ?? []}
                 events={wholeSchedule.data?.Event ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
@@ -964,14 +964,14 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
 
 function EventSecondaryEditor({
     events,
-    attendees,
+    contentPeople,
     isSecondaryPanelOpen,
     onSecondaryPanelClose,
     index,
     yellowC,
 }: {
     events: readonly EventInfoFragment[];
-    attendees: readonly AttendeeInfoFragment[];
+    contentPeople: readonly ContentPersonInfoFragment[];
     isSecondaryPanelOpen: boolean;
     onSecondaryPanelClose: () => void;
     index: number | null;
@@ -1003,7 +1003,11 @@ function EventSecondaryEditor({
                                         <AccordionIcon />
                                     </AccordionButton>
                                     <AccordionPanel>
-                                        <EventPeopleEditorModal yellowC={yellowC} event={event} attendees={attendees} />
+                                        <EventPeopleEditorModal
+                                            yellowC={yellowC}
+                                            event={event}
+                                            contentPeople={contentPeople}
+                                        />
                                     </AccordionPanel>
                                 </AccordionItem>
                             </Accordion>
@@ -1019,11 +1023,11 @@ function EventSecondaryEditor({
 
 function EventPeopleEditorModal({
     event,
-    attendees,
+    contentPeople,
     yellowC,
 }: {
     event: EventInfoFragment;
-    attendees: readonly AttendeeInfoFragment[];
+    contentPeople: readonly ContentPersonInfoFragment[];
     yellowC: string;
 }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -1034,7 +1038,7 @@ function EventPeopleEditorModal({
             onOpen={onOpen}
             onClose={onClose}
             event={event}
-            attendees={attendees}
+            contentPeople={contentPeople}
         />
     );
     return accordionContents;

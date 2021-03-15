@@ -81,7 +81,8 @@ export function HandUpButton({
     useEffect(() => {
         const people =
             eventPeople?.filter(
-                (eventPerson) => eventPerson.eventId === currentRoomEvent?.id && attendee.id === eventPerson.attendeeId
+                (eventPerson) =>
+                    eventPerson.eventId === currentRoomEvent?.id && attendee.id === eventPerson.person.attendeeId
             ) ?? [];
 
         if (myEventPeople && myEventPeople.length === 0 && people.length > 0) {

@@ -1793,13 +1793,6 @@
         table:
           schema: public
           name: ContentPerson
-  - name: eventPeople
-    using:
-      foreign_key_constraint_on:
-        column: attendeeId
-        table:
-          schema: public
-          name: EventPerson
   - name: groupAttendees
     using:
       foreign_key_constraint_on:
@@ -3659,6 +3652,13 @@
         table:
           schema: public
           name: ContentGroupPerson
+  - name: eventPeople
+    using:
+      foreign_key_constraint_on:
+        column: personId
+        table:
+          schema: public
+          name: EventPerson
   insert_permissions:
   - role: user
     permission:
@@ -4169,9 +4169,10 @@
             - event:
                 eventPeople:
                   _and:
-                  - attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+                  - person:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
                         _in:
@@ -4186,29 +4187,24 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
-  - name: attendee
-    using:
-      foreign_key_constraint_on: attendeeId
-  - name: conference
-    using:
-      foreign_key_constraint_on: conferenceId
   - name: event
     using:
       foreign_key_constraint_on: eventId
   - name: eventPersonRole
     using:
       foreign_key_constraint_on: roleName
-  - name: originatingData
+  - name: person
     using:
-      foreign_key_constraint_on: originatingDataId
+      foreign_key_constraint_on: personId
   insert_permissions:
   - role: user
     permission:
       check:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _or:
           - _exists:
               _where:
@@ -4238,41 +4234,35 @@
             - event:
                 eventPeople:
                   _and:
-                  - attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+                  - person:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
                         _in:
                         - CHAIR
                         - PRESENTER
       columns:
-      - id
       - eventId
-      - attendeeId
-      - name
-      - affiliation
+      - id
+      - personId
       - roleName
-      - originatingDataId
-      - conferenceId
       backend_only: false
   select_permissions:
   - role: unauthenticated
     permission:
       columns:
-      - affiliation
-      - attendeeId
-      - conferenceId
       - eventId
       - id
-      - name
-      - originatingDataId
+      - personId
       - roleName
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _exists:
             _where:
               _and:
@@ -4286,19 +4276,16 @@
   - role: user
     permission:
       columns:
-      - affiliation
-      - attendeeId
-      - conferenceId
       - eventId
       - id
-      - name
-      - originatingDataId
+      - personId
       - roleName
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _exists:
             _where:
               _and:
@@ -4317,16 +4304,14 @@
   - role: user
     permission:
       columns:
-      - affiliation
-      - attendeeId
-      - name
-      - originatingDataId
+      - personId
       - roleName
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _or:
           - _exists:
               _where:
@@ -4356,9 +4341,10 @@
             - event:
                 eventPeople:
                   _and:
-                  - attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+                  - person:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
                         _in:
@@ -4370,9 +4356,10 @@
     permission:
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _or:
           - _exists:
               _where:
@@ -4402,9 +4389,10 @@
             - event:
                 eventPeople:
                   _and:
-                  - attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+                  - person:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
                         _in:
@@ -4615,9 +4603,10 @@
           - event:
               eventPeople:
                 _and:
-                - attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                - person:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
                 - eventPersonRole:
                     name:
                       _in:
@@ -4834,9 +4823,10 @@
           - event:
               eventPeople:
                 _and:
-                - attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                - person:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
                 - eventPersonRole:
                     name:
                       _in:
@@ -5804,13 +5794,6 @@
         table:
           schema: public
           name: ContentPerson
-  - name: eventPeople
-    using:
-      foreign_key_constraint_on:
-        column: originatingDataId
-        table:
-          schema: public
-          name: EventPerson
   - name: events
     using:
       foreign_key_constraint_on:

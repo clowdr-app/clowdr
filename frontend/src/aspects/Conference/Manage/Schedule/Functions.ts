@@ -1,8 +1,8 @@
 import type { SelectWholeScheduleQuery } from "../../../../generated/graphql";
 import { convertContentGroupToDescriptor } from "../Content/Functions";
-import type { ContentGroupDescriptor } from "../Content/Types";
+import type { ContentGroupDescriptor, ContentPersonDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
-import type { AttendeeDescriptor, EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
+import type { EventDescriptor, RoomDescriptor } from "./Types";
 
 export function convertScheduleToDescriptors(
     schedule: SelectWholeScheduleQuery
@@ -11,7 +11,7 @@ export function convertScheduleToDescriptors(
     events: Map<string, EventDescriptor>;
     tags: Map<string, TagDescriptor>;
     originatingDatas: Map<string, OriginatingDataDescriptor>;
-    attendees: Map<string, AttendeeDescriptor>;
+    people: Map<string, ContentPersonDescriptor>;
     contentGroups: ContentGroupDescriptor[];
 } {
     return {
@@ -29,17 +29,6 @@ export function convertScheduleToDescriptors(
                     roomId: event.roomId,
                     startTime: event.startTime,
                     tagIds: new Set(event.eventTags.map((x) => x.tagId)),
-                    people: event.eventPeople.map(
-                        (eventPerson): EventPersonDescriptor => ({
-                            affiliation: eventPerson.affiliation,
-                            attendeeId: eventPerson.attendeeId,
-                            id: eventPerson.id,
-                            name: eventPerson.name,
-                            originatingDataId: eventPerson.originatingDataId,
-                            roleName: eventPerson.roleName,
-                            eventId: eventPerson.id,
-                        })
-                    ),
                 },
             ])
         ),
@@ -78,12 +67,16 @@ export function convertScheduleToDescriptors(
                 },
             ])
         ),
-        attendees: new Map(
-            schedule.Attendee.map((data): [string, AttendeeDescriptor] => [
-                data.id,
+        people: new Map(
+            schedule.ContentPerson.map((person): [string, ContentPersonDescriptor] => [
+                person.id,
                 {
-                    displayName: data.displayName,
-                    id: data.id,
+                    id: person.id,
+                    conferenceId: person.conferenceId,
+                    name: person.name,
+                    affiliation: person.affiliation,
+                    email: person.email,
+                    originatingDataId: person.originatingDataId,
                 },
             ])
         ),
@@ -101,17 +94,6 @@ export function deepCloneEventDescriptor(event: EventDescriptor): EventDescripto
         roomId: event.roomId,
         startTime: event.startTime,
         tagIds: new Set(event.tagIds),
-        people: event.people.map(
-            (eventPerson): EventPersonDescriptor => ({
-                affiliation: eventPerson.affiliation,
-                attendeeId: eventPerson.attendeeId,
-                eventId: eventPerson.eventId,
-                id: eventPerson.id,
-                name: eventPerson.name,
-                originatingDataId: eventPerson.originatingDataId,
-                roleName: eventPerson.roleName,
-            })
-        ),
     };
 }
 

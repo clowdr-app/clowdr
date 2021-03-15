@@ -19,10 +19,12 @@ gql`
 
 export function EventPerson({
     eventPerson,
-    enableDelete,
+    enableDelete: enableDeleteInput,
+    userId,
 }: {
     eventPerson: EventPersonDetailsFragment;
     enableDelete: boolean;
+    userId: string | null;
 }): JSX.Element {
     const [deleteEventPersonMutation] = useDeleteEventPersonMutation();
     const toast = useToast();
@@ -47,8 +49,13 @@ export function EventPerson({
         }
     }, [deleteEventPersonMutation, eventPerson.id, toast]);
 
-    const eventPersonIdObj = useMemo(() => ({ attendee: eventPerson.attendeeId }), [eventPerson.attendeeId]);
+    const eventPersonIdObj = useMemo(
+        () => (eventPerson.person?.attendeeId ? { attendee: eventPerson.person.attendeeId } : undefined),
+        [eventPerson.person.attendeeId]
+    );
     const attendee = useAttendee(eventPersonIdObj);
+    // Intentionally using `!=` (rather than `!==`) because `userId` may be null or undefined
+    const enableDelete = enableDeleteInput && attendee?.userId != userId;
 
     return (
         <HStack>

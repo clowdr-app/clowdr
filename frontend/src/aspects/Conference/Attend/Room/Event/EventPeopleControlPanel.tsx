@@ -6,7 +6,6 @@ import {
     EventRoomJoinRequestDetailsFragment,
 } from "../../../../../generated/graphql";
 import useUserId from "../../../../Auth/useUserId";
-import { useAttendee } from "../../../AttendeesContext";
 import { EventPerson } from "./EventPerson";
 import { JoinRequest } from "./JoinRequest";
 
@@ -80,14 +79,9 @@ function EventPersonListItem({
     person: EventPersonDetailsFragment;
     canControlEventPeople: boolean;
 }): JSX.Element {
-    const idObj = useMemo(() => (person.attendeeId ? { attendee: person.attendeeId } : undefined), [person.attendeeId]);
-    const attendee = useAttendee(idObj);
     return (
         <ListItem mt={2}>
-            <EventPerson
-                eventPerson={person}
-                enableDelete={canControlEventPeople && (attendee?.userId ?? null) !== userId}
-            />
+            <EventPerson eventPerson={person} enableDelete={canControlEventPeople} userId={userId} />
         </ListItem>
     );
 }

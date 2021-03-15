@@ -66,7 +66,11 @@ gql`
                             ]
                         }
                     }
-                    { eventPeople: { attendee: { displayName: { _ilike: $search } } } }
+                    {
+                        eventPeople: {
+                            person: { _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }] }
+                        }
+                    }
                     { eventTags: { tag: { name: { _ilike: $search } } } }
                 ]
             }

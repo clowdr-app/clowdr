@@ -31,10 +31,6 @@ export type Attendee = {
   readonly createdAt: Scalars['timestamptz'];
   readonly displayName: Scalars['String'];
   /** An array relationship */
-  readonly eventPeople: ReadonlyArray<EventPerson>;
-  /** An aggregated array relationship */
-  readonly eventPeople_aggregate: EventPerson_Aggregate;
-  /** An array relationship */
   readonly groupAttendees: ReadonlyArray<GroupAttendee>;
   /** An aggregated array relationship */
   readonly groupAttendees_aggregate: GroupAttendee_Aggregate;
@@ -73,26 +69,6 @@ export type AttendeeContentPeople_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<ContentPerson_Order_By>>;
   where?: Maybe<ContentPerson_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Attendee" */
-export type AttendeeEventPeopleArgs = {
-  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
-  where?: Maybe<EventPerson_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Attendee" */
-export type AttendeeEventPeople_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
-  where?: Maybe<EventPerson_Bool_Exp>;
 };
 
 
@@ -972,7 +948,6 @@ export type Attendee_Bool_Exp = {
   readonly contentPeople?: Maybe<ContentPerson_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly displayName?: Maybe<String_Comparison_Exp>;
-  readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
   readonly groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Invitation_Bool_Exp>;
@@ -998,7 +973,6 @@ export type Attendee_Insert_Input = {
   readonly contentPeople?: Maybe<ContentPerson_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly displayName?: Maybe<Scalars['String']>;
-  readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
   readonly groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly invitation?: Maybe<Invitation_Obj_Rel_Insert_Input>;
@@ -1080,7 +1054,6 @@ export type Attendee_Order_By = {
   readonly contentPeople_aggregate?: Maybe<ContentPerson_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly displayName?: Maybe<Order_By>;
-  readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
   readonly groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly invitation?: Maybe<Invitation_Order_By>;
@@ -4842,6 +4815,10 @@ export type ContentPerson = {
   /** An aggregated array relationship */
   readonly contentItemPeople_aggregate: ContentGroupPerson_Aggregate;
   readonly email?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  readonly eventPeople: ReadonlyArray<EventPerson>;
+  /** An aggregated array relationship */
+  readonly eventPeople_aggregate: EventPerson_Aggregate;
   readonly id: Scalars['uuid'];
   readonly name: Scalars['String'];
   /** An object relationship */
@@ -4867,6 +4844,26 @@ export type ContentPersonContentItemPeople_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
   where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentPerson" */
+export type ContentPersonEventPeopleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
+  where?: Maybe<EventPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentPerson" */
+export type ContentPersonEventPeople_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
+  where?: Maybe<EventPerson_Bool_Exp>;
 };
 
 /** aggregated selection of "ContentPerson" */
@@ -4916,6 +4913,7 @@ export type ContentPerson_Bool_Exp = {
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly contentItemPeople?: Maybe<ContentGroupPerson_Bool_Exp>;
   readonly email?: Maybe<String_Comparison_Exp>;
+  readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
@@ -4939,6 +4937,7 @@ export type ContentPerson_Insert_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentItemPeople?: Maybe<ContentGroupPerson_Arr_Rel_Insert_Input>;
   readonly email?: Maybe<Scalars['String']>;
+  readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
@@ -5022,6 +5021,7 @@ export type ContentPerson_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentItemPeople_aggregate?: Maybe<ContentGroupPerson_Aggregate_Order_By>;
   readonly email?: Maybe<Order_By>;
+  readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
@@ -6164,13 +6164,6 @@ export enum EventParticipantStream_Update_Column {
 /** columns and relationships of "EventPerson" */
 export type EventPerson = {
   readonly __typename?: 'EventPerson';
-  readonly affiliation?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  readonly attendee?: Maybe<Attendee>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  /** An object relationship */
-  readonly conference: Conference;
-  readonly conferenceId: Scalars['uuid'];
   readonly createdAt: Scalars['timestamptz'];
   /** An object relationship */
   readonly event: Event;
@@ -6178,10 +6171,9 @@ export type EventPerson = {
   /** An object relationship */
   readonly eventPersonRole: EventPersonRole;
   readonly id: Scalars['uuid'];
-  readonly name: Scalars['String'];
   /** An object relationship */
-  readonly originatingData?: Maybe<OriginatingData>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly person: ContentPerson;
+  readonly personId: Scalars['uuid'];
   readonly roleName: EventPersonRole_Enum;
   readonly updatedAt: Scalars['timestamptz'];
 };
@@ -6415,19 +6407,13 @@ export type EventPerson_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<EventPerson_Bool_Exp>>>;
   readonly _not?: Maybe<EventPerson_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<EventPerson_Bool_Exp>>>;
-  readonly affiliation?: Maybe<String_Comparison_Exp>;
-  readonly attendee?: Maybe<Attendee_Bool_Exp>;
-  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
-  readonly conference?: Maybe<Conference_Bool_Exp>;
-  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly event?: Maybe<Event_Bool_Exp>;
   readonly eventId?: Maybe<Uuid_Comparison_Exp>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly name?: Maybe<String_Comparison_Exp>;
-  readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
-  readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly person?: Maybe<ContentPerson_Bool_Exp>;
+  readonly personId?: Maybe<Uuid_Comparison_Exp>;
   readonly roleName?: Maybe<EventPersonRole_Enum_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -6435,28 +6421,20 @@ export type EventPerson_Bool_Exp = {
 /** unique or primary key constraints on table "EventPerson" */
 export enum EventPerson_Constraint {
   /** unique or primary key constraint */
-  EventPersonEventIdAttendeeIdRoleNameKey = 'EventPerson_eventId_attendeeId_roleName_key',
-  /** unique or primary key constraint */
-  EventPersonEventIdNameAffiliationKey = 'EventPerson_eventId_name_affiliation_key',
+  EventPersonEventIdPersonIdRoleNameKey = 'EventPerson_eventId_personId_roleName_key',
   /** unique or primary key constraint */
   EventPersonPkey = 'EventPerson_pkey'
 }
 
 /** input type for inserting data into table "EventPerson" */
 export type EventPerson_Insert_Input = {
-  readonly affiliation?: Maybe<Scalars['String']>;
-  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Obj_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly person?: Maybe<ContentPerson_Obj_Rel_Insert_Input>;
+  readonly personId?: Maybe<Scalars['uuid']>;
   readonly roleName?: Maybe<EventPersonRole_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -6464,54 +6442,38 @@ export type EventPerson_Insert_Input = {
 /** aggregate max on columns */
 export type EventPerson_Max_Fields = {
   readonly __typename?: 'EventPerson_max_fields';
-  readonly affiliation?: Maybe<Scalars['String']>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "EventPerson" */
 export type EventPerson_Max_Order_By = {
-  readonly affiliation?: Maybe<Order_By>;
-  readonly attendeeId?: Maybe<Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
+  readonly personId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type EventPerson_Min_Fields = {
   readonly __typename?: 'EventPerson_min_fields';
-  readonly affiliation?: Maybe<Scalars['String']>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "EventPerson" */
 export type EventPerson_Min_Order_By = {
-  readonly affiliation?: Maybe<Order_By>;
-  readonly attendeeId?: Maybe<Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
+  readonly personId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -6539,19 +6501,13 @@ export type EventPerson_On_Conflict = {
 
 /** ordering options when selecting data from "EventPerson" */
 export type EventPerson_Order_By = {
-  readonly affiliation?: Maybe<Order_By>;
-  readonly attendee?: Maybe<Attendee_Order_By>;
-  readonly attendeeId?: Maybe<Order_By>;
-  readonly conference?: Maybe<Conference_Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly event?: Maybe<Event_Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingData?: Maybe<OriginatingData_Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
+  readonly person?: Maybe<ContentPerson_Order_By>;
+  readonly personId?: Maybe<Order_By>;
   readonly roleName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -6564,21 +6520,13 @@ export type EventPerson_Pk_Columns_Input = {
 /** select columns of table "EventPerson" */
 export enum EventPerson_Select_Column {
   /** column name */
-  Affiliation = 'affiliation',
-  /** column name */
-  AttendeeId = 'attendeeId',
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   EventId = 'eventId',
   /** column name */
   Id = 'id',
   /** column name */
-  Name = 'name',
-  /** column name */
-  OriginatingDataId = 'originatingDataId',
+  PersonId = 'personId',
   /** column name */
   RoleName = 'roleName',
   /** column name */
@@ -6587,14 +6535,10 @@ export enum EventPerson_Select_Column {
 
 /** input type for updating data in table "EventPerson" */
 export type EventPerson_Set_Input = {
-  readonly affiliation?: Maybe<Scalars['String']>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
   readonly roleName?: Maybe<EventPersonRole_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -6602,21 +6546,13 @@ export type EventPerson_Set_Input = {
 /** update columns of table "EventPerson" */
 export enum EventPerson_Update_Column {
   /** column name */
-  Affiliation = 'affiliation',
-  /** column name */
-  AttendeeId = 'attendeeId',
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   EventId = 'eventId',
   /** column name */
   Id = 'id',
   /** column name */
-  Name = 'name',
-  /** column name */
-  OriginatingDataId = 'originatingDataId',
+  PersonId = 'personId',
   /** column name */
   RoleName = 'roleName',
   /** column name */
@@ -10381,10 +10317,6 @@ export type OriginatingData = {
   readonly createdAt: Scalars['timestamptz'];
   readonly data?: Maybe<Scalars['jsonb']>;
   /** An array relationship */
-  readonly eventPeople: ReadonlyArray<EventPerson>;
-  /** An aggregated array relationship */
-  readonly eventPeople_aggregate: EventPerson_Aggregate;
-  /** An array relationship */
   readonly events: ReadonlyArray<Event>;
   /** An aggregated array relationship */
   readonly events_aggregate: Event_Aggregate;
@@ -10469,26 +10401,6 @@ export type OriginatingDataContentPeople_AggregateArgs = {
 /** columns and relationships of "OriginatingData" */
 export type OriginatingDataDataArgs = {
   path?: Maybe<Scalars['String']>;
-};
-
-
-/** columns and relationships of "OriginatingData" */
-export type OriginatingDataEventPeopleArgs = {
-  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
-  where?: Maybe<EventPerson_Bool_Exp>;
-};
-
-
-/** columns and relationships of "OriginatingData" */
-export type OriginatingDataEventPeople_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
-  where?: Maybe<EventPerson_Bool_Exp>;
 };
 
 
@@ -10623,7 +10535,6 @@ export type OriginatingData_Bool_Exp = {
   readonly contentPeople?: Maybe<ContentPerson_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
-  readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
   readonly events?: Maybe<Event_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Bool_Exp>;
@@ -10665,7 +10576,6 @@ export type OriginatingData_Insert_Input = {
   readonly contentPeople?: Maybe<ContentPerson_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
-  readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
   readonly events?: Maybe<Event_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Arr_Rel_Insert_Input>;
@@ -10744,7 +10654,6 @@ export type OriginatingData_Order_By = {
   readonly contentPeople_aggregate?: Maybe<ContentPerson_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
-  readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
   readonly events_aggregate?: Maybe<Event_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly requiredContentItems_aggregate?: Maybe<RequiredContentItem_Aggregate_Order_By>;
@@ -32644,8 +32553,6 @@ export type ContentGroupSummary_ContentGroupDataFragment = { readonly __typename
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
-export type Timeline_EventPersonFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly name: string, readonly affiliation?: Maybe<string>, readonly roleName: EventPersonRole_Enum };
-
 export type AttendeeByIdQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   attendeeId: Scalars['uuid'];
@@ -32824,7 +32731,7 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly roleName: EventPersonRole_Enum }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any> } }> };
 
 export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
   originatingContentGroupId: Scalars['uuid'];
@@ -33813,17 +33720,14 @@ export type DeleteEventPersonsMutationVariables = Exact<{
 
 export type DeleteEventPersonsMutation = { readonly __typename?: 'mutation_root', readonly delete_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any }> }> };
 
-export type UpdateEventPersonInfoMutationVariables = Exact<{
+export type UpdateEventPersonMutationVariables = Exact<{
   id: Scalars['uuid'];
-  attendeeId?: Maybe<Scalars['uuid']>;
-  name: Scalars['String'];
-  affiliation?: Maybe<Scalars['String']>;
+  personId: Scalars['uuid'];
   roleName: EventPersonRole_Enum;
-  originatingDataId?: Maybe<Scalars['uuid']>;
 }>;
 
 
-export type UpdateEventPersonInfoMutation = { readonly __typename?: 'mutation_root', readonly update_EventPerson_by_pk?: Maybe<(
+export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root', readonly update_EventPerson_by_pk?: Maybe<(
     { readonly __typename?: 'EventPerson' }
     & EventPersonInfoFragment
   )> };
@@ -33846,11 +33750,9 @@ export type EventInfoFragment = { readonly __typename?: 'Event', readonly confer
     & EventTagInfoFragment
   )> };
 
-export type EventPersonInfoFragment = { readonly __typename?: 'EventPerson', readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any>, readonly conferenceId: any, readonly eventId: any, readonly id: any, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly userId?: Maybe<string> }> };
+export type EventPersonInfoFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly eventId: any, readonly roleName: EventPersonRole_Enum, readonly personId: any };
 
 export type EventTagInfoFragment = { readonly __typename?: 'EventTag', readonly eventId: any, readonly id: any, readonly tagId: any };
-
-export type AttendeeInfoFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string };
 
 export type SelectWholeScheduleQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -33872,9 +33774,9 @@ export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', rea
   )>, readonly ContentGroup: ReadonlyArray<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupFullNestedInfoFragment
-  )>, readonly Attendee: ReadonlyArray<(
-    { readonly __typename?: 'Attendee' }
-    & AttendeeInfoFragment
+  )>, readonly ContentPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentPerson' }
+    & ContentPersonInfoFragment
   )> };
 
 export type InsertRoomsMutationVariables = Exact<{
@@ -33936,36 +33838,16 @@ export type UpdateEventMutationVariables = Exact<{
   contentGroupId?: Maybe<Scalars['uuid']>;
   newEventTags: ReadonlyArray<EventTag_Insert_Input> | EventTag_Insert_Input;
   deleteEventTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-  newEventPeople: ReadonlyArray<EventPerson_Insert_Input> | EventPerson_Insert_Input;
-  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type UpdateEventMutation = { readonly __typename?: 'mutation_root', readonly insert_EventTag?: Maybe<{ readonly __typename?: 'EventTag_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'EventTag' }
       & EventTagInfoFragment
-    )> }>, readonly insert_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'EventPerson' }
-      & EventPersonInfoFragment
     )> }>, readonly update_Event_by_pk?: Maybe<(
     { readonly __typename?: 'Event' }
     & EventInfoFragment
-  )>, readonly delete_EventTag?: Maybe<{ readonly __typename?: 'EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly id: any }> }>, readonly delete_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any }> }> };
-
-export type UpdateEventPersonMutationVariables = Exact<{
-  id: Scalars['uuid'];
-  attendeeId?: Maybe<Scalars['uuid']>;
-  name: Scalars['String'];
-  affiliation?: Maybe<Scalars['String']>;
-  roleName: EventPersonRole_Enum;
-  originatingDataId?: Maybe<Scalars['uuid']>;
-}>;
-
-
-export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root', readonly update_EventPerson_by_pk?: Maybe<(
-    { readonly __typename?: 'EventPerson' }
-    & EventPersonInfoFragment
-  )> };
+  )>, readonly delete_EventTag?: Maybe<{ readonly __typename?: 'EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly id: any }> }> };
 
 export type UpdateShufflePeriodMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -33981,6 +33863,41 @@ export type InsertShufflePeriodMutationVariables = Exact<{
 
 
 export type InsertShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShufflePeriod_one?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetAttendeesPerRoom: number, readonly maxAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum }> };
+
+export type ManageShuffleRooms_RoomParticipantFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly roomId: any, readonly createdAt: any, readonly updatedAt: any, readonly conferenceId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+
+export type ManageShuffleRooms_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly name: string, readonly conferenceId: any, readonly participants: ReadonlyArray<(
+    { readonly __typename?: 'RoomParticipant' }
+    & ManageShuffleRooms_RoomParticipantFragment
+  )> };
+
+export type ManageShuffleRooms_QueueEntryFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly shufflePeriodId: any, readonly allocatedShuffleRoomId?: Maybe<number>, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
+
+export type ManageShuffleRooms_ShuffleRoomFragment = { readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly shufflePeriodId: any, readonly roomId: any, readonly durationMinutes: number, readonly startedAt: any, readonly reshuffleUponEnd: boolean, readonly isEnded: boolean, readonly queueEntries: ReadonlyArray<(
+    { readonly __typename?: 'room_ShuffleQueueEntry' }
+    & ManageShuffleRooms_QueueEntryFragment
+  )> };
+
+export type ManageShuffleRooms_ActiveShuffleRoomFragment = (
+  { readonly __typename?: 'room_ShuffleRoom', readonly room: (
+    { readonly __typename?: 'Room' }
+    & ManageShuffleRooms_RoomFragment
+  ) }
+  & ManageShuffleRooms_ShuffleRoomFragment
+);
+
+export type ManageShuffleRooms_SelectShuffleRoomsQueryVariables = Exact<{
+  periodId: Scalars['uuid'];
+}>;
+
+
+export type ManageShuffleRooms_SelectShuffleRoomsQuery = { readonly __typename?: 'query_root', readonly activeRooms: ReadonlyArray<(
+    { readonly __typename?: 'room_ShuffleRoom' }
+    & ManageShuffleRooms_ActiveShuffleRoomFragment
+  )>, readonly endedRooms: ReadonlyArray<(
+    { readonly __typename?: 'room_ShuffleRoom' }
+    & ManageShuffleRooms_ShuffleRoomFragment
+  )> };
 
 export type DeleteShufflePeriodMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -34202,17 +34119,7 @@ export type ProtectedEchoQueryVariables = Exact<{
 
 export type ProtectedEchoQuery = { readonly __typename?: 'query_root', readonly protectedEcho?: Maybe<{ readonly __typename?: 'ProtectedEchoOutput', readonly message: string }> };
 
-export type UserEventRolesSubscriptionVariables = Exact<{
-  eventId: Scalars['uuid'];
-}>;
-
-
-export type UserEventRolesSubscription = { readonly __typename?: 'subscription_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly eventPeople: ReadonlyArray<(
-      { readonly __typename?: 'EventPerson' }
-      & EventPersonDetailsFragment
-    )> }> };
-
-export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendeeId?: Maybe<any> };
+export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any>, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }> }> } };
 
 export type GetForceUserRefreshConfigQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -34695,15 +34602,6 @@ export const ContentGroupSummary_ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
-export const Timeline_EventPersonFragmentDoc = gql`
-    fragment Timeline_EventPerson on EventPerson {
-  id
-  attendeeId
-  name
-  affiliation
-  roleName
-}
-    `;
 export const EventParticipantStreamDetailsFragmentDoc = gql`
     fragment EventParticipantStreamDetails on EventParticipantStream {
   id
@@ -34771,7 +34669,12 @@ export const Room_EventSummaryFragmentDoc = gql`
   }
   eventPeople {
     id
-    attendeeId
+    person {
+      id
+      name
+      affiliation
+      attendeeId
+    }
     roleName
   }
 }
@@ -35287,19 +35190,10 @@ export const RoomInfoFragmentDoc = gql`
 ${RoomParticipantInfoFragmentDoc}`;
 export const EventPersonInfoFragmentDoc = gql`
     fragment EventPersonInfo on EventPerson {
-  affiliation
-  attendeeId
-  attendee {
-    id
-    displayName
-    userId
-  }
-  conferenceId
-  eventId
   id
-  name
-  originatingDataId
+  eventId
   roleName
+  personId
 }
     `;
 export const EventTagInfoFragmentDoc = gql`
@@ -35331,12 +35225,69 @@ export const EventInfoFragmentDoc = gql`
 }
     ${EventPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
-export const AttendeeInfoFragmentDoc = gql`
-    fragment AttendeeInfo on Attendee {
+export const ManageShuffleRooms_QueueEntryFragmentDoc = gql`
+    fragment ManageShuffleRooms_QueueEntry on room_ShuffleQueueEntry {
   id
-  displayName
+  created_at
+  updated_at
+  shufflePeriodId
+  attendee {
+    id
+    displayName
+  }
+  allocatedShuffleRoomId
 }
     `;
+export const ManageShuffleRooms_ShuffleRoomFragmentDoc = gql`
+    fragment ManageShuffleRooms_ShuffleRoom on room_ShuffleRoom {
+  id
+  created_at
+  updated_at
+  shufflePeriodId
+  roomId
+  durationMinutes
+  startedAt
+  reshuffleUponEnd
+  isEnded
+  queueEntries {
+    ...ManageShuffleRooms_QueueEntry
+  }
+}
+    ${ManageShuffleRooms_QueueEntryFragmentDoc}`;
+export const ManageShuffleRooms_RoomParticipantFragmentDoc = gql`
+    fragment ManageShuffleRooms_RoomParticipant on RoomParticipant {
+  id
+  roomId
+  attendee {
+    id
+    displayName
+  }
+  createdAt
+  updatedAt
+  conferenceId
+}
+    `;
+export const ManageShuffleRooms_RoomFragmentDoc = gql`
+    fragment ManageShuffleRooms_Room on Room {
+  id
+  created_at
+  updated_at
+  name
+  conferenceId
+  participants {
+    ...ManageShuffleRooms_RoomParticipant
+  }
+}
+    ${ManageShuffleRooms_RoomParticipantFragmentDoc}`;
+export const ManageShuffleRooms_ActiveShuffleRoomFragmentDoc = gql`
+    fragment ManageShuffleRooms_ActiveShuffleRoom on room_ShuffleRoom {
+  ...ManageShuffleRooms_ShuffleRoom
+  room {
+    ...ManageShuffleRooms_Room
+  }
+}
+    ${ManageShuffleRooms_ShuffleRoomFragmentDoc}
+${ManageShuffleRooms_RoomFragmentDoc}`;
 export const EditableSponsorsTable_ContentGroupInfoFragmentDoc = gql`
     fragment EditableSponsorsTable_ContentGroupInfo on ContentGroup {
   id
@@ -35454,10 +35405,23 @@ export const RequiredItemFieldsFragmentDoc = gql`
 export const EventPersonDetailsFragmentDoc = gql`
     fragment EventPersonDetails on EventPerson {
   id
-  name
   roleName
   eventId
-  attendeeId
+  person {
+    id
+    name
+    affiliation
+    attendeeId
+    attendee {
+      id
+      userId
+      displayName
+      profile {
+        attendeeId
+        affiliation
+      }
+    }
+  }
 }
     `;
 export const MenuSchedule_EventFragmentDoc = gql`
@@ -40461,46 +40425,43 @@ export function useDeleteEventPersonsMutation(baseOptions?: Apollo.MutationHookO
 export type DeleteEventPersonsMutationHookResult = ReturnType<typeof useDeleteEventPersonsMutation>;
 export type DeleteEventPersonsMutationResult = Apollo.MutationResult<DeleteEventPersonsMutation>;
 export type DeleteEventPersonsMutationOptions = Apollo.BaseMutationOptions<DeleteEventPersonsMutation, DeleteEventPersonsMutationVariables>;
-export const UpdateEventPersonInfoDocument = gql`
-    mutation UpdateEventPersonInfo($id: uuid!, $attendeeId: uuid = null, $name: String!, $affiliation: String = null, $roleName: EventPersonRole_enum!, $originatingDataId: uuid = null) {
+export const UpdateEventPersonDocument = gql`
+    mutation UpdateEventPerson($id: uuid!, $personId: uuid!, $roleName: EventPersonRole_enum!) {
   update_EventPerson_by_pk(
     pk_columns: {id: $id}
-    _set: {attendeeId: $attendeeId, name: $name, affiliation: $affiliation, roleName: $roleName, originatingDataId: $originatingDataId}
+    _set: {personId: $personId, roleName: $roleName}
   ) {
     ...EventPersonInfo
   }
 }
     ${EventPersonInfoFragmentDoc}`;
-export type UpdateEventPersonInfoMutationFn = Apollo.MutationFunction<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>;
+export type UpdateEventPersonMutationFn = Apollo.MutationFunction<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
 
 /**
- * __useUpdateEventPersonInfoMutation__
+ * __useUpdateEventPersonMutation__
  *
- * To run a mutation, you first call `useUpdateEventPersonInfoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEventPersonInfoMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateEventPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventPersonMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateEventPersonInfoMutation, { data, loading, error }] = useUpdateEventPersonInfoMutation({
+ * const [updateEventPersonMutation, { data, loading, error }] = useUpdateEventPersonMutation({
  *   variables: {
  *      id: // value for 'id'
- *      attendeeId: // value for 'attendeeId'
- *      name: // value for 'name'
- *      affiliation: // value for 'affiliation'
+ *      personId: // value for 'personId'
  *      roleName: // value for 'roleName'
- *      originatingDataId: // value for 'originatingDataId'
  *   },
  * });
  */
-export function useUpdateEventPersonInfoMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>) {
-        return Apollo.useMutation<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>(UpdateEventPersonInfoDocument, baseOptions);
+export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>) {
+        return Apollo.useMutation<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>(UpdateEventPersonDocument, baseOptions);
       }
-export type UpdateEventPersonInfoMutationHookResult = ReturnType<typeof useUpdateEventPersonInfoMutation>;
-export type UpdateEventPersonInfoMutationResult = Apollo.MutationResult<UpdateEventPersonInfoMutation>;
-export type UpdateEventPersonInfoMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>;
+export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
+export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
+export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
 export const SelectWholeScheduleDocument = gql`
     query SelectWholeSchedule($conferenceId: uuid!) {
   Room(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -40521,8 +40482,8 @@ export const SelectWholeScheduleDocument = gql`
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ContentGroupFullNestedInfo
   }
-  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...AttendeeInfo
+  ContentPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ContentPersonInfo
   }
 }
     ${RoomInfoFragmentDoc}
@@ -40530,7 +40491,7 @@ ${EventInfoFragmentDoc}
 ${OriginatingDataInfoFragmentDoc}
 ${TagInfoFragmentDoc}
 ${ContentGroupFullNestedInfoFragmentDoc}
-${AttendeeInfoFragmentDoc}`;
+${ContentPersonInfoFragmentDoc}`;
 
 /**
  * __useSelectWholeScheduleQuery__
@@ -40731,15 +40692,10 @@ export type InsertEventMutationHookResult = ReturnType<typeof useInsertEventMuta
 export type InsertEventMutationResult = Apollo.MutationResult<InsertEventMutation>;
 export type InsertEventMutationOptions = Apollo.BaseMutationOptions<InsertEventMutation, InsertEventMutationVariables>;
 export const UpdateEventDocument = gql`
-    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!, $newEventPeople: [EventPerson_insert_input!]!, $deleteEventPeopleIds: [uuid!]!) {
+    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!) {
   insert_EventTag(objects: $newEventTags) {
     returning {
       ...EventTagInfo
-    }
-  }
-  insert_EventPerson(objects: $newEventPeople) {
-    returning {
-      ...EventPersonInfo
     }
   }
   update_Event_by_pk(
@@ -40753,14 +40709,8 @@ export const UpdateEventDocument = gql`
       id
     }
   }
-  delete_EventPerson(where: {id: {_in: $deleteEventPeopleIds}}) {
-    returning {
-      id
-    }
-  }
 }
     ${EventTagInfoFragmentDoc}
-${EventPersonInfoFragmentDoc}
 ${EventInfoFragmentDoc}`;
 export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation, UpdateEventMutationVariables>;
 
@@ -40787,8 +40737,6 @@ export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation,
  *      contentGroupId: // value for 'contentGroupId'
  *      newEventTags: // value for 'newEventTags'
  *      deleteEventTagIds: // value for 'deleteEventTagIds'
- *      newEventPeople: // value for 'newEventPeople'
- *      deleteEventPeopleIds: // value for 'deleteEventPeopleIds'
  *   },
  * });
  */
@@ -40798,46 +40746,6 @@ export function useUpdateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMutation>;
 export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
 export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
-export const UpdateEventPersonDocument = gql`
-    mutation UpdateEventPerson($id: uuid!, $attendeeId: uuid = null, $name: String!, $affiliation: String = null, $roleName: EventPersonRole_enum!, $originatingDataId: uuid = null) {
-  update_EventPerson_by_pk(
-    pk_columns: {id: $id}
-    _set: {attendeeId: $attendeeId, name: $name, affiliation: $affiliation, roleName: $roleName, originatingDataId: $originatingDataId}
-  ) {
-    ...EventPersonInfo
-  }
-}
-    ${EventPersonInfoFragmentDoc}`;
-export type UpdateEventPersonMutationFn = Apollo.MutationFunction<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
-
-/**
- * __useUpdateEventPersonMutation__
- *
- * To run a mutation, you first call `useUpdateEventPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEventPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateEventPersonMutation, { data, loading, error }] = useUpdateEventPersonMutation({
- *   variables: {
- *      id: // value for 'id'
- *      attendeeId: // value for 'attendeeId'
- *      name: // value for 'name'
- *      affiliation: // value for 'affiliation'
- *      roleName: // value for 'roleName'
- *      originatingDataId: // value for 'originatingDataId'
- *   },
- * });
- */
-export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>) {
-        return Apollo.useMutation<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>(UpdateEventPersonDocument, baseOptions);
-      }
-export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
-export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
-export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
 export const UpdateShufflePeriodDocument = gql`
     mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {
   update_room_ShufflePeriod_by_pk(pk_columns: {id: $id}, _set: $object) {
@@ -40927,6 +40835,47 @@ export function useInsertShufflePeriodMutation(baseOptions?: Apollo.MutationHook
 export type InsertShufflePeriodMutationHookResult = ReturnType<typeof useInsertShufflePeriodMutation>;
 export type InsertShufflePeriodMutationResult = Apollo.MutationResult<InsertShufflePeriodMutation>;
 export type InsertShufflePeriodMutationOptions = Apollo.BaseMutationOptions<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>;
+export const ManageShuffleRooms_SelectShuffleRoomsDocument = gql`
+    query ManageShuffleRooms_SelectShuffleRooms($periodId: uuid!) {
+  activeRooms: room_ShuffleRoom(
+    where: {shufflePeriodId: {_eq: $periodId}, isEnded: {_eq: false}}
+  ) {
+    ...ManageShuffleRooms_ActiveShuffleRoom
+  }
+  endedRooms: room_ShuffleRoom(
+    where: {shufflePeriodId: {_eq: $periodId}, isEnded: {_eq: true}}
+  ) {
+    ...ManageShuffleRooms_ShuffleRoom
+  }
+}
+    ${ManageShuffleRooms_ActiveShuffleRoomFragmentDoc}
+${ManageShuffleRooms_ShuffleRoomFragmentDoc}`;
+
+/**
+ * __useManageShuffleRooms_SelectShuffleRoomsQuery__
+ *
+ * To run a query within a React component, call `useManageShuffleRooms_SelectShuffleRoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageShuffleRooms_SelectShuffleRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageShuffleRooms_SelectShuffleRoomsQuery({
+ *   variables: {
+ *      periodId: // value for 'periodId'
+ *   },
+ * });
+ */
+export function useManageShuffleRooms_SelectShuffleRoomsQuery(baseOptions: Apollo.QueryHookOptions<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>) {
+        return Apollo.useQuery<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>(ManageShuffleRooms_SelectShuffleRoomsDocument, baseOptions);
+      }
+export function useManageShuffleRooms_SelectShuffleRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>) {
+          return Apollo.useLazyQuery<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>(ManageShuffleRooms_SelectShuffleRoomsDocument, baseOptions);
+        }
+export type ManageShuffleRooms_SelectShuffleRoomsQueryHookResult = ReturnType<typeof useManageShuffleRooms_SelectShuffleRoomsQuery>;
+export type ManageShuffleRooms_SelectShuffleRoomsLazyQueryHookResult = ReturnType<typeof useManageShuffleRooms_SelectShuffleRoomsLazyQuery>;
+export type ManageShuffleRooms_SelectShuffleRoomsQueryResult = Apollo.QueryResult<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>;
 export const DeleteShufflePeriodDocument = gql`
     mutation DeleteShufflePeriod($id: uuid!) {
   delete_room_ShufflePeriod_by_pk(id: $id) {
@@ -41727,37 +41676,6 @@ export function useProtectedEchoLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ProtectedEchoQueryHookResult = ReturnType<typeof useProtectedEchoQuery>;
 export type ProtectedEchoLazyQueryHookResult = ReturnType<typeof useProtectedEchoLazyQuery>;
 export type ProtectedEchoQueryResult = Apollo.QueryResult<ProtectedEchoQuery, ProtectedEchoQueryVariables>;
-export const UserEventRolesDocument = gql`
-    subscription UserEventRoles($eventId: uuid!) {
-  Event_by_pk(id: $eventId) {
-    eventPeople {
-      ...EventPersonDetails
-    }
-  }
-}
-    ${EventPersonDetailsFragmentDoc}`;
-
-/**
- * __useUserEventRolesSubscription__
- *
- * To run a query within a React component, call `useUserEventRolesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserEventRolesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserEventRolesSubscription({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useUserEventRolesSubscription(baseOptions: Apollo.SubscriptionHookOptions<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>) {
-        return Apollo.useSubscription<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>(UserEventRolesDocument, baseOptions);
-      }
-export type UserEventRolesSubscriptionHookResult = ReturnType<typeof useUserEventRolesSubscription>;
-export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEventRolesSubscription>;
 export const GetForceUserRefreshConfigDocument = gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
   ConferenceConfiguration(
@@ -42037,7 +41955,7 @@ export type MenuScheduleQueryResult = Apollo.QueryResult<MenuScheduleQuery, Menu
 export const MenuSchedule_SearchEventsDocument = gql`
     query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
   Event(
-    where: {conferenceId: {_eq: $conferenceId}, room: {}, _or: [{name: {_ilike: $search}}, {contentGroup: {_or: [{title: {_ilike: $search}}, {people: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {eventPeople: {attendee: {displayName: {_ilike: $search}}}}, {eventTags: {tag: {name: {_ilike: $search}}}}]}
+    where: {conferenceId: {_eq: $conferenceId}, room: {}, _or: [{name: {_ilike: $search}}, {contentGroup: {_or: [{title: {_ilike: $search}}, {people: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {eventPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}, {eventTags: {tag: {name: {_ilike: $search}}}}]}
     limit: 10
     order_by: {startTime: asc}
   ) {

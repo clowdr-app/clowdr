@@ -87,9 +87,9 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
     const options = useMemo(() => {
         return [...contentPeople]
             .sort((x, y) => x.name.localeCompare(y.name))
-            .map((attendee) => (
-                <option key={attendee.id} value={attendee.id}>
-                    {attendee.name}
+            .map((person) => (
+                <option key={person.id} value={person.id}>
+                    {person.name}
                 </option>
             ));
     }, [contentPeople]);

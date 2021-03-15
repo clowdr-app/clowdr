@@ -653,7 +653,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
             />
             <ManagePeopleModal
                 persons={allPeopleMap ?? new Map()}
-                arePersonsEdited={editedPeopleIds.size > 0}
                 isOpen={peopleModalOpen}
                 onOpen={onPeopleModalOpen}
                 onClose={onPeopleModalClose}

@@ -16,7 +16,6 @@ import {
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import { formatRelative } from "date-fns";
-import type Hls from "hls.js";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
@@ -361,15 +360,13 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                         url={hlsUri}
                         config={{
                             file: {
-                                hlsVersion: "1.0.0-beta.6",
+                                hlsVersion: "1.0.0-rc.4",
+                                hlsOptions: {
+                                    subtitleDisplay: false,
+                                },
                             },
                         }}
                         ref={playerRef}
-                        onReady={() => {
-                            const hlsPlayer = playerRef.current?.getInternalPlayer("hls") as Hls;
-
-                            hlsPlayer.subtitleDisplay = false;
-                        }}
                         playing={
                             (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) &&
                             !showBackstage &&

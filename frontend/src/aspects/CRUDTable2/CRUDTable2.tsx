@@ -578,7 +578,7 @@ function RenderedCRUDTable<T>({
         () =>
             data !== false
                 ? columns.map((column) => (
-                      <Th key={column.id} padding={1}>
+                      <Th key={column.id} padding={1} verticalAlign="top">
                           <CRUDColumnHeading
                               column={column}
                               visibleData={data}

@@ -1,9 +1,14 @@
 import { gql } from "@apollo/client";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
     FormLabel,
     Input,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -12,9 +17,12 @@ import {
     ModalHeader,
     ModalOverlay,
     Select,
+    useColorModeValue,
+    useToast,
+    VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     ManageContentPeople_AttendeeFragment,
@@ -274,6 +282,67 @@ export default function ManagePersonsModal({
 
     const data = useMemo(() => [...persons.values()], [persons]);
 
+    const toast = useToast();
+    const autoLink = useCallback(
+        (mode: "email" | "name_affiliation" | "name_only") => {
+            const allUnmatched = data.filter((x) => !x.attendeeId);
+            let matchCount = 0;
+            for (const unmatched of allUnmatched) {
+                let attendee: ManageContentPeople_AttendeeFragment | undefined;
+
+                switch (mode) {
+                    case "email":
+                        if (unmatched.email) {
+                            attendee = attendees.find((x) => x.user?.email === unmatched.email);
+                        }
+                        break;
+                    case "name_affiliation":
+                        if (unmatched.name && unmatched.affiliation) {
+                            const name = unmatched.name.toLowerCase().trim();
+                            const affil = unmatched.affiliation.toLowerCase().trim();
+                            attendee = attendees.find(
+                                (x) =>
+                                    x.displayName.toLowerCase().trim() === name &&
+                                    x.profile?.affiliation &&
+                                    x.profile.affiliation.toLowerCase().trim() === affil
+                            );
+                        }
+                        break;
+                    case "name_only":
+                        if (unmatched.name) {
+                            const name = unmatched.name.toLowerCase().trim();
+                            attendee = attendees.find((x) => x.displayName.toLowerCase().trim() === name);
+                        }
+                        break;
+                }
+
+                if (attendee) {
+                    matchCount++;
+                    updatePerson({
+                        ...unmatched,
+                        attendeeId: attendee.id,
+                    });
+                }
+            }
+            const unmatchCount = allUnmatched.length - matchCount;
+            toast({
+                title: `Matched ${matchCount} people to registrants. Remember to save changes.`,
+                description: `${unmatchCount} remain unmatched.`,
+                duration: 4000,
+                isClosable: true,
+                position: "top",
+                status: matchCount > 0 ? "success" : "info",
+            });
+            if (matchCount > 0) {
+                onClose();
+            }
+        },
+        [attendees, data, onClose, toast, updatePerson]
+    );
+
+    const green = useColorModeValue("green.100", "green.700");
+    const greenAlt = useColorModeValue("green.200", "green.600");
+
     return (
         <>
             <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
@@ -281,40 +350,68 @@ export default function ManagePersonsModal({
                 <ModalContent>
                     <ModalHeader paddingBottom={0}>Manage People</ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody>
-                        <Box>
-                            <CRUDTable
-                                data={data}
-                                tableUniqueName="ManageConferenceContent_ManagePeopleModal"
-                                row={row}
-                                columns={columns}
-                                insert={{
-                                    ongoing: false,
-                                    generateDefaults: () => ({
-                                        id: uuidv4(),
-                                    }),
-                                    makeWhole: (d) =>
-                                        d.name && d.affiliation ? (d as ContentPersonDescriptor) : undefined,
-                                    start: (record) => {
-                                        assert(record.name);
-                                        assert(record.affiliation);
-                                        insertPerson(record);
-                                    },
-                                }}
-                                update={{
-                                    ongoing: false,
-                                    start: (record) => {
-                                        updatePerson(record);
-                                    },
-                                }}
-                                delete={{
-                                    ongoing: false,
-                                    start: (keys) => {
-                                        keys.forEach((key) => deletePerson(key));
-                                    },
-                                }}
-                            />
-                        </Box>
+                    <ModalBody py={4}>
+                        <VStack justifyContent="flex-start" alignItems="flex-start" spacing={2}>
+                            <Menu>
+                                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                                    Auto-link registrants
+                                </MenuButton>
+                                <MenuList>
+                                    <MenuItem
+                                        onClick={() => autoLink("email")}
+                                        bgColor={green}
+                                        _hover={{
+                                            bgColor: greenAlt,
+                                        }}
+                                        _focus={{
+                                            bgColor: greenAlt,
+                                        }}
+                                    >
+                                        By email (recommended)
+                                    </MenuItem>
+                                    <MenuItem onClick={() => autoLink("name_affiliation")}>
+                                        By name and affiliation (usually ok)
+                                    </MenuItem>
+                                    <MenuItem onClick={() => autoLink("name_only")}>
+                                        By name only (not recommended)
+                                    </MenuItem>
+                                </MenuList>
+                            </Menu>
+                            <Box>
+                                <CRUDTable
+                                    data={data}
+                                    tableUniqueName="ManageConferenceContent_ManagePeopleModal"
+                                    row={row}
+                                    columns={columns}
+                                    insert={{
+                                        ongoing: false,
+                                        generateDefaults: () => ({
+                                            id: uuidv4(),
+                                            isNew: true,
+                                        }),
+                                        makeWhole: (d) => (d.name ? (d as ContentPersonDescriptor) : undefined),
+                                        start: (record) => {
+                                            assert(record.name);
+                                            record.affiliation =
+                                                record.affiliation === "" ? undefined : record.affiliation;
+                                            insertPerson(record);
+                                        },
+                                    }}
+                                    update={{
+                                        ongoing: false,
+                                        start: (record) => {
+                                            updatePerson(record);
+                                        },
+                                    }}
+                                    delete={{
+                                        ongoing: false,
+                                        start: (keys) => {
+                                            keys.forEach((key) => deletePerson(key));
+                                        },
+                                    }}
+                                />
+                            </Box>
+                        </VStack>
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="blue" mr={3} onClick={onClose}>

@@ -104,7 +104,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     to="sponsors"
                     name="Sponsors"
                     icon="star"
-                    description="Manage your sponsors and their representatives."
+                    description="Manage your sponsors, their booths and representatives."
                     permissions={[
                         Permission_Enum.ConferenceManageContent, // TODO: Manage sponsors permission
                     ]}

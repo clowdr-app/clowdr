@@ -651,8 +651,8 @@ function EditableScheduleTable(): JSX.Element {
                     );
                     if (
                         eventsInSameRoom.some(([_, event]) => {
-                            const startE = event.startTime ? Date.parse(event.startTime) : Date.now();
-                            const endE = startE + 1000 * (event.durationSeconds ?? 300);
+                            const startE = event.startTime.getTime();
+                            const endE = event.endTime.getTime();
                             return areOverlapping(start, end, startE, endE);
                         })
                     ) {

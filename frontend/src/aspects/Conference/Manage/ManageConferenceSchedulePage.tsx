@@ -68,6 +68,7 @@ import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import BatchAddEventPeople from "./Schedule/BatchAddEventPeople";
 import { EventPersonsModal, requiresEventPeople } from "./Schedule/EventPersonsModal";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
@@ -877,6 +878,8 @@ function EditableScheduleTable(): JSX.Element {
         [deleteEvents, deleteEventsResponse.loading]
     );
 
+    const batchAddPeopleDisclosure = useDisclosure();
+
     return (
         <>
             <HStack>
@@ -891,6 +894,7 @@ function EditableScheduleTable(): JSX.Element {
                 >
                     Manage Rooms
                 </LinkButton>
+                <Button onClick={batchAddPeopleDisclosure.onOpen}>Add people to events (batch)</Button>
             </HStack>
             <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
             {wholeSchedule.data?.Room && wholeSchedule.data.Room.length === 0 ? (
@@ -936,6 +940,7 @@ function EditableScheduleTable(): JSX.Element {
                     forceReloadRef.current?.();
                 }}
             />
+            <BatchAddEventPeople events={data} rooms={wholeSchedule.data?.Room ?? []} {...batchAddPeopleDisclosure} />
         </>
     );
 }

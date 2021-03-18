@@ -18,6 +18,7 @@ gql`
             id
             displayName
             profile {
+                attendeeId
                 affiliation
             }
             user {

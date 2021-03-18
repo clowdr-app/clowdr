@@ -32972,7 +32972,7 @@ export type ContentGroup_CreateRoomMutationVariables = Exact<{
 
 export type ContentGroup_CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly createContentGroupRoom?: Maybe<{ readonly __typename?: 'CreateContentGroupRoomOutput', readonly roomId?: Maybe<string>, readonly message?: Maybe<string> }> };
 
-export type ManageContentPeople_AttendeeFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly user?: Maybe<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string> }>, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }> };
+export type ManageContentPeople_AttendeeFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly id: any, readonly invitedEmailAddress: string }>, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }> };
 
 export type ManageContentPeople_SelectAllAttendeesQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -33716,6 +33716,94 @@ export type SendEmail_GetAllGroupsQueryVariables = Exact<{
 
 export type SendEmail_GetAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string }> };
 
+export type AddEventPeople_ContentGroupPersonFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly groupId: any, readonly personId: any, readonly roleName: string };
+
+export type AddEventPeople_ContentPersonFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly attendeeId?: Maybe<any> };
+
+export type AddEventPeople_AttendeeFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }>, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly id: any, readonly invitedEmailAddress: string }> };
+
+export type AddEventPeople_GroupFragment = { readonly __typename?: 'Group', readonly id: any, readonly name: string };
+
+export type AddEventPeople_SelectContentGroupPeopleQueryVariables = Exact<{
+  contentGroupIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectContentGroupPeopleQuery = { readonly __typename?: 'query_root', readonly ContentGroupPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & AddEventPeople_ContentGroupPersonFragment
+  )> };
+
+export type AddEventPeople_SelectContentPeopleQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectContentPeopleQuery = { readonly __typename?: 'query_root', readonly ContentPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentPerson' }
+    & AddEventPeople_ContentPersonFragment
+  )> };
+
+export type AddEventPeople_SelectAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AddEventPeople_AttendeeFragment
+  )> };
+
+export type AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables = Exact<{
+  attendeeIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectContentPeople_ByAttendeeQuery = { readonly __typename?: 'query_root', readonly ContentPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentPerson' }
+    & AddEventPeople_ContentPersonFragment
+  )> };
+
+export type AddEventPeople_SelectGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<(
+    { readonly __typename?: 'Group' }
+    & AddEventPeople_GroupFragment
+  )> };
+
+export type AddEventPeople_SelectAttendees_ByGroupQueryVariables = Exact<{
+  groupId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectAttendees_ByGroupQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AddEventPeople_AttendeeFragment
+  )> };
+
+export type AddEventPeople_InsertContentPeopleMutationVariables = Exact<{
+  objects: ReadonlyArray<ContentPerson_Insert_Input> | ContentPerson_Insert_Input;
+}>;
+
+
+export type AddEventPeople_InsertContentPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentPerson?: Maybe<{ readonly __typename?: 'ContentPerson_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentPerson' }
+      & AddEventPeople_ContentPersonFragment
+    )> }> };
+
+export type AddEventPeople_InsertEventPeopleMutationVariables = Exact<{
+  objects: ReadonlyArray<EventPerson_Insert_Input> | EventPerson_Insert_Input;
+}>;
+
+
+export type AddEventPeople_InsertEventPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'EventPerson' }
+      & EventPersonInfoFragment
+    )> }> };
+
 export type InsertEventPersonMutationVariables = Exact<{
   newEventPerson: EventPerson_Insert_Input;
 }>;
@@ -33876,41 +33964,6 @@ export type InsertShufflePeriodMutationVariables = Exact<{
 
 
 export type InsertShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShufflePeriod_one?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetAttendeesPerRoom: number, readonly maxAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum }> };
-
-export type ManageShuffleRooms_RoomParticipantFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly roomId: any, readonly createdAt: any, readonly updatedAt: any, readonly conferenceId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
-
-export type ManageShuffleRooms_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly name: string, readonly conferenceId: any, readonly participants: ReadonlyArray<(
-    { readonly __typename?: 'RoomParticipant' }
-    & ManageShuffleRooms_RoomParticipantFragment
-  )> };
-
-export type ManageShuffleRooms_QueueEntryFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly shufflePeriodId: any, readonly allocatedShuffleRoomId?: Maybe<number>, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
-
-export type ManageShuffleRooms_ShuffleRoomFragment = { readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly shufflePeriodId: any, readonly roomId: any, readonly durationMinutes: number, readonly startedAt: any, readonly reshuffleUponEnd: boolean, readonly isEnded: boolean, readonly queueEntries: ReadonlyArray<(
-    { readonly __typename?: 'room_ShuffleQueueEntry' }
-    & ManageShuffleRooms_QueueEntryFragment
-  )> };
-
-export type ManageShuffleRooms_ActiveShuffleRoomFragment = (
-  { readonly __typename?: 'room_ShuffleRoom', readonly room: (
-    { readonly __typename?: 'Room' }
-    & ManageShuffleRooms_RoomFragment
-  ) }
-  & ManageShuffleRooms_ShuffleRoomFragment
-);
-
-export type ManageShuffleRooms_SelectShuffleRoomsQueryVariables = Exact<{
-  periodId: Scalars['uuid'];
-}>;
-
-
-export type ManageShuffleRooms_SelectShuffleRoomsQuery = { readonly __typename?: 'query_root', readonly activeRooms: ReadonlyArray<(
-    { readonly __typename?: 'room_ShuffleRoom' }
-    & ManageShuffleRooms_ActiveShuffleRoomFragment
-  )>, readonly endedRooms: ReadonlyArray<(
-    { readonly __typename?: 'room_ShuffleRoom' }
-    & ManageShuffleRooms_ShuffleRoomFragment
-  )> };
 
 export type DeleteShufflePeriodMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -34873,9 +34926,9 @@ export const ManageContentPeople_AttendeeFragmentDoc = gql`
     fragment ManageContentPeople_Attendee on Attendee {
   id
   displayName
-  user {
+  invitation {
     id
-    email
+    invitedEmailAddress
   }
   profile {
     attendeeId
@@ -35187,6 +35240,43 @@ export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
   }
 }
     `;
+export const AddEventPeople_ContentGroupPersonFragmentDoc = gql`
+    fragment AddEventPeople_ContentGroupPerson on ContentGroupPerson {
+  id
+  groupId
+  personId
+  roleName
+}
+    `;
+export const AddEventPeople_ContentPersonFragmentDoc = gql`
+    fragment AddEventPeople_ContentPerson on ContentPerson {
+  id
+  name
+  affiliation
+  email
+  attendeeId
+}
+    `;
+export const AddEventPeople_AttendeeFragmentDoc = gql`
+    fragment AddEventPeople_Attendee on Attendee {
+  id
+  displayName
+  profile {
+    attendeeId
+    affiliation
+  }
+  invitation {
+    id
+    invitedEmailAddress
+  }
+}
+    `;
+export const AddEventPeople_GroupFragmentDoc = gql`
+    fragment AddEventPeople_Group on Group {
+  id
+  name
+}
+    `;
 export const RoomParticipantInfoFragmentDoc = gql`
     fragment RoomParticipantInfo on RoomParticipant {
   attendeeId
@@ -35253,69 +35343,6 @@ export const EventInfoFragmentDoc = gql`
 }
     ${EventPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
-export const ManageShuffleRooms_QueueEntryFragmentDoc = gql`
-    fragment ManageShuffleRooms_QueueEntry on room_ShuffleQueueEntry {
-  id
-  created_at
-  updated_at
-  shufflePeriodId
-  attendee {
-    id
-    displayName
-  }
-  allocatedShuffleRoomId
-}
-    `;
-export const ManageShuffleRooms_ShuffleRoomFragmentDoc = gql`
-    fragment ManageShuffleRooms_ShuffleRoom on room_ShuffleRoom {
-  id
-  created_at
-  updated_at
-  shufflePeriodId
-  roomId
-  durationMinutes
-  startedAt
-  reshuffleUponEnd
-  isEnded
-  queueEntries {
-    ...ManageShuffleRooms_QueueEntry
-  }
-}
-    ${ManageShuffleRooms_QueueEntryFragmentDoc}`;
-export const ManageShuffleRooms_RoomParticipantFragmentDoc = gql`
-    fragment ManageShuffleRooms_RoomParticipant on RoomParticipant {
-  id
-  roomId
-  attendee {
-    id
-    displayName
-  }
-  createdAt
-  updatedAt
-  conferenceId
-}
-    `;
-export const ManageShuffleRooms_RoomFragmentDoc = gql`
-    fragment ManageShuffleRooms_Room on Room {
-  id
-  created_at
-  updated_at
-  name
-  conferenceId
-  participants {
-    ...ManageShuffleRooms_RoomParticipant
-  }
-}
-    ${ManageShuffleRooms_RoomParticipantFragmentDoc}`;
-export const ManageShuffleRooms_ActiveShuffleRoomFragmentDoc = gql`
-    fragment ManageShuffleRooms_ActiveShuffleRoom on room_ShuffleRoom {
-  ...ManageShuffleRooms_ShuffleRoom
-  room {
-    ...ManageShuffleRooms_Room
-  }
-}
-    ${ManageShuffleRooms_ShuffleRoomFragmentDoc}
-${ManageShuffleRooms_RoomFragmentDoc}`;
 export const EditableSponsorsTable_ContentGroupInfoFragmentDoc = gql`
     fragment EditableSponsorsTable_ContentGroupInfo on ContentGroup {
   id
@@ -40421,6 +40448,272 @@ export function useSendEmail_GetAllGroupsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type SendEmail_GetAllGroupsQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsQuery>;
 export type SendEmail_GetAllGroupsLazyQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsLazyQuery>;
 export type SendEmail_GetAllGroupsQueryResult = Apollo.QueryResult<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>;
+export const AddEventPeople_SelectContentGroupPeopleDocument = gql`
+    query AddEventPeople_SelectContentGroupPeople($contentGroupIds: [uuid!]!) {
+  ContentGroupPerson(where: {groupId: {_in: $contentGroupIds}}) {
+    ...AddEventPeople_ContentGroupPerson
+  }
+}
+    ${AddEventPeople_ContentGroupPersonFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectContentGroupPeopleQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectContentGroupPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectContentGroupPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectContentGroupPeopleQuery({
+ *   variables: {
+ *      contentGroupIds: // value for 'contentGroupIds'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectContentGroupPeopleQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>(AddEventPeople_SelectContentGroupPeopleDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectContentGroupPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>(AddEventPeople_SelectContentGroupPeopleDocument, baseOptions);
+        }
+export type AddEventPeople_SelectContentGroupPeopleQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentGroupPeopleQuery>;
+export type AddEventPeople_SelectContentGroupPeopleLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentGroupPeopleLazyQuery>;
+export type AddEventPeople_SelectContentGroupPeopleQueryResult = Apollo.QueryResult<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>;
+export const AddEventPeople_SelectContentPeopleDocument = gql`
+    query AddEventPeople_SelectContentPeople($conferenceId: uuid!) {
+  ContentPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AddEventPeople_ContentPerson
+  }
+}
+    ${AddEventPeople_ContentPersonFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectContentPeopleQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectContentPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectContentPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectContentPeopleQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectContentPeopleQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>(AddEventPeople_SelectContentPeopleDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectContentPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>(AddEventPeople_SelectContentPeopleDocument, baseOptions);
+        }
+export type AddEventPeople_SelectContentPeopleQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentPeopleQuery>;
+export type AddEventPeople_SelectContentPeopleLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentPeopleLazyQuery>;
+export type AddEventPeople_SelectContentPeopleQueryResult = Apollo.QueryResult<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>;
+export const AddEventPeople_SelectAttendeesDocument = gql`
+    query AddEventPeople_SelectAttendees($conferenceId: uuid!) {
+  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AddEventPeople_Attendee
+  }
+}
+    ${AddEventPeople_AttendeeFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectAttendeesQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectAttendeesQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>(AddEventPeople_SelectAttendeesDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>(AddEventPeople_SelectAttendeesDocument, baseOptions);
+        }
+export type AddEventPeople_SelectAttendeesQueryHookResult = ReturnType<typeof useAddEventPeople_SelectAttendeesQuery>;
+export type AddEventPeople_SelectAttendeesLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectAttendeesLazyQuery>;
+export type AddEventPeople_SelectAttendeesQueryResult = Apollo.QueryResult<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>;
+export const AddEventPeople_SelectContentPeople_ByAttendeeDocument = gql`
+    query AddEventPeople_SelectContentPeople_ByAttendee($attendeeIds: [uuid!]!) {
+  ContentPerson(where: {attendeeId: {_in: $attendeeIds}}) {
+    ...AddEventPeople_ContentPerson
+  }
+}
+    ${AddEventPeople_ContentPersonFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectContentPeople_ByAttendeeQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectContentPeople_ByAttendeeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectContentPeople_ByAttendeeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectContentPeople_ByAttendeeQuery({
+ *   variables: {
+ *      attendeeIds: // value for 'attendeeIds'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectContentPeople_ByAttendeeQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>(AddEventPeople_SelectContentPeople_ByAttendeeDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectContentPeople_ByAttendeeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>(AddEventPeople_SelectContentPeople_ByAttendeeDocument, baseOptions);
+        }
+export type AddEventPeople_SelectContentPeople_ByAttendeeQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentPeople_ByAttendeeQuery>;
+export type AddEventPeople_SelectContentPeople_ByAttendeeLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentPeople_ByAttendeeLazyQuery>;
+export type AddEventPeople_SelectContentPeople_ByAttendeeQueryResult = Apollo.QueryResult<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>;
+export const AddEventPeople_SelectGroupsDocument = gql`
+    query AddEventPeople_SelectGroups($conferenceId: uuid!) {
+  Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AddEventPeople_Group
+  }
+}
+    ${AddEventPeople_GroupFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectGroupsQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectGroupsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectGroupsQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>(AddEventPeople_SelectGroupsDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>(AddEventPeople_SelectGroupsDocument, baseOptions);
+        }
+export type AddEventPeople_SelectGroupsQueryHookResult = ReturnType<typeof useAddEventPeople_SelectGroupsQuery>;
+export type AddEventPeople_SelectGroupsLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectGroupsLazyQuery>;
+export type AddEventPeople_SelectGroupsQueryResult = Apollo.QueryResult<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>;
+export const AddEventPeople_SelectAttendees_ByGroupDocument = gql`
+    query AddEventPeople_SelectAttendees_ByGroup($groupId: uuid!) {
+  Attendee(where: {groupAttendees: {groupId: {_eq: $groupId}}}) {
+    ...AddEventPeople_Attendee
+  }
+}
+    ${AddEventPeople_AttendeeFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectAttendees_ByGroupQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectAttendees_ByGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectAttendees_ByGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectAttendees_ByGroupQuery({
+ *   variables: {
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectAttendees_ByGroupQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>(AddEventPeople_SelectAttendees_ByGroupDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectAttendees_ByGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>(AddEventPeople_SelectAttendees_ByGroupDocument, baseOptions);
+        }
+export type AddEventPeople_SelectAttendees_ByGroupQueryHookResult = ReturnType<typeof useAddEventPeople_SelectAttendees_ByGroupQuery>;
+export type AddEventPeople_SelectAttendees_ByGroupLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectAttendees_ByGroupLazyQuery>;
+export type AddEventPeople_SelectAttendees_ByGroupQueryResult = Apollo.QueryResult<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>;
+export const AddEventPeople_InsertContentPeopleDocument = gql`
+    mutation AddEventPeople_InsertContentPeople($objects: [ContentPerson_insert_input!]!) {
+  insert_ContentPerson(objects: $objects) {
+    returning {
+      ...AddEventPeople_ContentPerson
+    }
+  }
+}
+    ${AddEventPeople_ContentPersonFragmentDoc}`;
+export type AddEventPeople_InsertContentPeopleMutationFn = Apollo.MutationFunction<AddEventPeople_InsertContentPeopleMutation, AddEventPeople_InsertContentPeopleMutationVariables>;
+
+/**
+ * __useAddEventPeople_InsertContentPeopleMutation__
+ *
+ * To run a mutation, you first call `useAddEventPeople_InsertContentPeopleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_InsertContentPeopleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addEventPeopleInsertContentPeopleMutation, { data, loading, error }] = useAddEventPeople_InsertContentPeopleMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useAddEventPeople_InsertContentPeopleMutation(baseOptions?: Apollo.MutationHookOptions<AddEventPeople_InsertContentPeopleMutation, AddEventPeople_InsertContentPeopleMutationVariables>) {
+        return Apollo.useMutation<AddEventPeople_InsertContentPeopleMutation, AddEventPeople_InsertContentPeopleMutationVariables>(AddEventPeople_InsertContentPeopleDocument, baseOptions);
+      }
+export type AddEventPeople_InsertContentPeopleMutationHookResult = ReturnType<typeof useAddEventPeople_InsertContentPeopleMutation>;
+export type AddEventPeople_InsertContentPeopleMutationResult = Apollo.MutationResult<AddEventPeople_InsertContentPeopleMutation>;
+export type AddEventPeople_InsertContentPeopleMutationOptions = Apollo.BaseMutationOptions<AddEventPeople_InsertContentPeopleMutation, AddEventPeople_InsertContentPeopleMutationVariables>;
+export const AddEventPeople_InsertEventPeopleDocument = gql`
+    mutation AddEventPeople_InsertEventPeople($objects: [EventPerson_insert_input!]!) {
+  insert_EventPerson(objects: $objects) {
+    returning {
+      ...EventPersonInfo
+    }
+  }
+}
+    ${EventPersonInfoFragmentDoc}`;
+export type AddEventPeople_InsertEventPeopleMutationFn = Apollo.MutationFunction<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>;
+
+/**
+ * __useAddEventPeople_InsertEventPeopleMutation__
+ *
+ * To run a mutation, you first call `useAddEventPeople_InsertEventPeopleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_InsertEventPeopleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addEventPeopleInsertEventPeopleMutation, { data, loading, error }] = useAddEventPeople_InsertEventPeopleMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useAddEventPeople_InsertEventPeopleMutation(baseOptions?: Apollo.MutationHookOptions<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>) {
+        return Apollo.useMutation<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>(AddEventPeople_InsertEventPeopleDocument, baseOptions);
+      }
+export type AddEventPeople_InsertEventPeopleMutationHookResult = ReturnType<typeof useAddEventPeople_InsertEventPeopleMutation>;
+export type AddEventPeople_InsertEventPeopleMutationResult = Apollo.MutationResult<AddEventPeople_InsertEventPeopleMutation>;
+export type AddEventPeople_InsertEventPeopleMutationOptions = Apollo.BaseMutationOptions<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>;
 export const InsertEventPersonDocument = gql`
     mutation InsertEventPerson($newEventPerson: EventPerson_insert_input!) {
   insert_EventPerson_one(object: $newEventPerson) {
@@ -40897,47 +41190,6 @@ export function useInsertShufflePeriodMutation(baseOptions?: Apollo.MutationHook
 export type InsertShufflePeriodMutationHookResult = ReturnType<typeof useInsertShufflePeriodMutation>;
 export type InsertShufflePeriodMutationResult = Apollo.MutationResult<InsertShufflePeriodMutation>;
 export type InsertShufflePeriodMutationOptions = Apollo.BaseMutationOptions<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>;
-export const ManageShuffleRooms_SelectShuffleRoomsDocument = gql`
-    query ManageShuffleRooms_SelectShuffleRooms($periodId: uuid!) {
-  activeRooms: room_ShuffleRoom(
-    where: {shufflePeriodId: {_eq: $periodId}, isEnded: {_eq: false}}
-  ) {
-    ...ManageShuffleRooms_ActiveShuffleRoom
-  }
-  endedRooms: room_ShuffleRoom(
-    where: {shufflePeriodId: {_eq: $periodId}, isEnded: {_eq: true}}
-  ) {
-    ...ManageShuffleRooms_ShuffleRoom
-  }
-}
-    ${ManageShuffleRooms_ActiveShuffleRoomFragmentDoc}
-${ManageShuffleRooms_ShuffleRoomFragmentDoc}`;
-
-/**
- * __useManageShuffleRooms_SelectShuffleRoomsQuery__
- *
- * To run a query within a React component, call `useManageShuffleRooms_SelectShuffleRoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageShuffleRooms_SelectShuffleRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageShuffleRooms_SelectShuffleRoomsQuery({
- *   variables: {
- *      periodId: // value for 'periodId'
- *   },
- * });
- */
-export function useManageShuffleRooms_SelectShuffleRoomsQuery(baseOptions: Apollo.QueryHookOptions<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>) {
-        return Apollo.useQuery<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>(ManageShuffleRooms_SelectShuffleRoomsDocument, baseOptions);
-      }
-export function useManageShuffleRooms_SelectShuffleRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>) {
-          return Apollo.useLazyQuery<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>(ManageShuffleRooms_SelectShuffleRoomsDocument, baseOptions);
-        }
-export type ManageShuffleRooms_SelectShuffleRoomsQueryHookResult = ReturnType<typeof useManageShuffleRooms_SelectShuffleRoomsQuery>;
-export type ManageShuffleRooms_SelectShuffleRoomsLazyQueryHookResult = ReturnType<typeof useManageShuffleRooms_SelectShuffleRoomsLazyQuery>;
-export type ManageShuffleRooms_SelectShuffleRoomsQueryResult = Apollo.QueryResult<ManageShuffleRooms_SelectShuffleRoomsQuery, ManageShuffleRooms_SelectShuffleRoomsQueryVariables>;
 export const DeleteShufflePeriodDocument = gql`
     mutation DeleteShufflePeriod($id: uuid!) {
   delete_room_ShufflePeriod_by_pk(id: $id) {

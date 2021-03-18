@@ -47,9 +47,9 @@ gql`
     fragment ManageContentPeople_Attendee on Attendee {
         id
         displayName
-        user {
+        invitation {
             id
-            email
+            invitedEmailAddress
         }
         profile {
             attendeeId
@@ -98,7 +98,7 @@ export default function ManagePersonsModal({
                 <option key={person.id} value={person.id}>
                     {person.displayName}
                     {person.profile?.affiliation ? ` (${person.profile.affiliation})` : ""}
-                    {person.user?.email ? ` <${person.user.email}>` : ""}
+                    {person.invitation?.invitedEmailAddress ? ` <${person.invitation.invitedEmailAddress}>` : ""}
                 </option>
             ));
     }, [attendees]);
@@ -293,7 +293,7 @@ export default function ManagePersonsModal({
                 switch (mode) {
                     case "email":
                         if (unmatched.email) {
-                            attendee = attendees.find((x) => x.user?.email === unmatched.email);
+                            attendee = attendees.find((x) => x.invitation?.invitedEmailAddress === unmatched.email);
                         }
                         break;
                     case "name_affiliation":

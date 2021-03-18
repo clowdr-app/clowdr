@@ -1,7 +1,12 @@
 import { gql, Reference } from "@apollo/client";
 import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
     Box,
     Button,
+    ButtonGroup,
     Center,
     FormLabel,
     Modal,
@@ -12,10 +17,14 @@ import {
     ModalHeader,
     ModalOverlay,
     Select,
+    Spinner,
     Text,
+    useDisclosure,
+    useToast,
+    VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     ContentPersonInfoFragment,
@@ -26,6 +35,10 @@ import {
     EventPersonRole_Enum,
     EventPerson_Insert_Input,
     RoomMode_Enum,
+    useAddEventPeople_InsertContentPeopleMutation,
+    useAddEventPeople_InsertEventPeopleMutation,
+    useAddEventPeople_SelectAttendeesQuery,
+    useAddEventPeople_SelectContentPeople_ByAttendeeQuery,
     useDeleteEventPersonsMutation,
     useInsertEventPersonMutation,
     useUpdateEventPersonMutation,
@@ -40,6 +53,7 @@ import CRUDTable, {
 } from "../../../CRUDTable2/CRUDTable2";
 import FAIcon from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
+import { addAttendeesToEvent } from "./BatchAddEventPeople";
 
 interface Props {
     isOpen: boolean;
@@ -77,6 +91,178 @@ export function requiresEventPeople(event: EventInfoFragment): boolean {
         (!event.eventPeople || event.eventPeople.length === 0) &&
         (event.intendedRoomModeName === RoomMode_Enum.Presentation ||
             event.intendedRoomModeName === RoomMode_Enum.QAndA)
+    );
+}
+
+export function AddEventPerson_RegistrantModal({
+    event,
+    closeOuter,
+}: {
+    event: EventInfoFragment;
+    closeOuter: () => void;
+}): JSX.Element {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const selectAttendeesQuery = useAddEventPeople_SelectAttendeesQuery({
+        variables: {
+            conferenceId: event.conferenceId,
+        },
+    });
+    const selectContentPeople_ByAttendeeQuery = useAddEventPeople_SelectContentPeople_ByAttendeeQuery({
+        skip: true,
+    });
+    const registrantOptions = useMemo(
+        () =>
+            selectAttendeesQuery.data
+                ? [...selectAttendeesQuery.data.Attendee]
+                      .sort((x, y) => x.displayName.localeCompare(y.displayName))
+                      .map((x) => (
+                          <option key={x.id} value={x.id}>
+                              {x.displayName}
+                              {x.profile?.affiliation ? ` (${x.profile.affiliation})` : ""}
+                              {x.invitation?.invitedEmailAddress ? ` <${x.invitation.invitedEmailAddress}>` : ""}
+                          </option>
+                      ))
+                : undefined,
+        [selectAttendeesQuery.data]
+    );
+
+    const roleOptions = useMemo(
+        () =>
+            Object.keys(EventPersonRole_Enum)
+                .sort((x, y) => x.localeCompare(y))
+                .map((x) => {
+                    const v = (EventPersonRole_Enum as any)[x];
+                    return (
+                        <option key={v} value={v}>
+                            {formatEnumValue(v)}
+                        </option>
+                    );
+                }),
+        []
+    );
+
+    const [selectedAttendeeId, setSelectedAttendeeId] = useState<string>("");
+    const [selectedRole, setSelectedRole] = useState<EventPersonRole_Enum>(EventPersonRole_Enum.Presenter);
+
+    const insertContentPeople = useAddEventPeople_InsertContentPeopleMutation();
+    const insertEventPeopleQ = useAddEventPeople_InsertEventPeopleMutation();
+    const toast = useToast();
+
+    const [adding, setAdding] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const add = useCallback(async () => {
+        setAdding(true);
+        setError(null);
+
+        try {
+            const newEventPeople: EventPerson_Insert_Input[] = await addAttendeesToEvent(
+                [selectedAttendeeId],
+                selectAttendeesQuery,
+                selectContentPeople_ByAttendeeQuery,
+                insertContentPeople,
+                event.conferenceId,
+                [event],
+                selectedRole,
+                insertEventPeopleQ
+            );
+
+            setAdding(false);
+            onClose();
+            closeOuter();
+            toast({
+                title: `Registrant added to ${newEventPeople.length} event`,
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+                position: "bottom",
+            });
+        } catch (e) {
+            setError(e.message || e.toString());
+            setAdding(false);
+        }
+    }, [
+        event,
+        insertContentPeople,
+        insertEventPeopleQ,
+        onClose,
+        selectAttendeesQuery,
+        selectContentPeople_ByAttendeeQuery,
+        selectedAttendeeId,
+        selectedRole,
+        toast,
+        closeOuter,
+    ]);
+
+    return (
+        <>
+            <Button onClick={onOpen}>Add registrant</Button>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Add registrant to event</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {error || selectAttendeesQuery.error ? (
+                            <Alert
+                                status="error"
+                                variant="subtle"
+                                mb={4}
+                                justifyContent="flex-start"
+                                alignItems="flex-start"
+                            >
+                                <AlertIcon />
+                                <VStack justifyContent="flex-start" alignItems="flex-start">
+                                    <AlertTitle>
+                                        {error
+                                            ? "Error adding registrant to event"
+                                            : "Error loading list of registrants"}
+                                    </AlertTitle>
+                                    <AlertDescription>{error ?? selectAttendeesQuery.error?.message}</AlertDescription>
+                                </VStack>
+                            </Alert>
+                        ) : undefined}
+                        {registrantOptions ? (
+                            <>
+                                <Select
+                                    aria-label="Registrant to add"
+                                    value={selectedAttendeeId}
+                                    onChange={(ev) => setSelectedAttendeeId(ev.target.value)}
+                                    mb={4}
+                                >
+                                    <option value="">Select a registrant</option>
+                                    {registrantOptions}
+                                </Select>
+                                <Select
+                                    aria-label="Role of registrant"
+                                    value={selectedRole}
+                                    onChange={(ev) => setSelectedRole(ev.target.value as EventPersonRole_Enum)}
+                                    mb={4}
+                                >
+                                    {roleOptions}
+                                </Select>
+                            </>
+                        ) : (
+                            <Spinner label="Loading registrants" />
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <ButtonGroup>
+                            <Button onClick={onClose}>Cancel</Button>
+                            <Button
+                                colorScheme="green"
+                                isDisabled={selectAttendeesQuery.loading || selectedAttendeeId === ""}
+                                isLoading={adding}
+                                onClick={add}
+                            >
+                                Add
+                            </Button>
+                        </ButtonGroup>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
     );
 }
 
@@ -126,10 +312,10 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                 defaultSortDirection: SortDirection.Asc,
                 header: function NameHeader(props: ColumnHeaderProps<EventPersonInfoFragment>) {
                     return props.isInCreate ? (
-                        <FormLabel>Attendee</FormLabel>
+                        <FormLabel>Person</FormLabel>
                     ) : (
                         <Button size="xs" onClick={props.onClick}>
-                            Attendee{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            Person{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -246,6 +432,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
+                            <AddEventPerson_RegistrantModal event={event} closeOuter={onClose} />
                             <CRUDTable
                                 data={data}
                                 tableUniqueName="ManageConferenceSchedule_EventPersonsModal"

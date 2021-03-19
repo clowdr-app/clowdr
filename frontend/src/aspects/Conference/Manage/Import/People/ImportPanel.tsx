@@ -100,7 +100,7 @@ export default function ImportPanel({
     useEffect(() => {
         if (importData?.insert_Attendee) {
             toast({
-                title: `Imported ${importData.insert_Attendee.affected_rows / 2} people`,
+                title: `Imported ${importData.insert_Attendee.affected_rows / 2} registrants`,
                 status: "success",
                 duration: 3000,
                 position: "bottom",
@@ -196,7 +196,7 @@ export default function ImportPanel({
                     <Text as="b">This does NOT send invitation emails to attendees.</Text>
                     <Text>
                         All this does is import the list into the system - after importing, you will need to go to
-                        Manage People to send invitations.
+                        Manage Registrants to send invitations.
                     </Text>
                 </AlertDescription>
             </Alert>
@@ -248,7 +248,7 @@ export default function ImportPanel({
                     colorScheme="red"
                     isDisabled={!!finalData?.length && (!hasImported || importLoading)}
                 >
-                    Go to Manage People
+                    Go to Manage Registrants
                 </LinkButton>
             </HStack>
             {noName ? (

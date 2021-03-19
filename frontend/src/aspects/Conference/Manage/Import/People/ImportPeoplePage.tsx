@@ -40,7 +40,7 @@ $.{
 
 export default function ImportPeoplePage(): JSX.Element {
     const conference = useConference();
-    const title = useTitle(`Import people to ${conference.shortName}`);
+    const title = useTitle(`Import registrants to ${conference.shortName}`);
     useDashboardPrimaryMenuButtons();
 
     const [data, setData] = useState<ParsedData<any[]>[]>();
@@ -78,10 +78,10 @@ export default function ImportPeoplePage(): JSX.Element {
                     Manage {conference.shortName}
                 </Heading>
                 <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                    Import People
+                    Import Registrants
                 </Heading>
                 <LinkButton to={`/conference/${conference.slug}/manage/people`} colorScheme="red">
-                    Go to Manage People
+                    Go to Manage Registrants
                 </LinkButton>
                 <Tabs defaultIndex={0} w="100%" mt={4}>
                     <TabList>

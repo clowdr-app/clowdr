@@ -73,7 +73,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
                 />
                 <RestrictedDashboardButton
                     to="import/people"
-                    name="People"
+                    name="Registrants"
                     icon="users"
                     description="Import your attendees, organisers and other users."
                     permissions={[Permission_Enum.ConferenceManageAttendees]}

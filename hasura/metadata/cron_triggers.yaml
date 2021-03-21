@@ -6,19 +6,6 @@
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
-- name: ProcessUploadYouTubeVideoQueue
-  webhook: '{{ACTION_BASE_URL}}/google/processUploadYouTubeVideoQueue'
-  schedule: '* * * * *'
-  include_in_metadata: true
-  payload: {}
-  retry_conf:
-    num_retries: 0
-    timeout_seconds: 60
-    tolerance_seconds: 60
-    retry_interval_seconds: 10
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
 - name: ProcessCustomEmailsJobQueue
   webhook: '{{ACTION_BASE_URL}}/queues/processCustomEmailsJobQueue'
   schedule: '* * * * *'
@@ -28,45 +15,6 @@
     num_retries: 0
     timeout_seconds: 60
     tolerance_seconds: 60
-    retry_interval_seconds: 10
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-- name: ProcessShuffleQueues
-  webhook: '{{ACTION_BASE_URL}}/shuffle/process'
-  schedule: '* * * * *'
-  include_in_metadata: true
-  payload: {}
-  retry_conf:
-    num_retries: 0
-    timeout_seconds: 60
-    tolerance_seconds: 70
-    retry_interval_seconds: 10
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-- name: ProcessSendSubmissionRequestsJobQueue
-  webhook: '{{ACTION_BASE_URL}}/queues/processSendSubmissionRequestsJobQueue'
-  schedule: '* * * * *'
-  include_in_metadata: true
-  payload: {}
-  retry_conf:
-    num_retries: 0
-    timeout_seconds: 60
-    tolerance_seconds: 60
-    retry_interval_seconds: 10
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-- name: SyncChannels
-  webhook: '{{ACTION_BASE_URL}}/channels/sync'
-  schedule: '*/2 * * * *'
-  include_in_metadata: true
-  payload: {}
-  retry_conf:
-    num_retries: 0
-    timeout_seconds: 60
-    tolerance_seconds: 270
     retry_interval_seconds: 10
   headers:
   - name: x-hasura-event-secret
@@ -97,6 +45,45 @@
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
+- name: ProcessSendSubmissionRequestsJobQueue
+  webhook: '{{ACTION_BASE_URL}}/queues/processSendSubmissionRequestsJobQueue'
+  schedule: '* * * * *'
+  include_in_metadata: true
+  payload: {}
+  retry_conf:
+    num_retries: 0
+    timeout_seconds: 60
+    tolerance_seconds: 60
+    retry_interval_seconds: 10
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+- name: ProcessShuffleQueues
+  webhook: '{{ACTION_BASE_URL}}/shuffle/process'
+  schedule: '* * * * *'
+  include_in_metadata: true
+  payload: {}
+  retry_conf:
+    num_retries: 0
+    timeout_seconds: 60
+    tolerance_seconds: 70
+    retry_interval_seconds: 10
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+- name: ProcessUploadYouTubeVideoQueue
+  webhook: '{{ACTION_BASE_URL}}/google/processUploadYouTubeVideoQueue'
+  schedule: '* * * * *'
+  include_in_metadata: true
+  payload: {}
+  retry_conf:
+    num_retries: 0
+    timeout_seconds: 60
+    tolerance_seconds: 60
+    retry_interval_seconds: 10
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
 - name: ProcessVideoRenderJobQueue
   webhook: '{{ACTION_BASE_URL}}/videoRenderJob/processQueue'
   schedule: '* * * * *'
@@ -107,6 +94,14 @@
     timeout_seconds: 60
     tolerance_seconds: 60
     retry_interval_seconds: 10
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+- name: SyncChannels
+  webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
+  schedule: '*/2 * * * *'
+  include_in_metadata: true
+  payload: {}
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET

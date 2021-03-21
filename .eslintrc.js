@@ -23,7 +23,7 @@ module.exports = {
     plugins: ["react", "@typescript-eslint", "jest"],
     rules: {
         semi: ["warn", "always"],
-        quotes: ["error", "double"],
+        quotes: ["error", "double", { avoidEscape: true }],
         "jest/no-disabled-tests": "warn",
         "jest/no-focused-tests": "error",
         "jest/no-identical-title": "error",

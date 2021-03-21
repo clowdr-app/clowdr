@@ -4,3 +4,5 @@ frontend/snowpack/
 services/actions/src/types/
 
 slate-transcript-editor/
+
+services/playout/codegen.js

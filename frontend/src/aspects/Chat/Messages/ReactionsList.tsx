@@ -50,10 +50,9 @@ function ReactionsListInner({
     message: MessageState;
     reactions: readonly ChatReactionDataFragment[];
 } & BoxProps): JSX.Element {
-    const reactionsGrouped: Array<[
-        string,
-        { senderIds: string[]; attendeeSentThisReactionId: number | false }
-    ]> = useMemo(() => {
+    const reactionsGrouped: Array<
+        [string, { senderIds: string[]; attendeeSentThisReactionId: number | false }]
+    > = useMemo(() => {
         return R.sortWith(
             [(x, y) => y[1].senderIds.length - x[1].senderIds.length, (x, y) => x[0].localeCompare(y[0])],
             [

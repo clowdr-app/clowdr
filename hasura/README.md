@@ -1,7 +1,7 @@
 # Clowdr: Hasura
 
-We use the Hasura GraphQL engine to power the interface between the frontend and
-all of our backend services.
+We use the Hasura GraphQL engine to power the interface between the frontend
+and all of our backend services.
 
 ## Pre-requisites
 
@@ -10,23 +10,25 @@ all of our backend services.
 
 ## Setting Up
 
-1. Copy the `hasura/.env.example` to `hasura/.env.local`
-1. From your new `.env.local`, delete the "Hasura Cloud"-specific variables
-   (which are labeled accordingly in the env's comments).
-   1. You won't be able to configure the `HASURA_GRAPHQL_JWT_SECRET` yet. Replace it with `XXXXX` for now.
-   1. In `hasura/docker-compose.yaml`, comment out the line `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`. We'll re-enable it once we have a JWT secret.
-1. Run the `Hasura Console -- Local Development` task within VSCode
+1. `cp hasura/.env.example hasura/.env.local`
+1. Run the `Hasura Console -- Local Development` task within VSCode:
+   `Terminal > Run Task`.
 1. Check that the Docker Compose task ran successfully in the Task Output
 1. Check that the Hasura Console task ran successfully in the Task Output
+    - If you get an error message about `version check: failed to get
+      version from server: failed making version api call...` try running
+      the task again -- there is a race condition that can cause this.
 1. Your browser should have opened a tab to the Hasura console
+
+Now return to the main README.
 
 ## Local Development
 
 See root ReadMe instructions for local development for which tasks to run.
 
-If the environment configuration for Hasura/Postgres or the Docker Compose
-configuration changes, then the Hasura local-dev tasks need to be restarted
-(which will also apply the changes to Docker).
+**Note**: If the environment configuration for Hasura/Postgres or the Docker
+Compose configuration change, then the Hasura local-dev tasks will need to
+be restarted (which will also apply the changes to Docker).
 
 ## Remote Deployment
 

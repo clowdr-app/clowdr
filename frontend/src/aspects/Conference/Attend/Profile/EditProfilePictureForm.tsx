@@ -294,13 +294,13 @@ export default function EditProfilePitureForm({
                                                                     attendeeId: attendee.id,
                                                                 });
 
-                                                                const frag = cache.readFragment<
-                                                                    AttendeeProfileDataFragment
-                                                                >({
-                                                                    fragment: AttendeeProfileDataFragmentDoc,
-                                                                    fragmentName: "AttendeeProfileData",
-                                                                    id,
-                                                                });
+                                                                const frag = cache.readFragment<AttendeeProfileDataFragment>(
+                                                                    {
+                                                                        fragment: AttendeeProfileDataFragmentDoc,
+                                                                        fragmentName: "AttendeeProfileData",
+                                                                        id,
+                                                                    }
+                                                                );
 
                                                                 if (frag) {
                                                                     cache.writeFragment({

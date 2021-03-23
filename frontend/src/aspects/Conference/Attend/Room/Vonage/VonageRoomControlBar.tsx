@@ -194,6 +194,12 @@ export function VonageRoomControlBar({
         [vonage.state]
     );
 
+    /*
+    BCP: Might be useful to play with the color and size of the join room buttom -- e.g., 
+                                    colorScheme="red"
+                                    w="12em"
+                                    h="8ex"
+    */
     return (
         <>
             <VStack my={4}>

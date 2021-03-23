@@ -1,0 +1,1 @@
+export const AWS_MODULE_OPTIONS = "AWS_MODULE_OPTIONS";

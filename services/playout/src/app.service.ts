@@ -6,13 +6,14 @@ import {
 } from "@golevelup/nestjs-hasura";
 import { Injectable } from "@nestjs/common";
 import * as Bunyan from "bunyan";
+import { ChannelSyncService } from "./channel-sync/channel-sync.service";
 import { RoomMode_Enum } from "./generated/graphql";
 
 @Injectable()
 export class AppService {
     private readonly _logger: Bunyan;
 
-    constructor(@RootLogger() logger: Bunyan) {
+    constructor(@RootLogger() logger: Bunyan, private channelSync: ChannelSyncService) {
         this._logger = logger.child({ component: this.constructor.name });
     }
 
@@ -40,6 +41,7 @@ export class AppService {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannels(_evt: any): void {
         this._logger.info({ event: "SyncChannels", data: _evt });
+        this.channelSync.channelSync().catch((err) => this._logger.error(err));
     }
 }
 

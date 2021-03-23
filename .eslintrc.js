@@ -30,17 +30,8 @@ module.exports = {
         "jest/prefer-to-have-length": "warn",
         "jest/valid-expect": "error",
         "@typescript-eslint/no-explicit-any": "off",
-        "no-unused-vars": [
-            "warn",
-            {
-                vars: "all",
-                args: "after-used",
-                ignoreRestSiblings: false,
-                argsIgnorePattern: "^_",
-                varsIgnorePattern: "(^_)|(.*Query$)",
-            },
-        ],
         "@typescript-eslint/no-empty-interface": "off",
+        "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": [
             "warn",
             {

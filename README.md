@@ -31,51 +31,15 @@ parts of the platform, follow all the steps below.
 
 ## Pre-requisites
 
-BCP: General comments about the READMEs:
-
-- Overall flow...
-  - Separating Pre-Requisites from Setup as separate "phases" seems
-    unnecessarily heavy.
-  - Most of the README files begin with a sort of "Table of Contents" that
-    makes subroutine calls to various sections of the rest of the document.
-    This requires quite a bit of remembering state on the part of readers
-    (especially since the whole README file is itself generally a subroutine
-    call from the main README) and contributes to a feeling of overwhelm.
-    Moreover, there is not very much material in any of the files _besides_
-    the sections describing what to do.
-  - So my suggestion for overall flow would be to
-    1. Coalesce the pre-requisites and setup sections of every document
-       into a single list
-    2. Inline all the subroutine calls within individual README documents
-       -- i.e., make the whole document be a list of ## sections each
-       describing a major step of installation.
-    3. For the few sections that contain miscellaneous notes and useful
-       information, rather than setup instructions, just mark them clearly
-       as "Notes" so the reader knows to skip over them on a first pass.
-- Big tables at bottoms of files: Please let's just put the instructions
-  for env variables directly in the `.example` files! There are many
-  advantages to this:
-  - documentation right next to where you need it
-  - avoids a subroutine call to a different part of the README
-  - no width restriction --> encouragement to document things more
-    verbosely --> good
-
 1. [VSCode](https://code.visualstudio.com/)
    - We also recommend you install the "recommended extensions" listed in the
-     `.vscode/extensions` folder.
-     BCP: Will VSCode automatically offer to install them? Or do people need
-     to do something special / manual? (I see I have them installed, but
-     I don't think I did anything except maybe say yes to a question.)
+     `.vscode/extensions` folder. VSCode may offer to install them automatically.
 2. [Node.js](https://nodejs.org/en/) (and NPM)
 3. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
 4. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
 5. [Frontend pre-requsities](frontend/README.md#Pre-requisites)
 
-BCP: Probably also need: `npm install -g snowpack`
-
 ## Setting Up
-
-BCP: To fix: Once the Hasura console is running, we need to run the `Actions service - GraphQL Codegen` task.
 
 1. Clone this repository
 2. Initialise and update submodules:
@@ -85,9 +49,7 @@ BCP: To fix: Once the Hasura console is running, we need to run the `Actions ser
          git submodule update
    ```
 
-3. Build `react-transcript-editor` as follows:
-   BCP: Should this be slate-transcript-editor?? (Answer: Ross is working
-   on this bit; for now, just skip.)
+3. Build `slate-transcript-editor` as follows:
    1. `cd slate-transcript-editor`
    1. Run `npm install`
    1. Run `npm run build:component`
@@ -122,6 +84,142 @@ BCP: To fix: Once the Hasura console is running, we need to run the `Actions ser
 8. Follow the Frontend setup: [Clowdr Frontend
    ReadMe](frontend/README.md#Setting-up)
 9. Follow the instructions below for Auth0 setup.
+
+### Expose local services at a public URL
+
+When you run Clowdr locally, many parts of the system rely on exposing local
+services at a public URL. For example:
+
+- The actions service needs to receive SNS notifications from AWS and
+  webhooks from Vonage.
+- The Hasura service needs to receive GraphQL queries from Auth0.
+- The frontend much prefers to be served over HTTPS.
+
+Whenever your public URLs change, you will need to do the following:
+
+1. Copy the auth URL (`http://<hasura-domain>/v1/graphql`) into the
+   `HASURA_URL` Auth0 _Rule Configuration_ as shown in step 5.
+1. You will also need to set the actions URL
+   (`http://<actions-domain>/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
+   into the Vonage Session Monitoring URL. You can find this in the _Project
+   Settings_ for your Vonage Video API project.
+1. Reconfigure any local environment variables that point at the URL or
+   domain of the frontend, actions service or Hasura service.
+
+There are a couple of services that make it easy to do this: Packetriot and
+Ngrok. You only need one of them. We recommend Packetriot unless you have
+a particular reason to use ngrok.
+
+##### [Packetriot](https://packetriot.com)
+
+Packetriot costs $5 per month. This gets you five tunnels that support five
+ports each - i.e. five users. You can configure a custom domain, so Google
+OAuth will work.
+
+###### Packetriot Setup (administrator)
+
+1. Create a Packetriot account
+1. [Download the client](https://docs.packetriot.com/quickstart/) and ensure
+   it is on your `PATH`.
+1. Follow the Packetriot instructions to verify your domain and set up an
+   appropriate A/CNAME record.
+1. In the root of the repository, run `pktriot --config pktriot.json configure --url`. Follow the instructions to authenticate and create a
+   new tunnel. This will create a `pktriot.json` file with the credentials
+   for a tunnel.
+1. Add the following property to the JSON object, substituting your desired
+   credentials.
+   ```json
+   "https": [
+         {
+               "domain": "<custom-frontend-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 3000,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         },
+         {
+               "domain": "<custom-hasura-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 8080,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         },
+         {
+               "domain": "<custom-actions-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 3001,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
+         }
+      ]
+   ```
+1. Run `pktriot start --config pktriot.json` to start the tunnel.
+1. Configure Auth0 and Vonage using your custom domain
+
+To create a (persistent) tunnel for one of your team members, repeat the
+penultimate two steps (with a different filename) and send the generated
+JSON config to the team member.
+
+###### Packetriot Setup (team member)
+
+1. Download the [pktriot client](https://docs.packetriot.com/quickstart/)
+   and ensure it is on your `PATH`.
+1. Request configuration file from your Packetriot administrator.
+1. Put it in a file called `pktriot.json` in the root of the repository.
+1. Launch by running the _Packetriot_ task or running
+   `pktriot start --config pktriot.json`
+
+Note: it may take a little while for Packetriot to acquire certificates initially.
+
+##### [ngrok](https://ngrok.com)
+
+The second alternative is ngrok. Ngrok is either free (with random, ephemeral subdomains) or $8.25 per user
+per month (with custom domains).
+
+If you use the free version, you will have to perform some reconfiguration
+each time you relaunch ngrok. Additionally, Google OAuth (for YouTube
+integration) will not work properly, since it requires a verified domain.
+
+We have found that ngrok can be quite flaky.
+
+###### Ngrok Setup (paid)
+
+TODO
+
+###### Ngrok Setup (free)
+
+1. Create an ngrok account and note your auth token.
+1. Copy `ngrok.example.yml` to `ngrok.yml`.
+1. Set the `authtoken` and `region` (`us`, `eu`, `ap`, `au`, `sa`, `jp`, `in`)
+1. Remove the `hostname` line from each tunnel configuration - you will let
+   ngrok pick random subdomains instead.
+1. Start ngrok (`ngrok start -config=./ngrok.yaml auth actions`)
+
+**_Every time_** you start up for online (local) development, you will need
+to reconfigure Auth0 and Vonage as specified earlier. The domain format is
+`<ngrok-subdomain>.ngrok.io`.
+
+Additionally, ensure that the following env vars are set to use
+localhost-based, rather than public, URLs:
+
+- frontend
+  - `SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN`
+  - `SNOWPACK_PUBLIC_COMPANION_BASE_URL`
+- services/actions
+  - `FRONTEND_DOMAIN`
+- services/presence
+  - `CORS_ORIGIN`
+
+When using free ngrok, access the frontend via its localhost URL
+(`http://localhost:3000`) rather than launching an ngrok tunnel for it. You
+could also launch the frontend tunnel, but you would need to update all the
+above environment variable each time the tunnel was restarted.
 
 ### Auth0 Setup
 
@@ -319,9 +417,6 @@ Order of the rules matters.
    directly access the `user` table. It also sets the `lastLoggedInAt` field
    every time a user logs in.
 
-BCP: Ed said, "It occurs to me that this note is already out of date, as is
-the paragraph above it."
-
 _Note: `lastLoggedInAt` defaults to `now()` hence why updating it with a
 blank value when there is a constraint conflict results in it reflecting the
 last logged in time._
@@ -381,32 +476,18 @@ last logged in time._
 
 #### 5. Configure Rules
 
-BCP: HASURA_ADMIN_SECRET must be the same as HASURA_ADMIN_SECRET in
-services/actions/.env, right? Or only sometimes?
-
 Under _Settings_ on the `Rules` page, add the following key-value pairs:
 
-| Key                 | Value                                                                                       | Notes                                                                                                                                                     |
-| ------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HASURA_NAMESPACE    | `https://hasura.io/jwt/claims`                                                              | For Hasura, this value must always be this URL.                                                                                                           |
-| HASURA_ADMIN_SECRET | The Hasura Admin Secret                                                                     | For local testing, see Hasura Environment Variables.                                                                                                      |
-| HASURA_URL          | The full URL to the Hasura GraphQL API. E.g. `http://<ngrok-subdomain>.ngrok.io/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
+| Key                 | Value                                                                                    | Notes                                                                                                                                                     |
+| ------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HASURA_NAMESPACE    | `https://hasura.io/jwt/claims`                                                           | For Hasura, this value must always be this URL.                                                                                                           |
+| HASURA_ADMIN_SECRET | The Hasura Admin Secret                                                                  | This must match the HASURA_ADMIN_SECRET specified in the actions service and Hasura env.                                                                  |
+| HASURA_URL          | The full URL to the Hasura GraphQL API. E.g. `http://<public URL for Hasura>/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
 
-BCP: The first time through, I had no idea what the third row meant. The
-second time, I was a little less confused, but the comment is still pretty
-opaque; it would be nicer to spell out the steps. (There is more
-information involving ngrok below, but it seems out of order, and anyway
-those instructions have been updated; this seems out of date.)
-
-You can optionally use `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in
-addition to the non-local versions to have user records pushed to both
-services simultaneously (useful in testing environments).
-
-BCP: Huh?
+You may want to have a production and a test environment running off the same Auth0 tenant. In this case, you can optionally specify `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in
+addition to the `HASURA_ADMIN_SECRET` and `HASURA_URL` to have user records pushed to both places simultaneously.
 
 #### 6. Turn on live logging
-
-BCP: Full Setup only??
 
 This is useful for debugging. Go to _Extensions_ and install `Real-time Webtask Logs`. After installing, click it and authenticate it when asked. To
 see some useful logs, uncomment `console.log` statements in the _Rules_ we
@@ -430,192 +511,42 @@ created above.
 1. Optionally: Copy your key into Hasura Cloud Environment configuration
    - No need for the wrapping single quotes - Hasura's UI will handle that
      for you.
-     BCP: Full setup only, I assume? Or not even, for most people doing that?
 
-#### 8. Expose local services at a public URL
-
-When you run Clowdr locally, many parts of the system rely on exposing local
-services at a public URL. For example:
-
-- The actions service needs to receive SNS notifications from AWS and
-  webhooks from Vonage.
-- The Hasura service needs to receive GraphQL queries from Auth0.
-- The frontend much prefers to be served over HTTPS.
-
-Whenever your public URLs change, you will need to do the following:
-
-1. Copy the auth URL (`http://<hasura-domain>/v1/graphql`) into the
-   `HASURA_URL` Auth0 _Rule Configuration_ as shown in step 5.
-1. You will also need to set the actions URL
-   (`http://<actions-domain>/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
-   into the Vonage Session Monitoring URL. You can find this in the _Project
-   Settings_ for your Vonage Video API project.
-1. Reconfigure any local environment variables that point at the URL or
-   domain of the frontend, actions service or Hasura service.
-
-There are a couple of services that make it easy to do this: Packetriot and
-Ngrok. You only need one of them. We recommend Packetriot unless you have
-a particular reason to use ngrok.
-
-##### [Packetriot](https://packetriot.com)
-
-Packetriot costs $5 per month. This gets you five tunnels that support five
-ports each - i.e. five users. You can configure a custom domain, so Google
-OAuth will work.
-
-###### Packetriot Setup (administrator)
-
-1. Create a Packetriot account
-1. [Download the client](https://docs.packetriot.com/quickstart/) and ensure
-   it is on your `PATH`.
-1. Follow the Packetriot instructions to verify your domain and set up an
-   appropriate A/CNAME record.
-1. In the root of the repository, run `pktriot --config pktriot.json configure --url`. Follow the instructions to authenticate and create a
-   new tunnel. This will create a `pktriot.json` file with the credentials
-   for a tunnel.
-1. Add the following property to the JSON object, substituting your desired
-   credentials.
-   ```json
-   "https": [
-         {
-               "domain": "<custom-frontend-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 3000,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         },
-         {
-               "domain": "<custom-hasura-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 8080,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         },
-         {
-               "domain": "<custom-actions-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 3001,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         }
-      ]
-   ```
-1. Run `pktriot start --config pktriot.json` to start the tunnel.
-1. Configure Auth0 and Vonage using your custom domain
-
-To create a (persistent) tunnel for one of your team members, repeat the
-penultimate two steps (with a different filename) and send the generated
-JSON config to the team member.
-
-###### Packetriot Setup (team member)
-
-1. Download the [pktriot client](https://docs.packetriot.com/quickstart/)
-   and ensure it is on your `PATH`.
-1. Request configuration file from your Packetriot administrator.
-1. Put it in a file called `pktriot.json` in the root of the repository.
-1. Launch by running the _Packetriot_ task or running
-   `pktriot start --config pktriot.json`
-
-Note: it may take a little while for Packetriot to acquire certificates initially.
-
-##### [ngrok](https://ngrok.com)
-
-The second alternative is ngrok.  
-Ngrok is either free (with random, ephemeral subdomains) or $8.25 per user
-per month (with custom domains).
-
-If you use the free version, you will have to perform some reconfiguration
-each time you relaunch ngrok. Additionally, Google OAuth (for YouTube
-integration) will not work properly, since it requires a verified domain.
-
-We have found that ngrok can be quite flaky.
-
-###### Ngrok Setup (paid)
-
-TODO
-
-###### Ngrok Setup (free)
-
-1. Create an ngrok account and note your auth token.
-1. Copy `ngrok.example.yml` to `ngrok.yml`.
-1. Set the `authtoken` and `region` (`us`, `eu`, `ap`, `au`, `sa`, `jp`, `in`)
-1. Remove the `hostname` line from each tunnel configuration - you will let
-   ngrok pick random subdomains instead.
-1. Start ngrok (`ngrok start -config=./ngrok.yaml auth actions`)
-
-**_Every time_** you start up for online (local) development, you will need
-to reconfigure Auth0 and Vonage as specified earlier. The domain format is
-`<ngrok-subdomain>.ngrok.io`.
-
-Additionally, ensure that the following env vars are set to use
-localhost-based, rather than public, URLs:
-
-- frontend
-  - `SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN`
-  - `SNOWPACK_PUBLIC_COMPANION_BASE_URL`
-- services/actions
-  - `FRONTEND_DOMAIN`
-- services/presence
-  - `CORS_ORIGIN`
-
-When using free ngrok, access the frontend via its localhost URL
-(`http://localhost:3000`) rather than launching an ngrok tunnel for it. You
-could also launch the frontend tunnel, but you would need to update all the
-above environment variable each time the tunnel was restarted.
-
-#### 9. Configure "new UI experience"
+#### 8. Configure "new UI experience"
 
 Under _Universal Login_ settings, set the _default look and feel_ to _**New**_.
 
-BCP: This seems to be the default. Maybe this step can be skipped?
-
-#### 10. (Optional) Customising the login page
+#### 9. (Optional) Customising the login page
 
 To customise what the Auth0 login page looks like, go to _Universal Login_ and
 have fun. (Note: Always use the _**New**_ 'look and feel' for Clowdr to work
 properly.)
 
-#### 11. Configure your environment
+#### 10. Configure your environment
 
 You can now resume the frontend setup by configuring your [Frontend environment
 variables](/frontend/README.md#frontend-configuration).
 
 ## Local Development
 
-BCP: I'm confused where this fits in the task hierarchy -- are we done
-setting up Auth0 now? And is this then another top-level task that should
-then be listed in the Setup section at the top?
+Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development".
 
-1. Run the VSCode task "Run All -- Local Development"
-   - If you followed the setup, this should start everything you need.
-1. Most of the time, this will auto-watch for changes. But if you alter
-   environment config, Docker Compose config, etc then all tasks must be
-   restarted.
+In most cases you will also need to start up your tunnel (Packetriot/Ngrok) before running this task.
 
-BCP: More instructions needed: If I make changes to the code, what do I need
-to do to kick the system to reload / restart appropriately?
+If you alter environment config, Docker Compose config, etc., then all tasks must be restarted. Tasks can be killed in VSCode using Ctrl+C or by closing the terminal window they are running in. To kill Docker containers, you will need to manually terminate the container (e.g. by pressing the stop button in Docker Desktop)
 
 ## Formatting
 
 This repository uses Prettier for auto-formatting and checks for both pushes and
-PRs.
-
-BCP: Is this something I need to do?
+PRs. You may need to configure your editor to use Prettier (for example, by using the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode))
 
 ## Notes
 
-- The `Procfile` is used by Heroku to determine what services to run. We can add
-  more microservices to it in future.
+- The various `Procfile`s are used by Heroku to determine what services to run.
 
 ## GitHub Actions Configuration (/Secrets)
 
-BCP: Is this a setup task, or just for GitHub owners?
+If you want to configure the GitHub actions for CI, you will need to set the following secrets:
 
 | Secret                       | Value                                                                     |
 | ---------------------------- | ------------------------------------------------------------------------- |

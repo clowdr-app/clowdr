@@ -64,9 +64,7 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
    - **Full Setup**: You will need the outputs from running the AWS CDK
      deployment. **Quick setup**: Set all the environment variables related
      to AWS to `XXXX`.
-
-BCP: Why not put the table here? (Or, better, put all the information in
-the table into comments in the example .env file.)
+1. Run the `Actions service - GraphQL Codegen` task in VSCode to generate the GraphQL query code (Hasura must be running when you do this).
 
 BCP: Not clear whether I am supposed to continue on to do the rest of the
 file or whether I stop here and return to the main README... The convention

@@ -1,5 +1,5 @@
 import { GridItem, HStack, SimpleGrid, Text } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import { useAttendee } from "../../AttendeesContext";
@@ -7,7 +7,10 @@ import { useAttendee } from "../../AttendeesContext";
 export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
     const roomParticipants = useRoomParticipants();
 
-    const numberToShow = 5;
+    const columns = 2;
+    const rows = 3;
+    const defaultNumberToShow = columns * rows;
+    const [numberToShow, setNumberToShow] = useState<number>(defaultNumberToShow);
 
     const thisRoomParticipants = useMemo(
         () => (roomParticipants ? roomParticipants.filter((participant) => participant.roomId === roomId) : []),
@@ -15,12 +18,26 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
     );
 
     return roomParticipants ? (
-        <SimpleGrid fontSize="sm" columns={2} gridColumnGap={2} width="100%">
-            {thisRoomParticipants.slice(0, Math.min(thisRoomParticipants.length, numberToShow)).map((participant) => (
-                <ParticipantGridItem key={participant.id} attendeeId={participant.attendeeId} />
-            ))}
+        <SimpleGrid
+            fontSize="sm"
+            columns={columns}
+            gridColumnGap={2}
+            gridRowGap={1}
+            width="100%"
+            onMouseOver={() => {
+                setNumberToShow(Number.MAX_SAFE_INTEGER);
+            }}
+            onMouseLeave={() => {
+                setNumberToShow(defaultNumberToShow);
+            }}
+        >
+            {thisRoomParticipants
+                .slice(0, thisRoomParticipants.length > numberToShow ? numberToShow - 1 : thisRoomParticipants.length)
+                .map((participant) => (
+                    <ParticipantGridItem key={participant.id} attendeeId={participant.attendeeId} />
+                ))}
             {thisRoomParticipants.length > numberToShow ? (
-                <GridItem fontWeight="light">plus {thisRoomParticipants.length - numberToShow} more</GridItem>
+                <GridItem fontWeight="light">+ {thisRoomParticipants.length - numberToShow + 1} more</GridItem>
             ) : (
                 <></>
             )}
@@ -31,11 +48,12 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
 }
 
 function ParticipantGridItem({ attendeeId }: { attendeeId: string }): JSX.Element {
-    const attendee = useAttendee(attendeeId);
+    const attendeeIdObj = useMemo(() => ({ attendee: attendeeId }), [attendeeId]);
+    const attendee = useAttendee(attendeeIdObj);
     return (
         <GridItem fontWeight="light" fontSize="xs">
-            <HStack alignItems="flex-start">
-                <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
+            <HStack alignItems="center">
+                <FAIcon icon="video" iconStyle="s" fontSize="0.5rem" color="green.400" mr={1} />
                 <Text whiteSpace="normal">{attendee?.displayName ?? "Loading"}</Text>
             </HStack>
         </GridItem>

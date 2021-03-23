@@ -2,6 +2,7 @@ import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../generated/graphql";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
+import ConferencePageNotFound from "../Errors/ConferencePageNotFound";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import WaitingPage from "../ShuffleRooms/WaitingPage";
@@ -25,6 +26,7 @@ import ManageConferencePeoplePage from "./Manage/ManageConferencePeoplePage";
 import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
 import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
 import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";
+import ManageConferenceShufflePage from "./Manage/ManageConferenceShufflePage";
 import { ManageConferenceSponsorsPage } from "./Manage/ManageConferenceSponsorsPage";
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
@@ -48,7 +50,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 </Route>
             ) : undefined}
 
-            {mAttendee && !mAttendee.profile.hasBeenEdited ? (
+            {mAttendee && mAttendee.profile && !mAttendee.profile.hasBeenEdited ? (
                 <Route path={rootUrl}>
                     <Redirect to={`/conference/${conference.slug}/profile/edit`} />
                 </Route>
@@ -67,6 +69,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                         Permission_Enum.ConferenceManageName,
                         Permission_Enum.ConferenceManageRoles,
                         Permission_Enum.ConferenceManageSchedule,
+                        Permission_Enum.ConferenceManageShuffle,
                         Permission_Enum.ConferenceModerateAttendees,
                     ]}
                     componentIfDenied={<PageNotFound />}
@@ -97,6 +100,9 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             />
             <Route path={`${rootUrl}/manage/rooms`}>
                 <ManageConferenceRoomsPage />
+            </Route>
+            <Route path={`${rootUrl}/manage/shuffle`}>
+                <ManageConferenceShufflePage />
             </Route>
             <Route path={`${rootUrl}/manage/broadcasts`}>
                 <ManageConferenceBroadcastPage />
@@ -224,7 +230,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             </Route>
 
             <Route path={rootUrl}>
-                <PageNotFound />
+                <ConferencePageNotFound />
             </Route>
         </Switch>
     );

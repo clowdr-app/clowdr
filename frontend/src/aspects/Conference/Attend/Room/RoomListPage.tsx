@@ -1,9 +1,11 @@
 import { gql } from "@apollo/client";
-import { Button, Heading, useDisclosure, VStack } from "@chakra-ui/react";
+import { Button, Heading, HStack, useDisclosure, VStack } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { Permission_Enum, RoomListRoomDetailsFragment, useGetAllRoomsQuery } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
+import { LinkButton } from "../../../Chakra/LinkButton";
+import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import FAIcon from "../../../Icons/FAIcon";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
@@ -61,7 +63,7 @@ export default function RoomListPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
+            componentIfDenied={<ConferencePageNotFound />}
             permissions={[
                 Permission_Enum.ConferenceViewAttendees,
                 Permission_Enum.ConferenceView,
@@ -86,9 +88,15 @@ export default function RoomListPage(): JSX.Element {
                         <Heading as="h2" my={5}>
                             Social Rooms
                         </Heading>
-                        <Button onClick={onOpen} colorScheme="green" mb={2}>
-                            Create new room
-                        </Button>
+                        <HStack flexWrap="wrap" justifyContent="center">
+                            <Button onClick={onOpen} colorScheme="green" mb={2}>
+                                Create new room
+                            </Button>
+                            <LinkButton to={`/conference/${conference.slug}/shuffle`} colorScheme="blue" mb={2}>
+                                <FAIcon icon="random" iconStyle="s" mr={3} />
+                                Shuffle queues
+                            </LinkButton>
+                        </HStack>
                         <RoomList rooms={rooms} layout="grid" />
                         <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
                     </VStack>

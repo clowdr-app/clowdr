@@ -5,11 +5,10 @@ import {
     RoomPage_RoomDetailsFragment,
     useRoomPage_GetRoomDetailsQuery,
 } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
+import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
-import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { Room } from "./Room";
@@ -70,7 +69,7 @@ gql`
 export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
+            componentIfDenied={<ConferencePageNotFound />}
             permissions={[Permission_Enum.ConferenceViewAttendees, Permission_Enum.ConferenceManageSchedule]}
         >
             <RoomPageInner roomId={roomId} />
@@ -94,11 +93,9 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     return (
         <>
             {title}
-            <RoomMembersProvider roomId={roomId}>
-                <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
-                    {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
-                </ApolloQueryWrapper>
-            </RoomMembersProvider>
+            <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
+                {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
+            </ApolloQueryWrapper>
         </>
     );
 }

@@ -58,9 +58,9 @@ export default function ManagerLandingPage(): JSX.Element {
                 />
                 <RestrictedDashboardButton
                     to="people"
-                    name="People"
+                    name="Registrants"
                     icon="users"
-                    description="Manage the people at your conference: attendees, moderators, authors, presenters, organisers and more."
+                    description="Manage registrants for your conference (including attendees, organisers and speakers)."
                     permissions={[
                         Permission_Enum.ConferenceManageRoles,
                         Permission_Enum.ConferenceManageGroups,
@@ -104,7 +104,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     to="sponsors"
                     name="Sponsors"
                     icon="star"
-                    description="Manage your sponsors and their representatives."
+                    description="Manage your sponsors, their booths and representatives."
                     permissions={[
                         Permission_Enum.ConferenceManageContent, // TODO: Manage sponsors permission
                     ]}
@@ -128,6 +128,14 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[
                         Permission_Enum.ConferenceManageContent, // TODO: Manage rooms permission
                     ]}
+                    colorScheme="yellow"
+                />
+                <RestrictedDashboardButton
+                    to="shuffle"
+                    name="Shuffle"
+                    icon="random"
+                    description="Manage the shuffle queues happening at your conference."
+                    permissions={[Permission_Enum.ConferenceManageShuffle]}
                     colorScheme="yellow"
                 />
                 <RestrictedDashboardButton

@@ -1,4 +1,7 @@
 - table:
+    schema: analytics
+    name: AppStats
+- table:
     schema: chat
     name: Chat
   object_relationships:
@@ -88,6 +91,7 @@
       - enableMandatoryPin
       - enableMandatorySubscribe
       - id
+      - remoteServiceId
       - restrictToAdmins
       - updated_at
       filter:
@@ -173,6 +177,20 @@
             _table:
               schema: public
               name: FlatUserPermission
+  event_triggers:
+  - name: ChatInserted
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/chatInserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: chat
     name: Flag
@@ -487,33 +505,30 @@
                     room: {}
       columns:
       - chatId
-      - chatTitle
       - data
       - duplicatedMessageId
       - id
       - isPinned
       - message
       - senderId
-      - senderName
       - type
       backend_only: false
   select_permissions:
   - role: user
     permission:
       columns:
-      - isPinned
+      - chatId
+      - created_at
+      - data
       - duplicatedMessageId
       - id
-      - data
-      - chatTitle
+      - isPinned
       - message
-      - senderName
+      - remoteServiceId
+      - senderId
       - systemId
       - type
-      - created_at
       - updated_at
-      - chatId
-      - senderId
       filter:
         chat:
           _and:
@@ -700,6 +715,56 @@
                             _eq: X-Hasura-User-Id
                 - _not:
                     room: {}
+  event_triggers:
+  - name: MessageDeleted
+    definition:
+      enable_manual: false
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/messageDeleted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: MessageInserted
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/messageInserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: MessageUpdated
+    definition:
+      enable_manual: false
+      update:
+        columns:
+        - isPinned
+        - duplicatedMessageId
+        - id
+        - data
+        - message
+        - systemId
+        - type
+        - created_at
+        - chatId
+        - senderId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/messageUpdated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: chat
     name: MessageType
@@ -761,6 +826,36 @@
   delete_permissions:
   - role: user
     permission:
+      filter:
+        attendee:
+          userId:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: chat
+    name: PinnedOrSubscribed
+  object_relationships:
+  - name: attendee
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Attendee
+        column_mapping:
+          attendeeId: id
+  - name: chat
+    using:
+      manual_configuration:
+        remote_table:
+          schema: chat
+          name: Chat
+        column_mapping:
+          chatId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - attendeeId
+      - chatId
       filter:
         attendee:
           userId:
@@ -838,14 +933,15 @@
   - role: user
     permission:
       columns:
+      - created_at
+      - data
       - id
       - messageId
-      - data
+      - remoteServiceId
+      - senderId
       - symbol
       - type
-      - created_at
       - updated_at
-      - senderId
       filter:
         message:
           chat:
@@ -915,9 +1011,58 @@
                         _in:
                         - CONFERENCE_MANAGE_ATTENDEES
                         - CONFERENCE_MODERATE_ATTENDEES
+                        - CONFERENCE_VIEW_ATTENDEES
                   _table:
                     schema: public
                     name: FlatUserPermission
+  event_triggers:
+  - name: ReactionDeleted
+    definition:
+      enable_manual: false
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/reactionDeleted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: ReactionInserted
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/reactionInserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: ReactionUpdated
+    definition:
+      enable_manual: false
+      update:
+        columns:
+        - duplicateId
+        - id
+        - messageId
+        - data
+        - symbol
+        - type
+        - created_at
+        - senderId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/reactionUpdated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: chat
     name: ReactionType
@@ -1648,13 +1793,6 @@
         table:
           schema: public
           name: ContentPerson
-  - name: eventPeople
-    using:
-      foreign_key_constraint_on:
-        column: attendeeId
-        table:
-          schema: public
-          name: EventPerson
   - name: groupAttendees
     using:
       foreign_key_constraint_on:
@@ -1829,6 +1967,20 @@
               _table:
                 schema: public
                 name: FlatUserPermission
+  event_triggers:
+  - name: AttendeeCreated_GenerateChatRemoteUserId
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/generateRemoteUserId'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: public
     name: AttendeeGoogleAccount
@@ -2352,6 +2504,16 @@
       - value
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - conferenceId
+      - id
+      - key
+      - value
+      filter:
+        key:
+          _eq: CLOWDR_APP_VERSION
   - role: user
     permission:
       columns:
@@ -2382,6 +2544,8 @@
         - conference:
             createdBy:
               _eq: X-Hasura-User-Id
+        - key:
+            _eq: CLOWDR_APP_VERSION
   update_permissions:
   - role: user
     permission:
@@ -3488,6 +3652,13 @@
         table:
           schema: public
           name: ContentGroupPerson
+  - name: eventPeople
+    using:
+      foreign_key_constraint_on:
+        column: personId
+        table:
+          schema: public
+          name: EventPerson
   insert_permissions:
   - role: user
     permission:
@@ -3998,9 +4169,10 @@
             - event:
                 eventPeople:
                   _and:
-                  - attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+                  - person:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
                         _in:
@@ -4015,29 +4187,24 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
-  - name: attendee
-    using:
-      foreign_key_constraint_on: attendeeId
-  - name: conference
-    using:
-      foreign_key_constraint_on: conferenceId
   - name: event
     using:
       foreign_key_constraint_on: eventId
   - name: eventPersonRole
     using:
       foreign_key_constraint_on: roleName
-  - name: originatingData
+  - name: person
     using:
-      foreign_key_constraint_on: originatingDataId
+      foreign_key_constraint_on: personId
   insert_permissions:
   - role: user
     permission:
       check:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _or:
           - _exists:
               _where:
@@ -4067,41 +4234,35 @@
             - event:
                 eventPeople:
                   _and:
-                  - attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+                  - person:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
                         _in:
                         - CHAIR
                         - PRESENTER
       columns:
-      - id
       - eventId
-      - attendeeId
-      - name
-      - affiliation
+      - id
+      - personId
       - roleName
-      - originatingDataId
-      - conferenceId
       backend_only: false
   select_permissions:
   - role: unauthenticated
     permission:
       columns:
-      - affiliation
-      - attendeeId
-      - conferenceId
       - eventId
       - id
-      - name
-      - originatingDataId
+      - personId
       - roleName
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _exists:
             _where:
               _and:
@@ -4115,19 +4276,16 @@
   - role: user
     permission:
       columns:
-      - affiliation
-      - attendeeId
-      - conferenceId
       - eventId
       - id
-      - name
-      - originatingDataId
+      - personId
       - roleName
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _exists:
             _where:
               _and:
@@ -4146,16 +4304,14 @@
   - role: user
     permission:
       columns:
-      - affiliation
-      - attendeeId
-      - name
-      - originatingDataId
+      - personId
       - roleName
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _or:
           - _exists:
               _where:
@@ -4185,9 +4341,10 @@
             - event:
                 eventPeople:
                   _and:
-                  - attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+                  - person:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
                         _in:
@@ -4199,9 +4356,10 @@
     permission:
       filter:
         _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+        - event:
+            conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
         - _or:
           - _exists:
               _where:
@@ -4231,9 +4389,10 @@
             - event:
                 eventPeople:
                   _and:
-                  - attendee:
-                      userId:
-                        _eq: X-Hasura-User-Id
+                  - person:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
                         _in:
@@ -4444,9 +4603,10 @@
           - event:
               eventPeople:
                 _and:
-                - attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                - person:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
                 - eventPersonRole:
                     name:
                       _in:
@@ -4663,9 +4823,10 @@
           - event:
               eventPeople:
                 _and:
-                - attendee:
-                    userId:
-                      _eq: X-Hasura-User-Id
+                - person:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
                 - eventPersonRole:
                     name:
                       _in:
@@ -5633,13 +5794,6 @@
         table:
           schema: public
           name: ContentPerson
-  - name: eventPeople
-    using:
-      foreign_key_constraint_on:
-        column: originatingDataId
-        table:
-          schema: public
-          name: EventPerson
   - name: events
     using:
       foreign_key_constraint_on:
@@ -6399,43 +6553,57 @@
       - originatingContentGroupId
       filter:
         _and:
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _or:
-            - _exists:
-                _where:
-                  _and:
-                  - user_id:
-                      _eq: X-Hasura-User-Id
-                  - slug:
-                      _eq: X-Hasura-Conference-Slug
-                  - permission_name:
-                      _in:
-                      - CONFERENCE_VIEW
-                      - CONFERENCE_MANAGE_SCHEDULE
-                      - CONFERENCE_VIEW_ATTENDEES
-                _table:
-                  schema: public
-                  name: FlatUserPermission
-            - _exists:
-                _where:
-                  _and:
-                  - slug:
-                      _eq: X-Hasura-Conference-Slug
-                  - permission_name:
-                      _eq: CONFERENCE_VIEW
-                _table:
-                  schema: public
-                  name: FlatUnauthPermission
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
         - _or:
-          - roomPrivacyName:
-              _eq: PUBLIC
-          - roomPeople:
-              attendee:
-                userId:
-                  _eq: X-Hasura-User-Id
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+          - _and:
+            - _or:
+              - _exists:
+                  _where:
+                    _and:
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _eq: CONFERENCE_VIEW
+                  _table:
+                    schema: public
+                    name: FlatUnauthPermission
+              - _exists:
+                  _where:
+                    _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _in:
+                        - CONFERENCE_VIEW
+                        - CONFERENCE_VIEW_ATTENDEES
+                        - CONFERENCE_MANAGE_SCHEDULE
+                  _table:
+                    schema: public
+                    name: FlatUserPermission
+            - _or:
+              - roomPrivacyName:
+                  _eq: PUBLIC
+              - roomPeople:
+                  attendee:
+                    userId:
+                      _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
@@ -6666,9 +6834,6 @@
     permission:
       check:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6731,9 +6896,6 @@
       - updated_at
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6783,9 +6945,6 @@
       - roomPersonRoleName
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -6837,9 +6996,6 @@
     permission:
       filter:
         _and:
-        - attendee:
-            userId:
-              _is_null: false
         - _or:
           - room:
               _and:
@@ -7450,6 +7606,10 @@
               _eq: X-Hasura-Conference-Slug
 - table:
     schema: room
+    name: ShuffleAlgorithm
+  is_enum: true
+- table:
+    schema: room
     name: ShufflePeriod
   object_relationships:
   - name: conference
@@ -7481,9 +7641,6 @@
         - conference:
             slug:
               _eq: X-Hasura-Conference-Slug
-        - organiser:
-            userId:
-              _eq: X-Hasura-User-Id
         - _exists:
             _where:
               _and:
@@ -7492,20 +7649,21 @@
               - slug:
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
-                  _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  _eq: CONFERENCE_MANAGE_SHUFFLE
             _table:
               schema: public
               name: FlatUserPermission
-      set:
-        organiserId: x-hasura-User-Id
+        - organiser:
+            userId:
+              _eq: X-Hasura-User-Id
       columns:
+      - algorithm
+      - conferenceId
       - endAt
       - id
       - maxAttendeesPerRoom
       - name
+      - organiserId
       - roomDurationMinutes
       - startAt
       - targetAttendeesPerRoom
@@ -7519,6 +7677,7 @@
       - roomDurationMinutes
       - targetAttendeesPerRoom
       - waitRoomMaxDurationSeconds
+      - algorithm
       - name
       - created_at
       - endAt
@@ -7541,9 +7700,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
                   - CONFERENCE_VIEW_ATTENDEES
             _table:
               schema: public
@@ -7552,14 +7709,13 @@
   - role: user
     permission:
       columns:
-      - created_at
+      - algorithm
       - endAt
       - maxAttendeesPerRoom
       - name
       - roomDurationMinutes
       - startAt
       - targetAttendeesPerRoom
-      - updated_at
       - waitRoomMaxDurationSeconds
       filter:
         _and:
@@ -7575,9 +7731,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
             _table:
               schema: public
               name: FlatUserPermission
@@ -7599,9 +7753,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
             _table:
               schema: public
               name: FlatUserPermission
@@ -7636,9 +7788,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
                   - CONFERENCE_VIEW_ATTENDEES
             _table:
               schema: public
@@ -7677,9 +7827,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
                   - CONFERENCE_VIEW_ATTENDEES
             _table:
               schema: public
@@ -7720,9 +7868,7 @@
                     _eq: X-Hasura-Conference-Slug
                 - permission_name:
                     _in:
-                    - CONFERENCE_MANAGE_SCHEDULE
-                    - CONFERENCE_MANAGE_ATTENDEES
-                    - CONFERENCE_MODERATE_ATTENDEES
+                    - CONFERENCE_MANAGE_SHUFFLE
               _table:
                 schema: public
                 name: FlatUserPermission
@@ -7786,9 +7932,7 @@
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
-                  - CONFERENCE_MANAGE_SCHEDULE
-                  - CONFERENCE_MANAGE_ATTENDEES
-                  - CONFERENCE_MODERATE_ATTENDEES
+                  - CONFERENCE_MANAGE_SHUFFLE
                   - CONFERENCE_VIEW_ATTENDEES
             _table:
               schema: public

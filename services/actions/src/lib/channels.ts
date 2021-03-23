@@ -61,7 +61,7 @@ export async function ensureUpcomingChannelsCreated(holdOffOnCreatingChannel: {
     console.log("Ensuring channels created for rooms with upcoming events");
     const now = new Date();
     const from = now.toISOString();
-    const to = new Date(now.getTime() + 30 * 60 * 1000).toISOString();
+    const to = new Date(now.getTime() + 120 * 60 * 1000).toISOString();
 
     const roomsResult = await apolloClient.query({
         query: GetRoomsWithEventsStartingDocument,
@@ -103,12 +103,16 @@ export async function ensureUpcomingChannelsCreated(holdOffOnCreatingChannel: {
                 ].includes(channelState)
             ) {
                 console.log("Removing old/broken channel from room", room.id, room.mediaLiveChannel.id, channelState);
-                await apolloClient.mutate({
-                    mutation: DeleteMediaLiveChannelDocument,
-                    variables: {
-                        id: room.mediaLiveChannel.id,
-                    },
-                });
+                try {
+                    await apolloClient.mutate({
+                        mutation: DeleteMediaLiveChannelDocument,
+                        variables: {
+                            id: room.mediaLiveChannel.id,
+                        },
+                    });
+                } catch (e) {
+                    console.error("Failed to delete MediaLive channel record", e);
+                }
 
                 needToCreateChannel = true;
             }

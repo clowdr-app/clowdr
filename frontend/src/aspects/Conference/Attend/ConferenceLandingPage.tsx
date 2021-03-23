@@ -13,15 +13,14 @@ import {
     Permission_Enum,
     useConferenceLandingPageContentGroupQuery,
 } from "../../../generated/graphql";
+import ConferencePageNotFound from "../../Errors/ConferencePageNotFound";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
-import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import { Markdown } from "../../Text/Markdown";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import { useConferenceCurrentUserActivePermissions } from "../useConferenceCurrentUserActivePermissions";
 import ContentGroupList from "./Content/ContentGroupList";
 
 gql`
@@ -98,7 +97,6 @@ function ConferenceLandingContent({ group }: { group: ContentGroupDataFragment }
 
 function ConferenceLandingPageInner(): JSX.Element {
     const conference = useConference();
-    const activePermissions = useConferenceCurrentUserActivePermissions();
 
     const title = useTitle(conference.name);
 
@@ -171,7 +169,7 @@ export default function ConferenceLandingPage(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageContent]}
-            componentIfDenied={<PageNotFound />}
+            componentIfDenied={<ConferencePageNotFound />}
         >
             <ConferenceLandingPageInner />
         </RequireAtLeastOnePermissionWrapper>

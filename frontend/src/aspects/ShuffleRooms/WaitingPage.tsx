@@ -12,25 +12,25 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { formatRelative } from "date-fns";
+import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Redirect } from "react-router-dom";
 import {
-    Permission_Enum,
     PrefetchShuffleQueueEntryDataFragment,
     ShufflePeriodDataFragment,
     useGetShuffleRoomQuery,
-    useGetShuffleRoomsParticipantsCountQuery,
     useJoinShuffleQueueMutation,
     useMyShuffleQueueEntrySubscription,
     useShufflePeriodsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
-import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
-import { ConferenceInfo, useConference } from "../Conference/useConference";
+import { ConferenceInfoFragment, useConference } from "../Conference/useConference";
 import useCurrentAttendee from "../Conference/useCurrentAttendee";
 import { useRealTime } from "../Generic/useRealTime";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
+import { useTitle } from "../Utils/useTitle";
 
 gql`
     fragment ShufflePeriodData on room_ShufflePeriod {
@@ -79,10 +79,8 @@ gql`
         }
     }
 
-    query ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
-        room_ShufflePeriod(
-            where: { conferenceId: { _eq: $conferenceId }, startAt: { _lte: $start }, endAt: { _gte: $end } }
-        ) {
+    query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
+        room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gte: $end } }) {
             ...ShufflePeriodData
         }
     }
@@ -115,7 +113,7 @@ function QueuedShufflePeriodBox({
 }: {
     period: ShufflePeriodDataFragment;
     lastEntry: PrefetchShuffleQueueEntryDataFragment;
-    conference: ConferenceInfo;
+    conference: ConferenceInfoFragment;
     isJoining: boolean;
     joinShuffleQueue: () => void;
     numberOfQueued: number;
@@ -163,9 +161,9 @@ function QueuedShufflePeriodBox({
     const now = useRealTime(1000);
     const timeTextEl =
         startAt < now ? (
-            <Text>Ends in {Math.round((endAt - now) / (60 * 1000))} minutes</Text>
+            <Text>Ends {formatRelative(endAt, now)}</Text>
         ) : (
-            <Text>Starts in {Math.round((startAt - now) / 1000)} seconds</Text>
+            <Text>Starts {formatRelative(startAt, now)}</Text>
         );
 
     if (startAt > now) {
@@ -337,16 +335,18 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
         } else {
             const timeTextEl =
                 startAt < now ? (
-                    <Text>Ends in {Math.round((endAt - now) / (60 * 1000))} minutes</Text>
+                    <Text>Ends {formatRelative(endAt, now)}</Text>
                 ) : (
-                    <Text>Starts in {Math.round((startAt - now) / 1000)} seconds</Text>
+                    <Text>Starts {formatRelative(startAt, now)}</Text>
                 );
 
             return (
                 <>
-                    <Button isLoading={isJoining} colorScheme="green" onClick={joinShuffleQueue}>
-                        Join the queue
-                    </Button>
+                    {now > startAt - 5 * 60 * 1000 ? (
+                        <Button isLoading={isJoining} colorScheme="green" onClick={joinShuffleQueue}>
+                            Join the queue
+                        </Button>
+                    ) : undefined}
                     {timeTextEl}
                 </>
             );
@@ -368,36 +368,17 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
     );
 }
 
-function ShuffleRoomParticipantsCount(): JSX.Element {
-    const conference = useConference();
-    const count = useGetShuffleRoomsParticipantsCountQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-        pollInterval: 60000,
-    });
-    return typeof count.data?.RoomParticipant_aggregate?.aggregate?.count === "number" ? (
-        <>
-            {count.data.RoomParticipant_aggregate.aggregate.count} people actively participating in shuffle rooms at the
-            moment.
-            <br />
-            (Updates every 60s - please help preserve our DB by not refreshing!)
-        </>
-    ) : (
-        <>Loading active participant count</>
-    );
-}
-
 export default function WaitingPage(): JSX.Element {
     const conference = useConference();
+    const title = useTitle("Shuffle queues");
 
+    const now = useMemo(() => new Date(), []);
     const vars = useMemo(
         () => ({
             conferenceId: conference.id,
-            start: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-            end: new Date().toISOString(),
+            end: now.toISOString(),
         }),
-        [conference.id]
+        [conference.id, now]
     );
 
     const periods = useShufflePeriodsQuery({
@@ -409,27 +390,41 @@ export default function WaitingPage(): JSX.Element {
         periods.data?.room_ShufflePeriod,
     ]);
 
+    const ongoingQueues = useMemo(() => data?.filter((x) => Date.parse(x.startAt) <= 5 * 60 * 1000 + now.getTime()), [
+        data,
+        now,
+    ]);
+    const upcomingQueues = useMemo(
+        () =>
+            data
+                ? R.sortBy(
+                      (x) => Date.parse(x.startAt),
+                      data.filter((x) => Date.parse(x.startAt) > 5 * 60 * 1000 + now.getTime())
+                  )
+                : undefined,
+        [data, now]
+    );
+
     useNoPrimaryMenuButtons();
 
-    return periods.loading && !periods.data ? (
-        <Spinner label="Loading shuffle room times" />
-    ) : (
-        <Grid maxW="800px" gap={4}>
-            {data?.map((period) => (
-                <ShufflePeriodBox key={period.id} period={period} />
-            ))}
-            <RequireAtLeastOnePermissionWrapper
-                permissions={[
-                    Permission_Enum.ConferenceManageSchedule,
-                    Permission_Enum.ConferenceModerateAttendees,
-                    Permission_Enum.ConferenceManageAttendees,
-                ]}
-            >
-                <GridItem border="1px solid" borderColor="gray.500" borderRadius={10} p={4}>
-                    <ShuffleRoomParticipantsCount />
-                </GridItem>
-            </RequireAtLeastOnePermissionWrapper>
-            {!data?.length ? <GridItem>No shuffle spaces at the moment, please come back later.</GridItem> : undefined}
-        </Grid>
+    return (
+        <>
+            {title}
+            {periods.loading && !periods.data ? (
+                <Spinner label="Loading shuffle room times" />
+            ) : (
+                <Grid maxW="800px" gap={4}>
+                    {ongoingQueues?.map((period) => (
+                        <ShufflePeriodBox key={period.id} period={period} />
+                    ))}
+                    {!ongoingQueues?.length ? (
+                        <GridItem>No active shuffle spaces at the moment, please come back later.</GridItem>
+                    ) : undefined}
+                    {upcomingQueues && upcomingQueues.length > 0 ? (
+                        <ShufflePeriodBox key={upcomingQueues[0].id} period={upcomingQueues[0]} />
+                    ) : undefined}
+                </Grid>
+            )}
+        </>
     );
 }

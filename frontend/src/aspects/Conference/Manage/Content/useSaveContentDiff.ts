@@ -101,6 +101,7 @@ gql`
         affiliation
         email
         originatingDataId
+        attendeeId
     }
 
     fragment ContentGroupTagInfo on ContentGroupTag {
@@ -429,10 +430,17 @@ gql`
         $affiliation: String = null
         $email: String = null
         $originatingDataId: uuid = null
+        $attendeeId: uuid = null
     ) {
         update_ContentPerson_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, affiliation: $affiliation, email: $email, originatingDataId: $originatingDataId }
+            _set: {
+                name: $name
+                affiliation: $affiliation
+                email: $email
+                originatingDataId: $originatingDataId
+                attendeeId: $attendeeId
+            }
         ) {
             ...ContentPersonInfo
         }
@@ -784,6 +792,7 @@ export function useSaveContentDiff():
                                         email: person.email,
                                         name: person.name,
                                         originatingDataId: person.originatingDataId,
+                                        attendeeId: person.attendeeId,
                                     })
                                 ),
                             },
@@ -805,6 +814,7 @@ export function useSaveContentDiff():
                                             email: person.email,
                                             name: person.name,
                                             originatingDataId: person.originatingDataId,
+                                            attendeeId: person.attendeeId,
                                         },
                                     });
                                     ok = true;

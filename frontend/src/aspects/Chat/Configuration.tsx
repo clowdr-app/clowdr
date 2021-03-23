@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
+import type { ChatState } from "./ChatGlobalState";
 import type { Maybe, MinMax, MinMaxWithValue } from "./Types/Base";
 import type { EmoteMessageData } from "./Types/Messages";
 
@@ -7,22 +8,6 @@ export enum ChatSpacing {
     COMFORTABLE = 2,
     RELAXED = 4,
 }
-
-export type ChatSources =
-    | {
-          chatId: string;
-          chatLabel?: string;
-          chatTitle: string;
-      }
-    | {
-          chatIdL: string;
-          chatLabelL: string;
-          chatTitleL: string;
-          chatIdR: string;
-          chatLabelR: string;
-          chatTitleR: string;
-          defaultSelected: "L" | "R";
-      };
 
 export interface ChatPermissions {
     canMessage: boolean;
@@ -95,7 +80,7 @@ export interface ChatPollConfiguration {
 export interface ChatConfiguration {
     customHeadingElements?: React.ReactNodeArray;
 
-    sources: ChatSources;
+    state: ChatState;
     useTypingIndicators: Maybe<boolean>; // TODO
     permissions: ChatPermissions; // TODO
     messageConfig: ChatMessageConfiguration; // TODO
@@ -115,7 +100,6 @@ export interface ChatConfiguration {
     setSpacing: Dispatch<SetStateAction<ChatSpacing>>;
 
     messageBatchSize: number | undefined;
-    messageLiveBatchSize: number | undefined;
 
     onProfileModalOpened: Maybe<(attendeeId: string, close: () => void) => void>; // TODO
     onEmoteReceived: Maybe<(emote: EmoteMessageData) => void>; // TODO

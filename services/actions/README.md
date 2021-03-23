@@ -160,6 +160,7 @@ You will not have the information required for all environment variables yet. Se
 | AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN            | The ARN of the SNS topic for MediaLive notifications                                                                          | Yes      |
 | AWS_MEDIALIVE_SERVICE_ROLE_ARN                   | The IAM role to be passed to MediaLive                                                                                        | Yes      |
 | AWS_MEDIACONVERT_SERVICE_ROLE_ARN                | The IAM role to be passed to MediaConvert                                                                                     | Yes      |
+| AWS_MEDIACONVERT_API_ENDPOINT                    | The customer-specific MediaConvert endpoint                                                                                   | No       |
 | AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN                | The IAM role to be passed to MediaPackage                                                                                     | Yes      |
 | AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN | The ARN of the SNS topic for MediaPackage harvest job notifications                                                           | Yes      |
 | AWS_TRANSCRIBE_SERVICE_ROLE_ARN                  | The IAM role to be passed to Transcribe                                                                                       | Yes      |

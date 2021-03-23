@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
-import { assertType, is } from "typescript-is";
+import { assertType } from "typescript-is";
 import { handleContentItemUpdated, handleGetByRequiredItem, handleGetUploadAgreement } from "../handlers/content";
 import { handleContentItemSubmitted, handleUpdateSubtitles } from "../handlers/upload";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
@@ -31,15 +31,25 @@ router.post("/updated", bodyParser.json(), async (req: Request, res: Response) =
 
 router.post("/submit", bodyParser.json(), async (req: Request, res: Response) => {
     const params = req.body.input;
-    if (is<submitContentItemArgs>(params)) {
-        console.log(`${req.path}: Item upload requested`);
-        const result = await handleContentItemSubmitted(params);
-        return res.status(200).json(result);
-    } else {
-        console.error(`${req.path}: Invalid request:`, req.body.input);
+    try {
+        assertType<submitContentItemArgs>(params);
+    } catch (e) {
+        console.error(`${req.originalUrl}: invalid request`, params);
         return res.status(200).json({
             success: false,
             message: "Invalid request",
+        });
+    }
+
+    try {
+        console.log(`${req.originalUrl}: content item submitted`);
+        const result = await handleContentItemSubmitted(params);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.error(`${req.originalUrl}: failed to submit content item`, e);
+        return res.status(200).json({
+            success: false,
+            message: "Failed to submit content item",
         });
     }
 });

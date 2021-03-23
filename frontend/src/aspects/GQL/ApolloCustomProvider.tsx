@@ -123,7 +123,15 @@ class AuthTokenCache {
 
             return cacheEntry.token;
         } catch (e) {
+            // Probably the Auth0 cookie got blocked
+
             console.error("Major error! Failed to get authentication token!", e);
+            this.saveCache();
+
+            // Nuke everything and hope Auth0 recovers the state
+            localStorage.clear();
+            sessionStorage.clear();
+
             throw e;
         } finally {
             release();
@@ -225,6 +233,9 @@ async function createApolloClient(
             },
             chat_ReadUpToIndex: {
                 keyFields: ["chatId"],
+            },
+            chat_PinnedOrSubscribed: {
+                keyFields: ["chatId", "attendeeId"],
             },
             AttendeeProfile: {
                 keyFields: ["attendeeId"],

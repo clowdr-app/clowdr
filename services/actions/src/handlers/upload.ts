@@ -32,7 +32,6 @@ import {
     RequiredItemFieldsFragment,
     SetRequiredContentItemUploadsRemainingDocument,
     UnmarkSubmissionRequestEmailJobsDocument,
-    UploaderPartsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
@@ -427,7 +426,7 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
     `;
 
     if (requiredContentItem.uploadsRemaining) {
-        apolloClient.mutate({
+        await apolloClient.mutate({
             mutation: SetRequiredContentItemUploadsRemainingDocument,
             variables: {
                 id: requiredContentItem.id,
@@ -547,78 +546,6 @@ gql`
         }
     }
 `;
-
-function generateEmailContents(uploader: UploaderPartsFragment) {
-    const contentTypeFriendlyName = generateContentTypeFriendlyName(uploader.requiredContentItem.contentTypeName);
-    const url = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploader.requiredContentItem.id}/${uploader.requiredContentItem.accessToken}`;
-
-    // TODO: Make info like deadlines, max file sizes, tutorial video link, etc configurable
-    const htmlContents = `<p>Dear ${uploader.name},</p>
-<p>
-    The organisers of ${uploader.conference.name} are requesting that you or
-    your co-authors/co-presenters upload ${contentTypeFriendlyName} for
-    "${uploader.requiredContentItem.contentGroup.title}".
-</p>
-<p>
-    Please do not forward or share this email: anyone with the link contained
-    herein can use it to upload content to your conference item.
-</p>
-<p>
-    Please <a href="${url}">submit your content on this page</a>.
-</p>
-<p>
-    Please <a href="https://youtu.be/l0SqCISybqk">watch this 6 minute instructional video</a> to learn how to use Clowdr's content upload system. This video also shows how to edit subtitles.
-</p>
-<p>
-    You should have received two emails (including this one) for the two separate videos you should
-    upload. These are the <b>Broadcast video</b> and the <b>Pre-publication video</b>.
-</p>
-<ul>
-    <li><b>Broadcast video:</b> Max 5 mins. For POPL, this will be both pre-published and live streamed during the main conference before the live Q&amp;A.
-        <ul>
-            <li>If your video is longer than 5 minutes, it will be abruptly cut short during the live stream. The system is automated and there is no leeway in the schedule. Please make sure your video is under 5 minutes long.</li>
-        </ul>
-    </li>
-    <li><span><b>Pre-published video:</b> Max 30 mins. Published around the 11th Jan for attendees to watch before the conference.</span>
-        <ul>
-            <li>If your video is longer than 30 minutes, we are likely to cut it down (by clipping it to 30 mins).</li>
-        </ul>
-    </li>
-    <li><b>Submission deadline: 12:00 UTC on 4th January 2021.</b>
-        <ul>
-            <li>The deadline time has been chosen as it is equivalent to 'end of 3rd January for anywhere in the world'.</li>
-            <li>Your upload must start before this deadline, but any ongoing (uninterrupted) uploads will be allowed to continue past this time.</li>
-            <li>Please do not leave submitting to the last moment; Submitting at the last moment is risky. If we are unable to automatically process your video and are only made aware of an issue after the deadline, we may not have time to resolve the problem.</li>
-            <li>If you fail to submit on time, your videos may not be processed for pre-publication.</li>
-            <li>Submissions after this time may be blocked and will require you to contact the POPL organising committee.</li>
-        </ul>
-    </li>
-    <li><span><b>Up to 3 uploads</b> per requested video are allowed.</span>
-        <ul>
-            <li><b>Additional uploads are not available.</b></li>
-            <li>Only the last uploaded version will be used. We recommend you review and edit your video locally (e.g. using VLC Media Player) before uploading to Clowdr.</li>
-        </ul>
-    </li>
-    <li>After uploading your video, Clowdr will process it and auto-generate subtitles. You will receive emails for each stage of processing.</li>
-    <li><b>Once subtitles have been generated, you will have the opportunity to edit them.</b></li>
-    <li><b>The deadline for editing subtitles is 12:00 UTC on 6th January 2021.</b>
-        <ul>
-            <li>After editing subtitles, please remember to <b>click the "Save" button!</b></li>
-        </ul>
-    </li>
-</ul>
-<p>We hope you enjoy your conference,<br/>
-The Clowdr team
-</p>
-<p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
-received this email in error, please contact us via <a href="mailto:${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}">${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</a></p>`;
-
-    const plainTextContents = htmlToText(htmlContents);
-    return {
-        htmlContents,
-        plainTextContents,
-    };
-}
 
 function generateContentTypeFriendlyName(type: ContentType_Enum) {
     switch (type) {

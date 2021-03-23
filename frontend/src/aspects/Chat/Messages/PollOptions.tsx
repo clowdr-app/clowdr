@@ -1,10 +1,9 @@
 import { Button, Flex, Input, ListItem, OrderedList, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { ChatMessageDataFragment, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import { ChatReactionDataFragment, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import type { MessageState } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
 import type { PollMessageData } from "../Types/Messages";
-import { useReactions } from "./ReactionsProvider";
-import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 function PollOption({ value, count, onClick }: { value: string; count: number; onClick?: () => void }): JSX.Element {
     const contents = (
@@ -58,30 +57,32 @@ function PollOption({ value, count, onClick }: { value: string; count: number; o
     );
 }
 
-export default function PollOptions({ message }: { message: ChatMessageDataFragment }): JSX.Element {
+export default function PollOptions({
+    message,
+    reactions,
+}: {
+    message: MessageState;
+    reactions: readonly ChatReactionDataFragment[];
+}): JSX.Element {
     const config = useChatConfiguration();
     const currentAttendeeId = config.currentAttendeeId;
-    const isClosed = useMemo(
-        () => message.reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed),
-        [message.reactions]
-    );
+    const isClosed = useMemo(() => reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed), [
+        reactions,
+    ]);
     const isCompleted = useMemo(
-        () => message.reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete),
-        [message.reactions]
+        () => reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete),
+        [reactions]
     );
     const ownVoteCount = useMemo(
         () =>
             currentAttendeeId
-                ? message.reactions.filter(
+                ? reactions.filter(
                       (reaction) =>
                           reaction.type === Chat_ReactionType_Enum.PollChoice && reaction.senderId === currentAttendeeId
                   ).length
                 : 0,
-        [currentAttendeeId, message.reactions]
+        [currentAttendeeId, reactions]
     );
-
-    const reactionsQ = useReactions();
-    const messagesQ = useReceiveMessageQueries();
 
     const data = message.data as PollMessageData;
     const maxVotes = data.maxVotesPerAttendee !== 0 ? data.maxVotesPerAttendee : Number.POSITIVE_INFINITY;
@@ -90,7 +91,7 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
         const userCreatedOptions = data.canAttendeesCreateOptions
             ? [
                   ...new Set(
-                      message.reactions
+                      reactions
                           .filter(
                               (reaction) =>
                                   reaction.type === Chat_ReactionType_Enum.PollChoice &&
@@ -107,7 +108,7 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
         const allOptions = [...providedOptions, ...userCreatedOptions];
         if (isCompleted || data.revealBeforeComplete || (currentAttendeeId && message.senderId === currentAttendeeId)) {
             const optionsWithPopularity = new Map<string, number>(allOptions.map((x) => [x, 0]));
-            message.reactions.forEach((reaction) => {
+            reactions.forEach((reaction) => {
                 if (reaction.type === Chat_ReactionType_Enum.PollChoice) {
                     const count = optionsWithPopularity.get(reaction.symbol) ?? 0;
                     optionsWithPopularity.set(reaction.symbol, count + 1);
@@ -122,9 +123,8 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
         data.canAttendeesCreateOptions,
         data.options,
         data.revealBeforeComplete,
-        isClosed,
         isCompleted,
-        message.reactions,
+        reactions,
         message.senderId,
     ]);
 
@@ -137,10 +137,10 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
     }, [options]);
     const uniqueVoters = useMemo(() => {
         const voterIds = new Set(
-            message.reactions.filter((x) => x.type === Chat_ReactionType_Enum.PollChoice).map((x) => x.senderId)
+            reactions.filter((x) => x.type === Chat_ReactionType_Enum.PollChoice).map((x) => x.senderId)
         );
         return voterIds.size;
-    }, [message.reactions]);
+    }, [reactions]);
     return (
         <>
             <Text as="p" fontSize="80%" fontStyle="italic">
@@ -165,14 +165,11 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
                             onClick={
                                 currentAttendeeId && !isClosed && ownVoteCount < maxVotes
                                     ? async () => {
-                                          await reactionsQ.addReaction({
+                                          await message.addReaction({
                                               data: {},
-                                              messageId: message.id,
-                                              senderId: currentAttendeeId,
                                               symbol: opt[0],
                                               type: Chat_ReactionType_Enum.PollChoice,
                                           });
-                                          await messagesQ.refetch(message.id);
                                       }
                                     : undefined
                             }
@@ -193,14 +190,11 @@ export default function PollOptions({ message }: { message: ChatMessageDataFragm
                                             val.length <
                                                 (config.pollConfig.answerLength?.max ?? Number.POSITIVE_INFINITY)
                                         ) {
-                                            await reactionsQ.addReaction({
+                                            await message.addReaction({
                                                 data: {},
-                                                messageId: message.id,
-                                                senderId: currentAttendeeId,
                                                 symbol: val,
                                                 type: Chat_ReactionType_Enum.PollChoice,
                                             });
-                                            await messagesQ.refetch(message.id);
                                         }
                                     }
                                 }

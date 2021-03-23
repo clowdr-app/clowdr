@@ -1,15 +1,16 @@
-import { Box, Button, Center, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import { Box, Button, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
     AttendeeDataFragment,
-    ChatMessageDataFragment,
+    ChatReactionDataFragment,
     Chat_MessageType_Enum,
     Chat_ReactionType_Enum,
 } from "../../../generated/graphql";
 import { useAttendee } from "../../Conference/AttendeesContext";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import { Markdown } from "../../Text/Markdown";
+import type { MessageState, Observable } from "../ChatGlobalState";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
 import MessageControls from "./MessageControls";
@@ -66,13 +67,16 @@ function MessageBody({
     attendee,
     subscribeToReactions,
 }: {
-    message: ChatMessageDataFragment;
+    message: MessageState;
     attendee: AttendeeDataFragment | null;
     subscribeToReactions: boolean;
 }): JSX.Element {
     const config = useChatConfiguration();
     const messages = useReceiveMessageQueries();
-    // const conference = useConference();
+    const [reactions, setReactions] = useState<ChatReactionDataFragment[]>([]);
+    useEffect(() => {
+        return message.Reactions.subscribe(setReactions);
+    }, [message.Reactions]);
 
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
 
@@ -127,31 +131,38 @@ function MessageBody({
     );
 
     const attendeeNameEl = useMemo(
-        () =>
-            message.type !== Chat_MessageType_Enum.Emote ? (
-                <HStack>
-                    <Text as="span" fontSize={smallFontSize} color={timeColour}>
-                        {attendee?.displayName ?? " "}
-                    </Text>
-                    {attendee?.profile?.badges && attendee.profile.badges.length > 0 ? (
-                        <Box
-                            fontSize={smallFontSize}
-                            color={attendee.profile.badges[0].colour}
-                            border="1px solid"
-                            borderRadius="3px"
-                            borderColor={attendee.profile.badges[0].colour}
-                            lineHeight="3.5ex"
-                            py={0}
-                            px={1}
-                            m={0}
-                            ml={2}
-                        >
-                            {attendee.profile.badges[0].name}
-                        </Box>
-                    ) : undefined}
-                </HStack>
-            ) : undefined,
-        [attendee?.displayName, attendee?.profile?.badges, message.type, smallFontSize, timeColour]
+        () => (
+            <HStack
+                marginTop={
+                    config.spacing === ChatSpacing.RELAXED
+                        ? "-1.5ex"
+                        : config.spacing === ChatSpacing.COMFORTABLE
+                        ? "-0.5ex"
+                        : undefined
+                }
+            >
+                <Text as="span" fontSize={smallFontSize} color={timeColour}>
+                    {attendee?.displayName ?? " "}
+                </Text>
+                {attendee?.profile?.badges && attendee.profile.badges.length > 0 ? (
+                    <Box
+                        fontSize={smallFontSize}
+                        color={attendee.profile.badges[0].colour}
+                        border="1px solid"
+                        borderRadius="3px"
+                        borderColor={attendee.profile.badges[0].colour}
+                        lineHeight="3.5ex"
+                        py={0}
+                        px={1}
+                        m={0}
+                        ml={2}
+                    >
+                        {attendee.profile.badges[0].name}
+                    </Box>
+                ) : undefined}
+            </HStack>
+        ),
+        [attendee?.displayName, attendee?.profile?.badges, config.spacing, smallFontSize, timeColour]
     );
 
     const controls = useMemo(
@@ -164,8 +175,8 @@ function MessageBody({
                     fontSize={smallFontSize}
                     ml="auto"
                     isOwnMessage={!!config.currentAttendeeId && message.senderId === config.currentAttendeeId}
-                    messageId={message.id}
-                    usedReactions={message.reactions.reduce((acc, reaction) => {
+                    message={message}
+                    usedReactions={reactions.reduce((acc, reaction) => {
                         if (
                             config.currentAttendeeId &&
                             reaction.type === Chat_ReactionType_Enum.Emoji &&
@@ -177,59 +188,49 @@ function MessageBody({
                     }, [] as string[])}
                     isPollOpen={
                         message.type === Chat_MessageType_Enum.Poll
-                            ? !message.reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed)
+                            ? !reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed)
                             : undefined
                     }
                     isPollIncomplete={
                         message.type === Chat_MessageType_Enum.Poll
-                            ? !message.reactions.some(
-                                  (reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete
-                              )
+                            ? !reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete)
                             : undefined
                     }
                 />
             </Flex>
         ),
-        [
-            attendeeNameEl,
-            config.currentAttendeeId,
-            message.id,
-            message.reactions,
-            message.senderId,
-            message.type,
-            smallFontSize,
-        ]
+        [attendeeNameEl, message, smallFontSize, config.currentAttendeeId, reactions]
     );
 
     const emote = useMemo(
         () =>
             message.type === Chat_MessageType_Enum.Emote ? (
-                <Center fontSize={pictureSize} w="100%" pt={config.spacing}>
+                <HStack fontSize={pictureSize} w="100%" pt={config.spacing}>
                     <Twemoji className="twemoji" text={message.message} />
-                </Center>
+                </HStack>
             ) : (
                 <Markdown restrictHeadingSize>{message.message}</Markdown>
             ),
         [config.spacing, message.message, message.type, pictureSize]
     );
 
-    const reactions = useMemo(
+    const reactionEls = useMemo(
         () => (
             <ReactionsList
-                reactions={message.reactions}
+                reactions={reactions}
                 currentAttendeeId={config.currentAttendeeId}
-                messageId={message.id}
-                fontSize={smallFontSize}
+                message={message}
+                fontSize={config.fontSizeRange.value}
                 subscribeToReactions={subscribeToReactions}
             />
         ),
-        [config.currentAttendeeId, message.id, message.reactions, smallFontSize, subscribeToReactions]
+        [config.currentAttendeeId, config.fontSizeRange.value, message, reactions, subscribeToReactions]
     );
 
     const question = useMemo(
         () =>
             message.type === Chat_MessageType_Enum.Question ? (
-                message.reactions.some((x) => x.type === Chat_ReactionType_Enum.Answer) ? (
+                reactions.some((x) => x.type === Chat_ReactionType_Enum.Answer) ? (
                     <Button
                         fontSize={smallFontSize}
                         p={config.spacing}
@@ -271,7 +272,7 @@ function MessageBody({
             config.spacing,
             message.duplicatedMessageId,
             message.id,
-            message.reactions,
+            reactions,
             message.type,
             messages.setAnsweringQuestionId,
             smallFontSize,
@@ -279,14 +280,16 @@ function MessageBody({
     );
 
     const poll = useMemo(
-        () => (message.type === Chat_MessageType_Enum.Poll ? <PollOptions message={message} /> : undefined),
-        [message]
+        () =>
+            message.type === Chat_MessageType_Enum.Poll ? (
+                <PollOptions message={message} reactions={reactions} />
+            ) : undefined,
+        [message, reactions]
     );
 
     const msgBody = useMemo(
         () => (
             <VStack
-                justifyContent={message.type === Chat_MessageType_Enum.Emote ? "center" : undefined}
                 alignItems="flex-start"
                 spacing={roundUpToNearest(config.spacing * 0.5, 1) + "px"}
                 p={0}
@@ -297,12 +300,12 @@ function MessageBody({
             >
                 {controls}
                 {emote}
-                {reactions}
+                {reactionEls}
                 {question}
                 {poll}
             </VStack>
         ),
-        [config.spacing, controls, emote, message.type, poll, question, reactions]
+        [config.spacing, controls, emote, message.type, poll, question, reactionEls]
     );
 
     if (message.type === Chat_MessageType_Enum.DuplicationMarker) {
@@ -386,10 +389,10 @@ function MessageBody({
 
 export default function MessageBox({
     message,
-    subscribeToReactions,
+    positionObservable,
 }: {
-    message: ChatMessageDataFragment;
-    subscribeToReactions: boolean;
+    message: MessageState;
+    positionObservable: Observable<number>;
 }): JSX.Element {
     const config = useChatConfiguration();
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
@@ -402,8 +405,8 @@ export default function MessageBox({
     const isQuestion = message.type === Chat_MessageType_Enum.Question;
     const isAnswer = message.type === Chat_MessageType_Enum.Answer;
     const bgColour = useColorModeValue(
-        isQuestion ? "blue.100" : isAnswer ? "orange.100" : "white",
-        isQuestion ? "blue.700" : isAnswer ? "green.800" : "gray.900"
+        isQuestion ? "blue.50" : isAnswer ? "green.50" : "white",
+        isQuestion ? "blue.900" : isAnswer ? "green.900" : "gray.900"
     );
 
     const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);
@@ -417,7 +420,17 @@ export default function MessageBox({
         []
     );
 
-    const attendee = useAttendee(message.senderId);
+    const senderIdObj = useMemo(() => (message.senderId ? { attendee: message.senderId } : undefined), [
+        message.senderId,
+    ]);
+    const attendee = useAttendee(senderIdObj);
+
+    const [subscribeToReactions, setSubscribeToReactions] = useState<boolean>(false);
+    useEffect(() => {
+        return positionObservable.subscribe((v) => {
+            setSubscribeToReactions(v < 10);
+        });
+    }, [positionObservable]);
 
     return message.type === Chat_MessageType_Enum.DuplicationMarker ? (
         <></>

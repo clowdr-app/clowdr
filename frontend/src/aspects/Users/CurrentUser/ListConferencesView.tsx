@@ -54,6 +54,7 @@ export default function ListConferencesView(): JSX.Element {
             Permission_Enum.ConferenceManageName,
             Permission_Enum.ConferenceManageRoles,
             Permission_Enum.ConferenceManageSchedule,
+            Permission_Enum.ConferenceManageShuffle,
             Permission_Enum.ConferenceModerateAttendees,
         ];
 

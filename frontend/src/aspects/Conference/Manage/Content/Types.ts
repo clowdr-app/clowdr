@@ -76,6 +76,7 @@ export type ContentPersonDescriptor = {
     affiliation?: string | null;
     email?: string | null;
     originatingDataId?: string;
+    attendeeId?: string | null;
 };
 
 export type ContentGroupHallwayDescriptor = {

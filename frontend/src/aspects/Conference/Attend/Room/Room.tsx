@@ -7,15 +7,17 @@ import {
     Heading,
     HStack,
     Spinner,
+    Tag,
     Text,
     useColorModeValue,
     useToast,
     VStack,
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Redirect, useHistory } from "react-router-dom";
 import {
@@ -25,8 +27,8 @@ import {
     RoomPrivacy_Enum,
     Room_CurrentEventSummaryFragment,
     Room_EventSummaryFragment,
-    useRoomBackstage_GetEventBreakoutRoomQuery,
-    useRoom_GetCurrentEventQuery,
+    useRoom_GetCurrentEventsQuery,
+    useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
@@ -43,14 +45,16 @@ import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 
 gql`
-    query Room_GetCurrentEvent($currentEventId: uuid!) {
-        Event_by_pk(id: $currentEventId) {
+    query Room_GetCurrentEvents($currentEventIds: [uuid!]!) {
+        Event(where: { id: { _in: $currentEventIds } }) {
             ...Room_CurrentEventSummary
         }
     }
 
     fragment Room_CurrentEventSummary on Event {
         id
+        name
+        startTime
         contentGroup {
             id
             title
@@ -83,7 +87,26 @@ gql`
         }
         eventPeople {
             id
-            attendeeId
+            person {
+                id
+                name
+                affiliation
+                attendeeId
+            }
+            roleName
+        }
+    }
+
+    query Room_GetEventBreakoutRoom($originatingContentGroupId: uuid!) {
+        Room(
+            where: {
+                originatingEventId: { _is_null: true }
+                originatingContentGroupId: { _eq: $originatingContentGroupId }
+            }
+            order_by: { created_at: asc }
+            limit: 1
+        ) {
+            id
         }
     }
 `;
@@ -122,6 +145,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     const {
         currentRoomEvent,
         nextRoomEvent,
+        nextNextRoomEvent,
         withinThreeMinutesOfBroadcastEvent,
         secondsUntilBroadcastEvent,
         secondsUntilZoomEvent,
@@ -145,70 +169,152 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
 
-    const [currentEventData, setCurrentEventData] = useState<Room_CurrentEventSummaryFragment | null>(null);
-    const { refetch: refetchCurrentEventData } = useRoom_GetCurrentEventQuery({
+    const [currentEventsData, setCurrentEventsData] = useState<readonly Room_CurrentEventSummaryFragment[]>([]);
+    const { refetch: refetchCurrentEventsData } = useRoom_GetCurrentEventsQuery({
         skip: true,
         fetchPolicy: "network-only",
     });
 
     useEffect(() => {
         async function fn() {
-            if (currentRoomEvent?.id) {
-                try {
-                    const { data } = await refetchCurrentEventData({
-                        currentEventId: currentRoomEvent.id,
-                    });
+            const eventIds = [currentRoomEvent?.id, nextRoomEvent?.id, nextNextRoomEvent?.id].filter(notEmpty);
+            try {
+                const { data } = await refetchCurrentEventsData({
+                    currentEventIds: eventIds,
+                });
 
-                    if (data) {
-                        setCurrentEventData(data.Event_by_pk ?? null);
-                    }
-                } catch (e) {
-                    console.error("Could not fetch current event data");
+                if (data) {
+                    setCurrentEventsData(data.Event ?? []);
                 }
-            } else {
-                setCurrentEventData(null);
+            } catch (e) {
+                console.error("Could not fetch current events data");
             }
         }
         fn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentRoomEvent?.id]);
+    }, [currentRoomEvent?.id, nextRoomEvent?.id, nextNextRoomEvent?.id]);
 
-    const maybeCurrentEventZoomDetails = useMemo(() => {
+    const [zoomNow, setZoomNow] = useState<number>(Date.now());
+    const computeZoomNow = useCallback(() => setZoomNow(Date.now()), [setZoomNow]);
+    usePolling(computeZoomNow, 30000, true);
+    const maybeZoomUrl = useMemo(() => {
         try {
-            const zoomItems = currentEventData?.contentGroup?.contentItems;
+            const currentEventData = currentRoomEvent
+                ? currentEventsData.find((e) => e.id === currentRoomEvent?.id)
+                : undefined;
+            const nextEventData = nextRoomEvent ? currentEventsData.find((e) => e.id === nextRoomEvent?.id) : undefined;
 
-            if (!zoomItems || zoomItems.length < 1) {
-                return undefined;
+            const currentZoomItems = currentEventData?.contentGroup?.contentItems;
+            if (currentZoomItems && currentZoomItems.length > 0 && currentEventData) {
+                const versions = currentZoomItems[0].data as ContentItemDataBlob;
+                const latest = R.last(versions)?.data as ZoomBlob;
+                return latest.url;
             }
 
-            const versions = zoomItems[0].data as ContentItemDataBlob;
+            const nextZoomItems = nextEventData?.contentGroup?.contentItems;
+            if (
+                nextZoomItems &&
+                nextZoomItems.length > 0 &&
+                nextEventData &&
+                zoomNow > Date.parse(nextEventData.startTime) - 20 * 60 * 1000
+            ) {
+                const versions = nextZoomItems[0].data as ContentItemDataBlob;
+                const latest = R.last(versions)?.data as ZoomBlob;
+                return latest.url;
+            }
 
-            return (R.last(versions)?.data as ZoomBlob).url;
+            return undefined;
         } catch (e) {
             console.error("Error finding current event Zoom details", e);
             return undefined;
         }
-    }, [currentEventData?.contentGroup?.contentItems]);
+    }, [currentEventsData, currentRoomEvent, nextRoomEvent, zoomNow]);
 
     const currentAttendee = useCurrentAttendee();
-    // Used to allow the user to explicitly select to watch the stream rather
-    // than entering the backstage area
+
+    const presentingCurrentOrNextOrNextNextEvent = useMemo(() => {
+        const isPresenterOfCurrentEvent =
+            currentRoomEvent !== null &&
+            currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
+        const isPresenterOfNextEvent =
+            nextRoomEvent !== null &&
+            nextRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
+        const isPresenterOfNextNextEvent =
+            nextNextRoomEvent !== null &&
+            nextNextRoomEvent?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
+        return isPresenterOfCurrentEvent || isPresenterOfNextEvent || isPresenterOfNextNextEvent;
+    }, [currentAttendee.id, currentRoomEvent, nextRoomEvent, nextNextRoomEvent]);
+
+    const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);
+
     const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
     const showDefaultBreakoutRoom =
         roomEvents.length === 0 || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
     const hasBackstage = !!hlsUri;
-    const isPresenterOfCurrentEvent =
-        currentRoomEvent !== null &&
-        currentRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
-    const isPresenterOfNextEvent =
-        nextRoomEvent !== null && nextRoomEvent.eventPeople.some((person) => person.attendeeId === currentAttendee.id);
-    const shouldBeBackstage =
-        isPresenterOfCurrentEvent || (withinThreeMinutesOfBroadcastEvent && isPresenterOfNextEvent);
+
+    const alreadyBackstage = useRef<boolean>(false);
+
+    const notExplictlyWatchingCurrentOrNextEvent =
+        !watchStreamForEventId ||
+        (!!currentRoomEvent && watchStreamForEventId !== currentRoomEvent.id) ||
+        (!currentRoomEvent && !!nextRoomEvent && watchStreamForEventId !== nextRoomEvent.id);
     const showBackstage =
         hasBackstage &&
-        shouldBeBackstage &&
-        watchStreamForEventId !== currentRoomEvent?.id &&
-        watchStreamForEventId !== nextRoomEvent?.id;
+        notExplictlyWatchingCurrentOrNextEvent &&
+        (backStageRoomJoined || presentingCurrentOrNextOrNextNextEvent || alreadyBackstage.current);
+    alreadyBackstage.current = showBackstage;
+
+    useEffect(() => {
+        if (showBackstage) {
+            toast({
+                status: "info",
+                position: "bottom-right",
+                isClosable: true,
+                title: "You have been taken to the speakers' area",
+                description: "You are a presenter of a current or upcoming event",
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showBackstage]);
+
+    useEffect(() => {
+        if (
+            currentRoomEvent &&
+            currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
+            watchStreamForEventId === currentRoomEvent.id &&
+            !showBackstage
+        ) {
+            toast({
+                status: "info",
+                position: "bottom-right",
+                duration: 15000,
+                isClosable: true,
+                title: "You are a presenter of an event starting now",
+                description: (
+                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
+                        Go to the speakers&apos; area
+                    </Button>
+                ),
+            });
+        } else if (
+            nextRoomEvent &&
+            nextRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
+            !showBackstage
+        ) {
+            toast({
+                status: "info",
+                position: "bottom-right",
+                isClosable: true,
+                title: "You are a presenter of the next event",
+                description: (
+                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
+                        Go to the speakers&apos; area
+                    </Button>
+                ),
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRoomEvent?.id]);
 
     const controlBarEl = useMemo(
         () =>
@@ -218,25 +324,32 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         [roomDetails, showBackstage]
     );
 
-    const roomEventsForCurrentAttendde = useMemo(
+    const roomEventsForCurrentAttendee = useMemo(
         () =>
-            roomEvents.filter((event) => event.eventPeople.some((person) => person.attendeeId === currentAttendee.id)),
+            roomEvents.filter((event) =>
+                event.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
+            ),
         [currentAttendee.id, roomEvents]
     );
+    const [backstageSelectedEventId, setBackstageSelectedEventId] = useState<string | null>(null);
     const backStageEl = useMemo(
         () => (
             <RoomBackstage
                 showBackstage={showBackstage}
                 roomName={roomDetails.name}
-                roomEvents={roomEventsForCurrentAttendde}
+                roomEvents={roomEventsForCurrentAttendee}
                 currentRoomEventId={currentRoomEvent?.id}
+                nextRoomEventId={nextRoomEvent?.id}
                 setWatchStreamForEventId={setWatchStreamForEventId}
+                onRoomJoined={setBackStageRoomJoined}
+                onEventSelected={setBackstageSelectedEventId}
             />
         ),
-        [currentRoomEvent?.id, roomDetails.name, roomEventsForCurrentAttendde, showBackstage]
+        [currentRoomEvent?.id, nextRoomEvent, roomDetails.name, roomEventsForCurrentAttendee, showBackstage]
     );
 
-    const muteStream = shouldBeBackstage;
+    const muteStream = showBackstage;
+    const playerRef = useRef<ReactPlayer | null>(null);
     const playerEl = useMemo(
         () =>
             hlsUri && withinThreeMinutesOfBroadcastEvent ? (
@@ -247,9 +360,13 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                         url={hlsUri}
                         config={{
                             file: {
-                                hlsOptions: {},
+                                hlsVersion: "1.0.0-rc.4",
+                                hlsOptions: {
+                                    subtitleDisplay: false,
+                                },
                             },
                         }}
+                        ref={playerRef}
                         playing={
                             (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) &&
                             !showBackstage &&
@@ -269,6 +386,13 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const breakoutVonageRoomEl = useMemo(() => <BreakoutVonageRoom room={roomDetails} />, [roomDetails]);
 
+    const currentEventRole = currentRoomEvent?.eventPeople.find(
+        (p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id
+    )?.roleName;
+    const nextEventRole = nextRoomEvent?.eventPeople.find(
+        (p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id
+    )?.roleName;
+
     const contentEl = useMemo(
         () => (
             <Box flexGrow={1}>
@@ -276,7 +400,14 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
                 {currentRoomEvent ? (
                     <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now)}</Text>
+                        <HStack justifyContent="space-between">
+                            <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now)}</Text>
+                            {currentEventRole ? (
+                                <Tag colorScheme="green" my={2}>
+                                    {currentEventRole}
+                                </Tag>
+                            ) : undefined}
+                        </HStack>
                         <Heading as="h3" textAlign="left" size="lg" mb={2}>
                             {currentRoomEvent.name}
                         </Heading>
@@ -294,7 +425,14 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 )}
                 {nextRoomEvent ? (
                     <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
+                        <HStack justifyContent="space-between">
+                            <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
+                            {nextEventRole ? (
+                                <Tag colorScheme="gray" my={2}>
+                                    {nextEventRole}
+                                </Tag>
+                            ) : undefined}
+                        </HStack>
                         <Heading as="h3" textAlign="left" size="lg" mb={2}>
                             {nextRoomEvent.name}
                         </Heading>
@@ -336,7 +474,17 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 )}
             </Box>
         ),
-        [bgColour, currentRoomEvent, nextBgColour, nextRoomEvent, now, roomDetails, roomEvents.length]
+        [
+            bgColour,
+            currentEventRole,
+            currentRoomEvent,
+            nextBgColour,
+            nextEventRole,
+            nextRoomEvent,
+            now,
+            roomDetails,
+            roomEvents.length,
+        ]
     );
 
     const [sendShuffleRoomNotification, setSendShuffleRoomNotification] = useState<boolean>(false);
@@ -365,7 +513,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         currentRoomEvent
     );
     const conference = useConference();
-    const { refetch: refetchBreakout } = useRoomBackstage_GetEventBreakoutRoomQuery({
+    const { refetch: refetchBreakout } = useRoom_GetEventBreakoutRoomQuery({
         skip: true,
         fetchPolicy: "network-only",
     });
@@ -374,41 +522,72 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         async function fn() {
             try {
                 if (
-                    !showBackstage &&
-                    existingCurrentRoomEvent &&
+                    existingCurrentRoomEvent?.contentGroupId &&
                     (existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
                         existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
                     existingCurrentRoomEvent.id !== currentRoomEvent?.id
                 ) {
                     try {
-                        const breakoutRoom = await refetchBreakout({ originatingEventId: existingCurrentRoomEvent.id });
+                        const breakoutRoom = await refetchBreakout({
+                            originatingContentGroupId: existingCurrentRoomEvent.contentGroupId,
+                        });
 
                         if (!breakoutRoom.data || !breakoutRoom.data.Room || breakoutRoom.data.Room.length < 1) {
                             throw new Error("No matching room found");
                         }
 
-                        toast({
-                            status: "info",
-                            duration: 15000,
-                            isClosable: true,
-                            position: "bottom-right",
-                            title: "Spinoff room created",
-                            description: (
-                                <VStack alignItems="flex-start">
-                                    <Text>You can continue the discussion asynchronously in a spinoff room.</Text>
-                                    <Button
-                                        onClick={() =>
-                                            history.push(
-                                                `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
-                                            )
-                                        }
-                                        colorScheme="green"
-                                    >
-                                        Join the spinoff room
-                                    </Button>
-                                </VStack>
-                            ),
-                        });
+                        if (showBackstage && backstageSelectedEventId === existingCurrentRoomEvent.id) {
+                            toast({
+                                status: "info",
+                                duration: 5000,
+                                position: "bottom-right",
+                                isClosable: true,
+                                title: "Going to the discussion room",
+                                description: (
+                                    <VStack alignItems="flex-start">
+                                        <Text>You will be redirected to the discussion room in a few seconds.</Text>
+                                        <Button
+                                            onClick={() =>
+                                                history.push(
+                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
+                                                )
+                                            }
+                                            colorScheme="green"
+                                        >
+                                            Join the discussion room immediately
+                                        </Button>
+                                    </VStack>
+                                ),
+                            });
+                            setTimeout(() => {
+                                history.push(`/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`);
+                            }, 5000);
+                        } else {
+                            toast({
+                                status: "info",
+                                duration: 15000,
+                                isClosable: true,
+                                position: "bottom-right",
+                                title: "Discussion room available",
+                                description: (
+                                    <VStack alignItems="flex-start">
+                                        <Text>
+                                            You can continue the discussion asynchronously in a discussion room.
+                                        </Text>
+                                        <Button
+                                            onClick={() =>
+                                                history.push(
+                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
+                                                )
+                                            }
+                                            colorScheme="green"
+                                        >
+                                            Join the discussion room
+                                        </Button>
+                                    </VStack>
+                                ),
+                            });
+                        }
                     } catch (e) {
                         console.error(
                             "Error while moving to breakout room at end of event",
@@ -425,6 +604,19 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         fn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent]);
+
+    const eventStartingAlert = useMemo(
+        () =>
+            secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
+                <Alert status="info">
+                    <AlertIcon />
+                    Event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                </Alert>
+            ) : (
+                <></>
+            ),
+        [secondsUntilZoomEvent, currentRoomEvent]
+    );
 
     return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (
         <Redirect
@@ -462,23 +654,18 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                     <></>
                 )}
 
-                {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 ? (
-                    <Alert status="info">
-                        <AlertIcon />
-                        Event starting in {Math.round(secondsUntilZoomEvent)} seconds
-                    </Alert>
-                ) : (
-                    <></>
-                )}
+                {eventStartingAlert}
 
-                {maybeCurrentEventZoomDetails ? (
+                {maybeZoomUrl ? (
                     <ExternalLinkButton
-                        to={maybeCurrentEventZoomDetails}
+                        to={maybeZoomUrl}
                         isExternal={true}
                         colorScheme="green"
                         size="lg"
+                        w="100%"
+                        mt={4}
                     >
-                        Go to Zoom ({currentRoomEvent?.name})
+                        Go to Zoom
                     </ExternalLinkButton>
                 ) : (
                     <></>

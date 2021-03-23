@@ -5,14 +5,14 @@ import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOneP
 import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
 import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
 import { useRestorableState } from "../Generic/useRestorableState";
-import { ChatConfiguration, ChatConfigurationProvider, ChatSources, ChatSpacing } from "./Configuration";
+import type { ChatState } from "./ChatGlobalState";
+import { ChatConfiguration, ChatConfigurationProvider, ChatSpacing } from "./Configuration";
 import { ChatFrame } from "./Frame/ChatFrame";
-import { SelectedChatProvider } from "./SelectedChat";
 import type { EmoteMessageData } from "./Types/Messages";
 
 export interface ChatProps {
     customHeadingElements?: React.ReactNodeArray;
-    sources: ChatSources;
+    chat: ChatState;
 
     onProfileModalOpened?: (attendeeId: string, close: () => void) => void;
     onEmoteReceived?: (emote: EmoteMessageData) => void;
@@ -20,7 +20,7 @@ export interface ChatProps {
 
 export function Chat({
     customHeadingElements,
-    sources,
+    chat,
     onProfileModalOpened,
     onEmoteReceived,
     ...rest
@@ -43,17 +43,15 @@ export function Chat({
     const fontSizeMax = 28;
     // TODO: This is a temporary hack
     const canCompose =
-        "chatId" in sources
-            ? sources.chatTitle !== "Announcements" ||
-              currentPermissions.has(Permission_Enum.ConferenceManageAttendees) ||
-              currentPermissions.has(Permission_Enum.ConferenceModerateAttendees) ||
-              currentPermissions.has(Permission_Enum.ConferenceManageSchedule)
-            : true;
+        chat.Name !== "Announcements" ||
+        currentPermissions.has(Permission_Enum.ConferenceManageAttendees) ||
+        currentPermissions.has(Permission_Enum.ConferenceModerateAttendees) ||
+        currentPermissions.has(Permission_Enum.ConferenceManageSchedule);
     const config = useMemo<ChatConfiguration>(
         () => ({
             customHeadingElements,
 
-            sources,
+            state: chat,
             fontSizeRange: {
                 min: fontSizeMin,
                 max: fontSizeMax,
@@ -156,13 +154,13 @@ export function Chat({
                 setFontSize((old) =>
                     Math.min(fontSizeMax, Math.max(fontSizeMin, typeof next === "function" ? next(old) : next))
                 ),
-            messageBatchSize: 20,
-            messageLiveBatchSize: 20,
+            messageBatchSize: 30,
             onProfileModalOpened,
             onEmoteReceived,
         }),
         [
             canCompose,
+            chat,
             currentAttendee?.displayName,
             currentAttendee?.id,
             customHeadingElements,
@@ -171,7 +169,6 @@ export function Chat({
             onProfileModalOpened,
             setFontSize,
             setSpacing,
-            sources,
             spacing,
         ]
     );
@@ -180,9 +177,7 @@ export function Chat({
         <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
             {/* <ReflectionInfoModalProvider> */}
             <ChatConfigurationProvider config={config}>
-                <SelectedChatProvider>
-                    <ChatFrame {...rest} />
-                </SelectedChatProvider>
+                <ChatFrame {...rest} />
             </ChatConfigurationProvider>
             {/* </ReflectionInfoModalProvider> */}
         </RequireAtLeastOnePermissionWrapper>

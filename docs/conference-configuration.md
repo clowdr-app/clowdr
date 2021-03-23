@@ -75,3 +75,21 @@ A string that is a URL to a PNG image.
 ```json
 "http://www.example.org/example.png"
 ```
+
+## Force User Refresh
+
+A string representing the app version. Changing this causes the user's browsers to refresh.
+
+### Key
+
+`CLOWDR_APP_VERSION`
+
+### Value
+
+A string.
+
+### Example
+
+```json
+"1.0.0"
+```

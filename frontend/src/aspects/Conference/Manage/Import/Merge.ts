@@ -551,7 +551,7 @@ export function sourceIdsEquivalent(sId1: string, sId2: string): "L" | "R" | und
         } else if (ps1.every((id) => ps2.includes(id))) {
             return "L";
         }
-    } else {
+    } else if (ps1.length < ps2.length) {
         if (ps1.every((id) => ps2.includes(id))) {
             return "L";
         } else if (ps2.every((id) => ps1.includes(id))) {
@@ -709,7 +709,7 @@ export function mergeOriginatingData<C>(
         result.id = uuidv4();
         result.isNew = true;
         result.data = [...item1.data, ...item2.data];
-        result.sourceId = item1.sourceId + "¬" + item2.sourceId;
+        result.sourceId = item1.sourceId === item2.sourceId ? item1.sourceId : item1.sourceId + "¬" + item2.sourceId;
     }
 
     changes.push({

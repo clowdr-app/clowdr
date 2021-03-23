@@ -34,7 +34,8 @@ SOFTWARE.
 /* eslint-disable react/display-name */
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Checkbox, Code, Divider, Heading, Image, Link, List, ListItem, Text } from "@chakra-ui/react";
-import React from "react";
+import anchorme from "anchorme";
+import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import ReactMarkdown from "react-markdown";
 import ReactPlayer from "react-player";
@@ -65,12 +66,34 @@ function getCoreProps(props: any) {
     return props["data-sourcepos"] ? { "data-sourcepos": props["data-sourcepos"] } : {};
 }
 
+function autoLinkify(input: string) {
+    return anchorme({
+        input,
+        options: {
+            exclude: (str) => {
+                const matches = str.match(/\[[^\]]+]\([^)]+\)/gi);
+                return !!matches && matches.length > 0;
+            },
+            protocol: function (string) {
+                if (anchorme.validate.email(string)) {
+                    return "mailto:";
+                } else {
+                    return "https://";
+                }
+            },
+            truncate: 40,
+            middleTruncation: false,
+        },
+    });
+}
+
 export function Markdown(elProps?: {
     children?: string;
     className?: string;
     linkColour?: string;
     restrictHeadingSize?: boolean;
 }): JSX.Element {
+    const source = useMemo(() => autoLinkify(elProps?.children ?? ""), [elProps?.children]);
     return (
         <ReactMarkdown
             className={elProps?.className}
@@ -222,7 +245,7 @@ export function Markdown(elProps?: {
                 },
             }}
             escapeHtml={true}
-            source={elProps?.children ?? ""}
+            source={source}
         />
     );
 }

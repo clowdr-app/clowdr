@@ -141,7 +141,7 @@ export const FileItemTemplate: ItemBaseTemplate = {
                             data.item.typeName === ContentType_Enum.ImageFile ||
                             data.item.typeName === ContentType_Enum.PosterFile
                                 ? ["image/png", "image/jpeg", "image/gif", "image/webp"]
-                                : ["pdf"]
+                                : [".pdf"]
                         }
                         item={data.item}
                         onItemChange={(newItem) => {

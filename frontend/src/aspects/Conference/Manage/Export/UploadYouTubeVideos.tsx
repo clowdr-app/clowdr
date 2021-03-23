@@ -31,7 +31,7 @@ import {
 } from "@chakra-ui/react";
 import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/build/attendeeGoogleAccount";
 import { ContentBaseType, ContentItemDataBlob, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
-import { Field, FieldProps, Form, Formik } from "formik";
+import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
@@ -46,6 +46,7 @@ import {
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
 } from "../../../../generated/graphql";
+import { useRestorableState } from "../../../Generic/useRestorableState";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
@@ -133,6 +134,14 @@ gql`
                 }
                 paperUrlContentItems: contentItems(where: { contentTypeName: { _eq: PAPER_URL } }) {
                     ...UploadYouTubeVideos_ContentItem
+                }
+                authors: people(where: { roleName: { _eq: "AUTHOR" } }) {
+                    id
+                    person {
+                        id
+                        name
+                        affiliation
+                    }
                 }
             }
         }
@@ -257,7 +266,7 @@ export function UploadYouTubeVideos(): JSX.Element {
         ): Promise<{ [contentItemId: string]: { title: string; description: string } }> => {
             const result = await refetchTemplateData({ contentItemIds });
 
-            if (!result.data) {
+            if (!result || !result.data) {
                 console.error("Could not retrieve data for content item templates", result.error, result.errors);
                 throw new Error("Could not retrieve data for content item templates");
             }
@@ -343,6 +352,11 @@ export function UploadYouTubeVideos(): JSX.Element {
                     )
                 );
 
+                const authors = contentItem.contentGroup.authors.map((author) => ({
+                    name: author.person.name,
+                    affiliation: author.person.affiliation ?? "",
+                }));
+
                 const view = {
                     fileId: contentItemId,
                     fileName,
@@ -353,6 +367,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     paperUrls,
                     paperLinks,
                     youTubeUploads,
+                    authors,
                 };
 
                 return [
@@ -392,6 +407,29 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const [refreshYouTubeData] = useUploadYouTubeVideos_RefreshYouTubeDataMutation();
 
+    const getDescriptionError = useCallback((description: string) => {
+        const length = new TextEncoder().encode(description).length;
+        const invalid = description.includes("<") || description.includes(">");
+        const errors = [
+            ...(length > 5000 ? ["Description is too long."] : []),
+            ...(invalid ? ["Description cannot contain '<' or '>'."] : []),
+        ];
+        return errors.join(" ");
+    }, []);
+
+    const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
+        "clowdr-youTubeTitleTemplate",
+        "{{fileName}}",
+        (x) => x,
+        (x) => x
+    );
+    const [youTubeDescriptionTemplate, setYouTubeDescriptionTemplate] = useRestorableState(
+        "clowdr-youTubeDescriptionTemplate",
+        "{{abstract}}",
+        (x) => x,
+        (x) => x
+    );
+
     return (
         <>
             <HStack alignItems="flex-start">
@@ -404,15 +442,19 @@ export function UploadYouTubeVideos(): JSX.Element {
                         channelId: string | null;
                         playlistId: string | null;
                         videoPrivacyStatus: string;
+                        titleCorrections: { [contentItemId: string]: string };
+                        descriptionCorrections: { [contentItemId: string]: string };
                     }>
                         initialValues={{
                             contentItemIds: [],
                             attendeeGoogleAccountId: null,
-                            titleTemplate: "{{fileName}}",
-                            descriptionTemplate: "{{abstract}}",
+                            titleTemplate: youTubeTitleTemplate,
+                            descriptionTemplate: youTubeDescriptionTemplate,
                             channelId: null,
                             playlistId: null,
                             videoPrivacyStatus: "unlisted",
+                            titleCorrections: {},
+                            descriptionCorrections: {},
                         }}
                         onSubmit={async (values, actions) => {
                             try {
@@ -422,6 +464,47 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     values.descriptionTemplate
                                 );
 
+                                const updatedPairs = R.mapObjIndexed(
+                                    (x, key) => ({
+                                        title: values.titleCorrections[key] ?? x.title,
+                                        description: values.descriptionCorrections[key] ?? x.description,
+                                    }),
+                                    details
+                                );
+
+                                let correctionsNeeded = false;
+
+                                const invalidTitles = R.filter((x) => x.title.length > 100, updatedPairs);
+
+                                R.forEachObjIndexed((value, contentItemId) => {
+                                    actions.setFieldValue(`titleCorrections.${contentItemId}`, value.title ?? null);
+                                    actions.setFieldError(
+                                        `titleCorrections.${contentItemId}`,
+                                        "Title cannot be more than 100 characters"
+                                    );
+                                    correctionsNeeded = true;
+                                }, invalidTitles);
+
+                                R.forEachObjIndexed((value, contentItemId) => {
+                                    const error = getDescriptionError(value.description);
+                                    if (error) {
+                                        actions.setFieldValue(
+                                            `descriptionCorrections.${contentItemId}`,
+                                            value.description ?? null
+                                        );
+                                        actions.setFieldError(`descriptionCorrections.${contentItemId}`, error);
+                                        correctionsNeeded = true;
+                                    }
+                                }, updatedPairs);
+
+                                if (correctionsNeeded) {
+                                    toast({
+                                        status: "info",
+                                        title: "You need to make some corrections before starting the upload",
+                                    });
+                                    return;
+                                }
+
                                 await createJobs({
                                     variables: {
                                         objects: values.contentItemIds.map(
@@ -429,8 +512,8 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                 contentItemId: id,
                                                 attendeeGoogleAccountId: values.attendeeGoogleAccountId,
                                                 conferenceId: conference.id,
-                                                videoTitle: details[id]?.title ?? id,
-                                                videoDescription: details[id]?.description ?? "",
+                                                videoTitle: updatedPairs[id]?.title ?? id,
+                                                videoDescription: updatedPairs[id]?.description ?? "",
                                                 videoPrivacyStatus: values.videoPrivacyStatus,
                                                 playlistId: values.playlistId,
                                             })
@@ -442,6 +525,9 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     title: "Starting upload to YouTube",
                                 });
                                 actions.resetForm();
+                                actions.setFieldValue("titleTemplate", youTubeTitleTemplate);
+                                actions.setFieldValue("descriptionTemplate", youTubeDescriptionTemplate);
+                                setAttendeeGoogleAccountId(null);
                                 await existingJobsResult.refetch();
                             } catch (e) {
                                 console.error("Error while creating YouTube upload jobs", e);
@@ -453,7 +539,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                             }
                         }}
                     >
-                        {({ isSubmitting, values }) => {
+                        {({ isSubmitting, isValid, values, touched }) => {
                             if (!R.isEmpty(R.symmetricDifference(values.contentItemIds, contentItemIds))) {
                                 setContentItemIds(values.contentItemIds);
                             }
@@ -633,6 +719,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         <Code>url</Code>, <Code>text</Code>.
                                                     </ListItem>
                                                     <ListItem>
+                                                        <Code>authors</Code>: list of authors. Properties are{" "}
+                                                        <Code>name</Code>, <Code>affiliation</Code>.
+                                                    </ListItem>
+                                                    <ListItem>
                                                         <Code>youTubeUploads</Code>: list of previously uploaded YouTube
                                                         videos for this content item. Properties are <Code>url</Code>,{" "}
                                                         <Code>title</Code>.
@@ -669,6 +759,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     id="titleTemplate"
                                                     placeholder="{{fileName}}"
                                                     mt={2}
+                                                    onChange={(event) => {
+                                                        setYouTubeTitleTemplate(event.target.value);
+                                                        field.onChange(event);
+                                                    }}
                                                 />
                                                 <FormErrorMessage>{form.errors.titleTemplate}</FormErrorMessage>
                                             </FormControl>
@@ -691,6 +785,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     id="descriptionTemplate"
                                                     placeholder="{{abstract}}"
                                                     mt={2}
+                                                    onChange={(event) => {
+                                                        setYouTubeDescriptionTemplate(event.target.value);
+                                                        field.onChange(event);
+                                                    }}
                                                 />
                                                 <FormErrorMessage>{form.errors.descriptionTemplate}</FormErrorMessage>
                                             </FormControl>
@@ -833,7 +931,142 @@ export function UploadYouTubeVideos(): JSX.Element {
                                         )}
                                     </Field>
 
-                                    <Button type="submit" isLoading={isSubmitting} mt={4} colorScheme="green">
+                                    <FieldArray
+                                        name="titleCorrections"
+                                        render={(arrayHelpers) =>
+                                            values.titleCorrections &&
+                                            Object.keys(values.titleCorrections).length > 0 ? (
+                                                <>
+                                                    <Heading as="h2" size="md" textAlign="left" my={4}>
+                                                        Corrected video titles
+                                                    </Heading>
+                                                    {R.toPairs<string>(values.titleCorrections).map(
+                                                        ([contentItemId, title]) => (
+                                                            <Field
+                                                                key={contentItemId}
+                                                                name={`titleCorrections.${contentItemId}`}
+                                                                validate={(title: string) =>
+                                                                    title.length <= 100
+                                                                        ? undefined
+                                                                        : "Title cannot be more than 100 characters"
+                                                                }
+                                                                isRequired
+                                                            >
+                                                                {({ field, form }: FieldProps<string>) => (
+                                                                    <FormControl
+                                                                        isInvalid={
+                                                                            !!(form.errors.titleCorrections ??
+                                                                                ({} as any))[contentItemId] &&
+                                                                            !!(form.touched.titleCorrections ??
+                                                                                ({} as any))[contentItemId]
+                                                                        }
+                                                                        isRequired
+                                                                    >
+                                                                        <FormLabel
+                                                                            htmlFor={`titleCorrections.${contentItemId}`}
+                                                                            mt={2}
+                                                                        >
+                                                                            Title for {contentItems[contentItemId].name}{" "}
+                                                                            (
+                                                                            {
+                                                                                contentItems[contentItemId]
+                                                                                    .contentGroupTitle
+                                                                            }
+                                                                            )
+                                                                        </FormLabel>
+                                                                        <Input
+                                                                            {...field}
+                                                                            id={`titleCorrections.${contentItemId}`}
+                                                                            placeholder="Replacement title"
+                                                                        />
+                                                                        <FormErrorMessage>
+                                                                            {
+                                                                                (form.errors.titleCorrections ??
+                                                                                    ({} as any))[contentItemId]
+                                                                            }
+                                                                        </FormErrorMessage>
+                                                                    </FormControl>
+                                                                )}
+                                                            </Field>
+                                                        )
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <></>
+                                            )
+                                        }
+                                    />
+
+                                    <FieldArray
+                                        name="descriptionCorrections"
+                                        render={(arrayHelpers) =>
+                                            values.descriptionCorrections &&
+                                            Object.keys(values.descriptionCorrections).length > 0 ? (
+                                                <>
+                                                    <Heading as="h2" size="md" textAlign="left" my={4}>
+                                                        Corrected video descriptions
+                                                    </Heading>
+                                                    {R.toPairs<string>(values.descriptionCorrections).map(
+                                                        ([contentItemId, description]) => (
+                                                            <Field
+                                                                key={contentItemId}
+                                                                name={`descriptionCorrections.${contentItemId}`}
+                                                                validate={getDescriptionError}
+                                                                isRequired
+                                                            >
+                                                                {({ field, form }: FieldProps<string>) => (
+                                                                    <FormControl
+                                                                        isInvalid={
+                                                                            !!(form.errors.descriptionCorrections ??
+                                                                                ({} as any))[contentItemId] &&
+                                                                            !!(form.touched.descriptionCorrections ??
+                                                                                ({} as any))[contentItemId]
+                                                                        }
+                                                                        isRequired
+                                                                    >
+                                                                        <FormLabel
+                                                                            htmlFor={`descriptionCorrections.${contentItemId}`}
+                                                                            mt={2}
+                                                                        >
+                                                                            Description for{" "}
+                                                                            {contentItems[contentItemId].name} (
+                                                                            {
+                                                                                contentItems[contentItemId]
+                                                                                    .contentGroupTitle
+                                                                            }
+                                                                            )
+                                                                        </FormLabel>
+                                                                        <Textarea
+                                                                            {...field}
+                                                                            id={`descriptionCorrections.${contentItemId}`}
+                                                                            size="sm"
+                                                                            placeholder="Replacement description"
+                                                                        />
+                                                                        <FormErrorMessage>
+                                                                            {
+                                                                                (form.errors.descriptionCorrections ??
+                                                                                    ({} as any))[contentItemId]
+                                                                            }
+                                                                        </FormErrorMessage>
+                                                                    </FormControl>
+                                                                )}
+                                                            </Field>
+                                                        )
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <></>
+                                            )
+                                        }
+                                    />
+
+                                    <Button
+                                        type="submit"
+                                        isLoading={isSubmitting}
+                                        isDisabled={!isValid || !touched}
+                                        mt={4}
+                                        colorScheme="green"
+                                    >
                                         Upload videos
                                     </Button>
                                 </Form>

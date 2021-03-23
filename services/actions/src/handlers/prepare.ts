@@ -637,5 +637,5 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
     }
 
     console.log("Creating transitions for conference", conferenceId);
-    createTransitions(conferenceId);
+    await createTransitions(conferenceId);
 }

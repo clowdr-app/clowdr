@@ -33,8 +33,8 @@ import { DateTime } from "luxon";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    AttendeeInfoFragment,
     ContentGroupFullNestedInfoFragment,
+    ContentPersonInfoFragment,
     EventInfoFragment,
     EventInfoFragmentDoc,
     Permission_Enum,
@@ -68,6 +68,7 @@ import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import BatchAddEventPeople from "./Schedule/BatchAddEventPeople";
 import { EventPersonsModal, requiresEventPeople } from "./Schedule/EventPersonsModal";
 import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
@@ -650,8 +651,8 @@ function EditableScheduleTable(): JSX.Element {
                     );
                     if (
                         eventsInSameRoom.some(([_, event]) => {
-                            const startE = event.startTime ? Date.parse(event.startTime) : Date.now();
-                            const endE = startE + 1000 * (event.durationSeconds ?? 300);
+                            const startE = event.startTime.getTime();
+                            const endE = event.endTime.getTime();
                             return areOverlapping(start, end, startE, endE);
                         })
                     ) {
@@ -877,6 +878,8 @@ function EditableScheduleTable(): JSX.Element {
         [deleteEvents, deleteEventsResponse.loading]
     );
 
+    const batchAddPeopleDisclosure = useDisclosure();
+
     return (
         <>
             <HStack>
@@ -891,6 +894,7 @@ function EditableScheduleTable(): JSX.Element {
                 >
                     Manage Rooms
                 </LinkButton>
+                <Button onClick={batchAddPeopleDisclosure.onOpen}>Add people to events (batch)</Button>
             </HStack>
             <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
             {wholeSchedule.data?.Room && wholeSchedule.data.Room.length === 0 ? (
@@ -926,7 +930,7 @@ function EditableScheduleTable(): JSX.Element {
             />
             <EventSecondaryEditor
                 yellowC={yellow}
-                attendees={wholeSchedule.data?.Attendee ?? []}
+                contentPeople={wholeSchedule.data?.ContentPerson ?? []}
                 events={wholeSchedule.data?.Event ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
@@ -936,6 +940,7 @@ function EditableScheduleTable(): JSX.Element {
                     forceReloadRef.current?.();
                 }}
             />
+            <BatchAddEventPeople events={data} rooms={wholeSchedule.data?.Room ?? []} {...batchAddPeopleDisclosure} />
         </>
     );
 }
@@ -964,14 +969,14 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
 
 function EventSecondaryEditor({
     events,
-    attendees,
+    contentPeople,
     isSecondaryPanelOpen,
     onSecondaryPanelClose,
     index,
     yellowC,
 }: {
     events: readonly EventInfoFragment[];
-    attendees: readonly AttendeeInfoFragment[];
+    contentPeople: readonly ContentPersonInfoFragment[];
     isSecondaryPanelOpen: boolean;
     onSecondaryPanelClose: () => void;
     index: number | null;
@@ -1003,7 +1008,11 @@ function EventSecondaryEditor({
                                         <AccordionIcon />
                                     </AccordionButton>
                                     <AccordionPanel>
-                                        <EventPeopleEditorModal yellowC={yellowC} event={event} attendees={attendees} />
+                                        <EventPeopleEditorModal
+                                            yellowC={yellowC}
+                                            event={event}
+                                            contentPeople={contentPeople}
+                                        />
                                     </AccordionPanel>
                                 </AccordionItem>
                             </Accordion>
@@ -1019,11 +1028,11 @@ function EventSecondaryEditor({
 
 function EventPeopleEditorModal({
     event,
-    attendees,
+    contentPeople,
     yellowC,
 }: {
     event: EventInfoFragment;
-    attendees: readonly AttendeeInfoFragment[];
+    contentPeople: readonly ContentPersonInfoFragment[];
     yellowC: string;
 }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -1034,7 +1043,7 @@ function EventPeopleEditorModal({
             onOpen={onOpen}
             onClose={onClose}
             event={event}
-            attendees={attendees}
+            contentPeople={contentPeople}
         />
     );
     return accordionContents;

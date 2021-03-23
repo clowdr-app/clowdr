@@ -29,6 +29,32 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: generateChatRemoteServiceIds
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/chat/generateRemoteServiceIds'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+- name: generateChatRemoteToken
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/chat/generateRemoteToken'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
+- name: generateChatRemoteUserIds
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/chat/generateRemoteUserIds'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: getContentItem
   definition:
     kind: ""
@@ -121,6 +147,22 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
+- name: presence_Flush
+  definition:
+    kind: synchronous
+    handler: '{{PRESENCE_BASE_URL}}/flush'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-presence-flush-secret
+      value_from_env: PRESENCE_FLUSH_SECRET
+- name: presence_Summary
+  definition:
+    kind: ""
+    handler: '{{PRESENCE_BASE_URL}}/summary'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-presence-summary-secret
+      value_from_env: PRESENCE_SUMMARY_SECRET
 - name: protectedEcho
   definition:
     kind: ""
@@ -242,4 +284,9 @@ custom_types:
   - name: SubmitGoogleOAuthTokenOutput
   - name: SubmitGoogleOAuthCodeOutput
   - name: RefreshYouTubeDataOutput
+  - name: ChatRemoteToken
+  - name: GenerateChatRemoteServiceIdsOutput
+  - name: GenerateChatRemoteUserIdsOutput
+  - name: PresenceSummaryOutput
+  - name: PresenceFlushOutput
   scalars: []

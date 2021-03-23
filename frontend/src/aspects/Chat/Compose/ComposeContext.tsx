@@ -1,9 +1,7 @@
 import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import { useRealTime } from "../../Generic/useRealTime";
 import { ChatConfiguration, useChatConfiguration } from "../Configuration";
-import { useSelectedChat } from "../SelectedChat";
 import type { MinMax } from "../Types/Base";
 import type { AnswerMessageData, MessageData, OrdinaryMessageData } from "../Types/Messages";
 import { useSendMessageQueries } from "./SendMessageQueries";
@@ -72,9 +70,8 @@ export function ComposeContextProvider({
     const [newMessageType, setNewMessageType] = useState<Chat_MessageType_Enum>(defaultType);
     const [newMessageData, setNewMessageData] = useState<MessageData>({});
     const [lastSendTime, setLastSendTime] = useState<number>(0);
-    const now = useRealTime(250);
+    // const now = useRealTime(250);
     const sendQueries = useSendMessageQueries();
-    const selectedChat = useSelectedChat();
 
     const minLength =
         useMemo(() => {
@@ -119,27 +116,27 @@ export function ComposeContextProvider({
         config.questionConfig.length?.max,
     ]);
 
-    const lockoutTimeMs = useMemo(() => {
-        switch (newMessageType) {
-            case Chat_MessageType_Enum.Message:
-                return config.messageConfig.sendCooloffPeriodMs;
-            case Chat_MessageType_Enum.Emote:
-                return config.emoteConfig.sendCooloffPeriodMs;
-            case Chat_MessageType_Enum.Question:
-                return config.questionConfig.sendCooloffPeriodMs;
-            case Chat_MessageType_Enum.Answer:
-                return config.answerConfig.sendCooloffPeriodMs;
-            case Chat_MessageType_Enum.Poll:
-                return config.pollConfig.sendCooloffPeriodMs;
-        }
-    }, [
-        newMessageType,
-        config.answerConfig.sendCooloffPeriodMs,
-        config.emoteConfig.sendCooloffPeriodMs,
-        config.messageConfig.sendCooloffPeriodMs,
-        config.pollConfig.sendCooloffPeriodMs,
-        config.questionConfig.sendCooloffPeriodMs,
-    ]);
+    // const lockoutTimeMs = useMemo(() => {
+    //     switch (newMessageType) {
+    //         case Chat_MessageType_Enum.Message:
+    //             return config.messageConfig.sendCooloffPeriodMs;
+    //         case Chat_MessageType_Enum.Emote:
+    //             return config.emoteConfig.sendCooloffPeriodMs;
+    //         case Chat_MessageType_Enum.Question:
+    //             return config.questionConfig.sendCooloffPeriodMs;
+    //         case Chat_MessageType_Enum.Answer:
+    //             return config.answerConfig.sendCooloffPeriodMs;
+    //         case Chat_MessageType_Enum.Poll:
+    //             return config.pollConfig.sendCooloffPeriodMs;
+    //     }
+    // }, [
+    //     newMessageType,
+    //     config.answerConfig.sendCooloffPeriodMs,
+    //     config.emoteConfig.sendCooloffPeriodMs,
+    //     config.messageConfig.sendCooloffPeriodMs,
+    //     config.pollConfig.sendCooloffPeriodMs,
+    //     config.questionConfig.sendCooloffPeriodMs,
+    // ]);
 
     const newMessageComparisonV = newMessage.replace(/\s+/gi, " ").trim();
 
@@ -188,23 +185,21 @@ export function ComposeContextProvider({
     const send = useCallback(
         (data?: MessageData) => {
             (async () => {
-                if (!config.currentAttendeeId || !config.currentAttendeeName) {
+                if (!config.currentAttendeeId) {
                     throw new Error("Not authorized.");
                 }
 
                 try {
                     const isEmote = /^\p{Emoji}$/iu.test(newMessage);
                     sendQueries.send(
-                        selectedChat.id,
+                        config.state.Id,
                         config.currentAttendeeId,
-                        config.currentAttendeeName,
                         newMessageType === Chat_MessageType_Enum.Message && isEmote
                             ? Chat_MessageType_Enum.Emote
                             : newMessageType,
                         newMessage,
                         data ?? newMessageData,
-                        false,
-                        selectedChat.title
+                        false
                     );
 
                     setNewMessage("");
@@ -221,16 +216,7 @@ export function ComposeContextProvider({
                 }
             })();
         },
-        [
-            config.currentAttendeeId,
-            config.currentAttendeeName,
-            newMessage,
-            newMessageData,
-            newMessageType,
-            selectedChat.id,
-            selectedChat.title,
-            sendQueries,
-        ]
+        [config.currentAttendeeId, newMessage, newMessageData, newMessageType, config.state.Id, sendQueries]
     );
     const messageLengthRange = useMemo(
         () => ({
@@ -262,24 +248,21 @@ export function ComposeContextProvider({
             blockedReason,
 
             isSending: sendQueries.isSending,
-            sendError: sendQueries.sendError ?? undefined,
+            sendError: undefined,
             send,
 
             setAnsweringQuestionId,
-            readyToSend: blockedReason === undefined && (!lockoutTimeMs || now - lastSendTime > lockoutTimeMs),
+            readyToSend: blockedReason === undefined, // && (!lockoutTimeMs || now - lastSendTime > lockoutTimeMs),
         }),
         [
             blockedReason,
             lastSendTime,
-            lockoutTimeMs,
             messageLengthRange,
             newMessage,
             newMessageData,
             newMessageType,
-            now,
             send,
             sendQueries.isSending,
-            sendQueries.sendError,
             setAnsweringQuestionId,
             setNewMessageTypeF,
         ]

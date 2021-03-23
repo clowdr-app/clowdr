@@ -1,11 +1,14 @@
 import { gql, Reference } from "@apollo/client";
 import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
     Box,
     Button,
+    ButtonGroup,
     Center,
     FormLabel,
-    HStack,
-    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -14,14 +17,17 @@ import {
     ModalHeader,
     ModalOverlay,
     Select,
+    Spinner,
     Text,
-    Tooltip,
+    useDisclosure,
+    useToast,
+    VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    AttendeeInfoFragment,
+    ContentPersonInfoFragment,
     EventInfoFragment,
     EventInfoFragmentDoc,
     EventPersonInfoFragment,
@@ -29,11 +35,14 @@ import {
     EventPersonRole_Enum,
     EventPerson_Insert_Input,
     RoomMode_Enum,
+    useAddEventPeople_InsertContentPeopleMutation,
+    useAddEventPeople_InsertEventPeopleMutation,
+    useAddEventPeople_SelectAttendeesQuery,
+    useAddEventPeople_SelectContentPeople_ByAttendeeQuery,
     useDeleteEventPersonsMutation,
     useInsertEventPersonMutation,
     useUpdateEventPersonMutation,
 } from "../../../../generated/graphql";
-import { LinkButton } from "../../../Chakra/LinkButton";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
@@ -43,14 +52,15 @@ import CRUDTable, {
     SortDirection,
 } from "../../../CRUDTable2/CRUDTable2";
 import FAIcon from "../../../Icons/FAIcon";
-import { useConference } from "../../useConference";
+import { maybeCompare } from "../../../Utils/maybeSort";
+import { addAttendeesToEvent } from "./BatchAddEventPeople";
 
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
     event: EventInfoFragment;
-    attendees: readonly AttendeeInfoFragment[];
+    contentPeople: readonly ContentPersonInfoFragment[];
     yellow: string;
 }
 
@@ -69,24 +79,8 @@ gql`
         }
     }
 
-    mutation UpdateEventPersonInfo(
-        $id: uuid!
-        $attendeeId: uuid = null
-        $name: String!
-        $affiliation: String = null
-        $roleName: EventPersonRole_enum!
-        $originatingDataId: uuid = null
-    ) {
-        update_EventPerson_by_pk(
-            pk_columns: { id: $id }
-            _set: {
-                attendeeId: $attendeeId
-                name: $name
-                affiliation: $affiliation
-                roleName: $roleName
-                originatingDataId: $originatingDataId
-            }
-        ) {
+    mutation UpdateEventPerson($id: uuid!, $personId: uuid!, $roleName: EventPersonRole_enum!) {
+        update_EventPerson_by_pk(pk_columns: { id: $id }, _set: { personId: $personId, roleName: $roleName }) {
             ...EventPersonInfo
         }
     }
@@ -100,18 +94,190 @@ export function requiresEventPeople(event: EventInfoFragment): boolean {
     );
 }
 
-export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }: Props): JSX.Element {
+export function AddEventPerson_RegistrantModal({
+    event,
+    closeOuter,
+}: {
+    event: EventInfoFragment;
+    closeOuter: () => void;
+}): JSX.Element {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const selectAttendeesQuery = useAddEventPeople_SelectAttendeesQuery({
+        variables: {
+            conferenceId: event.conferenceId,
+        },
+    });
+    const selectContentPeople_ByAttendeeQuery = useAddEventPeople_SelectContentPeople_ByAttendeeQuery({
+        skip: true,
+    });
+    const registrantOptions = useMemo(
+        () =>
+            selectAttendeesQuery.data
+                ? [...selectAttendeesQuery.data.Attendee]
+                      .sort((x, y) => x.displayName.localeCompare(y.displayName))
+                      .map((x) => (
+                          <option key={x.id} value={x.id}>
+                              {x.displayName}
+                              {x.profile?.affiliation ? ` (${x.profile.affiliation})` : ""}
+                              {x.invitation?.invitedEmailAddress ? ` <${x.invitation.invitedEmailAddress}>` : ""}
+                          </option>
+                      ))
+                : undefined,
+        [selectAttendeesQuery.data]
+    );
+
+    const roleOptions = useMemo(
+        () =>
+            Object.keys(EventPersonRole_Enum)
+                .sort((x, y) => x.localeCompare(y))
+                .map((x) => {
+                    const v = (EventPersonRole_Enum as any)[x];
+                    return (
+                        <option key={v} value={v}>
+                            {formatEnumValue(v)}
+                        </option>
+                    );
+                }),
+        []
+    );
+
+    const [selectedAttendeeId, setSelectedAttendeeId] = useState<string>("");
+    const [selectedRole, setSelectedRole] = useState<EventPersonRole_Enum>(EventPersonRole_Enum.Presenter);
+
+    const insertContentPeople = useAddEventPeople_InsertContentPeopleMutation();
+    const insertEventPeopleQ = useAddEventPeople_InsertEventPeopleMutation();
+    const toast = useToast();
+
+    const [adding, setAdding] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const add = useCallback(async () => {
+        setAdding(true);
+        setError(null);
+
+        try {
+            const newEventPeople: EventPerson_Insert_Input[] = await addAttendeesToEvent(
+                [selectedAttendeeId],
+                selectAttendeesQuery,
+                selectContentPeople_ByAttendeeQuery,
+                insertContentPeople,
+                event.conferenceId,
+                [event],
+                selectedRole,
+                insertEventPeopleQ
+            );
+
+            setAdding(false);
+            onClose();
+            closeOuter();
+            toast({
+                title: `Registrant added to ${newEventPeople.length} event`,
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+                position: "bottom",
+            });
+        } catch (e) {
+            setError(e.message || e.toString());
+            setAdding(false);
+        }
+    }, [
+        event,
+        insertContentPeople,
+        insertEventPeopleQ,
+        onClose,
+        selectAttendeesQuery,
+        selectContentPeople_ByAttendeeQuery,
+        selectedAttendeeId,
+        selectedRole,
+        toast,
+        closeOuter,
+    ]);
+
+    return (
+        <>
+            <Button onClick={onOpen}>Add registrant</Button>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Add registrant to event</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {error || selectAttendeesQuery.error ? (
+                            <Alert
+                                status="error"
+                                variant="subtle"
+                                mb={4}
+                                justifyContent="flex-start"
+                                alignItems="flex-start"
+                            >
+                                <AlertIcon />
+                                <VStack justifyContent="flex-start" alignItems="flex-start">
+                                    <AlertTitle>
+                                        {error
+                                            ? "Error adding registrant to event"
+                                            : "Error loading list of registrants"}
+                                    </AlertTitle>
+                                    <AlertDescription>{error ?? selectAttendeesQuery.error?.message}</AlertDescription>
+                                </VStack>
+                            </Alert>
+                        ) : undefined}
+                        {registrantOptions ? (
+                            <>
+                                <Select
+                                    aria-label="Registrant to add"
+                                    value={selectedAttendeeId}
+                                    onChange={(ev) => setSelectedAttendeeId(ev.target.value)}
+                                    mb={4}
+                                >
+                                    <option value="">Select a registrant</option>
+                                    {registrantOptions}
+                                </Select>
+                                <Select
+                                    aria-label="Role of registrant"
+                                    value={selectedRole}
+                                    onChange={(ev) => setSelectedRole(ev.target.value as EventPersonRole_Enum)}
+                                    mb={4}
+                                >
+                                    {roleOptions}
+                                </Select>
+                            </>
+                        ) : (
+                            <Spinner label="Loading registrants" />
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <ButtonGroup>
+                            <Button onClick={onClose}>Cancel</Button>
+                            <Button
+                                colorScheme="green"
+                                isDisabled={selectAttendeesQuery.loading || selectedAttendeeId === ""}
+                                isLoading={adding}
+                                onClick={add}
+                            >
+                                Add
+                            </Button>
+                        </ButtonGroup>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    );
+}
+
+export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeople }: Props): JSX.Element {
     const data = useMemo(() => [...event.eventPeople], [event.eventPeople]);
 
-    const attendeeOptions = useMemo(() => {
-        return [...attendees]
-            .sort((x, y) => x.displayName.localeCompare(y.displayName))
-            .map((attendee) => (
-                <option key={attendee.id} value={attendee.id}>
-                    {attendee.displayName}
+    const options = useMemo(() => {
+        return [...contentPeople]
+            .sort((x, y) => x.name.localeCompare(y.name))
+            .map((person) => (
+                <option key={person.id} value={person.id}>
+                    {person.name}
                 </option>
             ));
-    }, [attendees]);
+    }, [contentPeople]);
 
     const [insertEventPerson, insertEventPersonResponse] = useInsertEventPersonMutation();
     const [updateEventPerson, updateEventPersonResponse] = useUpdateEventPersonMutation();
@@ -128,8 +294,6 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
         []
     );
 
-    const conference = useConference();
-
     const roleOptions = useMemo(
         () =>
             Object.keys(EventPersonRole_Enum)
@@ -144,87 +308,56 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
     const columns: ColumnSpecification<EventPersonInfoFragment>[] = useMemo(
         () => [
             {
-                id: "Attendee",
+                id: "ContentPerson",
                 defaultSortDirection: SortDirection.Asc,
                 header: function NameHeader(props: ColumnHeaderProps<EventPersonInfoFragment>) {
                     return props.isInCreate ? (
-                        <FormLabel>Attendee</FormLabel>
+                        <FormLabel>Person</FormLabel>
                     ) : (
                         <Button size="xs" onClick={props.onClick}>
-                            Attendee{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            Person{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
                         </Button>
                     );
                 },
-                get: (data) => attendees.find((x) => x.id === data.attendeeId),
-                set: (record, value: AttendeeInfoFragment | undefined) => {
-                    record.attendeeId = value?.id;
+                get: (data) => contentPeople.find((x) => x.id === data.personId),
+                set: (record, value: ContentPersonInfoFragment | undefined) => {
+                    record.personId = value?.id;
                 },
-                sort: (x: AttendeeInfoFragment | undefined, y: AttendeeInfoFragment | undefined) =>
-                    x && y ? x.displayName.localeCompare(y.displayName) : x ? 1 : y ? -1 : 0,
-                cell: function AttendeeCell({
+                sort: (x: ContentPersonInfoFragment | undefined, y: ContentPersonInfoFragment | undefined) =>
+                    x && y
+                        ? x.name.localeCompare(y.name) ||
+                          maybeCompare(x.affiliation, y.affiliation, (a, b) => a.localeCompare(b))
+                        : x
+                        ? 1
+                        : y
+                        ? -1
+                        : 0,
+                cell: function ContentPersonCell({
                     isInCreate,
                     value,
                     onChange,
                     onBlur,
-                }: CellProps<Partial<EventPersonInfoFragment>, AttendeeInfoFragment | undefined>) {
+                }: CellProps<Partial<EventPersonInfoFragment>, ContentPersonInfoFragment | undefined>) {
                     if (isInCreate) {
                         return (
-                            <HStack>
-                                {value ? (
-                                    <LinkButton
-                                        linkProps={{ target: "_blank" }}
-                                        to={`/conference/${conference.slug}/profile/view/${value.id}`}
-                                        size="xs"
-                                        aria-label="Go to attendee in new tab"
-                                    >
-                                        <Tooltip label="Go to attendee in new tab">
-                                            <FAIcon iconStyle="s" icon="link" />
-                                        </Tooltip>
-                                    </LinkButton>
-                                ) : undefined}
-                                <Select
-                                    value={value?.id ?? ""}
-                                    onChange={(ev) => onChange?.(attendees.find((x) => x.id === ev.target.value))}
-                                    onBlur={onBlur}
-                                >
-                                    <option value="">Select an attendee</option>
-                                    {attendeeOptions}
-                                </Select>
-                            </HStack>
+                            <Select
+                                value={value?.id ?? ""}
+                                onChange={(ev) => onChange?.(contentPeople.find((x) => x.id === ev.target.value))}
+                                onBlur={onBlur}
+                            >
+                                <option value="">Select a person</option>
+                                {options}
+                            </Select>
                         );
                     } else {
-                        return <>{value?.displayName ?? "Attendee not found"}</>;
+                        return (
+                            <>
+                                {value
+                                    ? `${value.name}${value.affiliation ? ` (${value.affiliation})` : ""}`
+                                    : "Person not found"}
+                            </>
+                        );
                     }
-                },
-            },
-            {
-                id: "affiliation",
-                header: function AffiliationHeader(props: ColumnHeaderProps<EventPersonInfoFragment>) {
-                    return props.isInCreate ? (
-                        <FormLabel>Affiliation</FormLabel>
-                    ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Affiliation{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
-                        </Button>
-                    );
-                },
-                get: (data) => data.affiliation,
-                set: (record, value: string) => {
-                    record.affiliation = value;
-                },
-                sort: (x: string | undefined, y: string | undefined) =>
-                    x && y ? x.localeCompare(y) : x ? 1 : y ? -1 : 0,
-                cell: function AffiliationCell(props: CellProps<Partial<EventPersonInfoFragment>>) {
-                    return (
-                        <Input
-                            type="text"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
-                            border="1px solid"
-                            borderColor="rgba(255, 255, 255, 0.16)"
-                        />
-                    );
                 },
             },
             {
@@ -262,7 +395,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                 },
             },
         ],
-        [attendeeOptions, attendees, conference.slug, roleOptions]
+        [options, contentPeople, roleOptions]
     );
 
     const forceReloadRef = useRef<() => void>(() => {
@@ -299,6 +432,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
+                            <AddEventPerson_RegistrantModal event={event} closeOuter={onClose} />
                             <CRUDTable
                                 data={data}
                                 tableUniqueName="ManageConferenceSchedule_EventPersonsModal"
@@ -308,26 +442,18 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                                     ongoing: insertEventPersonResponse.loading,
                                     generateDefaults: () => ({
                                         id: uuidv4(),
-                                        conferenceId: event.conferenceId,
                                         eventId: event.id,
-                                        name: "",
-                                        attendeeId: undefined,
                                         roleName: EventPersonRole_Enum.Presenter,
-                                        affiliation: undefined,
-                                        originatingDataId: undefined,
                                     }),
-                                    makeWhole: (d) => d.attendeeId && (d as EventPersonInfoFragment),
+                                    makeWhole: (d) => d.personId && (d as EventPersonInfoFragment),
                                     start: (record) => {
                                         assert(record.roleName);
+                                        assert(record.personId);
                                         const newEventPerson: EventPerson_Insert_Input = {
                                             id: uuidv4(),
                                             eventId: event.id,
-                                            conferenceId: event.conferenceId,
-                                            name: record.roleName.toString(),
-                                            attendeeId: record.attendeeId,
+                                            personId: record.personId,
                                             roleName: record.roleName,
-                                            affiliation: record.affiliation,
-                                            originatingDataId: record.originatingDataId,
                                         };
                                         insertEventPerson({
                                             variables: {
@@ -393,11 +519,8 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, attendees }:
                                         updateEventPerson({
                                             variables: {
                                                 id: record.id,
-                                                name: record.name,
                                                 roleName: record.roleName,
-                                                affiliation: record.affiliation,
-                                                attendeeId: record.attendeeId,
-                                                originatingDataId: record.originatingDataId,
+                                                personId: record.personId,
                                             },
                                             update: (cache, { data: _data }) => {
                                                 if (_data?.update_EventPerson_by_pk) {

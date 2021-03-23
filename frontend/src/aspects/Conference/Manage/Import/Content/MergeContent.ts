@@ -808,6 +808,7 @@ function mergePerson(
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "affiliation", item1, item2);
     mergeFieldInPlace(context, changes, result, "email", item1, item2);
+    mergeFieldInPlace(context, changes, result, "attendeeId", item1, item2);
 
     changes.push({
         location: "Person",

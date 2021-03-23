@@ -1,21 +1,24 @@
 import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import "./App.css";
 import Routing from "./AppRouting";
+import { GlobalChatStateContext, GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
 import AttendeesContextProvider from "./aspects/Conference/AttendeesContext";
 import ConferenceProvider, { useMaybeConference } from "./aspects/Conference/useConference";
-import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
-import CurrentUserGroupsRolesPermissionsProvider from "./aspects/Conference/useConferenceCurrentUserGroups";
+import ConferenceCurrentUserActivePermissionsProvider, {
+    useConferenceCurrentUserActivePermissions,
+} from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
 import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conference/useCurrentAttendee";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
+import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu from "./aspects/Menu/MainMenu";
 import RightSidebar from "./aspects/Menu/RightSidebar";
-import PresenceCountProvider from "./aspects/Presence/PresenceCountProvider";
 import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
+import { Permission_Enum } from "./generated/graphql";
 // import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
 interface AppProps {
@@ -50,20 +53,19 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
             <CurrentUserProvider>
                 {confSlug ? (
                     <ConferenceProvider confSlug={confSlug}>
-                        <CurrentUserGroupsRolesPermissionsProvider>
-                            <ConferenceCurrentUserActivePermissionsProvider>
-                                <CurrentAttendeeProvider>
-                                    <PresenceCountProvider>
-                                        <AttendeesContextProvider>
-                                            <RoomParticipantsProvider>
-                                                {/* <ShuffleRoomsQueueMonitor /> */}
-                                                <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
-                                            </RoomParticipantsProvider>
-                                        </AttendeesContextProvider>
-                                    </PresenceCountProvider>
-                                </CurrentAttendeeProvider>
-                            </ConferenceCurrentUserActivePermissionsProvider>
-                        </CurrentUserGroupsRolesPermissionsProvider>
+                        <ForceUserRefresh />
+                        <ConferenceCurrentUserActivePermissionsProvider>
+                            <CurrentAttendeeProvider>
+                                <GlobalChatStateProvider>
+                                    <AttendeesContextProvider>
+                                        <RoomParticipantsProvider>
+                                            {/* <ShuffleRoomsQueueMonitor /> */}
+                                            <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                        </RoomParticipantsProvider>
+                                    </AttendeesContextProvider>
+                                </GlobalChatStateProvider>
+                            </CurrentAttendeeProvider>
+                        </ConferenceCurrentUserActivePermissionsProvider>
                     </ConferenceProvider>
                 ) : (
                     page
@@ -77,6 +79,8 @@ function AppPage({ rootUrl }: AppProps) {
     const conference = useMaybeConference();
     const confSlug = conference?.slug;
     const attendee = useMaybeCurrentAttendee();
+    const permissions = useConferenceCurrentUserActivePermissions();
+    const isPermittedAccess = attendee && permissions.has(Permission_Enum.ConferenceViewAttendees);
 
     const leftSidebarWidthPc = 20;
     const rightSidebarWidthPc = 20;
@@ -98,8 +102,8 @@ function AppPage({ rootUrl }: AppProps) {
     });
     const [leftOpen, setLeftOpen] = useState<boolean | null>(null);
     const [rightOpen, setRightOpen] = useState<boolean | null>(null);
-    const leftVisible = attendee && !!leftOpen;
-    const rightVisible = attendee && rightOpen && (rightDefaultVisible || !leftVisible);
+    const leftVisible = isPermittedAccess && !!leftOpen;
+    const rightVisible = isPermittedAccess && rightOpen && (rightDefaultVisible || !leftVisible);
 
     useEffect(() => {
         if (leftOpen === null && leftDefaultVisible !== undefined) {
@@ -125,7 +129,20 @@ function AppPage({ rootUrl }: AppProps) {
     );
     const center = useMemo(() => <Routing rootUrl={rootUrl} />, [rootUrl]);
 
-    const mainMenuProps = useMemo(
+    const onRightBarOpen = useCallback(() => {
+        if (!rightDefaultVisible) {
+            setLeftOpen(false);
+        }
+        setRightOpen(true);
+    }, [rightDefaultVisible]);
+    const chatCtx = React.useContext(GlobalChatStateContext);
+    useEffect(() => {
+        if (chatCtx) {
+            chatCtx.showSidebar = onRightBarOpen;
+        }
+    }, [chatCtx, onRightBarOpen]);
+
+    const mainMenuState = useMemo(
         () => ({
             isLeftBarOpen: leftVisible ?? false,
             onLeftBarClose: () => setLeftOpen(false),
@@ -134,14 +151,9 @@ function AppPage({ rootUrl }: AppProps) {
             onRightBarClose: () => {
                 setRightOpen(false);
             },
-            onRightBarOpen: () => {
-                if (!rightDefaultVisible) {
-                    setLeftOpen(false);
-                }
-                setRightOpen(true);
-            },
+            onRightBarOpen,
         }),
-        [leftVisible, rightDefaultVisible, rightVisible]
+        [leftVisible, onRightBarOpen, rightVisible]
     );
 
     const leftBar = confSlug ? (
@@ -213,7 +225,7 @@ function AppPage({ rootUrl }: AppProps) {
             alignItems="center"
             backgroundColor={bgColour}
         >
-            <MainMenu {...mainMenuProps}>
+            <MainMenu state={mainMenuState}>
                 <Flex w="100%" h="100%" overflow="hidden">
                     {leftBar}
                     {centerBar}

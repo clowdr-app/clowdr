@@ -553,6 +553,7 @@ If you want to configure the GitHub actions for CI, you will need to set the fol
 | HASURA_ADMIN_SECRET          | The value of Hasura Cloud                                                 |
 | HASURA_ENDPOINT              | The GraphQL API URL from Hasura Cloud but without the `/v1/graphql` path. |
 | ACTION_BASE_URL              | As-per the Hasura Cloud environment variable.                             |
+| PRESENCE_BASE_URL            | As-per the Hasura Cloud environment variable.                             |
 | HASURA_PERSONAL_ACCESS_TOKEN | The value from Hasura Cloud                                               |
 | HASURA_PROJECT_ID            | The value from Hasura Cloud                                               |
 

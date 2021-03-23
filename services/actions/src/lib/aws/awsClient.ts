@@ -107,25 +107,30 @@ let mediaconvert: MediaConvert | null = null;
 const shortId = customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", 5);
 
 async function getMediaConvertClient(): Promise<MediaConvert> {
-    const mediaConvertEndpoint = await new MediaConvert({
-        apiVersion: "2017-08-29",
-        credentials,
-        region,
-    }).describeEndpoints({});
+    let mediaConvertEndpoint = process.env.AWS_MEDIACONVERT_API_ENDPOINT;
 
-    if (
-        !mediaConvertEndpoint.Endpoints ||
-        mediaConvertEndpoint.Endpoints.length < 1 ||
-        !mediaConvertEndpoint.Endpoints[0].Url
-    ) {
-        throw new Error("Could not retrieve customer-specific endpoint for MediaConvert");
+    if (!mediaConvertEndpoint) {
+        const mediaConvertEndpointDescription = await new MediaConvert({
+            apiVersion: "2017-08-29",
+            credentials,
+            region,
+        }).describeEndpoints({});
+
+        if (
+            !mediaConvertEndpointDescription.Endpoints ||
+            mediaConvertEndpointDescription.Endpoints.length < 1 ||
+            !mediaConvertEndpointDescription.Endpoints[0].Url
+        ) {
+            throw new Error("Could not retrieve customer-specific endpoint for MediaConvert");
+        }
+        mediaConvertEndpoint = mediaConvertEndpointDescription.Endpoints[0].Url;
     }
 
     return new MediaConvert({
         apiVersion: "2017-08-29",
         credentials,
         region,
-        endpoint: mediaConvertEndpoint.Endpoints[0].Url,
+        endpoint: mediaConvertEndpoint,
     });
 }
 

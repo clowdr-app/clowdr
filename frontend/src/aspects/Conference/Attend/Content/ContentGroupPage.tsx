@@ -8,7 +8,7 @@ import {
     Permission_Enum,
     useGetContentGroupQuery,
 } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
+import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
@@ -78,7 +78,7 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
+            componentIfDenied={<ConferencePageNotFound />}
             permissions={[Permission_Enum.ConferenceView]}
         >
             <ApolloQueryWrapper queryResult={result} getter={(data) => data.ContentGroup_by_pk}>

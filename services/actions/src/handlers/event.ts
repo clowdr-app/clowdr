@@ -10,8 +10,9 @@ import {
     StartChatDuplicationMutationVariables,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { createEventBreakoutRoom, createEventEndTrigger, createEventStartTrigger } from "../lib/event";
+import { createEventEndTrigger, createEventStartTrigger } from "../lib/event";
 import { sendFailureEmail } from "../lib/logging/failureEmails";
+import { createContentGroupBreakoutRoom } from "../lib/room";
 import Vonage from "../lib/vonage/vonageClient";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
@@ -71,8 +72,7 @@ gql`
 
     mutation StartChatDuplication(
         $chatId1: uuid!
-        $chatId2: uuid!
-        $data: jsonb! # $message: String! # $systemId1: String!
+        $chatId2: uuid! # $data: jsonb! # $message: String! # $systemId1: String!
     ) {
         update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: $chatId2 }) {
             id
@@ -100,10 +100,8 @@ gql`
 
     mutation EndChatDuplication(
         $chatId1: uuid!
-        $chatId2: uuid! # $data: jsonb! # $message: String!
-    ) # $systemId1: String!
-    # $systemId2: String!
-    {
+        $chatId2: uuid! # $data: jsonb! # $message: String! # $systemId1: String! # $systemId2: String!
+    ) {
         update_chat1: update_chat_Chat_by_pk(pk_columns: { id: $chatId1 }, _set: { duplicateToId: null }) {
             id
         }
@@ -156,40 +154,40 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
                     variables: {
                         chatId1,
                         chatId2,
-                        systemId1:
-                            chatId1 +
-                            "::" +
-                            (isStart ? "start" : "end") +
-                            "::" +
-                            (Date.parse(chatInfo.data.Event_by_pk.startTime) +
-                                (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)),
-                        systemId2: !isStart
-                            ? chatId2 +
-                              "::" +
-                              (isStart ? "start" : "end") +
-                              "::" +
-                              (Date.parse(chatInfo.data.Event_by_pk.startTime) +
-                                  (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds))
-                            : undefined,
-                        message: "<<<Duplication marker>>>",
-                        data: {
-                            type: isStart ? "start" : "end",
-                            event: {
-                                id: eventId,
-                                startTime: Date.parse(chatInfo.data.Event_by_pk.startTime),
-                                durationSeconds: chatInfo.data.Event_by_pk.durationSeconds,
-                            },
-                            room: {
-                                id: chatInfo.data.Event_by_pk.room.id,
-                                name: chatInfo.data.Event_by_pk.room.name,
-                                chatId: chatInfo.data.Event_by_pk.room.chatId,
-                            },
-                            contentGroup: {
-                                id: chatInfo.data.Event_by_pk.contentGroup.id,
-                                title: chatInfo.data.Event_by_pk.contentGroup.title,
-                                chatId: chatInfo.data.Event_by_pk.contentGroup.chatId,
-                            },
-                        },
+                        // systemId1:
+                        //     chatId1 +
+                        //     "::" +
+                        //     (isStart ? "start" : "end") +
+                        //     "::" +
+                        //     (Date.parse(chatInfo.data.Event_by_pk.startTime) +
+                        //         (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)),
+                        // systemId2: !isStart
+                        //     ? chatId2 +
+                        //       "::" +
+                        //       (isStart ? "start" : "end") +
+                        //       "::" +
+                        //       (Date.parse(chatInfo.data.Event_by_pk.startTime) +
+                        //           (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds))
+                        //     : undefined,
+                        // message: "<<<Duplication marker>>>",
+                        // data: {
+                        //     type: isStart ? "start" : "end",
+                        //     event: {
+                        //         id: eventId,
+                        //         startTime: Date.parse(chatInfo.data.Event_by_pk.startTime),
+                        //         durationSeconds: chatInfo.data.Event_by_pk.durationSeconds,
+                        //     },
+                        //     room: {
+                        //         id: chatInfo.data.Event_by_pk.room.id,
+                        //         name: chatInfo.data.Event_by_pk.room.name,
+                        //         chatId: chatInfo.data.Event_by_pk.room.chatId,
+                        //     },
+                        //     contentGroup: {
+                        //         id: chatInfo.data.Event_by_pk.contentGroup.id,
+                        //         title: chatInfo.data.Event_by_pk.contentGroup.title,
+                        //         chatId: chatInfo.data.Event_by_pk.contentGroup.chatId,
+                        //     },
+                        // },
                     } as StartChatDuplicationMutationVariables | EndChatDuplicationMutationVariables,
                 });
             }
@@ -235,14 +233,14 @@ export async function handleEventStartNotification(eventId: string, startTime: s
         console.log("Handling event start: matched expected startTime", result.data.Event_by_pk.id, startTime);
         const nowMillis = new Date().getTime();
         const startTimeMillis = Date.parse(startTime);
-        const preloadMillis = 1000;
+        const preloadMillis = 0;
         const waitForMillis = Math.max(startTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.Event_by_pk.id;
         const intendedRoomModeName = result.data.Event_by_pk.intendedRoomModeName;
 
         setTimeout(async () => {
             try {
-                insertChatDuplicationMarkers(eventId, true);
+                await insertChatDuplicationMarkers(eventId, true);
             } catch (e) {
                 console.error("Failed to insert chat duplication start markers", eventId, e);
             }
@@ -254,6 +252,20 @@ export async function handleEventStartNotification(eventId: string, startTime: s
 
             await startEventBroadcast(eventId);
         }, waitForMillis);
+
+        if (
+            [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName) &&
+            result.data.Event_by_pk.contentGroup
+        ) {
+            try {
+                await createContentGroupBreakoutRoom(
+                    result.data.Event_by_pk.contentGroup.id,
+                    result.data.Event_by_pk.conferenceId
+                );
+            } catch (e) {
+                console.error("Failed to create content group breakout room", eventId, e);
+            }
+        }
     } else {
         console.log("Event start notification did not match current event start time, skipping.", eventId, startTime);
     }
@@ -283,7 +295,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
 
         setTimeout(async () => {
             try {
-                insertChatDuplicationMarkers(eventId, false);
+                await insertChatDuplicationMarkers(eventId, false);
             } catch (e) {
                 console.error("Failed to insert chat duplication end markers", eventId, e);
             }
@@ -308,27 +320,6 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
                 console.error("Failed to create MediaPackage harvest job", eventId, e);
             }
         }, harvestJobWaitForMillis);
-
-        try {
-            if ([RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
-                const event = result.data.Event_by_pk;
-                if (!event.eventVonageSession) {
-                    throw new Error("Missing event Vonage session");
-                }
-                await createEventBreakoutRoom(
-                    event.conferenceId,
-                    event.id,
-                    event.name,
-                    event.startTime,
-                    event.eventVonageSession.sessionId,
-                    event.contentGroup?.id,
-                    event.contentGroup?.title,
-                    event.contentGroup?.chatId
-                );
-            }
-        } catch (e) {
-            console.error("Failed to create breakout room at end of event", eventId, e);
-        }
     } else {
         console.log("Event stop notification did not match current event end time, skipping.", eventId, endTime);
     }

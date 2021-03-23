@@ -2,7 +2,6 @@ import { ApolloError, gql } from "@apollo/client";
 import assert from "assert";
 import { useEffect, useState } from "react";
 import {
-    EventPerson_Insert_Input,
     OriginatingData_Insert_Input,
     RoomMode_Enum,
     Room_Insert_Input,
@@ -17,16 +16,15 @@ import {
     useInsertTagsMutation,
     useSelectWholeScheduleQuery,
     useUpdateEventMutation,
-    useUpdateEventPersonMutation,
     useUpdateRoomMutation,
     useUpdateTagMutation,
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
-import type { ContentGroupDescriptor } from "../Content/Types";
+import type { ContentGroupDescriptor, ContentPersonDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
 import { convertScheduleToDescriptors } from "./Functions";
-import type { AttendeeDescriptor, EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "./Types";
+import type { EventDescriptor, RoomDescriptor } from "./Types";
 
 gql`
     fragment RoomInfo on Room {
@@ -76,30 +74,16 @@ gql`
     }
 
     fragment EventPersonInfo on EventPerson {
-        affiliation
-        attendeeId
-        attendee {
-            id
-            displayName
-            userId
-        }
-        conferenceId
-        eventId
         id
-        name
-        originatingDataId
+        eventId
         roleName
+        personId
     }
 
     fragment EventTagInfo on EventTag {
         eventId
         id
         tagId
-    }
-
-    fragment AttendeeInfo on Attendee {
-        id
-        displayName
     }
 
     query SelectWholeSchedule($conferenceId: uuid!) {
@@ -118,8 +102,8 @@ gql`
         ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ContentGroupFullNestedInfo
         }
-        Attendee(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...AttendeeInfo
+        ContentPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ContentPersonInfo
         }
     }
 
@@ -179,17 +163,10 @@ gql`
         $contentGroupId: uuid = null
         $newEventTags: [EventTag_insert_input!]!
         $deleteEventTagIds: [uuid!]!
-        $newEventPeople: [EventPerson_insert_input!]!
-        $deleteEventPeopleIds: [uuid!]!
     ) {
         insert_EventTag(objects: $newEventTags) {
             returning {
                 ...EventTagInfo
-            }
-        }
-        insert_EventPerson(objects: $newEventPeople) {
-            returning {
-                ...EventPersonInfo
             }
         }
         update_Event_by_pk(
@@ -211,33 +188,6 @@ gql`
                 id
             }
         }
-        delete_EventPerson(where: { id: { _in: $deleteEventPeopleIds } }) {
-            returning {
-                id
-            }
-        }
-    }
-
-    mutation UpdateEventPerson(
-        $id: uuid!
-        $attendeeId: uuid = null
-        $name: String!
-        $affiliation: String = null
-        $roleName: EventPersonRole_enum!
-        $originatingDataId: uuid = null
-    ) {
-        update_EventPerson_by_pk(
-            pk_columns: { id: $id }
-            _set: {
-                attendeeId: $attendeeId
-                name: $name
-                affiliation: $affiliation
-                roleName: $roleName
-                originatingDataId: $originatingDataId
-            }
-        ) {
-            ...EventPersonInfo
-        }
     }
 `;
 
@@ -247,7 +197,7 @@ export type WholeScheduleStateT =
           tags: Map<string, TagDescriptor>;
           rooms: Map<string, RoomDescriptor>;
           originatingDatas: Map<string, OriginatingDataDescriptor>;
-          attendees: Map<string, AttendeeDescriptor>;
+          people: Map<string, ContentPersonDescriptor>;
           contentGroups: ContentGroupDescriptor[];
       }
     | undefined;
@@ -260,7 +210,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
-          originalAttendees: undefined;
+          originalPeople: undefined;
           contentGroups: undefined;
       }
     | {
@@ -270,7 +220,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
-          originalAttendees: undefined;
+          originalPeople: undefined;
           contentGroups: undefined;
       }
     | {
@@ -280,7 +230,7 @@ export function useSaveScheduleDiff():
           originalTags: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
-          originalAttendees: undefined;
+          originalPeople: undefined;
           contentGroups: undefined;
       }
     | {
@@ -290,7 +240,7 @@ export function useSaveScheduleDiff():
           originalTags: Map<string, TagDescriptor>;
           originalOriginatingDatas: Map<string, OriginatingDataDescriptor>;
           originalRooms: Map<string, RoomDescriptor>;
-          originalAttendees: Map<string, AttendeeDescriptor>;
+          originalPeople: Map<string, ContentPersonDescriptor>;
           contentGroups: ContentGroupDescriptor[];
           saveScheduleDiff: (
               dirtyKeys: {
@@ -324,7 +274,6 @@ export function useSaveScheduleDiff():
     const [deleteEventsMutation] = useDeleteEventsMutation();
     const [insertEventMutation] = useInsertEventMutation();
     const [updateEventMutation] = useUpdateEventMutation();
-    const [updateEventPersonMutation] = useUpdateEventPersonMutation();
 
     const { loading: loadingContent, error: errorContent, data: wholeSchedule } = useSelectWholeScheduleQuery({
         fetchPolicy: "network-only",
@@ -349,7 +298,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
-            originalAttendees: undefined,
+            originalPeople: undefined,
             contentGroups: undefined,
         };
     } else if (errorContent) {
@@ -360,7 +309,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
-            originalAttendees: undefined,
+            originalPeople: undefined,
             contentGroups: undefined,
         };
     } else if (!original) {
@@ -371,7 +320,7 @@ export function useSaveScheduleDiff():
             originalTags: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
-            originalAttendees: undefined,
+            originalPeople: undefined,
             contentGroups: undefined,
         };
     } else {
@@ -382,7 +331,7 @@ export function useSaveScheduleDiff():
             originalOriginatingDatas: original.originatingDatas,
             originalTags: original.tags,
             originalRooms: original.rooms,
-            originalAttendees: original.attendees,
+            originalPeople: original.people,
             contentGroups: original.contentGroups,
             saveScheduleDiff: async function saveScheduleDiff(
                 { eventKeys, originatingDataKeys, tagKeys, roomKeys },
@@ -610,20 +559,6 @@ export function useSaveScheduleDiff():
                                                     tagId,
                                                 })),
                                             },
-                                            eventPeople: {
-                                                data: event.people.map((eventPerson) => {
-                                                    const eventPersonResult: EventPerson_Insert_Input = {
-                                                        id: eventPerson.id,
-                                                        conferenceId: conference.id,
-                                                        originatingDataId: eventPerson.originatingDataId,
-                                                        attendeeId: eventPerson.attendeeId,
-                                                        name: eventPerson.name,
-                                                        affiliation: eventPerson.affiliation,
-                                                        roleName: eventPerson.roleName,
-                                                    };
-                                                    return eventPersonResult;
-                                                }),
-                                            },
                                         },
                                     },
                                 })
@@ -654,10 +589,6 @@ export function useSaveScheduleDiff():
                                 const newEventTags = new Set<string>();
                                 const deleteEventTagKeys = new Set<string>();
 
-                                const newEventPersons = new Map<string, EventPersonDescriptor>();
-                                const updatedEventPersons = new Map<string, EventPersonDescriptor>();
-                                const deleteEventPersonKeys = new Set<string>();
-
                                 const existingEvent = original.events.get(event.id);
                                 assert(existingEvent);
 
@@ -672,36 +603,6 @@ export function useSaveScheduleDiff():
                                     }
                                 }
 
-                                for (const eventPerson of event.people) {
-                                    if (eventPerson.isNew) {
-                                        newEventPersons.set(eventPerson.id, eventPerson);
-                                    } else {
-                                        updatedEventPersons.set(eventPerson.id, eventPerson);
-                                    }
-                                }
-                                for (const existingEventPerson of existingEvent.people) {
-                                    if (!updatedEventPersons.has(existingEventPerson.id)) {
-                                        deleteEventPersonKeys.add(existingEventPerson.id);
-                                    }
-                                }
-
-                                if (updatedEventPersons.size > 0) {
-                                    await Promise.all(
-                                        Array.from(updatedEventPersons.values()).map(async (eventPerson) => {
-                                            await updateEventPersonMutation({
-                                                variables: {
-                                                    id: eventPerson.id,
-                                                    name: eventPerson.name,
-                                                    roleName: eventPerson.roleName,
-                                                    affiliation: eventPerson.affiliation,
-                                                    attendeeId: eventPerson.attendeeId,
-                                                    originatingDataId: eventPerson.originatingDataId,
-                                                },
-                                            });
-                                        })
-                                    );
-                                }
-
                                 await updateEventMutation({
                                     variables: {
                                         eventId: event.id,
@@ -713,20 +614,9 @@ export function useSaveScheduleDiff():
                                         startTime: new Date(event.startTime).toISOString(),
                                         durationSeconds: event.durationSeconds,
                                         deleteEventTagIds: Array.from(deleteEventTagKeys.values()),
-                                        deleteEventPeopleIds: Array.from(deleteEventPersonKeys.values()),
                                         newEventTags: Array.from(newEventTags.values()).map((tagId) => ({
                                             eventId: event.id,
                                             tagId,
-                                        })),
-                                        newEventPeople: Array.from(newEventPersons.values()).map((eventPerson) => ({
-                                            eventId: event.id,
-                                            conferenceId: conference.id,
-                                            id: eventPerson.id,
-                                            name: eventPerson.name,
-                                            roleName: eventPerson.roleName,
-                                            affiliation: eventPerson.affiliation,
-                                            attendeeId: eventPerson.attendeeId,
-                                            originatingDataId: eventPerson.originatingDataId,
                                         })),
                                     },
                                 });

@@ -5,8 +5,10 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
 import { ContentGroupVideo } from "../../Attend/Content/ContentGroupVideos";
+import { RefreshSubtitles } from "./RefreshSubtitles";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
+import UploadFileForm_Subtitles from "./UploadFileForm_Subtitles";
 
 function createDefaultVideo(
     type:
@@ -133,6 +135,27 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                             update(newData);
                         }}
                         contentBaseType={ContentBaseType.Video}
+                    />
+                    <UploadFileForm_Subtitles
+                        item={data.item}
+                        onItemChange={(newItem) => {
+                            const newData = {
+                                ...data,
+                                item: newItem,
+                            };
+                            update(newData);
+                        }}
+                        contentBaseType={ContentBaseType.Video}
+                    />
+                    <RefreshSubtitles
+                        item={data.item}
+                        onItemChange={(newItem) => {
+                            const newData = {
+                                ...data,
+                                item: newItem,
+                            };
+                            update(newData);
+                        }}
                     />
                 </>
             );

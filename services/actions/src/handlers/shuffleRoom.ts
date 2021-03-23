@@ -1,11 +1,12 @@
 import { gql } from "@apollo/client/core";
 import {
     ActiveShufflePeriodFragment,
+    ActiveShuffleRoomFragment,
     AddPeopleToExistingShuffleRoomDocument,
     InsertManagedRoomDocument,
     InsertShuffleRoomDocument,
     RoomPersonRole_Enum,
-    RoomsToEndOfShufflePeriodFragment,
+    Room_ShuffleAlgorithm_Enum,
     SelectActiveShufflePeriodsDocument,
     SelectShufflePeriodDocument,
     SetShuffleRoomsEndedDocument,
@@ -22,6 +23,23 @@ gql`
         created_at
     }
 
+    fragment ActiveShuffleRoom on room_ShuffleRoom {
+        id
+        startedAt
+        durationMinutes
+        room {
+            id
+            people: roomPeople {
+                id
+                attendeeId
+            }
+            participants {
+                id
+                attendeeId
+            }
+        }
+    }
+
     fragment ActiveShufflePeriod on room_ShufflePeriod {
         conferenceId
         endAt
@@ -33,6 +51,7 @@ gql`
         startAt
         targetAttendeesPerRoom
         waitRoomMaxDurationSeconds
+        algorithm
         unallocatedQueueEntries: queueEntries(
             where: { allocatedShuffleRoomId: { _is_null: true } }
             order_by: { id: asc }
@@ -40,32 +59,7 @@ gql`
             ...UnallocatedShuffleQueueEntry
         }
         activeRooms: shuffleRooms(where: { isEnded: { _eq: false } }) {
-            id
-            durationMinutes
-            room {
-                id
-                people: roomPeople {
-                    id
-                    attendeeId
-                }
-            }
-            startedAt
-        }
-    }
-
-    fragment RoomsToEndOfShufflePeriod on room_ShufflePeriod {
-        id
-        roomsToEnd: shuffleRooms(where: { startedAt: { _lte: $atLatest }, isEnded: { _eq: false } }) {
-            id
-            startedAt
-            durationMinutes
-            room {
-                id
-                participants {
-                    id
-                    attendeeId
-                }
-            }
+            ...ActiveShuffleRoom
         }
     }
 
@@ -75,17 +69,9 @@ gql`
         }
     }
 
-    query SelectActiveShufflePeriods(
-        $from: timestamptz!
-        $until: timestamptz!
-        $untilExtended: timestamptz!
-        $atLatest: timestamptz!
-    ) {
-        active: room_ShufflePeriod(where: { startAt: { _lte: $from }, endAt: { _gte: $until } }) {
+    query SelectActiveShufflePeriods($from: timestamptz!, $until: timestamptz!) {
+        room_ShufflePeriod(where: { startAt: { _lte: $from }, endAt: { _gte: $until } }) {
             ...ActiveShufflePeriod
-        }
-        ending: room_ShufflePeriod(where: { endAt: { _lte: $untilExtended } }) {
-            ...RoomsToEndOfShufflePeriod
         }
     }
 
@@ -153,20 +139,27 @@ gql`
     }
 `;
 
+type ShuffleRoomAllocationInfo = {
+    id: number;
+    roomId: string;
+    peopleAttendeeIds: string[];
+    durationMinutes: number;
+    startedAt: string;
+};
+
 async function allocateToExistingRoom(
     entries: UnallocatedShuffleQueueEntryFragment[],
-    shuffleRoomId: number,
-    roomId: string,
+    room: ShuffleRoomAllocationInfo,
     unallocatedQueueEntries: Map<number, UnallocatedShuffleQueueEntryFragment>
 ): Promise<void> {
     await apolloClient.mutate({
         mutation: AddPeopleToExistingShuffleRoomDocument,
         variables: {
             queueEntryIds: entries.map((x) => x.id),
-            shuffleRoomId,
+            shuffleRoomId: room.id,
             roomPeople: entries.map((entry) => ({
                 attendeeId: entry.attendeeId,
-                roomId,
+                roomId: room.roomId,
                 roomPersonRoleName: RoomPersonRole_Enum.Participant,
             })),
         },
@@ -175,6 +168,7 @@ async function allocateToExistingRoom(
     // Bwweerrr mutable state bwweerrr
     for (const entry of entries) {
         unallocatedQueueEntries.delete(entry.id);
+        room.peopleAttendeeIds.push(entry.attendeeId);
     }
 }
 
@@ -187,7 +181,7 @@ async function allocateToNewRoom(
     reshuffleUponEnd: boolean,
     entries: UnallocatedShuffleQueueEntryFragment[],
     unallocatedQueueEntries: Map<number, UnallocatedShuffleQueueEntryFragment>
-): Promise<void> {
+): Promise<ShuffleRoomAllocationInfo> {
     const managedRoom = await apolloClient.mutate({
         mutation: InsertManagedRoomDocument,
         variables: {
@@ -201,6 +195,7 @@ async function allocateToNewRoom(
         throw new Error("Could not insert a new managed room for shuffle space! Room came back null.");
     }
 
+    const startedAt = new Date().toISOString();
     const shuffleRoom = await apolloClient.mutate({
         mutation: InsertShuffleRoomDocument,
         variables: {
@@ -208,7 +203,7 @@ async function allocateToNewRoom(
             reshuffleUponEnd,
             roomId: managedRoom.data.insert_Room_one.id,
             shufflePeriodId: periodId,
-            startedAt: new Date().toISOString(),
+            startedAt,
         },
     });
 
@@ -216,42 +211,50 @@ async function allocateToNewRoom(
         throw new Error("Could not insert a new shuffle room! ShuffleRoom came back null.");
     }
 
-    await allocateToExistingRoom(
-        entries,
-        shuffleRoom.data.insert_room_ShuffleRoom_one.id,
-        managedRoom.data.insert_Room_one.id,
-        unallocatedQueueEntries
-    );
+    const newRoom: ShuffleRoomAllocationInfo = {
+        durationMinutes,
+        id: shuffleRoom.data.insert_room_ShuffleRoom_one.id,
+        roomId: managedRoom.data.insert_Room_one.id,
+        startedAt,
+        peopleAttendeeIds: [],
+    };
+
+    await allocateToExistingRoom(entries, newRoom, unallocatedQueueEntries);
+
+    return newRoom;
 }
 
-async function attemptToMatchEntry(
+/**
+ * First-come, first-serve algorithm with optional auto-creation of rooms
+ */
+async function attemptToMatchEntry_FCFS(
     activePeriod: ActiveShufflePeriodFragment,
     entry: UnallocatedShuffleQueueEntryFragment,
-    unallocatedQueueEntries: Map<number, UnallocatedShuffleQueueEntryFragment>
+    unallocatedQueueEntries: Map<number, UnallocatedShuffleQueueEntryFragment>,
+    activeRooms: ShuffleRoomAllocationInfo[],
+    allocateNewRooms: boolean
 ): Promise<boolean> {
     // 1. Attempt to find an existing room to allocate them to
-    for (const room of activePeriod.activeRooms) {
-        if (room.room.people) {
-            const duration = room.durationMinutes * 60 * 1000;
-            const startedAt = Date.parse(room.startedAt);
-            const endsAt = startedAt + duration;
-            const now = Date.now();
-            const timeRemaining = endsAt - now;
-            if (timeRemaining > 0.5 * duration) {
-                // Add one because we allow space for the organiser to be in every room
-                if (
-                    room.room.people.length < activePeriod.targetAttendeesPerRoom + 1 &&
-                    !room.room.people.some((x) => x?.attendeeId === entry.attendeeId)
-                ) {
-                    await allocateToExistingRoom([entry], room.id, room.room.id, unallocatedQueueEntries);
-                    return true;
-                }
+    for (const room of activeRooms) {
+        const duration = room.durationMinutes * 60 * 1000;
+        const startedAt = Date.parse(room.startedAt);
+        const endsAt = startedAt + duration;
+        const now = Date.now();
+        const timeRemaining = endsAt - now;
+        if (timeRemaining > 0.5 * duration) {
+            // Add one because we allow space for the organiser to be in every room
+            if (
+                room.peopleAttendeeIds.length < activePeriod.targetAttendeesPerRoom &&
+                !room.peopleAttendeeIds.some((x) => x === entry.attendeeId)
+            ) {
+                await allocateToExistingRoom([entry], room, unallocatedQueueEntries);
+                return true;
             }
         }
     }
 
     // 2. Attempt to find other unallocated entries to match with
-    if (unallocatedQueueEntries.size > 1) {
+    if (allocateNewRooms && unallocatedQueueEntries.size > 1) {
         // Take as many as possible to group them all together right away
         // (minus one to allow space for the entry we are processing!)
         //    * Sorted by id so oldest entries come first
@@ -264,15 +267,17 @@ async function attemptToMatchEntry(
         const periodEndsAt = Date.parse(activePeriod.endAt);
         const timeRemaining = periodEndsAt - (now + roomDuration);
         const reshuffleUponEnd = timeRemaining > 60 * 1000;
-        await allocateToNewRoom(
-            activePeriod.id,
-            activePeriod.maxAttendeesPerRoom + 1,
-            activePeriod.name + " room " + new Date().toISOString(),
-            activePeriod.conferenceId,
-            activePeriod.roomDurationMinutes,
-            reshuffleUponEnd,
-            [...entriesToAllocate, entry],
-            unallocatedQueueEntries
+        activeRooms.push(
+            await allocateToNewRoom(
+                activePeriod.id,
+                activePeriod.maxAttendeesPerRoom + 1,
+                activePeriod.name + " room " + new Date().toISOString(),
+                activePeriod.conferenceId,
+                activePeriod.roomDurationMinutes,
+                reshuffleUponEnd,
+                [...entriesToAllocate, entry],
+                unallocatedQueueEntries
+            )
         );
         return true;
     }
@@ -282,50 +287,81 @@ async function attemptToMatchEntry(
     const expiresAt = enteredAt + activePeriod.waitRoomMaxDurationSeconds * 1000;
     const now = Date.now();
     if (expiresAt < now) {
-        for (const room of activePeriod.activeRooms) {
-            if (room.room.people) {
-                const duration = room.durationMinutes * 60 * 1000;
-                const startedAt = Date.parse(room.startedAt);
-                const endsAt = startedAt + duration;
-                const now = Date.now();
-                const timeRemaining = endsAt - now;
-                if (timeRemaining > 0.3 * duration) {
-                    // Add one because we allow space for the organiser to be in every room
-                    if (
-                        room.room.people.length < activePeriod.maxAttendeesPerRoom + 1 &&
-                        !room.room.people.some((x) => x?.attendeeId === entry.attendeeId)
-                    ) {
-                        await allocateToExistingRoom([entry], room.id, room.room.id, unallocatedQueueEntries);
-                        return true;
-                    }
+        for (const room of activeRooms) {
+            const duration = room.durationMinutes * 60 * 1000;
+            const startedAt = Date.parse(room.startedAt);
+            const endsAt = startedAt + duration;
+            const now = Date.now();
+            const timeRemaining = endsAt - now;
+            if (timeRemaining > 0.3 * duration) {
+                if (
+                    room.peopleAttendeeIds.length < activePeriod.maxAttendeesPerRoom &&
+                    !room.peopleAttendeeIds.some((x) => x === entry.attendeeId)
+                ) {
+                    await allocateToExistingRoom([entry], room, unallocatedQueueEntries);
+                    return true;
                 }
             }
         }
     }
 
     // We failed to match :(
-    console.log(
+    console.info(
         `[This is not an error]: Unable to match shuffle queue entry: ${entry.id} (Probably not enough people online!)`
     );
     return false;
 }
 
-async function attemptToMatchEntries(activePeriod: ActiveShufflePeriodFragment, entryIds: number[]): Promise<void> {
+/**
+ * First-come, first-serve algorithm with optional auto-creation of rooms
+ */
+async function attemptToMatchEntries(
+    activePeriod: ActiveShufflePeriodFragment,
+    entryIds: number[],
+    activeRooms: ActiveShuffleRoomFragment[],
+    allocateNewRooms: boolean
+): Promise<void> {
     const unallocatedQueueEntries = new Map(activePeriod.unallocatedQueueEntries.map((x) => [x.id, x]));
+    let rooms = activeRooms.map((room) => ({
+        id: room.id,
+        roomId: room.room.id,
+        durationMinutes: room.durationMinutes,
+        startedAt: room.startedAt,
+        peopleAttendeeIds: room.room.people.map((x) => x.attendeeId),
+    }));
     for (const entryId of entryIds) {
         const entry = unallocatedQueueEntries.get(entryId);
         if (entry) {
             try {
-                const matched = await attemptToMatchEntry(activePeriod, entry, unallocatedQueueEntries);
-                // If we failed to match someone, that means there's really no options left for anybody
-                // else either
-                if (!matched) {
-                    break;
-                }
+                rooms = rooms.sort((x, y) => x.peopleAttendeeIds.length - y.peopleAttendeeIds.length);
+                await attemptToMatchEntry_FCFS(activePeriod, entry, unallocatedQueueEntries, rooms, allocateNewRooms);
             } catch (e) {
                 console.error(`Error processing queue entry. Entry: ${entry.id}`, e);
             }
         }
+    }
+}
+
+async function processShufflePeriod(period: ActiveShufflePeriodFragment, entryIds: number[]) {
+    const now = Date.now();
+    const activeRooms = period.activeRooms.filter((shuffleRoom) => {
+        const startedAt = Date.parse(shuffleRoom.startedAt);
+        const duration = shuffleRoom.durationMinutes * 60 * 1000;
+        return startedAt + duration >= now - 5000;
+    });
+    switch (period.algorithm) {
+        case Room_ShuffleAlgorithm_Enum.Fcfs:
+            await attemptToMatchEntries(period, entryIds, activeRooms, true);
+            break;
+        case Room_ShuffleAlgorithm_Enum.FcfsFixedRooms:
+            await attemptToMatchEntries(period, entryIds, activeRooms, false);
+            break;
+        case Room_ShuffleAlgorithm_Enum.None:
+            // Do nothing
+            break;
+        default:
+            console.warn("Unable to process shuffle period: Unrecognised algorithm", period);
+            break;
     }
 }
 
@@ -348,44 +384,41 @@ export async function handleShuffleQueueEntered(payload: Payload<ShuffleQueueEnt
     }
     const startAt = Date.parse(result.data.room_ShufflePeriod_by_pk.startAt);
     if (startAt < Date.now()) {
-        await attemptToMatchEntries(result.data.room_ShufflePeriod_by_pk, [entry.id]);
+        await processShufflePeriod(result.data.room_ShufflePeriod_by_pk, [entry.id]);
     }
 }
 
-async function endRooms(period: RoomsToEndOfShufflePeriodFragment): Promise<void> {
+async function endRooms(period: ActiveShufflePeriodFragment): Promise<void> {
     try {
         const now = Date.now();
+        const endedRooms = period.activeRooms.filter((shuffleRoom) => {
+            const startedAt = Date.parse(shuffleRoom.startedAt);
+            const duration = shuffleRoom.durationMinutes * 60 * 1000;
+            return startedAt + duration < now - 5000;
+        });
         await Promise.all(
-            period.roomsToEnd
-                .filter((shuffleRoom) => {
-                    const startedAt = Date.parse(shuffleRoom.startedAt);
-                    const duration = shuffleRoom.durationMinutes * 60 * 1000;
-                    return startedAt + duration < now - 5000;
-                })
-                .map(async (shuffleRoom) => {
-                    console.log(`Ending shuffle room: ${shuffleRoom.id}`);
-                    await Promise.all(
-                        shuffleRoom.room.participants.map(async (participant) => {
-                            try {
-                                console.log(
-                                    `Kicking shuffle room participant: ${participant.id} from ${shuffleRoom.id}`
-                                );
-                                await kickAttendeeFromRoom(shuffleRoom.room.id, participant.attendeeId);
-                            } catch (e) {
-                                console.error(
-                                    `Failed to kick participant while terminating shuffle room. Participant: ${participant.id}`,
-                                    e
-                                );
-                            }
-                        })
-                    );
-                })
+            endedRooms.map(async (shuffleRoom) => {
+                console.info(`Ending shuffle room: ${shuffleRoom.id}`);
+                await Promise.all(
+                    shuffleRoom.room.participants.map(async (participant) => {
+                        try {
+                            console.info(`Kicking shuffle room participant: ${participant.id} from ${shuffleRoom.id}`);
+                            await kickAttendeeFromRoom(shuffleRoom.room.id, participant.attendeeId);
+                        } catch (e) {
+                            console.error(
+                                `Failed to kick participant while terminating shuffle room. Participant: ${participant.id}`,
+                                e
+                            );
+                        }
+                    })
+                );
+            })
         );
 
         await apolloClient.mutate({
             mutation: SetShuffleRoomsEndedDocument,
             variables: {
-                ids: period.roomsToEnd.map((x) => x.id),
+                ids: endedRooms.map((x) => x.id),
             },
         });
     } catch (e) {
@@ -395,30 +428,29 @@ async function endRooms(period: RoomsToEndOfShufflePeriodFragment): Promise<void
 
 export async function processShuffleQueues(): Promise<void> {
     const now = Date.now();
-    const from = now - 30000;
-    const until = now + 30000;
 
-    console.log("Processing end of shuffle rooms");
+    console.info("Shuffle rooms: Fetching");
 
     const result = await apolloClient.query({
         query: SelectActiveShufflePeriodsDocument,
         variables: {
-            from: new Date(from).toISOString(),
-            until: new Date(until).toISOString(),
-            untilExtended: new Date(until + 30000).toISOString(),
-            atLatest: new Date(now - 30 * 1000).toISOString(),
+            from: new Date(now - 24 * 60 * 60 * 1000).toISOString(),
+            until: new Date(now + 60 * 1000).toISOString(),
         },
     });
 
+    console.info("Shuffle rooms: Matching entries and ending rooms");
     await Promise.all([
-        ...result.data.active.map(async (period) => {
-            await attemptToMatchEntries(
-                period,
-                period.unallocatedQueueEntries.map((x) => x.id)
-            );
-        }),
-        ...result.data.ending.map(async (period) => {
+        ...result.data.room_ShufflePeriod.map(async (period) => {
             await endRooms(period);
+            if (Date.parse(period.startAt) <= now && Date.parse(period.endAt) >= now + 30000) {
+                await processShufflePeriod(
+                    period,
+                    period.unallocatedQueueEntries.map((x) => x.id)
+                );
+            }
         }),
     ]);
+
+    console.info("Shuffle rooms: Done.");
 }

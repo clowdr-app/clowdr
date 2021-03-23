@@ -8,7 +8,11 @@ import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
+import {
+    AttendeeProfileDataFragment,
+    AttendeeProfileDataFragmentDoc,
+    useSubmitProfilePhotoMutation,
+} from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { AttendeeContextT } from "../../useCurrentAttendee";
@@ -17,6 +21,8 @@ gql`
     mutation SubmitProfilePhoto($attendeeId: uuid!, $s3URL: String!) {
         updateProfilePhoto(attendeeId: $attendeeId, s3URL: $s3URL) {
             ok
+            photoURL_350x350
+            photoURL_50x50
         }
     }
 `;
@@ -43,7 +49,6 @@ export default function EditProfilePitureForm({
                 allowedFileTypes,
                 maxNumberOfFiles: 1,
                 minNumberOfFiles: 1,
-                maxFileSize: 1024 * 1024,
             },
             autoProceed: false,
         });
@@ -58,15 +63,26 @@ export default function EditProfilePitureForm({
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;
         if (uppy) {
-            const invalidFiles = uppy?.getFiles().filter((file) => !validNameRegex.test(file.name));
+            const invalidFiles = uppy
+                ?.getFiles()
+                .filter((file) => !validNameRegex.test(file.name) || file.size > 1024 * 1024);
             for (const invalidFile of invalidFiles) {
-                toast({
-                    position: "top",
-                    status: "error",
-                    description:
-                        "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
-                });
-                uppy.removeFile(invalidFile.id);
+                if (invalidFile.size > 1024 * 1024) {
+                    toast({
+                        position: "top",
+                        status: "error",
+                        description: "The maximum size is 1MiB.",
+                    });
+                    uppy.removeFile(invalidFile.id);
+                } else {
+                    toast({
+                        position: "top",
+                        status: "error",
+                        description:
+                            "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
+                    });
+                    uppy.removeFile(invalidFile.id);
+                }
             }
 
             setFiles(uppy.getFiles());
@@ -114,23 +130,48 @@ export default function EditProfilePitureForm({
                     }
 
                     try {
+                        const s3URL = result.successful[0].uploadURL;
                         const submitResult = await submitProfilePhoto({
                             variables: {
-                                s3URL: result.successful[0].uploadURL,
+                                s3URL,
                                 attendeeId: attendee.id,
+                            },
+                            update: (cache, result) => {
+                                if (result.data?.updateProfilePhoto) {
+                                    const data = result.data.updateProfilePhoto;
+
+                                    const id = cache.identify({
+                                        __typename: "AttendeeProfile",
+                                        attendeeId: attendee.id,
+                                    });
+
+                                    const frag = cache.readFragment<AttendeeProfileDataFragment>({
+                                        fragment: AttendeeProfileDataFragmentDoc,
+                                        fragmentName: "AttendeeProfileData",
+                                        id,
+                                    });
+
+                                    if (frag) {
+                                        cache.writeFragment({
+                                            id,
+                                            data: {
+                                                ...frag,
+                                                photoURL_350x350: data.photoURL_350x350 ?? "",
+                                                photoURL_50x50: data.photoURL_50x50 ?? "",
+                                                hasBeenEdited: true,
+                                            },
+                                            fragment: AttendeeProfileDataFragmentDoc,
+                                            fragmentName: "AttendeeProfileData",
+                                            broadcast: true,
+                                        });
+                                    }
+                                }
                             },
                         });
 
                         if (submitResult.errors || !submitResult.data?.updateProfilePhoto?.ok) {
                             throw new Error("Upload failed.");
                         }
-
-                        await new Promise<void>((resolve) =>
-                            setTimeout(async () => {
-                                await attendee.refetch();
-                                resolve();
-                            }, 1500)
-                        );
 
                         toast({
                             position: "top",
@@ -171,6 +212,7 @@ export default function EditProfilePitureForm({
                                     mb={2}
                                     p={0}
                                     overflow="hidden"
+                                    backgroundColor="#222"
                                 >
                                     {files.length === 1 || attendee.profile.photoURL_350x350 ? (
                                         <Image
@@ -246,8 +288,35 @@ export default function EditProfilePitureForm({
                                                                 s3URL: "",
                                                                 attendeeId: attendee.id,
                                                             },
+                                                            update: (cache) => {
+                                                                const id = cache.identify({
+                                                                    __typename: "AttendeeProfile",
+                                                                    attendeeId: attendee.id,
+                                                                });
+
+                                                                const frag = cache.readFragment<AttendeeProfileDataFragment>(
+                                                                    {
+                                                                        fragment: AttendeeProfileDataFragmentDoc,
+                                                                        fragmentName: "AttendeeProfileData",
+                                                                        id,
+                                                                    }
+                                                                );
+
+                                                                if (frag) {
+                                                                    cache.writeFragment({
+                                                                        id,
+                                                                        data: {
+                                                                            ...frag,
+                                                                            photoURL_350x350: "",
+                                                                            photoURL_50x50: "",
+                                                                        },
+                                                                        fragment: AttendeeProfileDataFragmentDoc,
+                                                                        fragmentName: "AttendeeProfileData",
+                                                                        broadcast: true,
+                                                                    });
+                                                                }
+                                                            },
                                                         });
-                                                        await attendee.refetch();
                                                     } finally {
                                                         setIsDeleting(false);
                                                     }

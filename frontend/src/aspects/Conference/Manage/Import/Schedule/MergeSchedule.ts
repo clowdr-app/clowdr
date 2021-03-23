@@ -1,13 +1,12 @@
 import type {
     IntermediaryEventDescriptor,
-    IntermediaryEventPersonDescriptor,
     IntermediaryRoomDescriptor,
     IntermediaryScheduleData,
     IntermediaryTagDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
 import type { ContentGroupDescriptor } from "../../Content/Types";
-import type { EventDescriptor, EventPersonDescriptor, RoomDescriptor } from "../../Schedule/Types";
+import type { EventDescriptor, RoomDescriptor } from "../../Schedule/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import {
     ChangeSummary,
@@ -56,105 +55,6 @@ function convertTagName(context: Context, tagName: string): string {
     }
 }
 
-function findExistingEventPerson(
-    ctx: Context,
-    items: EventPersonDescriptor[],
-    item: IntermediaryEventPersonDescriptor | EventPersonDescriptor
-): number | undefined {
-    return (
-        findMatch(ctx, items, item, isMatch_Id("EventPerson")) ??
-        findMatch(ctx, items, item, (ctxInner, item1, item2) => {
-            return (
-                isMatch_String_Exact<
-                    Context,
-                    IntermediaryEventPersonDescriptor | EventPersonDescriptor,
-                    EventPersonDescriptor
-                >("name")(ctxInner, item1, item2) &&
-                isMatch_String_Exact<
-                    Context,
-                    IntermediaryEventPersonDescriptor | EventPersonDescriptor,
-                    EventPersonDescriptor
-                >("affiliation")(ctxInner, item1, item2)
-            );
-        }) ??
-        findMatch(ctx, items, item, isMatch_String_Exact("attendeeId"))
-    );
-}
-
-function mergeEventPerson(
-    context: Context,
-    item1: EventPersonDescriptor,
-    item2: EventPersonDescriptor
-): {
-    changes: ChangeSummary[];
-    result: EventPersonDescriptor;
-} {
-    const changes: ChangeSummary[] = [];
-    const result = {} as EventPersonDescriptor;
-
-    mergeIdInPlace("EventPerson", context, changes, result, item1, item2);
-    mergeIsNewInPlace(context, result, item1, item2);
-    mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
-    mergeFieldInPlace(context, changes, result, "attendeeId", item1, item2);
-    mergeFieldInPlace(context, changes, result, "name", item1, item2);
-    mergeFieldInPlace(context, changes, result, "affiliation", item1, item2);
-    mergeFieldInPlace(context, changes, result, "roleName", item1, item2);
-
-    changes.push({
-        location: "EventPerson",
-        type: "MERGE",
-        description: "Merged two matching event-persons.",
-        importData: [item1, item2],
-        newData: result,
-    });
-
-    return {
-        result,
-        changes,
-    };
-}
-
-function convertEventPerson(
-    context: Context,
-    item: IntermediaryEventPersonDescriptor | EventPersonDescriptor
-): EventPersonDescriptor {
-    const result = {
-        id: item.id ?? uuidv4(),
-        isNew: ("isNew" in item && item.isNew) || !item.id,
-
-        roleName: item.roleName,
-        name: item.name,
-        affiliation: item.affiliation,
-        attendeeId: item.attendeeId,
-    } as EventPersonDescriptor;
-
-    const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
-    if (origDataIdx !== undefined) {
-        result.originatingDataId = context.originatingDatas[origDataIdx].id;
-    }
-
-    return result;
-}
-
-function mergeEventPeople(
-    context: Context,
-    items1: EventPersonDescriptor[],
-    items2: (IntermediaryEventPersonDescriptor | EventPersonDescriptor)[]
-): {
-    changes: ChangeSummary[];
-    result: EventPersonDescriptor[];
-} {
-    return mergeLists(
-        context,
-        "EventPerson",
-        items1,
-        items2,
-        findExistingEventPerson,
-        convertEventPerson,
-        mergeEventPerson
-    );
-}
-
 function convertEvent(context: Context, item: IntermediaryEventDescriptor | EventDescriptor): EventDescriptor {
     const result = {
         id: item.id ?? uuidv4(),
@@ -173,12 +73,6 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
     if (origDataIdx !== undefined) {
         result.originatingDataId = context.originatingDatas[origDataIdx].id;
-    }
-
-    if (item.people) {
-        for (const x of item.people) {
-            result.people.push(convertEventPerson(context, x));
-        }
     }
 
     if ("tagIds" in item && item.tagIds) {
@@ -268,7 +162,6 @@ function mergeEvent(
             ],
         };
     });
-    mergeFieldInPlace(context, changes, result, "people", item1, item2, true, mergeEventPeople);
 
     changes.push({
         location: "Event",
@@ -608,12 +501,6 @@ export default function mergeSchedule(
         if (event.originatingDataId) {
             unusedOriginatingDataIds.delete(event.originatingDataId);
         }
-
-        event.people.forEach((item) => {
-            if (item.originatingDataId) {
-                unusedOriginatingDataIds.delete(item.originatingDataId);
-            }
-        });
     });
 
     newRooms.forEach((item) => {

@@ -1,6 +1,7 @@
 import React, { useContext, useMemo } from "react";
 import { Permission_Enum } from "../../generated/graphql";
-import { useCurrentUserGroupsRolesPermissions } from "./useConferenceCurrentUserGroups";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import { useConference } from "./useConference";
 
 function reduceToSet<S, T>(array: ReadonlyArray<S>, reduce: (acc: Set<T>, i: S) => Set<T>, start?: Set<T>) {
     return array.reduce(reduce, new Set(start?.values() ?? []));
@@ -17,10 +18,11 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
-    const groups = useCurrentUserGroupsRolesPermissions();
+    const user = useMaybeCurrentUser();
+    const conference = useConference();
 
     const value: Set<Permission_Enum> = useMemo(() => {
-        const publicPermissions: Set<Permission_Enum> = reduceToSet(groups.publicGroups, (acc, group) => {
+        const publicPermissions: Set<Permission_Enum> = reduceToSet(conference.publicGroups, (acc, group) => {
             return reduceToSet(
                 group.groupRoles,
                 (acc, groupRole) => {
@@ -37,37 +39,31 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
             );
         });
 
-        if ("User" in groups) {
-            if (groups.User[0].conferencesCreated.length > 0) {
+        if (user.user) {
+            if (conference.createdBy === user.user.id) {
                 return new Set(Object.values(Permission_Enum));
             } else {
-                if (groups.User.length > 0) {
+                if ("attendees" in conference && conference.attendees.length > 0) {
                     return reduceToSet(
-                        groups.User[0].attendees,
-                        (acc, attendee) => {
-                            return reduceToSet(
-                                attendee.groupAttendees,
-                                (acc, groupAttendee) => {
-                                    if (groupAttendee.group.enabled) {
+                        conference.attendees[0].groupAttendees,
+                        (acc, groupAttendee) => {
+                            if (groupAttendee.group.enabled) {
+                                return reduceToSet(
+                                    groupAttendee.group.groupRoles,
+                                    (acc, groupRole) => {
                                         return reduceToSet(
-                                            groupAttendee.group.groupRoles,
-                                            (acc, groupRole) => {
-                                                return reduceToSet(
-                                                    groupRole.role.rolePermissions,
-                                                    (acc, rolePermission) => {
-                                                        acc.add(rolePermission.permissionName);
-                                                        return acc;
-                                                    },
-                                                    acc
-                                                );
+                                            groupRole.role.rolePermissions,
+                                            (acc, rolePermission) => {
+                                                acc.add(rolePermission.permissionName);
+                                                return acc;
                                             },
                                             acc
                                         );
-                                    }
-                                    return acc;
-                                },
-                                acc
-                            );
+                                    },
+                                    acc
+                                );
+                            }
+                            return acc;
                         },
                         publicPermissions
                     );
@@ -76,7 +72,7 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
         }
 
         return publicPermissions;
-    }, [groups]);
+    }, [conference, user.user]);
 
     return (
         <ConferenceCurrentUserActivePermissionsContext.Provider value={value}>

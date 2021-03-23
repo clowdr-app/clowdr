@@ -2,6 +2,8 @@ import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 
+export type CameraResolutions = "640x480" | "1280x720";
+
 export enum StateType {
     Uninitialised,
     Initialised,
@@ -97,6 +99,9 @@ export class VonageGlobalState {
                 onCameraStreamCreated,
                 onScreenStreamCreated,
             };
+        } catch (e) {
+            console.error("VonageGlobalState: initialiseState failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -112,12 +117,36 @@ export class VonageGlobalState {
             const session = OT.initSession(import.meta.env.SNOWPACK_PUBLIC_OPENTOK_API_KEY, this.state.sessionId, {});
             const token = await this.state.getToken(this.state.sessionId);
 
-            session.on("streamCreated", (event) => this.onStreamCreated(event));
-            session.on("streamDestroyed", (event) => this.onStreamDestroyed(event));
-            session.on("connectionCreated", (event) => this.onConnectionCreated(event));
-            session.on("connectionDestroyed", (event) => this.onConnectionDestroyed(event));
-            session.on("sessionConnected", (event) => this.onSessionConnected(event));
-            session.on("sessionDisconnected", (event) => this.onSessionDisconnected(event));
+            session.on("streamCreated", (event) =>
+                this.onStreamCreated(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling streamCreated", e)
+                )
+            );
+            session.on("streamDestroyed", (event) =>
+                this.onStreamDestroyed(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling streamDestroyed", e)
+                )
+            );
+            session.on("connectionCreated", (event) =>
+                this.onConnectionCreated(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling connectionCreated", e)
+                )
+            );
+            session.on("connectionDestroyed", (event) =>
+                this.onConnectionDestroyed(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling connectionDestroyed", e)
+                )
+            );
+            session.on("sessionConnected", (event) =>
+                this.onSessionConnected(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling sessionConnected", e)
+                )
+            );
+            session.on("sessionDisconnected", (event) =>
+                this.onSessionDisconnected(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling sessionDisconnected", e)
+                )
+            );
 
             await new Promise<void>((resolve, reject) => {
                 session.connect(token, (error) => {
@@ -138,6 +167,9 @@ export class VonageGlobalState {
                 streams: [],
                 connections: [],
             };
+        } catch (e) {
+            console.error("VonageGlobalState: connectToSession failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -146,8 +178,11 @@ export class VonageGlobalState {
     public async publishCamera(
         targetElement: string | HTMLElement,
         videoDeviceId: string | null,
-        audioDeviceId: string | null
+        audioDeviceId: string | null,
+        resolution: CameraResolutions = "640x480"
     ): Promise<void> {
+        const frameRate = resolution === "1280x720" ? 30 : 15;
+
         const release = await this.mutex.acquire();
         let _publisher: OT.Publisher | undefined;
         try {
@@ -190,7 +225,8 @@ export class VonageGlobalState {
                         publishVideo: !!videoDeviceId,
                         audioSource: audioDeviceId,
                         videoSource: videoDeviceId,
-                        resolution: "1280x720",
+                        resolution,
+                        frameRate,
                         width: "100%",
                         height: "100%",
                         insertMode: "append",
@@ -208,7 +244,11 @@ export class VonageGlobalState {
                             }
                         });
                     });
-                    publisher.on("streamDestroyed", (event) => this.onCameraStreamDestroyed(event));
+                    publisher.on("streamDestroyed", (event) =>
+                        this.onCameraStreamDestroyed(event).catch((e) =>
+                            console.error("VonageGlobalState: error handling streamDestroyed", e)
+                        )
+                    );
 
                     this.state = {
                         ...state,
@@ -256,7 +296,8 @@ export class VonageGlobalState {
                     publishVideo: !!videoDeviceId,
                     audioSource: audioDeviceId,
                     videoSource: videoDeviceId,
-                    resolution: "1280x720",
+                    resolution,
+                    frameRate,
                     width: "100%",
                     height: "100%",
                     insertMode: "append",
@@ -274,7 +315,11 @@ export class VonageGlobalState {
                         }
                     });
                 });
-                publisher.on("streamDestroyed", (event) => this.onCameraStreamDestroyed(event));
+                publisher.on("streamDestroyed", (event) =>
+                    this.onCameraStreamDestroyed(event).catch((e) =>
+                        console.error("VonageGlobalState: error handling streamDestroyed")
+                    )
+                );
 
                 this.state = {
                     ...state,
@@ -289,6 +334,7 @@ export class VonageGlobalState {
                 this.state.initialisedState.onCameraStreamCreated();
             }
         } catch (e) {
+            console.error("VonageGlobalState: publishCamera failure", e);
             if (_publisher) {
                 _publisher.destroy();
             }
@@ -335,7 +381,11 @@ export class VonageGlobalState {
                     }
                 });
             });
-            publisher.on("streamDestroyed", (event) => this.onScreenStreamDestroyed(event));
+            publisher.on("streamDestroyed", (event) =>
+                this.onScreenStreamDestroyed(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling streamDestroyed", e)
+                )
+            );
 
             this.state = {
                 ...this.state,
@@ -343,12 +393,14 @@ export class VonageGlobalState {
             };
             this.state.initialisedState.onScreenStreamCreated();
         } catch (e) {
+            console.error("VonageGlobalState: publishScreen failure", e);
             if (_publisher) {
                 _publisher.destroy();
             }
             if (this.state.type === StateType.Connected) {
                 this.state.initialisedState.onScreenStreamDestroyed("mediaStopped");
             }
+            throw e;
         } finally {
             release();
         }
@@ -372,6 +424,9 @@ export class VonageGlobalState {
                 screen: null,
             };
             this.state.initialisedState.onScreenStreamDestroyed("unpublished");
+        } catch (e) {
+            console.error("VonageGlobalState: unpublishScreen failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -405,6 +460,9 @@ export class VonageGlobalState {
             };
 
             callback(false);
+        } catch (e) {
+            console.error("VonageGlobalState: disconnect failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -423,6 +481,9 @@ export class VonageGlobalState {
             };
 
             this.state.initialisedState.onStreamsChanged(this.state.streams);
+        } catch (e) {
+            console.error("VonageGlobalState: onStreamCreated failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -443,6 +504,9 @@ export class VonageGlobalState {
             };
 
             this.state.initialisedState.onStreamsChanged(this.state.streams);
+        } catch (e) {
+            console.error("VonageGlobalState: onStreamDestroyed failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -466,6 +530,9 @@ export class VonageGlobalState {
             };
 
             this.state.initialisedState.onConnectionsChanged(this.state.connections);
+        } catch (e) {
+            console.error("VonageGlobalState: onConnectionCreated failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -486,6 +553,9 @@ export class VonageGlobalState {
             };
 
             this.state.initialisedState.onConnectionsChanged(this.state.connections);
+        } catch (e) {
+            console.error("VonageGlobalState: onConnectionDestroyed failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -509,6 +579,9 @@ export class VonageGlobalState {
             };
 
             callback(false);
+        } catch (e) {
+            console.error("VonageGlobalState: onSessionDisconnected failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -529,6 +602,9 @@ export class VonageGlobalState {
             }
 
             callback(true);
+        } catch (e) {
+            console.error("VonageGlobalState: onSessionConnected failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -544,6 +620,9 @@ export class VonageGlobalState {
             } else if (this.state.type === StateType.Connected) {
                 this.state.initialisedState.onCameraStreamDestroyed(event.reason);
             }
+        } catch (e) {
+            console.error("VonageGlobalState: onCameraStreamDestroyed failure", e);
+            throw e;
         } finally {
             release();
         }
@@ -559,6 +638,9 @@ export class VonageGlobalState {
             } else if (this.state.type === StateType.Connected) {
                 this.state.initialisedState.onScreenStreamDestroyed(event.reason);
             }
+        } catch (e) {
+            console.error("VonageGlobalState: onScreenStreamDestroyed failure", e);
+            throw e;
         } finally {
             release();
         }

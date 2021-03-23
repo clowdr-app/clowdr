@@ -1,59 +1,53 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
     AlertIcon,
     AlertTitle,
     Box,
     Button,
-    Center,
     Heading,
     HStack,
     ListItem,
     Text,
-    Tooltip,
     UnorderedList,
     useColorModeValue,
-    useToast,
     useToken,
     VStack,
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
-import { useHistory } from "react-router-dom";
-import {
-    RoomMode_Enum,
-    Room_EventSummaryFragment,
-    useRoomBackstage_GetEventBreakoutRoomQuery,
-} from "../../../../generated/graphql";
+import { RoomMode_Enum, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
-import { useConference } from "../../useConference";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
-
-gql`
-    query RoomBackstage_GetEventBreakoutRoom($originatingEventId: uuid!) {
-        Room(where: { originatingEventId: { _eq: $originatingEventId } }) {
-            id
-        }
-    }
-`;
 
 export function RoomBackstage({
     showBackstage,
     roomName,
     roomEvents,
     currentRoomEventId,
+    nextRoomEventId,
     setWatchStreamForEventId,
+    onRoomJoined,
+    onEventSelected,
 }: {
     showBackstage: boolean;
     roomName: string;
     roomEvents: readonly Room_EventSummaryFragment[];
     currentRoomEventId: string | null;
+    nextRoomEventId: string | null;
     setWatchStreamForEventId: (eventId: string | null) => void;
+    onRoomJoined: (joined: boolean) => void;
+    onEventSelected: (eventId: string | null) => void;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
@@ -88,12 +82,15 @@ export function RoomBackstage({
     const isEventSoon = useCallback(
         (event: Room_EventSummaryFragment): boolean => {
             const startTime = Date.parse(event.startTime);
-            return now >= startTime - 10 * 60 * 1000 && now <= startTime;
+            return now >= startTime - 25 * 60 * 1000 && now <= startTime;
         },
         [now]
     );
 
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+    useEffect(() => {
+        onEventSelected(selectedEventId);
+    }, [onEventSelected, selectedEventId]);
 
     const makeEventEl = useCallback(
         (event: Room_EventSummaryFragment, category: string) => {
@@ -107,6 +104,8 @@ export function RoomBackstage({
                         border={`1px ${borderColour} solid`}
                         width="max-content"
                         maxW="100%"
+                        w="100%"
+                        justifyContent="space-between"
                         p={4}
                         alignItems="center"
                         borderRadius="md"
@@ -114,7 +113,7 @@ export function RoomBackstage({
                         <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8} whiteSpace="normal">
                             {category}
                         </Heading>
-                        <VStack px={8} alignItems="left">
+                        <VStack px={8} alignItems="left" flexGrow={1}>
                             <Heading as="h4" size="md" textAlign="left" mt={2} mb={1} whiteSpace="normal">
                                 <Twemoji className="twemoji" text={title} />
                             </Heading>
@@ -154,30 +153,32 @@ export function RoomBackstage({
 
     const eventRooms = useMemo(
         () => (
-            <Box mt={4}>
+            <Box mt={4} w="100%">
                 {sortedEvents.map((x) =>
                     isEventNow(x) ? (
-                        <Box key={x.id}>{makeEventEl(x, "Happening now")}</Box>
+                        <Box key={x.id} mt={2} w="100%">
+                            {makeEventEl(x, "Happening now")}
+                        </Box>
                     ) : isEventSoon(x) ? (
-                        <Box key={x.id}>{makeEventEl(x, "Starting soon")}</Box>
+                        <Box key={x.id} mt={2} w="100%">
+                            {makeEventEl(x, "Starting soon")}
+                        </Box>
                     ) : x.id === selectedEventId ? (
-                        <Box key={x.id}>
-                            {makeEventEl(x, "Ongoing")}
+                        <Box key={x.id} mt={2} w="100%">
+                            {makeEventEl(x, "Ended")}
                             <Alert status="warning" mb={8}>
                                 <AlertIcon />
                                 This event has now finished. Once you close this room, you will not be able to rejoin
                                 it.
                             </Alert>
                         </Box>
-                    ) : (
-                        <></>
-                    )
+                    ) : undefined
                 )}
 
                 {sortedEvents.filter((x) => isEventNow(x) || isEventSoon(x) || selectedEventId === x.id).length ===
                 0 ? (
                     <Text textAlign="center" my={8} fontSize="lg">
-                        No current or upcoming events in this room
+                        No current or upcoming events in the speakers&apos; area.
                     </Text>
                 ) : undefined}
             </Box>
@@ -185,51 +186,10 @@ export function RoomBackstage({
         [isEventNow, isEventSoon, makeEventEl, selectedEventId, sortedEvents]
     );
 
-    const { refetch } = useRoomBackstage_GetEventBreakoutRoomQuery({
-        skip: true,
-        fetchPolicy: "network-only",
-    });
-
-    const [existingCurrentRoomEventId, setExistingCurrentRoomEventId] = useState<string | null>(currentRoomEventId);
-    const conference = useConference();
-    const history = useHistory();
-    const toast = useToast();
-
-    useEffect(() => {
-        async function fn() {
-            try {
-                if (
-                    showBackstage &&
-                    selectedEventId &&
-                    selectedEventId === existingCurrentRoomEventId &&
-                    existingCurrentRoomEventId !== currentRoomEventId
-                ) {
-                    try {
-                        const breakoutRoom = await refetch({ originatingEventId: selectedEventId });
-
-                        if (!breakoutRoom.data || !breakoutRoom.data.Room || breakoutRoom.data.Room.length < 1) {
-                            throw new Error("No matching room found");
-                        }
-
-                        history.push(`/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`);
-                    } catch (e) {
-                        console.error("Error while moving to breakout room at end of event", selectedEventId, e);
-                        toast({
-                            status: "error",
-                            title: "Could not find breakout room to move to at end of the event",
-                        });
-                        return;
-                    }
-                }
-            } finally {
-                setExistingCurrentRoomEventId(currentRoomEventId);
-            }
-        }
-        fn();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentRoomEventId]);
-
     const sharedRoomContext = useSharedRoomContext();
+
+    const [isWatchStreamConfirmOpen, setIsWatchStreamConfirmOpen] = useState<boolean>(false);
+    const cancelRef = useRef<HTMLButtonElement>(null);
 
     return showBackstage ? (
         <Box display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
@@ -244,7 +204,7 @@ export function RoomBackstage({
                         <UnorderedList>
                             <ListItem>Each event in this room has a speakers&apos; area.</ListItem>
                             <ListItem>
-                                Each speakers&apos; area becomes available to join ten minutes before the associated
+                                Each speakers&apos; area becomes available to join twenty minutes before the associated
                                 event starts.
                             </ListItem>
                             <ListItem>Keep an eye on the chat for questions!</ListItem>
@@ -260,23 +220,67 @@ export function RoomBackstage({
                         vonageSessionId=""
                         getAccessToken={() => ""}
                         disable={true}
+                        isBackstageRoom={true}
+                        onRoomJoined={onRoomJoined}
                     />
                 </Box>
             ) : undefined}
-            {!selectedEventId && (
-                <Center my={4}>
-                    <Tooltip label="Watching the stream while speaking is strongly discouraged. The stream lag can cause a lot of confusion. Please stay in the speakers' area. Please do not use a second device to watch the stream while you are active in the speakers' area.">
+            {!selectedEventId ? (
+                currentRoomEventId || nextRoomEventId ? (
+                    <>
                         <Button
                             variant="outline"
                             borderColor="red.600"
                             color="red.600"
-                            onClick={() => setWatchStreamForEventId(currentRoomEventId)}
+                            onClick={() => setIsWatchStreamConfirmOpen(true)}
+                            mt={4}
                         >
                             Watch stream
                         </Button>
-                    </Tooltip>
-                </Center>
-            )}
+                        <AlertDialog
+                            isOpen={isWatchStreamConfirmOpen}
+                            leastDestructiveRef={cancelRef}
+                            onClose={() => setIsWatchStreamConfirmOpen(false)}
+                        >
+                            <AlertDialogOverlay>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                        Watch stream
+                                    </AlertDialogHeader>
+
+                                    <AlertDialogBody>
+                                        Watching the stream while speaking is strongly discouraged. The stream lag can
+                                        cause a lot of confusion. Please stay in the speakers&apos; area. Please do not
+                                        use a second device to watch the stream while you are active in the
+                                        speakers&apos; area.
+                                    </AlertDialogBody>
+
+                                    <AlertDialogFooter>
+                                        <Button ref={cancelRef} onClick={() => setIsWatchStreamConfirmOpen(false)}>
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            colorScheme="red"
+                                            onClick={() =>
+                                                currentRoomEventId
+                                                    ? setWatchStreamForEventId(currentRoomEventId)
+                                                    : setWatchStreamForEventId(nextRoomEventId)
+                                            }
+                                            ml={3}
+                                        >
+                                            Go to stream
+                                        </Button>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialogOverlay>
+                        </AlertDialog>
+                    </>
+                ) : (
+                    <Button variant="outline" borderColor="red.600" color="red.600" isDisabled={true} mt={4}>
+                        Live stream ended
+                    </Button>
+                )
+            ) : undefined}
         </Box>
     ) : (
         <></>

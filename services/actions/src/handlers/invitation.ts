@@ -121,7 +121,22 @@ gql`
     }
 
     query SelectAttendeesWithInvitation($attendeeIds: [uuid!]!) {
-        Attendee(where: { _and: [{ id: { _in: $attendeeIds } }, { userId: { _is_null: true } }] }) {
+        Attendee(
+            where: {
+                _and: [
+                    { id: { _in: $attendeeIds } }
+                    { userId: { _is_null: true } }
+                    {
+                        groupAttendees: {
+                            group: {
+                                enabled: { _eq: true }
+                                groupRoles: { role: { rolePermissions: { permissionName: { _eq: CONFERENCE_VIEW } } } }
+                            }
+                        }
+                    }
+                ]
+            }
+        ) {
             ...AttendeeWithInviteParts
         }
     }

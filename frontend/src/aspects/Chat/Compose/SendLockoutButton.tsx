@@ -1,7 +1,6 @@
 import { Box, Button, ButtonProps, CircularProgress, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
-import { useRealTime } from "../../Generic/useRealTime";
 import FAIcon from "../../Icons/FAIcon";
 import { useChatConfiguration } from "../Configuration";
 import { useComposeContext } from "./ComposeContext";
@@ -17,7 +16,7 @@ export default function SendLockoutButton({
         time: number;
         error: boolean;
     }>({ time: 0, error: false });
-    const now = useRealTime(100);
+    // const now = useRealTime(100);
 
     const lockoutTimeMs = useMemo(() => {
         switch (compose.newMessageType) {
@@ -41,19 +40,18 @@ export default function SendLockoutButton({
         config.questionConfig.sendCooloffPeriodMs,
     ]);
 
-    const isLockedOut = !!lockoutTimeMs && compose.lastSendTime + lockoutTimeMs > now;
+    const isLockedOut = false; // !!lockoutTimeMs && compose.lastSendTime + lockoutTimeMs > now;
 
     useEffect(() => {
         if ((sendFailed || props.isDisabled) && props.isLoading) {
             setShowCheckMarkParams({ time: Date.now(), error: sendFailed });
         }
     }, [props.isDisabled, props.isLoading, sendFailed]);
-    const showCheckMarkFor = 2000;
-    const showingCheckMark = showCheckMarkParams.time + showCheckMarkFor > now;
+    // const showCheckMarkFor = 2000;
+    const showingCheckMark = false; // showCheckMarkParams.time + showCheckMarkFor > now;
 
-    const showCheckMarkProgress = Math.abs(now - showCheckMarkParams.time) / showCheckMarkFor;
-    const checkMarkOpacity =
-        showCheckMarkProgress < 0.5 ? 0.3 + 1.4 * showCheckMarkProgress : 2 * (1 - showCheckMarkProgress);
+    const showCheckMarkProgress = false; // Math.abs(now - showCheckMarkParams.time) / showCheckMarkFor;
+    const checkMarkOpacity = 0; // showCheckMarkProgress < 0.5 ? 0.3 + 1.4 * showCheckMarkProgress : 2 * (1 - showCheckMarkProgress);
 
     return (
         <Tooltip
@@ -73,7 +71,7 @@ export default function SendLockoutButton({
                     color={showingCheckMark ? (showCheckMarkParams.error ? "red.300" : "green.300") : props.color}
                     isDisabled={showingCheckMark || props.isDisabled || isLockedOut}
                     _disabled={{
-                        opacity: showingCheckMark && showCheckMarkProgress < 0.95 ? 1 : 0.4,
+                        opacity: false, // showingCheckMark && showCheckMarkProgress < 0.95 ? 1 : 0.4,
                         boxShadow: "none",
                         cursor: "progress",
                     }}
@@ -89,7 +87,7 @@ export default function SendLockoutButton({
                             size="4"
                             min={0}
                             max={(lockoutTimeMs ?? 200) - 200}
-                            value={now - compose.lastSendTime}
+                            value={0} // now - compose.lastSendTime}
                         />
                     ) : (
                         children

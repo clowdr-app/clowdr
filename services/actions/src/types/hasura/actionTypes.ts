@@ -78,6 +78,8 @@ type ProfilePhotoURLResponse = {
 
 type UpdateProfilePhotoResponse = {
     ok: boolean;
+    photoURL_350x350: string | undefined | null;
+    photoURL_50x50: string | undefined | null;
 };
 
 type CreateRoomDmOutput = {

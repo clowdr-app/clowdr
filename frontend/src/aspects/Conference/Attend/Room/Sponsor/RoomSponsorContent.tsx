@@ -74,7 +74,7 @@ export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string 
         <>
             <Divider mb={6} />
             {loading ? <Spinner /> : error ? <>An error occurred loading in data.</> : undefined}
-            <Grid gridTemplateColumns="50% 50%" ml={5} gridColumnGap={5}>
+            <Grid gridTemplateColumns="50% 50%" ml={0} mr={3} gridColumnGap={5}>
                 {contentItems ? (
                     contentItems.map((contentItem) =>
                         contentItem.layoutBlob.hidden ? (
@@ -84,7 +84,7 @@ export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string 
                                 minW={0}
                                 overflowX="auto"
                                 key={contentItem.item.id}
-                                colSpan={contentItem.layoutBlob.wide ? [1, 1, 2] : [1]}
+                                colSpan={contentItem.layoutBlob.wide ? [2] : [2, 2, 1]}
                                 p={4}
                             >
                                 <ContentItem blob={contentItem.blob} />

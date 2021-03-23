@@ -17,10 +17,14 @@ export function PresenceStateProvider({
 }): JSX.Element {
     useEffect(() => {
         State.begin(token);
+        return () => {
+            State.end();
+        };
     }, [token]);
 
     const location = useLocation();
     useEffect(() => {
+        // console.log("Page changed", location.pathname);
         State.pageChanged(location.pathname);
     }, [location.pathname]);
 

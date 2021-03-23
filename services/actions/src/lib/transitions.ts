@@ -193,7 +193,7 @@ async function createTransition(
         }
     `;
 
-    apolloClient.mutate({
+    await apolloClient.mutate({
         mutation: CreateTransitionDocument,
         variables: {
             broadcastContentId: broadcastContentItemId,

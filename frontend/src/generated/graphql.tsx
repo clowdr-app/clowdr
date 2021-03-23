@@ -31,10 +31,6 @@ export type Attendee = {
   readonly createdAt: Scalars['timestamptz'];
   readonly displayName: Scalars['String'];
   /** An array relationship */
-  readonly eventPeople: ReadonlyArray<EventPerson>;
-  /** An aggregated array relationship */
-  readonly eventPeople_aggregate: EventPerson_Aggregate;
-  /** An array relationship */
   readonly groupAttendees: ReadonlyArray<GroupAttendee>;
   /** An aggregated array relationship */
   readonly groupAttendees_aggregate: GroupAttendee_Aggregate;
@@ -73,26 +69,6 @@ export type AttendeeContentPeople_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<ContentPerson_Order_By>>;
   where?: Maybe<ContentPerson_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Attendee" */
-export type AttendeeEventPeopleArgs = {
-  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
-  where?: Maybe<EventPerson_Bool_Exp>;
-};
-
-
-/** columns and relationships of "Attendee" */
-export type AttendeeEventPeople_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
-  where?: Maybe<EventPerson_Bool_Exp>;
 };
 
 
@@ -972,7 +948,6 @@ export type Attendee_Bool_Exp = {
   readonly contentPeople?: Maybe<ContentPerson_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly displayName?: Maybe<String_Comparison_Exp>;
-  readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
   readonly groupAttendees?: Maybe<GroupAttendee_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Invitation_Bool_Exp>;
@@ -998,7 +973,6 @@ export type Attendee_Insert_Input = {
   readonly contentPeople?: Maybe<ContentPerson_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly displayName?: Maybe<Scalars['String']>;
-  readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
   readonly groupAttendees?: Maybe<GroupAttendee_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly invitation?: Maybe<Invitation_Obj_Rel_Insert_Input>;
@@ -1080,7 +1054,6 @@ export type Attendee_Order_By = {
   readonly contentPeople_aggregate?: Maybe<ContentPerson_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly displayName?: Maybe<Order_By>;
-  readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
   readonly groupAttendees_aggregate?: Maybe<GroupAttendee_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly invitation?: Maybe<Invitation_Order_By>;
@@ -1746,6 +1719,12 @@ export enum Broadcast_Update_Column {
   /** column name */
   UpdatedAt = 'updatedAt'
 }
+
+export type ChatRemoteToken = {
+  readonly __typename?: 'ChatRemoteToken';
+  readonly expiry: Scalars['Int'];
+  readonly jwt: Scalars['String'];
+};
 
 /** columns and relationships of "Conference" */
 export type Conference = {
@@ -4836,6 +4815,10 @@ export type ContentPerson = {
   /** An aggregated array relationship */
   readonly contentItemPeople_aggregate: ContentGroupPerson_Aggregate;
   readonly email?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  readonly eventPeople: ReadonlyArray<EventPerson>;
+  /** An aggregated array relationship */
+  readonly eventPeople_aggregate: EventPerson_Aggregate;
   readonly id: Scalars['uuid'];
   readonly name: Scalars['String'];
   /** An object relationship */
@@ -4861,6 +4844,26 @@ export type ContentPersonContentItemPeople_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<ContentGroupPerson_Order_By>>;
   where?: Maybe<ContentGroupPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentPerson" */
+export type ContentPersonEventPeopleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
+  where?: Maybe<EventPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "ContentPerson" */
+export type ContentPersonEventPeople_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
+  where?: Maybe<EventPerson_Bool_Exp>;
 };
 
 /** aggregated selection of "ContentPerson" */
@@ -4910,6 +4913,7 @@ export type ContentPerson_Bool_Exp = {
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly contentItemPeople?: Maybe<ContentGroupPerson_Bool_Exp>;
   readonly email?: Maybe<String_Comparison_Exp>;
+  readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
@@ -4933,6 +4937,7 @@ export type ContentPerson_Insert_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly contentItemPeople?: Maybe<ContentGroupPerson_Arr_Rel_Insert_Input>;
   readonly email?: Maybe<Scalars['String']>;
+  readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
@@ -5016,6 +5021,7 @@ export type ContentPerson_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentItemPeople_aggregate?: Maybe<ContentGroupPerson_Aggregate_Order_By>;
   readonly email?: Maybe<Order_By>;
+  readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
@@ -6158,13 +6164,6 @@ export enum EventParticipantStream_Update_Column {
 /** columns and relationships of "EventPerson" */
 export type EventPerson = {
   readonly __typename?: 'EventPerson';
-  readonly affiliation?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  readonly attendee?: Maybe<Attendee>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  /** An object relationship */
-  readonly conference: Conference;
-  readonly conferenceId: Scalars['uuid'];
   readonly createdAt: Scalars['timestamptz'];
   /** An object relationship */
   readonly event: Event;
@@ -6172,10 +6171,9 @@ export type EventPerson = {
   /** An object relationship */
   readonly eventPersonRole: EventPersonRole;
   readonly id: Scalars['uuid'];
-  readonly name: Scalars['String'];
   /** An object relationship */
-  readonly originatingData?: Maybe<OriginatingData>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly person: ContentPerson;
+  readonly personId: Scalars['uuid'];
   readonly roleName: EventPersonRole_Enum;
   readonly updatedAt: Scalars['timestamptz'];
 };
@@ -6409,19 +6407,13 @@ export type EventPerson_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<EventPerson_Bool_Exp>>>;
   readonly _not?: Maybe<EventPerson_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<EventPerson_Bool_Exp>>>;
-  readonly affiliation?: Maybe<String_Comparison_Exp>;
-  readonly attendee?: Maybe<Attendee_Bool_Exp>;
-  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
-  readonly conference?: Maybe<Conference_Bool_Exp>;
-  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly event?: Maybe<Event_Bool_Exp>;
   readonly eventId?: Maybe<Uuid_Comparison_Exp>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly name?: Maybe<String_Comparison_Exp>;
-  readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
-  readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly person?: Maybe<ContentPerson_Bool_Exp>;
+  readonly personId?: Maybe<Uuid_Comparison_Exp>;
   readonly roleName?: Maybe<EventPersonRole_Enum_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -6429,28 +6421,20 @@ export type EventPerson_Bool_Exp = {
 /** unique or primary key constraints on table "EventPerson" */
 export enum EventPerson_Constraint {
   /** unique or primary key constraint */
-  EventPersonEventIdAttendeeIdRoleNameKey = 'EventPerson_eventId_attendeeId_roleName_key',
-  /** unique or primary key constraint */
-  EventPersonEventIdNameAffiliationKey = 'EventPerson_eventId_name_affiliation_key',
+  EventPersonEventIdPersonIdRoleNameKey = 'EventPerson_eventId_personId_roleName_key',
   /** unique or primary key constraint */
   EventPersonPkey = 'EventPerson_pkey'
 }
 
 /** input type for inserting data into table "EventPerson" */
 export type EventPerson_Insert_Input = {
-  readonly affiliation?: Maybe<Scalars['String']>;
-  readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly event?: Maybe<Event_Obj_Rel_Insert_Input>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Obj_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly person?: Maybe<ContentPerson_Obj_Rel_Insert_Input>;
+  readonly personId?: Maybe<Scalars['uuid']>;
   readonly roleName?: Maybe<EventPersonRole_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -6458,54 +6442,38 @@ export type EventPerson_Insert_Input = {
 /** aggregate max on columns */
 export type EventPerson_Max_Fields = {
   readonly __typename?: 'EventPerson_max_fields';
-  readonly affiliation?: Maybe<Scalars['String']>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by max() on columns of table "EventPerson" */
 export type EventPerson_Max_Order_By = {
-  readonly affiliation?: Maybe<Order_By>;
-  readonly attendeeId?: Maybe<Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
+  readonly personId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type EventPerson_Min_Fields = {
   readonly __typename?: 'EventPerson_min_fields';
-  readonly affiliation?: Maybe<Scalars['String']>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
 /** order by min() on columns of table "EventPerson" */
 export type EventPerson_Min_Order_By = {
-  readonly affiliation?: Maybe<Order_By>;
-  readonly attendeeId?: Maybe<Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
+  readonly personId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -6533,19 +6501,13 @@ export type EventPerson_On_Conflict = {
 
 /** ordering options when selecting data from "EventPerson" */
 export type EventPerson_Order_By = {
-  readonly affiliation?: Maybe<Order_By>;
-  readonly attendee?: Maybe<Attendee_Order_By>;
-  readonly attendeeId?: Maybe<Order_By>;
-  readonly conference?: Maybe<Conference_Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly event?: Maybe<Event_Order_By>;
   readonly eventId?: Maybe<Order_By>;
   readonly eventPersonRole?: Maybe<EventPersonRole_Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingData?: Maybe<OriginatingData_Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
+  readonly person?: Maybe<ContentPerson_Order_By>;
+  readonly personId?: Maybe<Order_By>;
   readonly roleName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -6558,21 +6520,13 @@ export type EventPerson_Pk_Columns_Input = {
 /** select columns of table "EventPerson" */
 export enum EventPerson_Select_Column {
   /** column name */
-  Affiliation = 'affiliation',
-  /** column name */
-  AttendeeId = 'attendeeId',
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   EventId = 'eventId',
   /** column name */
   Id = 'id',
   /** column name */
-  Name = 'name',
-  /** column name */
-  OriginatingDataId = 'originatingDataId',
+  PersonId = 'personId',
   /** column name */
   RoleName = 'roleName',
   /** column name */
@@ -6581,14 +6535,10 @@ export enum EventPerson_Select_Column {
 
 /** input type for updating data in table "EventPerson" */
 export type EventPerson_Set_Input = {
-  readonly affiliation?: Maybe<Scalars['String']>;
-  readonly attendeeId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
   readonly roleName?: Maybe<EventPersonRole_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -6596,21 +6546,13 @@ export type EventPerson_Set_Input = {
 /** update columns of table "EventPerson" */
 export enum EventPerson_Update_Column {
   /** column name */
-  Affiliation = 'affiliation',
-  /** column name */
-  AttendeeId = 'attendeeId',
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   EventId = 'eventId',
   /** column name */
   Id = 'id',
   /** column name */
-  Name = 'name',
-  /** column name */
-  OriginatingDataId = 'originatingDataId',
+  PersonId = 'personId',
   /** column name */
   RoleName = 'roleName',
   /** column name */
@@ -8114,6 +8056,16 @@ export type Float_Comparison_Exp = {
   readonly _lte?: Maybe<Scalars['Float']>;
   readonly _neq?: Maybe<Scalars['Float']>;
   readonly _nin?: Maybe<ReadonlyArray<Scalars['Float']>>;
+};
+
+export type GenerateChatRemoteServiceIdsOutput = {
+  readonly __typename?: 'GenerateChatRemoteServiceIdsOutput';
+  readonly error?: Maybe<Scalars['String']>;
+};
+
+export type GenerateChatRemoteUserIdsOutput = {
+  readonly __typename?: 'GenerateChatRemoteUserIdsOutput';
+  readonly error?: Maybe<Scalars['String']>;
 };
 
 export type GetContentItemOutput = {
@@ -10365,10 +10317,6 @@ export type OriginatingData = {
   readonly createdAt: Scalars['timestamptz'];
   readonly data?: Maybe<Scalars['jsonb']>;
   /** An array relationship */
-  readonly eventPeople: ReadonlyArray<EventPerson>;
-  /** An aggregated array relationship */
-  readonly eventPeople_aggregate: EventPerson_Aggregate;
-  /** An array relationship */
   readonly events: ReadonlyArray<Event>;
   /** An aggregated array relationship */
   readonly events_aggregate: Event_Aggregate;
@@ -10453,26 +10401,6 @@ export type OriginatingDataContentPeople_AggregateArgs = {
 /** columns and relationships of "OriginatingData" */
 export type OriginatingDataDataArgs = {
   path?: Maybe<Scalars['String']>;
-};
-
-
-/** columns and relationships of "OriginatingData" */
-export type OriginatingDataEventPeopleArgs = {
-  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
-  where?: Maybe<EventPerson_Bool_Exp>;
-};
-
-
-/** columns and relationships of "OriginatingData" */
-export type OriginatingDataEventPeople_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<EventPerson_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<EventPerson_Order_By>>;
-  where?: Maybe<EventPerson_Bool_Exp>;
 };
 
 
@@ -10607,7 +10535,6 @@ export type OriginatingData_Bool_Exp = {
   readonly contentPeople?: Maybe<ContentPerson_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
-  readonly eventPeople?: Maybe<EventPerson_Bool_Exp>;
   readonly events?: Maybe<Event_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Bool_Exp>;
@@ -10649,7 +10576,6 @@ export type OriginatingData_Insert_Input = {
   readonly contentPeople?: Maybe<ContentPerson_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
-  readonly eventPeople?: Maybe<EventPerson_Arr_Rel_Insert_Input>;
   readonly events?: Maybe<Event_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly requiredContentItems?: Maybe<RequiredContentItem_Arr_Rel_Insert_Input>;
@@ -10728,7 +10654,6 @@ export type OriginatingData_Order_By = {
   readonly contentPeople_aggregate?: Maybe<ContentPerson_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
-  readonly eventPeople_aggregate?: Maybe<EventPerson_Aggregate_Order_By>;
   readonly events_aggregate?: Maybe<Event_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly requiredContentItems_aggregate?: Maybe<RequiredContentItem_Aggregate_Order_By>;
@@ -10885,6 +10810,8 @@ export enum Permission_Enum {
   ConferenceManageRoles = 'CONFERENCE_MANAGE_ROLES',
   /** Manage Schedule tables. */
   ConferenceManageSchedule = 'CONFERENCE_MANAGE_SCHEDULE',
+  /** Manage shuffle periods. */
+  ConferenceManageShuffle = 'CONFERENCE_MANAGE_SHUFFLE',
   /** Moderate (update only) conference attendees. */
   ConferenceModerateAttendees = 'CONFERENCE_MODERATE_ATTENDEES',
   /** View the conference. */
@@ -10990,6 +10917,18 @@ export enum Permission_Update_Column {
   /** column name */
   Name = 'name'
 }
+
+export type PresenceFlushOutput = {
+  readonly __typename?: 'PresenceFlushOutput';
+  readonly ok?: Maybe<Scalars['String']>;
+};
+
+export type PresenceSummaryOutput = {
+  readonly __typename?: 'PresenceSummaryOutput';
+  readonly pages?: Maybe<Scalars['jsonb']>;
+  readonly total_unique_tabs: Scalars['Int'];
+  readonly total_unique_user_ids: Scalars['Int'];
+};
 
 export type ProfilePhotoUrlResponse = {
   readonly __typename?: 'ProfilePhotoURLResponse';
@@ -14304,6 +14243,8 @@ export enum Transitions_Update_Column {
 export type UpdateProfilePhotoResponse = {
   readonly __typename?: 'UpdateProfilePhotoResponse';
   readonly ok: Scalars['Boolean'];
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
+  readonly photoURL_50x50?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "Uploader" */
@@ -15666,6 +15607,372 @@ export enum YouTubeUpload_Update_Column {
   VideoTitle = 'videoTitle'
 }
 
+/** columns and relationships of "analytics.AppStats" */
+export type Analytics_AppStats = {
+  readonly __typename?: 'analytics_AppStats';
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['Int'];
+  readonly pages?: Maybe<Scalars['jsonb']>;
+  readonly total_unique_tabs: Scalars['Int'];
+  readonly total_unique_user_ids: Scalars['Int'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "analytics.AppStats" */
+export type Analytics_AppStatsPagesArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "analytics.AppStats" */
+export type Analytics_AppStats_Aggregate = {
+  readonly __typename?: 'analytics_AppStats_aggregate';
+  readonly aggregate?: Maybe<Analytics_AppStats_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Analytics_AppStats>;
+};
+
+/** aggregate fields of "analytics.AppStats" */
+export type Analytics_AppStats_Aggregate_Fields = {
+  readonly __typename?: 'analytics_AppStats_aggregate_fields';
+  readonly avg?: Maybe<Analytics_AppStats_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Analytics_AppStats_Max_Fields>;
+  readonly min?: Maybe<Analytics_AppStats_Min_Fields>;
+  readonly stddev?: Maybe<Analytics_AppStats_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Analytics_AppStats_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Analytics_AppStats_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Analytics_AppStats_Sum_Fields>;
+  readonly var_pop?: Maybe<Analytics_AppStats_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Analytics_AppStats_Var_Samp_Fields>;
+  readonly variance?: Maybe<Analytics_AppStats_Variance_Fields>;
+};
+
+
+/** aggregate fields of "analytics.AppStats" */
+export type Analytics_AppStats_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "analytics.AppStats" */
+export type Analytics_AppStats_Aggregate_Order_By = {
+  readonly avg?: Maybe<Analytics_AppStats_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Analytics_AppStats_Max_Order_By>;
+  readonly min?: Maybe<Analytics_AppStats_Min_Order_By>;
+  readonly stddev?: Maybe<Analytics_AppStats_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Analytics_AppStats_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Analytics_AppStats_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Analytics_AppStats_Sum_Order_By>;
+  readonly var_pop?: Maybe<Analytics_AppStats_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Analytics_AppStats_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Analytics_AppStats_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Analytics_AppStats_Append_Input = {
+  readonly pages?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "analytics.AppStats" */
+export type Analytics_AppStats_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Analytics_AppStats_Insert_Input>;
+  readonly on_conflict?: Maybe<Analytics_AppStats_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_AppStats_Avg_Fields = {
+  readonly __typename?: 'analytics_AppStats_avg_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Avg_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "analytics.AppStats". All fields are combined with a logical 'AND'. */
+export type Analytics_AppStats_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Analytics_AppStats_Bool_Exp>>>;
+  readonly _not?: Maybe<Analytics_AppStats_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Analytics_AppStats_Bool_Exp>>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Int_Comparison_Exp>;
+  readonly pages?: Maybe<Jsonb_Comparison_Exp>;
+  readonly total_unique_tabs?: Maybe<Int_Comparison_Exp>;
+  readonly total_unique_user_ids?: Maybe<Int_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.AppStats" */
+export enum Analytics_AppStats_Constraint {
+  /** unique or primary key constraint */
+  AppStatsPkey = 'AppStats_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Analytics_AppStats_Delete_At_Path_Input = {
+  readonly pages?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Analytics_AppStats_Delete_Elem_Input = {
+  readonly pages?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Analytics_AppStats_Delete_Key_Input = {
+  readonly pages?: Maybe<Scalars['String']>;
+};
+
+/** input type for incrementing integer column in table "analytics.AppStats" */
+export type Analytics_AppStats_Inc_Input = {
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "analytics.AppStats" */
+export type Analytics_AppStats_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly pages?: Maybe<Scalars['jsonb']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Analytics_AppStats_Max_Fields = {
+  readonly __typename?: 'analytics_AppStats_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Analytics_AppStats_Min_Fields = {
+  readonly __typename?: 'analytics_AppStats_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.AppStats" */
+export type Analytics_AppStats_Mutation_Response = {
+  readonly __typename?: 'analytics_AppStats_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Analytics_AppStats>;
+};
+
+/** input type for inserting object relation for remote table "analytics.AppStats" */
+export type Analytics_AppStats_Obj_Rel_Insert_Input = {
+  readonly data: Analytics_AppStats_Insert_Input;
+  readonly on_conflict?: Maybe<Analytics_AppStats_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.AppStats" */
+export type Analytics_AppStats_On_Conflict = {
+  readonly constraint: Analytics_AppStats_Constraint;
+  readonly update_columns: ReadonlyArray<Analytics_AppStats_Update_Column>;
+  readonly where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "analytics.AppStats" */
+export type Analytics_AppStats_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly pages?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "analytics.AppStats" */
+export type Analytics_AppStats_Pk_Columns_Input = {
+  readonly id: Scalars['Int'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Analytics_AppStats_Prepend_Input = {
+  readonly pages?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "analytics.AppStats" */
+export enum Analytics_AppStats_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Pages = 'pages',
+  /** column name */
+  TotalUniqueTabs = 'total_unique_tabs',
+  /** column name */
+  TotalUniqueUserIds = 'total_unique_user_ids',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "analytics.AppStats" */
+export type Analytics_AppStats_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly pages?: Maybe<Scalars['jsonb']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_AppStats_Stddev_Fields = {
+  readonly __typename?: 'analytics_AppStats_stddev_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Stddev_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_AppStats_Stddev_Pop_Fields = {
+  readonly __typename?: 'analytics_AppStats_stddev_pop_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Stddev_Pop_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_AppStats_Stddev_Samp_Fields = {
+  readonly __typename?: 'analytics_AppStats_stddev_samp_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Stddev_Samp_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_AppStats_Sum_Fields = {
+  readonly __typename?: 'analytics_AppStats_sum_fields';
+  readonly id?: Maybe<Scalars['Int']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Int']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Sum_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.AppStats" */
+export enum Analytics_AppStats_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Pages = 'pages',
+  /** column name */
+  TotalUniqueTabs = 'total_unique_tabs',
+  /** column name */
+  TotalUniqueUserIds = 'total_unique_user_ids',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_AppStats_Var_Pop_Fields = {
+  readonly __typename?: 'analytics_AppStats_var_pop_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Var_Pop_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_AppStats_Var_Samp_Fields = {
+  readonly __typename?: 'analytics_AppStats_var_samp_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Var_Samp_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_AppStats_Variance_Fields = {
+  readonly __typename?: 'analytics_AppStats_variance_fields';
+  readonly id?: Maybe<Scalars['Float']>;
+  readonly total_unique_tabs?: Maybe<Scalars['Float']>;
+  readonly total_unique_user_ids?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "analytics.AppStats" */
+export type Analytics_AppStats_Variance_Order_By = {
+  readonly id?: Maybe<Order_By>;
+  readonly total_unique_tabs?: Maybe<Order_By>;
+  readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
 
 /** expression to compare columns of type bigint. All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
@@ -15719,6 +16026,7 @@ export type Chat_Chat = {
   readonly readUpToIndices: ReadonlyArray<Chat_ReadUpToIndex>;
   /** An aggregated array relationship */
   readonly readUpToIndices_aggregate: Chat_ReadUpToIndex_Aggregate;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly restrictToAdmins: Scalars['Boolean'];
   /** An array relationship */
   readonly room: ReadonlyArray<Room>;
@@ -15971,6 +16279,7 @@ export type Chat_Chat_Bool_Exp = {
   readonly messages?: Maybe<Chat_Message_Bool_Exp>;
   readonly pins?: Maybe<Chat_Pin_Bool_Exp>;
   readonly readUpToIndices?: Maybe<Chat_ReadUpToIndex_Bool_Exp>;
+  readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
   readonly restrictToAdmins?: Maybe<Boolean_Comparison_Exp>;
   readonly room?: Maybe<Room_Bool_Exp>;
   readonly subscriptions?: Maybe<Chat_Subscription_Bool_Exp>;
@@ -16002,6 +16311,7 @@ export type Chat_Chat_Insert_Input = {
   readonly messages?: Maybe<Chat_Message_Arr_Rel_Insert_Input>;
   readonly pins?: Maybe<Chat_Pin_Arr_Rel_Insert_Input>;
   readonly readUpToIndices?: Maybe<Chat_ReadUpToIndex_Arr_Rel_Insert_Input>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly restrictToAdmins?: Maybe<Scalars['Boolean']>;
   readonly room?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly subscriptions?: Maybe<Chat_Subscription_Arr_Rel_Insert_Input>;
@@ -16016,6 +16326,7 @@ export type Chat_Chat_Max_Fields = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicateToId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -16025,6 +16336,7 @@ export type Chat_Chat_Max_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly duplicateToId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -16035,6 +16347,7 @@ export type Chat_Chat_Min_Fields = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicateToId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -16044,6 +16357,7 @@ export type Chat_Chat_Min_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly duplicateToId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -16087,6 +16401,7 @@ export type Chat_Chat_Order_By = {
   readonly messages_aggregate?: Maybe<Chat_Message_Aggregate_Order_By>;
   readonly pins_aggregate?: Maybe<Chat_Pin_Aggregate_Order_By>;
   readonly readUpToIndices_aggregate?: Maybe<Chat_ReadUpToIndex_Aggregate_Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly restrictToAdmins?: Maybe<Order_By>;
   readonly room_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly subscriptions_aggregate?: Maybe<Chat_Subscription_Aggregate_Order_By>;
@@ -16118,6 +16433,8 @@ export enum Chat_Chat_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  RemoteServiceId = 'remoteServiceId',
+  /** column name */
   RestrictToAdmins = 'restrictToAdmins',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -16133,6 +16450,7 @@ export type Chat_Chat_Set_Input = {
   readonly enableMandatoryPin?: Maybe<Scalars['Boolean']>;
   readonly enableMandatorySubscribe?: Maybe<Scalars['Boolean']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly restrictToAdmins?: Maybe<Scalars['Boolean']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -16155,6 +16473,8 @@ export enum Chat_Chat_Update_Column {
   EnableMandatorySubscribe = 'enableMandatorySubscribe',
   /** column name */
   Id = 'id',
+  /** column name */
+  RemoteServiceId = 'remoteServiceId',
   /** column name */
   RestrictToAdmins = 'restrictToAdmins',
   /** column name */
@@ -16725,7 +17045,6 @@ export type Chat_Message = {
   /** An object relationship */
   readonly chat: Chat_Chat;
   readonly chatId: Scalars['uuid'];
-  readonly chatTitle: Scalars['String'];
   readonly created_at: Scalars['timestamptz'];
   readonly data: Scalars['jsonb'];
   /** An object relationship */
@@ -16744,10 +17063,10 @@ export type Chat_Message = {
   readonly reactions: ReadonlyArray<Chat_Reaction>;
   /** An aggregated array relationship */
   readonly reactions_aggregate: Chat_Reaction_Aggregate;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   /** An object relationship */
   readonly sender?: Maybe<Attendee>;
   readonly senderId?: Maybe<Scalars['uuid']>;
-  readonly senderName: Scalars['String'];
   readonly systemId?: Maybe<Scalars['String']>;
   readonly type: Chat_MessageType_Enum;
   readonly updated_at: Scalars['timestamptz'];
@@ -17050,7 +17369,6 @@ export type Chat_Message_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Message_Bool_Exp>>>;
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly chatTitle?: Maybe<String_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Bool_Exp>;
@@ -17061,9 +17379,9 @@ export type Chat_Message_Bool_Exp = {
   readonly isPinned?: Maybe<Boolean_Comparison_Exp>;
   readonly message?: Maybe<String_Comparison_Exp>;
   readonly reactions?: Maybe<Chat_Reaction_Bool_Exp>;
+  readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
-  readonly senderName?: Maybe<String_Comparison_Exp>;
   readonly systemId?: Maybe<String_Comparison_Exp>;
   readonly type?: Maybe<Chat_MessageType_Enum_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -17104,7 +17422,6 @@ export type Chat_Message_Inc_Input = {
 export type Chat_Message_Insert_Input = {
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly chatTitle?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
@@ -17115,9 +17432,9 @@ export type Chat_Message_Insert_Input = {
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly reactions?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
-  readonly senderName?: Maybe<Scalars['String']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_MessageType_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -17127,13 +17444,12 @@ export type Chat_Message_Insert_Input = {
 export type Chat_Message_Max_Fields = {
   readonly __typename?: 'chat_Message_max_fields';
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly chatTitle?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
-  readonly senderName?: Maybe<Scalars['String']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -17141,13 +17457,12 @@ export type Chat_Message_Max_Fields = {
 /** order by max() on columns of table "chat.Message" */
 export type Chat_Message_Max_Order_By = {
   readonly chatId?: Maybe<Order_By>;
-  readonly chatTitle?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
-  readonly senderName?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -17156,13 +17471,12 @@ export type Chat_Message_Max_Order_By = {
 export type Chat_Message_Min_Fields = {
   readonly __typename?: 'chat_Message_min_fields';
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly chatTitle?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
-  readonly senderName?: Maybe<Scalars['String']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -17170,13 +17484,12 @@ export type Chat_Message_Min_Fields = {
 /** order by min() on columns of table "chat.Message" */
 export type Chat_Message_Min_Order_By = {
   readonly chatId?: Maybe<Order_By>;
-  readonly chatTitle?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
-  readonly senderName?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -17207,7 +17520,6 @@ export type Chat_Message_On_Conflict = {
 export type Chat_Message_Order_By = {
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
-  readonly chatTitle?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Order_By>;
@@ -17218,9 +17530,9 @@ export type Chat_Message_Order_By = {
   readonly isPinned?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly reactions_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
-  readonly senderName?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly type?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -17241,8 +17553,6 @@ export enum Chat_Message_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
-  ChatTitle = 'chatTitle',
-  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   Data = 'data',
@@ -17255,9 +17565,9 @@ export enum Chat_Message_Select_Column {
   /** column name */
   Message = 'message',
   /** column name */
-  SenderId = 'senderId',
+  RemoteServiceId = 'remoteServiceId',
   /** column name */
-  SenderName = 'senderName',
+  SenderId = 'senderId',
   /** column name */
   SystemId = 'systemId',
   /** column name */
@@ -17269,15 +17579,14 @@ export enum Chat_Message_Select_Column {
 /** input type for updating data in table "chat.Message" */
 export type Chat_Message_Set_Input = {
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly chatTitle?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
-  readonly senderName?: Maybe<Scalars['String']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_MessageType_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -17340,8 +17649,6 @@ export enum Chat_Message_Update_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
-  ChatTitle = 'chatTitle',
-  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   Data = 'data',
@@ -17354,9 +17661,9 @@ export enum Chat_Message_Update_Column {
   /** column name */
   Message = 'message',
   /** column name */
-  SenderId = 'senderId',
+  RemoteServiceId = 'remoteServiceId',
   /** column name */
-  SenderName = 'senderName',
+  SenderId = 'senderId',
   /** column name */
   SystemId = 'systemId',
   /** column name */
@@ -17586,6 +17893,99 @@ export enum Chat_Pin_Update_Column {
   WasManuallyPinned = 'wasManuallyPinned'
 }
 
+/** columns and relationships of "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed = {
+  readonly __typename?: 'chat_PinnedOrSubscribed';
+  /** An object relationship */
+  readonly attendee?: Maybe<Attendee>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly chat?: Maybe<Chat_Chat>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregated selection of "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Aggregate = {
+  readonly __typename?: 'chat_PinnedOrSubscribed_aggregate';
+  readonly aggregate?: Maybe<Chat_PinnedOrSubscribed_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Chat_PinnedOrSubscribed>;
+};
+
+/** aggregate fields of "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Aggregate_Fields = {
+  readonly __typename?: 'chat_PinnedOrSubscribed_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Chat_PinnedOrSubscribed_Max_Fields>;
+  readonly min?: Maybe<Chat_PinnedOrSubscribed_Min_Fields>;
+};
+
+
+/** aggregate fields of "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Chat_PinnedOrSubscribed_Max_Order_By>;
+  readonly min?: Maybe<Chat_PinnedOrSubscribed_Min_Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "chat.PinnedOrSubscribed". All fields are combined with a logical 'AND'. */
+export type Chat_PinnedOrSubscribed_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_PinnedOrSubscribed_Bool_Exp>>>;
+  readonly _not?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_PinnedOrSubscribed_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Chat_PinnedOrSubscribed_Max_Fields = {
+  readonly __typename?: 'chat_PinnedOrSubscribed_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Chat_PinnedOrSubscribed_Min_Fields = {
+  readonly __typename?: 'chat_PinnedOrSubscribed_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chatId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** ordering options when selecting data from "chat.PinnedOrSubscribed" */
+export type Chat_PinnedOrSubscribed_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly chat?: Maybe<Chat_Chat_Order_By>;
+  readonly chatId?: Maybe<Order_By>;
+};
+
+/** select columns of table "chat.PinnedOrSubscribed" */
+export enum Chat_PinnedOrSubscribed_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  ChatId = 'chatId'
+}
+
 /** columns and relationships of "chat.Reaction" */
 export type Chat_Reaction = {
   readonly __typename?: 'chat_Reaction';
@@ -17602,6 +18002,7 @@ export type Chat_Reaction = {
   /** An object relationship */
   readonly message: Chat_Message;
   readonly messageId: Scalars['Int'];
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   /** An object relationship */
   readonly sender: Attendee;
   readonly senderId: Scalars['uuid'];
@@ -17886,6 +18287,7 @@ export type Chat_Reaction_Bool_Exp = {
   readonly id?: Maybe<Int_Comparison_Exp>;
   readonly message?: Maybe<Chat_Message_Bool_Exp>;
   readonly messageId?: Maybe<Int_Comparison_Exp>;
+  readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
   readonly symbol?: Maybe<String_Comparison_Exp>;
@@ -17931,6 +18333,7 @@ export type Chat_Reaction_Insert_Input = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
@@ -17945,6 +18348,7 @@ export type Chat_Reaction_Max_Fields = {
   readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -17956,6 +18360,7 @@ export type Chat_Reaction_Max_Order_By = {
   readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -17968,6 +18373,7 @@ export type Chat_Reaction_Min_Fields = {
   readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -17979,6 +18385,7 @@ export type Chat_Reaction_Min_Order_By = {
   readonly duplicateId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -18016,6 +18423,7 @@ export type Chat_Reaction_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Chat_Message_Order_By>;
   readonly messageId?: Maybe<Order_By>;
+  readonly remoteServiceId?: Maybe<Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
@@ -18046,6 +18454,8 @@ export enum Chat_Reaction_Select_Column {
   /** column name */
   MessageId = 'messageId',
   /** column name */
+  RemoteServiceId = 'remoteServiceId',
+  /** column name */
   SenderId = 'senderId',
   /** column name */
   Symbol = 'symbol',
@@ -18062,6 +18472,7 @@ export type Chat_Reaction_Set_Input = {
   readonly duplicateId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
+  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_ReactionType_Enum>;
@@ -18140,6 +18551,8 @@ export enum Chat_Reaction_Update_Column {
   Id = 'id',
   /** column name */
   MessageId = 'messageId',
+  /** column name */
+  RemoteServiceId = 'remoteServiceId',
   /** column name */
   SenderId = 'senderId',
   /** column name */
@@ -21120,6 +21533,10 @@ export type Mutation_Root = {
   readonly delete_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
   /** delete single row from the table: "YouTubeUpload" */
   readonly delete_YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
+  /** delete data from the table: "analytics.AppStats" */
+  readonly delete_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
+  /** delete single row from the table: "analytics.AppStats" */
+  readonly delete_analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
   /** delete data from the table: "chat.Chat" */
   readonly delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -21194,6 +21611,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.UploadYouTubeVideoJob" */
   readonly delete_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** delete data from the table: "room.ShuffleAlgorithm" */
+  readonly delete_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
+  /** delete single row from the table: "room.ShuffleAlgorithm" */
+  readonly delete_room_ShuffleAlgorithm_by_pk?: Maybe<Room_ShuffleAlgorithm>;
   /** delete data from the table: "room.ShufflePeriod" */
   readonly delete_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** delete single row from the table: "room.ShufflePeriod" */
@@ -21206,6 +21627,12 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** perform the action: "generateChatRemoteServiceIds" */
+  readonly generateChatRemoteServiceIds?: Maybe<GenerateChatRemoteServiceIdsOutput>;
+  /** perform the action: "generateChatRemoteToken" */
+  readonly generateChatRemoteToken?: Maybe<ChatRemoteToken>;
+  /** perform the action: "generateChatRemoteUserIds" */
+  readonly generateChatRemoteUserIds?: Maybe<GenerateChatRemoteUserIdsOutput>;
   /** perform the action: "getGoogleOAuthUrl" */
   readonly getGoogleOAuthUrl?: Maybe<GetGoogleOAuthUrlOutput>;
   /** insert data into the table: "Attendee" */
@@ -21420,6 +21847,10 @@ export type Mutation_Root = {
   readonly insert_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
   /** insert a single row into the table: "YouTubeUpload" */
   readonly insert_YouTubeUpload_one?: Maybe<YouTubeUpload>;
+  /** insert data into the table: "analytics.AppStats" */
+  readonly insert_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
+  /** insert a single row into the table: "analytics.AppStats" */
+  readonly insert_analytics_AppStats_one?: Maybe<Analytics_AppStats>;
   /** insert data into the table: "chat.Chat" */
   readonly insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -21496,6 +21927,10 @@ export type Mutation_Root = {
   readonly insert_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.UploadYouTubeVideoJob" */
   readonly insert_job_queues_UploadYouTubeVideoJob_one?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** insert data into the table: "room.ShuffleAlgorithm" */
+  readonly insert_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
+  /** insert a single row into the table: "room.ShuffleAlgorithm" */
+  readonly insert_room_ShuffleAlgorithm_one?: Maybe<Room_ShuffleAlgorithm>;
   /** insert data into the table: "room.ShufflePeriod" */
   readonly insert_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** insert a single row into the table: "room.ShufflePeriod" */
@@ -21520,6 +21955,8 @@ export type Mutation_Root = {
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
   /** perform the action: "joinRoomVonageSession" */
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+  /** perform the action: "presence_Flush" */
+  readonly presence_Flush: PresenceFlushOutput;
   /** perform the action: "refreshYouTubeData" */
   readonly refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
   /** perform the action: "stopEventBroadcast" */
@@ -21744,6 +22181,10 @@ export type Mutation_Root = {
   readonly update_YouTubeUpload?: Maybe<YouTubeUpload_Mutation_Response>;
   /** update single row of the table: "YouTubeUpload" */
   readonly update_YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
+  /** update data of the table: "analytics.AppStats" */
+  readonly update_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
+  /** update single row of the table: "analytics.AppStats" */
+  readonly update_analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
   /** update data of the table: "chat.Chat" */
   readonly update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -21818,6 +22259,10 @@ export type Mutation_Root = {
   readonly update_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** update single row of the table: "job_queues.UploadYouTubeVideoJob" */
   readonly update_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** update data of the table: "room.ShuffleAlgorithm" */
+  readonly update_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
+  /** update single row of the table: "room.ShuffleAlgorithm" */
+  readonly update_room_ShuffleAlgorithm_by_pk?: Maybe<Room_ShuffleAlgorithm>;
   /** update data of the table: "room.ShufflePeriod" */
   readonly update_room_ShufflePeriod?: Maybe<Room_ShufflePeriod_Mutation_Response>;
   /** update single row of the table: "room.ShufflePeriod" */
@@ -22484,6 +22929,18 @@ export type Mutation_RootDelete_YouTubeUpload_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Analytics_AppStatsArgs = {
+  where: Analytics_AppStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_AppStats_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Chat_ChatArgs = {
   where: Chat_Chat_Bool_Exp;
 };
@@ -22710,6 +23167,18 @@ export type Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Room_ShuffleAlgorithmArgs = {
+  where: Room_ShuffleAlgorithm_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_ShuffleAlgorithm_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Room_ShufflePeriodArgs = {
   where: Room_ShufflePeriod_Bool_Exp;
 };
@@ -22742,6 +23211,12 @@ export type Mutation_RootDelete_Room_ShuffleRoomArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+/** mutation root */
+export type Mutation_RootGenerateChatRemoteTokenArgs = {
+  attendeeId: Scalars['uuid'];
 };
 
 
@@ -23494,6 +23969,20 @@ export type Mutation_RootInsert_YouTubeUpload_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Analytics_AppStatsArgs = {
+  objects: ReadonlyArray<Analytics_AppStats_Insert_Input>;
+  on_conflict?: Maybe<Analytics_AppStats_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_AppStats_OneArgs = {
+  object: Analytics_AppStats_Insert_Input;
+  on_conflict?: Maybe<Analytics_AppStats_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Chat_ChatArgs = {
   objects: ReadonlyArray<Chat_Chat_Insert_Input>;
   on_conflict?: Maybe<Chat_Chat_On_Conflict>;
@@ -23754,6 +24243,20 @@ export type Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJobArgs = {
 export type Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJob_OneArgs = {
   object: Job_Queues_UploadYouTubeVideoJob_Insert_Input;
   on_conflict?: Maybe<Job_Queues_UploadYouTubeVideoJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShuffleAlgorithmArgs = {
+  objects: ReadonlyArray<Room_ShuffleAlgorithm_Insert_Input>;
+  on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_ShuffleAlgorithm_OneArgs = {
+  object: Room_ShuffleAlgorithm_Insert_Input;
+  on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
 };
 
 
@@ -24739,6 +25242,32 @@ export type Mutation_RootUpdate_YouTubeUpload_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Analytics_AppStatsArgs = {
+  _append?: Maybe<Analytics_AppStats_Append_Input>;
+  _delete_at_path?: Maybe<Analytics_AppStats_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Analytics_AppStats_Delete_Elem_Input>;
+  _delete_key?: Maybe<Analytics_AppStats_Delete_Key_Input>;
+  _inc?: Maybe<Analytics_AppStats_Inc_Input>;
+  _prepend?: Maybe<Analytics_AppStats_Prepend_Input>;
+  _set?: Maybe<Analytics_AppStats_Set_Input>;
+  where: Analytics_AppStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_AppStats_By_PkArgs = {
+  _append?: Maybe<Analytics_AppStats_Append_Input>;
+  _delete_at_path?: Maybe<Analytics_AppStats_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Analytics_AppStats_Delete_Elem_Input>;
+  _delete_key?: Maybe<Analytics_AppStats_Delete_Key_Input>;
+  _inc?: Maybe<Analytics_AppStats_Inc_Input>;
+  _prepend?: Maybe<Analytics_AppStats_Prepend_Input>;
+  _set?: Maybe<Analytics_AppStats_Set_Input>;
+  pk_columns: Analytics_AppStats_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Chat_ChatArgs = {
   _set?: Maybe<Chat_Chat_Set_Input>;
   where: Chat_Chat_Bool_Exp;
@@ -25064,6 +25593,20 @@ export type Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
   _inc?: Maybe<Job_Queues_UploadYouTubeVideoJob_Inc_Input>;
   _set?: Maybe<Job_Queues_UploadYouTubeVideoJob_Set_Input>;
   pk_columns: Job_Queues_UploadYouTubeVideoJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShuffleAlgorithmArgs = {
+  _set?: Maybe<Room_ShuffleAlgorithm_Set_Input>;
+  where: Room_ShuffleAlgorithm_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_ShuffleAlgorithm_By_PkArgs = {
+  _set?: Maybe<Room_ShuffleAlgorithm_Set_Input>;
+  pk_columns: Room_ShuffleAlgorithm_Pk_Columns_Input;
 };
 
 
@@ -25459,6 +26002,12 @@ export type Query_Root = {
   readonly YouTubeUpload_aggregate: YouTubeUpload_Aggregate;
   /** fetch data from the table: "YouTubeUpload" using primary key columns */
   readonly YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
+  /** fetch data from the table: "analytics.AppStats" */
+  readonly analytics_AppStats: ReadonlyArray<Analytics_AppStats>;
+  /** fetch aggregated fields from the table: "analytics.AppStats" */
+  readonly analytics_AppStats_aggregate: Analytics_AppStats_Aggregate;
+  /** fetch data from the table: "analytics.AppStats" using primary key columns */
+  readonly analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -25495,6 +26044,10 @@ export type Query_Root = {
   readonly chat_Pin_aggregate: Chat_Pin_Aggregate;
   /** fetch data from the table: "chat.Pin" using primary key columns */
   readonly chat_Pin_by_pk?: Maybe<Chat_Pin>;
+  /** fetch data from the table: "chat.PinnedOrSubscribed" */
+  readonly chat_PinnedOrSubscribed: ReadonlyArray<Chat_PinnedOrSubscribed>;
+  /** fetch aggregated fields from the table: "chat.PinnedOrSubscribed" */
+  readonly chat_PinnedOrSubscribed_aggregate: Chat_PinnedOrSubscribed_Aggregate;
   /** fetch data from the table: "chat.Reaction" */
   readonly chat_Reaction: ReadonlyArray<Chat_Reaction>;
   /** fetch data from the table: "chat.ReactionType" */
@@ -25577,8 +26130,16 @@ export type Query_Root = {
   readonly job_queues_UploadYouTubeVideoJob_aggregate: Job_Queues_UploadYouTubeVideoJob_Aggregate;
   /** fetch data from the table: "job_queues.UploadYouTubeVideoJob" using primary key columns */
   readonly job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** perform the action: "presence_Summary" */
+  readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
+  /** fetch data from the table: "room.ShuffleAlgorithm" */
+  readonly room_ShuffleAlgorithm: ReadonlyArray<Room_ShuffleAlgorithm>;
+  /** fetch aggregated fields from the table: "room.ShuffleAlgorithm" */
+  readonly room_ShuffleAlgorithm_aggregate: Room_ShuffleAlgorithm_Aggregate;
+  /** fetch data from the table: "room.ShuffleAlgorithm" using primary key columns */
+  readonly room_ShuffleAlgorithm_by_pk?: Maybe<Room_ShuffleAlgorithm>;
   /** fetch data from the table: "room.ShufflePeriod" */
   readonly room_ShufflePeriod: ReadonlyArray<Room_ShufflePeriod>;
   /** fetch aggregated fields from the table: "room.ShufflePeriod" */
@@ -27019,6 +27580,32 @@ export type Query_RootYouTubeUpload_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootAnalytics_AppStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_AppStats_Order_By>>;
+  where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_AppStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_AppStats_Order_By>>;
+  where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_AppStats_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** query root */
 export type Query_RootChat_ChatArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -27172,6 +27759,26 @@ export type Query_RootChat_Pin_AggregateArgs = {
 export type Query_RootChat_Pin_By_PkArgs = {
   attendeeId: Scalars['uuid'];
   chatId: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootChat_PinnedOrSubscribedArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Order_By>>;
+  where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootChat_PinnedOrSubscribed_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Order_By>>;
+  where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
 };
 
 
@@ -27535,6 +28142,32 @@ export type Query_RootProtectedEchoArgs = {
 
 
 /** query root */
+export type Query_RootRoom_ShuffleAlgorithmArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Order_By>>;
+  where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleAlgorithm_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Order_By>>;
+  where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_ShuffleAlgorithm_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootRoom_ShufflePeriodArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -27611,9 +28244,172 @@ export type Query_RootRoom_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
+/** columns and relationships of "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm = {
+  readonly __typename?: 'room_ShuffleAlgorithm';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Aggregate = {
+  readonly __typename?: 'room_ShuffleAlgorithm_aggregate';
+  readonly aggregate?: Maybe<Room_ShuffleAlgorithm_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_ShuffleAlgorithm>;
+};
+
+/** aggregate fields of "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Aggregate_Fields = {
+  readonly __typename?: 'room_ShuffleAlgorithm_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Room_ShuffleAlgorithm_Max_Fields>;
+  readonly min?: Maybe<Room_ShuffleAlgorithm_Min_Fields>;
+};
+
+
+/** aggregate fields of "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Room_ShuffleAlgorithm_Max_Order_By>;
+  readonly min?: Maybe<Room_ShuffleAlgorithm_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Room_ShuffleAlgorithm_Insert_Input>;
+  readonly on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "room.ShuffleAlgorithm". All fields are combined with a logical 'AND'. */
+export type Room_ShuffleAlgorithm_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Room_ShuffleAlgorithm_Bool_Exp>>>;
+  readonly _not?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Room_ShuffleAlgorithm_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.ShuffleAlgorithm" */
+export enum Room_ShuffleAlgorithm_Constraint {
+  /** unique or primary key constraint */
+  ShuffleAlgorithmPkey = 'ShuffleAlgorithm_pkey'
+}
+
+export enum Room_ShuffleAlgorithm_Enum {
+  /** First-come, first-served with auto-created rooms. */
+  Fcfs = 'fcfs',
+  /** First-come, first-served with a fixed set of (manually created) rooms. Limits max participants. */
+  FcfsFixedRooms = 'fcfs_fixed_rooms',
+  /** No automation. Rooms and allocations controlled manually. */
+  None = 'none'
+}
+
+/** expression to compare columns of type room_ShuffleAlgorithm_enum. All fields are combined with logical 'AND'. */
+export type Room_ShuffleAlgorithm_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<Room_ShuffleAlgorithm_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Room_ShuffleAlgorithm_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Enum>>;
+};
+
+/** input type for inserting data into table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Room_ShuffleAlgorithm_Max_Fields = {
+  readonly __typename?: 'room_ShuffleAlgorithm_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Room_ShuffleAlgorithm_Min_Fields = {
+  readonly __typename?: 'room_ShuffleAlgorithm_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Mutation_Response = {
+  readonly __typename?: 'room_ShuffleAlgorithm_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Room_ShuffleAlgorithm>;
+};
+
+/** input type for inserting object relation for remote table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Obj_Rel_Insert_Input = {
+  readonly data: Room_ShuffleAlgorithm_Insert_Input;
+  readonly on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
+};
+
+/** on conflict condition type for table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_On_Conflict = {
+  readonly constraint: Room_ShuffleAlgorithm_Constraint;
+  readonly update_columns: ReadonlyArray<Room_ShuffleAlgorithm_Update_Column>;
+  readonly where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "room.ShuffleAlgorithm" */
+export enum Room_ShuffleAlgorithm_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "room.ShuffleAlgorithm" */
+export type Room_ShuffleAlgorithm_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "room.ShuffleAlgorithm" */
+export enum Room_ShuffleAlgorithm_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 /** columns and relationships of "room.ShufflePeriod" */
 export type Room_ShufflePeriod = {
   readonly __typename?: 'room_ShufflePeriod';
+  readonly algorithm: Room_ShuffleAlgorithm_Enum;
   /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -27753,6 +28549,7 @@ export type Room_ShufflePeriod_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Room_ShufflePeriod_Bool_Exp>>>;
   readonly _not?: Maybe<Room_ShufflePeriod_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Room_ShufflePeriod_Bool_Exp>>>;
+  readonly algorithm?: Maybe<Room_ShuffleAlgorithm_Enum_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -27787,6 +28584,7 @@ export type Room_ShufflePeriod_Inc_Input = {
 
 /** input type for inserting data into table "room.ShufflePeriod" */
 export type Room_ShufflePeriod_Insert_Input = {
+  readonly algorithm?: Maybe<Room_ShuffleAlgorithm_Enum>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
@@ -27895,6 +28693,7 @@ export type Room_ShufflePeriod_On_Conflict = {
 
 /** ordering options when selecting data from "room.ShufflePeriod" */
 export type Room_ShufflePeriod_Order_By = {
+  readonly algorithm?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
@@ -27920,6 +28719,8 @@ export type Room_ShufflePeriod_Pk_Columns_Input = {
 
 /** select columns of table "room.ShufflePeriod" */
 export enum Room_ShufflePeriod_Select_Column {
+  /** column name */
+  Algorithm = 'algorithm',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -27948,6 +28749,7 @@ export enum Room_ShufflePeriod_Select_Column {
 
 /** input type for updating data in table "room.ShufflePeriod" */
 export type Room_ShufflePeriod_Set_Input = {
+  readonly algorithm?: Maybe<Room_ShuffleAlgorithm_Enum>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly endAt?: Maybe<Scalars['timestamptz']>;
@@ -28032,6 +28834,8 @@ export type Room_ShufflePeriod_Sum_Order_By = {
 
 /** update columns of table "room.ShufflePeriod" */
 export enum Room_ShufflePeriod_Update_Column {
+  /** column name */
+  Algorithm = 'algorithm',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -29167,6 +29971,12 @@ export type Subscription_Root = {
   readonly YouTubeUpload_aggregate: YouTubeUpload_Aggregate;
   /** fetch data from the table: "YouTubeUpload" using primary key columns */
   readonly YouTubeUpload_by_pk?: Maybe<YouTubeUpload>;
+  /** fetch data from the table: "analytics.AppStats" */
+  readonly analytics_AppStats: ReadonlyArray<Analytics_AppStats>;
+  /** fetch aggregated fields from the table: "analytics.AppStats" */
+  readonly analytics_AppStats_aggregate: Analytics_AppStats_Aggregate;
+  /** fetch data from the table: "analytics.AppStats" using primary key columns */
+  readonly analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -29203,6 +30013,10 @@ export type Subscription_Root = {
   readonly chat_Pin_aggregate: Chat_Pin_Aggregate;
   /** fetch data from the table: "chat.Pin" using primary key columns */
   readonly chat_Pin_by_pk?: Maybe<Chat_Pin>;
+  /** fetch data from the table: "chat.PinnedOrSubscribed" */
+  readonly chat_PinnedOrSubscribed: ReadonlyArray<Chat_PinnedOrSubscribed>;
+  /** fetch aggregated fields from the table: "chat.PinnedOrSubscribed" */
+  readonly chat_PinnedOrSubscribed_aggregate: Chat_PinnedOrSubscribed_Aggregate;
   /** fetch data from the table: "chat.Reaction" */
   readonly chat_Reaction: ReadonlyArray<Chat_Reaction>;
   /** fetch data from the table: "chat.ReactionType" */
@@ -29285,8 +30099,16 @@ export type Subscription_Root = {
   readonly job_queues_UploadYouTubeVideoJob_aggregate: Job_Queues_UploadYouTubeVideoJob_Aggregate;
   /** fetch data from the table: "job_queues.UploadYouTubeVideoJob" using primary key columns */
   readonly job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** perform the action: "presence_Summary" */
+  readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
+  /** fetch data from the table: "room.ShuffleAlgorithm" */
+  readonly room_ShuffleAlgorithm: ReadonlyArray<Room_ShuffleAlgorithm>;
+  /** fetch aggregated fields from the table: "room.ShuffleAlgorithm" */
+  readonly room_ShuffleAlgorithm_aggregate: Room_ShuffleAlgorithm_Aggregate;
+  /** fetch data from the table: "room.ShuffleAlgorithm" using primary key columns */
+  readonly room_ShuffleAlgorithm_by_pk?: Maybe<Room_ShuffleAlgorithm>;
   /** fetch data from the table: "room.ShufflePeriod" */
   readonly room_ShufflePeriod: ReadonlyArray<Room_ShufflePeriod>;
   /** fetch aggregated fields from the table: "room.ShufflePeriod" */
@@ -30727,6 +31549,32 @@ export type Subscription_RootYouTubeUpload_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootAnalytics_AppStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_AppStats_Order_By>>;
+  where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_AppStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_AppStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_AppStats_Order_By>>;
+  where?: Maybe<Analytics_AppStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_AppStats_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** subscription root */
 export type Subscription_RootChat_ChatArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -30880,6 +31728,26 @@ export type Subscription_RootChat_Pin_AggregateArgs = {
 export type Subscription_RootChat_Pin_By_PkArgs = {
   attendeeId: Scalars['uuid'];
   chatId: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_PinnedOrSubscribedArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Order_By>>;
+  where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootChat_PinnedOrSubscribed_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Chat_PinnedOrSubscribed_Order_By>>;
+  where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
 };
 
 
@@ -31243,6 +32111,32 @@ export type Subscription_RootProtectedEchoArgs = {
 
 
 /** subscription root */
+export type Subscription_RootRoom_ShuffleAlgorithmArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Order_By>>;
+  where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleAlgorithm_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Order_By>>;
+  where?: Maybe<Room_ShuffleAlgorithm_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_ShuffleAlgorithm_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
 export type Subscription_RootRoom_ShufflePeriodArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_ShufflePeriod_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -31347,64 +32241,91 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
-export type SubdMessages_2021_02_20T21_08SubscriptionVariables = Exact<{
+export type InitialChatState_ReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly notifiedUpToMessageId: number, readonly unreadCount?: Maybe<number> };
+
+export type ChatState_SubdMessageFragment = { readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any>, readonly remoteServiceId?: Maybe<string> };
+
+export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly remoteServiceId?: Maybe<string>, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
+    { readonly __typename?: 'chat_ReadUpToIndex' }
+    & InitialChatState_ReadUpToIndexFragment
+  )>, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> };
+
+export type InitialChatStateQueryVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type SubdMessages_2021_02_20T21_08Subscription = { readonly __typename?: 'subscription_root', readonly chat_Subscription: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any, readonly chat: { readonly __typename?: 'chat_Chat', readonly id: any, readonly messages: ReadonlyArray<{ readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any>, readonly senderName: string, readonly chatTitle: string }> } }> };
+export type InitialChatStateQuery = { readonly __typename?: 'query_root', readonly chat_PinnedOrSubscribed: ReadonlyArray<{ readonly __typename?: 'chat_PinnedOrSubscribed', readonly chatId?: Maybe<any>, readonly attendeeId?: Maybe<any>, readonly chat?: Maybe<(
+      { readonly __typename?: 'chat_Chat' }
+      & InitialChatState_ChatFragment
+    )> }> };
 
-export type SetNotifiedUpToIndexMutationVariables = Exact<{
+export type SelectInitialChatStateQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
   attendeeId: Scalars['uuid'];
-  chatId: Scalars['uuid'];
-  msgId: Scalars['Int'];
 }>;
 
 
-export type SetNotifiedUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex_one?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly chatId: any, readonly attendeeId: any, readonly unreadCount?: Maybe<number>, readonly notifiedUpToMessageId: number }> };
-
-export type GetChatPathQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-}>;
-
-
-export type GetChatPathQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
-
-export type SendChatMessageMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  senderId: Scalars['uuid'];
-  type: Chat_MessageType_Enum;
-  message: Scalars['String'];
-  data?: Maybe<Scalars['jsonb']>;
-  isPinned?: Maybe<Scalars['Boolean']>;
-  chatTitle?: Maybe<Scalars['String']>;
-  senderName?: Maybe<Scalars['String']>;
-}>;
-
-
-export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message_one?: Maybe<(
-    { readonly __typename?: 'chat_Message' }
-    & SubscribedChatMessageDataFragment
+export type SelectInitialChatStateQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_Chat' }
+    & InitialChatState_ChatFragment
   )> };
 
-export type SendChatAnswerMutationVariables = Exact<{
-  data: Scalars['jsonb'];
-  senderId: Scalars['uuid'];
-  answeringId: Scalars['Int'];
+export type SelectInitialChatStatesQueryVariables = Exact<{
+  chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
 }>;
 
 
-export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
+export type SelectInitialChatStatesQuery = { readonly __typename?: 'query_root', readonly chat_Chat: ReadonlyArray<(
+    { readonly __typename?: 'chat_Chat' }
+    & InitialChatState_ChatFragment
+  )> };
 
-export type SelectFirstMessagesPageQueryVariables = Exact<{
+export type SelectPinnedOrSubscribedQueryVariables = Exact<{
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type SelectPinnedOrSubscribedQuery = { readonly __typename?: 'query_root', readonly chat_PinnedOrSubscribed: ReadonlyArray<{ readonly __typename?: 'chat_PinnedOrSubscribed', readonly chatId?: Maybe<any>, readonly attendeeId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> }> }> };
+
+export type SubscribeChatMutationVariables = Exact<{
   chatId: Scalars['uuid'];
-  maxCount: Scalars['Int'];
+  attendeeId: Scalars['uuid'];
 }>;
 
 
-export type SelectFirstMessagesPageQuery = { readonly __typename?: 'query_root', readonly chat_Message: ReadonlyArray<(
-    { readonly __typename?: 'chat_Message' }
-    & ChatMessageDataFragment
+export type SubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Subscription?: Maybe<{ readonly __typename?: 'chat_Subscription_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any }> }>, readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
+
+export type UnsubscribeChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type UnsubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Subscription_by_pk?: Maybe<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any }> };
+
+export type PinChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type PinChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Pin?: Maybe<{ readonly __typename?: 'chat_Pin_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly chatId: any, readonly attendeeId: any }> }> };
+
+export type UnpinChatMutationVariables = Exact<{
+  chatId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type UnpinChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Pin_by_pk?: Maybe<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any }> };
+
+export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number, readonly remoteServiceId?: Maybe<string> };
+
+export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly remoteServiceId?: Maybe<string>, readonly reactions: ReadonlyArray<(
+    { readonly __typename?: 'chat_Reaction' }
+    & ChatReactionDataFragment
   )> };
 
 export type SelectMessagesPageQueryVariables = Exact<{
@@ -31419,59 +32340,48 @@ export type SelectMessagesPageQuery = { readonly __typename?: 'query_root', read
     & ChatMessageDataFragment
   )> };
 
-export type SubscribedChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any };
+export type ShortChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly remoteServiceId?: Maybe<string> };
 
-export type NewMessagesSubscriptionVariables = Exact<{
+export type SendChatMessageMutationVariables = Exact<{
   chatId: Scalars['uuid'];
+  senderId: Scalars['uuid'];
+  type: Chat_MessageType_Enum;
+  message: Scalars['String'];
+  data?: Maybe<Scalars['jsonb']>;
+  isPinned?: Maybe<Scalars['Boolean']>;
 }>;
 
 
-export type NewMessagesSubscription = { readonly __typename?: 'subscription_root', readonly chat_Message: ReadonlyArray<(
+export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message_one?: Maybe<(
     { readonly __typename?: 'chat_Message' }
-    & SubscribedChatMessageDataFragment
+    & ShortChatMessageDataFragment
   )> };
 
-export type SubscribedChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number };
-
-export type MessageReactionsSubscriptionVariables = Exact<{
-  messageId: Scalars['Int'];
+export type SendChatAnswerMutationVariables = Exact<{
+  data: Scalars['jsonb'];
+  senderId: Scalars['uuid'];
+  answeringId: Scalars['Int'];
 }>;
 
 
-export type MessageReactionsSubscription = { readonly __typename?: 'subscription_root', readonly chat_Reaction: ReadonlyArray<(
-    { readonly __typename?: 'chat_Reaction' }
-    & SubscribedChatReactionDataFragment
-  )> };
+export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
 
-export type AddReactionMutationVariables = Exact<{
-  reaction: Chat_Reaction_Insert_Input;
-}>;
-
-
-export type AddReactionMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction?: Maybe<{ readonly __typename?: 'chat_Reaction_mutation_response', readonly affected_rows: number }> };
-
-export type DeleteReactionMutationVariables = Exact<{
-  reactionId: Scalars['Int'];
-}>;
-
-
-export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
-
-export type SelectReadUpToIndexQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
+export type SelectReadUpToIndicesQueryVariables = Exact<{
+  chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type SelectReadUpToIndexQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex_by_pk?: Maybe<(
+export type SelectReadUpToIndicesQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex: ReadonlyArray<(
     { readonly __typename?: 'chat_ReadUpToIndex' }
-    & SidebarReadUpToIndexFragment
+    & InitialChatState_ReadUpToIndexFragment
   )> };
 
 export type InsertReadUpToIndexMutationVariables = Exact<{
   chatId: Scalars['uuid'];
   attendeeId: Scalars['uuid'];
   messageId: Scalars['Int'];
+  notifiedUpToMessageId: Scalars['Int'];
 }>;
 
 
@@ -31481,29 +32391,11 @@ export type UpdateReadUpToIndexMutationVariables = Exact<{
   chatId: Scalars['uuid'];
   attendeeId: Scalars['uuid'];
   messageId: Scalars['Int'];
+  notifiedUpToMessageId: Scalars['Int'];
 }>;
 
 
-export type UpdateReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly update_chat_ReadUpToIndex_by_pk?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number }> };
-
-export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageId: number, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
-
-export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum };
-
-export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
-    { readonly __typename?: 'chat_Reaction' }
-    & ChatReactionDataFragment
-  )> };
-
-export type SelectSingleMessageQueryVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type SelectSingleMessageQuery = { readonly __typename?: 'query_root', readonly chat_Message_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_Message' }
-    & ChatMessageDataFragment
-  )> };
+export type UpdateReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly update_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
 
 export type DeleteMessageMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -31512,85 +32404,36 @@ export type DeleteMessageMutationVariables = Exact<{
 
 export type DeleteMessageMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
 
-export type PinDataFragment = { readonly __typename?: 'chat_Pin', readonly chatId: any, readonly attendeeId: any, readonly wasManuallyPinned: boolean };
-
-export type ChatPinConfigFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableMandatoryPin: boolean };
-
-export type SelectPinQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
+export type AddReactionMutationVariables = Exact<{
+  reaction: Chat_Reaction_Insert_Input;
 }>;
 
 
-export type SelectPinQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_Chat' }
-    & ChatPinConfigFragment
-  )>, readonly chat_Pin: ReadonlyArray<(
-    { readonly __typename?: 'chat_Pin' }
-    & PinDataFragment
+export type AddReactionMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<(
+    { readonly __typename?: 'chat_Reaction' }
+    & ChatReactionDataFragment
   )> };
 
-export type PinChatMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
+export type DeleteReactionMutationVariables = Exact<{
+  reactionId: Scalars['Int'];
+}>;
+
+
+export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
+
+export type GetRemoteChatServiceTokenMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type PinChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Pin?: Maybe<{ readonly __typename?: 'chat_Pin_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'chat_Pin' }
-      & PinDataFragment
-    )> }> };
+export type GetRemoteChatServiceTokenMutation = { readonly __typename?: 'mutation_root', readonly generateChatRemoteToken?: Maybe<{ readonly __typename?: 'ChatRemoteToken', readonly expiry: number, readonly jwt: string }> };
 
-export type UnpinChatMutationVariables = Exact<{
+export type GetChatPathQueryVariables = Exact<{
   chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
 }>;
 
 
-export type UnpinChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Pin_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_Pin' }
-    & PinDataFragment
-  )> };
-
-export type SubscriptionDataFragment = { readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any, readonly wasManuallySubscribed: boolean };
-
-export type ChatSubscriptionConfigFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoSubscribe: boolean, readonly enableMandatorySubscribe: boolean };
-
-export type SelectSubscriptionQueryVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type SelectSubscriptionQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_Chat' }
-    & ChatSubscriptionConfigFragment
-  )>, readonly chat_Subscription: ReadonlyArray<(
-    { readonly __typename?: 'chat_Subscription' }
-    & SubscriptionDataFragment
-  )> };
-
-export type SubscribeChatMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type SubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Subscription?: Maybe<{ readonly __typename?: 'chat_Subscription_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'chat_Subscription' }
-      & SubscriptionDataFragment
-    )> }>, readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
-
-export type UnsubscribeChatMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type UnsubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Subscription_by_pk?: Maybe<(
-    { readonly __typename?: 'chat_Subscription' }
-    & SubscriptionDataFragment
-  )> };
+export type GetChatPathQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
 
 export type SelectAttendeesQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -31710,7 +32553,16 @@ export type ContentGroupSummary_ContentGroupDataFragment = { readonly __typename
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
-export type Timeline_EventPersonFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any>, readonly name: string, readonly affiliation?: Maybe<string>, readonly roleName: EventPersonRole_Enum };
+export type AttendeeByIdQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
+}>;
+
+
+export type AttendeeByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
 
 export type UpdateAttendeeProfileMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -31718,7 +32570,10 @@ export type UpdateAttendeeProfileMutationVariables = Exact<{
 }>;
 
 
-export type UpdateAttendeeProfileMutation = { readonly __typename?: 'mutation_root', readonly update_AttendeeProfile_by_pk?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any }> };
+export type UpdateAttendeeProfileMutation = { readonly __typename?: 'mutation_root', readonly update_AttendeeProfile_by_pk?: Maybe<(
+    { readonly __typename?: 'AttendeeProfile' }
+    & AttendeeProfileDataFragment
+  )> };
 
 export type UpdateAttendeeDisplayNameMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -31726,7 +32581,10 @@ export type UpdateAttendeeDisplayNameMutationVariables = Exact<{
 }>;
 
 
-export type UpdateAttendeeDisplayNameMutation = { readonly __typename?: 'mutation_root', readonly update_Attendee_by_pk?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any }> };
+export type UpdateAttendeeDisplayNameMutation = { readonly __typename?: 'mutation_root', readonly update_Attendee_by_pk?: Maybe<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
 
 export type SubmitProfilePhotoMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -31734,7 +32592,7 @@ export type SubmitProfilePhotoMutationVariables = Exact<{
 }>;
 
 
-export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean }> };
+export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean, readonly photoURL_350x350?: Maybe<string>, readonly photoURL_50x50?: Maybe<string> }> };
 
 export type GetRoomVonageTokenMutationVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -31851,17 +32709,17 @@ export type MyEventRoomJoinRequestSubscriptionVariables = Exact<{
 
 export type MyEventRoomJoinRequestSubscription = { readonly __typename?: 'subscription_root', readonly EventRoomJoinRequest: ReadonlyArray<{ readonly __typename?: 'EventRoomJoinRequest', readonly id: any, readonly approved: boolean }> };
 
-export type Room_GetCurrentEventQueryVariables = Exact<{
-  currentEventId: Scalars['uuid'];
+export type Room_GetCurrentEventsQueryVariables = Exact<{
+  currentEventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type Room_GetCurrentEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<(
+export type Room_GetCurrentEventsQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
     { readonly __typename?: 'Event' }
     & Room_CurrentEventSummaryFragment
   )> };
 
-export type Room_CurrentEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> };
+export type Room_CurrentEventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly name: string, readonly startTime: any, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }> };
 
 export type Room_GetEventsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -31873,14 +32731,14 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly attendeeId?: Maybe<any> }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any> } }> };
 
-export type RoomBackstage_GetEventBreakoutRoomQueryVariables = Exact<{
-  originatingEventId: Scalars['uuid'];
+export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
+  originatingContentGroupId: Scalars['uuid'];
 }>;
 
 
-export type RoomBackstage_GetEventBreakoutRoomQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
+export type Room_GetEventBreakoutRoomQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -31945,16 +32803,6 @@ export type RoomSponsorContent_ContentGroupDataFragment = { readonly __typename?
   )> };
 
 export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
-
-export type VonageSubscriber_GetAttendeeQueryVariables = Exact<{
-  id: Scalars['uuid'];
-}>;
-
-
-export type VonageSubscriber_GetAttendeeQuery = { readonly __typename?: 'query_root', readonly Attendee_by_pk?: Maybe<(
-    { readonly __typename?: 'Attendee' }
-    & AttendeeDataFragment
-  )> };
 
 export type Timeline_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly isHidden: boolean, readonly layoutData?: Maybe<any> };
 
@@ -32029,6 +32877,17 @@ export type AttendeesByIdQueryVariables = Exact<{
 
 
 export type AttendeesByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeDataFragment
+  )> };
+
+export type AttendeesByUserIdQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  userIds: ReadonlyArray<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type AttendeesByUserIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
     { readonly __typename?: 'Attendee' }
     & AttendeeDataFragment
   )> };
@@ -32113,6 +32972,18 @@ export type ContentGroup_CreateRoomMutationVariables = Exact<{
 
 export type ContentGroup_CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly createContentGroupRoom?: Maybe<{ readonly __typename?: 'CreateContentGroupRoomOutput', readonly roomId?: Maybe<string>, readonly message?: Maybe<string> }> };
 
+export type ManageContentPeople_AttendeeFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly id: any, readonly invitedEmailAddress: string }>, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }> };
+
+export type ManageContentPeople_SelectAllAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContentPeople_SelectAllAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & ManageContentPeople_AttendeeFragment
+  )> };
+
 export type SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -32143,7 +33014,7 @@ export type ContentItemInfoFragment = { readonly __typename?: 'ContentItem', rea
 
 export type OriginatingDataInfoFragment = { readonly __typename?: 'OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> };
 
-export type ContentPersonInfoFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any> };
+export type ContentPersonInfoFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly attendeeId?: Maybe<any> };
 
 export type ContentGroupTagInfoFragment = { readonly __typename?: 'ContentGroupTag', readonly id: any, readonly tagId: any, readonly contentGroupId: any };
 
@@ -32391,6 +33262,7 @@ export type UpdatePersonMutationVariables = Exact<{
   affiliation?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
+  attendeeId?: Maybe<Scalars['uuid']>;
 }>;
 
 
@@ -32548,7 +33420,7 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: '
       )>, readonly paperUrlContentItems: ReadonlyArray<(
         { readonly __typename?: 'ContentItem' }
         & UploadYouTubeVideos_ContentItemFragment
-      )> } }> };
+      )>, readonly authors: ReadonlyArray<{ readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> } }> };
 
 export type UploadYouTubeVideos_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any };
 
@@ -32703,7 +33575,7 @@ export type UpdateRoleMutationVariables = Exact<{
 
 export type UpdateRoleMutation = { readonly __typename?: 'mutation_root', readonly update_Role?: Maybe<{ readonly __typename?: 'Role_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }> }>, readonly insert_RolePermission?: Maybe<{ readonly __typename?: 'RolePermission_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum, readonly roleId: any }> }>, readonly delete_RolePermission?: Maybe<{ readonly __typename?: 'RolePermission_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any }> }> };
 
-export type RoomParticipantWithAttendeeInfoFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly conferenceId: any, readonly attendeeId: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly displayName: string } };
+export type RoomParticipantWithAttendeeInfoFragment = { readonly __typename?: 'RoomParticipant', readonly id: any, readonly conferenceId: any, readonly attendeeId: any, readonly roomId: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } };
 
 export type RoomWithParticipantInfoFragment = { readonly __typename?: 'Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingContentGroupId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly participants: ReadonlyArray<(
     { readonly __typename?: 'RoomParticipant' }
@@ -32825,12 +33697,112 @@ export type DeleteEventInfosMutationVariables = Exact<{
 
 export type DeleteEventInfosMutation = { readonly __typename?: 'mutation_root', readonly delete_Event?: Maybe<{ readonly __typename?: 'Event_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any }> }> };
 
+export type ManageShufflePeriods_ShufflePeriodFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetAttendeesPerRoom: number, readonly maxAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum, readonly completedEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count?: Maybe<number> }> }, readonly ongoingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count?: Maybe<number> }> }, readonly waitingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count?: Maybe<number> }> } };
+
+export type ManageShufflePeriods_SelectAllQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageShufflePeriods_SelectAllQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<(
+    { readonly __typename?: 'room_ShufflePeriod' }
+    & ManageShufflePeriods_ShufflePeriodFragment
+  )> };
+
 export type SendEmail_GetAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
 export type SendEmail_GetAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string }> };
+
+export type AddEventPeople_ContentGroupPersonFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly groupId: any, readonly personId: any, readonly roleName: string };
+
+export type AddEventPeople_ContentPersonFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly attendeeId?: Maybe<any> };
+
+export type AddEventPeople_AttendeeFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }>, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly id: any, readonly invitedEmailAddress: string }> };
+
+export type AddEventPeople_GroupFragment = { readonly __typename?: 'Group', readonly id: any, readonly name: string };
+
+export type AddEventPeople_SelectContentGroupPeopleQueryVariables = Exact<{
+  contentGroupIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectContentGroupPeopleQuery = { readonly __typename?: 'query_root', readonly ContentGroupPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & AddEventPeople_ContentGroupPersonFragment
+  )> };
+
+export type AddEventPeople_SelectContentPeopleQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectContentPeopleQuery = { readonly __typename?: 'query_root', readonly ContentPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentPerson' }
+    & AddEventPeople_ContentPersonFragment
+  )> };
+
+export type AddEventPeople_SelectAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AddEventPeople_AttendeeFragment
+  )> };
+
+export type AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables = Exact<{
+  attendeeIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectContentPeople_ByAttendeeQuery = { readonly __typename?: 'query_root', readonly ContentPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentPerson' }
+    & AddEventPeople_ContentPersonFragment
+  )> };
+
+export type AddEventPeople_SelectGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<(
+    { readonly __typename?: 'Group' }
+    & AddEventPeople_GroupFragment
+  )> };
+
+export type AddEventPeople_SelectAttendees_ByGroupQueryVariables = Exact<{
+  groupId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectAttendees_ByGroupQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AddEventPeople_AttendeeFragment
+  )> };
+
+export type AddEventPeople_InsertContentPeopleMutationVariables = Exact<{
+  objects: ReadonlyArray<ContentPerson_Insert_Input> | ContentPerson_Insert_Input;
+}>;
+
+
+export type AddEventPeople_InsertContentPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentPerson?: Maybe<{ readonly __typename?: 'ContentPerson_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'ContentPerson' }
+      & AddEventPeople_ContentPersonFragment
+    )> }> };
+
+export type AddEventPeople_InsertEventPeopleMutationVariables = Exact<{
+  objects: ReadonlyArray<EventPerson_Insert_Input> | EventPerson_Insert_Input;
+}>;
+
+
+export type AddEventPeople_InsertEventPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'EventPerson' }
+      & EventPersonInfoFragment
+    )> }> };
 
 export type InsertEventPersonMutationVariables = Exact<{
   newEventPerson: EventPerson_Insert_Input;
@@ -32849,17 +33821,14 @@ export type DeleteEventPersonsMutationVariables = Exact<{
 
 export type DeleteEventPersonsMutation = { readonly __typename?: 'mutation_root', readonly delete_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any }> }> };
 
-export type UpdateEventPersonInfoMutationVariables = Exact<{
+export type UpdateEventPersonMutationVariables = Exact<{
   id: Scalars['uuid'];
-  attendeeId?: Maybe<Scalars['uuid']>;
-  name: Scalars['String'];
-  affiliation?: Maybe<Scalars['String']>;
+  personId: Scalars['uuid'];
   roleName: EventPersonRole_Enum;
-  originatingDataId?: Maybe<Scalars['uuid']>;
 }>;
 
 
-export type UpdateEventPersonInfoMutation = { readonly __typename?: 'mutation_root', readonly update_EventPerson_by_pk?: Maybe<(
+export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root', readonly update_EventPerson_by_pk?: Maybe<(
     { readonly __typename?: 'EventPerson' }
     & EventPersonInfoFragment
   )> };
@@ -32882,11 +33851,9 @@ export type EventInfoFragment = { readonly __typename?: 'Event', readonly confer
     & EventTagInfoFragment
   )> };
 
-export type EventPersonInfoFragment = { readonly __typename?: 'EventPerson', readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any>, readonly conferenceId: any, readonly eventId: any, readonly id: any, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roleName: EventPersonRole_Enum, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly userId?: Maybe<string> }> };
+export type EventPersonInfoFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly eventId: any, readonly roleName: EventPersonRole_Enum, readonly personId: any };
 
 export type EventTagInfoFragment = { readonly __typename?: 'EventTag', readonly eventId: any, readonly id: any, readonly tagId: any };
-
-export type AttendeeInfoFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string };
 
 export type SelectWholeScheduleQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -32908,9 +33875,9 @@ export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', rea
   )>, readonly ContentGroup: ReadonlyArray<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupFullNestedInfoFragment
-  )>, readonly Attendee: ReadonlyArray<(
-    { readonly __typename?: 'Attendee' }
-    & AttendeeInfoFragment
+  )>, readonly ContentPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentPerson' }
+    & ContentPersonInfoFragment
   )> };
 
 export type InsertRoomsMutationVariables = Exact<{
@@ -32972,36 +33939,38 @@ export type UpdateEventMutationVariables = Exact<{
   contentGroupId?: Maybe<Scalars['uuid']>;
   newEventTags: ReadonlyArray<EventTag_Insert_Input> | EventTag_Insert_Input;
   deleteEventTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-  newEventPeople: ReadonlyArray<EventPerson_Insert_Input> | EventPerson_Insert_Input;
-  deleteEventPeopleIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
 export type UpdateEventMutation = { readonly __typename?: 'mutation_root', readonly insert_EventTag?: Maybe<{ readonly __typename?: 'EventTag_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'EventTag' }
       & EventTagInfoFragment
-    )> }>, readonly insert_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'EventPerson' }
-      & EventPersonInfoFragment
     )> }>, readonly update_Event_by_pk?: Maybe<(
     { readonly __typename?: 'Event' }
     & EventInfoFragment
-  )>, readonly delete_EventTag?: Maybe<{ readonly __typename?: 'EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly id: any }> }>, readonly delete_EventPerson?: Maybe<{ readonly __typename?: 'EventPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any }> }> };
+  )>, readonly delete_EventTag?: Maybe<{ readonly __typename?: 'EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'EventTag', readonly id: any }> }> };
 
-export type UpdateEventPersonMutationVariables = Exact<{
+export type UpdateShufflePeriodMutationVariables = Exact<{
   id: Scalars['uuid'];
-  attendeeId?: Maybe<Scalars['uuid']>;
-  name: Scalars['String'];
-  affiliation?: Maybe<Scalars['String']>;
-  roleName: EventPersonRole_Enum;
-  originatingDataId?: Maybe<Scalars['uuid']>;
+  object: Room_ShufflePeriod_Set_Input;
 }>;
 
 
-export type UpdateEventPersonMutation = { readonly __typename?: 'mutation_root', readonly update_EventPerson_by_pk?: Maybe<(
-    { readonly __typename?: 'EventPerson' }
-    & EventPersonInfoFragment
-  )> };
+export type UpdateShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly update_room_ShufflePeriod_by_pk?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetAttendeesPerRoom: number, readonly maxAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum }> };
+
+export type InsertShufflePeriodMutationVariables = Exact<{
+  object: Room_ShufflePeriod_Insert_Input;
+}>;
+
+
+export type InsertShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShufflePeriod_one?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetAttendeesPerRoom: number, readonly maxAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum }> };
+
+export type DeleteShufflePeriodMutationVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type DeleteShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly delete_room_ShufflePeriod_by_pk?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any }> };
 
 export type AddSponsorContentMenu_CreateContentItemMutationVariables = Exact<{
   object: ContentItem_Insert_Input;
@@ -33115,66 +34084,48 @@ export type CreateNewConferenceMetaStructureMutation = { readonly __typename?: '
       & ContentGroupDataFragment
     )> }> };
 
-export type ConferenceBySlugQueryVariables = Exact<{
+export type ConferenceBySlug_WithUserQueryVariables = Exact<{
   slug: Scalars['String'];
-}>;
-
-
-export type ConferenceBySlugQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> };
-
-export type GroupDataFragment = { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> };
-
-export type CurrentUserGroupsRolesPermissionsQueryVariables = Exact<{
-  userId?: Maybe<Scalars['String']>;
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type CurrentUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly User: ReadonlyArray<{ readonly __typename?: 'User', readonly id: string, readonly conferencesCreated: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any }>, readonly attendees: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: (
-          { readonly __typename?: 'Group' }
-          & GroupDataFragment
-        ) }> }> }>, readonly publicGroups: ReadonlyArray<(
-    { readonly __typename?: 'Group' }
-    & GroupDataFragment
-  )> };
-
-export type PublicUserGroupsRolesPermissionsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type PublicUserGroupsRolesPermissionsQuery = { readonly __typename?: 'query_root', readonly publicGroups: ReadonlyArray<(
-    { readonly __typename?: 'Group' }
-    & GroupDataFragment
-  )> };
-
-export type AttendeeProfileDataFragment = { readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean };
-
-export type AttendeeDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string, readonly profile?: Maybe<(
-    { readonly __typename?: 'AttendeeProfile' }
-    & AttendeeProfileDataFragment
-  )> };
-
-export type AttendeeByUserIdConferenceIdQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
   userId: Scalars['String'];
 }>;
 
 
-export type AttendeeByUserIdConferenceIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
-    { readonly __typename?: 'Attendee' }
-    & AttendeeDataFragment
+export type ConferenceBySlug_WithUserQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<(
+    { readonly __typename?: 'Conference' }
+    & PublicConferenceInfoFragment
+    & AuthdConferenceInfoFragment
   )> };
 
-export type AttendeeByIdQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
+export type ConferenceBySlug_WithoutUserQueryVariables = Exact<{
+  slug: Scalars['String'];
 }>;
 
 
-export type AttendeeByIdQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
-    { readonly __typename?: 'Attendee' }
+export type ConferenceBySlug_WithoutUserQuery = { readonly __typename?: 'query_root', readonly Conference: ReadonlyArray<(
+    { readonly __typename?: 'Conference' }
+    & PublicConferenceInfoFragment
+  )> };
+
+export type AuthdConferenceInfoFragment = { readonly __typename?: 'Conference', readonly attendees: ReadonlyArray<(
+    { readonly __typename?: 'Attendee', readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly groupId: any, readonly attendeeId: any, readonly group: (
+        { readonly __typename?: 'Group' }
+        & GroupDataFragment
+      ) }> }
     & AttendeeDataFragment
+  )> };
+
+export type PublicConferenceInfoFragment = { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly publicGroups: ReadonlyArray<(
+    { readonly __typename?: 'Group' }
+    & GroupDataFragment
+  )> };
+
+export type GroupDataFragment = { readonly __typename?: 'Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly permissionName: Permission_Enum, readonly id: any, readonly roleId: any }> } }> };
+
+export type AttendeeProfileDataFragment = { readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean };
+
+export type AttendeeDataFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly profile?: Maybe<(
+    { readonly __typename?: 'AttendeeProfile' }
+    & AttendeeProfileDataFragment
   )> };
 
 export type UpdateSubtitlesMutationVariables = Exact<{
@@ -33234,17 +34185,14 @@ export type ProtectedEchoQueryVariables = Exact<{
 
 export type ProtectedEchoQuery = { readonly __typename?: 'query_root', readonly protectedEcho?: Maybe<{ readonly __typename?: 'ProtectedEchoOutput', readonly message: string }> };
 
-export type UserEventRolesSubscriptionVariables = Exact<{
-  eventId: Scalars['uuid'];
+export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any>, readonly attendee?: Maybe<{ readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }> }> } };
+
+export type GetForceUserRefreshConfigQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
 }>;
 
 
-export type UserEventRolesSubscription = { readonly __typename?: 'subscription_root', readonly Event_by_pk?: Maybe<{ readonly __typename?: 'Event', readonly eventPeople: ReadonlyArray<(
-      { readonly __typename?: 'EventPerson' }
-      & EventPersonDetailsFragment
-    )> }> };
-
-export type EventPersonDetailsFragment = { readonly __typename?: 'EventPerson', readonly id: any, readonly name: string, readonly roleName: EventPersonRole_Enum, readonly eventId: any, readonly attendeeId?: Maybe<any> };
+export type GetForceUserRefreshConfigQuery = { readonly __typename?: 'query_root', readonly ConferenceConfiguration: ReadonlyArray<{ readonly __typename?: 'ConferenceConfiguration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any }> };
 
 export type GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables = Exact<{
   code: Scalars['String'];
@@ -33292,20 +34240,12 @@ export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutat
 
 export type MenuScheduleQueryVariables = Exact<{
   now: Scalars['timestamptz'];
-  inThreeMinutes: Scalars['timestamptz'];
-  in30Minutes: Scalars['timestamptz'];
   inOneHour: Scalars['timestamptz'];
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type MenuScheduleQuery = { readonly __typename?: 'query_root', readonly eventsNow: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & MenuSchedule_EventFragment
-  )>, readonly eventsIn30mins: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & MenuSchedule_EventFragment
-  )>, readonly eventsIn1Hour: ReadonlyArray<(
+export type MenuScheduleQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
     { readonly __typename?: 'Event' }
     & MenuSchedule_EventFragment
   )> };
@@ -33335,23 +34275,6 @@ export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_r
 
 export type MainMenuSponsors_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> };
 
-export type SidebarReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly unreadCount?: Maybe<number> };
-
-export type SidebarChatInfoFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
-    { readonly __typename?: 'chat_ReadUpToIndex' }
-    & SidebarReadUpToIndexFragment
-  )> };
-
-export type PinnedChatsWithUnreadCountsQueryVariables = Exact<{
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type PinnedChatsWithUnreadCountsQuery = { readonly __typename?: 'query_root', readonly chat_Pin: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly chat: (
-      { readonly __typename?: 'chat_Chat' }
-      & SidebarChatInfoFragment
-    ) }> };
-
 export type GetRoomChatIdQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
@@ -33364,19 +34287,19 @@ export type GetContentGroupChatIdQueryVariables = Exact<{
 }>;
 
 
-export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> }> }> };
+export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chatId?: Maybe<any> }> };
 
-export type GetRoomMembersSubscriptionVariables = Exact<{
+export type GetRoomMembersQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type GetRoomMembersSubscription = { readonly __typename?: 'subscription_root', readonly RoomPerson: ReadonlyArray<(
+export type GetRoomMembersQuery = { readonly __typename?: 'query_root', readonly RoomPerson: ReadonlyArray<(
     { readonly __typename?: 'RoomPerson' }
     & RoomMemberFragment
   )> };
 
-export type RoomMemberFragment = { readonly __typename?: 'RoomPerson', readonly id: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendeeId: any };
+export type RoomMemberFragment = { readonly __typename?: 'RoomPerson', readonly id: any, readonly roomId: any, readonly roomPersonRoleName: RoomPersonRole_Enum, readonly attendeeId: any };
 
 export type GetRoomParticipantsSubscriptionVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -33399,7 +34322,7 @@ export type GetAllRoomParticipantsQuery = { readonly __typename?: 'query_root', 
     & RoomParticipantDetailsFragment
   )> };
 
-export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
+export type RoomParticipantDetailsFragment = { readonly __typename?: 'RoomParticipant', readonly conferenceId: any, readonly id: any, readonly roomId: any, readonly attendeeId: any };
 
 export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxAttendeesPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetAttendeesPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<(
     { readonly __typename?: 'room_ShuffleQueueEntry' }
@@ -33429,7 +34352,6 @@ export type GetShuffleRoomQuery = { readonly __typename?: 'query_root', readonly
 
 export type ShufflePeriodsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
-  start: Scalars['timestamptz'];
   end: Scalars['timestamptz'];
 }>;
 
@@ -33506,42 +34428,70 @@ export type UpdateCurrentUserLastSeenMutationVariables = Exact<{
 
 export type UpdateCurrentUserLastSeenMutation = { readonly __typename?: 'mutation_root', readonly update_OnlineStatus?: Maybe<{ readonly __typename?: 'OnlineStatus_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'OnlineStatus', readonly id: any, readonly lastSeen: any }> }> };
 
-export const SubscribedChatMessageDataFragmentDoc = gql`
-    fragment SubscribedChatMessageData on chat_Message {
-  created_at
-  data
-  duplicatedMessageId
+export const ChatState_SubdMessageFragmentDoc = gql`
+    fragment ChatState_SubdMessage on chat_Message {
   id
-  message
-  senderId
-  type
   chatId
-}
-    `;
-export const SubscribedChatReactionDataFragmentDoc = gql`
-    fragment SubscribedChatReactionData on chat_Reaction {
-  data
-  id
+  message
+  type
   senderId
-  symbol
-  type
-  messageId
+  remoteServiceId
 }
     `;
-export const ChatFlagDataFragmentDoc = gql`
-    fragment ChatFlagData on chat_Flag {
-  discussionChatId
-  flaggedById
+export const InitialChatState_ReadUpToIndexFragmentDoc = gql`
+    fragment InitialChatState_ReadUpToIndex on chat_ReadUpToIndex {
+  attendeeId
+  chatId
+  messageId
+  notifiedUpToMessageId
+  unreadCount
+}
+    `;
+export const InitialChatState_ChatFragmentDoc = gql`
+    fragment InitialChatState_Chat on chat_Chat {
   id
-  messageId
-  notes
-  resolution
-  resolved_at
-  type
-  updated_at
-  created_at
+  remoteServiceId
+  contentGroup {
+    id
+    title
+    shortTitle
+  }
+  nonDMRoom: room(where: {roomPrivacyName: {_neq: DM}}) {
+    id
+    name
+    priority
+    roomPrivacyName
+  }
+  DMRoom: room(where: {roomPrivacyName: {_eq: DM}}) {
+    id
+    name
+    roomPeople {
+      id
+      attendee {
+        id
+        displayName
+      }
+    }
+  }
+  enableAutoPin
+  enableAutoSubscribe
+  enableMandatoryPin
+  enableMandatorySubscribe
+  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
+    ...InitialChatState_ReadUpToIndex
+  }
+  pins(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
+    chatId
+    wasManuallyPinned
+  }
+  subscriptions(where: {attendeeId: {_eq: $attendeeId}}) {
+    attendeeId
+    chatId
+    wasManuallySubscribed
+  }
 }
-    `;
+    ${InitialChatState_ReadUpToIndexFragmentDoc}`;
 export const ChatReactionDataFragmentDoc = gql`
     fragment ChatReactionData on chat_Reaction {
   data
@@ -33549,6 +34499,8 @@ export const ChatReactionDataFragmentDoc = gql`
   senderId
   symbol
   type
+  messageId
+  remoteServiceId
 }
     `;
 export const ChatMessageDataFragmentDoc = gql`
@@ -33564,34 +34516,20 @@ export const ChatMessageDataFragmentDoc = gql`
   senderId
   type
   chatId
+  remoteServiceId
 }
     ${ChatReactionDataFragmentDoc}`;
-export const PinDataFragmentDoc = gql`
-    fragment PinData on chat_Pin {
-  chatId
-  attendeeId
-  wasManuallyPinned
-}
-    `;
-export const ChatPinConfigFragmentDoc = gql`
-    fragment ChatPinConfig on chat_Chat {
+export const ShortChatMessageDataFragmentDoc = gql`
+    fragment ShortChatMessageData on chat_Message {
+  created_at
+  data
+  duplicatedMessageId
   id
-  enableAutoPin
-  enableMandatoryPin
-}
-    `;
-export const SubscriptionDataFragmentDoc = gql`
-    fragment SubscriptionData on chat_Subscription {
+  message
+  senderId
+  type
   chatId
-  attendeeId
-  wasManuallySubscribed
-}
-    `;
-export const ChatSubscriptionConfigFragmentDoc = gql`
-    fragment ChatSubscriptionConfig on chat_Chat {
-  id
-  enableAutoSubscribe
-  enableMandatorySubscribe
+  remoteServiceId
 }
     `;
 export const ContentGroupRoomEventFragmentDoc = gql`
@@ -33730,15 +34668,6 @@ export const ContentGroupSummary_ContentGroupDataFragmentDoc = gql`
 }
     ${ContentItemDataFragmentDoc}
 ${ContentPersonDataFragmentDoc}`;
-export const Timeline_EventPersonFragmentDoc = gql`
-    fragment Timeline_EventPerson on EventPerson {
-  id
-  attendeeId
-  name
-  affiliation
-  roleName
-}
-    `;
 export const EventParticipantStreamDetailsFragmentDoc = gql`
     fragment EventParticipantStreamDetails on EventParticipantStream {
   id
@@ -33777,6 +34706,8 @@ export const RoomEventDetailsFragmentDoc = gql`
 export const Room_CurrentEventSummaryFragmentDoc = gql`
     fragment Room_CurrentEventSummary on Event {
   id
+  name
+  startTime
   contentGroup {
     id
     title
@@ -33804,7 +34735,13 @@ export const Room_EventSummaryFragmentDoc = gql`
   }
   eventPeople {
     id
-    attendeeId
+    person {
+      id
+      name
+      affiliation
+      attendeeId
+    }
+    roleName
   }
 }
     `;
@@ -33985,6 +34922,20 @@ export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
   value
 }
     `;
+export const ManageContentPeople_AttendeeFragmentDoc = gql`
+    fragment ManageContentPeople_Attendee on Attendee {
+  id
+  displayName
+  invitation {
+    id
+    invitedEmailAddress
+  }
+  profile {
+    attendeeId
+    affiliation
+  }
+}
+    `;
 export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
     fragment SubmissionRequestsModal_ConferenceConfiguration on ConferenceConfiguration {
   id
@@ -34001,6 +34952,7 @@ export const ContentPersonInfoFragmentDoc = gql`
   affiliation
   email
   originatingDataId
+  attendeeId
 }
     `;
 export const UploaderInfoFragmentDoc = gql`
@@ -34207,6 +35159,7 @@ export const RoomParticipantWithAttendeeInfoFragmentDoc = gql`
   attendeeId
   roomId
   attendee {
+    id
     displayName
   }
 }
@@ -34249,6 +35202,81 @@ export const RoomPersonInfoFragmentDoc = gql`
   roomPersonRoleName
 }
     `;
+export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
+    fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
+  id
+  created_at
+  updated_at
+  conferenceId
+  startAt
+  endAt
+  roomDurationMinutes
+  targetAttendeesPerRoom
+  maxAttendeesPerRoom
+  waitRoomMaxDurationSeconds
+  name
+  organiserId
+  algorithm
+  completedEntries: queueEntries_aggregate(
+    where: {shuffleRoom: {isEnded: {_eq: true}}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  ongoingEntries: queueEntries_aggregate(
+    where: {shuffleRoom: {isEnded: {_eq: false}}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+  waitingEntries: queueEntries_aggregate(
+    where: {allocatedShuffleRoomId: {_is_null: true}}
+  ) {
+    aggregate {
+      count
+    }
+  }
+}
+    `;
+export const AddEventPeople_ContentGroupPersonFragmentDoc = gql`
+    fragment AddEventPeople_ContentGroupPerson on ContentGroupPerson {
+  id
+  groupId
+  personId
+  roleName
+}
+    `;
+export const AddEventPeople_ContentPersonFragmentDoc = gql`
+    fragment AddEventPeople_ContentPerson on ContentPerson {
+  id
+  name
+  affiliation
+  email
+  attendeeId
+}
+    `;
+export const AddEventPeople_AttendeeFragmentDoc = gql`
+    fragment AddEventPeople_Attendee on Attendee {
+  id
+  displayName
+  profile {
+    attendeeId
+    affiliation
+  }
+  invitation {
+    id
+    invitedEmailAddress
+  }
+}
+    `;
+export const AddEventPeople_GroupFragmentDoc = gql`
+    fragment AddEventPeople_Group on Group {
+  id
+  name
+}
+    `;
 export const RoomParticipantInfoFragmentDoc = gql`
     fragment RoomParticipantInfo on RoomParticipant {
   attendeeId
@@ -34280,19 +35308,10 @@ export const RoomInfoFragmentDoc = gql`
 ${RoomParticipantInfoFragmentDoc}`;
 export const EventPersonInfoFragmentDoc = gql`
     fragment EventPersonInfo on EventPerson {
-  affiliation
-  attendeeId
-  attendee {
-    id
-    displayName
-    userId
-  }
-  conferenceId
-  eventId
   id
-  name
-  originatingDataId
+  eventId
   roleName
+  personId
 }
     `;
 export const EventTagInfoFragmentDoc = gql`
@@ -34324,12 +35343,6 @@ export const EventInfoFragmentDoc = gql`
 }
     ${EventPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
-export const AttendeeInfoFragmentDoc = gql`
-    fragment AttendeeInfo on Attendee {
-  id
-  displayName
-}
-    `;
 export const EditableSponsorsTable_ContentGroupInfoFragmentDoc = gql`
     fragment EditableSponsorsTable_ContentGroupInfo on ContentGroup {
   id
@@ -34346,30 +35359,6 @@ export const SponsorSecondaryEditor_ContentItemFragmentDoc = gql`
   layoutData
   isHidden
   updatedAt
-}
-    `;
-export const GroupDataFragmentDoc = gql`
-    fragment GroupData on Group {
-  groupRoles {
-    role {
-      rolePermissions {
-        permissionName
-        id
-        roleId
-      }
-      id
-      name
-      conferenceId
-    }
-    id
-    roleId
-    groupId
-  }
-  enabled
-  id
-  includeUnauthenticated
-  name
-  conferenceId
 }
     `;
 export const AttendeeProfileDataFragmentDoc = gql`
@@ -34394,12 +35383,67 @@ export const AttendeeDataFragmentDoc = gql`
     fragment AttendeeData on Attendee {
   id
   userId
+  conferenceId
   displayName
   profile {
     ...AttendeeProfileData
   }
 }
     ${AttendeeProfileDataFragmentDoc}`;
+export const GroupDataFragmentDoc = gql`
+    fragment GroupData on Group {
+  groupRoles {
+    role {
+      rolePermissions {
+        permissionName
+        id
+        roleId
+      }
+      id
+      name
+      conferenceId
+    }
+    id
+    roleId
+    groupId
+  }
+  enabled
+  id
+  includeUnauthenticated
+  name
+  conferenceId
+}
+    `;
+export const AuthdConferenceInfoFragmentDoc = gql`
+    fragment AuthdConferenceInfo on Conference {
+  attendees(where: {userId: {_eq: $userId}}) {
+    ...AttendeeData
+    groupAttendees {
+      group {
+        ...GroupData
+      }
+      id
+      groupId
+      attendeeId
+    }
+  }
+}
+    ${AttendeeDataFragmentDoc}
+${GroupDataFragmentDoc}`;
+export const PublicConferenceInfoFragmentDoc = gql`
+    fragment PublicConferenceInfo on Conference {
+  id
+  name
+  shortName
+  slug
+  createdBy
+  publicGroups: groups(
+    where: {enabled: {_eq: true}, includeUnauthenticated: {_eq: true}}
+  ) {
+    ...GroupData
+  }
+}
+    ${GroupDataFragmentDoc}`;
 export const RequiredItemFieldsFragmentDoc = gql`
     fragment RequiredItemFields on RequiredContentItem {
   id
@@ -34416,10 +35460,23 @@ export const RequiredItemFieldsFragmentDoc = gql`
 export const EventPersonDetailsFragmentDoc = gql`
     fragment EventPersonDetails on EventPerson {
   id
-  name
   roleName
   eventId
-  attendeeId
+  person {
+    id
+    name
+    affiliation
+    attendeeId
+    attendee {
+      id
+      userId
+      displayName
+      profile {
+        attendeeId
+        affiliation
+      }
+    }
+  }
 }
     `;
 export const MenuSchedule_EventFragmentDoc = gql`
@@ -34466,58 +35523,16 @@ export const MainMenuSponsors_ContentGroupDataFragmentDoc = gql`
   shortTitle
 }
     `;
-export const SidebarReadUpToIndexFragmentDoc = gql`
-    fragment SidebarReadUpToIndex on chat_ReadUpToIndex {
-  attendeeId
-  chatId
-  messageId
-  unreadCount
-}
-    `;
-export const SidebarChatInfoFragmentDoc = gql`
-    fragment SidebarChatInfo on chat_Chat {
-  id
-  contentGroup {
-    id
-    title
-    shortTitle
-  }
-  nonDMRoom: room(where: {roomPrivacyName: {_neq: DM}}) {
-    id
-    name
-    priority
-    roomPrivacyName
-  }
-  DMRoom: room(where: {roomPrivacyName: {_eq: DM}}) {
-    id
-    name
-    roomPeople {
-      id
-      attendee {
-        id
-        displayName
-      }
-    }
-  }
-  enableAutoPin
-  enableAutoSubscribe
-  enableMandatoryPin
-  enableMandatorySubscribe
-  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
-    ...SidebarReadUpToIndex
-  }
-}
-    ${SidebarReadUpToIndexFragmentDoc}`;
 export const RoomMemberFragmentDoc = gql`
     fragment RoomMember on RoomPerson {
   id
+  roomId
   roomPersonRoleName
   attendeeId
 }
     `;
 export const RoomParticipantDetailsFragmentDoc = gql`
     fragment RoomParticipantDetails on RoomParticipant {
-  attendeeId
   conferenceId
   id
   roomId
@@ -34599,21 +35614,127 @@ export const AttendeeFieldsFragmentDoc = gql`
   }
 }
     `;
-export const SubdMessages_2021_02_20T21_08Document = gql`
-    subscription SubdMessages_2021_02_20T21_08($attendeeId: uuid!) {
-  chat_Subscription(where: {attendeeId: {_eq: $attendeeId}}) {
+export const InitialChatStateDocument = gql`
+    query InitialChatState($attendeeId: uuid!) {
+  chat_PinnedOrSubscribed(where: {attendeeId: {_eq: $attendeeId}}) {
+    chatId
+    attendeeId
+    chat {
+      ...InitialChatState_Chat
+    }
+  }
+}
+    ${InitialChatState_ChatFragmentDoc}`;
+
+/**
+ * __useInitialChatStateQuery__
+ *
+ * To run a query within a React component, call `useInitialChatStateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInitialChatStateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInitialChatStateQuery({
+ *   variables: {
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useInitialChatStateQuery(baseOptions: Apollo.QueryHookOptions<InitialChatStateQuery, InitialChatStateQueryVariables>) {
+        return Apollo.useQuery<InitialChatStateQuery, InitialChatStateQueryVariables>(InitialChatStateDocument, baseOptions);
+      }
+export function useInitialChatStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InitialChatStateQuery, InitialChatStateQueryVariables>) {
+          return Apollo.useLazyQuery<InitialChatStateQuery, InitialChatStateQueryVariables>(InitialChatStateDocument, baseOptions);
+        }
+export type InitialChatStateQueryHookResult = ReturnType<typeof useInitialChatStateQuery>;
+export type InitialChatStateLazyQueryHookResult = ReturnType<typeof useInitialChatStateLazyQuery>;
+export type InitialChatStateQueryResult = Apollo.QueryResult<InitialChatStateQuery, InitialChatStateQueryVariables>;
+export const SelectInitialChatStateDocument = gql`
+    query SelectInitialChatState($chatId: uuid!, $attendeeId: uuid!) {
+  chat_Chat_by_pk(id: $chatId) {
+    ...InitialChatState_Chat
+  }
+}
+    ${InitialChatState_ChatFragmentDoc}`;
+
+/**
+ * __useSelectInitialChatStateQuery__
+ *
+ * To run a query within a React component, call `useSelectInitialChatStateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectInitialChatStateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectInitialChatStateQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectInitialChatStateQuery(baseOptions: Apollo.QueryHookOptions<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>) {
+        return Apollo.useQuery<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>(SelectInitialChatStateDocument, baseOptions);
+      }
+export function useSelectInitialChatStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>) {
+          return Apollo.useLazyQuery<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>(SelectInitialChatStateDocument, baseOptions);
+        }
+export type SelectInitialChatStateQueryHookResult = ReturnType<typeof useSelectInitialChatStateQuery>;
+export type SelectInitialChatStateLazyQueryHookResult = ReturnType<typeof useSelectInitialChatStateLazyQuery>;
+export type SelectInitialChatStateQueryResult = Apollo.QueryResult<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>;
+export const SelectInitialChatStatesDocument = gql`
+    query SelectInitialChatStates($chatIds: [uuid!]!, $attendeeId: uuid!) {
+  chat_Chat(where: {id: {_in: $chatIds}}) {
+    ...InitialChatState_Chat
+  }
+}
+    ${InitialChatState_ChatFragmentDoc}`;
+
+/**
+ * __useSelectInitialChatStatesQuery__
+ *
+ * To run a query within a React component, call `useSelectInitialChatStatesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectInitialChatStatesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectInitialChatStatesQuery({
+ *   variables: {
+ *      chatIds: // value for 'chatIds'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useSelectInitialChatStatesQuery(baseOptions: Apollo.QueryHookOptions<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>) {
+        return Apollo.useQuery<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>(SelectInitialChatStatesDocument, baseOptions);
+      }
+export function useSelectInitialChatStatesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>) {
+          return Apollo.useLazyQuery<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>(SelectInitialChatStatesDocument, baseOptions);
+        }
+export type SelectInitialChatStatesQueryHookResult = ReturnType<typeof useSelectInitialChatStatesQuery>;
+export type SelectInitialChatStatesLazyQueryHookResult = ReturnType<typeof useSelectInitialChatStatesLazyQuery>;
+export type SelectInitialChatStatesQueryResult = Apollo.QueryResult<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>;
+export const SelectPinnedOrSubscribedDocument = gql`
+    query SelectPinnedOrSubscribed($attendeeId: uuid!) {
+  chat_PinnedOrSubscribed(where: {attendeeId: {_eq: $attendeeId}}) {
     chatId
     attendeeId
     chat {
       id
-      messages(limit: 1, order_by: {id: desc}) {
-        id
+      pins(where: {attendeeId: {_eq: $attendeeId}}) {
+        attendeeId
         chatId
-        message
-        type
-        senderId
-        senderName
-        chatTitle
+        wasManuallyPinned
+      }
+      subscriptions(where: {attendeeId: {_eq: $attendeeId}}) {
+        attendeeId
+        chatId
+        wasManuallySubscribed
       }
     }
   }
@@ -34621,114 +35742,230 @@ export const SubdMessages_2021_02_20T21_08Document = gql`
     `;
 
 /**
- * __useSubdMessages_2021_02_20T21_08Subscription__
+ * __useSelectPinnedOrSubscribedQuery__
  *
- * To run a query within a React component, call `useSubdMessages_2021_02_20T21_08Subscription` and pass it any options that fit your needs.
- * When your component renders, `useSubdMessages_2021_02_20T21_08Subscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSelectPinnedOrSubscribedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectPinnedOrSubscribedQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubdMessages_2021_02_20T21_08Subscription({
+ * const { data, loading, error } = useSelectPinnedOrSubscribedQuery({
  *   variables: {
  *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useSubdMessages_2021_02_20T21_08Subscription(baseOptions: Apollo.SubscriptionHookOptions<SubdMessages_2021_02_20T21_08Subscription, SubdMessages_2021_02_20T21_08SubscriptionVariables>) {
-        return Apollo.useSubscription<SubdMessages_2021_02_20T21_08Subscription, SubdMessages_2021_02_20T21_08SubscriptionVariables>(SubdMessages_2021_02_20T21_08Document, baseOptions);
+export function useSelectPinnedOrSubscribedQuery(baseOptions: Apollo.QueryHookOptions<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>) {
+        return Apollo.useQuery<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>(SelectPinnedOrSubscribedDocument, baseOptions);
       }
-export type SubdMessages_2021_02_20T21_08SubscriptionHookResult = ReturnType<typeof useSubdMessages_2021_02_20T21_08Subscription>;
-export type SubdMessages_2021_02_20T21_08SubscriptionResult = Apollo.SubscriptionResult<SubdMessages_2021_02_20T21_08Subscription>;
-export const SetNotifiedUpToIndexDocument = gql`
-    mutation SetNotifiedUpToIndex($attendeeId: uuid!, $chatId: uuid!, $msgId: Int!) {
-  insert_chat_ReadUpToIndex_one(
-    object: {attendeeId: $attendeeId, chatId: $chatId, messageId: -1, notifiedUpToMessageId: $msgId}
-    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [notifiedUpToMessageId]}
+export function useSelectPinnedOrSubscribedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>) {
+          return Apollo.useLazyQuery<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>(SelectPinnedOrSubscribedDocument, baseOptions);
+        }
+export type SelectPinnedOrSubscribedQueryHookResult = ReturnType<typeof useSelectPinnedOrSubscribedQuery>;
+export type SelectPinnedOrSubscribedLazyQueryHookResult = ReturnType<typeof useSelectPinnedOrSubscribedLazyQuery>;
+export type SelectPinnedOrSubscribedQueryResult = Apollo.QueryResult<SelectPinnedOrSubscribedQuery, SelectPinnedOrSubscribedQueryVariables>;
+export const SubscribeChatDocument = gql`
+    mutation SubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+  insert_chat_Subscription(
+    objects: {chatId: $chatId, attendeeId: $attendeeId}
+    on_conflict: {constraint: Subscription_pkey, update_columns: wasManuallySubscribed}
   ) {
-    chatId
-    attendeeId
-    unreadCount
-    notifiedUpToMessageId
+    returning {
+      chatId
+      attendeeId
+    }
+  }
+  insert_chat_ReadUpToIndex(
+    objects: {chatId: $chatId, attendeeId: $attendeeId, messageId: -1}
+    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: []}
+  ) {
+    affected_rows
   }
 }
     `;
-export type SetNotifiedUpToIndexMutationFn = Apollo.MutationFunction<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>;
+export type SubscribeChatMutationFn = Apollo.MutationFunction<SubscribeChatMutation, SubscribeChatMutationVariables>;
 
 /**
- * __useSetNotifiedUpToIndexMutation__
+ * __useSubscribeChatMutation__
  *
- * To run a mutation, you first call `useSetNotifiedUpToIndexMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetNotifiedUpToIndexMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSubscribeChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeChatMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [setNotifiedUpToIndexMutation, { data, loading, error }] = useSetNotifiedUpToIndexMutation({
+ * const [subscribeChatMutation, { data, loading, error }] = useSubscribeChatMutation({
  *   variables: {
- *      attendeeId: // value for 'attendeeId'
  *      chatId: // value for 'chatId'
- *      msgId: // value for 'msgId'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useSetNotifiedUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>) {
-        return Apollo.useMutation<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>(SetNotifiedUpToIndexDocument, baseOptions);
+export function useSubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeChatMutation, SubscribeChatMutationVariables>) {
+        return Apollo.useMutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument, baseOptions);
       }
-export type SetNotifiedUpToIndexMutationHookResult = ReturnType<typeof useSetNotifiedUpToIndexMutation>;
-export type SetNotifiedUpToIndexMutationResult = Apollo.MutationResult<SetNotifiedUpToIndexMutation>;
-export type SetNotifiedUpToIndexMutationOptions = Apollo.BaseMutationOptions<SetNotifiedUpToIndexMutation, SetNotifiedUpToIndexMutationVariables>;
-export const GetChatPathDocument = gql`
-    query GetChatPath($chatId: uuid!) {
-  chat_Chat_by_pk(id: $chatId) {
-    id
-    room {
-      id
-    }
-    contentGroup {
-      id
+export type SubscribeChatMutationHookResult = ReturnType<typeof useSubscribeChatMutation>;
+export type SubscribeChatMutationResult = Apollo.MutationResult<SubscribeChatMutation>;
+export type SubscribeChatMutationOptions = Apollo.BaseMutationOptions<SubscribeChatMutation, SubscribeChatMutationVariables>;
+export const UnsubscribeChatDocument = gql`
+    mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+  delete_chat_Subscription_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+    attendeeId
+    chatId
+  }
+}
+    `;
+export type UnsubscribeChatMutationFn = Apollo.MutationFunction<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
+
+/**
+ * __useUnsubscribeChatMutation__
+ *
+ * To run a mutation, you first call `useUnsubscribeChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsubscribeChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unsubscribeChatMutation, { data, loading, error }] = useUnsubscribeChatMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useUnsubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>) {
+        return Apollo.useMutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(UnsubscribeChatDocument, baseOptions);
+      }
+export type UnsubscribeChatMutationHookResult = ReturnType<typeof useUnsubscribeChatMutation>;
+export type UnsubscribeChatMutationResult = Apollo.MutationResult<UnsubscribeChatMutation>;
+export type UnsubscribeChatMutationOptions = Apollo.BaseMutationOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
+export const PinChatDocument = gql`
+    mutation PinChat($chatId: uuid!, $attendeeId: uuid!) {
+  insert_chat_Pin(
+    objects: {chatId: $chatId, attendeeId: $attendeeId}
+    on_conflict: {constraint: ChatPin_pkey, update_columns: wasManuallyPinned}
+  ) {
+    returning {
+      chatId
+      attendeeId
     }
   }
 }
     `;
+export type PinChatMutationFn = Apollo.MutationFunction<PinChatMutation, PinChatMutationVariables>;
 
 /**
- * __useGetChatPathQuery__
+ * __usePinChatMutation__
  *
- * To run a query within a React component, call `useGetChatPathQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetChatPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a mutation, you first call `usePinChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePinChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [pinChatMutation, { data, loading, error }] = usePinChatMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function usePinChatMutation(baseOptions?: Apollo.MutationHookOptions<PinChatMutation, PinChatMutationVariables>) {
+        return Apollo.useMutation<PinChatMutation, PinChatMutationVariables>(PinChatDocument, baseOptions);
+      }
+export type PinChatMutationHookResult = ReturnType<typeof usePinChatMutation>;
+export type PinChatMutationResult = Apollo.MutationResult<PinChatMutation>;
+export type PinChatMutationOptions = Apollo.BaseMutationOptions<PinChatMutation, PinChatMutationVariables>;
+export const UnpinChatDocument = gql`
+    mutation UnpinChat($chatId: uuid!, $attendeeId: uuid!) {
+  delete_chat_Pin_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
+    attendeeId
+    chatId
+  }
+}
+    `;
+export type UnpinChatMutationFn = Apollo.MutationFunction<UnpinChatMutation, UnpinChatMutationVariables>;
+
+/**
+ * __useUnpinChatMutation__
+ *
+ * To run a mutation, you first call `useUnpinChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnpinChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unpinChatMutation, { data, loading, error }] = useUnpinChatMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useUnpinChatMutation(baseOptions?: Apollo.MutationHookOptions<UnpinChatMutation, UnpinChatMutationVariables>) {
+        return Apollo.useMutation<UnpinChatMutation, UnpinChatMutationVariables>(UnpinChatDocument, baseOptions);
+      }
+export type UnpinChatMutationHookResult = ReturnType<typeof useUnpinChatMutation>;
+export type UnpinChatMutationResult = Apollo.MutationResult<UnpinChatMutation>;
+export type UnpinChatMutationOptions = Apollo.BaseMutationOptions<UnpinChatMutation, UnpinChatMutationVariables>;
+export const SelectMessagesPageDocument = gql`
+    query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
+  chat_Message(
+    order_by: {id: desc}
+    where: {chatId: {_eq: $chatId}, id: {_lte: $startAtIndex}}
+    limit: $maxCount
+  ) {
+    ...ChatMessageData
+  }
+}
+    ${ChatMessageDataFragmentDoc}`;
+
+/**
+ * __useSelectMessagesPageQuery__
+ *
+ * To run a query within a React component, call `useSelectMessagesPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetChatPathQuery({
+ * const { data, loading, error } = useSelectMessagesPageQuery({
  *   variables: {
  *      chatId: // value for 'chatId'
+ *      startAtIndex: // value for 'startAtIndex'
+ *      maxCount: // value for 'maxCount'
  *   },
  * });
  */
-export function useGetChatPathQuery(baseOptions: Apollo.QueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
-        return Apollo.useQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
+export function useSelectMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
+        return Apollo.useQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
       }
-export function useGetChatPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
-          return Apollo.useLazyQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
+export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
+          return Apollo.useLazyQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
         }
-export type GetChatPathQueryHookResult = ReturnType<typeof useGetChatPathQuery>;
-export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLazyQuery>;
-export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
+export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
+export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
+export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
 export const SendChatMessageDocument = gql`
-    mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false, $chatTitle: String = " ", $senderName: String = " ") {
+    mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
   insert_chat_Message_one(
-    object: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type, chatTitle: $chatTitle, senderName: $senderName}
+    object: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type}
   ) {
-    ...SubscribedChatMessageData
+    ...ShortChatMessageData
   }
 }
-    ${SubscribedChatMessageDataFragmentDoc}`;
+    ${ShortChatMessageDataFragmentDoc}`;
 export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageMutation, SendChatMessageMutationVariables>;
 
 /**
@@ -34750,8 +35987,6 @@ export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageM
  *      message: // value for 'message'
  *      data: // value for 'data'
  *      isPinned: // value for 'isPinned'
- *      chatTitle: // value for 'chatTitle'
- *      senderName: // value for 'senderName'
  *   },
  * });
  */
@@ -34797,148 +36032,159 @@ export function useSendChatAnswerMutation(baseOptions?: Apollo.MutationHookOptio
 export type SendChatAnswerMutationHookResult = ReturnType<typeof useSendChatAnswerMutation>;
 export type SendChatAnswerMutationResult = Apollo.MutationResult<SendChatAnswerMutation>;
 export type SendChatAnswerMutationOptions = Apollo.BaseMutationOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
-export const SelectFirstMessagesPageDocument = gql`
-    query SelectFirstMessagesPage($chatId: uuid!, $maxCount: Int!) {
-  chat_Message(
-    order_by: {id: desc}
-    where: {chatId: {_eq: $chatId}}
-    limit: $maxCount
+export const SelectReadUpToIndicesDocument = gql`
+    query SelectReadUpToIndices($chatIds: [uuid!]!, $attendeeId: uuid!) {
+  chat_ReadUpToIndex(
+    where: {chatId: {_in: $chatIds}, attendeeId: {_eq: $attendeeId}}
   ) {
-    ...ChatMessageData
+    ...InitialChatState_ReadUpToIndex
   }
 }
-    ${ChatMessageDataFragmentDoc}`;
+    ${InitialChatState_ReadUpToIndexFragmentDoc}`;
 
 /**
- * __useSelectFirstMessagesPageQuery__
+ * __useSelectReadUpToIndicesQuery__
  *
- * To run a query within a React component, call `useSelectFirstMessagesPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectFirstMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSelectReadUpToIndicesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectReadUpToIndicesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSelectFirstMessagesPageQuery({
+ * const { data, loading, error } = useSelectReadUpToIndicesQuery({
  *   variables: {
- *      chatId: // value for 'chatId'
- *      maxCount: // value for 'maxCount'
+ *      chatIds: // value for 'chatIds'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useSelectFirstMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>) {
-        return Apollo.useQuery<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>(SelectFirstMessagesPageDocument, baseOptions);
+export function useSelectReadUpToIndicesQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>) {
+        return Apollo.useQuery<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>(SelectReadUpToIndicesDocument, baseOptions);
       }
-export function useSelectFirstMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>) {
-          return Apollo.useLazyQuery<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>(SelectFirstMessagesPageDocument, baseOptions);
+export function useSelectReadUpToIndicesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>) {
+          return Apollo.useLazyQuery<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>(SelectReadUpToIndicesDocument, baseOptions);
         }
-export type SelectFirstMessagesPageQueryHookResult = ReturnType<typeof useSelectFirstMessagesPageQuery>;
-export type SelectFirstMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectFirstMessagesPageLazyQuery>;
-export type SelectFirstMessagesPageQueryResult = Apollo.QueryResult<SelectFirstMessagesPageQuery, SelectFirstMessagesPageQueryVariables>;
-export const SelectMessagesPageDocument = gql`
-    query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
-  chat_Message(
-    order_by: {id: desc}
-    where: {chatId: {_eq: $chatId}, id: {_lte: $startAtIndex}}
-    limit: $maxCount
+export type SelectReadUpToIndicesQueryHookResult = ReturnType<typeof useSelectReadUpToIndicesQuery>;
+export type SelectReadUpToIndicesLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndicesLazyQuery>;
+export type SelectReadUpToIndicesQueryResult = Apollo.QueryResult<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>;
+export const InsertReadUpToIndexDocument = gql`
+    mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
+  insert_chat_ReadUpToIndex_one(
+    object: {attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId, notifiedUpToMessageId: $notifiedUpToMessageId}
+    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [messageId, notifiedUpToMessageId]}
   ) {
-    ...ChatMessageData
+    attendeeId
+    chatId
+    messageId
   }
 }
-    ${ChatMessageDataFragmentDoc}`;
+    `;
+export type InsertReadUpToIndexMutationFn = Apollo.MutationFunction<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
 
 /**
- * __useSelectMessagesPageQuery__
+ * __useInsertReadUpToIndexMutation__
  *
- * To run a query within a React component, call `useSelectMessagesPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useInsertReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertReadUpToIndexMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useSelectMessagesPageQuery({
+ * const [insertReadUpToIndexMutation, { data, loading, error }] = useInsertReadUpToIndexMutation({
  *   variables: {
  *      chatId: // value for 'chatId'
- *      startAtIndex: // value for 'startAtIndex'
- *      maxCount: // value for 'maxCount'
- *   },
- * });
- */
-export function useSelectMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
-        return Apollo.useQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
-      }
-export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
-          return Apollo.useLazyQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, baseOptions);
-        }
-export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
-export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
-export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
-export const NewMessagesDocument = gql`
-    subscription NewMessages($chatId: uuid!) {
-  chat_Message(order_by: {id: desc}, where: {chatId: {_eq: $chatId}}, limit: 5) {
-    ...SubscribedChatMessageData
-  }
-}
-    ${SubscribedChatMessageDataFragmentDoc}`;
-
-/**
- * __useNewMessagesSubscription__
- *
- * To run a query within a React component, call `useNewMessagesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useNewMessagesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNewMessagesSubscription({
- *   variables: {
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useNewMessagesSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewMessagesSubscription, NewMessagesSubscriptionVariables>) {
-        return Apollo.useSubscription<NewMessagesSubscription, NewMessagesSubscriptionVariables>(NewMessagesDocument, baseOptions);
-      }
-export type NewMessagesSubscriptionHookResult = ReturnType<typeof useNewMessagesSubscription>;
-export type NewMessagesSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubscription>;
-export const MessageReactionsDocument = gql`
-    subscription MessageReactions($messageId: Int!) {
-  chat_Reaction(where: {messageId: {_eq: $messageId}}) {
-    ...SubscribedChatReactionData
-  }
-}
-    ${SubscribedChatReactionDataFragmentDoc}`;
-
-/**
- * __useMessageReactionsSubscription__
- *
- * To run a query within a React component, call `useMessageReactionsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useMessageReactionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMessageReactionsSubscription({
- *   variables: {
+ *      attendeeId: // value for 'attendeeId'
  *      messageId: // value for 'messageId'
+ *      notifiedUpToMessageId: // value for 'notifiedUpToMessageId'
  *   },
  * });
  */
-export function useMessageReactionsSubscription(baseOptions: Apollo.SubscriptionHookOptions<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>) {
-        return Apollo.useSubscription<MessageReactionsSubscription, MessageReactionsSubscriptionVariables>(MessageReactionsDocument, baseOptions);
+export function useInsertReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>) {
+        return Apollo.useMutation<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>(InsertReadUpToIndexDocument, baseOptions);
       }
-export type MessageReactionsSubscriptionHookResult = ReturnType<typeof useMessageReactionsSubscription>;
-export type MessageReactionsSubscriptionResult = Apollo.SubscriptionResult<MessageReactionsSubscription>;
-export const AddReactionDocument = gql`
-    mutation AddReaction($reaction: chat_Reaction_insert_input!) {
-  insert_chat_Reaction(objects: [$reaction]) {
+export type InsertReadUpToIndexMutationHookResult = ReturnType<typeof useInsertReadUpToIndexMutation>;
+export type InsertReadUpToIndexMutationResult = Apollo.MutationResult<InsertReadUpToIndexMutation>;
+export type InsertReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
+export const UpdateReadUpToIndexDocument = gql`
+    mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
+  update_chat_ReadUpToIndex(
+    where: {attendeeId: {_eq: $attendeeId}, chatId: {_eq: $chatId}, messageId: {_lte: $messageId}, notifiedUpToMessageId: {_lte: $notifiedUpToMessageId}}
+    _set: {messageId: $messageId, notifiedUpToMessageId: $notifiedUpToMessageId}
+  ) {
     affected_rows
   }
 }
     `;
+export type UpdateReadUpToIndexMutationFn = Apollo.MutationFunction<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
+
+/**
+ * __useUpdateReadUpToIndexMutation__
+ *
+ * To run a mutation, you first call `useUpdateReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateReadUpToIndexMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateReadUpToIndexMutation, { data, loading, error }] = useUpdateReadUpToIndexMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      attendeeId: // value for 'attendeeId'
+ *      messageId: // value for 'messageId'
+ *      notifiedUpToMessageId: // value for 'notifiedUpToMessageId'
+ *   },
+ * });
+ */
+export function useUpdateReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>) {
+        return Apollo.useMutation<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>(UpdateReadUpToIndexDocument, baseOptions);
+      }
+export type UpdateReadUpToIndexMutationHookResult = ReturnType<typeof useUpdateReadUpToIndexMutation>;
+export type UpdateReadUpToIndexMutationResult = Apollo.MutationResult<UpdateReadUpToIndexMutation>;
+export type UpdateReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
+export const DeleteMessageDocument = gql`
+    mutation DeleteMessage($id: Int!) {
+  delete_chat_Message_by_pk(id: $id) {
+    id
+  }
+}
+    `;
+export type DeleteMessageMutationFn = Apollo.MutationFunction<DeleteMessageMutation, DeleteMessageMutationVariables>;
+
+/**
+ * __useDeleteMessageMutation__
+ *
+ * To run a mutation, you first call `useDeleteMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteMessageMutation, { data, loading, error }] = useDeleteMessageMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMessageMutation, DeleteMessageMutationVariables>) {
+        return Apollo.useMutation<DeleteMessageMutation, DeleteMessageMutationVariables>(DeleteMessageDocument, baseOptions);
+      }
+export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
+export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
+export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
+export const AddReactionDocument = gql`
+    mutation AddReaction($reaction: chat_Reaction_insert_input!) {
+  insert_chat_Reaction_one(object: $reaction) {
+    ...ChatReactionData
+  }
+}
+    ${ChatReactionDataFragmentDoc}`;
 export type AddReactionMutationFn = Apollo.MutationFunction<AddReactionMutation, AddReactionMutationVariables>;
 
 /**
@@ -34996,409 +36242,78 @@ export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
 export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
 export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
-export const SelectReadUpToIndexDocument = gql`
-    query SelectReadUpToIndex($chatId: uuid!, $attendeeId: uuid!) {
-  chat_ReadUpToIndex_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-    ...SidebarReadUpToIndex
-  }
-}
-    ${SidebarReadUpToIndexFragmentDoc}`;
-
-/**
- * __useSelectReadUpToIndexQuery__
- *
- * To run a query within a React component, call `useSelectReadUpToIndexQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectReadUpToIndexQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectReadUpToIndexQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSelectReadUpToIndexQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
-        return Apollo.useQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
-      }
-export function useSelectReadUpToIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>) {
-          return Apollo.useLazyQuery<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>(SelectReadUpToIndexDocument, baseOptions);
-        }
-export type SelectReadUpToIndexQueryHookResult = ReturnType<typeof useSelectReadUpToIndexQuery>;
-export type SelectReadUpToIndexLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndexLazyQuery>;
-export type SelectReadUpToIndexQueryResult = Apollo.QueryResult<SelectReadUpToIndexQuery, SelectReadUpToIndexQueryVariables>;
-export const InsertReadUpToIndexDocument = gql`
-    mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
-  insert_chat_ReadUpToIndex_one(
-    object: {attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId}
-    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [messageId]}
-  ) {
-    attendeeId
-    chatId
-    messageId
+export const GetRemoteChatServiceTokenDocument = gql`
+    mutation GetRemoteChatServiceToken($attendeeId: uuid!) {
+  generateChatRemoteToken(attendeeId: $attendeeId) {
+    expiry
+    jwt
   }
 }
     `;
-export type InsertReadUpToIndexMutationFn = Apollo.MutationFunction<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
+export type GetRemoteChatServiceTokenMutationFn = Apollo.MutationFunction<GetRemoteChatServiceTokenMutation, GetRemoteChatServiceTokenMutationVariables>;
 
 /**
- * __useInsertReadUpToIndexMutation__
+ * __useGetRemoteChatServiceTokenMutation__
  *
- * To run a mutation, you first call `useInsertReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertReadUpToIndexMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useGetRemoteChatServiceTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetRemoteChatServiceTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [insertReadUpToIndexMutation, { data, loading, error }] = useInsertReadUpToIndexMutation({
+ * const [getRemoteChatServiceTokenMutation, { data, loading, error }] = useGetRemoteChatServiceTokenMutation({
  *   variables: {
- *      chatId: // value for 'chatId'
  *      attendeeId: // value for 'attendeeId'
- *      messageId: // value for 'messageId'
  *   },
  * });
  */
-export function useInsertReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>) {
-        return Apollo.useMutation<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>(InsertReadUpToIndexDocument, baseOptions);
+export function useGetRemoteChatServiceTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetRemoteChatServiceTokenMutation, GetRemoteChatServiceTokenMutationVariables>) {
+        return Apollo.useMutation<GetRemoteChatServiceTokenMutation, GetRemoteChatServiceTokenMutationVariables>(GetRemoteChatServiceTokenDocument, baseOptions);
       }
-export type InsertReadUpToIndexMutationHookResult = ReturnType<typeof useInsertReadUpToIndexMutation>;
-export type InsertReadUpToIndexMutationResult = Apollo.MutationResult<InsertReadUpToIndexMutation>;
-export type InsertReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
-export const UpdateReadUpToIndexDocument = gql`
-    mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!) {
-  update_chat_ReadUpToIndex_by_pk(
-    pk_columns: {attendeeId: $attendeeId, chatId: $chatId}
-    _set: {messageId: $messageId}
-  ) {
-    attendeeId
-    chatId
-    messageId
-  }
-}
-    `;
-export type UpdateReadUpToIndexMutationFn = Apollo.MutationFunction<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
-
-/**
- * __useUpdateReadUpToIndexMutation__
- *
- * To run a mutation, you first call `useUpdateReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateReadUpToIndexMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateReadUpToIndexMutation, { data, loading, error }] = useUpdateReadUpToIndexMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *      messageId: // value for 'messageId'
- *   },
- * });
- */
-export function useUpdateReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>) {
-        return Apollo.useMutation<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>(UpdateReadUpToIndexDocument, baseOptions);
-      }
-export type UpdateReadUpToIndexMutationHookResult = ReturnType<typeof useUpdateReadUpToIndexMutation>;
-export type UpdateReadUpToIndexMutationResult = Apollo.MutationResult<UpdateReadUpToIndexMutation>;
-export type UpdateReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
-export const SelectSingleMessageDocument = gql`
-    query SelectSingleMessage($id: Int!) {
-  chat_Message_by_pk(id: $id) {
-    ...ChatMessageData
-  }
-}
-    ${ChatMessageDataFragmentDoc}`;
-
-/**
- * __useSelectSingleMessageQuery__
- *
- * To run a query within a React component, call `useSelectSingleMessageQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectSingleMessageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectSingleMessageQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useSelectSingleMessageQuery(baseOptions: Apollo.QueryHookOptions<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>) {
-        return Apollo.useQuery<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>(SelectSingleMessageDocument, baseOptions);
-      }
-export function useSelectSingleMessageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>) {
-          return Apollo.useLazyQuery<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>(SelectSingleMessageDocument, baseOptions);
-        }
-export type SelectSingleMessageQueryHookResult = ReturnType<typeof useSelectSingleMessageQuery>;
-export type SelectSingleMessageLazyQueryHookResult = ReturnType<typeof useSelectSingleMessageLazyQuery>;
-export type SelectSingleMessageQueryResult = Apollo.QueryResult<SelectSingleMessageQuery, SelectSingleMessageQueryVariables>;
-export const DeleteMessageDocument = gql`
-    mutation DeleteMessage($id: Int!) {
-  delete_chat_Message_by_pk(id: $id) {
+export type GetRemoteChatServiceTokenMutationHookResult = ReturnType<typeof useGetRemoteChatServiceTokenMutation>;
+export type GetRemoteChatServiceTokenMutationResult = Apollo.MutationResult<GetRemoteChatServiceTokenMutation>;
+export type GetRemoteChatServiceTokenMutationOptions = Apollo.BaseMutationOptions<GetRemoteChatServiceTokenMutation, GetRemoteChatServiceTokenMutationVariables>;
+export const GetChatPathDocument = gql`
+    query GetChatPath($chatId: uuid!) {
+  chat_Chat_by_pk(id: $chatId) {
     id
+    room {
+      id
+    }
+    contentGroup {
+      id
+    }
   }
 }
     `;
-export type DeleteMessageMutationFn = Apollo.MutationFunction<DeleteMessageMutation, DeleteMessageMutationVariables>;
 
 /**
- * __useDeleteMessageMutation__
+ * __useGetChatPathQuery__
  *
- * To run a mutation, you first call `useDeleteMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteMessageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteMessageMutation, { data, loading, error }] = useDeleteMessageMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMessageMutation, DeleteMessageMutationVariables>) {
-        return Apollo.useMutation<DeleteMessageMutation, DeleteMessageMutationVariables>(DeleteMessageDocument, baseOptions);
-      }
-export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
-export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
-export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
-export const SelectPinDocument = gql`
-    query SelectPin($chatId: uuid!, $attendeeId: uuid!) {
-  chat_Chat_by_pk(id: $chatId) {
-    ...ChatPinConfig
-  }
-  chat_Pin(where: {chatId: {_eq: $chatId}, attendeeId: {_eq: $attendeeId}}) {
-    ...PinData
-  }
-}
-    ${ChatPinConfigFragmentDoc}
-${PinDataFragmentDoc}`;
-
-/**
- * __useSelectPinQuery__
- *
- * To run a query within a React component, call `useSelectPinQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectPinQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetChatPathQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSelectPinQuery({
+ * const { data, loading, error } = useGetChatPathQuery({
  *   variables: {
  *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
-export function useSelectPinQuery(baseOptions: Apollo.QueryHookOptions<SelectPinQuery, SelectPinQueryVariables>) {
-        return Apollo.useQuery<SelectPinQuery, SelectPinQueryVariables>(SelectPinDocument, baseOptions);
+export function useGetChatPathQuery(baseOptions: Apollo.QueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
+        return Apollo.useQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
       }
-export function useSelectPinLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectPinQuery, SelectPinQueryVariables>) {
-          return Apollo.useLazyQuery<SelectPinQuery, SelectPinQueryVariables>(SelectPinDocument, baseOptions);
+export function useGetChatPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
+          return Apollo.useLazyQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, baseOptions);
         }
-export type SelectPinQueryHookResult = ReturnType<typeof useSelectPinQuery>;
-export type SelectPinLazyQueryHookResult = ReturnType<typeof useSelectPinLazyQuery>;
-export type SelectPinQueryResult = Apollo.QueryResult<SelectPinQuery, SelectPinQueryVariables>;
-export const PinChatDocument = gql`
-    mutation PinChat($chatId: uuid!, $attendeeId: uuid!) {
-  insert_chat_Pin(
-    objects: {chatId: $chatId, attendeeId: $attendeeId}
-    on_conflict: {constraint: ChatPin_pkey, update_columns: wasManuallyPinned}
-  ) {
-    returning {
-      ...PinData
-    }
-  }
-}
-    ${PinDataFragmentDoc}`;
-export type PinChatMutationFn = Apollo.MutationFunction<PinChatMutation, PinChatMutationVariables>;
-
-/**
- * __usePinChatMutation__
- *
- * To run a mutation, you first call `usePinChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePinChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [pinChatMutation, { data, loading, error }] = usePinChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function usePinChatMutation(baseOptions?: Apollo.MutationHookOptions<PinChatMutation, PinChatMutationVariables>) {
-        return Apollo.useMutation<PinChatMutation, PinChatMutationVariables>(PinChatDocument, baseOptions);
-      }
-export type PinChatMutationHookResult = ReturnType<typeof usePinChatMutation>;
-export type PinChatMutationResult = Apollo.MutationResult<PinChatMutation>;
-export type PinChatMutationOptions = Apollo.BaseMutationOptions<PinChatMutation, PinChatMutationVariables>;
-export const UnpinChatDocument = gql`
-    mutation UnpinChat($chatId: uuid!, $attendeeId: uuid!) {
-  delete_chat_Pin_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-    ...PinData
-  }
-}
-    ${PinDataFragmentDoc}`;
-export type UnpinChatMutationFn = Apollo.MutationFunction<UnpinChatMutation, UnpinChatMutationVariables>;
-
-/**
- * __useUnpinChatMutation__
- *
- * To run a mutation, you first call `useUnpinChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUnpinChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [unpinChatMutation, { data, loading, error }] = useUnpinChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useUnpinChatMutation(baseOptions?: Apollo.MutationHookOptions<UnpinChatMutation, UnpinChatMutationVariables>) {
-        return Apollo.useMutation<UnpinChatMutation, UnpinChatMutationVariables>(UnpinChatDocument, baseOptions);
-      }
-export type UnpinChatMutationHookResult = ReturnType<typeof useUnpinChatMutation>;
-export type UnpinChatMutationResult = Apollo.MutationResult<UnpinChatMutation>;
-export type UnpinChatMutationOptions = Apollo.BaseMutationOptions<UnpinChatMutation, UnpinChatMutationVariables>;
-export const SelectSubscriptionDocument = gql`
-    query SelectSubscription($chatId: uuid!, $attendeeId: uuid!) {
-  chat_Chat_by_pk(id: $chatId) {
-    ...ChatSubscriptionConfig
-  }
-  chat_Subscription(
-    where: {chatId: {_eq: $chatId}, attendeeId: {_eq: $attendeeId}}
-  ) {
-    ...SubscriptionData
-  }
-}
-    ${ChatSubscriptionConfigFragmentDoc}
-${SubscriptionDataFragmentDoc}`;
-
-/**
- * __useSelectSubscriptionQuery__
- *
- * To run a query within a React component, call `useSelectSubscriptionQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectSubscriptionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectSubscriptionQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSelectSubscriptionQuery(baseOptions: Apollo.QueryHookOptions<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>) {
-        return Apollo.useQuery<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>(SelectSubscriptionDocument, baseOptions);
-      }
-export function useSelectSubscriptionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>) {
-          return Apollo.useLazyQuery<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>(SelectSubscriptionDocument, baseOptions);
-        }
-export type SelectSubscriptionQueryHookResult = ReturnType<typeof useSelectSubscriptionQuery>;
-export type SelectSubscriptionLazyQueryHookResult = ReturnType<typeof useSelectSubscriptionLazyQuery>;
-export type SelectSubscriptionQueryResult = Apollo.QueryResult<SelectSubscriptionQuery, SelectSubscriptionQueryVariables>;
-export const SubscribeChatDocument = gql`
-    mutation SubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
-  insert_chat_Subscription(
-    objects: {chatId: $chatId, attendeeId: $attendeeId}
-    on_conflict: {constraint: Subscription_pkey, update_columns: wasManuallySubscribed}
-  ) {
-    returning {
-      ...SubscriptionData
-    }
-  }
-  insert_chat_ReadUpToIndex(
-    objects: {chatId: $chatId, attendeeId: $attendeeId, messageId: -1}
-    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: []}
-  ) {
-    affected_rows
-  }
-}
-    ${SubscriptionDataFragmentDoc}`;
-export type SubscribeChatMutationFn = Apollo.MutationFunction<SubscribeChatMutation, SubscribeChatMutationVariables>;
-
-/**
- * __useSubscribeChatMutation__
- *
- * To run a mutation, you first call `useSubscribeChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSubscribeChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [subscribeChatMutation, { data, loading, error }] = useSubscribeChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeChatMutation, SubscribeChatMutationVariables>) {
-        return Apollo.useMutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument, baseOptions);
-      }
-export type SubscribeChatMutationHookResult = ReturnType<typeof useSubscribeChatMutation>;
-export type SubscribeChatMutationResult = Apollo.MutationResult<SubscribeChatMutation>;
-export type SubscribeChatMutationOptions = Apollo.BaseMutationOptions<SubscribeChatMutation, SubscribeChatMutationVariables>;
-export const UnsubscribeChatDocument = gql`
-    mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
-  delete_chat_Subscription_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-    ...SubscriptionData
-  }
-}
-    ${SubscriptionDataFragmentDoc}`;
-export type UnsubscribeChatMutationFn = Apollo.MutationFunction<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
-
-/**
- * __useUnsubscribeChatMutation__
- *
- * To run a mutation, you first call `useUnsubscribeChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUnsubscribeChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [unsubscribeChatMutation, { data, loading, error }] = useUnsubscribeChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useUnsubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>) {
-        return Apollo.useMutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(UnsubscribeChatDocument, baseOptions);
-      }
-export type UnsubscribeChatMutationHookResult = ReturnType<typeof useUnsubscribeChatMutation>;
-export type UnsubscribeChatMutationResult = Apollo.MutationResult<UnsubscribeChatMutation>;
-export type UnsubscribeChatMutationOptions = Apollo.BaseMutationOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
+export type GetChatPathQueryHookResult = ReturnType<typeof useGetChatPathQuery>;
+export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLazyQuery>;
+export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
 export const SelectAttendeesDocument = gql`
     query SelectAttendees($conferenceId: uuid!) {
   Attendee(
@@ -35643,16 +36558,50 @@ export function useContentGroupSummary_GetContentGroupLazyQuery(baseOptions?: Ap
 export type ContentGroupSummary_GetContentGroupQueryHookResult = ReturnType<typeof useContentGroupSummary_GetContentGroupQuery>;
 export type ContentGroupSummary_GetContentGroupLazyQueryHookResult = ReturnType<typeof useContentGroupSummary_GetContentGroupLazyQuery>;
 export type ContentGroupSummary_GetContentGroupQueryResult = Apollo.QueryResult<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>;
+export const AttendeeByIdDocument = gql`
+    query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
+  Attendee(where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useAttendeeByIdQuery__
+ *
+ * To run a query within a React component, call `useAttendeeByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttendeeByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttendeeByIdQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useAttendeeByIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
+        return Apollo.useQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
+      }
+export function useAttendeeByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
+          return Apollo.useLazyQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
+        }
+export type AttendeeByIdQueryHookResult = ReturnType<typeof useAttendeeByIdQuery>;
+export type AttendeeByIdLazyQueryHookResult = ReturnType<typeof useAttendeeByIdLazyQuery>;
+export type AttendeeByIdQueryResult = Apollo.QueryResult<AttendeeByIdQuery, AttendeeByIdQueryVariables>;
 export const UpdateAttendeeProfileDocument = gql`
     mutation UpdateAttendeeProfile($attendeeId: uuid!, $profile: AttendeeProfile_set_input = {}) {
   update_AttendeeProfile_by_pk(
     pk_columns: {attendeeId: $attendeeId}
     _set: $profile
   ) {
-    attendeeId
+    ...AttendeeProfileData
   }
 }
-    `;
+    ${AttendeeProfileDataFragmentDoc}`;
 export type UpdateAttendeeProfileMutationFn = Apollo.MutationFunction<UpdateAttendeeProfileMutation, UpdateAttendeeProfileMutationVariables>;
 
 /**
@@ -35682,10 +36631,10 @@ export type UpdateAttendeeProfileMutationOptions = Apollo.BaseMutationOptions<Up
 export const UpdateAttendeeDisplayNameDocument = gql`
     mutation UpdateAttendeeDisplayName($attendeeId: uuid!, $name: String!) {
   update_Attendee_by_pk(pk_columns: {id: $attendeeId}, _set: {displayName: $name}) {
-    id
+    ...AttendeeData
   }
 }
-    `;
+    ${AttendeeDataFragmentDoc}`;
 export type UpdateAttendeeDisplayNameMutationFn = Apollo.MutationFunction<UpdateAttendeeDisplayNameMutation, UpdateAttendeeDisplayNameMutationVariables>;
 
 /**
@@ -35716,6 +36665,8 @@ export const SubmitProfilePhotoDocument = gql`
     mutation SubmitProfilePhoto($attendeeId: uuid!, $s3URL: String!) {
   updateProfilePhoto(attendeeId: $attendeeId, s3URL: $s3URL) {
     ok
+    photoURL_350x350
+    photoURL_50x50
   }
 }
     `;
@@ -36181,39 +37132,39 @@ export function useMyEventRoomJoinRequestSubscription(baseOptions: Apollo.Subscr
       }
 export type MyEventRoomJoinRequestSubscriptionHookResult = ReturnType<typeof useMyEventRoomJoinRequestSubscription>;
 export type MyEventRoomJoinRequestSubscriptionResult = Apollo.SubscriptionResult<MyEventRoomJoinRequestSubscription>;
-export const Room_GetCurrentEventDocument = gql`
-    query Room_GetCurrentEvent($currentEventId: uuid!) {
-  Event_by_pk(id: $currentEventId) {
+export const Room_GetCurrentEventsDocument = gql`
+    query Room_GetCurrentEvents($currentEventIds: [uuid!]!) {
+  Event(where: {id: {_in: $currentEventIds}}) {
     ...Room_CurrentEventSummary
   }
 }
     ${Room_CurrentEventSummaryFragmentDoc}`;
 
 /**
- * __useRoom_GetCurrentEventQuery__
+ * __useRoom_GetCurrentEventsQuery__
  *
- * To run a query within a React component, call `useRoom_GetCurrentEventQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoom_GetCurrentEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useRoom_GetCurrentEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoom_GetCurrentEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useRoom_GetCurrentEventQuery({
+ * const { data, loading, error } = useRoom_GetCurrentEventsQuery({
  *   variables: {
- *      currentEventId: // value for 'currentEventId'
+ *      currentEventIds: // value for 'currentEventIds'
  *   },
  * });
  */
-export function useRoom_GetCurrentEventQuery(baseOptions: Apollo.QueryHookOptions<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>) {
-        return Apollo.useQuery<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>(Room_GetCurrentEventDocument, baseOptions);
+export function useRoom_GetCurrentEventsQuery(baseOptions: Apollo.QueryHookOptions<Room_GetCurrentEventsQuery, Room_GetCurrentEventsQueryVariables>) {
+        return Apollo.useQuery<Room_GetCurrentEventsQuery, Room_GetCurrentEventsQueryVariables>(Room_GetCurrentEventsDocument, baseOptions);
       }
-export function useRoom_GetCurrentEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>) {
-          return Apollo.useLazyQuery<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>(Room_GetCurrentEventDocument, baseOptions);
+export function useRoom_GetCurrentEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetCurrentEventsQuery, Room_GetCurrentEventsQueryVariables>) {
+          return Apollo.useLazyQuery<Room_GetCurrentEventsQuery, Room_GetCurrentEventsQueryVariables>(Room_GetCurrentEventsDocument, baseOptions);
         }
-export type Room_GetCurrentEventQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventQuery>;
-export type Room_GetCurrentEventLazyQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventLazyQuery>;
-export type Room_GetCurrentEventQueryResult = Apollo.QueryResult<Room_GetCurrentEventQuery, Room_GetCurrentEventQueryVariables>;
+export type Room_GetCurrentEventsQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventsQuery>;
+export type Room_GetCurrentEventsLazyQueryHookResult = ReturnType<typeof useRoom_GetCurrentEventsLazyQuery>;
+export type Room_GetCurrentEventsQueryResult = Apollo.QueryResult<Room_GetCurrentEventsQuery, Room_GetCurrentEventsQueryVariables>;
 export const Room_GetEventsDocument = gql`
     query Room_GetEvents($roomId: uuid!) {
   Event(where: {roomId: {_eq: $roomId}}) {
@@ -36247,39 +37198,43 @@ export function useRoom_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type Room_GetEventsQueryHookResult = ReturnType<typeof useRoom_GetEventsQuery>;
 export type Room_GetEventsLazyQueryHookResult = ReturnType<typeof useRoom_GetEventsLazyQuery>;
 export type Room_GetEventsQueryResult = Apollo.QueryResult<Room_GetEventsQuery, Room_GetEventsQueryVariables>;
-export const RoomBackstage_GetEventBreakoutRoomDocument = gql`
-    query RoomBackstage_GetEventBreakoutRoom($originatingEventId: uuid!) {
-  Room(where: {originatingEventId: {_eq: $originatingEventId}}) {
+export const Room_GetEventBreakoutRoomDocument = gql`
+    query Room_GetEventBreakoutRoom($originatingContentGroupId: uuid!) {
+  Room(
+    where: {originatingEventId: {_is_null: true}, originatingContentGroupId: {_eq: $originatingContentGroupId}}
+    order_by: {created_at: asc}
+    limit: 1
+  ) {
     id
   }
 }
     `;
 
 /**
- * __useRoomBackstage_GetEventBreakoutRoomQuery__
+ * __useRoom_GetEventBreakoutRoomQuery__
  *
- * To run a query within a React component, call `useRoomBackstage_GetEventBreakoutRoomQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoomBackstage_GetEventBreakoutRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useRoom_GetEventBreakoutRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoom_GetEventBreakoutRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useRoomBackstage_GetEventBreakoutRoomQuery({
+ * const { data, loading, error } = useRoom_GetEventBreakoutRoomQuery({
  *   variables: {
- *      originatingEventId: // value for 'originatingEventId'
+ *      originatingContentGroupId: // value for 'originatingContentGroupId'
  *   },
  * });
  */
-export function useRoomBackstage_GetEventBreakoutRoomQuery(baseOptions: Apollo.QueryHookOptions<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>) {
-        return Apollo.useQuery<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>(RoomBackstage_GetEventBreakoutRoomDocument, baseOptions);
+export function useRoom_GetEventBreakoutRoomQuery(baseOptions: Apollo.QueryHookOptions<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>) {
+        return Apollo.useQuery<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>(Room_GetEventBreakoutRoomDocument, baseOptions);
       }
-export function useRoomBackstage_GetEventBreakoutRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>) {
-          return Apollo.useLazyQuery<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>(RoomBackstage_GetEventBreakoutRoomDocument, baseOptions);
+export function useRoom_GetEventBreakoutRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>) {
+          return Apollo.useLazyQuery<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>(Room_GetEventBreakoutRoomDocument, baseOptions);
         }
-export type RoomBackstage_GetEventBreakoutRoomQueryHookResult = ReturnType<typeof useRoomBackstage_GetEventBreakoutRoomQuery>;
-export type RoomBackstage_GetEventBreakoutRoomLazyQueryHookResult = ReturnType<typeof useRoomBackstage_GetEventBreakoutRoomLazyQuery>;
-export type RoomBackstage_GetEventBreakoutRoomQueryResult = Apollo.QueryResult<RoomBackstage_GetEventBreakoutRoomQuery, RoomBackstage_GetEventBreakoutRoomQueryVariables>;
+export type Room_GetEventBreakoutRoomQueryHookResult = ReturnType<typeof useRoom_GetEventBreakoutRoomQuery>;
+export type Room_GetEventBreakoutRoomLazyQueryHookResult = ReturnType<typeof useRoom_GetEventBreakoutRoomLazyQuery>;
+export type Room_GetEventBreakoutRoomQueryResult = Apollo.QueryResult<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(
@@ -36462,39 +37417,6 @@ export function useRoomSponsorContent_GetContentItemsLazyQuery(baseOptions?: Apo
 export type RoomSponsorContent_GetContentItemsQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetContentItemsQuery>;
 export type RoomSponsorContent_GetContentItemsLazyQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetContentItemsLazyQuery>;
 export type RoomSponsorContent_GetContentItemsQueryResult = Apollo.QueryResult<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>;
-export const VonageSubscriber_GetAttendeeDocument = gql`
-    query VonageSubscriber_GetAttendee($id: uuid!) {
-  Attendee_by_pk(id: $id) {
-    ...AttendeeData
-  }
-}
-    ${AttendeeDataFragmentDoc}`;
-
-/**
- * __useVonageSubscriber_GetAttendeeQuery__
- *
- * To run a query within a React component, call `useVonageSubscriber_GetAttendeeQuery` and pass it any options that fit your needs.
- * When your component renders, `useVonageSubscriber_GetAttendeeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useVonageSubscriber_GetAttendeeQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useVonageSubscriber_GetAttendeeQuery(baseOptions: Apollo.QueryHookOptions<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>) {
-        return Apollo.useQuery<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>(VonageSubscriber_GetAttendeeDocument, baseOptions);
-      }
-export function useVonageSubscriber_GetAttendeeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>) {
-          return Apollo.useLazyQuery<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>(VonageSubscriber_GetAttendeeDocument, baseOptions);
-        }
-export type VonageSubscriber_GetAttendeeQueryHookResult = ReturnType<typeof useVonageSubscriber_GetAttendeeQuery>;
-export type VonageSubscriber_GetAttendeeLazyQueryHookResult = ReturnType<typeof useVonageSubscriber_GetAttendeeLazyQuery>;
-export type VonageSubscriber_GetAttendeeQueryResult = Apollo.QueryResult<VonageSubscriber_GetAttendeeQuery, VonageSubscriber_GetAttendeeQueryVariables>;
 export const Timeline_SelectEventDocument = gql`
     query Timeline_SelectEvent($id: uuid!) {
   Event_by_pk(id: $id) {
@@ -36605,6 +37527,40 @@ export function useAttendeesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type AttendeesByIdQueryHookResult = ReturnType<typeof useAttendeesByIdQuery>;
 export type AttendeesByIdLazyQueryHookResult = ReturnType<typeof useAttendeesByIdLazyQuery>;
 export type AttendeesByIdQueryResult = Apollo.QueryResult<AttendeesByIdQuery, AttendeesByIdQueryVariables>;
+export const AttendeesByUserIdDocument = gql`
+    query AttendeesByUserId($conferenceId: uuid!, $userIds: [String!]!) {
+  Attendee(where: {userId: {_in: $userIds}, conferenceId: {_eq: $conferenceId}}) {
+    ...AttendeeData
+  }
+}
+    ${AttendeeDataFragmentDoc}`;
+
+/**
+ * __useAttendeesByUserIdQuery__
+ *
+ * To run a query within a React component, call `useAttendeesByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttendeesByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttendeesByUserIdQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      userIds: // value for 'userIds'
+ *   },
+ * });
+ */
+export function useAttendeesByUserIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>) {
+        return Apollo.useQuery<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>(AttendeesByUserIdDocument, baseOptions);
+      }
+export function useAttendeesByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>) {
+          return Apollo.useLazyQuery<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>(AttendeesByUserIdDocument, baseOptions);
+        }
+export type AttendeesByUserIdQueryHookResult = ReturnType<typeof useAttendeesByUserIdQuery>;
+export type AttendeesByUserIdLazyQueryHookResult = ReturnType<typeof useAttendeesByUserIdLazyQuery>;
+export type AttendeesByUserIdQueryResult = Apollo.QueryResult<AttendeesByUserIdQuery, AttendeesByUserIdQueryVariables>;
 export const GetMediaLiveChannelsDocument = gql`
     query GetMediaLiveChannels($conferenceId: uuid!) {
   Room(where: {mediaLiveChannel: {}, conferenceId: {_eq: $conferenceId}}) {
@@ -36970,6 +37926,39 @@ export function useContentGroup_CreateRoomMutation(baseOptions?: Apollo.Mutation
 export type ContentGroup_CreateRoomMutationHookResult = ReturnType<typeof useContentGroup_CreateRoomMutation>;
 export type ContentGroup_CreateRoomMutationResult = Apollo.MutationResult<ContentGroup_CreateRoomMutation>;
 export type ContentGroup_CreateRoomMutationOptions = Apollo.BaseMutationOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
+export const ManageContentPeople_SelectAllAttendeesDocument = gql`
+    query ManageContentPeople_SelectAllAttendees($conferenceId: uuid!) {
+  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContentPeople_Attendee
+  }
+}
+    ${ManageContentPeople_AttendeeFragmentDoc}`;
+
+/**
+ * __useManageContentPeople_SelectAllAttendeesQuery__
+ *
+ * To run a query within a React component, call `useManageContentPeople_SelectAllAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContentPeople_SelectAllAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContentPeople_SelectAllAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContentPeople_SelectAllAttendeesQuery(baseOptions: Apollo.QueryHookOptions<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>) {
+        return Apollo.useQuery<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>(ManageContentPeople_SelectAllAttendeesDocument, baseOptions);
+      }
+export function useManageContentPeople_SelectAllAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>(ManageContentPeople_SelectAllAttendeesDocument, baseOptions);
+        }
+export type ManageContentPeople_SelectAllAttendeesQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllAttendeesQuery>;
+export type ManageContentPeople_SelectAllAttendeesLazyQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllAttendeesLazyQuery>;
+export type ManageContentPeople_SelectAllAttendeesQueryResult = Apollo.QueryResult<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>;
 export const SubmissionRequestsModal_GetConferenceConfigurationsDocument = gql`
     query SubmissionRequestsModal_GetConferenceConfigurations($conferenceId: uuid!) {
   ConferenceConfiguration(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -37706,10 +38695,10 @@ export type UpdateGroupHallwayMutationHookResult = ReturnType<typeof useUpdateGr
 export type UpdateGroupHallwayMutationResult = Apollo.MutationResult<UpdateGroupHallwayMutation>;
 export type UpdateGroupHallwayMutationOptions = Apollo.BaseMutationOptions<UpdateGroupHallwayMutation, UpdateGroupHallwayMutationVariables>;
 export const UpdatePersonDocument = gql`
-    mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String = null, $email: String = null, $originatingDataId: uuid = null) {
+    mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String = null, $email: String = null, $originatingDataId: uuid = null, $attendeeId: uuid = null) {
   update_ContentPerson_by_pk(
     pk_columns: {id: $id}
-    _set: {name: $name, affiliation: $affiliation, email: $email, originatingDataId: $originatingDataId}
+    _set: {name: $name, affiliation: $affiliation, email: $email, originatingDataId: $originatingDataId, attendeeId: $attendeeId}
   ) {
     ...ContentPersonInfo
   }
@@ -37735,6 +38724,7 @@ export type UpdatePersonMutationFn = Apollo.MutationFunction<UpdatePersonMutatio
  *      affiliation: // value for 'affiliation'
  *      email: // value for 'email'
  *      originatingDataId: // value for 'originatingDataId'
+ *      attendeeId: // value for 'attendeeId'
  *   },
  * });
  */
@@ -38309,6 +39299,14 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
       }
       paperUrlContentItems: contentItems(where: {contentTypeName: {_eq: PAPER_URL}}) {
         ...UploadYouTubeVideos_ContentItem
+      }
+      authors: people(where: {roleName: {_eq: "AUTHOR"}}) {
+        id
+        person {
+          id
+          name
+          affiliation
+        }
       }
     }
   }
@@ -39382,6 +40380,39 @@ export function useDeleteEventInfosMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteEventInfosMutationHookResult = ReturnType<typeof useDeleteEventInfosMutation>;
 export type DeleteEventInfosMutationResult = Apollo.MutationResult<DeleteEventInfosMutation>;
 export type DeleteEventInfosMutationOptions = Apollo.BaseMutationOptions<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>;
+export const ManageShufflePeriods_SelectAllDocument = gql`
+    query ManageShufflePeriods_SelectAll($conferenceId: uuid!) {
+  room_ShufflePeriod(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageShufflePeriods_ShufflePeriod
+  }
+}
+    ${ManageShufflePeriods_ShufflePeriodFragmentDoc}`;
+
+/**
+ * __useManageShufflePeriods_SelectAllQuery__
+ *
+ * To run a query within a React component, call `useManageShufflePeriods_SelectAllQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageShufflePeriods_SelectAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageShufflePeriods_SelectAllQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageShufflePeriods_SelectAllQuery(baseOptions: Apollo.QueryHookOptions<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>) {
+        return Apollo.useQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(ManageShufflePeriods_SelectAllDocument, baseOptions);
+      }
+export function useManageShufflePeriods_SelectAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>) {
+          return Apollo.useLazyQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(ManageShufflePeriods_SelectAllDocument, baseOptions);
+        }
+export type ManageShufflePeriods_SelectAllQueryHookResult = ReturnType<typeof useManageShufflePeriods_SelectAllQuery>;
+export type ManageShufflePeriods_SelectAllLazyQueryHookResult = ReturnType<typeof useManageShufflePeriods_SelectAllLazyQuery>;
+export type ManageShufflePeriods_SelectAllQueryResult = Apollo.QueryResult<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>;
 export const SendEmail_GetAllGroupsDocument = gql`
     query SendEmail_GetAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -39417,6 +40448,272 @@ export function useSendEmail_GetAllGroupsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type SendEmail_GetAllGroupsQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsQuery>;
 export type SendEmail_GetAllGroupsLazyQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsLazyQuery>;
 export type SendEmail_GetAllGroupsQueryResult = Apollo.QueryResult<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>;
+export const AddEventPeople_SelectContentGroupPeopleDocument = gql`
+    query AddEventPeople_SelectContentGroupPeople($contentGroupIds: [uuid!]!) {
+  ContentGroupPerson(where: {groupId: {_in: $contentGroupIds}}) {
+    ...AddEventPeople_ContentGroupPerson
+  }
+}
+    ${AddEventPeople_ContentGroupPersonFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectContentGroupPeopleQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectContentGroupPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectContentGroupPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectContentGroupPeopleQuery({
+ *   variables: {
+ *      contentGroupIds: // value for 'contentGroupIds'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectContentGroupPeopleQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>(AddEventPeople_SelectContentGroupPeopleDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectContentGroupPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>(AddEventPeople_SelectContentGroupPeopleDocument, baseOptions);
+        }
+export type AddEventPeople_SelectContentGroupPeopleQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentGroupPeopleQuery>;
+export type AddEventPeople_SelectContentGroupPeopleLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentGroupPeopleLazyQuery>;
+export type AddEventPeople_SelectContentGroupPeopleQueryResult = Apollo.QueryResult<AddEventPeople_SelectContentGroupPeopleQuery, AddEventPeople_SelectContentGroupPeopleQueryVariables>;
+export const AddEventPeople_SelectContentPeopleDocument = gql`
+    query AddEventPeople_SelectContentPeople($conferenceId: uuid!) {
+  ContentPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AddEventPeople_ContentPerson
+  }
+}
+    ${AddEventPeople_ContentPersonFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectContentPeopleQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectContentPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectContentPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectContentPeopleQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectContentPeopleQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>(AddEventPeople_SelectContentPeopleDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectContentPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>(AddEventPeople_SelectContentPeopleDocument, baseOptions);
+        }
+export type AddEventPeople_SelectContentPeopleQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentPeopleQuery>;
+export type AddEventPeople_SelectContentPeopleLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentPeopleLazyQuery>;
+export type AddEventPeople_SelectContentPeopleQueryResult = Apollo.QueryResult<AddEventPeople_SelectContentPeopleQuery, AddEventPeople_SelectContentPeopleQueryVariables>;
+export const AddEventPeople_SelectAttendeesDocument = gql`
+    query AddEventPeople_SelectAttendees($conferenceId: uuid!) {
+  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AddEventPeople_Attendee
+  }
+}
+    ${AddEventPeople_AttendeeFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectAttendeesQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectAttendeesQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>(AddEventPeople_SelectAttendeesDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>(AddEventPeople_SelectAttendeesDocument, baseOptions);
+        }
+export type AddEventPeople_SelectAttendeesQueryHookResult = ReturnType<typeof useAddEventPeople_SelectAttendeesQuery>;
+export type AddEventPeople_SelectAttendeesLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectAttendeesLazyQuery>;
+export type AddEventPeople_SelectAttendeesQueryResult = Apollo.QueryResult<AddEventPeople_SelectAttendeesQuery, AddEventPeople_SelectAttendeesQueryVariables>;
+export const AddEventPeople_SelectContentPeople_ByAttendeeDocument = gql`
+    query AddEventPeople_SelectContentPeople_ByAttendee($attendeeIds: [uuid!]!) {
+  ContentPerson(where: {attendeeId: {_in: $attendeeIds}}) {
+    ...AddEventPeople_ContentPerson
+  }
+}
+    ${AddEventPeople_ContentPersonFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectContentPeople_ByAttendeeQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectContentPeople_ByAttendeeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectContentPeople_ByAttendeeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectContentPeople_ByAttendeeQuery({
+ *   variables: {
+ *      attendeeIds: // value for 'attendeeIds'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectContentPeople_ByAttendeeQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>(AddEventPeople_SelectContentPeople_ByAttendeeDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectContentPeople_ByAttendeeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>(AddEventPeople_SelectContentPeople_ByAttendeeDocument, baseOptions);
+        }
+export type AddEventPeople_SelectContentPeople_ByAttendeeQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentPeople_ByAttendeeQuery>;
+export type AddEventPeople_SelectContentPeople_ByAttendeeLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectContentPeople_ByAttendeeLazyQuery>;
+export type AddEventPeople_SelectContentPeople_ByAttendeeQueryResult = Apollo.QueryResult<AddEventPeople_SelectContentPeople_ByAttendeeQuery, AddEventPeople_SelectContentPeople_ByAttendeeQueryVariables>;
+export const AddEventPeople_SelectGroupsDocument = gql`
+    query AddEventPeople_SelectGroups($conferenceId: uuid!) {
+  Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AddEventPeople_Group
+  }
+}
+    ${AddEventPeople_GroupFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectGroupsQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectGroupsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectGroupsQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>(AddEventPeople_SelectGroupsDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>(AddEventPeople_SelectGroupsDocument, baseOptions);
+        }
+export type AddEventPeople_SelectGroupsQueryHookResult = ReturnType<typeof useAddEventPeople_SelectGroupsQuery>;
+export type AddEventPeople_SelectGroupsLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectGroupsLazyQuery>;
+export type AddEventPeople_SelectGroupsQueryResult = Apollo.QueryResult<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>;
+export const AddEventPeople_SelectAttendees_ByGroupDocument = gql`
+    query AddEventPeople_SelectAttendees_ByGroup($groupId: uuid!) {
+  Attendee(where: {groupAttendees: {groupId: {_eq: $groupId}}}) {
+    ...AddEventPeople_Attendee
+  }
+}
+    ${AddEventPeople_AttendeeFragmentDoc}`;
+
+/**
+ * __useAddEventPeople_SelectAttendees_ByGroupQuery__
+ *
+ * To run a query within a React component, call `useAddEventPeople_SelectAttendees_ByGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_SelectAttendees_ByGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddEventPeople_SelectAttendees_ByGroupQuery({
+ *   variables: {
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useAddEventPeople_SelectAttendees_ByGroupQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>) {
+        return Apollo.useQuery<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>(AddEventPeople_SelectAttendees_ByGroupDocument, baseOptions);
+      }
+export function useAddEventPeople_SelectAttendees_ByGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>) {
+          return Apollo.useLazyQuery<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>(AddEventPeople_SelectAttendees_ByGroupDocument, baseOptions);
+        }
+export type AddEventPeople_SelectAttendees_ByGroupQueryHookResult = ReturnType<typeof useAddEventPeople_SelectAttendees_ByGroupQuery>;
+export type AddEventPeople_SelectAttendees_ByGroupLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectAttendees_ByGroupLazyQuery>;
+export type AddEventPeople_SelectAttendees_ByGroupQueryResult = Apollo.QueryResult<AddEventPeople_SelectAttendees_ByGroupQuery, AddEventPeople_SelectAttendees_ByGroupQueryVariables>;
+export const AddEventPeople_InsertContentPeopleDocument = gql`
+    mutation AddEventPeople_InsertContentPeople($objects: [ContentPerson_insert_input!]!) {
+  insert_ContentPerson(objects: $objects) {
+    returning {
+      ...AddEventPeople_ContentPerson
+    }
+  }
+}
+    ${AddEventPeople_ContentPersonFragmentDoc}`;
+export type AddEventPeople_InsertContentPeopleMutationFn = Apollo.MutationFunction<AddEventPeople_InsertContentPeopleMutation, AddEventPeople_InsertContentPeopleMutationVariables>;
+
+/**
+ * __useAddEventPeople_InsertContentPeopleMutation__
+ *
+ * To run a mutation, you first call `useAddEventPeople_InsertContentPeopleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_InsertContentPeopleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addEventPeopleInsertContentPeopleMutation, { data, loading, error }] = useAddEventPeople_InsertContentPeopleMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useAddEventPeople_InsertContentPeopleMutation(baseOptions?: Apollo.MutationHookOptions<AddEventPeople_InsertContentPeopleMutation, AddEventPeople_InsertContentPeopleMutationVariables>) {
+        return Apollo.useMutation<AddEventPeople_InsertContentPeopleMutation, AddEventPeople_InsertContentPeopleMutationVariables>(AddEventPeople_InsertContentPeopleDocument, baseOptions);
+      }
+export type AddEventPeople_InsertContentPeopleMutationHookResult = ReturnType<typeof useAddEventPeople_InsertContentPeopleMutation>;
+export type AddEventPeople_InsertContentPeopleMutationResult = Apollo.MutationResult<AddEventPeople_InsertContentPeopleMutation>;
+export type AddEventPeople_InsertContentPeopleMutationOptions = Apollo.BaseMutationOptions<AddEventPeople_InsertContentPeopleMutation, AddEventPeople_InsertContentPeopleMutationVariables>;
+export const AddEventPeople_InsertEventPeopleDocument = gql`
+    mutation AddEventPeople_InsertEventPeople($objects: [EventPerson_insert_input!]!) {
+  insert_EventPerson(objects: $objects) {
+    returning {
+      ...EventPersonInfo
+    }
+  }
+}
+    ${EventPersonInfoFragmentDoc}`;
+export type AddEventPeople_InsertEventPeopleMutationFn = Apollo.MutationFunction<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>;
+
+/**
+ * __useAddEventPeople_InsertEventPeopleMutation__
+ *
+ * To run a mutation, you first call `useAddEventPeople_InsertEventPeopleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddEventPeople_InsertEventPeopleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addEventPeopleInsertEventPeopleMutation, { data, loading, error }] = useAddEventPeople_InsertEventPeopleMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useAddEventPeople_InsertEventPeopleMutation(baseOptions?: Apollo.MutationHookOptions<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>) {
+        return Apollo.useMutation<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>(AddEventPeople_InsertEventPeopleDocument, baseOptions);
+      }
+export type AddEventPeople_InsertEventPeopleMutationHookResult = ReturnType<typeof useAddEventPeople_InsertEventPeopleMutation>;
+export type AddEventPeople_InsertEventPeopleMutationResult = Apollo.MutationResult<AddEventPeople_InsertEventPeopleMutation>;
+export type AddEventPeople_InsertEventPeopleMutationOptions = Apollo.BaseMutationOptions<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>;
 export const InsertEventPersonDocument = gql`
     mutation InsertEventPerson($newEventPerson: EventPerson_insert_input!) {
   insert_EventPerson_one(object: $newEventPerson) {
@@ -39483,46 +40780,43 @@ export function useDeleteEventPersonsMutation(baseOptions?: Apollo.MutationHookO
 export type DeleteEventPersonsMutationHookResult = ReturnType<typeof useDeleteEventPersonsMutation>;
 export type DeleteEventPersonsMutationResult = Apollo.MutationResult<DeleteEventPersonsMutation>;
 export type DeleteEventPersonsMutationOptions = Apollo.BaseMutationOptions<DeleteEventPersonsMutation, DeleteEventPersonsMutationVariables>;
-export const UpdateEventPersonInfoDocument = gql`
-    mutation UpdateEventPersonInfo($id: uuid!, $attendeeId: uuid = null, $name: String!, $affiliation: String = null, $roleName: EventPersonRole_enum!, $originatingDataId: uuid = null) {
+export const UpdateEventPersonDocument = gql`
+    mutation UpdateEventPerson($id: uuid!, $personId: uuid!, $roleName: EventPersonRole_enum!) {
   update_EventPerson_by_pk(
     pk_columns: {id: $id}
-    _set: {attendeeId: $attendeeId, name: $name, affiliation: $affiliation, roleName: $roleName, originatingDataId: $originatingDataId}
+    _set: {personId: $personId, roleName: $roleName}
   ) {
     ...EventPersonInfo
   }
 }
     ${EventPersonInfoFragmentDoc}`;
-export type UpdateEventPersonInfoMutationFn = Apollo.MutationFunction<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>;
+export type UpdateEventPersonMutationFn = Apollo.MutationFunction<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
 
 /**
- * __useUpdateEventPersonInfoMutation__
+ * __useUpdateEventPersonMutation__
  *
- * To run a mutation, you first call `useUpdateEventPersonInfoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEventPersonInfoMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateEventPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventPersonMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateEventPersonInfoMutation, { data, loading, error }] = useUpdateEventPersonInfoMutation({
+ * const [updateEventPersonMutation, { data, loading, error }] = useUpdateEventPersonMutation({
  *   variables: {
  *      id: // value for 'id'
- *      attendeeId: // value for 'attendeeId'
- *      name: // value for 'name'
- *      affiliation: // value for 'affiliation'
+ *      personId: // value for 'personId'
  *      roleName: // value for 'roleName'
- *      originatingDataId: // value for 'originatingDataId'
  *   },
  * });
  */
-export function useUpdateEventPersonInfoMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>) {
-        return Apollo.useMutation<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>(UpdateEventPersonInfoDocument, baseOptions);
+export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>) {
+        return Apollo.useMutation<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>(UpdateEventPersonDocument, baseOptions);
       }
-export type UpdateEventPersonInfoMutationHookResult = ReturnType<typeof useUpdateEventPersonInfoMutation>;
-export type UpdateEventPersonInfoMutationResult = Apollo.MutationResult<UpdateEventPersonInfoMutation>;
-export type UpdateEventPersonInfoMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonInfoMutation, UpdateEventPersonInfoMutationVariables>;
+export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
+export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
+export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
 export const SelectWholeScheduleDocument = gql`
     query SelectWholeSchedule($conferenceId: uuid!) {
   Room(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -39543,8 +40837,8 @@ export const SelectWholeScheduleDocument = gql`
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ContentGroupFullNestedInfo
   }
-  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...AttendeeInfo
+  ContentPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ContentPersonInfo
   }
 }
     ${RoomInfoFragmentDoc}
@@ -39552,7 +40846,7 @@ ${EventInfoFragmentDoc}
 ${OriginatingDataInfoFragmentDoc}
 ${TagInfoFragmentDoc}
 ${ContentGroupFullNestedInfoFragmentDoc}
-${AttendeeInfoFragmentDoc}`;
+${ContentPersonInfoFragmentDoc}`;
 
 /**
  * __useSelectWholeScheduleQuery__
@@ -39753,15 +41047,10 @@ export type InsertEventMutationHookResult = ReturnType<typeof useInsertEventMuta
 export type InsertEventMutationResult = Apollo.MutationResult<InsertEventMutation>;
 export type InsertEventMutationOptions = Apollo.BaseMutationOptions<InsertEventMutation, InsertEventMutationVariables>;
 export const UpdateEventDocument = gql`
-    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!, $newEventPeople: [EventPerson_insert_input!]!, $deleteEventPeopleIds: [uuid!]!) {
+    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!) {
   insert_EventTag(objects: $newEventTags) {
     returning {
       ...EventTagInfo
-    }
-  }
-  insert_EventPerson(objects: $newEventPeople) {
-    returning {
-      ...EventPersonInfo
     }
   }
   update_Event_by_pk(
@@ -39775,14 +41064,8 @@ export const UpdateEventDocument = gql`
       id
     }
   }
-  delete_EventPerson(where: {id: {_in: $deleteEventPeopleIds}}) {
-    returning {
-      id
-    }
-  }
 }
     ${EventTagInfoFragmentDoc}
-${EventPersonInfoFragmentDoc}
 ${EventInfoFragmentDoc}`;
 export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation, UpdateEventMutationVariables>;
 
@@ -39809,8 +41092,6 @@ export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation,
  *      contentGroupId: // value for 'contentGroupId'
  *      newEventTags: // value for 'newEventTags'
  *      deleteEventTagIds: // value for 'deleteEventTagIds'
- *      newEventPeople: // value for 'newEventPeople'
- *      deleteEventPeopleIds: // value for 'deleteEventPeopleIds'
  *   },
  * });
  */
@@ -39820,46 +41101,127 @@ export function useUpdateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMutation>;
 export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
 export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
-export const UpdateEventPersonDocument = gql`
-    mutation UpdateEventPerson($id: uuid!, $attendeeId: uuid = null, $name: String!, $affiliation: String = null, $roleName: EventPersonRole_enum!, $originatingDataId: uuid = null) {
-  update_EventPerson_by_pk(
-    pk_columns: {id: $id}
-    _set: {attendeeId: $attendeeId, name: $name, affiliation: $affiliation, roleName: $roleName, originatingDataId: $originatingDataId}
-  ) {
-    ...EventPersonInfo
+export const UpdateShufflePeriodDocument = gql`
+    mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {
+  update_room_ShufflePeriod_by_pk(pk_columns: {id: $id}, _set: $object) {
+    id
+    created_at
+    updated_at
+    conferenceId
+    startAt
+    endAt
+    roomDurationMinutes
+    targetAttendeesPerRoom
+    maxAttendeesPerRoom
+    waitRoomMaxDurationSeconds
+    name
+    organiserId
+    algorithm
   }
 }
-    ${EventPersonInfoFragmentDoc}`;
-export type UpdateEventPersonMutationFn = Apollo.MutationFunction<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
+    `;
+export type UpdateShufflePeriodMutationFn = Apollo.MutationFunction<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>;
 
 /**
- * __useUpdateEventPersonMutation__
+ * __useUpdateShufflePeriodMutation__
  *
- * To run a mutation, you first call `useUpdateEventPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEventPersonMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateShufflePeriodMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateShufflePeriodMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateEventPersonMutation, { data, loading, error }] = useUpdateEventPersonMutation({
+ * const [updateShufflePeriodMutation, { data, loading, error }] = useUpdateShufflePeriodMutation({
  *   variables: {
  *      id: // value for 'id'
- *      attendeeId: // value for 'attendeeId'
- *      name: // value for 'name'
- *      affiliation: // value for 'affiliation'
- *      roleName: // value for 'roleName'
- *      originatingDataId: // value for 'originatingDataId'
+ *      object: // value for 'object'
  *   },
  * });
  */
-export function useUpdateEventPersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>) {
-        return Apollo.useMutation<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>(UpdateEventPersonDocument, baseOptions);
+export function useUpdateShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>) {
+        return Apollo.useMutation<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>(UpdateShufflePeriodDocument, baseOptions);
       }
-export type UpdateEventPersonMutationHookResult = ReturnType<typeof useUpdateEventPersonMutation>;
-export type UpdateEventPersonMutationResult = Apollo.MutationResult<UpdateEventPersonMutation>;
-export type UpdateEventPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventPersonMutation, UpdateEventPersonMutationVariables>;
+export type UpdateShufflePeriodMutationHookResult = ReturnType<typeof useUpdateShufflePeriodMutation>;
+export type UpdateShufflePeriodMutationResult = Apollo.MutationResult<UpdateShufflePeriodMutation>;
+export type UpdateShufflePeriodMutationOptions = Apollo.BaseMutationOptions<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>;
+export const InsertShufflePeriodDocument = gql`
+    mutation InsertShufflePeriod($object: room_ShufflePeriod_insert_input!) {
+  insert_room_ShufflePeriod_one(object: $object) {
+    id
+    created_at
+    updated_at
+    conferenceId
+    startAt
+    endAt
+    roomDurationMinutes
+    targetAttendeesPerRoom
+    maxAttendeesPerRoom
+    waitRoomMaxDurationSeconds
+    name
+    organiserId
+    algorithm
+  }
+}
+    `;
+export type InsertShufflePeriodMutationFn = Apollo.MutationFunction<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>;
+
+/**
+ * __useInsertShufflePeriodMutation__
+ *
+ * To run a mutation, you first call `useInsertShufflePeriodMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertShufflePeriodMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertShufflePeriodMutation, { data, loading, error }] = useInsertShufflePeriodMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useInsertShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>) {
+        return Apollo.useMutation<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>(InsertShufflePeriodDocument, baseOptions);
+      }
+export type InsertShufflePeriodMutationHookResult = ReturnType<typeof useInsertShufflePeriodMutation>;
+export type InsertShufflePeriodMutationResult = Apollo.MutationResult<InsertShufflePeriodMutation>;
+export type InsertShufflePeriodMutationOptions = Apollo.BaseMutationOptions<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>;
+export const DeleteShufflePeriodDocument = gql`
+    mutation DeleteShufflePeriod($id: uuid!) {
+  delete_room_ShufflePeriod_by_pk(id: $id) {
+    id
+  }
+}
+    `;
+export type DeleteShufflePeriodMutationFn = Apollo.MutationFunction<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>;
+
+/**
+ * __useDeleteShufflePeriodMutation__
+ *
+ * To run a mutation, you first call `useDeleteShufflePeriodMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteShufflePeriodMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteShufflePeriodMutation, { data, loading, error }] = useDeleteShufflePeriodMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>) {
+        return Apollo.useMutation<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>(DeleteShufflePeriodDocument, baseOptions);
+      }
+export type DeleteShufflePeriodMutationHookResult = ReturnType<typeof useDeleteShufflePeriodMutation>;
+export type DeleteShufflePeriodMutationResult = Apollo.MutationResult<DeleteShufflePeriodMutation>;
+export type DeleteShufflePeriodMutationOptions = Apollo.BaseMutationOptions<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>;
 export const AddSponsorContentMenu_CreateContentItemDocument = gql`
     mutation AddSponsorContentMenu_CreateContentItem($object: ContentItem_insert_input!) {
   insert_ContentItem_one(object: $object) {
@@ -40249,12 +41611,12 @@ export type CreateConferenceMutationOptions = Apollo.BaseMutationOptions<CreateC
 export const CreateNewConferenceMetaStructureDocument = gql`
     mutation CreateNewConferenceMetaStructure($conferenceId: uuid!, $attendeeDisplayName: String!, $userId: String!, $abstractData: jsonb!, $contentGroupListData: jsonb!) {
   insert_Attendee(
-    objects: [{displayName: $attendeeDisplayName, userId: $userId, conferenceId: $conferenceId, groupAttendees: {data: {group: {data: {conferenceId: $conferenceId, includeUnauthenticated: false, name: "Organisers", groupRoles: {data: {role: {data: {conferenceId: $conferenceId, name: "Organiser", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_NAME}, {permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_MANAGE_ROLES}, {permissionName: CONFERENCE_MANAGE_GROUPS}, {permissionName: CONFERENCE_MANAGE_CONTENT}, {permissionName: CONFERENCE_MANAGE_SCHEDULE}]}}}}}}}}}}]
+    objects: [{displayName: $attendeeDisplayName, userId: $userId, conferenceId: $conferenceId, groupAttendees: {data: {group: {data: {conferenceId: $conferenceId, includeUnauthenticated: false, name: "Organisers", groupRoles: {data: {role: {data: {conferenceId: $conferenceId, name: "Organiser", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_NAME}, {permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_MANAGE_ROLES}, {permissionName: CONFERENCE_MANAGE_GROUPS}, {permissionName: CONFERENCE_MANAGE_CONTENT}, {permissionName: CONFERENCE_MANAGE_SCHEDULE}, {permissionName: CONFERENCE_MANAGE_SHUFFLE}]}}}}}}}}}}]
   ) {
     affected_rows
   }
   insert_Group(
-    objects: [{conferenceId: $conferenceId, enabled: false, name: "Attendees", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Attendee", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Public", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Public", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Registrars", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Registrar", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Moderators", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Moderator", rolePermissions: {data: [{permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}]}}}}]}}]
+    objects: [{conferenceId: $conferenceId, enabled: false, name: "Attendees", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Attendee", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Public", includeUnauthenticated: true, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Public", rolePermissions: {data: [{permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Registrars", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Registrar", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Moderators", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Moderator", rolePermissions: {data: [{permissionName: CONFERENCE_MODERATE_ATTENDEES}, {permissionName: CONFERENCE_VIEW_ATTENDEES}, {permissionName: CONFERENCE_VIEW}]}}}}]}}, {conferenceId: $conferenceId, enabled: false, name: "Social Chairs", includeUnauthenticated: false, groupRoles: {data: [{role: {data: {conferenceId: $conferenceId, name: "Social Chair", rolePermissions: {data: [{permissionName: CONFERENCE_MANAGE_SHUFFLE}]}}}}]}}]
   ) {
     returning {
       id
@@ -40316,203 +41678,75 @@ export function useCreateNewConferenceMetaStructureMutation(baseOptions?: Apollo
 export type CreateNewConferenceMetaStructureMutationHookResult = ReturnType<typeof useCreateNewConferenceMetaStructureMutation>;
 export type CreateNewConferenceMetaStructureMutationResult = Apollo.MutationResult<CreateNewConferenceMetaStructureMutation>;
 export type CreateNewConferenceMetaStructureMutationOptions = Apollo.BaseMutationOptions<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
-export const ConferenceBySlugDocument = gql`
-    query ConferenceBySlug($slug: String!) {
+export const ConferenceBySlug_WithUserDocument = gql`
+    query ConferenceBySlug_WithUser($slug: String!, $userId: String!) {
   Conference(where: {slug: {_eq: $slug}}) {
-    id
-    name
-    shortName
-    slug
+    ...PublicConferenceInfo
+    ...AuthdConferenceInfo
   }
 }
-    `;
+    ${PublicConferenceInfoFragmentDoc}
+${AuthdConferenceInfoFragmentDoc}`;
 
 /**
- * __useConferenceBySlugQuery__
+ * __useConferenceBySlug_WithUserQuery__
  *
- * To run a query within a React component, call `useConferenceBySlugQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useConferenceBySlug_WithUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceBySlug_WithUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useConferenceBySlugQuery({
+ * const { data, loading, error } = useConferenceBySlug_WithUserQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useConferenceBySlug_WithUserQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>) {
+        return Apollo.useQuery<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>(ConferenceBySlug_WithUserDocument, baseOptions);
+      }
+export function useConferenceBySlug_WithUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>(ConferenceBySlug_WithUserDocument, baseOptions);
+        }
+export type ConferenceBySlug_WithUserQueryHookResult = ReturnType<typeof useConferenceBySlug_WithUserQuery>;
+export type ConferenceBySlug_WithUserLazyQueryHookResult = ReturnType<typeof useConferenceBySlug_WithUserLazyQuery>;
+export type ConferenceBySlug_WithUserQueryResult = Apollo.QueryResult<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>;
+export const ConferenceBySlug_WithoutUserDocument = gql`
+    query ConferenceBySlug_WithoutUser($slug: String!) {
+  Conference(where: {slug: {_eq: $slug}}) {
+    ...PublicConferenceInfo
+  }
+}
+    ${PublicConferenceInfoFragmentDoc}`;
+
+/**
+ * __useConferenceBySlug_WithoutUserQuery__
+ *
+ * To run a query within a React component, call `useConferenceBySlug_WithoutUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConferenceBySlug_WithoutUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConferenceBySlug_WithoutUserQuery({
  *   variables: {
  *      slug: // value for 'slug'
  *   },
  * });
  */
-export function useConferenceBySlugQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
-        return Apollo.useQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
+export function useConferenceBySlug_WithoutUserQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>) {
+        return Apollo.useQuery<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>(ConferenceBySlug_WithoutUserDocument, baseOptions);
       }
-export function useConferenceBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>) {
-          return Apollo.useLazyQuery<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>(ConferenceBySlugDocument, baseOptions);
+export function useConferenceBySlug_WithoutUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>) {
+          return Apollo.useLazyQuery<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>(ConferenceBySlug_WithoutUserDocument, baseOptions);
         }
-export type ConferenceBySlugQueryHookResult = ReturnType<typeof useConferenceBySlugQuery>;
-export type ConferenceBySlugLazyQueryHookResult = ReturnType<typeof useConferenceBySlugLazyQuery>;
-export type ConferenceBySlugQueryResult = Apollo.QueryResult<ConferenceBySlugQuery, ConferenceBySlugQueryVariables>;
-export const CurrentUserGroupsRolesPermissionsDocument = gql`
-    query CurrentUserGroupsRolesPermissions($userId: String, $conferenceId: uuid!) {
-  User(where: {id: {_eq: $userId}}) {
-    conferencesCreated(where: {id: {_eq: $conferenceId}}) {
-      id
-    }
-    attendees(where: {conferenceId: {_eq: $conferenceId}}) {
-      groupAttendees {
-        group {
-          ...GroupData
-        }
-        id
-        groupId
-        attendeeId
-      }
-      id
-      userId
-      conferenceId
-      displayName
-    }
-    id
-  }
-  publicGroups: Group(
-    where: {conferenceId: {_eq: $conferenceId}, enabled: {_eq: true}, includeUnauthenticated: {_eq: true}}
-  ) {
-    ...GroupData
-  }
-}
-    ${GroupDataFragmentDoc}`;
-
-/**
- * __useCurrentUserGroupsRolesPermissionsQuery__
- *
- * To run a query within a React component, call `useCurrentUserGroupsRolesPermissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCurrentUserGroupsRolesPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCurrentUserGroupsRolesPermissionsQuery({
- *   variables: {
- *      userId: // value for 'userId'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCurrentUserGroupsRolesPermissionsQuery(baseOptions: Apollo.QueryHookOptions<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>) {
-        return Apollo.useQuery<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>(CurrentUserGroupsRolesPermissionsDocument, baseOptions);
-      }
-export function useCurrentUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>) {
-          return Apollo.useLazyQuery<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>(CurrentUserGroupsRolesPermissionsDocument, baseOptions);
-        }
-export type CurrentUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsQuery>;
-export type CurrentUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserGroupsRolesPermissionsLazyQuery>;
-export type CurrentUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<CurrentUserGroupsRolesPermissionsQuery, CurrentUserGroupsRolesPermissionsQueryVariables>;
-export const PublicUserGroupsRolesPermissionsDocument = gql`
-    query PublicUserGroupsRolesPermissions($conferenceId: uuid!) {
-  publicGroups: Group(
-    where: {conferenceId: {_eq: $conferenceId}, enabled: {_eq: true}, includeUnauthenticated: {_eq: true}}
-  ) {
-    ...GroupData
-  }
-}
-    ${GroupDataFragmentDoc}`;
-
-/**
- * __usePublicUserGroupsRolesPermissionsQuery__
- *
- * To run a query within a React component, call `usePublicUserGroupsRolesPermissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `usePublicUserGroupsRolesPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePublicUserGroupsRolesPermissionsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function usePublicUserGroupsRolesPermissionsQuery(baseOptions: Apollo.QueryHookOptions<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>) {
-        return Apollo.useQuery<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>(PublicUserGroupsRolesPermissionsDocument, baseOptions);
-      }
-export function usePublicUserGroupsRolesPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>) {
-          return Apollo.useLazyQuery<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>(PublicUserGroupsRolesPermissionsDocument, baseOptions);
-        }
-export type PublicUserGroupsRolesPermissionsQueryHookResult = ReturnType<typeof usePublicUserGroupsRolesPermissionsQuery>;
-export type PublicUserGroupsRolesPermissionsLazyQueryHookResult = ReturnType<typeof usePublicUserGroupsRolesPermissionsLazyQuery>;
-export type PublicUserGroupsRolesPermissionsQueryResult = Apollo.QueryResult<PublicUserGroupsRolesPermissionsQuery, PublicUserGroupsRolesPermissionsQueryVariables>;
-export const AttendeeByUserIdConferenceIdDocument = gql`
-    query AttendeeByUserIdConferenceId($conferenceId: uuid!, $userId: String!) {
-  Attendee(
-    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {userId: {_eq: $userId}}]}
-  ) {
-    ...AttendeeData
-  }
-}
-    ${AttendeeDataFragmentDoc}`;
-
-/**
- * __useAttendeeByUserIdConferenceIdQuery__
- *
- * To run a query within a React component, call `useAttendeeByUserIdConferenceIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useAttendeeByUserIdConferenceIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAttendeeByUserIdConferenceIdQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useAttendeeByUserIdConferenceIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>) {
-        return Apollo.useQuery<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>(AttendeeByUserIdConferenceIdDocument, baseOptions);
-      }
-export function useAttendeeByUserIdConferenceIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>) {
-          return Apollo.useLazyQuery<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>(AttendeeByUserIdConferenceIdDocument, baseOptions);
-        }
-export type AttendeeByUserIdConferenceIdQueryHookResult = ReturnType<typeof useAttendeeByUserIdConferenceIdQuery>;
-export type AttendeeByUserIdConferenceIdLazyQueryHookResult = ReturnType<typeof useAttendeeByUserIdConferenceIdLazyQuery>;
-export type AttendeeByUserIdConferenceIdQueryResult = Apollo.QueryResult<AttendeeByUserIdConferenceIdQuery, AttendeeByUserIdConferenceIdQueryVariables>;
-export const AttendeeByIdDocument = gql`
-    query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
-  Attendee(where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}) {
-    ...AttendeeData
-  }
-}
-    ${AttendeeDataFragmentDoc}`;
-
-/**
- * __useAttendeeByIdQuery__
- *
- * To run a query within a React component, call `useAttendeeByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useAttendeeByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAttendeeByIdQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useAttendeeByIdQuery(baseOptions: Apollo.QueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
-        return Apollo.useQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
-      }
-export function useAttendeeByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttendeeByIdQuery, AttendeeByIdQueryVariables>) {
-          return Apollo.useLazyQuery<AttendeeByIdQuery, AttendeeByIdQueryVariables>(AttendeeByIdDocument, baseOptions);
-        }
-export type AttendeeByIdQueryHookResult = ReturnType<typeof useAttendeeByIdQuery>;
-export type AttendeeByIdLazyQueryHookResult = ReturnType<typeof useAttendeeByIdLazyQuery>;
-export type AttendeeByIdQueryResult = Apollo.QueryResult<AttendeeByIdQuery, AttendeeByIdQueryVariables>;
+export type ConferenceBySlug_WithoutUserQueryHookResult = ReturnType<typeof useConferenceBySlug_WithoutUserQuery>;
+export type ConferenceBySlug_WithoutUserLazyQueryHookResult = ReturnType<typeof useConferenceBySlug_WithoutUserLazyQuery>;
+export type ConferenceBySlug_WithoutUserQueryResult = Apollo.QueryResult<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>;
 export const UpdateSubtitlesDocument = gql`
     mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
   updateSubtitles(
@@ -40756,37 +41990,44 @@ export function useProtectedEchoLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ProtectedEchoQueryHookResult = ReturnType<typeof useProtectedEchoQuery>;
 export type ProtectedEchoLazyQueryHookResult = ReturnType<typeof useProtectedEchoLazyQuery>;
 export type ProtectedEchoQueryResult = Apollo.QueryResult<ProtectedEchoQuery, ProtectedEchoQueryVariables>;
-export const UserEventRolesDocument = gql`
-    subscription UserEventRoles($eventId: uuid!) {
-  Event_by_pk(id: $eventId) {
-    eventPeople {
-      ...EventPersonDetails
-    }
+export const GetForceUserRefreshConfigDocument = gql`
+    query GetForceUserRefreshConfig($conferenceId: uuid!) {
+  ConferenceConfiguration(
+    where: {conferenceId: {_eq: $conferenceId}, key: {_eq: "CLOWDR_APP_VERSION"}}
+  ) {
+    id
+    conferenceId
+    key
+    value
   }
 }
-    ${EventPersonDetailsFragmentDoc}`;
+    `;
 
 /**
- * __useUserEventRolesSubscription__
+ * __useGetForceUserRefreshConfigQuery__
  *
- * To run a query within a React component, call `useUserEventRolesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserEventRolesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetForceUserRefreshConfigQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetForceUserRefreshConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useUserEventRolesSubscription({
+ * const { data, loading, error } = useGetForceUserRefreshConfigQuery({
  *   variables: {
- *      eventId: // value for 'eventId'
+ *      conferenceId: // value for 'conferenceId'
  *   },
  * });
  */
-export function useUserEventRolesSubscription(baseOptions: Apollo.SubscriptionHookOptions<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>) {
-        return Apollo.useSubscription<UserEventRolesSubscription, UserEventRolesSubscriptionVariables>(UserEventRolesDocument, baseOptions);
+export function useGetForceUserRefreshConfigQuery(baseOptions: Apollo.QueryHookOptions<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>) {
+        return Apollo.useQuery<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>(GetForceUserRefreshConfigDocument, baseOptions);
       }
-export type UserEventRolesSubscriptionHookResult = ReturnType<typeof useUserEventRolesSubscription>;
-export type UserEventRolesSubscriptionResult = Apollo.SubscriptionResult<UserEventRolesSubscription>;
+export function useGetForceUserRefreshConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>) {
+          return Apollo.useLazyQuery<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>(GetForceUserRefreshConfigDocument, baseOptions);
+        }
+export type GetForceUserRefreshConfigQueryHookResult = ReturnType<typeof useGetForceUserRefreshConfigQuery>;
+export type GetForceUserRefreshConfigLazyQueryHookResult = ReturnType<typeof useGetForceUserRefreshConfigLazyQuery>;
+export type GetForceUserRefreshConfigQueryResult = Apollo.QueryResult<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>;
 export const GoogleOAuth_SubmitGoogleOAuthCodeDocument = gql`
     mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
   submitGoogleOAuthCode(code: $code, state: $state) {
@@ -40989,19 +42230,9 @@ export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof us
 export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
 export const MenuScheduleDocument = gql`
-    query MenuSchedule($now: timestamptz!, $inThreeMinutes: timestamptz!, $in30Minutes: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
-  eventsNow: Event(
-    where: {startTime: {_lte: $inThreeMinutes}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}}
-  ) {
-    ...MenuSchedule_Event
-  }
-  eventsIn30mins: Event(
-    where: {startTime: {_gt: $inThreeMinutes, _lte: $in30Minutes}, conferenceId: {_eq: $conferenceId}}
-  ) {
-    ...MenuSchedule_Event
-  }
-  eventsIn1Hour: Event(
-    where: {startTime: {_gt: $in30Minutes, _lte: $inOneHour}, conferenceId: {_eq: $conferenceId}}
+    query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
+  Event(
+    where: {startTime: {_lte: $inOneHour}, endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, room: {}}
   ) {
     ...MenuSchedule_Event
   }
@@ -41021,8 +42252,6 @@ export const MenuScheduleDocument = gql`
  * const { data, loading, error } = useMenuScheduleQuery({
  *   variables: {
  *      now: // value for 'now'
- *      inThreeMinutes: // value for 'inThreeMinutes'
- *      in30Minutes: // value for 'in30Minutes'
  *      inOneHour: // value for 'inOneHour'
  *      conferenceId: // value for 'conferenceId'
  *   },
@@ -41040,7 +42269,7 @@ export type MenuScheduleQueryResult = Apollo.QueryResult<MenuScheduleQuery, Menu
 export const MenuSchedule_SearchEventsDocument = gql`
     query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
   Event(
-    where: {conferenceId: {_eq: $conferenceId}, _or: [{name: {_ilike: $search}}, {contentGroup: {_or: [{title: {_ilike: $search}}, {people: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {eventPeople: {attendee: {displayName: {_ilike: $search}}}}, {eventTags: {tag: {name: {_ilike: $search}}}}]}
+    where: {conferenceId: {_eq: $conferenceId}, room: {}, _or: [{name: {_ilike: $search}}, {contentGroup: {_or: [{title: {_ilike: $search}}, {people: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {eventPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}, {eventTags: {tag: {name: {_ilike: $search}}}}]}
     limit: 10
     order_by: {startTime: asc}
   ) {
@@ -41111,43 +42340,6 @@ export function useMainMenuSponsors_GetSponsorsLazyQuery(baseOptions?: Apollo.La
 export type MainMenuSponsors_GetSponsorsQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsQuery>;
 export type MainMenuSponsors_GetSponsorsLazyQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsLazyQuery>;
 export type MainMenuSponsors_GetSponsorsQueryResult = Apollo.QueryResult<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>;
-export const PinnedChatsWithUnreadCountsDocument = gql`
-    query PinnedChatsWithUnreadCounts($attendeeId: uuid!) {
-  chat_Pin(where: {attendeeId: {_eq: $attendeeId}}) {
-    attendeeId
-    chatId
-    chat {
-      ...SidebarChatInfo
-    }
-  }
-}
-    ${SidebarChatInfoFragmentDoc}`;
-
-/**
- * __usePinnedChatsWithUnreadCountsQuery__
- *
- * To run a query within a React component, call `usePinnedChatsWithUnreadCountsQuery` and pass it any options that fit your needs.
- * When your component renders, `usePinnedChatsWithUnreadCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePinnedChatsWithUnreadCountsQuery({
- *   variables: {
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function usePinnedChatsWithUnreadCountsQuery(baseOptions: Apollo.QueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
-        return Apollo.useQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
-      }
-export function usePinnedChatsWithUnreadCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>) {
-          return Apollo.useLazyQuery<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>(PinnedChatsWithUnreadCountsDocument, baseOptions);
-        }
-export type PinnedChatsWithUnreadCountsQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsQuery>;
-export type PinnedChatsWithUnreadCountsLazyQueryHookResult = ReturnType<typeof usePinnedChatsWithUnreadCountsLazyQuery>;
-export type PinnedChatsWithUnreadCountsQueryResult = Apollo.QueryResult<PinnedChatsWithUnreadCountsQuery, PinnedChatsWithUnreadCountsQueryVariables>;
 export const GetRoomChatIdDocument = gql`
     query GetRoomChatId($roomId: uuid!) {
   Room_by_pk(id: $roomId) {
@@ -41188,12 +42380,7 @@ export const GetContentGroupChatIdDocument = gql`
   ContentGroup_by_pk(id: $itemId) {
     id
     title
-    chat {
-      id
-      room {
-        id
-      }
-    }
+    chatId
   }
 }
     `;
@@ -41224,7 +42411,7 @@ export type GetContentGroupChatIdQueryHookResult = ReturnType<typeof useGetConte
 export type GetContentGroupChatIdLazyQueryHookResult = ReturnType<typeof useGetContentGroupChatIdLazyQuery>;
 export type GetContentGroupChatIdQueryResult = Apollo.QueryResult<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>;
 export const GetRoomMembersDocument = gql`
-    subscription GetRoomMembers($roomId: uuid!) {
+    query GetRoomMembers($roomId: uuid!) {
   RoomPerson(where: {roomId: {_eq: $roomId}}) {
     ...RoomMember
   }
@@ -41232,26 +42419,30 @@ export const GetRoomMembersDocument = gql`
     ${RoomMemberFragmentDoc}`;
 
 /**
- * __useGetRoomMembersSubscription__
+ * __useGetRoomMembersQuery__
  *
- * To run a query within a React component, call `useGetRoomMembersSubscription` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomMembersSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetRoomMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetRoomMembersSubscription({
+ * const { data, loading, error } = useGetRoomMembersQuery({
  *   variables: {
  *      roomId: // value for 'roomId'
  *   },
  * });
  */
-export function useGetRoomMembersSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetRoomMembersSubscription, GetRoomMembersSubscriptionVariables>) {
-        return Apollo.useSubscription<GetRoomMembersSubscription, GetRoomMembersSubscriptionVariables>(GetRoomMembersDocument, baseOptions);
+export function useGetRoomMembersQuery(baseOptions: Apollo.QueryHookOptions<GetRoomMembersQuery, GetRoomMembersQueryVariables>) {
+        return Apollo.useQuery<GetRoomMembersQuery, GetRoomMembersQueryVariables>(GetRoomMembersDocument, baseOptions);
       }
-export type GetRoomMembersSubscriptionHookResult = ReturnType<typeof useGetRoomMembersSubscription>;
-export type GetRoomMembersSubscriptionResult = Apollo.SubscriptionResult<GetRoomMembersSubscription>;
+export function useGetRoomMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomMembersQuery, GetRoomMembersQueryVariables>) {
+          return Apollo.useLazyQuery<GetRoomMembersQuery, GetRoomMembersQueryVariables>(GetRoomMembersDocument, baseOptions);
+        }
+export type GetRoomMembersQueryHookResult = ReturnType<typeof useGetRoomMembersQuery>;
+export type GetRoomMembersLazyQueryHookResult = ReturnType<typeof useGetRoomMembersLazyQuery>;
+export type GetRoomMembersQueryResult = Apollo.QueryResult<GetRoomMembersQuery, GetRoomMembersQueryVariables>;
 export const GetRoomParticipantsDocument = gql`
     subscription GetRoomParticipants($conferenceId: uuid!, $roomId: uuid!) {
   RoomParticipant(
@@ -41381,9 +42572,9 @@ export type GetShuffleRoomQueryHookResult = ReturnType<typeof useGetShuffleRoomQ
 export type GetShuffleRoomLazyQueryHookResult = ReturnType<typeof useGetShuffleRoomLazyQuery>;
 export type GetShuffleRoomQueryResult = Apollo.QueryResult<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>;
 export const ShufflePeriodsDocument = gql`
-    query ShufflePeriods($conferenceId: uuid!, $start: timestamptz!, $end: timestamptz!) {
+    query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
   room_ShufflePeriod(
-    where: {conferenceId: {_eq: $conferenceId}, startAt: {_lte: $start}, endAt: {_gte: $end}}
+    where: {conferenceId: {_eq: $conferenceId}, endAt: {_gte: $end}}
   ) {
     ...ShufflePeriodData
   }
@@ -41403,7 +42594,6 @@ export const ShufflePeriodsDocument = gql`
  * const { data, loading, error } = useShufflePeriodsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
- *      start: // value for 'start'
  *      end: // value for 'end'
  *   },
  * });

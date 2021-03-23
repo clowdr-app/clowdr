@@ -66,10 +66,7 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
      to AWS to `XXXX`.
 1. Run the `Actions service - GraphQL Codegen` task in VSCode to generate the GraphQL query code (Hasura must be running when you do this).
 
-BCP: Not clear whether I am supposed to continue on to do the rest of the
-file or whether I stop here and return to the main README... The convention
-in some other READMEs is to explicitly mention which of the later sections
-to look at, in the top-level list.
+Now return to the main README.
 
 ## Local Development
 
@@ -134,41 +131,24 @@ BCP:
 - And wouldn't it be cleaner and easier to document all of these in the
   .env example file?
 
-BCP (Ross): "HASURA_ADMIN_SECRET is self-defined - easiest to keep it to
-XXXXX for a dev machine"
+You will not have the information required for all environment variables yet. See the _Complete later_ column for whether you should come back and fill in a value later on.
 
-BCP (Ross): "Should EVENT_SECRET also be left as XXX? Yes, it probably
-should. Actually, the event secret is also arbitrary, but you should
-probably choose something like XXXY for development. (It's useful if it's
-different from the admin secret)"  
-BCP: Again, this should be the default in the example file.
-
-BCP: Also, it would be great to reorganize the example file to put all "Full
-Setup only" stuff at the end.
-
-BCP: I think this is the first time I'm seeing the word OpenShot...
-
-BCP: I think the HOST_DOMAIN Value explanation is the first time that ngrok
-has been mentioned.
-
-BCP: Is OPENTOK_API_KEY what Vonage calls "Project API key"?
-
-| Key                                              | Value                                                                                                                         | From CDK |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------- |
-| AUTH0_API_DOMAIN                                 | `<auth0-subdomain>.auth0.com`                                                                                                 |          |
+| Key                                              | Value                                                                                                                         | From CDK | Complete later |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------- | -------------- |
+| AUTH0_API_DOMAIN                                 | `<auth0-subdomain>.auth0.com`                                                                                                 |          | Yes            |
 | AUTH0_AUDIENCE                                   | `hasura`                                                                                                                      |          |
-| AUTH0_ISSUER_DOMAIN                              | `https://<auth0-subdomain>.auth0.com/`                                                                                        |          |
-| HASURA_ADMIN_SECRET                              | Hasura admin secret (used for queries/mutations to Hasura)                                                                    |          |
-| EVENT_SECRET                                     | Event trigger secret (used to verify Hasura events)                                                                           |          |
-| FRONTEND_DOMAIN                                  | The domain of the frontend website (e.g. `localhost:3000` or `app.clowdr.org`)                                                |          |
+| AUTH0_ISSUER_DOMAIN                              | `https://<auth0-subdomain>.auth0.com/`                                                                                        |          | Yes            |
+| HASURA_ADMIN_SECRET                              | Hasura admin secret (used for queries/mutations to Hasura, you can choose this value freely)                                  |          |
+| EVENT_SECRET                                     | Event trigger secret (used to verify Hasura events, you can choose this value freely)                                         |          |
+| FRONTEND_DOMAIN                                  | The domain of the frontend website (e.g. `localhost:3000` or `app.clowdr.org`)                                                |          | Yes            |
 | STOP_EMAILS_CONTACT_EMAIL_ADDRESS                | The email address users should contact when they received unexpected emails (e.g. `stop-emails@example.org`)                  |          |
 | FAILURE_NOTIFICATIONS_EMAIL_ADDRESS              | The email address the system should send notifications when errors occurr, such as failing to process a video.                |          |
 | GRAPHQL_API_SECURE_PROTOCOLS                     | Boolean. Default: true. Whether to use https/wss or not.                                                                      |          |
-| GRAPHQL_API_DOMAIN                               | The domain and port of the GraphQL server                                                                                     |          |
+| GRAPHQL_API_DOMAIN                               | The domain and port of the GraphQL server (Hasura)                                                                            |          |
 | SENDGRID_API_KEY                                 | Your SendGrid API Key                                                                                                         |          |
 | SENDGRID_SENDER                                  | Your SendGrid sender email address                                                                                            |          |
 | HOST_SECURE_PROTOCOLS                            | Whether the actions service public URL uses https                                                                             |          |
-| HOST_DOMAIN                                      | The public domain of the actions service (e.g. your actions ngrok URL)                                                        |          |
+| HOST_DOMAIN                                      | The public domain of the actions service (e.g. your actions Packetriot/ngrok URL)                                             |          | Yes            |
 | AWS_PREFIX                                       | The deployment prefix you are using for your AWS deployment. Same as `clowdr/stackPrefix` in the `cdk.context.json`           |          |
 | AWS_ACCESS_KEY_ID                                | The access key ID for your AWS user                                                                                           | Yes      |
 | AWS_SECRET_ACCESS_KEY                            | The secret access key for your AWS user                                                                                       | Yes      |
@@ -187,10 +167,10 @@ BCP: Is OPENTOK_API_KEY what Vonage calls "Project API key"?
 | AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN           | The ARN of the SNS topic for transcription notifications                                                                      | Yes      |
 | AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME          | The name of the Cloudfront distribution obtained from deploying the Serverless Image Handler template (e.g. `f9da4dbs83dnsl`) | No       |
 | AWS_IMAGES_SECRET_VALUE                          | The value you manually entered into Secrets Manager.                                                                          | No       |
-| OPENSHOT_BASE_URL                                | The base URL of the OpenShot instance                                                                                         |          |
-| OPENSHOT_USERNAME                                | The username you created for your OpenShot instance                                                                           |          |
-| OPENSHOT_PASSWORD                                | The password you created for your OpenShot instance                                                                           |          |
-| OPENTOK_API_KEY                                  | Your Vonage Video API key                                                                                                     |          |
+| OPENSHOT_BASE_URL                                | The base URL of the OpenShot instance                                                                                         |          | Yes            |
+| OPENSHOT_USERNAME                                | The username you created for your OpenShot instance                                                                           |          | Yes            |
+| OPENSHOT_PASSWORD                                | The password you created for your OpenShot instance                                                                           |          | Yes            |
+| OPENTOK_API_KEY                                  | Your Vonage Video API key (project API key)                                                                                   |          |
 | OPENTOK_API_SECRET                               | Your Vonage Video API secret                                                                                                  |          |
 | VONAGE_WEBHOOK_SECRET                            | A random token (your choice!) to be sent with Vonage webhook calls                                                            |          |
 | GOOGLE_CLIENT_ID                                 | The OAuth Client ID from your Google Cloud Platform project                                                                   |          |

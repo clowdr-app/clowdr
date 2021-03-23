@@ -7,7 +7,6 @@ React web app that forms the main Clowdr frontend.
 ## Pre-requisites
 
 1. `serve` tool (for testing production builds): `npm i -g serve`
-   BCP: Maybe this is full setup only?
 
 ## Setting up
 
@@ -19,19 +18,15 @@ React web app that forms the main Clowdr frontend.
 4. Build and test the system locally (see [Local Development](#local-development)
    below).
 5. **Full Setup**: If using Netlify, then:
+
    - Once you have set up Hasura Cloud, create a Netlify account and
      follow the steps below.
    - in Netlify, create a new site from Git.
+     - If you're not part of the core Clowdr team, create and use a fork of this
+       (`clowdr-app/clowdr`) repository.
+     - See _[Deployment to Netlify](#deployment-to-netlify)_ for instructions.
 
-BCP: I don't understand the formatting (bulleting and indentation) of the
-rest of this subsection.
-
-- If you're not part of the core Clowdr team, create and use a fork of this
-  (`clowdr-app/clowdr`) repository.
-  BCP: Should that step not be part of the top-level "clone clowdr repo" step?
-- See _[Deployment to Netlify](#deployment-to-netlify)_ for instructions.
-
-1. If using Netlify, go back to Auth0 and add the Netlify app url(s) to the
+6. If using Netlify, go back to Auth0 and add the Netlify app url(s) to the
    application configuration (see instructions in root README).
 
 ## UI Components, Theming, and Icons
@@ -40,8 +35,6 @@ We use [Chakra UI](https://chakra-ui.com/) to build accessible, consistent UIs
 with [theming](@chakra-ui/theme-tools). Chakra also provides
 [icons](https://chakra-ui.com/docs/components/icon) and a system for [custom
 components](@chakra-ui/theme-tools).
-
-BCP: In there something to install here? Or is this just FYI?
 
 ## GraphQL
 
@@ -130,12 +123,7 @@ If you need to build a new version, run `npm run build:transcript-editor` and co
 **_Note:_** Snowpack (the build tool we use) will only include environment
 variables in the build which start with `SNOWPACK_PUBLIC_`.
 
-**_Note:_** Pay attention to the _Netlify?_ column when configuring Netlify.
-BCP: Don't understand the semantics of No, Yes, and Only!
-
-BCP: Again, the explanations in the Value column are not very helpful (they
-don't tell me where to find things), and anyway I would rather see all this
-in comments in the .example file!
+**_Note:_** Pay attention to the _Netlify?_ column when configuring Netlify. _No_ means 'do not add to Netlify'; _Yes_ means 'add to Netlify'; _Only_ means 'only add in Netlify, not locally'.
 
 | Env Var                                      | Value                                                                                | Netlify? |
 | -------------------------------------------- | ------------------------------------------------------------------------------------ | -------- |

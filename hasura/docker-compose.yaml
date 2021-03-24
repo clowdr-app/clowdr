@@ -48,5 +48,14 @@ services:
       PRESENCE_SUMMARY_SECRET: ${PRESENCE_SUMMARY_SECRET}
       HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
       HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
+  rabbitmq:
+      image: rabbitmq:3.8.14-management
+      hostname: rabbitmq-1
+      ports:
+          - "5672:5672"
+          - "15672:15672"
+      environment:
+          RABBITMQ_DEFAULT_USER: admin
+          RABBITMQ_DEFAULT_PASS: admin
 volumes:
   db_data:

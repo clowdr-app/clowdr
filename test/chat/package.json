@@ -1,0 +1,16 @@
+{
+    "name": "clowdr-test-chat",
+    "version": "1.0.0",
+    "description": "",
+    "main": "src/index.ts",
+    "scripts": {
+        "test-basic-connectivity": "ts-node src/test-basic-connectivity.ts"
+    },
+    "author": "Clowdr CIC",
+    "license": "BSD-3-Clause",
+    "dependencies": {
+        "@types/amqplib": "^0.5.17",
+        "amqplib": "^0.7.1",
+        "ts-node": "^9.1.1"
+    }
+}

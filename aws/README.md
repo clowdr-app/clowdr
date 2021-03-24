@@ -6,9 +6,13 @@ AWS infrastructure-as-code for the Clowdr app.
 
 1. An [AWS](https://aws.amazon.com/) account.
 1. The [AWS CLI](https://aws.amazon.com/cli/)
-   - Follow the AWS Documentation to configure the CLI with credentials for your personal admin account.
-   - Using MFA? Set up [aws-mfa](https://github.com/broamski/aws-mfa) so that you can easily generate credentials.
-   - Configure your `~/.aws/config` file to specify the region you want to deploy to by default.
+   - Follow the AWS CLI Documentation to configure the CLI with credentials for
+     your personal admin account.
+   - If you are using MFA, set up
+     [aws-mfa](https://github.com/broamski/aws-mfa) so that you can easily
+     generate credentials.
+   - Configure your `~/.aws/config` file to specify the region you want to
+     deploy to by default.
 
 ## Setting up
 

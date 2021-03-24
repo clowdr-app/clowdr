@@ -1,16 +1,27 @@
 # Clowdr: Actions Service
 
-Express server designed to run on Heroku and serves action calls from Hasura.
+Express server designed to run on Heroku and serve action calls from Hasura.
 Eventually this may be split into multiple microservices.
 
 ## Pre-requisities
 
 1. [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-1. You have followed the AWS setup instructions in [aws/README.md](../../aws/README.md)
-1. You have created a [SendGrid](https://www.sendgrid.com) account and an API key for it.
-1. You have create a [Vonage Video API](https://www.vonage.co.uk/communications-apis/video/) account and an API key for it.
-1. You have deployed the [Image Handler](#deploying-the-image-handler) stack.
-1. You have created a [Google Cloud](#creating-a-google-cloud-project) project.
+2. **Full Setup**: Follow the AWS setup instructions in
+   [aws/README.md](../../aws/README.md)
+   **Quick Setup**: Copy `services/actions/.env.example` to
+   `services/actions/.env`, edit the latter and set all variables starting
+   with `AWS` to `XXX`.
+   BCP: This will not actually work right now, but let's give it a try this way and see how much further we can get.
+3. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and
+   an API key for it.
+4. Create a free [Vonage Video
+   API](https://www.vonage.co.uk/communications-apis/video/) account; then
+   go to `Projects > Create New Project`, choose "Custom", and make a note
+   of the API key that is generated.
+5. **Full Setup**: Deploy the AWS Image
+   Handler as described [below](#deploying-the-image-handler).
+6. **Full Setup**: Create a Google Cloud project as described
+   [below](#creating-a-google-cloud-project).
 
 ## Deploying the image handler
 
@@ -35,7 +46,7 @@ We use the AWS `serverless-image-handler` template for processing uploaded profi
 1. Deploy the stack and wait for creation to copmlete.
 1. Make a note of the `ApiEndpoint` output.
 
-# Creating a Google Cloud project
+## Creating a Google Cloud project
 
 We use a Google Cloud project to provide access to the YouTube Data API with OAuth2.
 
@@ -45,12 +56,17 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
 1. Set the _Authorised JavaScript origins_ `URIs` to the URI at which the frontend is hosted.
 1. Set _Authorised redirect URIs_ `URIs` to the `<frontend uri>/googleoauth`.
 
-## Setting Up
+# Setting Up
 
 1. Copy the `services/actions/.env.example` to `services/actions/.env`
 1. Configure your `.env` according to the [Actions Service
    Configuration](#actions-service-configuration) table below
-   - You will need the outputs from running the AWS CDK deployment
+   - **Full Setup**: You will need the outputs from running the AWS CDK
+     deployment. **Quick setup**: Set all the environment variables related
+     to AWS to `XXXX`.
+1. Run the `Actions service - GraphQL Codegen` task in VSCode to generate the GraphQL query code (Hasura must be running when you do this).
+
+Now return to the main README.
 
 ## Local Development
 
@@ -104,22 +120,35 @@ variables according to [the table below](#actions-service-configuration).
 
 Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/README.md`](../../aws/README.md)
 
-| Key                                              | Value                                                                                                                         | From CDK |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------- |
-| AUTH0_API_DOMAIN                                 | `<auth0-subdomain>.auth0.com`                                                                                                 |          |
+BCP:
+
+- If I haven't done the Auth0 step yet, what should I do with
+  `<auth0-subdomain>`? (Ross says I will know this information later.
+  But then there is an ordering problem in the instructions: I reached
+  this point before I had done the Auth0 setup.)
+- In general, many of these are puzzling if you don't know what they are /
+  how to find them. The Value is no more informative than the Key.
+- And wouldn't it be cleaner and easier to document all of these in the
+  .env example file?
+
+You will not have the information required for all environment variables yet. See the _Complete later_ column for whether you should come back and fill in a value later on.
+
+| Key                                              | Value                                                                                                                         | From CDK | Complete later |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------- | -------------- |
+| AUTH0_API_DOMAIN                                 | `<auth0-subdomain>.auth0.com`                                                                                                 |          | Yes            |
 | AUTH0_AUDIENCE                                   | `hasura`                                                                                                                      |          |
-| AUTH0_ISSUER_DOMAIN                              | `https://<auth0-subdomain>.auth0.com/`                                                                                        |          |
-| HASURA_ADMIN_SECRET                              | Hasura admin secret (used for queries/mutations to Hasura)                                                                    |          |
-| EVENT_SECRET                                     | Event trigger secret (used to verify Hasura events)                                                                           |          |
-| FRONTEND_DOMAIN                                  | The domain of the frontend website (e.g. `localhost:3000` or `app.clowdr.org`)                                                |          |
+| AUTH0_ISSUER_DOMAIN                              | `https://<auth0-subdomain>.auth0.com/`                                                                                        |          | Yes            |
+| HASURA_ADMIN_SECRET                              | Hasura admin secret (used for queries/mutations to Hasura, you can choose this value freely)                                  |          |
+| EVENT_SECRET                                     | Event trigger secret (used to verify Hasura events, you can choose this value freely)                                         |          |
+| FRONTEND_DOMAIN                                  | The domain of the frontend website (e.g. `localhost:3000` or `app.clowdr.org`)                                                |          | Yes            |
 | STOP_EMAILS_CONTACT_EMAIL_ADDRESS                | The email address users should contact when they received unexpected emails (e.g. `stop-emails@example.org`)                  |          |
 | FAILURE_NOTIFICATIONS_EMAIL_ADDRESS              | The email address the system should send notifications when errors occurr, such as failing to process a video.                |          |
 | GRAPHQL_API_SECURE_PROTOCOLS                     | Boolean. Default: true. Whether to use https/wss or not.                                                                      |          |
-| GRAPHQL_API_DOMAIN                               | The domain and port of the GraphQL server                                                                                     |          |
+| GRAPHQL_API_DOMAIN                               | The domain and port of the GraphQL server (Hasura)                                                                            |          |
 | SENDGRID_API_KEY                                 | Your SendGrid API Key                                                                                                         |          |
 | SENDGRID_SENDER                                  | Your SendGrid sender email address                                                                                            |          |
 | HOST_SECURE_PROTOCOLS                            | Whether the actions service public URL uses https                                                                             |          |
-| HOST_DOMAIN                                      | The public domain of the actions service (e.g. your actions ngrok URL)                                                        |          |
+| HOST_DOMAIN                                      | The public domain of the actions service (e.g. your actions Packetriot/ngrok URL)                                             |          | Yes            |
 | AWS_PREFIX                                       | The deployment prefix you are using for your AWS deployment. Same as `clowdr/stackPrefix` in the `cdk.context.json`           |          |
 | AWS_ACCESS_KEY_ID                                | The access key ID for your AWS user                                                                                           | Yes      |
 | AWS_SECRET_ACCESS_KEY                            | The secret access key for your AWS user                                                                                       | Yes      |
@@ -139,10 +168,10 @@ Note: `AWS_` values come from the outputs of your AWS deployment. See [`aws/READ
 | AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN           | The ARN of the SNS topic for transcription notifications                                                                      | Yes      |
 | AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME          | The name of the Cloudfront distribution obtained from deploying the Serverless Image Handler template (e.g. `f9da4dbs83dnsl`) | No       |
 | AWS_IMAGES_SECRET_VALUE                          | The value you manually entered into Secrets Manager.                                                                          | No       |
-| OPENSHOT_BASE_URL                                | The base URL of the OpenShot instance                                                                                         |          |
-| OPENSHOT_USERNAME                                | The username you created for your OpenShot instance                                                                           |          |
-| OPENSHOT_PASSWORD                                | The password you created for your OpenShot instance                                                                           |          |
-| OPENTOK_API_KEY                                  | Your Vonage Video API key                                                                                                     |          |
+| OPENSHOT_BASE_URL                                | The base URL of the OpenShot instance                                                                                         |          | Yes            |
+| OPENSHOT_USERNAME                                | The username you created for your OpenShot instance                                                                           |          | Yes            |
+| OPENSHOT_PASSWORD                                | The password you created for your OpenShot instance                                                                           |          | Yes            |
+| OPENTOK_API_KEY                                  | Your Vonage Video API key (project API key)                                                                                   |          |
 | OPENTOK_API_SECRET                               | Your Vonage Video API secret                                                                                                  |          |
 | VONAGE_WEBHOOK_SECRET                            | A random token (your choice!) to be sent with Vonage webhook calls                                                            |          |
 | GOOGLE_CLIENT_ID                                 | The OAuth Client ID from your Google Cloud Platform project                                                                   |          |

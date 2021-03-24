@@ -14599,6 +14599,8 @@ export type Uploader_Variance_Order_By = {
 /** columns and relationships of "User" */
 export type User = {
   readonly __typename?: 'User';
+  readonly acceptedPrivacyPolicyAt?: Maybe<Scalars['timestamptz']>;
+  readonly acceptedTermsAt?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
   readonly attendees: ReadonlyArray<Attendee>;
   /** An aggregated array relationship */
@@ -14770,6 +14772,8 @@ export type User_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<User_Bool_Exp>>>;
   readonly _not?: Maybe<User_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<User_Bool_Exp>>>;
+  readonly acceptedPrivacyPolicyAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly acceptedTermsAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly attendees?: Maybe<Attendee_Bool_Exp>;
   readonly conferenceDemoCodes?: Maybe<ConferenceDemoCode_Bool_Exp>;
   readonly conferencesCreated?: Maybe<Conference_Bool_Exp>;
@@ -14795,6 +14799,8 @@ export enum User_Constraint {
 
 /** input type for inserting data into table "User" */
 export type User_Insert_Input = {
+  readonly acceptedPrivacyPolicyAt?: Maybe<Scalars['timestamptz']>;
+  readonly acceptedTermsAt?: Maybe<Scalars['timestamptz']>;
   readonly attendees?: Maybe<Attendee_Arr_Rel_Insert_Input>;
   readonly conferenceDemoCodes?: Maybe<ConferenceDemoCode_Arr_Rel_Insert_Input>;
   readonly conferencesCreated?: Maybe<Conference_Arr_Rel_Insert_Input>;
@@ -14813,6 +14819,8 @@ export type User_Insert_Input = {
 /** aggregate max on columns */
 export type User_Max_Fields = {
   readonly __typename?: 'User_max_fields';
+  readonly acceptedPrivacyPolicyAt?: Maybe<Scalars['timestamptz']>;
+  readonly acceptedTermsAt?: Maybe<Scalars['timestamptz']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly email?: Maybe<Scalars['String']>;
   readonly firstName?: Maybe<Scalars['String']>;
@@ -14824,6 +14832,8 @@ export type User_Max_Fields = {
 
 /** order by max() on columns of table "User" */
 export type User_Max_Order_By = {
+  readonly acceptedPrivacyPolicyAt?: Maybe<Order_By>;
+  readonly acceptedTermsAt?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
   readonly firstName?: Maybe<Order_By>;
@@ -14836,6 +14846,8 @@ export type User_Max_Order_By = {
 /** aggregate min on columns */
 export type User_Min_Fields = {
   readonly __typename?: 'User_min_fields';
+  readonly acceptedPrivacyPolicyAt?: Maybe<Scalars['timestamptz']>;
+  readonly acceptedTermsAt?: Maybe<Scalars['timestamptz']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly email?: Maybe<Scalars['String']>;
   readonly firstName?: Maybe<Scalars['String']>;
@@ -14847,6 +14859,8 @@ export type User_Min_Fields = {
 
 /** order by min() on columns of table "User" */
 export type User_Min_Order_By = {
+  readonly acceptedPrivacyPolicyAt?: Maybe<Order_By>;
+  readonly acceptedTermsAt?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
   readonly firstName?: Maybe<Order_By>;
@@ -14880,6 +14894,8 @@ export type User_On_Conflict = {
 
 /** ordering options when selecting data from "User" */
 export type User_Order_By = {
+  readonly acceptedPrivacyPolicyAt?: Maybe<Order_By>;
+  readonly acceptedTermsAt?: Maybe<Order_By>;
   readonly attendees_aggregate?: Maybe<Attendee_Aggregate_Order_By>;
   readonly conferenceDemoCodes_aggregate?: Maybe<ConferenceDemoCode_Aggregate_Order_By>;
   readonly conferencesCreated_aggregate?: Maybe<Conference_Aggregate_Order_By>;
@@ -14903,6 +14919,10 @@ export type User_Pk_Columns_Input = {
 /** select columns of table "User" */
 export enum User_Select_Column {
   /** column name */
+  AcceptedPrivacyPolicyAt = 'acceptedPrivacyPolicyAt',
+  /** column name */
+  AcceptedTermsAt = 'acceptedTermsAt',
+  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   Email = 'email',
@@ -14920,6 +14940,8 @@ export enum User_Select_Column {
 
 /** input type for updating data in table "User" */
 export type User_Set_Input = {
+  readonly acceptedPrivacyPolicyAt?: Maybe<Scalars['timestamptz']>;
+  readonly acceptedTermsAt?: Maybe<Scalars['timestamptz']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly email?: Maybe<Scalars['String']>;
   readonly firstName?: Maybe<Scalars['String']>;
@@ -14931,6 +14953,10 @@ export type User_Set_Input = {
 
 /** update columns of table "User" */
 export enum User_Update_Column {
+  /** column name */
+  AcceptedPrivacyPolicyAt = 'acceptedPrivacyPolicyAt',
+  /** column name */
+  AcceptedTermsAt = 'acceptedTermsAt',
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
@@ -21627,6 +21653,14 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** delete data from the table: "system.Configuration" */
+  readonly delete_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
+  /** delete data from the table: "system.ConfigurationKey" */
+  readonly delete_system_ConfigurationKey?: Maybe<System_ConfigurationKey_Mutation_Response>;
+  /** delete single row from the table: "system.ConfigurationKey" */
+  readonly delete_system_ConfigurationKey_by_pk?: Maybe<System_ConfigurationKey>;
+  /** delete single row from the table: "system.Configuration" */
+  readonly delete_system_Configuration_by_pk?: Maybe<System_Configuration>;
   /** perform the action: "generateChatRemoteServiceIds" */
   readonly generateChatRemoteServiceIds?: Maybe<GenerateChatRemoteServiceIdsOutput>;
   /** perform the action: "generateChatRemoteToken" */
@@ -21943,6 +21977,14 @@ export type Mutation_Root = {
   readonly insert_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** insert a single row into the table: "room.ShuffleRoom" */
   readonly insert_room_ShuffleRoom_one?: Maybe<Room_ShuffleRoom>;
+  /** insert data into the table: "system.Configuration" */
+  readonly insert_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
+  /** insert data into the table: "system.ConfigurationKey" */
+  readonly insert_system_ConfigurationKey?: Maybe<System_ConfigurationKey_Mutation_Response>;
+  /** insert a single row into the table: "system.ConfigurationKey" */
+  readonly insert_system_ConfigurationKey_one?: Maybe<System_ConfigurationKey>;
+  /** insert a single row into the table: "system.Configuration" */
+  readonly insert_system_Configuration_one?: Maybe<System_Configuration>;
   /** perform the action: "invitationConfirmCurrent" */
   readonly invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
   /** perform the action: "invitationConfirmSendInitialEmail" */
@@ -22275,6 +22317,14 @@ export type Mutation_Root = {
   readonly update_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** update single row of the table: "room.ShuffleRoom" */
   readonly update_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** update data of the table: "system.Configuration" */
+  readonly update_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
+  /** update data of the table: "system.ConfigurationKey" */
+  readonly update_system_ConfigurationKey?: Maybe<System_ConfigurationKey_Mutation_Response>;
+  /** update single row of the table: "system.ConfigurationKey" */
+  readonly update_system_ConfigurationKey_by_pk?: Maybe<System_ConfigurationKey>;
+  /** update single row of the table: "system.Configuration" */
+  readonly update_system_Configuration_by_pk?: Maybe<System_Configuration>;
 };
 
 
@@ -23211,6 +23261,30 @@ export type Mutation_RootDelete_Room_ShuffleRoomArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_System_ConfigurationArgs = {
+  where: System_Configuration_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_System_ConfigurationKeyArgs = {
+  where: System_ConfigurationKey_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_System_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_System_Configuration_By_PkArgs = {
+  key: System_ConfigurationKey_Enum;
 };
 
 
@@ -24299,6 +24373,34 @@ export type Mutation_RootInsert_Room_ShuffleRoomArgs = {
 export type Mutation_RootInsert_Room_ShuffleRoom_OneArgs = {
   object: Room_ShuffleRoom_Insert_Input;
   on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_System_ConfigurationArgs = {
+  objects: ReadonlyArray<System_Configuration_Insert_Input>;
+  on_conflict?: Maybe<System_Configuration_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_System_ConfigurationKeyArgs = {
+  objects: ReadonlyArray<System_ConfigurationKey_Insert_Input>;
+  on_conflict?: Maybe<System_ConfigurationKey_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_System_ConfigurationKey_OneArgs = {
+  object: System_ConfigurationKey_Insert_Input;
+  on_conflict?: Maybe<System_ConfigurationKey_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_System_Configuration_OneArgs = {
+  object: System_Configuration_Insert_Input;
+  on_conflict?: Maybe<System_Configuration_On_Conflict>;
 };
 
 
@@ -25657,6 +25759,44 @@ export type Mutation_RootUpdate_Room_ShuffleRoom_By_PkArgs = {
   pk_columns: Room_ShuffleRoom_Pk_Columns_Input;
 };
 
+
+/** mutation root */
+export type Mutation_RootUpdate_System_ConfigurationArgs = {
+  _append?: Maybe<System_Configuration_Append_Input>;
+  _delete_at_path?: Maybe<System_Configuration_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<System_Configuration_Delete_Elem_Input>;
+  _delete_key?: Maybe<System_Configuration_Delete_Key_Input>;
+  _prepend?: Maybe<System_Configuration_Prepend_Input>;
+  _set?: Maybe<System_Configuration_Set_Input>;
+  where: System_Configuration_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_System_ConfigurationKeyArgs = {
+  _set?: Maybe<System_ConfigurationKey_Set_Input>;
+  where: System_ConfigurationKey_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_System_ConfigurationKey_By_PkArgs = {
+  _set?: Maybe<System_ConfigurationKey_Set_Input>;
+  pk_columns: System_ConfigurationKey_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_System_Configuration_By_PkArgs = {
+  _append?: Maybe<System_Configuration_Append_Input>;
+  _delete_at_path?: Maybe<System_Configuration_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<System_Configuration_Delete_Elem_Input>;
+  _delete_key?: Maybe<System_Configuration_Delete_Key_Input>;
+  _prepend?: Maybe<System_Configuration_Prepend_Input>;
+  _set?: Maybe<System_Configuration_Set_Input>;
+  pk_columns: System_Configuration_Pk_Columns_Input;
+};
+
 /** column ordering options */
 export enum Order_By {
   /** in the ascending order, nulls last */
@@ -26158,6 +26298,18 @@ export type Query_Root = {
   readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
   /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
   readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** fetch data from the table: "system.Configuration" */
+  readonly system_Configuration: ReadonlyArray<System_Configuration>;
+  /** fetch data from the table: "system.ConfigurationKey" */
+  readonly system_ConfigurationKey: ReadonlyArray<System_ConfigurationKey>;
+  /** fetch aggregated fields from the table: "system.ConfigurationKey" */
+  readonly system_ConfigurationKey_aggregate: System_ConfigurationKey_Aggregate;
+  /** fetch data from the table: "system.ConfigurationKey" using primary key columns */
+  readonly system_ConfigurationKey_by_pk?: Maybe<System_ConfigurationKey>;
+  /** fetch aggregated fields from the table: "system.Configuration" */
+  readonly system_Configuration_aggregate: System_Configuration_Aggregate;
+  /** fetch data from the table: "system.Configuration" using primary key columns */
+  readonly system_Configuration_by_pk?: Maybe<System_Configuration>;
 };
 
 
@@ -28244,6 +28396,58 @@ export type Query_RootRoom_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
+
+/** query root */
+export type Query_RootSystem_ConfigurationArgs = {
+  distinct_on?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<System_Configuration_Order_By>>;
+  where?: Maybe<System_Configuration_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootSystem_ConfigurationKeyArgs = {
+  distinct_on?: Maybe<ReadonlyArray<System_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<System_ConfigurationKey_Order_By>>;
+  where?: Maybe<System_ConfigurationKey_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootSystem_ConfigurationKey_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<System_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<System_ConfigurationKey_Order_By>>;
+  where?: Maybe<System_ConfigurationKey_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootSystem_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootSystem_Configuration_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<System_Configuration_Order_By>>;
+  where?: Maybe<System_Configuration_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootSystem_Configuration_By_PkArgs = {
+  key: System_ConfigurationKey_Enum;
+};
+
 /** columns and relationships of "room.ShuffleAlgorithm" */
 export type Room_ShuffleAlgorithm = {
   readonly __typename?: 'room_ShuffleAlgorithm';
@@ -30127,6 +30331,18 @@ export type Subscription_Root = {
   readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
   /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
   readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** fetch data from the table: "system.Configuration" */
+  readonly system_Configuration: ReadonlyArray<System_Configuration>;
+  /** fetch data from the table: "system.ConfigurationKey" */
+  readonly system_ConfigurationKey: ReadonlyArray<System_ConfigurationKey>;
+  /** fetch aggregated fields from the table: "system.ConfigurationKey" */
+  readonly system_ConfigurationKey_aggregate: System_ConfigurationKey_Aggregate;
+  /** fetch data from the table: "system.ConfigurationKey" using primary key columns */
+  readonly system_ConfigurationKey_by_pk?: Maybe<System_ConfigurationKey>;
+  /** fetch aggregated fields from the table: "system.Configuration" */
+  readonly system_Configuration_aggregate: System_Configuration_Aggregate;
+  /** fetch data from the table: "system.Configuration" using primary key columns */
+  readonly system_Configuration_by_pk?: Maybe<System_Configuration>;
 };
 
 
@@ -32212,6 +32428,421 @@ export type Subscription_RootRoom_ShuffleRoom_AggregateArgs = {
 export type Subscription_RootRoom_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
 };
+
+
+/** subscription root */
+export type Subscription_RootSystem_ConfigurationArgs = {
+  distinct_on?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<System_Configuration_Order_By>>;
+  where?: Maybe<System_Configuration_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootSystem_ConfigurationKeyArgs = {
+  distinct_on?: Maybe<ReadonlyArray<System_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<System_ConfigurationKey_Order_By>>;
+  where?: Maybe<System_ConfigurationKey_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootSystem_ConfigurationKey_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<System_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<System_ConfigurationKey_Order_By>>;
+  where?: Maybe<System_ConfigurationKey_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootSystem_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootSystem_Configuration_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<System_Configuration_Order_By>>;
+  where?: Maybe<System_Configuration_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootSystem_Configuration_By_PkArgs = {
+  key: System_ConfigurationKey_Enum;
+};
+
+/** columns and relationships of "system.Configuration" */
+export type System_Configuration = {
+  readonly __typename?: 'system_Configuration';
+  readonly created_at: Scalars['timestamptz'];
+  readonly key: System_ConfigurationKey_Enum;
+  readonly updated_at: Scalars['timestamptz'];
+  readonly value: Scalars['jsonb'];
+};
+
+
+/** columns and relationships of "system.Configuration" */
+export type System_ConfigurationValueArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** columns and relationships of "system.ConfigurationKey" */
+export type System_ConfigurationKey = {
+  readonly __typename?: 'system_ConfigurationKey';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "system.ConfigurationKey" */
+export type System_ConfigurationKey_Aggregate = {
+  readonly __typename?: 'system_ConfigurationKey_aggregate';
+  readonly aggregate?: Maybe<System_ConfigurationKey_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<System_ConfigurationKey>;
+};
+
+/** aggregate fields of "system.ConfigurationKey" */
+export type System_ConfigurationKey_Aggregate_Fields = {
+  readonly __typename?: 'system_ConfigurationKey_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<System_ConfigurationKey_Max_Fields>;
+  readonly min?: Maybe<System_ConfigurationKey_Min_Fields>;
+};
+
+
+/** aggregate fields of "system.ConfigurationKey" */
+export type System_ConfigurationKey_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<System_ConfigurationKey_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "system.ConfigurationKey" */
+export type System_ConfigurationKey_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<System_ConfigurationKey_Max_Order_By>;
+  readonly min?: Maybe<System_ConfigurationKey_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "system.ConfigurationKey" */
+export type System_ConfigurationKey_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<System_ConfigurationKey_Insert_Input>;
+  readonly on_conflict?: Maybe<System_ConfigurationKey_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "system.ConfigurationKey". All fields are combined with a logical 'AND'. */
+export type System_ConfigurationKey_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<System_ConfigurationKey_Bool_Exp>>>;
+  readonly _not?: Maybe<System_ConfigurationKey_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<System_ConfigurationKey_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "system.ConfigurationKey" */
+export enum System_ConfigurationKey_Constraint {
+  /** unique or primary key constraint */
+  ConfigurationKeyPkey = 'ConfigurationKey_pkey'
+}
+
+export enum System_ConfigurationKey_Enum {
+  /** The time of the latest revision of the host cookie policy. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
+  CookiePolicyLatestRevisionTimestamp = 'COOKIE_POLICY_LATEST_REVISION_TIMESTAMP',
+  /** The URL to the host cookie policy. Note: If self hosting Clowdr, this must be your organisation's cookie policy - you cannot legally reuse, rely on or copy Clowdr's cookie policy. */
+  CookiePolicyUrl = 'COOKIE_POLICY_URL',
+  /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
+  HostOrganisationName = 'HOST_ORGANISATION_NAME',
+  /** The time of the latest revision of the host Privacy Policy. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
+  PrivacyPolicyLatestRevisionTimestamp = 'PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP',
+  /** URL to the host Privacy Policy. Note: If self hosting Clowdr, this must be your organisation's privacy policy - you cannot legally reuse, rely on or copy Clowdr's privacy policy. */
+  PrivacyPolicyUrl = 'PRIVACY_POLICY_URL',
+  /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
+  TermsLatestRevisionTimestamp = 'TERMS_LATEST_REVISION_TIMESTAMP',
+  /** URL to the host T&Cs. Note: If self hosting Clowdr, this must be your organisation's terms - you cannot legally reuse, rely on or copy Clowdr's terms. */
+  TermsUrl = 'TERMS_URL'
+}
+
+/** expression to compare columns of type system_ConfigurationKey_enum. All fields are combined with logical 'AND'. */
+export type System_ConfigurationKey_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<System_ConfigurationKey_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<System_ConfigurationKey_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<System_ConfigurationKey_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<System_ConfigurationKey_Enum>>;
+};
+
+/** input type for inserting data into table "system.ConfigurationKey" */
+export type System_ConfigurationKey_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type System_ConfigurationKey_Max_Fields = {
+  readonly __typename?: 'system_ConfigurationKey_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "system.ConfigurationKey" */
+export type System_ConfigurationKey_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type System_ConfigurationKey_Min_Fields = {
+  readonly __typename?: 'system_ConfigurationKey_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "system.ConfigurationKey" */
+export type System_ConfigurationKey_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "system.ConfigurationKey" */
+export type System_ConfigurationKey_Mutation_Response = {
+  readonly __typename?: 'system_ConfigurationKey_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<System_ConfigurationKey>;
+};
+
+/** input type for inserting object relation for remote table "system.ConfigurationKey" */
+export type System_ConfigurationKey_Obj_Rel_Insert_Input = {
+  readonly data: System_ConfigurationKey_Insert_Input;
+  readonly on_conflict?: Maybe<System_ConfigurationKey_On_Conflict>;
+};
+
+/** on conflict condition type for table "system.ConfigurationKey" */
+export type System_ConfigurationKey_On_Conflict = {
+  readonly constraint: System_ConfigurationKey_Constraint;
+  readonly update_columns: ReadonlyArray<System_ConfigurationKey_Update_Column>;
+  readonly where?: Maybe<System_ConfigurationKey_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "system.ConfigurationKey" */
+export type System_ConfigurationKey_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "system.ConfigurationKey" */
+export type System_ConfigurationKey_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "system.ConfigurationKey" */
+export enum System_ConfigurationKey_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "system.ConfigurationKey" */
+export type System_ConfigurationKey_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "system.ConfigurationKey" */
+export enum System_ConfigurationKey_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** aggregated selection of "system.Configuration" */
+export type System_Configuration_Aggregate = {
+  readonly __typename?: 'system_Configuration_aggregate';
+  readonly aggregate?: Maybe<System_Configuration_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<System_Configuration>;
+};
+
+/** aggregate fields of "system.Configuration" */
+export type System_Configuration_Aggregate_Fields = {
+  readonly __typename?: 'system_Configuration_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<System_Configuration_Max_Fields>;
+  readonly min?: Maybe<System_Configuration_Min_Fields>;
+};
+
+
+/** aggregate fields of "system.Configuration" */
+export type System_Configuration_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "system.Configuration" */
+export type System_Configuration_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<System_Configuration_Max_Order_By>;
+  readonly min?: Maybe<System_Configuration_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type System_Configuration_Append_Input = {
+  readonly value?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "system.Configuration" */
+export type System_Configuration_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<System_Configuration_Insert_Input>;
+  readonly on_conflict?: Maybe<System_Configuration_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "system.Configuration". All fields are combined with a logical 'AND'. */
+export type System_Configuration_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<System_Configuration_Bool_Exp>>>;
+  readonly _not?: Maybe<System_Configuration_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<System_Configuration_Bool_Exp>>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly key?: Maybe<System_ConfigurationKey_Enum_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly value?: Maybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "system.Configuration" */
+export enum System_Configuration_Constraint {
+  /** unique or primary key constraint */
+  ConfigurationPkey = 'Configuration_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type System_Configuration_Delete_At_Path_Input = {
+  readonly value?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type System_Configuration_Delete_Elem_Input = {
+  readonly value?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type System_Configuration_Delete_Key_Input = {
+  readonly value?: Maybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "system.Configuration" */
+export type System_Configuration_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly key?: Maybe<System_ConfigurationKey_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly value?: Maybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type System_Configuration_Max_Fields = {
+  readonly __typename?: 'system_Configuration_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "system.Configuration" */
+export type System_Configuration_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type System_Configuration_Min_Fields = {
+  readonly __typename?: 'system_Configuration_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "system.Configuration" */
+export type System_Configuration_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "system.Configuration" */
+export type System_Configuration_Mutation_Response = {
+  readonly __typename?: 'system_Configuration_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<System_Configuration>;
+};
+
+/** input type for inserting object relation for remote table "system.Configuration" */
+export type System_Configuration_Obj_Rel_Insert_Input = {
+  readonly data: System_Configuration_Insert_Input;
+  readonly on_conflict?: Maybe<System_Configuration_On_Conflict>;
+};
+
+/** on conflict condition type for table "system.Configuration" */
+export type System_Configuration_On_Conflict = {
+  readonly constraint: System_Configuration_Constraint;
+  readonly update_columns: ReadonlyArray<System_Configuration_Update_Column>;
+  readonly where?: Maybe<System_Configuration_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "system.Configuration" */
+export type System_Configuration_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly key?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly value?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "system.Configuration" */
+export type System_Configuration_Pk_Columns_Input = {
+  readonly key: System_ConfigurationKey_Enum;
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type System_Configuration_Prepend_Input = {
+  readonly value?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "system.Configuration" */
+export enum System_Configuration_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Key = 'key',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "system.Configuration" */
+export type System_Configuration_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly key?: Maybe<System_ConfigurationKey_Enum>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly value?: Maybe<Scalars['jsonb']>;
+};
+
+/** update columns of table "system.Configuration" */
+export enum System_Configuration_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Key = 'key',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Value = 'value'
+}
 
 
 /** expression to compare columns of type timestamptz. All fields are combined with logical 'AND'. */
@@ -34386,10 +35017,15 @@ export type SelectCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User_by_pk?: Maybe<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly attendees: ReadonlyArray<(
+export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User_by_pk?: Maybe<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly acceptedTermsAt?: Maybe<any>, readonly acceptedPrivacyPolicyAt?: Maybe<any>, readonly attendees: ReadonlyArray<(
       { readonly __typename?: 'Attendee' }
       & AttendeeFieldsFragment
     )> }> };
+
+export type TermsConfigsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TermsConfigsQuery = { readonly __typename?: 'query_root', readonly hostOrganisationName?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly termsTimestamp?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly termsURL?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly ppTimestamp?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly ppURL?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly cookiesTimestamp?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly cookiesURL?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }> };
 
 export type GetCurrentUserIsIncognitoQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -42689,6 +43325,8 @@ export const SelectCurrentUserDocument = gql`
     attendees {
       ...AttendeeFields
     }
+    acceptedTermsAt
+    acceptedPrivacyPolicyAt
   }
 }
     ${AttendeeFieldsFragmentDoc}`;
@@ -42718,6 +43356,74 @@ export function useSelectCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type SelectCurrentUserQueryHookResult = ReturnType<typeof useSelectCurrentUserQuery>;
 export type SelectCurrentUserLazyQueryHookResult = ReturnType<typeof useSelectCurrentUserLazyQuery>;
 export type SelectCurrentUserQueryResult = Apollo.QueryResult<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>;
+export const TermsConfigsDocument = gql`
+    query TermsConfigs {
+  hostOrganisationName: system_Configuration_by_pk(key: HOST_ORGANISATION_NAME) {
+    key
+    value
+    updated_at
+  }
+  termsTimestamp: system_Configuration_by_pk(key: TERMS_LATEST_REVISION_TIMESTAMP) {
+    key
+    value
+    updated_at
+  }
+  termsURL: system_Configuration_by_pk(key: TERMS_URL) {
+    key
+    value
+    updated_at
+  }
+  ppTimestamp: system_Configuration_by_pk(
+    key: PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
+  ) {
+    key
+    value
+    updated_at
+  }
+  ppURL: system_Configuration_by_pk(key: PRIVACY_POLICY_URL) {
+    key
+    value
+    updated_at
+  }
+  cookiesTimestamp: system_Configuration_by_pk(
+    key: COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
+  ) {
+    key
+    value
+    updated_at
+  }
+  cookiesURL: system_Configuration_by_pk(key: COOKIE_POLICY_URL) {
+    key
+    value
+    updated_at
+  }
+}
+    `;
+
+/**
+ * __useTermsConfigsQuery__
+ *
+ * To run a query within a React component, call `useTermsConfigsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTermsConfigsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTermsConfigsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTermsConfigsQuery(baseOptions?: Apollo.QueryHookOptions<TermsConfigsQuery, TermsConfigsQueryVariables>) {
+        return Apollo.useQuery<TermsConfigsQuery, TermsConfigsQueryVariables>(TermsConfigsDocument, baseOptions);
+      }
+export function useTermsConfigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermsConfigsQuery, TermsConfigsQueryVariables>) {
+          return Apollo.useLazyQuery<TermsConfigsQuery, TermsConfigsQueryVariables>(TermsConfigsDocument, baseOptions);
+        }
+export type TermsConfigsQueryHookResult = ReturnType<typeof useTermsConfigsQuery>;
+export type TermsConfigsLazyQueryHookResult = ReturnType<typeof useTermsConfigsLazyQuery>;
+export type TermsConfigsQueryResult = Apollo.QueryResult<TermsConfigsQuery, TermsConfigsQueryVariables>;
 export const GetCurrentUserIsIncognitoDocument = gql`
     query getCurrentUserIsIncognito($userId: String!) {
   OnlineStatus(where: {userId: {_eq: $userId}}) {

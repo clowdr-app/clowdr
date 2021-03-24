@@ -1,7 +1,9 @@
 import { gql } from "@apollo/client";
+import { Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { useSelectCurrentUserQuery } from "../../../generated/graphql";
+import { useSelectCurrentUserQuery, useTermsConfigsQuery } from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
+import { useRestorableState } from "../../Generic/useRestorableState";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { CurrentUserContext, defaultCurrentUserContext, UserInfo } from "./useMaybeCurrentUser";
 
@@ -53,6 +55,8 @@ gql`
             attendees {
                 ...AttendeeFields
             }
+            acceptedTermsAt
+            acceptedPrivacyPolicyAt
         }
     }
 `;
@@ -82,6 +86,46 @@ function CurrentUserProvider_NotAuthenticated({ children }: { children: string |
     return <CurrentUserContext.Provider value={ctx}>{children}</CurrentUserContext.Provider>;
 }
 
+gql`
+    query TermsConfigs {
+        hostOrganisationName: system_Configuration_by_pk(key: HOST_ORGANISATION_NAME) {
+            key
+            value
+            updated_at
+        }
+        termsTimestamp: system_Configuration_by_pk(key: TERMS_LATEST_REVISION_TIMESTAMP) {
+            key
+            value
+            updated_at
+        }
+        termsURL: system_Configuration_by_pk(key: TERMS_URL) {
+            key
+            value
+            updated_at
+        }
+        ppTimestamp: system_Configuration_by_pk(key: PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP) {
+            key
+            value
+            updated_at
+        }
+        ppURL: system_Configuration_by_pk(key: PRIVACY_POLICY_URL) {
+            key
+            value
+            updated_at
+        }
+        cookiesTimestamp: system_Configuration_by_pk(key: COOKIE_POLICY_LATEST_REVISION_TIMESTAMP) {
+            key
+            value
+            updated_at
+        }
+        cookiesURL: system_Configuration_by_pk(key: COOKIE_POLICY_URL) {
+            key
+            value
+            updated_at
+        }
+    }
+`;
+
 function CurrentUserProvider_IsAuthenticated({
     children,
     userId,
@@ -97,6 +141,8 @@ function CurrentUserProvider_IsAuthenticated({
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
 
+    const { loading: termsLoading, data: termsData } = useTermsConfigsQuery();
+
     const value = loading ? undefined : error ? false : data;
     const ctx: UserInfo = useMemo(
         () => ({
@@ -107,5 +153,73 @@ function CurrentUserProvider_IsAuthenticated({
         [loading, refetch, value]
     );
 
+    const acceptedTermsAt = useMemo(() => ctx.user && Date.parse(ctx.user.acceptedTermsAt), [ctx.user]);
+    const acceptedPPAt = useMemo(() => ctx.user && Date.parse(ctx.user.acceptedPrivacyPolicyAt), [ctx.user]);
+    const [acceptedCookiesAt, setAcceptedCookiesAt] = useRestorableState<number | null>(
+        "COOKIE_POLICY_ACCEPTED_AT",
+        null,
+        (x) => (x === null ? "" : x.toFixed(0)),
+        (x) => (x === "" ? null : parseInt(x, 10))
+    );
+
+    if (termsLoading) {
+        return <Spinner label="Loading terms configuration" />;
+    }
+
+    if (termsData && termsData.hostOrganisationName) {
+        if (termsData.cookiesTimestamp && termsData.cookiesURL) {
+            const cookiesTimestamp: number = termsData.cookiesTimestamp.value;
+            const cookiesURL: string = termsData.cookiesURL.value;
+            if (!acceptedCookiesAt || cookiesTimestamp > acceptedCookiesAt) {
+                return (
+                    <CookiePolicyCompliance
+                        cookiesURL={cookiesURL}
+                        setAcceptedCookiesAt={setAcceptedCookiesAt}
+                        hostOrganisationName={termsData.hostOrganisationName.value}
+                    />
+                );
+            }
+        }
+
+        if (termsData.ppTimestamp && termsData.ppURL && termsData.termsTimestamp && termsData.termsURL) {
+            const ppTimestamp: number = termsData.ppTimestamp.value;
+            const termsTimestamp: number = termsData.termsTimestamp.value;
+
+            if (!acceptedPPAt || !acceptedTermsAt || ppTimestamp > acceptedPPAt || termsTimestamp > acceptedTermsAt) {
+                return (
+                    <TermsAndPPCompliance
+                        hostOrganisationName={termsData.hostOrganisationName.value}
+                        ppURL={termsData.ppURL.value}
+                        termsURL={termsData.termsURL.value}
+                    />
+                );
+            }
+        }
+    }
+
     return <CurrentUserContext.Provider value={ctx}>{children}</CurrentUserContext.Provider>;
+}
+
+function CookiePolicyCompliance({
+    cookiesURL,
+    setAcceptedCookiesAt,
+    hostOrganisationName,
+}: {
+    cookiesURL: string;
+    setAcceptedCookiesAt: React.Dispatch<React.SetStateAction<number | null>>;
+    hostOrganisationName: string;
+}) {
+    return <>TODO: Accept cookies</>;
+}
+
+function TermsAndPPCompliance({
+    ppURL,
+    termsURL,
+    hostOrganisationName,
+}: {
+    ppURL: string;
+    termsURL: string;
+    hostOrganisationName: string;
+}) {
+    return <>TODO: Terms and privacy policy</>;
 }

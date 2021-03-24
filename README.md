@@ -46,6 +46,10 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
    ReadMe](services/actions/README.md#Setting-up)
 1. Follow the Frontend setup: [Clowdr Frontend
    ReadMe](frontend/README.md#Setting-up)
+1. If running this software in a production environment, you will need to insert
+   rows into the "system.Configuration" table in Postgres.
+   - Fill out values for all available keys.
+   - Refer to the description of each key for expected values.
 1. Follow the Auth0 setup below
 
 ### Auth0 Setup

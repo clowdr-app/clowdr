@@ -1,10 +1,29 @@
 import { gql } from "@apollo/client";
-import { Spinner } from "@chakra-ui/react";
-import React, { useMemo } from "react";
-import { useSelectCurrentUserQuery, useTermsConfigsQuery } from "../../../generated/graphql";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import {
+    Box,
+    Button,
+    Center,
+    Checkbox,
+    Container,
+    Heading,
+    Link,
+    Spinner,
+    Text,
+    Tooltip,
+    VStack,
+} from "@chakra-ui/react";
+import React, { useCallback, useMemo, useState } from "react";
+import {
+    useAgreeToTermsMutation,
+    UserInfoFragment,
+    useSelectCurrentUserQuery,
+    useTermsConfigsQuery,
+} from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import FAIcon from "../../Icons/FAIcon";
 import { CurrentUserContext, defaultCurrentUserContext, UserInfo } from "./useMaybeCurrentUser";
 
 gql`
@@ -46,17 +65,21 @@ gql`
         }
     }
 
+    fragment UserInfo on User {
+        id
+        email
+        lastName
+        firstName
+        acceptedTermsAt
+        acceptedPrivacyPolicyAt
+        attendees {
+            ...AttendeeFields
+        }
+    }
+
     query SelectCurrentUser($userId: String!) {
         User_by_pk(id: $userId) {
-            id
-            email
-            lastName
-            firstName
-            attendees {
-                ...AttendeeFields
-            }
-            acceptedTermsAt
-            acceptedPrivacyPolicyAt
+            ...UserInfo
         }
     }
 `;
@@ -144,14 +167,15 @@ function CurrentUserProvider_IsAuthenticated({
     const { loading: termsLoading, data: termsData } = useTermsConfigsQuery();
 
     const value = loading ? undefined : error ? false : data;
-    const ctx: UserInfo = useMemo(
-        () => ({
+    const ctx = useMemo(() => {
+        const result: UserInfo = {
             loading,
-            user: value ? value?.User_by_pk ?? false : value,
+            user: value ? (value?.User_by_pk as UserInfoFragment) ?? false : value,
             refetchUser: refetch,
-        }),
-        [loading, refetch, value]
-    );
+        };
+
+        return result;
+    }, [loading, refetch, value]);
 
     const acceptedTermsAt = useMemo(() => ctx.user && Date.parse(ctx.user.acceptedTermsAt), [ctx.user]);
     const acceptedPPAt = useMemo(() => ctx.user && Date.parse(ctx.user.acceptedPrivacyPolicyAt), [ctx.user]);
@@ -162,7 +186,7 @@ function CurrentUserProvider_IsAuthenticated({
         (x) => (x === "" ? null : parseInt(x, 10))
     );
 
-    if (termsLoading) {
+    if (termsLoading || loading) {
         return <Spinner label="Loading terms configuration" />;
     }
 
@@ -191,6 +215,7 @@ function CurrentUserProvider_IsAuthenticated({
                         hostOrganisationName={termsData.hostOrganisationName.value}
                         ppURL={termsData.ppURL.value}
                         termsURL={termsData.termsURL.value}
+                        userId={userId}
                     />
                 );
             }
@@ -209,17 +234,129 @@ function CookiePolicyCompliance({
     setAcceptedCookiesAt: React.Dispatch<React.SetStateAction<number | null>>;
     hostOrganisationName: string;
 }) {
-    return <>TODO: Accept cookies</>;
+    return (
+        <Center mt={10}>
+            <Container>
+                <VStack spacing={4}>
+                    <Heading as="h1">Cookies</Heading>
+                    <Text>
+                        The Clowdr software (hosted by {hostOrganisationName}) requires the use of cookies in order to
+                        deliver the software service to you. Please{" "}
+                        <Link isExternal href={cookiesURL}>
+                            read the cookie policy
+                            <ExternalLinkIcon ml={1} fontSize="xs" />
+                        </Link>{" "}
+                        before continuining.
+                    </Text>
+                    <Text>
+                        By clicking &ldquo;Agree and continue&rdquo;, you agree to the use of cookies in accordance with{" "}
+                        <Link isExternal href={cookiesURL}>
+                            the policy
+                            <ExternalLinkIcon ml={1} fontSize="xs" />
+                        </Link>
+                        .
+                    </Text>
+                    <Button colorScheme="green" onClick={() => setAcceptedCookiesAt(Date.now())}>
+                        <FAIcon iconStyle="r" icon="check-square" aria-hidden mr={2} />
+                        Agree and continue
+                    </Button>
+                </VStack>
+            </Container>
+        </Center>
+    );
 }
+
+gql`
+    mutation AgreeToTerms($userId: String!, $at: timestamptz!) {
+        update_User_by_pk(pk_columns: { id: $userId }, _set: { acceptedTermsAt: $at, acceptedPrivacyPolicyAt: $at }) {
+            id
+            acceptedTermsAt
+            acceptedPrivacyPolicyAt
+        }
+    }
+`;
 
 function TermsAndPPCompliance({
     ppURL,
     termsURL,
     hostOrganisationName,
+    userId,
 }: {
     ppURL: string;
     termsURL: string;
     hostOrganisationName: string;
-}) {
-    return <>TODO: Terms and privacy policy</>;
+    userId: string;
+}): JSX.Element {
+    const [termsChecked, setTermsChecked] = useState<boolean>(false);
+    const [ppChecked, setPPChecked] = useState<boolean>(false);
+    const [agreeToTerms, agreeToTermsResponse] = useAgreeToTermsMutation();
+
+    const agreeAndContinue = useCallback(() => {
+        agreeToTerms({
+            variables: {
+                userId,
+                at: new Date().toISOString(),
+            },
+        });
+    }, [agreeToTerms, userId]);
+
+    return (
+        <Center mt={10}>
+            <Container>
+                <VStack spacing={4}>
+                    <Heading as="h1">Terms of Service</Heading>
+                    <Text>
+                        Please read and agree to the{" "}
+                        <Link isExternal href={termsURL}>
+                            terms and conditions
+                            <ExternalLinkIcon ml={1} fontSize="xs" />
+                        </Link>{" "}
+                        and{" "}
+                        <Link isExternal href={ppURL}>
+                            privacy policy
+                            <ExternalLinkIcon ml={1} fontSize="xs" />
+                        </Link>{" "}
+                        before continuing to use the Clowdr software hosted by {hostOrganisationName}.
+                    </Text>
+                    <VStack alignItems="flex-start">
+                        <Checkbox isChecked={termsChecked} onChange={(ev) => setTermsChecked(ev.target.checked)}>
+                            I agree to the {hostOrganisationName}{" "}
+                            <Link isExternal href={termsURL}>
+                                terms and conditions.
+                                <ExternalLinkIcon ml={1} fontSize="xs" />
+                            </Link>
+                        </Checkbox>
+                        <Checkbox isChecked={ppChecked} onChange={(ev) => setPPChecked(ev.target.checked)}>
+                            I agree to the {hostOrganisationName}{" "}
+                            <Link isExternal href={ppURL}>
+                                privacy policy.
+                                <ExternalLinkIcon ml={1} fontSize="xs" />
+                            </Link>
+                        </Checkbox>
+                    </VStack>
+                    <Tooltip
+                        label={
+                            !termsChecked
+                                ? "Please agree to the terms and conditions"
+                                : !ppChecked
+                                ? "Please agree to the privacy policy"
+                                : undefined
+                        }
+                    >
+                        <Box>
+                            <Button
+                                colorScheme="green"
+                                onClick={() => agreeAndContinue()}
+                                isDisabled={!termsChecked || !ppChecked}
+                                isLoading={agreeToTermsResponse.loading}
+                            >
+                                <FAIcon iconStyle="s" icon="signature" aria-hidden mr={2} />
+                                Confirm and continue
+                            </Button>
+                        </Box>
+                    </Tooltip>
+                </VStack>
+            </Container>
+        </Center>
+    );
 }

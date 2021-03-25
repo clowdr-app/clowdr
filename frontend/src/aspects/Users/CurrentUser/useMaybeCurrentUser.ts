@@ -1,9 +1,9 @@
 import React from "react";
-import type { SelectCurrentUserQuery } from "../../../generated/graphql";
+import type { UserInfoFragment } from "../../../generated/graphql";
 
 export type UserInfo = {
     loading: boolean;
-    user: SelectCurrentUserQuery["User_by_pk"] | false | undefined;
+    user: UserInfoFragment | false | undefined;
     refetchUser: () => Promise<unknown>;
 };
 

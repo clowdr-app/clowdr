@@ -7457,6 +7457,8 @@
   - role: user
     permission:
       columns:
+      - acceptedPrivacyPolicyAt
+      - acceptedTermsAt
       - created_at
       - email
       - firstName
@@ -7472,6 +7474,8 @@
   - role: user
     permission:
       columns:
+      - acceptedPrivacyPolicyAt
+      - acceptedTermsAt
       - email
       - firstName
       - lastName

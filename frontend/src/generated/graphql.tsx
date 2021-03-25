@@ -35012,20 +35012,33 @@ export type GetShuffleRoomsParticipantsCountQuery = { readonly __typename?: 'que
 
 export type AttendeeFieldsFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly createdAt: any, readonly updatedAt: any, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly photoURL_50x50?: Maybe<string> }>, readonly conference: { readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly id: any, readonly group: { readonly __typename?: 'Group', readonly id: any, readonly enabled: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly role: { readonly __typename?: 'Role', readonly id: any, readonly name: string, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'RolePermission', readonly id: any, readonly permissionName: Permission_Enum }> } }> } }> };
 
+export type UserInfoFragment = { readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly acceptedTermsAt?: Maybe<any>, readonly acceptedPrivacyPolicyAt?: Maybe<any>, readonly attendees: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeeFieldsFragment
+  )> };
+
 export type SelectCurrentUserQueryVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User_by_pk?: Maybe<{ readonly __typename?: 'User', readonly id: string, readonly email?: Maybe<string>, readonly lastName: string, readonly firstName: string, readonly acceptedTermsAt?: Maybe<any>, readonly acceptedPrivacyPolicyAt?: Maybe<any>, readonly attendees: ReadonlyArray<(
-      { readonly __typename?: 'Attendee' }
-      & AttendeeFieldsFragment
-    )> }> };
+export type SelectCurrentUserQuery = { readonly __typename?: 'query_root', readonly User_by_pk?: Maybe<(
+    { readonly __typename?: 'User' }
+    & UserInfoFragment
+  )> };
 
 export type TermsConfigsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type TermsConfigsQuery = { readonly __typename?: 'query_root', readonly hostOrganisationName?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly termsTimestamp?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly termsURL?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly ppTimestamp?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly ppURL?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly cookiesTimestamp?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }>, readonly cookiesURL?: Maybe<{ readonly __typename?: 'system_Configuration', readonly key: System_ConfigurationKey_Enum, readonly value: any, readonly updated_at: any }> };
+
+export type AgreeToTermsMutationVariables = Exact<{
+  userId: Scalars['String'];
+  at: Scalars['timestamptz'];
+}>;
+
+
+export type AgreeToTermsMutation = { readonly __typename?: 'mutation_root', readonly update_User_by_pk?: Maybe<{ readonly __typename?: 'User', readonly id: string, readonly acceptedTermsAt?: Maybe<any>, readonly acceptedPrivacyPolicyAt?: Maybe<any> }> };
 
 export type GetCurrentUserIsIncognitoQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -36250,6 +36263,19 @@ export const AttendeeFieldsFragmentDoc = gql`
   }
 }
     `;
+export const UserInfoFragmentDoc = gql`
+    fragment UserInfo on User {
+  id
+  email
+  lastName
+  firstName
+  acceptedTermsAt
+  acceptedPrivacyPolicyAt
+  attendees {
+    ...AttendeeFields
+  }
+}
+    ${AttendeeFieldsFragmentDoc}`;
 export const InitialChatStateDocument = gql`
     query InitialChatState($attendeeId: uuid!) {
   chat_PinnedOrSubscribed(where: {attendeeId: {_eq: $attendeeId}}) {
@@ -43318,18 +43344,10 @@ export type GetShuffleRoomsParticipantsCountQueryResult = Apollo.QueryResult<Get
 export const SelectCurrentUserDocument = gql`
     query SelectCurrentUser($userId: String!) {
   User_by_pk(id: $userId) {
-    id
-    email
-    lastName
-    firstName
-    attendees {
-      ...AttendeeFields
-    }
-    acceptedTermsAt
-    acceptedPrivacyPolicyAt
+    ...UserInfo
   }
 }
-    ${AttendeeFieldsFragmentDoc}`;
+    ${UserInfoFragmentDoc}`;
 
 /**
  * __useSelectCurrentUserQuery__
@@ -43424,6 +43442,44 @@ export function useTermsConfigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type TermsConfigsQueryHookResult = ReturnType<typeof useTermsConfigsQuery>;
 export type TermsConfigsLazyQueryHookResult = ReturnType<typeof useTermsConfigsLazyQuery>;
 export type TermsConfigsQueryResult = Apollo.QueryResult<TermsConfigsQuery, TermsConfigsQueryVariables>;
+export const AgreeToTermsDocument = gql`
+    mutation AgreeToTerms($userId: String!, $at: timestamptz!) {
+  update_User_by_pk(
+    pk_columns: {id: $userId}
+    _set: {acceptedTermsAt: $at, acceptedPrivacyPolicyAt: $at}
+  ) {
+    id
+    acceptedTermsAt
+    acceptedPrivacyPolicyAt
+  }
+}
+    `;
+export type AgreeToTermsMutationFn = Apollo.MutationFunction<AgreeToTermsMutation, AgreeToTermsMutationVariables>;
+
+/**
+ * __useAgreeToTermsMutation__
+ *
+ * To run a mutation, you first call `useAgreeToTermsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAgreeToTermsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [agreeToTermsMutation, { data, loading, error }] = useAgreeToTermsMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      at: // value for 'at'
+ *   },
+ * });
+ */
+export function useAgreeToTermsMutation(baseOptions?: Apollo.MutationHookOptions<AgreeToTermsMutation, AgreeToTermsMutationVariables>) {
+        return Apollo.useMutation<AgreeToTermsMutation, AgreeToTermsMutationVariables>(AgreeToTermsDocument, baseOptions);
+      }
+export type AgreeToTermsMutationHookResult = ReturnType<typeof useAgreeToTermsMutation>;
+export type AgreeToTermsMutationResult = Apollo.MutationResult<AgreeToTermsMutation>;
+export type AgreeToTermsMutationOptions = Apollo.BaseMutationOptions<AgreeToTermsMutation, AgreeToTermsMutationVariables>;
 export const GetCurrentUserIsIncognitoDocument = gql`
     query getCurrentUserIsIncognito($userId: String!) {
   OnlineStatus(where: {userId: {_eq: $userId}}) {

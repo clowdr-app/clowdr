@@ -1,6 +1,7 @@
 import jwksRsa from "jwks-rsa";
 import socketIO, { Socket } from "socket.io";
 import { createAdapter } from "socket.io-redis";
+import { testJWKs } from "../jwks";
 import { redisPubClient, redisSubClient } from "../redis";
 import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
@@ -27,6 +28,11 @@ const jwksClient = jwksRsa({
     rateLimit: true,
     jwksRequestsPerMinute: 1,
     jwksUri: `https://${process.env.AUTH0_API_DOMAIN}/.well-known/jwks.json`,
+    getKeysInterceptor:
+        testJWKs &&
+        (() => {
+            return testJWKs;
+        }),
 });
 socketServer.use(
     authorize({

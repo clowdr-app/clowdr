@@ -52,8 +52,12 @@ function getPageKey(confSlug: string, path: string) {
     return hash.digest("hex").toLowerCase();
 }
 
-export function onEnterPage(conferenceSlug: string, userId: string, socketId: string): (path: string) => Promise<void> {
-    return async (path) => {
+export function onEnterPage(
+    conferenceSlug: string,
+    userId: string,
+    socketId: string
+): (path: string, cb?: () => void) => Promise<void> {
+    return async (path, cb) => {
         try {
             if (typeof path === "string") {
                 const pageKey = getPageKey(conferenceSlug, path);
@@ -61,6 +65,8 @@ export function onEnterPage(conferenceSlug: string, userId: string, socketId: st
                     if (err) {
                         throw err;
                     }
+
+                    cb?.();
                 });
             }
         } catch (e) {
@@ -69,8 +75,12 @@ export function onEnterPage(conferenceSlug: string, userId: string, socketId: st
     };
 }
 
-export function onLeavePage(conferenceSlug: string, userId: string, socketId: string): (path: string) => Promise<void> {
-    return async (path) => {
+export function onLeavePage(
+    conferenceSlug: string,
+    userId: string,
+    socketId: string
+): (path: string, cb?: () => void) => Promise<void> {
+    return async (path, cb) => {
         try {
             if (typeof path === "string") {
                 const pageKey = getPageKey(conferenceSlug, path);
@@ -78,6 +88,8 @@ export function onLeavePage(conferenceSlug: string, userId: string, socketId: st
                     if (err) {
                         throw err;
                     }
+
+                    cb?.();
                 });
             }
         } catch (e) {
@@ -90,8 +102,8 @@ export function onObservePage(
     conferenceSlug: string,
     socketId: string,
     socket: Socket
-): (path: string) => Promise<void> {
-    return async (path) => {
+): (path: string, cb?: () => void) => Promise<void> {
+    return async (path, cb) => {
         try {
             if (typeof path === "string") {
                 const listId = getPageKey(conferenceSlug, path);
@@ -107,6 +119,8 @@ export function onObservePage(
 
                     // console.log(`Emitting presences for ${path} to ${userId} / ${socketId}`, userIds);
                     socket.emit("presences", { listId, userIds });
+
+                    cb?.();
                 });
             }
         } catch (e) {
@@ -119,14 +133,16 @@ export function onUnobservePage(
     conferenceSlug: string,
     socketId: string,
     socket: Socket
-): (path: string) => Promise<void> {
-    return async (path) => {
+): (path: string, cb?: () => void) => Promise<void> {
+    return async (path, cb) => {
         try {
             if (typeof path === "string") {
                 const pageKey = getPageKey(conferenceSlug, path);
                 const chan = presenceChannelName(pageKey);
                 // console.log(`${userId} unobserved ${pageKey}`);
                 await socket.leave(chan);
+
+                cb?.();
             }
         } catch (e) {
             console.error(`Error unobserving presence on socket ${socketId}`, e);
@@ -139,12 +155,14 @@ export function onConnect(userId: string, socketId: string): void {
     redisClient.SADD(ALL_SESSION_USER_IDS_KEY, `${socketId}¬${userId}`);
 }
 
-export function onDisconnect(socketId: string, userId: string): void {
+export function onDisconnect(socketId: string, userId: string, cb?: () => void): void {
     try {
         exitAllPresences(userId, socketId, (err) => {
             if (err) {
                 throw err;
             }
+
+            cb?.();
         });
     } catch (e) {
         console.error(`Error exiting all presences on socket ${socketId}`, e);

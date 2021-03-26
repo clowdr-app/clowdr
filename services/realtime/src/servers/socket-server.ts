@@ -58,10 +58,10 @@ socketServer.on("connection", function (socket: Socket) {
             socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-conference-slug"] ?? "<<NO-CONFERENCE>>";
         console.log(`Authorized client connected: ${conferenceSlug} / ${userId} / ${socketId}`);
 
-        socket.on("disconnect", () => {
+        socket.on("disconnect", (cb) => {
             console.log(`Client disconnected: ${conferenceSlug} / ${userId} / ${socketId}`);
 
-            onDisconnectPresence(socketId, userId);
+            onDisconnectPresence(socketId, userId, cb);
         });
 
         onConnectPresence(socket, userId, conferenceSlug);

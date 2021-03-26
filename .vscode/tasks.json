@@ -96,15 +96,15 @@
             },
             "args": ["run", "gql-cdg"]
         },
-        // Presence service -- Local Development
+        // Real-time service -- Local Development
         {
-            "label": "Presence Service -- Local Development",
+            "label": "Real-time Service -- Local Development",
             "type": "shell",
             "isBackground": true,
             "command": "npm",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceFolder}/services/presence"
+                "cwd": "${workspaceFolder}/services/realtime"
             },
             "runOptions": {
                 "instanceLimit": 1
@@ -224,7 +224,7 @@
             "dependsOn": [
                 "Hasura Console -- Local Development",
                 "Actions Service -- Local Development",
-                "Presence Service -- Local Development",
+                "Real-time Service -- Local Development",
                 "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",

@@ -14,7 +14,7 @@
 1. We need Heroku Redis for maintaining state: `heroku addons:create heroku-redis:premium-0 --app APP_NAME`
 1. We need Heroku Multiprocfile to handle our monorepo:
    - `heroku buildpacks:add -a APP_NAME heroku-community/multi-procfile`
-   - `heroku config:set -a APP_NAME PROCFILE=services/presence/PROCFILE`
+   - `heroku config:set -a APP_NAME PROCFILE=services/realtime/PROCFILE`
 
 ## Env vars
 

@@ -150,7 +150,7 @@ actions:
 - name: presence_Flush
   definition:
     kind: synchronous
-    handler: '{{PRESENCE_BASE_URL}}/flush'
+    handler: '{{REALTIME_BASE_URL}}/flush'
     forward_client_headers: true
     headers:
     - name: x-hasura-presence-flush-secret
@@ -158,7 +158,7 @@ actions:
 - name: presence_Summary
   definition:
     kind: ""
-    handler: '{{PRESENCE_BASE_URL}}/summary'
+    handler: '{{REALTIME_BASE_URL}}/summary'
     forward_client_headers: true
     headers:
     - name: x-hasura-presence-summary-secret

@@ -114,7 +114,7 @@ desktop.ini
 ngrok.yml
 frontend/x.env.local
 *.local
-services/presence/build/
+services/realtime/build/
 
 # Packetriot
 pktriot.json

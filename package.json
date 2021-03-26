@@ -4,9 +4,9 @@
     "description": "Development setup",
     "main": "index.js",
     "scripts": {
-        "heroku-postbuild": "cd shared && npm ci && cd ../services/presence && npm ci && npm run build && cd ../../services/actions && npm ci && npm run build",
+        "heroku-postbuild": "cd shared && npm ci && cd ../services/realtime && npm ci && npm run build && cd ../../services/actions && npm ci && npm run build",
         "run-services-actions": "heroku local -p 3001 web",
-        "run-services-presence": "heroku local -p 3002 -f Presence.Procfile web"
+        "run-services-realtime": "heroku local -p 3002 -f Realtime.Procfile web"
     },
     "repository": {
         "type": "git",

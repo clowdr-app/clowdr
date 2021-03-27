@@ -159,39 +159,34 @@ export function MenuBar(): JSX.Element {
                                     </MenuItem>
                                 ) : undefined}
                                 {conference ? (
-                                    <Switch>
-                                        <Route path={`/conference/${conference.slug}/manage`}></Route>
-                                        <Route path={`/conference/${conference.slug}`}>
-                                            <RequireAtLeastOnePermissionWrapper
-                                                permissions={[
-                                                    Permission_Enum.ConferenceManageAttendees,
-                                                    Permission_Enum.ConferenceManageContent,
-                                                    Permission_Enum.ConferenceManageGroups,
-                                                    Permission_Enum.ConferenceManageName,
-                                                    Permission_Enum.ConferenceManageRoles,
-                                                    Permission_Enum.ConferenceManageSchedule,
-                                                    Permission_Enum.ConferenceManageShuffle,
-                                                    Permission_Enum.ConferenceModerateAttendees,
-                                                ]}
-                                            >
-                                                <MenuItem
-                                                    onClick={() => {
-                                                        history.push(`/conference/${conference.slug}/manage`);
-                                                    }}
-                                                >
-                                                    <FAIcon
-                                                        display="inline"
-                                                        verticalAlign="middle"
-                                                        iconStyle="s"
-                                                        icon="cog"
-                                                        mr={2}
-                                                        aria-hidden={true}
-                                                    />
-                                                    Manage conference
-                                                </MenuItem>
-                                            </RequireAtLeastOnePermissionWrapper>
-                                        </Route>
-                                    </Switch>
+                                    <RequireAtLeastOnePermissionWrapper
+                                        permissions={[
+                                            Permission_Enum.ConferenceManageAttendees,
+                                            Permission_Enum.ConferenceManageContent,
+                                            Permission_Enum.ConferenceManageGroups,
+                                            Permission_Enum.ConferenceManageName,
+                                            Permission_Enum.ConferenceManageRoles,
+                                            Permission_Enum.ConferenceManageSchedule,
+                                            Permission_Enum.ConferenceManageShuffle,
+                                            Permission_Enum.ConferenceModerateAttendees,
+                                        ]}
+                                    >
+                                        <MenuItem
+                                            onClick={() => {
+                                                history.push(`/conference/${conference.slug}/manage`);
+                                            }}
+                                        >
+                                            <FAIcon
+                                                display="inline"
+                                                verticalAlign="middle"
+                                                iconStyle="s"
+                                                icon="cog"
+                                                mr={2}
+                                                aria-hidden={true}
+                                            />
+                                            Manage conference
+                                        </MenuItem>
+                                    </RequireAtLeastOnePermissionWrapper>
                                 ) : undefined}
                                 {user && user.attendees.length > 0 ? (
                                     <MenuItem

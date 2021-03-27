@@ -445,36 +445,72 @@ last logged in time._
             // console.log("url", url);
             // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
 
-            const sendRequest = (url, adminSecret) => {
+            const sendRequest = (url, adminSecret, user, context, cb) => {
                 request.post({
                     headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
                     url:   url,
                     body:  JSON.stringify(graphqlReq)
                 }, function(error, response, body){
+                    body = JSON.parse(body);
                     console.log(body);
-                    if (!error) {
-                      user.app_metadata.isNew = false;
-                      auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
-                          .then(function(){
-                            callback(null, user, context);
-                          })
-                          .catch(function(err){
-                            callback(err);
-                          });
+                    if (!error &&
+                        body.data &&
+                        body.data.insert_User &&
+                        typeof body.data.insert_User.affected_rows === "number"
+                    ) {
+                        console.log("Suucessfully saved to db. Marking as not new.");
+                        user.app_metadata.isNew = false;
                     }
                     else {
-                        callback(null, user, context);
+                        console.log("body.data",
+                            body.data);
+                        console.log("body.data.insert_User",
+                            body.data && body.data.insert_User);
+                        console.log("body.data.insert_User.affected_rows",
+                            body.data &&
+                            body.data.insert_User &&
+                            body.data.insert_User.affected_rows
+                        );
                     }
+                    cb(null, user, context);
                 });
             };
 
-            sendRequest(configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET);
-            if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
-                sendRequest(configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL);
-            }
+            sendRequest(
+                configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET,
+                user, context,
+                (_err, _user, _ctx) => {
+                    if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
+                        sendRequest(
+                            configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL,
+                            _user, _ctx,
+                            (_err2, _user2, _ctx2) => {
+                                auth0.users.updateAppMetadata(_user2.user_id, _user2.app_metadata)
+                                    .then(function(){
+                                        if (_err) {
+                                            callback(_err);
+                                        }
+                                        else if (_err2) {
+                                            callback(_err2);
+                                        }
+                                        else {
+                                            callback(null, _user2, _ctx2);
+                                        }
+                                    })
+                                    .catch(function(_err3){
+                                        callback(_err3);
+                                    });
+                            }
+                        );
+                    }
+                    else {
+                        callback(null, _user, _ctx);
+                    }
+                }
+            );
         }
         else {
-            console.log("Ignoring existing new user");
+            console.log("Ignoring existing user");
             callback(null, user, context);
         }
     }

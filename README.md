@@ -510,7 +510,7 @@ created above.
    - e.g. `HASURA_GRAPHQL_JWT_SECRET='your key goes in here'`
    - **Don't forget the wrapping single quotes!**
 1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`
-   line in `hasura/docker-compose.yaml`
+   line in `docker-compose.yaml`
    - Don't forget to restart the `Hasura Console -- Local Development` task
      in VSCode! (Again, if you get an error message about `version check: failed to get version from server: failed making version api call...`
      try running the task again -- this could be due to a race condition.)

@@ -11,7 +11,7 @@ and all of our backend services.
 ## Setting Up
 
 1. `cp hasura/.env.example hasura/.env.local`
-1. In `hasura/docker-compose.yaml`, comment out the line `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`. We'll re-enable it once we have a JWT secret.
+1. In `docker-compose.yaml`, comment out the line `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`. We'll re-enable it once we have a JWT secret.
 1. Run the `Hasura Console -- Local Development` task within VSCode:
    `Terminal > Run Task`.
 1. Check that the Docker Compose task ran successfully in the Task Output

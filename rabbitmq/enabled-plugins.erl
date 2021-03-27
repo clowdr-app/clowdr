@@ -1,0 +1,1 @@
+[rabbitmq_management,rabbitmq_prometheus,rabbitmq_auth_backend_oauth2].

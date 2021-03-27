@@ -3,15 +3,15 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        // Start Hasura Service -- Local Development
+        // Start Services in Docker -- Local Development
         {
-            "label": "Start Hasura Service -- Local Development",
+            "label": "Start Docker Services -- Local Development",
             "type": "shell",
             "isBackground": true,
             "command": "docker-compose",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceFolder}/hasura"
+                "cwd": "${workspaceFolder}"
             },
             "runOptions": {
                 "instanceLimit": 1
@@ -19,13 +19,13 @@
             // Use `"-p", "Hasura 3",` as the first arguments to use a different
             // Docker project name
             // Keywords: project_name, project-name, container name, container-name
-            "args": ["--env-file", ".env.local", "up", "-d"]
+            "args": ["--env-file", "./hasura/.env.local", "up", "-d"]
         },
         // Hasura Console -- Local Development
         {
             "label": "Hasura Console -- Local Development",
             "type": "shell",
-            "dependsOn": "Start Hasura Service -- Local Development",
+            "dependsOn": "Start Docker Services -- Local Development",
             "isBackground": true,
             "command": "hasura",
             "problemMatcher": [],

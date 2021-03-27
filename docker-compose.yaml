@@ -30,8 +30,8 @@ services:
       - "postgres"
     restart: always
     volumes:
-      - ./migrations:/hasura-migrations
-      - ./metadata:/hasura-metadata
+      - ./hasura/migrations:/hasura-migrations
+      - ./hasura/metadata:/hasura-metadata
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
@@ -57,5 +57,7 @@ services:
       environment:
           RABBITMQ_DEFAULT_USER: admin
           RABBITMQ_DEFAULT_PASS: admin
+      volumes:
+          - ./rabbitmq/enabled-plugins.erl:/etc/rabbitmq/enabled_plugins
 volumes:
   db_data:

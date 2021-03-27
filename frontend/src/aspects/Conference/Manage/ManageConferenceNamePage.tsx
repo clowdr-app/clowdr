@@ -32,7 +32,6 @@ import { useTitle } from "../../Utils/useTitle";
 import { validateName, validateShortName } from "../NewConferenceForm";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 const _updateConferenceQueries = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
@@ -72,8 +71,6 @@ export default function ManageConferenceNamePage(): JSX.Element {
     const [updateConferenceMutation] = useUpdateConferenceMutation();
     const toast = useToast();
     const history = useHistory();
-
-    useDashboardPrimaryMenuButtons();
 
     return (
         <RequireAtLeastOnePermissionWrapper

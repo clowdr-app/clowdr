@@ -28,7 +28,6 @@ import isValidUUID from "../../Utils/isValidUUID";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
     query SelectAllGroups($conferenceId: uuid!) {
@@ -122,8 +121,6 @@ const GroupsCRUDTable = (props: Readonly<CRUDTableProps<GroupDescriptor, "id">>)
 export default function ManageConferenceGroupsPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage groups of ${conference.shortName}`);
-
-    useDashboardPrimaryMenuButtons();
 
     const { loading: loadingAllRoles, error: errorAllRoles, data: allRoles } = useSelectAllRolesQuery({
         fetchPolicy: "network-only",

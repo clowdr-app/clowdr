@@ -1,12 +1,9 @@
 import { Heading, Stack, StackDivider, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
-import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import InviteCodeInput from "../Users/NewUser/InviteCodeInput";
 import NewConferenceForm from "./NewConferenceForm";
 
 export default function UseInviteOrCreateView(): JSX.Element {
-    useNoPrimaryMenuButtons();
-
     const useInviteEl = (
         <VStack
             width={["100%", "100%", "50%"]}

@@ -6,7 +6,6 @@ import { LinkButton } from "../../../Chakra/LinkButton";
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import FAIcon from "../../../Icons/FAIcon";
-import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -45,7 +44,6 @@ gql`
 
 export default function RoomListPage(): JSX.Element {
     const conference = useConference();
-    useNoPrimaryMenuButtons();
 
     const title = useTitle(`Rooms - ${conference.shortName}`);
 

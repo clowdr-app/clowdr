@@ -10,7 +10,6 @@ import ImportContentPage from "./Import/Content/ImportContentPage";
 import ImportPeoplePage from "./Import/People/ImportPeoplePage";
 import ImportSchedulePage from "./Import/Schedule/ImportSchedulePage";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 export default function ManageConferenceImportPage({ rootUrl }: { rootUrl: string }): JSX.Element {
     return (
@@ -34,7 +33,6 @@ export default function ManageConferenceImportPage({ rootUrl }: { rootUrl: strin
 function InnerManageConferenceImportPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Import to ${conference.shortName}`);
-    useDashboardPrimaryMenuButtons();
 
     return (
         <RequireAtLeastOnePermissionWrapper

@@ -2,12 +2,9 @@ import { ButtonGroup, FormControl, Heading } from "@chakra-ui/react";
 import React from "react";
 import LoginButton from "../../Auth/Buttons/LoginButton";
 import SignupButton from "../../Auth/Buttons/SignUpButton";
-import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../Utils/useTitle";
 
 export default function NewUserLandingPage({ conferenceName }: { conferenceName?: string }): JSX.Element {
-    useNoPrimaryMenuButtons();
-
     const title = useTitle(conferenceName ?? "");
 
     return (

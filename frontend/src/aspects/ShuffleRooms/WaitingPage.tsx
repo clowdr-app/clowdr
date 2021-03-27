@@ -28,7 +28,6 @@ import { ConferenceInfoFragment, useConference } from "../Conference/useConferen
 import useCurrentAttendee from "../Conference/useCurrentAttendee";
 import { useRealTime } from "../Generic/useRealTime";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
-import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../Utils/useTitle";
 
 gql`
@@ -403,8 +402,6 @@ export default function WaitingPage(): JSX.Element {
                 : undefined,
         [data, now]
     );
-
-    useNoPrimaryMenuButtons();
 
     return (
         <>

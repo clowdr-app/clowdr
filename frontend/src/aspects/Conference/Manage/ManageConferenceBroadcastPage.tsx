@@ -22,13 +22,11 @@ import { BroadcastRooms } from "./Broadcast/BroadcastRooms";
 import { ConferenceConfiguration } from "./Broadcast/ConferenceConfiguration";
 import { EventVonageControls } from "./Broadcast/EventVonageControls";
 import { PrepareJobsList } from "./Broadcast/PrepareJobsList";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 export default function ManageConferenceBroadcastPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage broadcasts at ${conference.shortName}`);
 
-    useDashboardPrimaryMenuButtons();
     const [create, { loading, error }] = useCreateConferencePrepareJobMutation();
     useQueryErrorToast(error, false);
     const toast = useToast();

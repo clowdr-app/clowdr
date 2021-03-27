@@ -44,15 +44,12 @@ import type {
 import UploadersModal from "./Content/UploadersModal";
 import { useSaveContentDiff } from "./Content/useSaveContentDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "./Shared/Types";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>) => CRUDTable(props);
 
 export default function ManageConferenceContentPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage content at ${conference.shortName}`);
-
-    useDashboardPrimaryMenuButtons();
 
     const saveContentDiff = useSaveContentDiff();
 

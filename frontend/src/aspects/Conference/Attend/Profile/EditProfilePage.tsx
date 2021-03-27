@@ -6,6 +6,7 @@ import {
     AlertIcon,
     AlertTitle,
     Button,
+    ButtonGroup,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -37,7 +38,6 @@ import type { BadgeData } from "../../../Badges/ProfileBadge";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
-import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import PronounInput from "../../../Pronouns/PronounInput";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useTitle } from "../../../Utils/useTitle";
@@ -112,29 +112,7 @@ gql`
 
 function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX.Element {
     const conference = useConference();
-    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
     const currentUser = useCurrentUser();
-    useEffect(() => {
-        setPrimaryMenuButtons([
-            {
-                key: "view-profile",
-                action:
-                    attendee.userId === currentUser.user.id
-                        ? `/conference/${conference.slug}/profile/view`
-                        : `/conference/${conference.slug}/profile/view/${attendee.id}`,
-                text: "View profile",
-                label: "View profile",
-                colorScheme: "green",
-            },
-        ]);
-    }, [
-        attendee.id,
-        attendee.userId,
-        conference.shortName,
-        conference.slug,
-        currentUser.user.id,
-        setPrimaryMenuButtons,
-    ]);
 
     const [editingAttendee, setEditingAttendee] = useState<AttendeeContextT>(attendee);
 
@@ -434,9 +412,21 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                         </AlertDescription>
                     </Alert>
                 ) : (
-                    <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
-                        Continue to {conference.shortName}
-                    </LinkButton>
+                    <ButtonGroup variant="outline">
+                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
+                            Continue to {conference.shortName}
+                        </LinkButton>
+                        <LinkButton
+                            to={
+                                attendee.userId === currentUser.user.id
+                                    ? `/conference/${conference.slug}/profile/view`
+                                    : `/conference/${conference.slug}/profile/view/${attendee.id}`
+                            }
+                            colorScheme="gray"
+                        >
+                            View profile
+                        </LinkButton>
+                    </ButtonGroup>
                 )}
                 {isEditingName ? (
                     <VStack alignItems="flex-start" w="100%" maxW={350}>
@@ -512,9 +502,21 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 {twitterField}
                 {githubField}
                 {attendee.profile.hasBeenEdited ? (
-                    <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
-                        Continue to {conference.shortName}
-                    </LinkButton>
+                    <ButtonGroup variant="solid">
+                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
+                            Continue to {conference.shortName}
+                        </LinkButton>
+                        <LinkButton
+                            to={
+                                attendee.userId === currentUser.user.id
+                                    ? `/conference/${conference.slug}/profile/view`
+                                    : `/conference/${conference.slug}/profile/view/${attendee.id}`
+                            }
+                            colorScheme="gray"
+                        >
+                            View profile
+                        </LinkButton>
+                    </ButtonGroup>
                 ) : undefined}
             </VStack>
         </>

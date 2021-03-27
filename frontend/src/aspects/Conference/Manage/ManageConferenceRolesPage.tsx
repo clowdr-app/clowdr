@@ -27,7 +27,6 @@ import isValidUUID from "../../Utils/isValidUUID";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
     query SelectAllPermissions {
@@ -115,8 +114,6 @@ const RolesCRUDTable = (props: Readonly<CRUDTableProps<RoleDescriptor, "id">>) =
 export default function ManageConferenceRolesPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage roles at ${conference.shortName}`);
-
-    useDashboardPrimaryMenuButtons();
 
     const {
         loading: loadingAllPermissions,

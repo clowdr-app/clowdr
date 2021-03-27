@@ -21,7 +21,6 @@ import {
     useSelectRequiredItemQuery,
 } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
-import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../Utils/useTitle";
 import UploadedContentItem from "./UploadedContentItem";
 import UploadFileForm from "./UploadFileForm";
@@ -80,8 +79,6 @@ export default function SubmitItemPage({
     magicToken: string;
     requiredContentItemId: string;
 }): JSX.Element {
-    useNoPrimaryMenuButtons();
-
     const { loading, error, data, refetch } = useSelectRequiredItemQuery({
         fetchPolicy: "network-only",
         context: {

@@ -10,7 +10,6 @@ import {
 } from "../../../../generated/graphql";
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { ContentGroupEvents } from "./ContentGroupEvents";
@@ -73,8 +72,6 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
     const title = useTitle(result.data?.ContentGroup_by_pk?.title ?? "Unknown content item");
-
-    useNoPrimaryMenuButtons();
 
     return (
         <RequireAtLeastOnePermissionWrapper

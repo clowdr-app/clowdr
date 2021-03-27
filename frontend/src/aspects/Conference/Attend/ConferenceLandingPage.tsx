@@ -16,7 +16,6 @@ import {
 import ConferencePageNotFound from "../../Errors/ConferencePageNotFound";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useNoPrimaryMenuButtons } from "../../Menu/usePrimaryMenuButtons";
 import { Markdown } from "../../Text/Markdown";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -164,8 +163,6 @@ function ConferenceLandingPageInner(): JSX.Element {
 }
 
 export default function ConferenceLandingPage(): JSX.Element {
-    useNoPrimaryMenuButtons();
-
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageContent]}

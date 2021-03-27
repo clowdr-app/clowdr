@@ -10,35 +10,16 @@ import {
     StackDivider,
     Text,
     useColorModeValue,
-    useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { AttendeeFieldsFragment, Permission_Enum } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
-import UseInviteOrCreateView from "../../Conference/UseInviteOrCreateView";
-import usePrimaryMenuButtons from "../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../Utils/useTitle";
 import useCurrentUser from "./useCurrentUser";
 
 export default function ListConferencesView(): JSX.Element {
     const title = useTitle("My Conferences");
-    const { isOpen: shouldShowUseInvite, onOpen: showUseInvite, onClose: hideUseInvite } = useDisclosure();
-    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
-    useEffect(() => {
-        setPrimaryMenuButtons(
-            shouldShowUseInvite
-                ? [
-                      {
-                          action: hideUseInvite,
-                          key: "list-conferences:hide-use-invite",
-                          label: "My conferences",
-                          text: "My conferences",
-                      },
-                  ]
-                : []
-        );
-    }, [hideUseInvite, setPrimaryMenuButtons, shouldShowUseInvite, showUseInvite]);
 
     const { user } = useCurrentUser();
 
@@ -141,7 +122,7 @@ export default function ListConferencesView(): JSX.Element {
             {renderConferenceList(
                 ViewIcon,
                 attending,
-                <LinkButton to="/join" colorScheme="blue" onClick={showUseInvite} marginRight={0}>
+                <LinkButton to="/join" colorScheme="blue" marginRight={0}>
                     Use invite code
                 </LinkButton>,
                 ""
@@ -163,7 +144,7 @@ export default function ListConferencesView(): JSX.Element {
             {renderConferenceList(
                 SettingsIcon,
                 organising,
-                <LinkButton to="/join" colorScheme="green" onClick={showUseInvite} marginRight={0}>
+                <LinkButton to="/join" colorScheme="green" marginRight={0}>
                     Create a conference
                 </LinkButton>,
                 "manage"
@@ -171,12 +152,7 @@ export default function ListConferencesView(): JSX.Element {
         </VStack>
     );
     const dividerColor = useColorModeValue("gray.200", "gray.700");
-    return shouldShowUseInvite ? (
-        <>
-            {title}
-            <UseInviteOrCreateView />
-        </>
-    ) : (
+    return (
         <>
             {title}
             <Stack

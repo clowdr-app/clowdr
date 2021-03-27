@@ -10,7 +10,6 @@ import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 import { useTitle } from "../../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../../useConference";
-import useDashboardPrimaryMenuButtons from "../../useDashboardPrimaryMenuButtons";
 import ConfigPanel from "../Shared/ConfigPanel";
 import DataPanel from "../Shared/DataPanel";
 import ReviewPanel from "../Shared/ReviewPanel";
@@ -120,7 +119,6 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
 export default function ImportContentPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Import content to ${conference.shortName}`);
-    useDashboardPrimaryMenuButtons();
 
     const [data, setData] = useState<ParsedData<any[]>[]>();
     const [intermediaryData, setIntermediaryData] = useState<Record<string, IntermediaryContentData>>({});

@@ -1,14 +1,27 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Badge, Box, Center, chakra, Divider, Heading, HStack, Image, Link, Spinner, VStack } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import {
+    Badge,
+    Box,
+    ButtonGroup,
+    Center,
+    chakra,
+    Divider,
+    Heading,
+    HStack,
+    Image,
+    Link,
+    Spinner,
+    VStack,
+} from "@chakra-ui/react";
+import React from "react";
 import { Redirect } from "react-router-dom";
 import { Permission_Enum, useAttendeeByIdQuery } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import PageFailedToLoad from "../../../Errors/PageFailedToLoad";
 import PageNotFound from "../../../Errors/PageNotFound";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
-import usePrimaryMenuButtons from "../../../Menu/usePrimaryMenuButtons";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
@@ -22,46 +35,35 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
     const conference = useConference();
     const activePermissions = useConferenceCurrentUserActivePermissions();
     const maybeCurrentUser = useMaybeCurrentUser();
-    const { setPrimaryMenuButtons } = usePrimaryMenuButtons();
-    useEffect(() => {
-        if (
-            (maybeCurrentUser.user && attendee.userId === maybeCurrentUser.user.id) ||
-            [
-                Permission_Enum.ConferenceManageAttendees,
-                Permission_Enum.ConferenceManageGroups,
-                Permission_Enum.ConferenceManageRoles,
-            ].some((permission) => activePermissions.has(permission))
-        ) {
-            setPrimaryMenuButtons([
-                {
-                    key: "edit-profile",
-                    action: `/conference/${conference.slug}/profile/edit${
-                        maybeCurrentUser.user && attendee.userId === maybeCurrentUser.user.id ? "" : `/${attendee.id}`
-                    }`,
-                    text: "Edit profile",
-                    label: "Edit profile",
-                    colorScheme: "blue",
-                },
-            ]);
-        } else {
-            setPrimaryMenuButtons([]);
-        }
-    }, [
-        activePermissions,
-        attendee.id,
-        attendee.userId,
-        conference.shortName,
-        conference.slug,
-        maybeCurrentUser.user,
-        setPrimaryMenuButtons,
-    ]);
 
     const title = useTitle(`${attendee.displayName} at ${conference.shortName}`);
 
     return (
         <>
             {title}
-            <VStack spacing={0} maxW={1100} w="100%">
+            <VStack spacing={0} maxW={1100} w="100%" m={2}>
+                {(maybeCurrentUser.user && attendee.userId === maybeCurrentUser.user.id) ||
+                [
+                    Permission_Enum.ConferenceManageAttendees,
+                    Permission_Enum.ConferenceManageGroups,
+                    Permission_Enum.ConferenceManageRoles,
+                ].some((permission) => activePermissions.has(permission)) ? (
+                    <ButtonGroup variant="outline">
+                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
+                            Continue to {conference.shortName}
+                        </LinkButton>
+                        <LinkButton
+                            to={`/conference/${conference.slug}/profile/edit${
+                                maybeCurrentUser.user && attendee.userId === maybeCurrentUser.user.id
+                                    ? ""
+                                    : `/${attendee.id}`
+                            }`}
+                            colorScheme="blue"
+                        >
+                            Edit profile
+                        </LinkButton>
+                    </ButtonGroup>
+                ) : undefined}
                 <HStack justifyContent="center" flexWrap="wrap" alignItems="stretch" spacing={0} pr={4} pt={4} w="100%">
                     <Center
                         ml={[2, 4]}

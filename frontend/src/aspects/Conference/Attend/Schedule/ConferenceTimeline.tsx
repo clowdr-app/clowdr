@@ -12,7 +12,6 @@ import {
 } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -128,7 +127,6 @@ function ConferenceTimelineInner({
     contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
 }): JSX.Element {
     const conference = useConference();
-    useNoPrimaryMenuButtons();
 
     const rooms = useMemo(() => {
         return [...unsortedRooms].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority);

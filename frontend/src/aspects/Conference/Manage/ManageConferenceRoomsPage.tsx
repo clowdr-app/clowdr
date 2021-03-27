@@ -66,7 +66,6 @@ import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
     fragment RoomParticipantWithAttendeeInfo on RoomParticipant {
@@ -755,8 +754,6 @@ function EditableRoomsCRUDTable() {
 export default function ManageConferenceRoomsPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage rooms at ${conference.shortName}`);
-
-    useDashboardPrimaryMenuButtons();
 
     return (
         <RequireAtLeastOnePermissionWrapper

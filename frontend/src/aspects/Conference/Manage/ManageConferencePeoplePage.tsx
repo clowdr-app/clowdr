@@ -33,7 +33,6 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 import { SendEmailModal } from "./People/SendEmailModal";
 import type { AttendeeDescriptor } from "./People/Types";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
     fragment AttendeeParts on Attendee {
@@ -142,8 +141,6 @@ const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "
 export default function ManageConferencePeoplePage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
-
-    useDashboardPrimaryMenuButtons();
 
     const { loading: loadingAllGroups, error: errorAllGroups, data: allGroups } = useSelectAllGroupsQuery({
         fetchPolicy: "network-only",

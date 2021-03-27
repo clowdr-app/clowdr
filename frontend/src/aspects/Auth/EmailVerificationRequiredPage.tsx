@@ -1,7 +1,6 @@
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../Icons/FAIcon";
-import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import { getCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
 import { useTitle } from "../Utils/useTitle";
 import LoginButton from "./Buttons/LoginButton";
@@ -13,7 +12,6 @@ export default function EmailVerificationRequiredPage({
     success: boolean;
     message: string | null;
 }): JSX.Element {
-    useNoPrimaryMenuButtons();
     const title = useTitle("Email verification required");
 
     const cachedInviteCode = getCachedInviteCode();

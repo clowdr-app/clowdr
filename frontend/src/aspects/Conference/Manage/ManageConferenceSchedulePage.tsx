@@ -70,7 +70,6 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 import BatchAddEventPeople from "./Schedule/BatchAddEventPeople";
 import { EventPersonsModal, requiresEventPeople } from "./Schedule/EventPersonsModal";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
     mutation InsertEventInfo(
@@ -948,7 +947,6 @@ function EditableScheduleTable(): JSX.Element {
 export default function ManageConferenceSchedulePage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage schedule of ${conference.shortName}`);
-    useDashboardPrimaryMenuButtons();
 
     return (
         <RequireAtLeastOnePermissionWrapper

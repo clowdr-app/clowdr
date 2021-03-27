@@ -674,7 +674,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 {showBackstage ? backStageEl : playerEl}
 
                 {showDefaultBreakoutRoom ? (
-                    <Box display={showBackstage ? "none" : "block"} bgColor={bgColour}>
+                    <Box display={showBackstage ? "none" : "block"} bgColor={bgColour} m={-2}>
                         {breakoutVonageRoomEl}
                     </Box>
                 ) : (

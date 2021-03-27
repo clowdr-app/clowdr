@@ -3,15 +3,12 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
-import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useTitle } from "../Utils/useTitle";
 
 export default function LoggedOutPage(): JSX.Element {
     const title = useTitle("Logged Out");
     const mUser = useMaybeCurrentUser();
-
-    useNoPrimaryMenuButtons();
 
     if (mUser.loading) {
         return <Spinner label="Loading user info" />;

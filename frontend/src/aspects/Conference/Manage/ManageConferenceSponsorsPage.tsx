@@ -6,12 +6,10 @@ import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { EditableSponsorsTable } from "./Sponsors/EditableSponsorsTable";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 export function ManageConferenceSponsorsPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage sponsors of ${conference.shortName}`);
-    useDashboardPrimaryMenuButtons();
 
     return (
         <RequireAtLeastOnePermissionWrapper

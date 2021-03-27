@@ -22,7 +22,6 @@ import { useInvitation_ConfirmCurrentMutation, useSelectInvitationForAcceptQuery
 import LoginButton from "../Auth/Buttons/LoginButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
 import FAIcon from "../Icons/FAIcon";
-import { useNoPrimaryMenuButtons } from "../Menu/usePrimaryMenuButtons";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { setCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
 import { useTitle } from "../Utils/useTitle";
@@ -166,7 +165,6 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
 export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element {
     const title = useTitle("Accept invitation");
     const { user, loading } = useMaybeCurrentUser();
-    useNoPrimaryMenuButtons();
 
     const { loading: inviteLoading, data: inviteData } = useSelectInvitationForAcceptQuery({
         context: {

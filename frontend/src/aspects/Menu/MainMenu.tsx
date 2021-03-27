@@ -27,7 +27,6 @@ import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { MenuState, MenuStateContext, useMainMenu } from "./MainMenuState";
 import { ToggleChatsButton } from "./ToggleChatsButton";
 import { ToggleNavButton } from "./ToggleNavButton";
-import { PrimaryMenuButtonsProvider } from "./usePrimaryMenuButtons";
 
 interface Props {
     children: React.ReactNode | React.ReactNodeArray;
@@ -247,9 +246,5 @@ export function MenuBar(): JSX.Element {
 }
 
 export default function MainMenu({ children, state }: Props): JSX.Element {
-    return (
-        <MenuStateContext.Provider value={state}>
-            <PrimaryMenuButtonsProvider>{children}</PrimaryMenuButtonsProvider>
-        </MenuStateContext.Provider>
-    );
+    return <MenuStateContext.Provider value={state}>{children}</MenuStateContext.Provider>;
 }

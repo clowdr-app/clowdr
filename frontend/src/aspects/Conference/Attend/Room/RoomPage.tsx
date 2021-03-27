@@ -8,7 +8,6 @@ import {
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { useNoPrimaryMenuButtons } from "../../../Menu/usePrimaryMenuButtons";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { Room } from "./Room";
@@ -87,8 +86,6 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     const title = useTitle(result.loading ? "Loading room" : result.data?.Room_by_pk?.name ?? "Unknown room");
 
     usePolling(result.refetch, 60000, true);
-
-    useNoPrimaryMenuButtons();
 
     return (
         <>

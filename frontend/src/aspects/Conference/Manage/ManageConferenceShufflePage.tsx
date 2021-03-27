@@ -19,7 +19,6 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 import CreateQueueModal from "./Shuffle/CreateQueueModal";
 import ShuffleQueueTile from "./Shuffle/ShuffleQueueTile";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
@@ -63,8 +62,6 @@ gql`
 export default function ManageConferenceShufflePage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
-
-    useDashboardPrimaryMenuButtons();
 
     const shufflePeriodsQ = useManageShufflePeriods_SelectAllQuery({
         variables: {

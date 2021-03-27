@@ -8,13 +8,10 @@ import { useConference } from "../useConference";
 import { ConnectYouTubeAccount } from "./Export/ConnectYouTubeAccount";
 import { UploadedYouTubeVideos } from "./Export/UploadedYouTubeVideos";
 import { UploadYouTubeVideos } from "./Export/UploadYouTubeVideos";
-import useDashboardPrimaryMenuButtons from "./useDashboardPrimaryMenuButtons";
 
 export default function ManageConferenceExportPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Export data from ${conference.shortName}`);
-
-    useDashboardPrimaryMenuButtons();
 
     return (
         <RequireAtLeastOnePermissionWrapper

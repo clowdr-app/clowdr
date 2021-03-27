@@ -32,7 +32,7 @@ const colors = {
     // },
 };
 
-export const defaultOutline_AsBoxShadow = "0 0 0 3px rgba(255, 187, 0, 0.8)";
+export const defaultOutline_AsBoxShadow = "0 0 0 2px rgba(255, 187, 0, 0.8)";
 
 const theme = extendTheme({
     config: {

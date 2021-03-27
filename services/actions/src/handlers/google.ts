@@ -18,7 +18,7 @@ import {
     UploadYouTubeVideoJobDataFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { attendeeBelongsToUser, getAttendeeByConferenceSlug } from "../lib/authorisation";
+import { attendeeBelongsToUser } from "../lib/authorisation";
 import { S3 } from "../lib/aws/awsClient";
 import { createOAuth2Client, GoogleIdToken } from "../lib/googleAuth";
 import { callWithRetry } from "../utils";
@@ -27,20 +27,14 @@ assert(process.env.FRONTEND_DOMAIN, "FRONTEND_DOMAIN environment variable not pr
 process.env.FRONTEND_PROTOCOL =
     process.env.FRONTEND_PROTOCOL || (process.env.FRONTEND_DOMAIN.startsWith("localhost") ? "http" : "https");
 
-export async function handleGetGoogleOAuthUrl(
-    params: getGoogleOAuthUrlArgs,
-    userId: string,
-    conferenceSlug: string
-): Promise<GetGoogleOAuthUrlOutput> {
-    const attendee = await getAttendeeByConferenceSlug(userId, conferenceSlug);
-
+export async function handleGetGoogleOAuthUrl(params: getGoogleOAuthUrlArgs): Promise<GetGoogleOAuthUrlOutput> {
     const oauth2Client = createOAuth2Client();
 
     const url = oauth2Client.generateAuthUrl({
         access_type: "offline",
         scope: [...params.scopes, "openid email"],
         include_granted_scopes: true,
-        state: attendee.id,
+        state: params.attendeeId,
         prompt: "consent",
         redirect_uri: `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/googleoauth`,
     });

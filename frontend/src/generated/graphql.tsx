@@ -23296,6 +23296,7 @@ export type Mutation_RootGenerateChatRemoteTokenArgs = {
 
 /** mutation root */
 export type Mutation_RootGetGoogleOAuthUrlArgs = {
+  attendeeId: Scalars['uuid'];
   scopes: ReadonlyArray<Scalars['String']>;
 };
 
@@ -24443,6 +24444,7 @@ export type Mutation_RootJoinRoomVonageSessionArgs = {
 /** mutation root */
 export type Mutation_RootRefreshYouTubeDataArgs = {
   attendeeGoogleAccountId: Scalars['uuid'];
+  attendeeId: Scalars['uuid'];
 };
 
 
@@ -33979,6 +33981,7 @@ export type ChooseContentItemModal_GetVideoContentItemsQueryVariables = Exact<{
 export type ChooseContentItemModal_GetVideoContentItemsQuery = { readonly __typename?: 'query_root', readonly ContentItem: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly name: string }> };
 
 export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
   scopes: ReadonlyArray<Scalars['String']> | Scalars['String'];
 }>;
 
@@ -34056,6 +34059,7 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: '
 export type UploadYouTubeVideos_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any };
 
 export type UploadYouTubeVideos_RefreshYouTubeDataMutationVariables = Exact<{
+  attendeeId: Scalars['uuid'];
   attendeeGoogleAccountId: Scalars['uuid'];
 }>;
 
@@ -39693,8 +39697,8 @@ export type ChooseContentItemModal_GetVideoContentItemsQueryHookResult = ReturnT
 export type ChooseContentItemModal_GetVideoContentItemsLazyQueryHookResult = ReturnType<typeof useChooseContentItemModal_GetVideoContentItemsLazyQuery>;
 export type ChooseContentItemModal_GetVideoContentItemsQueryResult = Apollo.QueryResult<ChooseContentItemModal_GetVideoContentItemsQuery, ChooseContentItemModal_GetVideoContentItemsQueryVariables>;
 export const ManageConferenceExportPage_GetGoogleOAuthUrlDocument = gql`
-    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($scopes: [String!]!) {
-  getGoogleOAuthUrl(scopes: $scopes) {
+    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($attendeeId: uuid!, $scopes: [String!]!) {
+  getGoogleOAuthUrl(attendeeId: $attendeeId, scopes: $scopes) {
     url
   }
 }
@@ -39714,6 +39718,7 @@ export type ManageConferenceExportPage_GetGoogleOAuthUrlMutationFn = Apollo.Muta
  * @example
  * const [manageConferenceExportPageGetGoogleOAuthUrlMutation, { data, loading, error }] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation({
  *   variables: {
+ *      attendeeId: // value for 'attendeeId'
  *      scopes: // value for 'scopes'
  *   },
  * });
@@ -40001,8 +40006,11 @@ export type UploadYouTubeVideos_GetTemplateDataQueryHookResult = ReturnType<type
 export type UploadYouTubeVideos_GetTemplateDataLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataLazyQuery>;
 export type UploadYouTubeVideos_GetTemplateDataQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>;
 export const UploadYouTubeVideos_RefreshYouTubeDataDocument = gql`
-    mutation UploadYouTubeVideos_RefreshYouTubeData($attendeeGoogleAccountId: uuid!) {
-  refreshYouTubeData(attendeeGoogleAccountId: $attendeeGoogleAccountId) {
+    mutation UploadYouTubeVideos_RefreshYouTubeData($attendeeId: uuid!, $attendeeGoogleAccountId: uuid!) {
+  refreshYouTubeData(
+    attendeeId: $attendeeId
+    attendeeGoogleAccountId: $attendeeGoogleAccountId
+  ) {
     message
     success
   }
@@ -40023,6 +40031,7 @@ export type UploadYouTubeVideos_RefreshYouTubeDataMutationFn = Apollo.MutationFu
  * @example
  * const [uploadYouTubeVideosRefreshYouTubeDataMutation, { data, loading, error }] = useUploadYouTubeVideos_RefreshYouTubeDataMutation({
  *   variables: {
+ *      attendeeId: // value for 'attendeeId'
  *      attendeeGoogleAccountId: // value for 'attendeeGoogleAccountId'
  *   },
  * });

@@ -196,6 +196,7 @@ type createRoomDmArgs = {
 };
 
 type getGoogleOAuthUrlArgs = {
+    attendeeId: string;
     scopes: Array<string>;
 };
 
@@ -224,6 +225,7 @@ type joinRoomVonageSessionArgs = {
 };
 
 type refreshYouTubeDataArgs = {
+    attendeeId: string;
     attendeeGoogleAccountId: uuid;
 };
 

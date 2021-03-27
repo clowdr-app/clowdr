@@ -26,11 +26,7 @@ router.post(
         }
 
         try {
-            const result = await handleGetGoogleOAuthUrl(
-                params,
-                req.body.session_variables["x-hasura-user-id"],
-                req.body.session_variables["x-hasura-conference-slug"]
-            );
+            const result = await handleGetGoogleOAuthUrl(params);
             return res.status(200).json(result);
         } catch (e) {
             console.error(`${req.path}: Failed to get Google OAuth URL`, e);

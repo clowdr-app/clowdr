@@ -41,11 +41,7 @@ router.post("/refreshYouTubeData", bodyParser.json(), async (req: Request, res: 
     }
 
     try {
-        const result = await handleRefreshYouTubeData(
-            params,
-            req.body.session_variables["x-hasura-user-id"],
-            req.body.session_variables["x-hasura-conference-slug"]
-        );
+        const result = await handleRefreshYouTubeData(params);
         return res.status(200).json(result);
     } catch (e) {
         console.error(`${req.originalUrl}: failed to refresh YouTube data`, params, e);

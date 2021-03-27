@@ -45,29 +45,45 @@ function invalidateSessions() {
 
 setInterval(invalidateSessions, 60 * 1000);
 
-function getPageKey(confSlug: string, path: string) {
-    const hash = crypto.createHash("sha256");
-    hash.write(confSlug, "utf8");
-    hash.write(path, "utf8");
-    return hash.digest("hex").toLowerCase();
+function getPageKey(confSlugs: string[], path: string): string | undefined {
+    if (path.startsWith("/conference/")) {
+        const confSlug = path.split("/")[2];
+        if (confSlugs.includes(confSlug)) {
+            const hash = crypto.createHash("sha256");
+            hash.write(confSlug, "utf8");
+            hash.write(path, "utf8");
+            return hash.digest("hex").toLowerCase();
+        } else {
+            return undefined;
+        }
+    } else {
+        const hash = crypto.createHash("sha256");
+        hash.write("/<<NO-CONF>>/", "utf8");
+        hash.write(path, "utf8");
+        return hash.digest("hex").toLowerCase();
+    }
 }
 
 export function onEnterPage(
-    conferenceSlug: string,
+    conferenceSlugs: string[],
     userId: string,
     socketId: string
 ): (path: string, cb?: () => void) => Promise<void> {
     return async (path, cb) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlug, path);
-                enterPresence(pageKey, userId, socketId, (err) => {
-                    if (err) {
-                        throw err;
-                    }
+                const pageKey = getPageKey(conferenceSlugs, path);
+                if (pageKey) {
+                    enterPresence(pageKey, userId, socketId, (err) => {
+                        if (err) {
+                            throw err;
+                        }
 
-                    cb?.();
-                });
+                        cb?.();
+                    });
+                } else {
+                    console.info("User is not authorized to enter path", path);
+                }
             }
         } catch (e) {
             console.error(`Error entering presence on socket ${socketId}`, e);
@@ -76,21 +92,25 @@ export function onEnterPage(
 }
 
 export function onLeavePage(
-    conferenceSlug: string,
+    conferenceSlugs: string[],
     userId: string,
     socketId: string
 ): (path: string, cb?: () => void) => Promise<void> {
     return async (path, cb) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlug, path);
-                exitPresence(pageKey, userId, socketId, (err) => {
-                    if (err) {
-                        throw err;
-                    }
+                const pageKey = getPageKey(conferenceSlugs, path);
+                if (pageKey) {
+                    exitPresence(pageKey, userId, socketId, (err) => {
+                        if (err) {
+                            throw err;
+                        }
 
-                    cb?.();
-                });
+                        cb?.();
+                    });
+                } else {
+                    console.info("User is not authorized to exit path", path);
+                }
             }
         } catch (e) {
             console.error(`Error exiting presence on socket ${socketId}`, e);
@@ -99,29 +119,33 @@ export function onLeavePage(
 }
 
 export function onObservePage(
-    conferenceSlug: string,
+    conferenceSlugs: string[],
     socketId: string,
     socket: Socket
 ): (path: string, cb?: () => void) => Promise<void> {
     return async (path, cb) => {
         try {
             if (typeof path === "string") {
-                const listId = getPageKey(conferenceSlug, path);
-                const listKey = presenceListKey(listId);
-                const chan = presenceChannelName(listId);
-                // console.log(`${userId} observed ${listId}`);
-                await socket.join(chan);
+                const listId = getPageKey(conferenceSlugs, path);
+                if (listId) {
+                    const listKey = presenceListKey(listId);
+                    const chan = presenceChannelName(listId);
+                    // console.log(`${userId} observed ${listId}`);
+                    await socket.join(chan);
 
-                redisClient.smembers(listKey, (err, userIds) => {
-                    if (err) {
-                        throw err;
-                    }
+                    redisClient.smembers(listKey, (err, userIds) => {
+                        if (err) {
+                            throw err;
+                        }
 
-                    // console.log(`Emitting presences for ${path} to ${userId} / ${socketId}`, userIds);
-                    socket.emit("presences", { listId, userIds });
+                        // console.log(`Emitting presences for ${path} to ${userId} / ${socketId}`, userIds);
+                        socket.emit("presences", { listId, userIds });
 
-                    cb?.();
-                });
+                        cb?.();
+                    });
+                } else {
+                    console.info("User is not authorized to observe path", path);
+                }
             }
         } catch (e) {
             console.error(`Error observing presence on socket ${socketId}`, e);
@@ -130,19 +154,23 @@ export function onObservePage(
 }
 
 export function onUnobservePage(
-    conferenceSlug: string,
+    conferenceSlugs: string[],
     socketId: string,
     socket: Socket
 ): (path: string, cb?: () => void) => Promise<void> {
     return async (path, cb) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlug, path);
-                const chan = presenceChannelName(pageKey);
-                // console.log(`${userId} unobserved ${pageKey}`);
-                await socket.leave(chan);
+                const pageKey = getPageKey(conferenceSlugs, path);
+                if (pageKey) {
+                    const chan = presenceChannelName(pageKey);
+                    // console.log(`${userId} unobserved ${pageKey}`);
+                    await socket.leave(chan);
 
-                cb?.();
+                    cb?.();
+                } else {
+                    console.info("User is not authorized to unobserve path", path);
+                }
             }
         } catch (e) {
             console.error(`Error unobserving presence on socket ${socketId}`, e);

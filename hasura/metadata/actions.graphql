@@ -47,6 +47,7 @@ type Query {
 
 type Mutation {
   getGoogleOAuthUrl (
+    attendeeId: uuid!
     scopes: [String!]!
   ): GetGoogleOAuthUrlOutput
 }
@@ -120,6 +121,7 @@ type Query {
 
 type Mutation {
   refreshYouTubeData (
+    attendeeId: uuid!
     attendeeGoogleAccountId: uuid!
   ): RefreshYouTubeDataOutput
 }

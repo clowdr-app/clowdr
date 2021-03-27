@@ -13,7 +13,6 @@ import {
     AttendeeGoogleAccount_UpdateAttendeeGoogleAccountDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { getAttendeeByConferenceSlug } from "../lib/authorisation";
 import { createOAuth2Client } from "../lib/googleAuth";
 import { AttendeeGoogleAccountData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
@@ -53,25 +52,7 @@ gql`
     }
 `;
 
-export async function handleRefreshYouTubeData(
-    payload: refreshYouTubeDataArgs,
-    userId: string,
-    conferenceSlug: string
-): Promise<RefreshYouTubeDataOutput> {
-    let attendee;
-    try {
-        attendee = await getAttendeeByConferenceSlug(userId, conferenceSlug);
-    } catch (e) {
-        console.error(
-            "User is not authorised to refresh YouTube data",
-            payload.attendeeGoogleAccountId,
-            userId,
-            conferenceSlug,
-            e
-        );
-        throw new Error("User is not authorised to refresh YouTube data");
-    }
-
+export async function handleRefreshYouTubeData(payload: refreshYouTubeDataArgs): Promise<RefreshYouTubeDataOutput> {
     const attendeeGoogleAccount = await apolloClient.query({
         query: AttendeeGoogleAccount_GetAttendeeGoogleAccountDocument,
         variables: {
@@ -82,14 +63,9 @@ export async function handleRefreshYouTubeData(
     if (
         !attendeeGoogleAccount.data ||
         !attendeeGoogleAccount.data.AttendeeGoogleAccount_by_pk?.attendeeId ||
-        attendeeGoogleAccount.data.AttendeeGoogleAccount_by_pk.attendeeId !== attendee.id
+        attendeeGoogleAccount.data.AttendeeGoogleAccount_by_pk.attendeeId !== payload.attendeeId
     ) {
-        console.error(
-            "Could not find matching Google account for attendee",
-            payload.attendeeGoogleAccountId,
-            userId,
-            conferenceSlug
-        );
+        console.error("Could not find matching Google account for attendee", payload.attendeeGoogleAccountId);
         throw new Error("Could not find Google account");
     }
 

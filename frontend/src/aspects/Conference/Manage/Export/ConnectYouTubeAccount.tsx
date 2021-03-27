@@ -15,8 +15,8 @@ import { FAIcon } from "../../../Icons/FAIcon";
 import useCurrentAttendee from "../../useCurrentAttendee";
 
 gql`
-    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($scopes: [String!]!) {
-        getGoogleOAuthUrl(scopes: $scopes) {
+    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($attendeeId: uuid!, $scopes: [String!]!) {
+        getGoogleOAuthUrl(attendeeId: $attendeeId, scopes: $scopes) {
             url
         }
     }
@@ -119,6 +119,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                     try {
                         const urlResult = await mutation({
                             variables: {
+                                attendeeId: attendee.id,
                                 scopes: [
                                     "https://www.googleapis.com/auth/youtube.upload",
                                     "https://www.googleapis.com/auth/youtube.readonly",

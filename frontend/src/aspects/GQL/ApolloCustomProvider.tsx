@@ -172,7 +172,10 @@ async function createApolloClient(
 
             newHeaders.Authorization = `Bearer ${token}`;
         } else {
-            newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug ?? "/NONE";
+            const slugs = conferenceSlug ? [conferenceSlug] : [];
+            newHeaders["X-Hasura-Conference-Slugs"] =
+                "{" + slugs.reduce((acc, x) => `${acc},"${x}"`, "").substr(1) + "}";
+            newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug ?? "";
         }
 
         return {

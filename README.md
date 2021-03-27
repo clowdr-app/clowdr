@@ -396,19 +396,97 @@ Order of the rules matters.
 
    ```js
    function (user, context, callback) {
-     const namespace = configuration.HASURA_NAMESPACE;
-     console.log(`Upgrading access token for ${user.user_id}`);
-     const magicToken = context.request && context.request.query && context.request.query["magic-token"];
-     const confSlug = context.request && context.request.query && context.request.query["conference-slug"];
-     context.accessToken[namespace] =
-       {
-         'x-hasura-default-role': 'user',
-         'x-hasura-allowed-roles': ['user'],
-         'x-hasura-user-id': user.user_id,
-         'x-hasura-magic-token': magicToken,
-         'x-hasura-conference-slug': confSlug,
+       const namespace = configuration.HASURA_NAMESPACE;
+       console.log(`Upgrading access token for ${user.user_id}`);
+       const magicToken = context.request && context.request.query && context.request.query["magic-token"];
+       const confSlug = context.request && context.request.query && context.request.query["conference-slug"];
+
+       const result = (acceptedSlug) => {
+         	 console.log("Granting token", user.app_metadata.conferenceSlugs, acceptedSlug);
+           context.accessToken[namespace] =
+           {
+               'x-hasura-default-role': 'user',
+               'x-hasura-allowed-roles': ['user'],
+               'x-hasura-user-id': user.user_id,
+               'x-hasura-magic-token': magicToken,
+               'x-hasura-conference-slugs': "{" + user.app_metadata.conferenceSlugs.reduce((acc, x) => `${acc},"${x}"`, "").substr(1) + "}",
+               'x-hasura-conference-slug': acceptedSlug
+           };
+
+           callback(null, user, context);
        };
-     callback(null, user, context);
+
+       if (!confSlug) {
+           result(undefined);
+           return;
+       }
+
+       if (!user.app_metadata.conferenceSlugs) {
+           user.app_metadata.conferenceSlugs = [];
+       }
+
+       const lastFetch = user.app_metadata.conferenceSlugs_LastFetch;
+       const refetchInterval = 1000 * 60 * 60 * 24 * 7;
+       const now = Date.now();
+       const hasSlug = user.app_metadata.conferenceSlugs.includes(confSlug);
+       const hasExpired = !lastFetch || lastFetch + refetchInterval < now;
+       if (!hasSlug || hasExpired) {
+           if (!hasSlug) {
+               console.log("Conference slug not in user's existing list. Fetching available conferences.", confSlug, user.app_metadata.conferenceSlugs);
+           }
+           if (hasExpired) {
+               console.log("Conference slug cache expired. Fetching available conferences.", new Date(lastFetch).toISOString());
+           }
+
+           const userId = user.user_id;
+           const fetchConferenceSlugsQuery = `query UserConferences($userId: String!) {
+   Conference(where:{attendees:{userId:{_eq: $userId }}}) {
+       slug
+   }
+   }`;
+           const graphqlReq = { "query": fetchConferenceSlugsQuery, "variables": { "userId": userId } };
+
+           request.post({
+               headers: {
+                   'content-type': 'application/json',
+                   'x-hasura-admin-secret': configuration.HASURA_ADMIN_SECRET
+               },
+               url: configuration.HASURA_URL,
+               body: JSON.stringify(graphqlReq)
+           }, function (error, response, body) {
+               body = JSON.parse(body);
+               console.log("Response Body", body);
+               if (!error &&
+                   body.data &&
+                   body.data.Conference
+               ) {
+                   const confSlugs = body.data.Conference.map(x => x.slug);
+                   console.log("Conference slugs", confSlugs);
+                   user.app_metadata.conferenceSlugs = confSlugs;
+                   user.app_metadata.conferenceSlugs_LastFetch = Date.now();
+                   auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
+                       .then(function () {
+                           if (user.app_metadata.conferenceSlugs.includes(confSlug)) {
+                               result(confSlug);
+                           }
+                           else {
+                               result("/NONE/");
+                           }
+                       })
+                       .catch(function (err) {
+                           callback(err);
+                       });
+               }
+               else {
+                   console.log("body.data", body.data);
+                   console.log("body.data.Conference", body.data && body.data.Conference);
+                   callback(new Error("Unable to fetch conferences for attendee"));
+               }
+           });
+       }
+       else {
+           result(confSlug);
+       }
    }
    ```
 

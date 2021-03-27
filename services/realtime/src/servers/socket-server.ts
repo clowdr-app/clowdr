@@ -60,16 +60,20 @@ socketServer.on("connection", function (socket: Socket) {
 
     const userId: string = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
     if (userId) {
-        const conferenceSlug: string =
-            socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-conference-slug"] ?? "<<NO-CONFERENCE>>";
-        console.log(`Authorized client connected: ${conferenceSlug} / ${userId} / ${socketId}`);
+        const conferenceSlugsRaw: string =
+            socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-conference-slugs"] ?? "{}";
+        const conferenceSlugs: string[] = JSON.parse(
+            `[${conferenceSlugsRaw.substring(1, conferenceSlugsRaw.length - 1)}]`
+        );
 
-        socket.on("disconnect", (cb) => {
-            console.log(`Client disconnected: ${conferenceSlug} / ${userId} / ${socketId}`);
+        console.log(`Authorized client connected: ${userId} / ${socketId}: ${conferenceSlugs}`);
 
-            onDisconnectPresence(socketId, userId, cb);
+        socket.on("disconnect", () => {
+            console.log(`Client disconnected: ${userId} / ${socketId}: ${conferenceSlugs}`);
+
+            onDisconnectPresence(socketId, userId);
         });
 
-        onConnectPresence(socket, userId, conferenceSlug);
+        onConnectPresence(socket, userId, conferenceSlugs);
     }
 });

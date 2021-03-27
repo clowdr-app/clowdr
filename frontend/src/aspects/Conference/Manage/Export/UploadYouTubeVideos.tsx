@@ -152,8 +152,8 @@ gql`
         data
     }
 
-    mutation UploadYouTubeVideos_RefreshYouTubeData($attendeeGoogleAccountId: uuid!) {
-        refreshYouTubeData(attendeeGoogleAccountId: $attendeeGoogleAccountId) {
+    mutation UploadYouTubeVideos_RefreshYouTubeData($attendeeId: uuid!, $attendeeGoogleAccountId: uuid!) {
+        refreshYouTubeData(attendeeId: $attendeeId, attendeeGoogleAccountId: $attendeeGoogleAccountId) {
             message
             success
         }
@@ -837,6 +837,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         try {
                                                             const result = await refreshYouTubeData({
                                                                 variables: {
+                                                                    attendeeId: attendee.id,
                                                                     attendeeGoogleAccountId:
                                                                         form.values.attendeeGoogleAccountId,
                                                                 },

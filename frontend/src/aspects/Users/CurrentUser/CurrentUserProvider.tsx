@@ -187,7 +187,13 @@ function CurrentUserProvider_IsAuthenticated({
     );
 
     if (termsLoading || loading) {
-        return <Spinner label="Loading terms configuration" />;
+        return (
+            <Center w="100%" h="100%">
+                <div>
+                    <Spinner label="Loading terms configuration" />
+                </div>
+            </Center>
+        );
     }
 
     if (termsData && termsData.hostOrganisationName) {

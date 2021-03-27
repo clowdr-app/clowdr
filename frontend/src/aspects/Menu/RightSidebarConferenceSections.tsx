@@ -5,7 +5,6 @@ import {
     AlertDescription,
     AlertIcon,
     AlertTitle,
-    Box,
     Button,
     Center,
     Divider,
@@ -57,6 +56,7 @@ import { usePresenceState } from "../Presence/PresenceStateProvider";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
+import { ToggleChatsButton } from "./ToggleChatsButton";
 
 function ChatListItem({ chat, onClick }: { chat: ChatState; onClick: () => void }): JSX.Element {
     const chatName = chat.Name;
@@ -562,9 +562,9 @@ function ChatsPanel({
         return (
             <VStack alignItems="center">
                 <Text>Setting up chat...</Text>
-                <Box>
+                <div>
                     <Spinner />
-                </Box>
+                </div>
             </VStack>
         );
     } else if (chatEl) {
@@ -1094,10 +1094,13 @@ function RightSidebarConferenceSections_Inner({
             onChange={onChangeTab}
         >
             <TabList py={2}>
-                {roomId && <Tab>Room{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>}
-                {itemId && <Tab>Item{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>}
-                <Tab>Chats{chatsUnread > 0 ? ` (${chatsUnread})` : ""}</Tab>
-                <Tab>Who&apos;s here</Tab>
+                <ToggleChatsButton ml={2} mr="auto" size="xs" />
+                {roomId && <Tab ml={2}>Room{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>}
+                {itemId && (
+                    <Tab ml={roomId ? undefined : 2}>Item{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>
+                )}
+                <Tab ml={roomId || itemId ? undefined : 2}>Chats{chatsUnread > 0 ? ` (${chatsUnread})` : ""}</Tab>
+                <Tab mr="auto">Who&apos;s here</Tab>
             </TabList>
 
             <TabPanels textAlign="left" display="flex" flexDir="row" flex="1" overflow="hidden">

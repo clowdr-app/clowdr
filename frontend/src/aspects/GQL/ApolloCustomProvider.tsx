@@ -301,7 +301,10 @@ function ApolloCustomProviderInner({
     tokenCache: AuthTokenCache;
     conferenceSlug: string | undefined;
 }): JSX.Element {
-    const [client, setClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null);
+    const [client, setClient] = useState<{
+        slug: string | undefined;
+        client: ApolloClient<NormalizedCacheObject>;
+    } | null>(null);
     const [presenceToken, setPresenceToken] = useState<string | null>(null);
 
     const mutex = useRef(new Mutex());
@@ -320,7 +323,7 @@ function ApolloCustomProviderInner({
                         getAccessTokenSilently,
                         tokenCache
                     );
-                    setClient(newClient);
+                    setClient({ slug: conferenceSlug, client: newClient });
 
                     if (isAuthenticated) {
                         const newPresenceToken = await tokenCache.getToken(
@@ -362,7 +365,7 @@ function ApolloCustomProviderInner({
         [reconnect]
     );
 
-    if (!client) {
+    if (!client || client.slug !== conferenceSlug) {
         return <AppLoadingScreen />;
     }
 
@@ -370,10 +373,10 @@ function ApolloCustomProviderInner({
         <ApolloCustomContext.Provider value={ctx}>
             {presenceToken ? (
                 <PresenceStateProvider token={presenceToken}>
-                    <ApolloProvider client={client}>{children}</ApolloProvider>
+                    <ApolloProvider client={client.client}>{children}</ApolloProvider>
                 </PresenceStateProvider>
             ) : (
-                <ApolloProvider client={client}>{children}</ApolloProvider>
+                <ApolloProvider client={client.client}>{children}</ApolloProvider>
             )}
         </ApolloCustomContext.Provider>
     );

@@ -163,9 +163,9 @@ function ViewProfilePage_FetchAttendee({ attendeeId }: { attendeeId: string }): 
 
     if (loading && !data) {
         return (
-            <Box>
+            <div>
                 <Spinner />
-            </Box>
+            </div>
         );
     }
 
@@ -180,9 +180,9 @@ function ViewProfilePage_FetchAttendee({ attendeeId }: { attendeeId: string }): 
 
     if (!data?.Attendee[0] || !data.Attendee[0].profile) {
         return (
-            <Box>
+            <div>
                 <Spinner />
-            </Box>
+            </div>
         );
     }
 

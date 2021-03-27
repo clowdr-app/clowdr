@@ -5,7 +5,6 @@ import {
     AlertDescription,
     AlertIcon,
     AlertTitle,
-    Box,
     Button,
     FormControl,
     FormHelperText,
@@ -542,9 +541,9 @@ function EditProfilePage_FetchWrapper({ attendeeId }: { attendeeId: string }): J
 
     if (loading && !data) {
         return (
-            <Box>
+            <div>
                 <Spinner />
-            </Box>
+            </div>
         );
     }
 

@@ -24,6 +24,7 @@ import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import useLazyRenderAndRetain from "./LazyRenderAndRetain";
 import { MainMenuProgram } from "./MainMenuProgram";
 import { MainMenuSponsors } from "./MainMenuSponsors";
+import { ToggleNavButton } from "./ToggleNavButton";
 
 function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     const conference = useConference();
@@ -116,8 +117,6 @@ function LazySponsorsPanel({ isExpanded }: { isExpanded: boolean }): JSX.Element
 
 export function LeftSidebarConferenceSections_Inner({
     confSlug,
-    attendee,
-    onClose,
 }: {
     rootUrl: string;
     confSlug: string;
@@ -126,44 +125,47 @@ export function LeftSidebarConferenceSections_Inner({
 }): JSX.Element {
     return (
         <>
-            <Flex my={4} mx={4} justifyContent="space-around" alignItems="center" flexWrap="wrap" gridGap={2}>
-                <LinkButton
-                    linkProps={{ flexBasis: "40%", flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    to={`/conference/${confSlug}/schedule`}
-                    width="100%"
-                >
-                    <FAIcon icon="calendar" iconStyle="r" mr={3} />
-                    Schedule
-                </LinkButton>
-                <LinkButton
-                    linkProps={{ flexBasis: "40%", flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    to={`/conference/${confSlug}/attendees`}
-                    width="100%"
-                >
-                    <FAIcon icon="cat" iconStyle="s" mr={3} />
-                    Attendees
-                </LinkButton>
-                <LinkButton
-                    linkProps={{ flexBasis: "40%", flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    to={`/conference/${confSlug}/rooms`}
-                    width="100%"
-                >
-                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
-                    Rooms
-                </LinkButton>
-                <LinkButton
-                    linkProps={{ flexBasis: "40%", flexGrow: 0, flexShrink: [0, 1] }}
-                    size="sm"
-                    to={`/conference/${confSlug}/shuffle`}
-                    width="100%"
-                >
-                    <FAIcon icon="random" iconStyle="s" mr={3} />
-                    Shuffle
-                </LinkButton>
-            </Flex>
+            <HStack spacing={2} my={2} mx={2} alignItems="flex-start">
+                <Flex justifyContent="center" alignItems="center" flexWrap="wrap" gridGap={2}>
+                    <LinkButton
+                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
+                        size="sm"
+                        to={`/conference/${confSlug}/schedule`}
+                        width="100%"
+                    >
+                        <FAIcon icon="calendar" iconStyle="r" mr={3} />
+                        Schedule
+                    </LinkButton>
+                    <LinkButton
+                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
+                        size="sm"
+                        to={`/conference/${confSlug}/attendees`}
+                        width="100%"
+                    >
+                        <FAIcon icon="cat" iconStyle="s" mr={3} />
+                        Attendees
+                    </LinkButton>
+                    <LinkButton
+                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
+                        size="sm"
+                        to={`/conference/${confSlug}/rooms`}
+                        width="100%"
+                    >
+                        <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
+                        Rooms
+                    </LinkButton>
+                    <LinkButton
+                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
+                        size="sm"
+                        to={`/conference/${confSlug}/shuffle`}
+                        width="100%"
+                    >
+                        <FAIcon icon="random" iconStyle="s" mr={3} />
+                        Shuffle
+                    </LinkButton>
+                </Flex>
+                <ToggleNavButton m={0} size="xs" />
+            </HStack>
             <Accordion defaultIndex={[0, 3]} allowMultiple allowToggle>
                 <AccordionItem>
                     {({ isExpanded }) => (

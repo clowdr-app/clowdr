@@ -1,6 +1,5 @@
 import { gql } from "@apollo/client";
 import {
-    Box,
     Button,
     CircularProgress,
     CircularProgressLabel,
@@ -184,9 +183,9 @@ function QueuedShufflePeriodBox({
             return (
                 <>
                     <Text>Loading allocated shuffle room information, please wait</Text>
-                    <Box>
+                    <div>
                         <Spinner />
-                    </Box>
+                    </div>
                 </>
             );
         } else {

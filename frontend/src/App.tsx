@@ -13,7 +13,7 @@ import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conf
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
-import MainMenu from "./aspects/Menu/MainMenu";
+import MainMenu, { MenuBar } from "./aspects/Menu/MainMenu";
 import RightSidebar from "./aspects/Menu/RightSidebar";
 import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
@@ -194,7 +194,6 @@ function AppPage({ rootUrl }: AppProps) {
             width={contentWidthPc + "%"}
             flex="1 0 300px"
             mb="auto"
-            p={2}
             position={centerVisible ? "relative" : "fixed"}
             top={centerVisible ? undefined : "100%"}
             bgColor={centerBgColour}
@@ -202,7 +201,8 @@ function AppPage({ rootUrl }: AppProps) {
             borderLeftColor={borderColour}
             borderRightColor={borderColour}
         >
-            <VStack spacing={5} width="100%">
+            <MenuBar />
+            <VStack spacing={5} width="100%" m={2}>
                 {center}
                 <Box h="40px" display="inline-block" flex="0 0 40px">
                     &nbsp;

@@ -271,9 +271,9 @@ export default function ContentGroupList(): JSX.Element {
 
     if (loading && !sortedTags) {
         return (
-            <Box>
+            <div>
                 <Spinner />
-            </Box>
+            </div>
         );
     }
 

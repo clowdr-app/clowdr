@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Center, Spinner, VStack } from "@chakra-ui/react";
+import { Center, Spinner, VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
 import {
@@ -134,10 +134,10 @@ function ConferenceProvider_WithoutUser({
 
     if (loading && !data) {
         return (
-            <Center>
-                <Box>
+            <Center w="100%" h="100%">
+                <div>
                     <Spinner />
-                </Box>
+                </div>
             </Center>
         );
     }
@@ -179,10 +179,10 @@ function ConferenceProvider_WithUser({
 
     if (loading && !data) {
         return (
-            <Center>
-                <Box>
+            <Center w="100%" h="100%">
+                <div>
                     <Spinner />
-                </Box>
+                </div>
             </Center>
         );
     }
@@ -217,10 +217,10 @@ export default function ConferenceProvider({
 
     if (user.loading) {
         return (
-            <Center>
-                <Box>
+            <Center w="100%" h="100%">
+                <div>
                     <Spinner />
-                </Box>
+                </div>
             </Center>
         );
     }

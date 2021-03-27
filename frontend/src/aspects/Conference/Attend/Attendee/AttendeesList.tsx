@@ -1,4 +1,4 @@
-import { Box, Button, Center, Image, SimpleGrid, Spinner, Text, useDisclosure } from "@chakra-ui/react";
+import { Button, Center, Image, SimpleGrid, Spinner, Text, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import type { Attendee } from "../../useCurrentAttendee";
@@ -101,8 +101,8 @@ export default function AttendeesList({
             <ProfileModal isOpen={isOpen} onClose={onClose} attendee={selectedAttendee} />
         </>
     ) : (
-        <Box>
+        <div>
             <Spinner />
-        </Box>
+        </div>
     );
 }

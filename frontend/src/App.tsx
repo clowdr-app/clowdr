@@ -202,7 +202,7 @@ function AppPage({ rootUrl }: AppProps) {
             borderRightColor={borderColour}
         >
             <MenuBar />
-            <VStack spacing={5} width="100%" m={2}>
+            <VStack spacing={5} width="100%" p={2}>
                 {center}
                 <Box h="40px" display="inline-block" flex="0 0 40px">
                     &nbsp;

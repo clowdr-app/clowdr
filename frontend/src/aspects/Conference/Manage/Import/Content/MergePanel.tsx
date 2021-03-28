@@ -6,12 +6,16 @@ import {
     Box,
     Button,
     ButtonGroup,
+    Checkbox,
+    FormControl,
+    FormHelperText,
     Spinner,
     useToast,
 } from "@chakra-ui/react";
 import type { IntermediaryContentData } from "@clowdr-app/shared-types/build/import/intermediary";
 import assert from "assert";
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
@@ -20,6 +24,38 @@ import { useSaveContentDiff } from "../../Content/useSaveContentDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import { ChangeSummary, Set_toJSON } from "../Merge";
 import mergeContent from "./MergeContent";
+
+function copyAuthorsToUploaders(
+    groups: Map<string, ContentGroupDescriptor>,
+    people: Map<string, ContentPersonDescriptor>
+): void {
+    groups.forEach((group) => {
+        group.requiredItems.forEach((requiredItem) => {
+            group.people.forEach((groupPerson) => {
+                const person = people.get(groupPerson.personId);
+                assert(
+                    person,
+                    `Person ${groupPerson.personId} not found: ${groupPerson.groupId} / ${groupPerson.priority} / ${
+                        groupPerson.roleName
+                    }\n${JSON.stringify(groupPerson)}`
+                );
+                if (person.email) {
+                    const email = person.email.trim().toLowerCase();
+                    if (!requiredItem.uploaders.some((uploader) => uploader.email.trim().toLowerCase() === email)) {
+                        requiredItem.uploaders.push({
+                            email,
+                            emailsSentCount: 0,
+                            id: uuidv4(),
+                            name: person.name,
+                            requiredContentItemId: requiredItem.id,
+                            isNew: true,
+                        });
+                    }
+                }
+            });
+        });
+    });
+}
 
 export default function MergePanel({ data }: { data: Record<string, IntermediaryContentData> }): JSX.Element {
     const conference = useConference();
@@ -44,6 +80,8 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const [changes, setChanges] = useState<ChangeSummary[]>([]);
     const [error, setError] = useState<string | null>(null);
 
+    const [shouldCopyAuthorsToUploaders, setShouldCopyAuthorsToUploaders] = useState<boolean>(true);
+
     useEffect(() => {
         if (originalContentGroups && originalHallways && originalOriginatingDatas && originalPeople && originalTags) {
             try {
@@ -57,6 +95,9 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                     originalPeople,
                     originalTags
                 );
+                if (shouldCopyAuthorsToUploaders) {
+                    copyAuthorsToUploaders(merged.newContentGroups, merged.newPeople);
+                }
                 setMergedContentGroupsMap(merged.newContentGroups);
                 setMergedPeopleMap(merged.newPeople);
                 setMergedHallwaysMap(merged.newHallways);
@@ -85,6 +126,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
         originalOriginatingDatas,
         originalPeople,
         originalTags,
+        shouldCopyAuthorsToUploaders,
     ]);
 
     const finalData = {
@@ -112,6 +154,18 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                     <AlertDescription>{error}</AlertDescription>
                 </Alert>
             ) : undefined}
+            <FormControl mb={4}>
+                <Checkbox
+                    isChecked={shouldCopyAuthorsToUploaders}
+                    onChange={(ev) => setShouldCopyAuthorsToUploaders(ev.target.checked)}
+                >
+                    Copy authors to uploaders
+                </Checkbox>
+                <FormHelperText>
+                    If checked, for each content item, make people with the role &ldquo;Author&rdquo; uploaders for any
+                    uploadable elements.
+                </FormHelperText>
+            </FormControl>
             {changes ? (
                 <Alert status="info">
                     <AlertIcon />

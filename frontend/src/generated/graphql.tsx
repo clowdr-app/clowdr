@@ -4082,10 +4082,18 @@ export enum ContentGroupType_Enum {
   Paper = 'PAPER',
   /** A poster. */
   Poster = 'POSTER',
+  /** A presentation. */
+  Presentation = 'PRESENTATION',
+  /** A Q&A covering the whole session. */
+  SessionQAndA = 'SESSION_Q_AND_A',
+  /** A scheduled social. */
+  Social = 'SOCIAL',
   /** A sponsor. */
   Sponsor = 'SPONSOR',
   /** A symposium. */
   Symposium = 'SYMPOSIUM',
+  /** A tutorial. */
+  Tutorial = 'TUTORIAL',
   /** A workshop. */
   Workshop = 'WORKSHOP'
 }

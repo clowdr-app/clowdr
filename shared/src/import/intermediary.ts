@@ -75,10 +75,18 @@ declare enum ContentGroupType_Enum {
     Paper = "PAPER",
     /** A poster. */
     Poster = "POSTER",
+    /** A presentation. */
+    Presentation = "PRESENTATION",
+    /** A Q&A covering the whole session. */
+    SessionQAndA = "SESSION_Q_AND_A",
+    /** A scheduled social. */
+    Social = "SOCIAL",
     /** A sponsor. */
     Sponsor = "SPONSOR",
     /** A symposium. */
     Symposium = "SYMPOSIUM",
+    /** A tutorial. */
+    Tutorial = "TUTORIAL",
     /** A workshop. */
     Workshop = "WORKSHOP",
 }
@@ -288,8 +296,8 @@ function internalAttendeeConverter(data: any, query: string): IntermediaryAttend
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function JSONataToIntermediaryAttendee(
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     data: any,
     query: string
 ): IntermediaryAttendeeData[] | string | undefined {

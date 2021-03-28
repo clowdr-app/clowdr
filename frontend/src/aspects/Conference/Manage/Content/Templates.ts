@@ -64,10 +64,30 @@ export const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
         requiredItemTypes: [],
         itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.Zoom],
     },
+    [ContentGroupType_Enum.Tutorial]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.Zoom],
+    },
     [ContentGroupType_Enum.LandingPage]: {
         supported: true,
         requiredItemTypes: [],
         itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.ContentGroupList],
+    },
+    [ContentGroupType_Enum.Presentation]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.VideoBroadcast],
+    },
+    [ContentGroupType_Enum.SessionQAndA]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Text],
+    },
+    [ContentGroupType_Enum.Social]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Text],
     },
 };
 

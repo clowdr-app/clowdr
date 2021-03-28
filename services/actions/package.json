@@ -6,10 +6,10 @@
     "scripts": {
         "build": "npm run build-shared && npm run gql-cdg && npm run build-this && npm run-script copy-resources",
         "build-this": "ttsc",
-        "build-shared": "npm run --prefix=../../shared/ --cwd=../../shared/ build",
+        "build-shared": "npm run --prefix=../../ --workspace=shared build",
         "start": "node build/server.js",
         "dev": "npm run build-shared && nodenv -E ./.env -e \"npm run dev-stage2\"",
-        "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ --cwd=../../ run-services-actions\"",
+        "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ run-services-actions\"",
         "test": "jest --config jest.config.ts --forceExit",
         "gql-cdg": "npx --no-install -p @graphql-codegen/cli graphql-codegen -- --config codegen.js"
     },

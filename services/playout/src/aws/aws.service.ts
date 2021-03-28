@@ -70,8 +70,8 @@ export class AwsService {
         });
     }
 
-    public shortId(): string {
-        return customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", 5)();
+    public shortId(length = 5): string {
+        return customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", length)();
     }
 
     public async createNewChannelStack(roomId: string): Promise<void> {
@@ -96,11 +96,12 @@ export class AwsService {
                 account,
                 region,
             },
+            description: `Broadcast channel stack for room ${roomId}`,
         };
 
         this.logger.info("Starting deployment");
         const app = new App();
-        const stack = new ChannelStack(app, `room-${this.shortId()}`, options);
+        const stack = new ChannelStack(app, `${awsPrefix}-room-${this.shortId()}`, options);
 
         const stackArtifact = app.synth().getStackByName(stack.stackName);
         const credentials = new AWS.Credentials({

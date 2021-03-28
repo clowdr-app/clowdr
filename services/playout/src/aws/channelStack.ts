@@ -15,13 +15,14 @@ export class ChannelStack extends cdk.Stack {
         const rtmpInputA = new medialive.CfnInput(this, "rtmpInputA", {
             destinations: [
                 {
-                    streamName: props.generateId(),
+                    streamName: "rtmpInputA",
                 },
             ],
             tags: {
                 roomId: props.roomId,
                 environment: props.awsPrefix ?? "unknown",
             },
+            name: props.generateId(),
             type: "RTMP_PUSH",
             inputSecurityGroups: [props.inputSecurityGroupId],
         });

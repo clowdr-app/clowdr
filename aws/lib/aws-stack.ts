@@ -8,28 +8,60 @@ import { HttpMethods } from "@aws-cdk/aws-s3";
 import * as sns from "@aws-cdk/aws-sns";
 import * as cdk from "@aws-cdk/core";
 
+export interface AwsStackProps extends cdk.StackProps {
+    stackPrefix: string;
+}
+
 export class AwsStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, stackPrefix: string, props?: cdk.StackProps) {
+    constructor(scope: cdk.Construct, id: string, props: AwsStackProps) {
         super(scope, id, props);
 
         // Create user account to be used by the actions service
-        const user = new iam.User(this, "ActionsUser", {});
+        const actionsUser = new iam.User(this, "ActionsUser", {});
 
-        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess"));
-        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaConvertFullAccess"));
-        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaPackageFullAccess"));
-        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("CloudFrontFullAccess"));
-        user.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonElasticTranscoder_FullAccess"));
-        user.addToPolicy(
+        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess"));
+        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaConvertFullAccess"));
+        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaPackageFullAccess"));
+        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("CloudFrontFullAccess"));
+        actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonElasticTranscoder_FullAccess"));
+        actionsUser.addToPolicy(
             new iam.PolicyStatement({
                 actions: ["transcribe:*"],
                 effect: iam.Effect.ALLOW,
                 resources: ["*"],
             })
         );
+        actionsUser.addToPolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "cloudformation:CreateChangeSet",
+                    "cloudformation:CreateStack",
+                    "cloudformation:DeleteChangeSet",
+                    "cloudformation:DescribeChangeSet",
+                    "cloudformation:DescribeStacks",
+                    "cloudformation:DescribeStackEvents",
+                    "cloudformation:DescribeStackResources",
+                    "cloudformation:ExecuteChangeSet",
+                    "cloudformation:GetTemplate",
+                    "cloudformation:ValidateTemplate",
+                ],
+                effect: iam.Effect.ALLOW,
+                resources: [
+                    `arn:aws:cloudformation:${props.env?.region}:${props.env?.account}:stack/${props.stackPrefix}-room-*/*`,
+                    `arn:aws:cloudformation:${props.env?.region}:${props.env?.account}:stack/CDKToolkit/*`,
+                ],
+            })
+        );
+        actionsUser.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:*Object", "s3:ListBucket", "s3:GetBucketLocation"],
+                effect: iam.Effect.ALLOW,
+                resources: ["arn:aws:s3:::cdktoolkit-stagingbucket-*"],
+            })
+        );
 
         const accessKey = new iam.CfnAccessKey(this, "accessKey", {
-            userName: user.userName,
+            userName: actionsUser.userName,
         });
 
         /* S3 */
@@ -44,8 +76,8 @@ export class AwsStack extends cdk.Stack {
             },
         });
 
-        bucket.grantPut(user);
-        bucket.grantReadWrite(user);
+        bucket.grantPut(actionsUser);
+        bucket.grantReadWrite(actionsUser);
         bucket.grantPublicAccess();
         bucket.addCorsRule({
             allowedMethods: [HttpMethods.GET, HttpMethods.PUT, HttpMethods.POST],
@@ -70,7 +102,7 @@ export class AwsStack extends cdk.Stack {
         });
 
         // Allow the actions user to pass the MediaLiveRole to MediaLive
-        mediaLiveAccessRole.grantPassRole(user);
+        mediaLiveAccessRole.grantPassRole(actionsUser);
         bucket.grantReadWrite(mediaLiveAccessRole);
 
         mediaLiveAccessRole.addToPolicy(
@@ -125,7 +157,7 @@ export class AwsStack extends cdk.Stack {
         });
 
         // Allow the actions user to pass the MediaPackageRole to MediaPackage
-        mediaPackageAccessRole.grantPassRole(user);
+        mediaPackageAccessRole.grantPassRole(actionsUser);
 
         mediaPackageAccessRole.addToPolicy(
             new iam.PolicyStatement({
@@ -139,7 +171,7 @@ export class AwsStack extends cdk.Stack {
         const mediaConvertAccessRole = new iam.Role(this, "MediaConvertRole", {
             assumedBy: new iam.ServicePrincipal("mediaconvert.amazonaws.com"),
         });
-        mediaConvertAccessRole.grantPassRole(user);
+        mediaConvertAccessRole.grantPassRole(actionsUser);
         bucket.grantReadWrite(mediaConvertAccessRole);
 
         mediaConvertAccessRole.addToPolicy(
@@ -154,7 +186,7 @@ export class AwsStack extends cdk.Stack {
         const transcribeAccessRole = new iam.Role(this, "TranscribeRole", {
             assumedBy: new iam.ServicePrincipal("transcribe.amazonaws.com"),
         });
-        transcribeAccessRole.grantPassRole(user);
+        transcribeAccessRole.grantPassRole(actionsUser);
         bucket.grantReadWrite(transcribeAccessRole);
 
         /* Elastic Transcoder */
@@ -175,7 +207,7 @@ export class AwsStack extends cdk.Stack {
                 resources: ["*"],
             })
         );
-        elasticTranscoderServiceRole.grantPassRole(user);
+        elasticTranscoderServiceRole.grantPassRole(actionsUser);
 
         /* Notifications and webhooks */
 
@@ -211,7 +243,7 @@ export class AwsStack extends cdk.Stack {
         mediaConvertNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(user.userArn)],
+                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
                 resources: [mediaConvertNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })
@@ -226,7 +258,7 @@ export class AwsStack extends cdk.Stack {
             detailType: ["MediaConvert Job State Change"],
             detail: {
                 userMetadata: {
-                    environment: [stackPrefix],
+                    environment: [props.stackPrefix],
                 },
             },
         });
@@ -267,7 +299,7 @@ export class AwsStack extends cdk.Stack {
         mediaLiveNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(user.userArn)],
+                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
                 resources: [mediaLiveNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })
@@ -317,7 +349,7 @@ export class AwsStack extends cdk.Stack {
         mediaPackageHarvestNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(user.userArn)],
+                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
                 resources: [mediaPackageHarvestNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })
@@ -340,7 +372,7 @@ export class AwsStack extends cdk.Stack {
         transcribeNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(user.userArn)],
+                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
                 resources: [transcribeNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })
@@ -365,7 +397,7 @@ export class AwsStack extends cdk.Stack {
         elasticTranscoderNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(user.userArn)],
+                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
                 resources: [elasticTranscoderNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })

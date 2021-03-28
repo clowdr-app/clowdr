@@ -29,10 +29,10 @@ export default function ConfigPanel<T = IntermediaryContentData | IntermediarySc
     data: ParsedData<any[]>[];
     onChange?: (data: Record<string, T>) => void;
     JSONataFunction: (data: any, query: string) => T | string | undefined;
-    presetJSONataXMLQuery?: string;
-    presetJSONataJSONQuery?: string;
-    presetJSONataCSVQuery?: string;
-    presetJSONataUnknownFileTypeQuery: string;
+    presetJSONataXMLQuery?: string | ((name: string) => string);
+    presetJSONataJSONQuery?: string | ((name: string) => string);
+    presetJSONataCSVQuery?: string | ((name: string) => string);
+    presetJSONataUnknownFileTypeQuery: string | ((name: string) => string);
 }): JSX.Element {
     // * For each file, setup the JSONata queries to output exactly the types we need
     // * JSONata:
@@ -52,13 +52,32 @@ export default function ConfigPanel<T = IntermediaryContentData | IntermediarySc
             for (const parsedData of data) {
                 if (!newTemplates.has(parsedData.fileName)) {
                     if (presetJSONataXMLQuery && parsedData.fileName.toLowerCase().endsWith(".xml")) {
-                        newTemplates.set(parsedData.fileName, presetJSONataXMLQuery);
+                        if (typeof presetJSONataXMLQuery === "string") {
+                            newTemplates.set(parsedData.fileName, presetJSONataXMLQuery);
+                        } else {
+                            newTemplates.set(parsedData.fileName, presetJSONataXMLQuery(parsedData.fileName));
+                        }
                     } else if (presetJSONataJSONQuery && parsedData.fileName.toLowerCase().endsWith(".json")) {
-                        newTemplates.set(parsedData.fileName, presetJSONataJSONQuery);
+                        if (typeof presetJSONataJSONQuery === "string") {
+                            newTemplates.set(parsedData.fileName, presetJSONataJSONQuery);
+                        } else {
+                            newTemplates.set(parsedData.fileName, presetJSONataJSONQuery(parsedData.fileName));
+                        }
                     } else if (presetJSONataCSVQuery && parsedData.fileName.toLowerCase().endsWith(".csv")) {
-                        newTemplates.set(parsedData.fileName, presetJSONataCSVQuery);
+                        if (typeof presetJSONataCSVQuery === "string") {
+                            newTemplates.set(parsedData.fileName, presetJSONataCSVQuery);
+                        } else {
+                            newTemplates.set(parsedData.fileName, presetJSONataCSVQuery(parsedData.fileName));
+                        }
                     } else {
-                        newTemplates.set(parsedData.fileName, presetJSONataUnknownFileTypeQuery);
+                        if (typeof presetJSONataUnknownFileTypeQuery === "string") {
+                            newTemplates.set(parsedData.fileName, presetJSONataUnknownFileTypeQuery);
+                        } else {
+                            newTemplates.set(
+                                parsedData.fileName,
+                                presetJSONataUnknownFileTypeQuery(parsedData.fileName)
+                            );
+                        }
                     }
                 }
             }

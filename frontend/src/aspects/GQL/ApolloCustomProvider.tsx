@@ -27,7 +27,7 @@ interface TokenCacheEntry {
 }
 
 class AuthTokenCache {
-    static readonly CacheVersion = "1.0";
+    static readonly CacheVersion = "1.1";
     static readonly CacheKey = "CLOWDR_AUTH_CACHE";
     static readonly TokenExpiryTime = (36000 - 60) * 1000;
 

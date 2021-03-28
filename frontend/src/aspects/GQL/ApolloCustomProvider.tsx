@@ -124,6 +124,8 @@ class AuthTokenCache {
             return cacheEntry.token;
         } catch (e) {
             // Probably the Auth0 cookie got blocked
+            // However, it's possible the error has originated from an Auth0 rule
+            // Use the "Real-time Webtask Logs" Auth0 extension to check
 
             console.error("Major error! Failed to get authentication token!", e);
             this.saveCache();

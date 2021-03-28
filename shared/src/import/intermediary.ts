@@ -65,6 +65,8 @@ declare enum ContentType_Enum {
 }
 
 declare enum ContentGroupType_Enum {
+    /** A demonstration. */
+    Demonstration = "DEMONSTRATION",
     /** A keynote. */
     Keynote = "KEYNOTE",
     /** Conference main landing page. */

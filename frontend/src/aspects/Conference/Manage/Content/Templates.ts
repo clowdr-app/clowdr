@@ -89,6 +89,11 @@ export const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
         requiredItemTypes: [],
         itemTypes: [ContentType_Enum.Text],
     },
+    [ContentGroupType_Enum.Demonstration]: {
+        supported: true,
+        requiredItemTypes: [],
+        itemTypes: [ContentType_Enum.Abstract],
+    },
 };
 
 export function fitGroupToTemplate(group: ContentGroupDescriptor): void {

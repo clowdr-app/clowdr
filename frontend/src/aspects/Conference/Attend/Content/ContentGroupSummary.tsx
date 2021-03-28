@@ -19,6 +19,7 @@ import { Twemoji } from "react-emoji-render";
 import ReactPlayer from "react-player";
 import {
     ContentGroupSummary_ContentGroupDataFragment,
+    ContentGroupType_Enum,
     ContentType_Enum,
     Permission_Enum,
     useContentGroupSummary_GetContentGroupQuery,
@@ -77,6 +78,10 @@ export function ContentGroupSummaryWrapper({
             )}
         </ApolloQueryWrapper>
     );
+}
+
+function formatContentGroupTypeNameForDisplay(typeName: ContentGroupType_Enum): string {
+    return typeName.replace(/_/g, " ").replace(/Q AND A/, "Q&A");
 }
 
 export function ContentGroupSummary({
@@ -195,7 +200,9 @@ export function ContentGroupSummary({
                     maxW="100%"
                 >
                     <VStack alignItems="flex-start" maxW="100%">
-                        <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
+                        <Text colorScheme="green">
+                            {formatContentGroupTypeNameForDisplay(contentGroupData.contentGroupTypeName)}
+                        </Text>
                         <Heading
                             as="h2"
                             size="md"
@@ -210,7 +217,9 @@ export function ContentGroupSummary({
                 </LinkButton>
             ) : (
                 <>
-                    <Text colorScheme="green">{contentGroupData.contentGroupTypeName}</Text>
+                    <Text colorScheme="green">
+                        {formatContentGroupTypeNameForDisplay(contentGroupData.contentGroupTypeName)}
+                    </Text>
                     <Heading as="h2" size="md" mb={5} textAlign="left">
                         <Twemoji className="twemoji" text={contentGroupData.title} />
                     </Heading>

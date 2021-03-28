@@ -42,12 +42,39 @@ export default function DataPanel({
     onData?: (data: ParsedData<any[]>[] | undefined) => void;
 }): JSX.Element {
     const { acceptedFiles, component: fileImporterEl } = useCSVJSONXMLFileSelector();
-    const { importOptions, openOptionsButton, optionsComponent } = useCSVJSONXMLImportOptions(acceptedFiles);
+    const { importOptions, replaceImportOptions, openOptionsButton, optionsComponent } = useCSVJSONXMLImportOptions(
+        acceptedFiles
+    );
     const { data } = useCSVJSONXMLParse(importOptions, parser);
 
     useEffect(() => {
-        onData?.(data);
-    }, [data, onData]);
+        let newOptionsChanged = false;
+
+        if (data) {
+            const newOptions = importOptions.map((x) => ({ ...x }));
+            for (const aData of data) {
+                if ("error" in aData) {
+                    // Excel seems to save CSVs as ANSI encoded by default,
+                    // so we accomodate this common exception case automatically
+                    if (aData.error === "TextDecoder.decode: Decoding failed.") {
+                        const options = newOptions.find((x) => x.file.name === aData.fileName);
+                        if (options?.encoding === "utf-8" || options?.encoding === "utf8") {
+                            options.encoding = "ansi_x3.4-1968";
+                            newOptionsChanged = true;
+                        }
+                    }
+                }
+            }
+
+            if (newOptionsChanged) {
+                replaceImportOptions(newOptions);
+            }
+        }
+
+        if (!newOptionsChanged) {
+            onData?.(data);
+        }
+    }, [data, importOptions, onData, replaceImportOptions]);
     const [selectedFileIndex, setSelectedFileIndex] = useState<number>(-1);
 
     const selectedData =

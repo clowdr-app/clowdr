@@ -171,7 +171,7 @@ function ImportOptionsPanel({
                         />
                         <FormHelperText>
                             The text encoding of your file. See{" "}
-                            <Link to="https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/TextDecoder">
+                            <Link isExternal href="https://encoding.spec.whatwg.org/#names-and-labels">
                                 this list of encodings
                             </Link>{" "}
                             for acceptable values.
@@ -199,7 +199,7 @@ function ImportOptionsPanel({
                         />
                         <FormHelperText>
                             The text encoding of your file. See{" "}
-                            <Link to="https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/TextDecoder">
+                            <Link isExternal href="https://encoding.spec.whatwg.org/#names-and-labels">
                                 this list of encodings
                             </Link>{" "}
                             for acceptable values.
@@ -227,7 +227,7 @@ function ImportOptionsPanel({
                         />
                         <FormHelperText>
                             The text encoding of your file. See{" "}
-                            <Link to="https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/TextDecoder">
+                            <Link isExternal href="https://encoding.spec.whatwg.org/#names-and-labels">
                                 this list of encodings
                             </Link>{" "}
                             for acceptable values.

@@ -92,13 +92,13 @@ export function MenuBar(): JSX.Element {
             <>
                 <Spacer />
                 <Menu>
-                    <MenuButton as={Button} size="sm">
+                    <MenuButton as={Button} display="inline-block" size="sm" p={0}>
                         {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
                             <Image
                                 borderRadius={5}
                                 w="100%"
-                                h="auto"
-                                objectFit="cover"
+                                h="100%"
+                                objectFit="scale-down"
                                 objectPosition="center"
                                 src={attendee.profile.photoURL_50x50}
                                 aria-hidden={true}
@@ -128,14 +128,13 @@ export function MenuBar(): JSX.Element {
                                         {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
                                             <Image
                                                 borderRadius={5}
-                                                w="100%"
-                                                h="auto"
-                                                objectFit="cover"
+                                                w="35px"
+                                                h="35px"
+                                                objectFit="contain"
                                                 objectPosition="center"
                                                 src={attendee.profile.photoURL_50x50}
                                                 aria-hidden={true}
                                                 overflow="hidden"
-                                                maxW="3ex"
                                                 mr={2}
                                                 my={0}
                                                 verticalAlign="middle"
@@ -147,7 +146,7 @@ export function MenuBar(): JSX.Element {
                                                 verticalAlign="middle"
                                                 iconStyle="s"
                                                 icon="cat"
-                                                fontSize="25px"
+                                                fontSize="20px"
                                                 mr={2}
                                                 aria-hidden={true}
                                             />

@@ -435,7 +435,9 @@ Order of the rules matters.
                console.log("Conference slug not in user's existing list. Fetching available conferences.", confSlug, user.app_metadata.conferenceSlugs);
            }
            if (hasExpired) {
-               console.log("Conference slug cache expired. Fetching available conferences.", new Date(lastFetch).toISOString());
+               console.log("Conference slug cache expired. Fetching available conferences.",
+                   lastFetch ? new Date(lastFetch).toISOString() : "Never fetched"
+               );
            }
 
            const userId = user.user_id;

@@ -542,7 +542,11 @@ export function mergeIsNewInPlace<C, S extends { isNew?: boolean }>(_context: C,
     }
 }
 
-export function sourceIdsEquivalent(sId1: string, sId2: string): "L" | "R" | undefined {
+export function sourceIdsEquivalent(
+    sId1: string,
+    sId2: string,
+    treatExactAs: "L" | "R" | undefined = undefined
+): "L" | "R" | undefined {
     const ps1 = sId1.split("¬");
     const ps2 = sId2.split("¬");
     if (ps1.length > ps2.length) {
@@ -557,6 +561,8 @@ export function sourceIdsEquivalent(sId1: string, sId2: string): "L" | "R" | und
         } else if (ps2.every((id) => ps1.includes(id))) {
             return "R";
         }
+    } else if (ps1.every((id) => ps2.includes(id)) && ps2.every((id) => ps1.includes(id))) {
+        return treatExactAs;
     }
     return undefined;
 }
@@ -706,10 +712,25 @@ export function mergeOriginatingData<C>(
         result.data = [...item2.data];
         result.sourceId = item2.sourceId;
     } else {
-        result.id = uuidv4();
-        result.isNew = true;
-        result.data = [...item1.data, ...item2.data];
-        result.sourceId = item1.sourceId === item2.sourceId ? item1.sourceId : item1.sourceId + "¬" + item2.sourceId;
+        if (!item1.isNew) {
+            result.id = item1.id;
+            result.isNew = false;
+            result.data = [...item1.data, ...item2.data];
+            result.sourceId =
+                item1.sourceId === item2.sourceId ? item1.sourceId : item1.sourceId + "¬" + item2.sourceId;
+        } else if (!item2.isNew) {
+            result.id = item2.id;
+            result.isNew = false;
+            result.data = [...item2.data, ...item1.data];
+            result.sourceId =
+                item1.sourceId === item2.sourceId ? item1.sourceId : item1.sourceId + "¬" + item2.sourceId;
+        } else {
+            result.id = uuidv4();
+            result.isNew = true;
+            result.data = [...item1.data, ...item2.data];
+            result.sourceId =
+                item1.sourceId === item2.sourceId ? item1.sourceId : item1.sourceId + "¬" + item2.sourceId;
+        }
     }
 
     changes.push({

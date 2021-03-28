@@ -102,7 +102,7 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
                     isMatch_Id_Generalised("OriginatingData", "id", "originatingDataId")(context, x, g)
                 );
                 if (od) {
-                    if (sourceIdsEquivalent(od.sourceId, srcId)) {
+                    if (sourceIdsEquivalent(od.sourceId, srcId, "L")) {
                         return true;
                     }
                 }
@@ -223,7 +223,7 @@ function convertRoom(context: Context, item: IntermediaryRoomDescriptor | RoomDe
 
         name: item.name,
         capacity: item.capacity,
-        priority: item.priority ?? 0,
+        priority: item.priority ?? 10,
         participants: new Set(),
     } as RoomDescriptor;
 

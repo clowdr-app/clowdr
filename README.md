@@ -401,6 +401,10 @@ Order of the rules matters.
        const magicToken = context.request && context.request.query && context.request.query["magic-token"];
        const confSlug = context.request && context.request.query && context.request.query["conference-slug"];
 
+       if (!user.app_metadata.conferenceSlugs) {
+           user.app_metadata.conferenceSlugs = [];
+       }
+
        const result = (acceptedSlug) => {
          	 console.log("Granting token", user.app_metadata.conferenceSlugs, acceptedSlug);
            context.accessToken[namespace] =
@@ -419,10 +423,6 @@ Order of the rules matters.
        if (!confSlug) {
            result(undefined);
            return;
-       }
-
-       if (!user.app_metadata.conferenceSlugs) {
-           user.app_metadata.conferenceSlugs = [];
        }
 
        const lastFetch = user.app_metadata.conferenceSlugs_LastFetch;

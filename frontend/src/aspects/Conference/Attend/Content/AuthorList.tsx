@@ -41,15 +41,19 @@ export function AuthorList({
     hideRole?: boolean;
     hiddenRoles?: string[];
 }): JSX.Element {
-    const [authorEls, chairEls, othersEls] = useMemo(() => {
+    const [authorEls, presenterEls, chairEls, othersEls] = useMemo(() => {
         const data =
             hiddenRoles && hiddenRoles.length > 0
                 ? contentPeopleData.filter((x) => !hiddenRoles.includes(x.roleName.toLowerCase()))
                 : [...contentPeopleData];
         const authors = data.filter((x) => x.roleName.toUpperCase() === "AUTHOR");
+        const presenters = data.filter((x) => x.roleName.toUpperCase() === "PRESENTER");
         const chairs = data.filter((x) => x.roleName.toUpperCase() === "CHAIR");
         const others = data.filter(
-            (x) => x.roleName.toUpperCase() !== "AUTHOR" && x.roleName.toUpperCase() !== "CHAIR"
+            (x) =>
+                x.roleName.toUpperCase() !== "AUTHOR" &&
+                x.roleName.toUpperCase() !== "PRESENTER" &&
+                x.roleName.toUpperCase() !== "CHAIR"
         );
 
         const createEl = (contentPersonData: ContentPersonDataFragment) => {
@@ -58,6 +62,7 @@ export function AuthorList({
 
         return [
             authors.sort(sortAuthors).map(createEl),
+            presenters.sort(sortAuthors).map(createEl),
             chairs.sort(sortAuthors).map(createEl),
             others.sort(sortAuthors).map(createEl),
         ];
@@ -70,8 +75,18 @@ export function AuthorList({
                     {authorEls}
                 </HStack>
             ) : undefined}
-            {chairEls.length > 0 ? (
+            {presenterEls.length > 0 ? (
                 <HStack spacing="0" gridGap="8" wrap="wrap" mt={authorEls.length > 0 ? 8 : undefined}>
+                    {presenterEls}
+                </HStack>
+            ) : undefined}
+            {chairEls.length > 0 ? (
+                <HStack
+                    spacing="0"
+                    gridGap="8"
+                    wrap="wrap"
+                    mt={authorEls.length > 0 || presenterEls.length > 0 ? 8 : undefined}
+                >
                     {chairEls}
                 </HStack>
             ) : undefined}
@@ -80,7 +95,7 @@ export function AuthorList({
                     spacing="0"
                     gridGap="8"
                     wrap="wrap"
-                    mt={chairEls.length > 0 || authorEls.length > 0 ? 8 : undefined}
+                    mt={chairEls.length > 0 || authorEls.length > 0 || presenterEls.length > 0 ? 8 : undefined}
                 >
                     {othersEls}
                 </HStack>

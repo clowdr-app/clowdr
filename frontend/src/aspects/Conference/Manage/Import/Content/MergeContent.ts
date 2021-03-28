@@ -763,8 +763,7 @@ function findExistingTag(
     return (
         findMatch(ctx, items, item, isMatch_Id("Tag")) ??
         findMatch(ctx, items, item, isMatch_OriginatingDataId) ??
-        findMatch(ctx, items, item, isMatch_String_Exact("name")) ??
-        findMatch(ctx, items, item, isMatch_String_EditDistance("name"))
+        findMatch(ctx, items, item, isMatch_String_Exact("name"))
     );
 }
 

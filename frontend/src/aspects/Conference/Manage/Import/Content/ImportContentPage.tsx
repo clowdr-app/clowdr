@@ -15,34 +15,7 @@ import DataPanel from "../Shared/DataPanel";
 import ReviewPanel from "../Shared/ReviewPanel";
 import MergePanel from "./MergePanel";
 
-const defaultReviewQuery = `
-(
-    $researchrPapers := $.'2020-12-25 - Researchr.xml'.groups;
-    $hotCRPPapers := $.'popl21-data-2.json'.groups;
-    $researchrTitles := $distinct([$researchrPapers ["Research Papers" in tagNames].$lowercase(title)]);
-    $hotCRPTitles := $distinct([$hotCRPPapers.$lowercase(title)]);
-    $expectedHotCRPMissing := [
-      "break",
-      "welcome",
-      "the road to a universal internet machine (demystifying blockchain protocols)",
-      "robin milner award",
-      "toward a programmable cloud: calm foundations and open challenges",
-      "dynamical systems and program analysis",
-      "structured social",
-      "test of time award",
-      "business meeting & townhall"
-    ];
-{
-    "missing_from": {
-        "researchr": [$hotCRPTitles[$not($ in $researchrTitles)]],
-        "hotCRP": [$researchrTitles[$not($ in $hotCRPTitles or $ in $expectedHotCRPMissing)]]
-    },
-    "matching": [$hotCRPTitles[$ in $researchrTitles]],
-
-    "researchrTitles": $researchrTitles,
-    "hotCRPTitles": $hotCRPTitles
-})
-`;
+const defaultReviewQuery = "";
 
 const presetJSONata_UnknownQuery = `
 {
@@ -50,6 +23,165 @@ const presetJSONata_UnknownQuery = `
     "groups": [],
     "hallways": [],
     "tags": [],
+    "people": []
+}
+`;
+
+const presetJSONata_CSVQuery_ContentPeople = `
+(
+    $all := $[$not($."Content Id" = "")];
+    $distinctIds := $distinct($all."Content Id");
+    {
+        "originatingDatas": [$distinctIds.$@$ContentId.(
+            $items := $all[$."Content Id" = $ContentId];
+            {
+                "sourceId": $ContentId,
+                "data": [$items.{
+                    "sourceId": $ContentId,
+                    "originName": "Content People.csv",
+                    "data": $
+                }]
+            }
+        )],
+        "groups": [$distinctIds.$@$ContentId.(
+            $people := $all[$."Content Id" = $ContentId];
+            {
+                "originatingDataSourceId": $ContentId,
+                "people": [$people#$Priority.{
+                    "name_affiliation": $."First Name" & ' ' & $."Last Name" & ' (' & $."Affiliation" & ')',
+                    "role": $uppercase(Role),
+                    "priority": $Priority
+                }]
+            }
+        )],
+        "hallways": [],
+        "tags": [],
+        "people": [$all.{
+            "name": $."First Name" & ' ' & $."Last Name",
+            "affiliation": Affiliation,
+            "email": $."Email address"
+        }]
+    }
+)
+`;
+
+const presetJSONata_CSVQuery_Content = `
+(
+    $all := $[$not($."Content Id" = "")];
+    {
+        "originatingDatas": [$all.{
+            "sourceId": $."Content Id",
+            "data": [{
+                "sourceId": $."Content Id",
+                "originName": "Content.csv",
+                "data": $
+            }]
+        }],
+        "groups": [$all.{
+            "originatingDataSourceId": $."Content Id",
+            "title": Title,
+            "shortTitle": $."Short title",
+            "typeName": $uppercase(Type),
+            "items": [
+                {
+                    "typeName": "ABSTRACT",
+                    "isHidden": false,
+                    "name": "Abstract",
+                    "data": [{
+                        "createdAt": $millis(),
+                        "createdBy": "importer",
+                        "data": {
+                            "type": "ABSTRACT",
+                            "baseType": "text",
+                            "text": Abstract
+                        }
+                    }]
+                }
+            ] 
+            ~> $append($."Link to webpage - Text" != "" ? [{
+                "typeName": "PAPER_LINK",
+                "isHidden": false,
+                "name": "Link to webpage",
+                "data": [{
+                    "createdAt": $millis(),
+                    "createdBy": "importer",
+                    "data": {
+                        "type": "PAPER_LINK",
+                        "baseType": "link",
+                        "text": $."Link to webpage - Text",
+                        "url": $."Link to webpage - URL"
+                    }
+                }]
+            }] : [])
+            ~> $append($."Link to PDF - Text" != "" ? [{
+                "typeName": "PAPER_LINK",
+                "isHidden": false,
+                "name": "Link to PDF",
+                "data": [{
+                    "createdAt": $millis(),
+                    "createdBy": "importer",
+                    "data": {
+                        "type": "PAPER_LINK",
+                        "baseType": "link",
+                        "text": $."Link to PDF - Text",
+                        "url": $."Link to PDF - URL"
+                    }
+                }]
+            }] : [])
+            ~> $append($."Zoom URL" != "" ? [{
+                "typeName": "ZOOM",
+                "isHidden": false,
+                "name": "Zoom",
+                "data": [{
+                    "createdAt": $millis(),
+                    "createdBy": "importer",
+                    "data": {
+                        "type": "ZOOM",
+                        "baseType": "url",
+                        "url": $."Zoom URL"
+                    }
+                }]
+            }] : []),
+            "requiredItems": ($."Uploadable video for pre-publication" != "" ? [{
+                "typeName": "VIDEO_PREPUBLISH",
+                "name": $."Uploadable video for pre-publication",
+                "uploadsRemaining": 3
+            }] : [])
+            ~> $append($."Uploadable video for broadcast" != "" ? [{
+                "typeName": "VIDEO_BROADCAST",
+                "name": $."Uploadable video for broadcast",
+                "uploadsRemaining": 3
+            }] : [])
+            ~> $append($."Uploadable slides" != "" ? [{
+                "typeName": "PAPER_FILE",
+                "name": $."Uploadable slides",
+                "uploadsRemaining": 3
+            }] : [])
+            ~> $append($."Uploadable PDF" != "" ? [{
+                "typeName": "PAPER_FILE",
+                "name": $."Uploadable PDF",
+                "uploadsRemaining": 3
+            }] : []),
+            "tagNames": ($."Tag 1" != "" ? [$."Tag 1"] : [])
+            ~> $append($."Tag 2" != "" ? [$."Tag 2"] : [])
+            ~> $append($."Tag 3" != "" ? [$."Tag 3"] : [])
+        }],
+        "hallways": [],
+        "tags": [],
+        "people": []
+    }
+)
+`;
+
+const presetJSONata_CSVQuery_Tags = `
+{
+    "originatingDatas": [],
+    "groups": [],
+    "hallways": [],
+    "tags": [$.{
+        "name": $.Name,
+        "colour": $.Colour
+    }],
     "people": []
 }
 `;
@@ -133,6 +265,16 @@ export default function ImportContentPage(): JSX.Element {
                     JSONataFunction={JSONataToIntermediaryContent}
                     presetJSONataXMLQuery={presetJSONata_ResearchrQuery_POPL2021}
                     presetJSONataJSONQuery={presetJSONata_HotCRPQuery_POPL2021}
+                    presetJSONataCSVQuery={(name) => {
+                        if (name.endsWith("People.csv")) {
+                            return presetJSONata_CSVQuery_ContentPeople;
+                        } else if (name === "Content.csv") {
+                            return presetJSONata_CSVQuery_Content;
+                        } else if (name === "Tags.csv") {
+                            return presetJSONata_CSVQuery_Tags;
+                        }
+                        return presetJSONata_UnknownQuery;
+                    }}
                     presetJSONataUnknownFileTypeQuery={presetJSONata_UnknownQuery}
                 />
             ),

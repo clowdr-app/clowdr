@@ -21,7 +21,49 @@ const defaultReviewQuery = `
 const presetJSONata_UnknownQuery = `
 `;
 
-const presetJSONata_ResearchrQuery_POPL2021 = `
+const presetJSONata_ScheduleCSVQuery = `
+(
+    $all := $[$not($."Event Id" = "")];
+    $roomNames := $distinct($all."Room Name");
+    {
+        "rooms": [$roomNames.{ "name": $ }],
+        "events": [$all.(
+            $timeZoneOffset := '+00:00';
+            $timeFormat := "[Y0001]-[M01]-[D01]T[H01]:[m01] [Z]";
+            $startAt := $."Start Time" & ' ' & $timeZoneOffset;
+            $endAt := $."End Time" & ' ' & $timeZoneOffset;
+            $startTime := $toMillis($startAt, $timeFormat);
+            $endTime := $toMillis($endAt, $timeFormat);
+            $durationSeconds := ($endTime - $startTime) / 1000;
+            $roomName := $."Room Name";
+            $modeName := $.Mode ~> $uppercase ~> $replace(/ /, "_");
+            $name := $."Event Name";
+            {
+                "originatingDataSourceId": $."Event Id",
+                "startAt": $startAt,
+                "endAt": $endAt,
+                "startTime": $startTime,
+                "durationSeconds": $durationSeconds,
+
+                "contentGroupSourceId": $."Content Id",
+                "intendedRoomModeName": $modeName,
+                "name": $name,
+
+                "roomName": $roomName
+            }
+        )],
+        "originatingDatas": [$all.(
+            {
+                "sourceId": $."Event Id",
+                "data": [{
+                    "sourceId": $."Event Id",
+                    "originName": "Schedule.csv",
+                    "data": $
+                }]
+            }
+        )]
+    }
+)
 `;
 
 // TODO: At some point in the future, import sessions from Researchr
@@ -54,7 +96,12 @@ export default function ImportSchedulePage(): JSX.Element {
                     data={data}
                     onChange={setIntermediaryData}
                     JSONataFunction={JSONataToIntermediarySchedule}
-                    presetJSONataXMLQuery={presetJSONata_ResearchrQuery_POPL2021}
+                    presetJSONataCSVQuery={(name) => {
+                        if (name === "Schedule.csv") {
+                            return presetJSONata_ScheduleCSVQuery;
+                        }
+                        return presetJSONata_UnknownQuery;
+                    }}
                     presetJSONataUnknownFileTypeQuery={presetJSONata_UnknownQuery}
                 />
             ),

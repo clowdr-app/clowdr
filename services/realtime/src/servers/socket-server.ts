@@ -1,4 +1,4 @@
-import jwksRsa from "jwks-rsa";
+import jwksRsa, { SigningKey } from "jwks-rsa";
 import socketIO, { Socket } from "socket.io";
 import { createAdapter } from "socket.io-redis";
 import { testJWKs } from "../jwks";
@@ -28,17 +28,15 @@ const jwksClient = jwksRsa({
     rateLimit: true,
     jwksRequestsPerMinute: 1,
     jwksUri: `https://${process.env.AUTH0_API_DOMAIN}/.well-known/jwks.json`,
-    getKeysInterceptor:
-        testJWKs &&
-        (() => {
-            return testJWKs;
-        }),
+    getKeysInterceptor: async () => {
+        return testJWKs as SigningKey[];
+    },
 });
 socketServer.use(
     authorize({
         secret: async (token) => {
             if (token && typeof token !== "string") {
-                const key = await jwksClient.getSigningKeyAsync(token.header.kid);
+                const key = await jwksClient.getSigningKey(token.header.kid);
                 return key.getPublicKey();
             }
             return "";

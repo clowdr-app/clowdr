@@ -81,7 +81,7 @@
         "html-to-text": "^6.0.0",
         "i": "^0.3.6",
         "jest": "^26.6.3",
-        "jwks-rsa": "^1.12.2",
+        "jwks-rsa": "^2.0.2",
         "jwt-decode": "^3.1.2",
         "mustache": "^4.1.0",
         "nanoid": "^3.1.20",

@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3002;
 const server = express();
 
 server.use(presenceRouter);
-server.use(testRouter);
+server.use("/test", testRouter);
 
 const INDEX_FILE = "../resources/index.html";
 server.use((_req, res) => res.sendFile(path.resolve(path.join(__dirname, INDEX_FILE))));

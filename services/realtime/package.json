@@ -13,7 +13,8 @@
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
         "start": "node build/server.js",
         "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ --cwd=../../ run-services-realtime\"",
-        "dev": "npm run build-shared && node-env-run -E ./.env -e \"npm run dev-stage2\""
+        "dev": "npm run build-shared && node-env-run -E ./.env -e \"npm run dev-stage2\"",
+        "test-publisher": "node-env-run -E ./test/.publisher.env -e \"ts-node ./test/publisher.ts\""
     },
     "repository": {
         "type": "git",
@@ -30,13 +31,12 @@
         "@types/jwk-to-pem": "^2.0.0",
         "@types/redis": "^2.8.28",
         "@types/redlock": "^4.0.1",
-        "assert": "^2.0.0",
         "bufferutil": "^4.0.3",
         "cpy-cli": "^3.1.1",
         "express": "^4.17.1",
         "jsonwebtoken": "^8.5.1",
         "jwk-to-pem": "^2.0.4",
-        "jwks-rsa": "^1.12.2",
+        "jwks-rsa": "^2.0.2",
         "redlock": "^4.2.0",
         "rimraf": "^3.0.2",
         "socket.io": "^3.1.1",
@@ -47,9 +47,13 @@
     },
     "devDependencies": {
         "@types/express": "^4.17.11",
+        "@types/node-fetch": "^2.5.8",
         "@types/socket.io": "^2.1.13",
         "@types/socket.io-redis": "^1.0.26",
+        "assert": "^2.0.0",
         "node-env-run": "^4.0.2",
+        "node-fetch": "^2.6.1",
+        "socket.io-client": "^4.0.0",
         "tsc-watch": "^4.2.9"
     }
 }

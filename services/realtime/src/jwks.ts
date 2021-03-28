@@ -4,6 +4,7 @@ try {
         const jwks = JSON.parse(process.env.TEST_JWKS);
         if (jwks.keys && jwks.keys instanceof Array) {
             testJWKs = jwks.keys;
+            console.log("Loaded test JWKs");
         }
     }
 } catch (e) {

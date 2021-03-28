@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import jwkToPem from "jwk-to-pem";
 import { testJWKs } from "../jwks";
 
-export async function generateTestJWKs(req: Request, res: Response, _next?: NextFunction): Promise<void> {
+export async function generateTestJWT(req: Request, res: Response, _next?: NextFunction): Promise<void> {
     try {
         if (testJWKs) {
             if (!req.query.userId) {

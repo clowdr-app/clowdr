@@ -6,14 +6,10 @@ import vonageClient from "../lib/vonage/vonageClient";
 import { EventPersonData, Payload } from "../types/hasura/event";
 
 gql`
-    query FindEventConnectionsForParticipant($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
+    query FindEventConnectionsForParticipant($personId: uuid!, $eventId: uuid!) {
         EventParticipantStream_aggregate(
             distinct_on: vonageConnectionId
-            where: {
-                attendeeId: { _eq: $attendeeId }
-                conferenceId: { _eq: $conferenceId }
-                eventId: { _eq: $eventId }
-            }
+            where: { attendee: { contentPeople: { id: { _eq: $personId } } }, eventId: { _eq: $eventId } }
         ) {
             nodes {
                 vonageConnectionId
@@ -38,8 +34,7 @@ export async function handleEventPersonDeleted(payload: Payload<EventPersonData>
     const result = await apolloClient.query({
         query: FindEventConnectionsForParticipantDocument,
         variables: {
-            attendeeId: oldRow.attendeeId,
-            conferenceId: oldRow.conferenceId,
+            personId: oldRow.personId,
             eventId: oldRow.eventId,
         },
     });

@@ -183,13 +183,10 @@ export interface EventRoomJoinRequestData extends BaseData {
 }
 
 export interface EventPersonData extends BaseData {
+    id: string;
     eventId: string;
-    attendeeId: string | null;
-    name: string;
-    affiliation: string | null;
+    personId: string | null;
     roleName: EventPersonRole_Enum;
-    originatingDataId: string | null;
-    conferenceId: string;
 }
 
 export interface MediaPackageHarvestJob extends BaseData {

@@ -17,7 +17,7 @@ export class ChannelSyncService {
             this.syncInProgress = true;
             this.logger.info("Executing sync");
 
-            await this.awsService.createNewChannelStack("myroom123");
+            //await this.awsService.createNewChannelStack("myroom123");
 
             //this.syncInProgress = false;
         } else {

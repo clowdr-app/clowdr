@@ -34,6 +34,7 @@
     "dependencies": {
         "@apollo/client": "^3.3.13",
         "@aws-cdk/aws-cloudfront": "^1.95.1",
+        "@aws-cdk/aws-cloudfront-origins": "^1.95.1",
         "@aws-cdk/aws-medialive": "^1.95.1",
         "@aws-cdk/aws-mediapackage": "^1.95.1",
         "@aws-cdk/core": "^1.95.1",
@@ -85,6 +86,8 @@
         "axios-better-stacktrace": "^2.1.1",
         "bunyan": "^1.8.15",
         "cdk-assets": "^1.95.1",
+        "class-transformer": "^0.4.0",
+        "class-validator": "^0.13.1",
         "cors": "^2.8.5",
         "cpy-cli": "^3.1.1",
         "exponential-backoff": "^3.1.0",

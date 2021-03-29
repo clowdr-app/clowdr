@@ -4,6 +4,7 @@ import { ElasticTranscoder } from "@aws-sdk/client-elastic-transcoder";
 import { IAM } from "@aws-sdk/client-iam";
 import { MediaLive } from "@aws-sdk/client-medialive";
 import { MediaPackage } from "@aws-sdk/client-mediapackage";
+import { SNS } from "@aws-sdk/client-sns";
 import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Inject, Injectable } from "@nestjs/common";
@@ -28,6 +29,7 @@ export class AwsService {
     private readonly mediaLive: MediaLive;
     private readonly mediaPackage: MediaPackage;
     private readonly cloudFront: CloudFront;
+    private readonly sns: SNS;
 
     constructor(
         @RootLogger() logger: Bunyan,
@@ -68,10 +70,36 @@ export class AwsService {
             credentials: this.credentials,
             region,
         });
+
+        this.sns = new SNS({
+            apiVersion: "2010-03-31",
+            credentials: this.credentials,
+            region,
+        });
     }
 
-    public shortId(length = 5): string {
-        return customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", length)();
+    public shortId(length = 6): string {
+        return `C${customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", length - 1)()}`;
+    }
+
+    public getHostUrl(): string {
+        const hostDomain = this.configService.get<string>("HOST_DOMAIN");
+        assert(hostDomain, "Missing HOST_DOMAIN.");
+        const hostSecureProtocols = this.configService.get<boolean>("HOST_SECURE_PROTOCOLS");
+        assert(hostSecureProtocols, "Missing HOST_SECURE_PROTOCOLS");
+
+        return `${process.env.HOST_SECURE_PROTOCOLS ? "https" : "http"}://${process.env.HOST_DOMAIN}`;
+    }
+
+    public async subscribeToTopic(topicArn: string, endpointUri: string): Promise<void> {
+        const hostSecureProtocols = this.configService.get<boolean>("HOST_SECURE_PROTOCOLS");
+        assert(hostSecureProtocols, "Missing HOST_SECURE_PROTOCOLS");
+
+        await this.sns.subscribe({
+            Protocol: hostSecureProtocols ? "https" : "http",
+            TopicArn: topicArn,
+            Endpoint: endpointUri,
+        });
     }
 
     public async createNewChannelStack(roomId: string): Promise<void> {
@@ -79,6 +107,12 @@ export class AwsService {
         assert(awsPrefix, "Missing AWS_PREFIX");
         const inputSecurityGroupId = this.configService.get<string>("AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID");
         assert(inputSecurityGroupId, "Missing AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID");
+        const mediaLiveServiceRoleArn = this.configService.get<string>("AWS_MEDIALIVE_SERVICE_ROLE_ARN");
+        assert(mediaLiveServiceRoleArn, "Missing AWS_MEDIALIVE_SERVICE_ROLE_ARN");
+        const cloudFormationNotificationsTopicArn = this.configService.get<string>(
+            "AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN"
+        );
+        assert(cloudFormationNotificationsTopicArn, "Missing AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN");
         const region = this.configService.get<string>("AWS_REGION");
         assert(region, "Missing AWS_REGION");
         const account = this.configService.get<string>("AWS_ACCOUNT_ID");
@@ -97,6 +131,7 @@ export class AwsService {
                 region,
             },
             description: `Broadcast channel stack for room ${roomId}`,
+            mediaLiveServiceRoleArn,
         };
 
         this.logger.info("Starting deployment");
@@ -114,14 +149,15 @@ export class AwsService {
             credentials,
         });
         const cloudFormation = new CloudFormationDeployments({ sdkProvider });
-        const deployResultPromise = cloudFormation.deployStack({
-            stack: stackArtifact,
-        });
-        const result = await deployResultPromise;
-        this.logger.info({
-            msg: "Finished deploying",
-            stackArn: result.stackArn,
-            outputs: result.outputs,
-        });
+        cloudFormation
+            .deployStack({
+                stack: stackArtifact,
+                notificationArns: [cloudFormationNotificationsTopicArn],
+            })
+            .catch((e) =>
+                this.logger.error(e, {
+                    msg: `Failed to deploy stack for room ${roomId}`,
+                })
+            );
     }
 }

@@ -1,6 +1,6 @@
 import { LoggingModule } from "@eropple/nestjs-bunyan";
 import { HasuraModule } from "@golevelup/nestjs-hasura";
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import assert from "assert";
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +8,9 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AwsModule, AwsModuleOptions } from "./aws/aws.module";
 import { ChannelSyncModule } from "./channel-sync/channel-sync.module";
+import { JsonBodyMiddleware } from "./json-body.middleware";
 import { ROOT_LOGGER } from "./logger";
+import { TextBodyMiddleware } from "./text-body.middleware";
 
 @Module({
     imports: [
@@ -54,4 +56,15 @@ import { ROOT_LOGGER } from "./logger";
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    public configure(consumer: MiddlewareConsumer): void {
+        consumer
+            .apply(TextBodyMiddleware)
+            .forRoutes({
+                path: "/aws/cloudformation/notify",
+                method: RequestMethod.POST,
+            })
+            .apply(JsonBodyMiddleware)
+            .forRoutes("*");
+    }
+}

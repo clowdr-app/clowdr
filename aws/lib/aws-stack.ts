@@ -211,6 +211,20 @@ export class AwsStack extends cdk.Stack {
 
         /* Notifications and webhooks */
 
+        // CloudFormation notifications
+        const cloudFormationNotificationsTopic = new sns.Topic(this, "CloudFormationNotifications");
+        cloudFormationNotificationsTopic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("cloudformation.amazonaws.com"),
+        });
+        cloudFormationNotificationsTopic.addToResourcePolicy(
+            new iam.PolicyStatement({
+                actions: ["SNS:Subscribe"],
+                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
+                resources: [cloudFormationNotificationsTopic.topicArn],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+
         // Transcoding notifications
         const mediaConvertNotificationsTopic = new sns.Topic(this, "TranscodeNotifications");
         mediaConvertNotificationsTopic.grantPublish({
@@ -445,6 +459,10 @@ export class AwsStack extends cdk.Stack {
         });
 
         // SNS topics
+        new cdk.CfnOutput(this, "CloudFormationNotificationsTopic", {
+            value: cloudFormationNotificationsTopic.topicArn,
+        });
+
         new cdk.CfnOutput(this, "TranscodeNotificationsTopic", {
             value: mediaConvertNotificationsTopic.topicArn,
         });

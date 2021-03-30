@@ -11,7 +11,7 @@ assert(process.env.USER_ID, "Missing USER_ID env var");
 assert(process.env.CONFERENCE_SLUG, "Missing CONFERENCE_SLUG env var");
 
 const serverURL = process.env.SERVER_URL;
-const userId = process.env.USER_ID;
+const userId = process.env.USER_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
 const confSlug = process.env.CONFERENCE_SLUG;
 
 async function wait(ms: number) {

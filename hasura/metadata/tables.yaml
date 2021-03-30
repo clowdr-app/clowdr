@@ -1337,6 +1337,19 @@
       filter: {}
 - table:
     schema: job_queues
+    name: ChannelStackCreateJob
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+- table:
+    schema: job_queues
     name: CombineVideosJob
   object_relationships:
   - name: attendee
@@ -1431,9 +1444,6 @@
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
-- table:
-    schema: job_queues
-    name: CreateChannelStackJob
 - table:
     schema: job_queues
     name: CustomEmailJob

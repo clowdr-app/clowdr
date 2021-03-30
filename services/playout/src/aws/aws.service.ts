@@ -7,7 +7,7 @@ import { MediaPackage } from "@aws-sdk/client-mediapackage";
 import { SNS } from "@aws-sdk/client-sns";
 import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { RootLogger } from "@eropple/nestjs-bunyan";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import assert from "assert";
 import { SdkProvider } from "aws-cdk/lib/api/aws-auth";
@@ -20,16 +20,17 @@ import { AwsModuleOptions } from "./aws.module";
 import { ChannelStack, ChannelStackProps } from "./channelStack";
 
 @Injectable()
-export class AwsService {
+export class AwsService implements OnModuleInit {
     private readonly logger: Bunyan;
 
     private readonly credentials: NewSdkCredentials;
-    private readonly iam: IAM;
-    private readonly elasticTranscoder: ElasticTranscoder;
-    private readonly mediaLive: MediaLive;
-    private readonly mediaPackage: MediaPackage;
-    private readonly cloudFront: CloudFront;
-    private readonly sns: SNS;
+    private readonly region: string;
+    private iam: IAM;
+    private elasticTranscoder: ElasticTranscoder;
+    private mediaLive: MediaLive;
+    private mediaPackage: MediaPackage;
+    private cloudFront: CloudFront;
+    private sns: SNS;
 
     constructor(
         @RootLogger() logger: Bunyan,
@@ -39,42 +40,43 @@ export class AwsService {
         this.logger = logger.child({ component: this.constructor.name });
 
         this.credentials = config.credentials;
-        const region = config.region;
-
+        this.region = config.region;
+    }
+    onModuleInit(): void {
         this.iam = new IAM({
             apiVersion: "2010-05-08",
             credentials: this.credentials,
-            region,
+            region: this.region,
         });
 
         this.elasticTranscoder = new ElasticTranscoder({
             apiVersion: "2012-09-25",
             credentials: this.credentials,
-            region,
+            region: this.region,
         });
 
         this.mediaLive = new MediaLive({
             apiVersion: "2017-10-14",
             credentials: this.credentials,
-            region,
+            region: this.region,
         });
 
         this.mediaPackage = new MediaPackage({
             apiVersion: "2017-10-14",
             credentials: this.credentials,
-            region,
+            region: this.region,
         });
 
         this.cloudFront = new CloudFront({
             apiVersion: "2020-05-31",
             credentials: this.credentials,
-            region,
+            region: this.region,
         });
 
         this.sns = new SNS({
             apiVersion: "2010-03-31",
             credentials: this.credentials,
-            region,
+            region: this.region,
         });
     }
 

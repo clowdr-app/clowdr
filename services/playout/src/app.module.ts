@@ -1,5 +1,5 @@
 import { LoggingModule } from "@eropple/nestjs-bunyan";
-import { HasuraModule } from "@golevelup/nestjs-hasura";
+import { HasuraModule as ExternalHasuraModule } from "@golevelup/nestjs-hasura";
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import assert from "assert";
@@ -8,6 +8,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AwsModule, AwsModuleOptions } from "./aws/aws.module";
 import { ChannelSyncModule } from "./channel-sync/channel-sync.module";
+import { HasuraDataModule, HasuraModuleOptions } from "./hasura/hasura-data.module";
 import { JsonBodyMiddleware } from "./json-body.middleware";
 import { ROOT_LOGGER } from "./logger";
 import { TextBodyMiddleware } from "./text-body.middleware";
@@ -19,7 +20,7 @@ import { TextBodyMiddleware } from "./text-body.middleware";
             dropHeaders: ["x-hasura-event-secret"],
             correlationIdHeader: "x-b3-traceid",
         }),
-        HasuraModule.forRootAsync(HasuraModule, {
+        ExternalHasuraModule.forRootAsync(ExternalHasuraModule, {
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
                 webhookConfig: {
@@ -47,6 +48,24 @@ import { TextBodyMiddleware } from "./text-body.middleware";
                     mediaLiveServiceRoleArn: "",
                     prefix: "",
                     region,
+                };
+                return config;
+            },
+            inject: [ConfigService],
+        }),
+        HasuraDataModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => {
+                const useSecureProtocols = configService.get<boolean>("GRAPHQL_API_SECURE_PROTOCOLS");
+                assert(useSecureProtocols, "Missing GRAPHQL_API_SECURE_PROTOCOLS");
+                const graphQlApiDomain = configService.get<string>("GRAPHQL_API_DOMAIN");
+                assert(graphQlApiDomain, "Missing GRAPHQL_API_DOMAIN");
+                const hasuraAdminSecret = configService.get<string>("HASURA_ADMIN_SECRET");
+                assert(hasuraAdminSecret, "Missing HASURA_ADMIN_SECRET");
+                const config: HasuraModuleOptions = {
+                    graphQlApiDomain,
+                    useSecureProtocols,
+                    hasuraAdminSecret,
                 };
                 return config;
             },

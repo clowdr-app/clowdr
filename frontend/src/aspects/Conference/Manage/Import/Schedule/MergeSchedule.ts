@@ -516,7 +516,7 @@ export default function mergeSchedule(
     });
 
     unusedOriginatingDataIds.forEach((id) => {
-        originalOriginatingDatas.delete(id);
+        newOriginatingDatas.delete(id);
     });
 
     return {

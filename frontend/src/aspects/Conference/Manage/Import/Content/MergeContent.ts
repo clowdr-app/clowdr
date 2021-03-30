@@ -1167,7 +1167,7 @@ export default function mergeContent(
     });
 
     unusedOriginatingDataIds.forEach((id) => {
-        originalOriginatingDatas.delete(id);
+        newOriginatingDatas.delete(id);
     });
 
     return {

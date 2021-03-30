@@ -27,10 +27,13 @@
     },
     "homepage": "https://github.com/clowdr/clowdr-app#readme",
     "dependencies": {
+        "@types/amqplib": "^0.5.17",
         "@types/jsonwebtoken": "^8.5.1",
         "@types/jwk-to-pem": "^2.0.0",
         "@types/redis": "^2.8.28",
         "@types/redlock": "^4.0.1",
+        "@types/uuid": "^8.3.0",
+        "amqplib": "^0.7.1",
         "bufferutil": "^4.0.3",
         "cpy-cli": "^3.1.1",
         "express": "^4.17.1",
@@ -43,7 +46,8 @@
         "socket.io-redis": "^6.0.1",
         "ttypescript": "^1.5.12",
         "typescript": "^4.1.5",
-        "utf-8-validate": "^5.0.4"
+        "utf-8-validate": "^5.0.4",
+        "uuid": "^8.3.2"
     },
     "devDependencies": {
         "@types/express": "^4.17.11",

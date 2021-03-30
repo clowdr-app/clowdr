@@ -13,6 +13,7 @@ import assert from "assert";
 import { AWS_MODULE_OPTIONS } from "../constants";
 import { AwsController } from "./aws.controller";
 import { AwsService } from "./aws.service";
+import { CloudFormationService } from "./cloud-formation/cloud-formation.service";
 import { SnsNotificationMiddleware } from "./sns-notification.middleware";
 
 export type AwsModuleOptions = {
@@ -27,7 +28,7 @@ export type AwsModuleOptions = {
 
 @Global()
 @Module({
-    providers: [AwsService],
+    providers: [AwsService, CloudFormationService],
     exports: [AwsService],
     controllers: [AwsController],
 })

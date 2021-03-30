@@ -17,6 +17,7 @@ import { TextBodyMiddleware } from "./text-body.middleware";
         ConfigModule.forRoot(),
         LoggingModule.forRoot(ROOT_LOGGER, {
             dropHeaders: ["x-hasura-event-secret"],
+            correlationIdHeader: "x-b3-traceid",
         }),
         HasuraModule.forRootAsync(HasuraModule, {
             imports: [ConfigModule],

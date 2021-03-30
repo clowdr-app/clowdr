@@ -1433,6 +1433,9 @@
       value_from_env: EVENT_SECRET
 - table:
     schema: job_queues
+    name: CreateChannelStackJob
+- table:
+    schema: job_queues
     name: CustomEmailJob
   object_relationships:
   - name: conference

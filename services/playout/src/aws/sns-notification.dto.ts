@@ -1,36 +1,36 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { IsDefined, IsIn, IsOptional, IsString } from "class-validator";
+import { IsDefined, IsIn, IsISO8601, IsOptional, IsString, IsUrl } from "class-validator";
 
 export class SNSNotificationDto {
     @IsDefined()
     @IsString()
-    MessageId: string;
+    MessageId: string; //
     @IsDefined()
     Message: any;
     @IsDefined()
     @IsString()
-    TopicArn: string;
+    TopicArn: string; //
+    @IsDefined()
+    @IsISO8601()
+    Timestamp: string; //
     @IsDefined()
     @IsString()
-    Timestamp: string;
+    SignatureVersion: string; //
     @IsDefined()
     @IsString()
-    SignatureVersion: string;
+    Signature: string; //
     @IsDefined()
-    @IsString()
-    Signature: string;
-    @IsDefined()
-    @IsString()
-    SigningCertURL: string;
+    @IsUrl()
+    SigningCertURL: string; //
     @IsIn(["SubscriptionConfirmation", "Notification", "UnsubscribeConfirmation"])
-    Type: "SubscriptionConfirmation" | "Notification" | "UnsubscribeConfirmation";
-    @IsDefined()
+    Type: "SubscriptionConfirmation" | "Notification" | "UnsubscribeConfirmation"; //
+    @IsOptional()
     @IsString()
     Token: string;
     @IsOptional()
-    @IsString()
+    @IsUrl()
     SubscribeURL?: string;
     @IsOptional()
-    @IsString()
+    @IsUrl()
     UnsubscribeURL?: string;
 }

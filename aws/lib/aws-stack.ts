@@ -216,6 +216,9 @@ export class AwsStack extends cdk.Stack {
         cloudFormationNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("cloudformation.amazonaws.com"),
         });
+        cloudFormationNotificationsTopic.grantPublish({
+            grantPrincipal: actionsUser,
+        });
         cloudFormationNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],

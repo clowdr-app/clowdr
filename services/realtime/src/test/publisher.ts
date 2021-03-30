@@ -2,6 +2,7 @@ import assert from "assert";
 import fetch from "node-fetch";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import { Message, Reaction } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
 assert(
@@ -91,9 +92,9 @@ async function Main(
         let messagesSinceLastReactionsFlood = 0;
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            const msg = {
+            const msg: Message = {
                 sId: uuidv4(),
-                message,
+                message: `${totalMessagesSent}: ${message}`,
                 chatId,
             };
 
@@ -124,11 +125,11 @@ async function Main(
                 process.stdout.write("*");
                 try {
                     for (const reaction of reactions) {
-                        const rct = {
+                        const rct: Reaction = {
                             sId: uuidv4(),
                             reaction,
                             chatId,
-                            messageId: msg.sId,
+                            messageSId: msg.sId,
                         };
                         client.emit("chat.reactions.send", rct);
                         // We don't bother with an ack mechanism for reactions

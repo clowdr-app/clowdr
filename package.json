@@ -6,7 +6,7 @@
     "scripts": {
         "heroku-postbuild": "cd shared && npm ci && cd ../services/realtime && npm ci && npm run build && cd ../../services/actions && npm ci && npm run build",
         "run-services-actions": "heroku local -p 3001 web",
-        "run-services-realtime": "heroku local -p 3002 -f Realtime.Procfile web"
+        "run-services-realtime": "npx foreman start --procfile ./Realtime.Procfile -p 3002"
     },
     "repository": {
         "type": "git",

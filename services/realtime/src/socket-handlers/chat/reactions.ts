@@ -1,46 +1,23 @@
+import assert from "assert";
 import { Socket } from "socket.io";
-import { uplink } from "../../rabbitmq";
-
-interface Reaction {
-    sId: string;
-    messageSId: string;
-    chatId: string;
-    reaction: string;
-}
-
-const exchange = "chat.reactions";
-const exchangeParams = {
-    autoDelete: false,
-    durable: true,
-};
-
-async function setup() {
-    const connection = await uplink;
-    const channel = await connection.createChannel();
-    await channel.assertExchange(exchange, "topic", exchangeParams);
-    return channel;
-}
-
-const publicationChannel = setup();
-
-async function send(reaction: Reaction) {
-    const channel = await publicationChannel;
-    channel.publish(exchange, reaction.chatId, Buffer.from(JSON.stringify(reaction)), {
-        persistent: true,
-    });
-}
+import { is } from "typescript-is";
+import { send } from "../../rabbitmq/chat/reactions";
+import { Reaction } from "../../types/chat";
 
 export function onSend(
     _conferenceSlugs: string[],
     _userId: string,
     socketId: string,
     _socket: Socket
-): (reaction: Reaction, cb?: () => void) => Promise<void> {
+): (reaction: any, cb?: () => void) => Promise<void> {
     return async (reaction, cb) => {
-        try {
-            await send(reaction);
-        } catch (e) {
-            console.error(`Error processing chat.reactions.send (socket: ${socketId}, sId: ${reaction.sId})`, e);
+        if (reaction) {
+            try {
+                assert(is<Reaction>(reaction), "Data does not match expected type.");
+                await send(reaction);
+            } catch (e) {
+                console.error(`Error processing chat.reactions.send (socket: ${socketId}, sId: ${reaction.sId})`, e);
+            }
         }
 
         cb?.();

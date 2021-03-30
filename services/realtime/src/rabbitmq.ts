@@ -9,5 +9,19 @@ const url =
               }@`
             : ""
     }localhost:5672`;
-export const uplink = amqplib.connect(url);
-export const downlink = amqplib.connect(url);
+
+let _uplink: amqplib.Connection | undefined;
+export async function uplink(): Promise<amqplib.Connection> {
+    if (!_uplink) {
+        _uplink = await amqplib.connect(url);
+    }
+    return _uplink;
+}
+
+let _downlink: amqplib.Connection | undefined;
+export async function downlink(): Promise<amqplib.Connection> {
+    if (!_downlink) {
+        _downlink = await amqplib.connect(url);
+    }
+    return _downlink;
+}

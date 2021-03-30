@@ -2,7 +2,7 @@ import jwksRsa, { SigningKey } from "jwks-rsa";
 import socketIO, { Socket } from "socket.io";
 import { createAdapter } from "socket.io-redis";
 import { testJWKs } from "../jwks";
-import { redisPubClient, redisSubClient } from "../redis";
+import { redisClient } from "../redis";
 import { onConnect as onConnectChat } from "../socket-events/chat";
 import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
@@ -17,6 +17,11 @@ export const socketServer = new socketIO.Server(httpServer, {
     },
     transports: ["websocket"],
 });
+
+// We only need these if we're running a socket server, not just a worker process
+// (Having them here reduces the total number of connections to the redis instance)
+export const redisPubClient = redisClient.duplicate();
+export const redisSubClient = redisClient.duplicate();
 
 // Configure the websocket server's connection to redis
 socketServer.adapter(

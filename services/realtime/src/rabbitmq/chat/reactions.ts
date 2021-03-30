@@ -19,6 +19,8 @@ async function uplinkChannel() {
 }
 
 export async function send(reaction: Reaction): Promise<void> {
+    // TODO: Check permissions
+
     const channel = await uplinkChannel();
     channel.publish(exchange, reaction.chatId, Buffer.from(JSON.stringify(reaction)), {
         persistent: true,

@@ -54,6 +54,8 @@ async function writebackDownChannel() {
 }
 
 export async function send(message: Message): Promise<void> {
+    // TODO: Check permissions
+
     const channel = await uplinkChannel();
     channel.publish(exchange, message.chatId, Buffer.from(JSON.stringify(message)), {
         persistent: true,

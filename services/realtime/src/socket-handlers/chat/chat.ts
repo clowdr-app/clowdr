@@ -13,6 +13,7 @@ export function onSubscribe(
         if (chatId) {
             try {
                 assert(is<string>(chatId), "Data does not match expected type.");
+                // TODO: Check permissions
                 socket.join(generateRoomName(chatId));
             } catch (e) {
                 console.error(`Error processing chat.subscribe (socket: ${socketId}, chatId: ${chatId})`, e);

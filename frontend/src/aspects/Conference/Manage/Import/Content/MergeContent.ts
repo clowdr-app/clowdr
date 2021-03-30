@@ -421,6 +421,8 @@ function convertGroupPerson(
     const personIdx = findExistingPersonForGroup(context, context.people, item);
     if (personIdx !== undefined) {
         result.personId = context.people[personIdx].id;
+    } else {
+        throw new Error(`Could not find person: ${JSON.stringify(item, null, 2)}`);
     }
 
     return result;

@@ -364,7 +364,16 @@ export function isMatch_String_Exact<C, T, S extends T>(k?: keyof (S | T)): (ctx
         const v1 = k ? item1[k] : item1;
         const v2 = k ? item2[k] : item2;
 
-        if (v1 === undefined || v2 === undefined || typeof v1 !== "string" || typeof v2 !== "string") {
+        if (
+            v1 === undefined ||
+            v2 === undefined ||
+            v1 === null ||
+            v2 === null ||
+            typeof v1 !== "string" ||
+            typeof v2 !== "string" ||
+            v1 === "" ||
+            v2 === ""
+        ) {
             return false;
         }
 
@@ -386,7 +395,7 @@ export function isMatch_String_EditDistance<C, T, S extends T>(
         const lengthDiff = Math.abs(v1.length - v2.length);
         const longerLength = Math.max(v1.length, v2.length);
         const shorterLength = Math.min(v1.length, v2.length);
-        const threshhold = 0.2;
+        const threshhold = 0.15;
         if (shorterLength <= 8 || lengthDiff / shorterLength > threshhold) {
             return false;
         }

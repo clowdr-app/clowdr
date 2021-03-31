@@ -56,8 +56,7 @@ import { TextBodyMiddleware } from "./text-body.middleware";
         HasuraDataModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => {
-                const useSecureProtocols = configService.get<boolean>("GRAPHQL_API_SECURE_PROTOCOLS");
-                assert(useSecureProtocols, "Missing GRAPHQL_API_SECURE_PROTOCOLS");
+                const useSecureProtocols = configService.get<string>("GRAPHQL_API_SECURE_PROTOCOLS") !== "false";
                 const graphQlApiDomain = configService.get<string>("GRAPHQL_API_DOMAIN");
                 assert(graphQlApiDomain, "Missing GRAPHQL_API_DOMAIN");
                 const hasuraAdminSecret = configService.get<string>("HASURA_ADMIN_SECRET");

@@ -47,10 +47,13 @@ import {
     VideoDescriptionScalingBehavior,
 } from "@aws-sdk/client-medialive";
 import { AdMarkers, Origination, PlaylistType, StreamOrder } from "@aws-sdk/client-mediapackage";
+import { truncate } from "../utils/string";
 
 export interface ChannelStackProps extends cdk.StackProps {
     inputSecurityGroupId: string;
     roomId: string;
+    roomName: string;
+    conferenceId: string;
     awsPrefix: string;
     mediaLiveServiceRoleArn: string;
     generateId(): string;
@@ -154,6 +157,8 @@ export class ChannelStack extends cdk.Stack {
             ],
             tags: {
                 roomId: props.roomId,
+                roomName: truncate(props.roomName, 200),
+                conferenceId: props.conferenceId,
                 environment: props.awsPrefix ?? "unknown",
             },
             name: props.generateId(),
@@ -166,6 +171,8 @@ export class ChannelStack extends cdk.Stack {
         return new medialive.CfnInput(this, name, {
             tags: {
                 roomId: props.roomId,
+                roomName: truncate(props.roomName, 200),
+                conferenceId: props.conferenceId,
                 environment: props.awsPrefix ?? "unknown",
             },
             name: props.generateId(),
@@ -193,6 +200,14 @@ export class ChannelStack extends cdk.Stack {
                     key: "environment",
                     value: props.awsPrefix,
                 },
+                {
+                    key: "roomName",
+                    value: truncate(props.roomName, 200),
+                },
+                {
+                    key: "conferenceId",
+                    value: truncate(props.conferenceId, 200),
+                },
             ],
             description: `MediaPackage channel for room ${props.roomId}`,
         });
@@ -216,6 +231,14 @@ export class ChannelStack extends cdk.Stack {
                 {
                     key: "environment",
                     value: props.awsPrefix,
+                },
+                {
+                    key: "roomName",
+                    value: truncate(props.roomName, 200),
+                },
+                {
+                    key: "conferenceId",
+                    value: truncate(props.conferenceId, 200),
                 },
             ],
             hlsPackage: {
@@ -268,6 +291,8 @@ export class ChannelStack extends cdk.Stack {
             name,
             tags: {
                 roomId: props.roomId,
+                roomName: truncate(props.roomName, 200),
+                conferenceId: props.conferenceId,
                 environment: props.awsPrefix ?? "unknown",
             },
             channelClass: "SINGLE_PIPELINE",

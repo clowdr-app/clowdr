@@ -1,5 +1,6 @@
 import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "@nestjs/common";
 import { HASURA_MODULE_OPTIONS } from "../constants";
+import { ChannelStackCreateJobService } from "./channel-stack-create-job/channel-stack-create-job.service";
 import { GraphQlService } from "./graphql.service";
 
 export type HasuraModuleOptions = {
@@ -10,7 +11,7 @@ export type HasuraModuleOptions = {
 
 @Global()
 @Module({
-    providers: [GraphQlService],
+    providers: [GraphQlService, ChannelStackCreateJobService],
     exports: [GraphQlService],
 })
 export class HasuraDataModule {

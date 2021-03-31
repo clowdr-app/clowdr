@@ -6475,6 +6475,13 @@
     using:
       foreign_key_constraint_on: roomPrivacyName
   array_relationships:
+  - name: channelStackCreateJobs
+    using:
+      foreign_key_constraint_on:
+        column: roomId
+        table:
+          schema: job_queues
+          name: ChannelStackCreateJob
   - name: events
     using:
       foreign_key_constraint_on:

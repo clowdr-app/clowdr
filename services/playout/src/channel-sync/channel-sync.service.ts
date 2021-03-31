@@ -2,13 +2,19 @@ import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { AwsService } from "../aws/aws.service";
-import { GetRoomsWithEventsStartingDocument } from "../generated/graphql";
+import { GetRoomsNeedingMediaLiveChannelDocument } from "../generated/graphql";
+import { ChannelStackCreateJobService } from "../hasura/channel-stack-create-job/channel-stack-create-job.service";
 import { GraphQlService } from "../hasura/graphql.service";
 
 @Injectable()
 export class ChannelSyncService {
     private readonly logger: Bunyan;
-    constructor(@RootLogger() logger: Bunyan, private awsService: AwsService, private graphQlService: GraphQlService) {
+    constructor(
+        @RootLogger() logger: Bunyan,
+        private awsService: AwsService,
+        private graphQlService: GraphQlService,
+        private channelStackCreateJobService: ChannelStackCreateJobService
+    ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
@@ -16,11 +22,10 @@ export class ChannelSyncService {
 
     public async channelSync(): Promise<void> {
         this.logger.info("Channel Sync service");
+        this.ensureChannelsCreated();
         if (!this.syncInProgress) {
             this.syncInProgress = true;
             this.logger.info("Executing sync");
-
-            //await this.awsService.createNewChannelStack("myroom123");
 
             //this.syncInProgress = false;
         } else {
@@ -28,38 +33,75 @@ export class ChannelSyncService {
         }
     }
 
-    public async ensureChannelsCreated(): Promise<void> {
-        this.logger.info("Ensuring channels created for rooms with upcoming events");
+    public async getRoomsNeedingChannelStack(): Promise<{ roomId: string; roomName: string; conferenceId: string }[]> {
         const now = new Date();
-        const from = now.toISOString();
-        const to = new Date(now.getTime() + 60 * 60 * 1000).toISOString();
+        const future = new Date(now.getTime() + 60 * 60 * 1000);
 
         gql`
-            query GetRoomsWithEventsStarting($from: timestamptz, $to: timestamptz) {
+            query GetRoomsNeedingMediaLiveChannel($now: timestamptz, $future: timestamptz) {
                 Room(
                     where: {
                         events: {
-                            startTime: { _gte: $from, _lte: $to }
                             intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                            _or: [
+                                { startTime: { _gte: $now, _lte: $future } }
+                                { startTime: { _lte: $now }, endTime: { _gte: $now } }
+                            ]
+                        }
+                        _not: {
+                            _or: [
+                                { channelStackCreateJobs: { jobStatusName: { _in: [IN_PROGRESS, NEW] } } }
+                                { mediaLiveChannel: {} }
+                            ]
                         }
                     }
                 ) {
-                    id
+                    roomId: id
                     conferenceId
-                    mediaLiveChannel {
-                        id
-                        mediaLiveChannelId
-                    }
+                    roomName: name
                 }
             }
         `;
 
-        const roomsResult = await this.graphQlService.apolloClient.query({
-            query: GetRoomsWithEventsStartingDocument,
+        const result = await this.graphQlService.apolloClient.query({
+            query: GetRoomsNeedingMediaLiveChannelDocument,
             variables: {
-                from,
-                to,
+                now: now.toISOString(),
+                future: future.toISOString(),
             },
         });
+
+        return result.data.Room;
+    }
+
+    public async ensureChannelsCreated(): Promise<void> {
+        this.logger.info("Ensuring channels created for rooms with upcoming events");
+
+        const roomsNeedingChannelStack = await this.getRoomsNeedingChannelStack();
+
+        if (roomsNeedingChannelStack.length > 0) {
+            this.logger.info({ msg: "Found rooms that need a channel stack", rooms: roomsNeedingChannelStack });
+        }
+
+        for (const roomNeedingChannelStack of roomsNeedingChannelStack) {
+            const jobId = await this.channelStackCreateJobService.createChannelStackCreateJob(
+                roomNeedingChannelStack.roomId,
+                roomNeedingChannelStack.conferenceId
+            );
+            this.awsService
+                .createNewChannelStack(
+                    roomNeedingChannelStack.roomId,
+                    roomNeedingChannelStack.roomName,
+                    roomNeedingChannelStack.conferenceId
+                )
+                .catch(async (e) => {
+                    this.logger.error(e, {
+                        msg: "Failed to create channel stack",
+                        roomId: roomNeedingChannelStack.roomId,
+                        conferenceId: roomNeedingChannelStack.conferenceId,
+                    });
+                    await this.channelStackCreateJobService.failChannelStackCreateJob(jobId, JSON.stringify(e));
+                });
+        }
     }
 }

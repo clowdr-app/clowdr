@@ -12,6 +12,7 @@ import { ConfigService } from "@nestjs/config";
 import assert from "assert";
 import { SdkProvider } from "aws-cdk/lib/api/aws-auth";
 import { CloudFormationDeployments } from "aws-cdk/lib/api/cloudformation-deployments";
+import { DeployStackResult } from "aws-cdk/lib/api/deploy-stack";
 import AWS, { CredentialProviderChain } from "aws-sdk";
 import * as Bunyan from "bunyan";
 import { customAlphabet } from "nanoid";
@@ -87,15 +88,13 @@ export class AwsService implements OnModuleInit {
     public getHostUrl(): string {
         const hostDomain = this.configService.get<string>("HOST_DOMAIN");
         assert(hostDomain, "Missing HOST_DOMAIN.");
-        const hostSecureProtocols = this.configService.get<boolean>("HOST_SECURE_PROTOCOLS");
-        assert(hostSecureProtocols, "Missing HOST_SECURE_PROTOCOLS");
+        const hostSecureProtocols = this.configService.get<string>("HOST_SECURE_PROTOCOLS") !== "false";
 
-        return `${process.env.HOST_SECURE_PROTOCOLS ? "https" : "http"}://${process.env.HOST_DOMAIN}`;
+        return `${hostSecureProtocols ? "https" : "http"}://${hostDomain}`;
     }
 
     public async subscribeToTopic(topicArn: string, endpointUri: string): Promise<void> {
-        const hostSecureProtocols = this.configService.get<boolean>("HOST_SECURE_PROTOCOLS");
-        assert(hostSecureProtocols, "Missing HOST_SECURE_PROTOCOLS");
+        const hostSecureProtocols = this.configService.get<string>("HOST_SECURE_PROTOCOLS") !== "false";
 
         await this.sns.subscribe({
             Protocol: hostSecureProtocols ? "https" : "http",
@@ -104,7 +103,11 @@ export class AwsService implements OnModuleInit {
         });
     }
 
-    public async createNewChannelStack(roomId: string): Promise<void> {
+    public async createNewChannelStack(
+        roomId: string,
+        roomName: string,
+        conferenceId: string
+    ): Promise<DeployStackResult> {
         const awsPrefix = this.configService.get<string>("AWS_PREFIX");
         assert(awsPrefix, "Missing AWS_PREFIX");
         const inputSecurityGroupId = this.configService.get<string>("AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID");
@@ -125,8 +128,12 @@ export class AwsService implements OnModuleInit {
             generateId: this.shortId,
             inputSecurityGroupId,
             roomId,
+            roomName,
+            conferenceId,
             tags: {
                 roomId,
+                roomName,
+                conferenceId,
             },
             env: {
                 account,
@@ -151,15 +158,9 @@ export class AwsService implements OnModuleInit {
             credentials,
         });
         const cloudFormation = new CloudFormationDeployments({ sdkProvider });
-        cloudFormation
-            .deployStack({
-                stack: stackArtifact,
-                notificationArns: [cloudFormationNotificationsTopicArn],
-            })
-            .catch((e) =>
-                this.logger.error(e, {
-                    msg: `Failed to deploy stack for room ${roomId}`,
-                })
-            );
+        return await cloudFormation.deployStack({
+            stack: stackArtifact,
+            notificationArns: [cloudFormationNotificationsTopicArn],
+        });
     }
 }

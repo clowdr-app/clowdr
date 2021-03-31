@@ -15,7 +15,6 @@ import { CloudFormationDeployments } from "aws-cdk/lib/api/cloudformation-deploy
 import { DeployStackResult } from "aws-cdk/lib/api/deploy-stack";
 import AWS, { CredentialProviderChain } from "aws-sdk";
 import * as Bunyan from "bunyan";
-import { customAlphabet } from "nanoid";
 import { AWS_MODULE_OPTIONS } from "../constants";
 import { AwsModuleOptions } from "./aws.module";
 import { ChannelStack, ChannelStackProps } from "./channelStack";
@@ -81,10 +80,6 @@ export class AwsService implements OnModuleInit {
         });
     }
 
-    public shortId(length = 6): string {
-        return `C${customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", length - 1)()}`;
-    }
-
     public getHostUrl(): string {
         const hostDomain = this.configService.get<string>("HOST_DOMAIN");
         assert(hostDomain, "Missing HOST_DOMAIN.");
@@ -106,7 +101,8 @@ export class AwsService implements OnModuleInit {
     public async createNewChannelStack(
         roomId: string,
         roomName: string,
-        conferenceId: string
+        conferenceId: string,
+        stackLogicalResourceId: string
     ): Promise<DeployStackResult> {
         const awsPrefix = this.configService.get<string>("AWS_PREFIX");
         assert(awsPrefix, "Missing AWS_PREFIX");
@@ -145,7 +141,7 @@ export class AwsService implements OnModuleInit {
 
         this.logger.info("Starting deployment");
         const app = new App();
-        const stack = new ChannelStack(app, `${awsPrefix}-room-${this.shortId()}`, options);
+        const stack = new ChannelStack(app, stackLogicalResourceId, options);
 
         const stackArtifact = app.synth().getStackByName(stack.stackName);
         const credentials = new AWS.Credentials({
@@ -158,9 +154,10 @@ export class AwsService implements OnModuleInit {
             credentials,
         });
         const cloudFormation = new CloudFormationDeployments({ sdkProvider });
-        return await cloudFormation.deployStack({
+        return cloudFormation.deployStack({
             stack: stackArtifact,
             notificationArns: [cloudFormationNotificationsTopicArn],
+            quiet: true,
         });
     }
 }

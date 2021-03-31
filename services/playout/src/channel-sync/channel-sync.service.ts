@@ -5,6 +5,7 @@ import { AwsService } from "../aws/aws.service";
 import { GetRoomsNeedingMediaLiveChannelDocument } from "../generated/graphql";
 import { ChannelStackCreateJobService } from "../hasura/channel-stack-create-job/channel-stack-create-job.service";
 import { GraphQlService } from "../hasura/graphql.service";
+import { shortId } from "../utils/id";
 
 @Injectable()
 export class ChannelSyncService {
@@ -84,15 +85,19 @@ export class ChannelSyncService {
         }
 
         for (const roomNeedingChannelStack of roomsNeedingChannelStack) {
+            const stackLogicalResourceId = `room-${shortId(10)}`;
+
             const jobId = await this.channelStackCreateJobService.createChannelStackCreateJob(
                 roomNeedingChannelStack.roomId,
-                roomNeedingChannelStack.conferenceId
+                roomNeedingChannelStack.conferenceId,
+                stackLogicalResourceId
             );
             this.awsService
                 .createNewChannelStack(
                     roomNeedingChannelStack.roomId,
                     roomNeedingChannelStack.roomName,
-                    roomNeedingChannelStack.conferenceId
+                    roomNeedingChannelStack.conferenceId,
+                    stackLogicalResourceId
                 )
                 .catch(async (e) => {
                     this.logger.error(e, {

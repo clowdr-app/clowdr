@@ -4,6 +4,7 @@ import { Injectable } from "@nestjs/common";
 import {
     CreateChannelStackCreateJobDocument,
     FailChannelStackCreateJobDocument,
+    FindChannelStackCreateJobByLogicalResourceIdDocument,
     GetChannelStackCreateJobDocument,
     JobStatus_Enum,
 } from "../../generated/graphql";
@@ -17,11 +18,24 @@ export class ChannelStackCreateJobService {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
-    public async createChannelStackCreateJob(roomId: string, conferenceId: string): Promise<string> {
+    public async createChannelStackCreateJob(
+        roomId: string,
+        conferenceId: string,
+        stackLogicalResourceId: string
+    ): Promise<string> {
         gql`
-            mutation CreateChannelStackCreateJob($conferenceId: uuid!, $roomId: uuid!) {
+            mutation CreateChannelStackCreateJob(
+                $conferenceId: uuid!
+                $roomId: uuid!
+                $stackLogicalResourceId: String!
+            ) {
                 insert_job_queues_ChannelStackCreateJob_one(
-                    object: { conferenceId: $conferenceId, jobStatusName: IN_PROGRESS, roomId: $roomId }
+                    object: {
+                        conferenceId: $conferenceId
+                        jobStatusName: IN_PROGRESS
+                        roomId: $roomId
+                        stackLogicalResourceId: $stackLogicalResourceId
+                    }
                 ) {
                     id
                 }
@@ -33,6 +47,7 @@ export class ChannelStackCreateJobService {
             variables: {
                 roomId,
                 conferenceId,
+                stackLogicalResourceId,
             },
         });
 
@@ -73,6 +88,29 @@ export class ChannelStackCreateJobService {
                     message,
                 },
             });
+        }
+    }
+
+    public async findChannelStackCreateJobByLogicalResourceId(stackLogicalResourceId: string): Promise<string | null> {
+        gql`
+            query FindChannelStackCreateJobByLogicalResourceId($stackLogicalResourceId: String!) {
+                job_queues_ChannelStackCreateJob(where: { stackLogicalResourceId: { _eq: $stackLogicalResourceId } }) {
+                    id
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: FindChannelStackCreateJobByLogicalResourceIdDocument,
+            variables: {
+                stackLogicalResourceId,
+            },
+        });
+
+        if (result.data.job_queues_ChannelStackCreateJob.length > 0) {
+            return result.data.job_queues_ChannelStackCreateJob[0].id;
+        } else {
+            return null;
         }
     }
 }

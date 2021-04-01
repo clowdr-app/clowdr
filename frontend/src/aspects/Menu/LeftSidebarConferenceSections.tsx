@@ -10,7 +10,6 @@ import {
     Flex,
     Heading,
     HStack,
-    Text,
     useDisclosure,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
@@ -50,19 +49,19 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     return (
         <>
             <AccordionPanel pb={4} px={"3px"}>
-                <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" mb={2} textAlign="left" ml={1}>
-                    <Flex>
-                        <Text>Social rooms</Text>
-                        <ButtonGroup ml="auto">
-                            <Button onClick={onCreateRoomOpen} colorScheme="green" size="xs">
-                                <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
-                            </Button>
-                            <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="xs">
-                                View all rooms
-                            </LinkButton>
-                        </ButtonGroup>
-                    </Flex>
-                </Heading>
+                <Flex mb={2} ml={1} mr={1}>
+                    <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
+                        Social rooms
+                    </Heading>
+                    <ButtonGroup ml="auto">
+                        <Button onClick={onCreateRoomOpen} colorScheme="green" size="xs">
+                            <FAIcon icon="plus-square" iconStyle="s" />
+                        </Button>
+                        <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="xs" mt={-1}>
+                            All rooms
+                        </LinkButton>
+                    </ButtonGroup>
+                </Flex>
                 <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
                     {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                         <RoomList
@@ -76,25 +75,16 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                 <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                     {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                         <RoomList rooms={rooms} layout="list">
-                            <Heading
-                                as="h3"
-                                fontWeight="normal"
-                                fontStyle="italic"
-                                fontSize="md"
-                                mb={2}
-                                textAlign="left"
-                                mt={4}
-                                ml={1}
-                            >
-                                <Flex>
-                                    <Text>Today&apos;s Program rooms</Text>
-                                    <ButtonGroup ml="auto">
-                                        <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="xs">
-                                            View all rooms
-                                        </LinkButton>
-                                    </ButtonGroup>
-                                </Flex>
-                            </Heading>
+                            <Flex mb={2} mt={4} ml={1} mr={1}>
+                                <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
+                                    Today&apos;s Program rooms
+                                </Heading>
+                                <ButtonGroup ml="auto">
+                                    <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="xs">
+                                        All rooms
+                                    </LinkButton>
+                                </ButtonGroup>
+                            </Flex>
                         </RoomList>
                     )}
                 </ApolloQueryWrapper>

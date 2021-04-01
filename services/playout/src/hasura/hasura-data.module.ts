@@ -2,6 +2,7 @@ import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "
 import { HASURA_MODULE_OPTIONS } from "../constants";
 import { ChannelStackCreateJobService } from "./channel-stack-create-job/channel-stack-create-job.service";
 import { GraphQlService } from "./graphql.service";
+import { MediaLiveChannelService } from "./media-live-channel/media-live-channel.service";
 
 export type HasuraModuleOptions = {
     useSecureProtocols: boolean;
@@ -11,8 +12,8 @@ export type HasuraModuleOptions = {
 
 @Global()
 @Module({
-    providers: [GraphQlService, ChannelStackCreateJobService],
-    exports: [GraphQlService],
+    providers: [GraphQlService, ChannelStackCreateJobService, MediaLiveChannelService],
+    exports: [GraphQlService, ChannelStackCreateJobService, MediaLiveChannelService],
 })
 export class HasuraDataModule {
     static forRootAsync(

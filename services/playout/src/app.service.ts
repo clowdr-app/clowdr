@@ -35,13 +35,13 @@ export class AppService {
 
     @TrackedHasuraScheduledEventHandler({
         cronSchedule: "*/2 * * * *",
-        name: "SyncChannels",
+        name: "SyncChannelStacks",
         payload: {},
     })
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    handleSyncChannels(_evt: any): void {
-        this._logger.info({ event: "SyncChannels", data: _evt });
-        this.channelSync.channelSync().catch((err) => this._logger.error(err));
+    handleSyncChannelStacks(_evt: any): void {
+        this._logger.info({ event: "SyncChannelStacks", data: _evt });
+        this.channelSync.syncChannelStacks().catch((err) => this._logger.error(err));
     }
 }
 

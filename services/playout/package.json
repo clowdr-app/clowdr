@@ -39,6 +39,7 @@
         "@aws-cdk/aws-mediapackage": "^1.95.1",
         "@aws-cdk/core": "^1.95.1",
         "@aws-cdk/yaml-cfn": "^1.95.1",
+        "@aws-sdk/client-cloudformation": "^3.10.0",
         "@aws-sdk/client-cloudfront": "^3.10.0",
         "@aws-sdk/client-elastic-transcoder": "^3.10.0",
         "@aws-sdk/client-iam": "^3.10.0",

@@ -5715,25 +5715,24 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: channelStackCreateJob
+    using:
+      foreign_key_constraint_on: channelStackCreateJobId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
   - name: room
     using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: Room
-        insertion_order: null
-        column_mapping:
-          id: mediaLiveChannelId
+      foreign_key_constraint_on: roomId
   select_permissions:
   - role: user
     permission:
       columns:
       - cloudFrontDomain
+      - conferenceId
       - endpointUri
       - id
+      - roomId
       filter:
         _or:
         - conference:
@@ -6461,7 +6460,13 @@
       foreign_key_constraint_on: currentModeName
   - name: mediaLiveChannel
     using:
-      foreign_key_constraint_on: mediaLiveChannelId
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: MediaLiveChannel
+        insertion_order: null
+        column_mapping:
+          id: roomId
   - name: originatingContentGroup
     using:
       foreign_key_constraint_on: originatingContentGroupId
@@ -6594,21 +6599,20 @@
   - role: user
     permission:
       columns:
-      - id
-      - created_at
-      - updated_at
-      - conferenceId
-      - name
-      - currentModeName
-      - originatingDataId
       - capacity
-      - publicVonageSessionId
-      - mediaLiveChannelId
-      - priority
-      - roomPrivacyName
       - chatId
-      - originatingEventId
+      - conferenceId
+      - created_at
+      - currentModeName
+      - id
+      - name
       - originatingContentGroupId
+      - originatingDataId
+      - originatingEventId
+      - priority
+      - publicVonageSessionId
+      - roomPrivacyName
+      - updated_at
       filter:
         _and:
         - conference:

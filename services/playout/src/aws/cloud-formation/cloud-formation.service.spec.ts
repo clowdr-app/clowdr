@@ -22,7 +22,7 @@ describe("CloudFormationService", () => {
             const timestamp = "2021-03-29T16:23:55.358Z";
             const resourceProperties = {
                 Type: "RTMP_PUSH",
-                Destinations: [{ StreamName: "rtmpInputB" }],
+                Destinations: [{ StreamName: "rtmpBInput" }],
                 InputSecurityGroups: ["6683279"],
                 Tags: { environment: "ross-dev", roomId: "myroom123" },
                 Name: "C6yml0",
@@ -42,7 +42,7 @@ describe("CloudFormationService", () => {
             const timestamp = "2021-03-29T16:23:55.358Z";
             const resourceProperties = {
                 Type: "RTMP_PUSH",
-                Destinations: [{ StreamName: "rtmpInputB" }],
+                Destinations: [{ StreamName: "rtmpBInput" }],
                 InputSecurityGroups: ["6683279"],
                 Tags: { environment: "ross-dev", roomId: "myroom123" },
                 Name: "C6yml0",

@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import {
+    CompleteChannelStackCreateJobDocument,
     CreateChannelStackCreateJobDocument,
     FailChannelStackCreateJobDocument,
     FindChannelStackCreateJobByLogicalResourceIdDocument,
@@ -91,11 +92,34 @@ export class ChannelStackCreateJobService {
         }
     }
 
-    public async findChannelStackCreateJobByLogicalResourceId(stackLogicalResourceId: string): Promise<string | null> {
+    public async completeChannelStackCreateJob(jobId: string): Promise<void> {
+        gql`
+            mutation CompleteChannelStackCreateJob($id: uuid!) {
+                update_job_queues_ChannelStackCreateJob_by_pk(
+                    pk_columns: { id: $id }
+                    _set: { jobStatusName: COMPLETED }
+                ) {
+                    id
+                }
+            }
+        `;
+
+        await this.graphQlService.apolloClient.mutate({
+            mutation: CompleteChannelStackCreateJobDocument,
+            variables: {
+                id: jobId,
+            },
+        });
+    }
+
+    public async findChannelStackCreateJobByLogicalResourceId(
+        stackLogicalResourceId: string
+    ): Promise<{ jobId: string; conferenceId: string } | null> {
         gql`
             query FindChannelStackCreateJobByLogicalResourceId($stackLogicalResourceId: String!) {
                 job_queues_ChannelStackCreateJob(where: { stackLogicalResourceId: { _eq: $stackLogicalResourceId } }) {
                     id
+                    conferenceId
                 }
             }
         `;
@@ -108,7 +132,10 @@ export class ChannelStackCreateJobService {
         });
 
         if (result.data.job_queues_ChannelStackCreateJob.length > 0) {
-            return result.data.job_queues_ChannelStackCreateJob[0].id;
+            return {
+                jobId: result.data.job_queues_ChannelStackCreateJob[0].id,
+                conferenceId: result.data.job_queues_ChannelStackCreateJob[0].conferenceId,
+            };
         } else {
             return null;
         }

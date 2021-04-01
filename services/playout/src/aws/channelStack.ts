@@ -104,47 +104,83 @@ export class ChannelStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props: ChannelStackProps) {
         super(scope, id, props);
 
-        const rtmpInputA = this.createRtmpInput("rtmpInputA", props);
-        const rtmpInputB = this.createRtmpInput("rtmpInputB", props);
+        const rtmpAInput = this.createRtmpInput("rtmpAInput", props);
+        const rtmpBInput = this.createRtmpInput("rtmpBInput", props);
         const mp4Input = this.createMp4Input("mp4Input", props);
         const loopingMp4Input = this.createMp4Input("loopingMp4Input", props);
 
         const mediaPackageChannel = this.createMediaPackageChannel("mediaPackageChannel", props);
         const originEndpoint = this.createOriginEndpoint("originEndpoint", mediaPackageChannel.ref, props);
-        this.createCloudFrontDistribution("cloudfrontDistribution", originEndpoint.attrUrl, props);
+        const distribution = this.createCloudFrontDistribution("cloudfrontDistribution", originEndpoint.attrUrl, props);
 
         const mediaLiveChannel = this.createMediaLiveChannel(
             props.generateId(),
-            rtmpInputA.ref,
-            rtmpInputB.ref,
+            rtmpAInput.ref,
+            rtmpBInput.ref,
             mp4Input.ref,
             loopingMp4Input.ref,
             mediaPackageChannel.id,
             props
         );
 
-        new cdk.CfnOutput(this, "RtmpInputA", {
-            value: rtmpInputA.ref,
+        new cdk.CfnOutput(this, "RtmpAInputUri", {
+            value: cdk.Fn.select(0, rtmpAInput.attrDestinations),
         });
 
-        new cdk.CfnOutput(this, "RtmpInputB", {
-            value: rtmpInputB.ref,
+        new cdk.CfnOutput(this, "RtmpAInputId", {
+            value: rtmpAInput.ref,
         });
 
-        new cdk.CfnOutput(this, "Mp4Input", {
+        new cdk.CfnOutput(this, "RtmpBInputUri", {
+            value: cdk.Fn.select(0, rtmpBInput.attrDestinations),
+        });
+
+        new cdk.CfnOutput(this, "RtmpBInputId", {
+            value: rtmpBInput.ref,
+        });
+
+        new cdk.CfnOutput(this, "Mp4InputId", {
             value: mp4Input.ref,
         });
 
-        new cdk.CfnOutput(this, "LoopingMp4Input", {
+        new cdk.CfnOutput(this, "LoopingMp4InputId", {
             value: loopingMp4Input.ref,
         });
 
+        new cdk.CfnOutput(this, "Mp4InputAttachmentName", {
+            value: mediaLiveChannel.mp4InputAttachmentName,
+        });
+
+        new cdk.CfnOutput(this, "LoopingMp4InputAttachmentName", {
+            value: mediaLiveChannel.loopingMp4InputAttachmentName,
+        });
+
+        new cdk.CfnOutput(this, "RtmpAInputAttachmentName", {
+            value: mediaLiveChannel.rtmpAInputAttachmentName,
+        });
+
+        new cdk.CfnOutput(this, "RtmpBInputAttachmentName", {
+            value: mediaLiveChannel.rtmpBInputAttachmentName,
+        });
+
         new cdk.CfnOutput(this, "MediaLiveChannelId", {
-            value: mediaLiveChannel.ref,
+            value: mediaLiveChannel.channel.ref,
         });
 
         new cdk.CfnOutput(this, "MediaPackageChannelId", {
             value: mediaPackageChannel.id,
+        });
+
+        new cdk.CfnOutput(this, "CloudFrontDistributionId", {
+            value: distribution.distributionId,
+        });
+
+        new cdk.CfnOutput(this, "CloudFrontDomain", {
+            value: distribution.distributionDomainName,
+        });
+
+        new cdk.CfnOutput(this, "EndpointUri", {
+            value: originEndpoint.attrUrl,
         });
     }
 
@@ -269,9 +305,15 @@ export class ChannelStack extends cdk.Stack {
         loopingMp4InputId: string,
         mediaPackageChannelId: string,
         props: ChannelStackProps
-    ): medialive.CfnChannel {
-        const rtmpInputAAttachmentName = `${props.generateId()}-rtmpA`;
-        const rtmpInputBAttachmentName = `${props.generateId()}-rtmpB`;
+    ): {
+        channel: medialive.CfnChannel;
+        rtmpAInputAttachmentName: string;
+        rtmpBInputAttachmentName: string;
+        mp4InputAttachmentName: string;
+        loopingMp4InputAttachmentName: string;
+    } {
+        const rtmpAInputAttachmentName = `${props.generateId()}-rtmpA`;
+        const rtmpBInputAttachmentName = `${props.generateId()}-rtmpB`;
         const mp4InputAttachmentName = `${props.generateId()}-mp4`;
         const loopingMp4InputAttachmentName = `${props.generateId()}-looping`;
 
@@ -287,7 +329,7 @@ export class ChannelStack extends cdk.Stack {
 
         const destinationId = props.generateId();
 
-        return new medialive.CfnChannel(this, name, {
+        const channel = new medialive.CfnChannel(this, name, {
             name,
             tags: {
                 roomId: props.roomId,
@@ -298,7 +340,7 @@ export class ChannelStack extends cdk.Stack {
             channelClass: "SINGLE_PIPELINE",
             inputAttachments: [
                 {
-                    inputAttachmentName: rtmpInputAAttachmentName,
+                    inputAttachmentName: rtmpAInputAttachmentName,
                     inputId: rtmpAInputId,
                     inputSettings: {
                         captionSelectors: [
@@ -317,7 +359,7 @@ export class ChannelStack extends cdk.Stack {
                     },
                 },
                 {
-                    inputAttachmentName: rtmpInputBAttachmentName,
+                    inputAttachmentName: rtmpBInputAttachmentName,
                     inputId: rtmpBInputId,
                     inputSettings: {
                         captionSelectors: [
@@ -536,6 +578,14 @@ export class ChannelStack extends cdk.Stack {
                 },
             ],
         });
+
+        return {
+            channel,
+            rtmpAInputAttachmentName,
+            rtmpBInputAttachmentName,
+            mp4InputAttachmentName,
+            loopingMp4InputAttachmentName,
+        };
     }
 
     createCloudFrontDistribution(

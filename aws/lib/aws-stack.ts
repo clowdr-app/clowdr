@@ -47,7 +47,7 @@ export class AwsStack extends cdk.Stack {
                 ],
                 effect: iam.Effect.ALLOW,
                 resources: [
-                    `arn:aws:cloudformation:${props.env?.region}:${props.env?.account}:stack/${props.stackPrefix}-room-*/*`,
+                    `arn:aws:cloudformation:${props.env?.region}:${props.env?.account}:stack/room-*/*`,
                     `arn:aws:cloudformation:${props.env?.region}:${props.env?.account}:stack/CDKToolkit/*`,
                 ],
             })

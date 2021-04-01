@@ -43,7 +43,7 @@ export function useGenerateMarkers(
 
     return useMemo(() => {
         const scale = (2 * 60 * 60) / scroller.visibleTimeSpanSeconds;
-        const markerDensity = findMarkerBoundary(window.innerWidth * scale);
+        const markerDensity = findMarkerBoundary((window.innerHeight - 150) * scale);
         const markerDivisions = markerDensity[0];
         const markerSubdivisions = markerDensity[1];
 

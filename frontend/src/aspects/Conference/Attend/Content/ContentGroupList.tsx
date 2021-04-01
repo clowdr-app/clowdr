@@ -14,11 +14,13 @@ import {
     SimpleGrid,
     Spinner,
     Text,
+    useColorMode,
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
+import Color from "tinycolor2";
 import {
     ContentGroupList_ContentGroupDataFragment,
     ContentGroupList_ContentGroupTagDataFragment,
@@ -87,18 +89,41 @@ function TagButton({
     isExpanded: boolean;
     setOpenId: (id: string) => void;
 }): JSX.Element {
-    const colour = tag.colour.replace(/\s/g, "") === "rgba(0,0,0,0)" ? undefined : tag.colour;
-    const collapsedBgColour = useColorModeValue("blue.200", "blue.700");
-    const expandedBgColour = useColorModeValue("blue.300", "gray.500");
+    const colour = tag.colour.replace(/\s/g, "").endsWith("0)") ? undefined : tag.colour;
+    const defaultCollapsedBgColour = useColorModeValue("blue.200", "blue.700");
+    const defaultExpandedBgColour = useColorModeValue("blue.300", "gray.500");
+    const colourMode = useColorMode();
+    const isDark = useMemo(() => (colour ? Color(colour).isDark() : colourMode.colorMode === "dark"), [
+        colour,
+        colourMode.colorMode,
+    ]);
+    const collapsedBgColour = useMemo(() => (colour ? colour : defaultCollapsedBgColour), [
+        colour,
+        defaultCollapsedBgColour,
+    ]);
+    const expandedBgColour = useMemo(
+        () =>
+            colour
+                ? isDark
+                    ? Color(colour).lighten(20).toHexString()
+                    : Color(colour).darken(20).toHexString()
+                : defaultExpandedBgColour,
+        [colour, defaultExpandedBgColour, isDark]
+    );
+    const isExpandedDark = useMemo(() => (colour ? Color(expandedBgColour).isDark() : false), [
+        colour,
+        expandedBgColour,
+    ]);
+
     return (
         <Button
             colorScheme="blue"
             isActive={isExpanded}
             aria-expanded={isExpanded}
-            padding={[1, 1, 5]}
+            padding={[1, 1, 1]}
             whiteSpace="normal"
             margin={0}
-            color={colour}
+            color={(isExpanded && isExpandedDark) || (!isExpanded && isDark) ? "white" : "black"}
             height="auto"
             borderWidth={2}
             borderColor={isExpanded ? expandedBgColour : collapsedBgColour}
@@ -107,9 +132,18 @@ function TagButton({
             aria-controls={`content-groups-accordion-panel-${tag.id}`}
             onClick={() => setOpenId(tag.id)}
             backgroundColor={isExpanded ? expandedBgColour : collapsedBgColour}
+            _hover={{
+                backgroundColor: isExpanded ? collapsedBgColour : expandedBgColour,
+            }}
+            _focus={{
+                backgroundColor: isExpanded ? collapsedBgColour : expandedBgColour,
+            }}
+            _active={{
+                backgroundColor: isExpanded ? expandedBgColour : collapsedBgColour,
+            }}
         >
-            <Center>
-                <Text as="span" fontSize="1.2rem" marginBottom="0.5rem" fontWeight={600} m={0}>
+            <Center m={0} p={0}>
+                <Text as="span" fontSize="sm" fontWeight={600} m={0}>
                     {tag.name}
                 </Text>
             </Center>
@@ -119,6 +153,7 @@ function TagButton({
 
 function ContentGroupButton({ group }: { group: ContentGroupList_ContentGroupDataFragment }): JSX.Element {
     const conference = useConference();
+    const bgColour = useColorModeValue("gray.200", "gray.700");
     const textColour = useColorModeValue("gray.500", "gray.400");
     return (
         <LinkButton
@@ -129,6 +164,7 @@ function ContentGroupButton({ group }: { group: ContentGroupList_ContentGroupDat
             flexDir="column"
             width="100%"
             height="100%"
+            background={bgColour}
         >
             <Text as="p" whiteSpace="normal" fontSize="1.2em" fontWeight="600" textAlign="left" mb={4}>
                 <Twemoji className="twemoji" text={group.title} />
@@ -287,7 +323,7 @@ export default function ContentGroupList(): JSX.Element {
     }
 
     return (
-        <VStack px={4} pt="6ex" spacing={4}>
+        <VStack px={4} pt="3ex" spacing={4}>
             <Center flexDirection="column">
                 <SimpleGrid
                     aria-describedby="content-groups-accordion-header"
@@ -295,7 +331,7 @@ export default function ContentGroupList(): JSX.Element {
                         1,
                         Math.min(2, sortedTags.length),
                         Math.min(3, sortedTags.length),
-                        Math.min(4, sortedTags.length),
+                        Math.min(5, sortedTags.length),
                     ]}
                     maxW={1024}
                     autoRows={["min-content", "min-content", "1fr"]}

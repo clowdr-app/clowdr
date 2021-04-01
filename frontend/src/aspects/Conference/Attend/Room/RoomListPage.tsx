@@ -32,6 +32,29 @@ gql`
         }
     }
 
+    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
+        socialRooms: Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
+                roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
+            }
+            order_by: { name: asc }
+        ) {
+            ...RoomListRoomDetails
+        }
+        programRooms: Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                events: { startTime: { _lte: $todayEnd }, endTime: { _gte: $todayStart } }
+                roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
+            }
+            order_by: { name: asc }
+        ) {
+            ...RoomListRoomDetails
+        }
+    }
+
     fragment RoomListRoomDetails on Room {
         id
         name

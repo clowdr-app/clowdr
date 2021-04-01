@@ -12,7 +12,13 @@ import {
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import CRUDTable, { CRUDTableProps, defaultStringFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
+import CRUDTable, {
+    CRUDTableProps,
+    defaultIntegerFilter,
+    defaultStringFilter,
+    FieldType,
+    UpdateResult,
+} from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
 import type { TagDescriptor } from "../Shared/Types";
 
@@ -115,6 +121,28 @@ export default function ManageTagsModal({
                                                 filter: defaultStringFilter,
                                             },
                                             validate: (_v) => true, // TODO: Validation
+                                        },
+                                        priority: {
+                                            heading: "Priority",
+                                            ariaLabel: "Priority",
+                                            description:
+                                                "Priority determines the order tags are listed. Ascending sort (lowest first).",
+                                            isHidden: false,
+                                            isEditable: true,
+                                            defaultValue: tags.size,
+                                            insert: (item, v) => {
+                                                return {
+                                                    ...item,
+                                                    priority: v,
+                                                };
+                                            },
+                                            extract: (v) => v.priority,
+                                            spec: {
+                                                fieldType: FieldType.integer,
+                                                convertToUI: (x) => x,
+                                                convertFromUI: (x) => x,
+                                                filter: defaultIntegerFilter,
+                                            },
                                         },
                                     },
                                 }}

@@ -161,6 +161,7 @@ gql`
         colour
         name
         originatingDataId
+        priority
     }
 
     fragment HallwayInfo on Hallway {
@@ -446,10 +447,16 @@ gql`
         }
     }
 
-    mutation UpdateTag($id: uuid!, $name: String!, $colour: String!, $originatingDataId: uuid = null) {
+    mutation UpdateTag(
+        $id: uuid!
+        $name: String!
+        $colour: String!
+        $originatingDataId: uuid = null
+        $priority: Int! = 10
+    ) {
         update_Tag_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, colour: $colour, originatingDataId: $originatingDataId }
+            _set: { name: $name, colour: $colour, originatingDataId: $originatingDataId, priority: $priority }
         ) {
             ...TagInfo
         }
@@ -749,6 +756,7 @@ export function useSaveContentDiff():
                                             colour: tag.colour,
                                             name: tag.name,
                                             originatingDataId: tag.originatingDataId,
+                                            priority: tag.priority,
                                         },
                                     });
                                     ok = true;

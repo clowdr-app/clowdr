@@ -26,6 +26,7 @@ export function convertContentToDescriptors(
                     colour: tag.colour,
                     name: tag.name,
                     originatingDataId: tag.originatingDataId,
+                    priority: tag.priority,
                 },
             ])
         ),

@@ -13514,6 +13514,7 @@ export type Tag = {
   /** An object relationship */
   readonly originatingData?: Maybe<OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority: Scalars['Int'];
   readonly updatedAt: Scalars['timestamptz'];
 };
 
@@ -13567,9 +13568,17 @@ export type Tag_Aggregate = {
 /** aggregate fields of "Tag" */
 export type Tag_Aggregate_Fields = {
   readonly __typename?: 'Tag_aggregate_fields';
+  readonly avg?: Maybe<Tag_Avg_Fields>;
   readonly count?: Maybe<Scalars['Int']>;
   readonly max?: Maybe<Tag_Max_Fields>;
   readonly min?: Maybe<Tag_Min_Fields>;
+  readonly stddev?: Maybe<Tag_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Tag_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Tag_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Tag_Sum_Fields>;
+  readonly var_pop?: Maybe<Tag_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Tag_Var_Samp_Fields>;
+  readonly variance?: Maybe<Tag_Variance_Fields>;
 };
 
 
@@ -13581,15 +13590,34 @@ export type Tag_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "Tag" */
 export type Tag_Aggregate_Order_By = {
+  readonly avg?: Maybe<Tag_Avg_Order_By>;
   readonly count?: Maybe<Order_By>;
   readonly max?: Maybe<Tag_Max_Order_By>;
   readonly min?: Maybe<Tag_Min_Order_By>;
+  readonly stddev?: Maybe<Tag_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Tag_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Tag_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Tag_Sum_Order_By>;
+  readonly var_pop?: Maybe<Tag_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Tag_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Tag_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "Tag" */
 export type Tag_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<Tag_Insert_Input>;
   readonly on_conflict?: Maybe<Tag_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Tag_Avg_Fields = {
+  readonly __typename?: 'Tag_avg_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "Tag" */
+export type Tag_Avg_Order_By = {
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "Tag". All fields are combined with a logical 'AND'. */
@@ -13607,6 +13635,7 @@ export type Tag_Bool_Exp = {
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly priority?: Maybe<Int_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -13615,6 +13644,11 @@ export enum Tag_Constraint {
   /** unique or primary key constraint */
   TagPkey = 'Tag_pkey'
 }
+
+/** input type for incrementing integer column in table "Tag" */
+export type Tag_Inc_Input = {
+  readonly priority?: Maybe<Scalars['Int']>;
+};
 
 /** input type for inserting data into table "Tag" */
 export type Tag_Insert_Input = {
@@ -13628,6 +13662,7 @@ export type Tag_Insert_Input = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -13640,6 +13675,7 @@ export type Tag_Max_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -13651,6 +13687,7 @@ export type Tag_Max_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -13663,6 +13700,7 @@ export type Tag_Min_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -13674,6 +13712,7 @@ export type Tag_Min_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -13711,6 +13750,7 @@ export type Tag_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -13734,6 +13774,8 @@ export enum Tag_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Priority = 'priority',
+  /** column name */
   UpdatedAt = 'updatedAt'
 }
 
@@ -13745,7 +13787,52 @@ export type Tag_Set_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Tag_Stddev_Fields = {
+  readonly __typename?: 'Tag_stddev_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "Tag" */
+export type Tag_Stddev_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Tag_Stddev_Pop_Fields = {
+  readonly __typename?: 'Tag_stddev_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "Tag" */
+export type Tag_Stddev_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Tag_Stddev_Samp_Fields = {
+  readonly __typename?: 'Tag_stddev_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "Tag" */
+export type Tag_Stddev_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Tag_Sum_Fields = {
+  readonly __typename?: 'Tag_sum_fields';
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "Tag" */
+export type Tag_Sum_Order_By = {
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** update columns of table "Tag" */
@@ -13763,8 +13850,43 @@ export enum Tag_Update_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Priority = 'priority',
+  /** column name */
   UpdatedAt = 'updatedAt'
 }
+
+/** aggregate var_pop on columns */
+export type Tag_Var_Pop_Fields = {
+  readonly __typename?: 'Tag_var_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "Tag" */
+export type Tag_Var_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Tag_Var_Samp_Fields = {
+  readonly __typename?: 'Tag_var_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "Tag" */
+export type Tag_Var_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Tag_Variance_Fields = {
+  readonly __typename?: 'Tag_variance_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "Tag" */
+export type Tag_Variance_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "TranscriptionJob" */
 export type TranscriptionJob = {
@@ -25245,6 +25367,7 @@ export type Mutation_RootUpdate_Room_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_TagArgs = {
+  _inc?: Maybe<Tag_Inc_Input>;
   _set?: Maybe<Tag_Set_Input>;
   where: Tag_Bool_Exp;
 };
@@ -25252,6 +25375,7 @@ export type Mutation_RootUpdate_TagArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Tag_By_PkArgs = {
+  _inc?: Maybe<Tag_Inc_Input>;
   _set?: Maybe<Tag_Set_Input>;
   pk_columns: Tag_Pk_Columns_Input;
 };
@@ -33125,7 +33249,7 @@ export type ContentGroupList_ContentGroupTagDataFragment = { readonly __typename
     & ContentGroupList_ContentGroupDataFragment
   ) };
 
-export type ContentGroupList_TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string };
+export type ContentGroupList_TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string, readonly priority: number };
 
 export type ContentOfTagQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -33462,7 +33586,7 @@ export type RoomSponsorContent_ContentGroupDataFragment = { readonly __typename?
 
 export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
 
-export type Schedule_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
+export type Schedule_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
 
 export type Schedule_EventTagFragment = { readonly __typename?: 'EventTag', readonly id: any, readonly tag: (
     { readonly __typename?: 'Tag' }
@@ -33690,7 +33814,7 @@ export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'Conten
     & ContentGroupPersonInfoFragment
   )>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
-export type TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any> };
+export type TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number };
 
 export type HallwayInfoFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number };
 
@@ -33927,6 +34051,7 @@ export type UpdateTagMutationVariables = Exact<{
   name: Scalars['String'];
   colour: Scalars['String'];
   originatingDataId?: Maybe<Scalars['uuid']>;
+  priority?: Scalars['Int'];
 }>;
 
 
@@ -35249,6 +35374,7 @@ export const ContentGroupList_TagInfoFragmentDoc = gql`
   id
   colour
   name
+  priority
 }
     `;
 export const ContentItemDataFragmentDoc = gql`
@@ -35493,6 +35619,7 @@ export const Schedule_TagFragmentDoc = gql`
   id
   name
   colour
+  priority
 }
     `;
 export const Schedule_EventTagFragmentDoc = gql`
@@ -35722,6 +35849,7 @@ export const TagInfoFragmentDoc = gql`
   colour
   name
   originatingDataId
+  priority
 }
     `;
 export const HallwayInfoFragmentDoc = gql`
@@ -39450,10 +39578,10 @@ export type UpdatePersonMutationHookResult = ReturnType<typeof useUpdatePersonMu
 export type UpdatePersonMutationResult = Apollo.MutationResult<UpdatePersonMutation>;
 export type UpdatePersonMutationOptions = Apollo.BaseMutationOptions<UpdatePersonMutation, UpdatePersonMutationVariables>;
 export const UpdateTagDocument = gql`
-    mutation UpdateTag($id: uuid!, $name: String!, $colour: String!, $originatingDataId: uuid = null) {
+    mutation UpdateTag($id: uuid!, $name: String!, $colour: String!, $originatingDataId: uuid = null, $priority: Int! = 10) {
   update_Tag_by_pk(
     pk_columns: {id: $id}
-    _set: {name: $name, colour: $colour, originatingDataId: $originatingDataId}
+    _set: {name: $name, colour: $colour, originatingDataId: $originatingDataId, priority: $priority}
   ) {
     ...TagInfo
   }
@@ -39478,6 +39606,7 @@ export type UpdateTagMutationFn = Apollo.MutationFunction<UpdateTagMutation, Upd
  *      name: // value for 'name'
  *      colour: // value for 'colour'
  *      originatingDataId: // value for 'originatingDataId'
+ *      priority: // value for 'priority'
  *   },
  * });
  */

@@ -8,6 +8,7 @@ gql`
         id
         name
         colour
+        priority
     }
 
     fragment Schedule_EventTag on EventTag {
@@ -20,7 +21,9 @@ gql`
 
 export default function EventTagList({ tags }: { tags: readonly Schedule_EventTagFragment[] }): JSX.Element {
     const sortedTags = useMemo(() => {
-        return [...tags].sort((x, y) => x.tag.name.localeCompare(y.tag.name));
+        return [...tags]
+            .sort((x, y) => x.tag.name.localeCompare(y.tag.name))
+            .sort((x, y) => x.tag.priority - y.tag.priority);
     }, [tags]);
 
     const colour = useColorModeValue("gray.800", "gray.200");

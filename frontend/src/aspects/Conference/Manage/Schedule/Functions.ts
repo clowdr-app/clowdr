@@ -40,6 +40,7 @@ export function convertScheduleToDescriptors(
                     colour: tag.colour,
                     name: tag.name,
                     originatingDataId: tag.originatingDataId,
+                    priority: tag.priority,
                 },
             ])
         ),

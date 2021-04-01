@@ -62,6 +62,7 @@ gql`
         id
         colour
         name
+        priority
     }
 
     query ContentOfTag($id: uuid!) {
@@ -265,9 +266,13 @@ export default function ContentGroupList(): JSX.Element {
     );
     const setOpenId = setOpenPanelId;
 
-    const sortedTags = useMemo(() => (data?.Tag ? [...data.Tag].sort((x, y) => x.name.localeCompare(y.name)) : []), [
-        data?.Tag,
-    ]);
+    const sortedTags = useMemo(
+        () =>
+            data?.Tag
+                ? [...data.Tag].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority)
+                : [],
+        [data?.Tag]
+    );
 
     if (loading && !sortedTags) {
         return (

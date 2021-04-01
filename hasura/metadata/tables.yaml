@@ -7133,6 +7133,7 @@
       - id
       - name
       - originatingDataId
+      - priority
       backend_only: false
   select_permissions:
   - role: unauthenticated
@@ -7143,6 +7144,7 @@
       - id
       - name
       - originatingDataId
+      - priority
       filter:
         conference:
           _and:
@@ -7167,6 +7169,7 @@
       - id
       - name
       - originatingDataId
+      - priority
       - updated_at
       filter:
         _and:
@@ -7206,6 +7209,7 @@
       - colour
       - name
       - originatingDataId
+      - priority
       filter:
         _and:
         - conference:

@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useRealTime } from "../../../Generic/useRealTime";
-import { useTimelineParameters } from "./useTimelineParameters";
+import useTimelineParameters from "./useTimelineParameters";
 
 export default function NowMarker({
     showLabel = false,
-    setScrollToNow,
+    scrollToNow,
 }: {
     showLabel?: boolean;
-    setScrollToNow?: (cb: () => void) => void;
+    scrollToNow?: { f: () => void };
 }): JSX.Element | null {
     const now = useRealTime(60000);
     const timelineParams = useTimelineParameters();
@@ -17,7 +17,7 @@ export default function NowMarker({
     const percent = (100 * offsetSeconds) / timelineParams.fullTimeSpanSeconds;
 
     const ref = useRef<HTMLDivElement>(null);
-    const scrollToNow = useCallback(() => {
+    const scrollToNowF = useCallback(() => {
         if (offsetSeconds >= 0 && offsetSeconds < timelineParams.fullTimeSpanSeconds) {
             ref.current?.scrollIntoView({
                 behavior: "smooth",
@@ -27,8 +27,10 @@ export default function NowMarker({
         }
     }, [offsetSeconds, timelineParams.fullTimeSpanSeconds]);
     useEffect(() => {
-        setScrollToNow?.(scrollToNow);
-    }, [scrollToNow, setScrollToNow]);
+        if (scrollToNow && offsetSeconds >= 0 && offsetSeconds < timelineParams.fullTimeSpanSeconds) {
+            scrollToNow.f = scrollToNowF;
+        }
+    }, [offsetSeconds, scrollToNow, scrollToNowF, timelineParams.fullTimeSpanSeconds]);
 
     if (offsetSeconds < 0 || offsetSeconds > timelineParams.fullTimeSpanSeconds) {
         return <></>;

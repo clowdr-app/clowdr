@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 import React, { useMemo } from "react";
 import { useScrollerParams } from "./Scroller";
 import TimeMarker from "./TimeMarker";
-import { useTimelineParameters } from "./useTimelineParameters";
+import useTimelineParameters from "./useTimelineParameters";
 
 const markerDensityBoundaries: Record<string, number[]> = {
     "350": [4, 2],
@@ -141,6 +141,7 @@ export default function TimeBar({
             overflow="hidden"
             backgroundColor={bgColor}
             ml={marginTop}
+            fontSize="xs"
         >
             {markers}
         </Box>

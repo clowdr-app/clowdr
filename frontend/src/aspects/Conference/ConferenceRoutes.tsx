@@ -14,7 +14,7 @@ import EditProfilePage from "./Attend/Profile/EditProfilePage";
 import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RoomListPage from "./Attend/Room/RoomListPage";
 import RoomPage from "./Attend/Room/RoomPage";
-import ConferenceTimeline from "./Attend/Schedule/ConferenceTimeline";
+import Schedule from "./Attend/Schedule/Schedule";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
 import { ManageConferenceEmailPage } from "./Manage/ManageConferenceEmailPage";
@@ -170,7 +170,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
                     permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageSchedule]}
                 >
-                    <ConferenceTimeline />
+                    <Schedule />
                 </RequireAtLeastOnePermissionWrapper>
             </Route>
 

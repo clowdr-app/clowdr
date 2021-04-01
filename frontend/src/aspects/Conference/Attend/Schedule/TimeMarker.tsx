@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import React from "react";
-import { useTimelineParameters } from "./useTimelineParameters";
+import useTimelineParameters from "./useTimelineParameters";
 
 export default function TimeMarker({
     time,

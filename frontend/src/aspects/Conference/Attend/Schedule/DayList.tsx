@@ -2,23 +2,23 @@ import { Button, ButtonGroup, Text } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import React, { useMemo } from "react";
 import type {
-    Timeline_ContentGroup_PartialInfoFragment,
-    Timeline_EventFragment,
-    Timeline_RoomFragment,
+    Schedule_ContentGroupSummaryFragment,
+    Schedule_EventSummaryFragment,
+    Schedule_RoomSummaryFragment,
 } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Generic/useRealTime";
-import { useTimelineParameters } from "./useTimelineParameters";
+import useTimelineParameters from "./useTimelineParameters";
 
 type FirstEventInfo = {
-    event: Timeline_EventFragment;
+    event: Schedule_EventSummaryFragment;
     startTime: number;
 };
 
-export interface TimelineEvent extends Timeline_EventFragment {
-    contentGroup?: Timeline_ContentGroup_PartialInfoFragment;
+export interface TimelineEvent extends Schedule_EventSummaryFragment {
+    contentGroup?: Schedule_ContentGroupSummaryFragment;
 }
 
-export interface TimelineRoom extends Timeline_RoomFragment {
+export interface TimelineRoom extends Schedule_RoomSummaryFragment {
     events: TimelineEvent[];
 }
 
@@ -28,15 +28,15 @@ export default function DayList({
     scrollToEvent,
     scrollToNow,
 }: {
-    rooms: readonly Timeline_RoomFragment[];
-    events: readonly Timeline_EventFragment[];
-    scrollToEvent: (event: Timeline_EventFragment) => void;
+    rooms: readonly Schedule_RoomSummaryFragment[];
+    events: readonly Schedule_EventSummaryFragment[];
+    scrollToEvent: (event: Schedule_EventSummaryFragment) => void;
     scrollToNow: () => void;
 }): JSX.Element {
     const timelineParams = useTimelineParameters();
 
     const distinctDates = useMemo(() => {
-        const result = new Map<number, FirstEventInfo>();
+        const result = new Map<number, { roomPriority: number; event: FirstEventInfo }>();
         for (const room of rooms) {
             for (const event of events.filter((x) => x.roomId === room.id)) {
                 // TODO: How to handle multi-year calendars?
@@ -45,18 +45,32 @@ export default function DayList({
 
                 const existingStartEv = result.get(day.toMillis());
                 if (existingStartEv) {
-                    if (startDate.toMillis() < existingStartEv.startTime) {
-                        result.set(day.toMillis(), { event, startTime: startDate.toMillis() });
+                    if (
+                        startDate.toMillis() < existingStartEv.event.startTime ||
+                        (startDate.toMillis() === existingStartEv.event.startTime &&
+                            room.priority < existingStartEv.roomPriority)
+                    ) {
+                        result.set(day.toMillis(), {
+                            roomPriority: room.priority,
+                            event: { event, startTime: startDate.toMillis() },
+                        });
                     }
                 } else {
-                    result.set(day.toMillis(), { event, startTime: startDate.toMillis() });
+                    result.set(day.toMillis(), {
+                        roomPriority: room.priority,
+                        event: { event, startTime: startDate.toMillis() },
+                    });
                 }
             }
         }
         return [...result.entries()]
             .sort((x, y) => x[0] - y[0])
             .map(
-                (x) => [DateTime.fromMillis(x[0]).setZone(timelineParams.timezone), x[1]] as [DateTime, FirstEventInfo]
+                (x) =>
+                    [DateTime.fromMillis(x[0]).setZone(timelineParams.timezone), x[1].event] as [
+                        DateTime,
+                        FirstEventInfo
+                    ]
             );
     }, [events, rooms, timelineParams.timezone]);
 

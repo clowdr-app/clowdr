@@ -1,8 +1,7 @@
 import { Center, HStack, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
-import { Permission_Enum, RoomMode_Enum, Timeline_RoomFragment } from "../../../../generated/graphql";
-import FAIcon from "../../../Icons/FAIcon";
+import { Permission_Enum, Schedule_RoomSummaryFragment } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 
@@ -14,7 +13,7 @@ export default function RoomNameBox({
     backgroundColor,
     marginLeft,
 }: {
-    room: Timeline_RoomFragment | string;
+    room: Schedule_RoomSummaryFragment | string;
     width: number | string;
     showBottomBorder: boolean;
     borderColour: string;
@@ -23,24 +22,24 @@ export default function RoomNameBox({
 }): JSX.Element {
     const conference = useConference();
     const activePermissions = useConferenceCurrentUserActivePermissions();
-    let roomIcon: JSX.Element | undefined;
-    if (typeof room !== "string") {
-        switch (room.currentModeName) {
-            case RoomMode_Enum.Zoom:
-            case RoomMode_Enum.Breakout:
-                roomIcon = <FAIcon iconStyle="s" icon="users" />;
-                break;
-            case RoomMode_Enum.Prerecorded:
-                roomIcon = <FAIcon iconStyle="s" icon="film" />;
-                break;
-            case RoomMode_Enum.Presentation:
-                roomIcon = <FAIcon iconStyle="s" icon="chalkboard-teacher" />;
-                break;
-            case RoomMode_Enum.QAndA:
-                roomIcon = <FAIcon iconStyle="s" icon="comments" />;
-                break;
-        }
-    }
+    // let roomIcon: JSX.Element | undefined;
+    // if (typeof room !== "string") {
+    //     switch (room.currentModeName) {
+    //         case RoomMode_Enum.Zoom:
+    //         case RoomMode_Enum.Breakout:
+    //             roomIcon = <FAIcon iconStyle="s" icon="users" />;
+    //             break;
+    //         case RoomMode_Enum.Prerecorded:
+    //             roomIcon = <FAIcon iconStyle="s" icon="film" />;
+    //             break;
+    //         case RoomMode_Enum.Presentation:
+    //             roomIcon = <FAIcon iconStyle="s" icon="chalkboard-teacher" />;
+    //             break;
+    //         case RoomMode_Enum.QAndA:
+    //             roomIcon = <FAIcon iconStyle="s" icon="comments" />;
+    //             break;
+    //     }
+    // }
 
     const shouldLink = [
         Permission_Enum.ConferenceViewAttendees,
@@ -64,6 +63,8 @@ export default function RoomNameBox({
             borderLeftWidth={marginLeft ? 1 : 0}
             borderLeftStyle="solid"
             borderLeftColor={borderColour}
+            overflow="hidden"
+            fontSize="sm"
         >
             {typeof room === "string" ? (
                 room
@@ -75,13 +76,13 @@ export default function RoomNameBox({
                     aria-label={`${room.name} room`}
                 >
                     <HStack>
-                        {roomIcon}
+                        {/* {roomIcon} */}
                         <Text>{room.name}</Text>
                     </HStack>
                 </Link>
             ) : (
                 <HStack aria-label={`${room.name} room`}>
-                    {roomIcon}
+                    {/* {roomIcon} */}
                     <Text>{room.name}</Text>
                 </HStack>
             )}

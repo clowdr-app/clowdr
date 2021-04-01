@@ -1,25 +1,22 @@
 import { Box } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import type {
-    Timeline_ContentGroup_PartialInfoFragment,
-    Timeline_EventFragment,
-    Timeline_RoomFragment,
+    Schedule_ContentGroupSummaryFragment,
+    Schedule_EventSummaryFragment,
+    Schedule_RoomSummaryFragment,
 } from "../../../../generated/graphql";
 import type { TimelineEvent, TimelineRoom } from "./DayList";
 import EventBox from "./EventBox";
-import Scroller from "./Scroller";
-import TimelineZoomControls from "./TimelineZoomControls";
 
 function RoomTimelineContents({
     groupedEvents,
     room,
-    setScrollToEvent,
+    scrollToEventCbs,
 }: {
-    groupedEvents: Timeline_EventFragment[][];
-    room: Timeline_RoomFragment;
-    setScrollToEvent?: (f: (event: Timeline_EventFragment) => void) => void;
+    groupedEvents: Schedule_EventSummaryFragment[][];
+    room: Schedule_RoomSummaryFragment;
+    scrollToEventCbs: Map<string, () => void>;
 }): JSX.Element {
-    const [scrollCallbacks, setScrollCallbacks] = useState<Map<string, () => void>>(new Map());
     const eventBoxes = useMemo(
         () =>
             groupedEvents.map((events) => (
@@ -27,44 +24,24 @@ function RoomTimelineContents({
                     roomName={room.name}
                     key={events[0].id}
                     sortedEvents={events}
-                    setScrollToEvent={(cb) => {
-                        setScrollCallbacks((old) => {
-                            const newMap = new Map(old);
-                            events.forEach((e) => newMap.set(e.id, cb));
-                            return newMap;
-                        });
-                    }}
+                    scrollToEventCbs={scrollToEventCbs}
                 />
             )),
-        [groupedEvents, room.name]
+        [groupedEvents, room.name, scrollToEventCbs]
     );
-    const scrollToEvent = useCallback(
-        (ev: Timeline_EventFragment) => {
-            const evCb = scrollCallbacks.get(ev.id);
-            evCb?.();
-        },
-        [scrollCallbacks]
-    );
-    useEffect(() => {
-        setScrollToEvent?.(scrollToEvent);
-    }, [scrollToEvent, setScrollToEvent]);
     return <>{eventBoxes}</>;
 }
 
 function RoomTimelineInner({
     room,
-    hideTimeZoomButtons = true,
-    useScroller = false,
     width = 50,
     backgroundColor,
-    setScrollToEvent,
+    scrollToEventCbs,
 }: {
     room: TimelineRoom;
-    hideTimeZoomButtons?: boolean;
-    useScroller?: boolean;
     width?: number;
     backgroundColor?: string;
-    setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
+    scrollToEventCbs: Map<string, () => void>;
 }): JSX.Element {
     const groupedEvents = useMemo(() => {
         const result: TimelineEvent[][] = [];
@@ -107,44 +84,27 @@ function RoomTimelineInner({
             role="region"
             aria-label={`${room.name} room schedule.`}
         >
-            {useScroller ? (
-                <Scroller width={width}>
-                    <RoomTimelineContents
-                        groupedEvents={groupedEvents}
-                        room={room}
-                        setScrollToEvent={setScrollToEvent}
-                    />
-                </Scroller>
-            ) : (
-                <RoomTimelineContents groupedEvents={groupedEvents} room={room} setScrollToEvent={setScrollToEvent} />
-            )}
-            {!hideTimeZoomButtons ? (
-                <Box pos="absolute" top="0" right="0">
-                    <TimelineZoomControls />
-                </Box>
-            ) : undefined}
+            <RoomTimelineContents groupedEvents={groupedEvents} room={room} scrollToEventCbs={scrollToEventCbs} />
         </Box>
     );
 }
 
-function RoomTimelineFetchWrapper({
+function RoomTimelineWrapper({
     room,
-    hideTimeZoomButtons = false,
-    useScroller = true,
     width,
     backgroundColor,
-    setScrollToEvent,
+    scrollToEventCbs,
     events,
     contentGroups,
 }: {
-    room: Timeline_RoomFragment;
+    room: Schedule_RoomSummaryFragment;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     width?: number;
     backgroundColor?: string;
-    setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
-    events: ReadonlyArray<Timeline_EventFragment>;
-    contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
+    scrollToEventCbs: Map<string, () => void>;
+    events: ReadonlyArray<Schedule_EventSummaryFragment>;
+    contentGroups: ReadonlyArray<Schedule_ContentGroupSummaryFragment>;
 }): JSX.Element {
     const roomEvents = useMemo(() => {
         const result: TimelineEvent[] = [];
@@ -170,11 +130,9 @@ function RoomTimelineFetchWrapper({
                 ...room,
                 events: roomEvents,
             }}
-            hideTimeZoomButtons={hideTimeZoomButtons}
-            useScroller={useScroller}
             width={width}
             backgroundColor={backgroundColor}
-            setScrollToEvent={setScrollToEvent}
+            scrollToEventCbs={scrollToEventCbs}
         />
     ) : (
         <></>
@@ -182,16 +140,16 @@ function RoomTimelineFetchWrapper({
 }
 
 type Props = {
-    room: Timeline_RoomFragment;
+    room: Schedule_RoomSummaryFragment;
     hideTimeShiftButtons?: boolean;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     width?: number;
-    setScrollToEvent?: (f: (event: TimelineEvent) => void) => void;
-    events: ReadonlyArray<Timeline_EventFragment>;
-    contentGroups: ReadonlyArray<Timeline_ContentGroup_PartialInfoFragment>;
+    scrollToEventCbs: Map<string, () => void>;
+    events: ReadonlyArray<Schedule_EventSummaryFragment>;
+    contentGroups: ReadonlyArray<Schedule_ContentGroupSummaryFragment>;
 };
 
 export default function RoomTimeline({ ...props }: Props): JSX.Element {
-    return <RoomTimelineFetchWrapper {...props} />;
+    return <RoomTimelineWrapper {...props} />;
 }

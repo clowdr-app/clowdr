@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
-import { useTimelineParameters } from "./useTimelineParameters";
+import useTimelineParameters from "./useTimelineParameters";
 
 interface ScrollerParams {
     visibleTimeSpanSeconds: number;

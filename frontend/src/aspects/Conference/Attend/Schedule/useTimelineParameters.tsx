@@ -29,8 +29,10 @@ export function TimelineParameters({
 }): JSX.Element {
     const timezone = DateTime.local().zone; // E.g. 8 hours behind (PST): FixedOffsetZone.instance(-8 * 60)
     // const timezone = FixedOffsetZone.instance(-1 * 60);
-    const earliestMs = DateTime.fromMillis(earliestEventStart).setZone(timezone).startOf("hour").toMillis();
-    const latestMs = DateTime.fromMillis(latestEventEnd).setZone(timezone).endOf("hour").toMillis();
+    const earliestMs = DateTime.fromMillis(earliestEventStart).setZone(timezone).toMillis();
+    // .startOf("hour")
+    const latestMs = DateTime.fromMillis(latestEventEnd).setZone(timezone).toMillis();
+    // .endOf("hour")
     const ctx = useMemo(
         () => ({
             earliestMs,
@@ -44,6 +46,6 @@ export function TimelineParameters({
     return <TimelineContext.Provider value={ctx}>{children}</TimelineContext.Provider>;
 }
 
-export function useTimelineParameters(): TimelineParameters {
+export default function useTimelineParameters(): TimelineParameters {
     return useContext(TimelineContext);
 }

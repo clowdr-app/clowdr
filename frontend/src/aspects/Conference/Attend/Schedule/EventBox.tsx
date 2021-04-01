@@ -23,9 +23,9 @@ import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
 import {
     ContentType_Enum,
-    Timeline_EventFragment,
-    Timeline_Event_FullInfoFragment,
-    useTimeline_SelectEventLazyQuery,
+    Schedule_ContentGroupFragment,
+    Schedule_EventSummaryFragment,
+    useSchedule_SelectContentGroupLazyQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
@@ -33,7 +33,7 @@ import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 import { AuthorList } from "../Content/AuthorList";
 import type { TimelineEvent } from "./DayList";
-import { useTimelineParameters } from "./useTimelineParameters";
+import useTimelineParameters from "./useTimelineParameters";
 
 function EventBoxPopover({
     topPc,
@@ -42,7 +42,7 @@ function EventBoxPopover({
     durationSeconds,
     roomName,
     events,
-    fullEvent,
+    content,
     isOpen,
     onClose,
 }: {
@@ -51,22 +51,19 @@ function EventBoxPopover({
     eventStartMs: number;
     durationSeconds: number;
     roomName: string;
-    events: ReadonlyArray<Timeline_EventFragment>;
-    fullEvent: Timeline_Event_FullInfoFragment | null | undefined;
+    events: ReadonlyArray<Schedule_EventSummaryFragment>;
+    content: Schedule_ContentGroupFragment | null | undefined;
     isOpen: boolean;
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
-    const eventTitle = fullEvent?.contentGroup
-        ? events.length > 1
-            ? fullEvent.contentGroup.title
-            : `${fullEvent.contentGroup.title}`
-        : fullEvent?.name;
+    const event0 = events[0];
+    const eventTitle = content ? (events.length > 1 ? content.title : `${content.title}`) : event0.name;
 
     const now = Date.now();
-    const isLive = eventStartMs < now && now < eventStartMs + durationSeconds * 1000;
+    const isLive = eventStartMs < now + 10 * 60 * 1000 && now < eventStartMs + durationSeconds * 1000;
 
-    const abstractData: ContentItemDataBlob | undefined = fullEvent?.contentGroup?.abstractContentItems?.find(
+    const abstractData: ContentItemDataBlob | undefined = content?.abstractContentItems?.find(
         (x) => x.contentTypeName === ContentType_Enum.Abstract
     )?.data;
     let abstractText: string | undefined;
@@ -77,8 +74,7 @@ function EventBoxPopover({
         }
     }
     const eventUrl =
-        `/conference/${conference.slug}` +
-        (fullEvent?.contentGroup && !isLive ? `/item/${fullEvent.contentGroup.id}` : `/room/${fullEvent?.roomId}`);
+        `/conference/${conference.slug}` + (content && !isLive ? `/item/${content.id}` : `/room/${event0.roomId}`);
 
     const ref = useRef<HTMLAnchorElement>(null);
     useEffect(() => {
@@ -138,7 +134,7 @@ function EventBoxPopover({
                     maxH="70vh"
                     // width={Math.min(window.innerWidth * 0.7, Math.min(window.innerWidth - 200, 900))}
                 >
-                    {fullEvent ? (
+                    {content ? (
                         <>
                             <PopoverHeader fontWeight="semibold" pr={1}>
                                 <Flex direction="row">
@@ -157,7 +153,7 @@ function EventBoxPopover({
                                             title={
                                                 isLive
                                                     ? `Event is happening now. Go to room ${roomName}`
-                                                    : fullEvent.contentGroup
+                                                    : content.title
                                                     ? "View this event"
                                                     : `Go to room ${roomName}`
                                             }
@@ -181,7 +177,7 @@ function EventBoxPopover({
                                     </Flex>
                                 </Flex>
                                 <Text
-                                    aria-label={`Starts at ${DateTime.fromISO(fullEvent.startTime)
+                                    aria-label={`Starts at ${DateTime.fromISO(event0.startTime)
                                         .setZone(timelineParams.timezone)
                                         .toLocaleString({
                                             weekday: "long",
@@ -207,8 +203,8 @@ function EventBoxPopover({
                             </PopoverHeader>
                             <PopoverArrow />
                             <PopoverBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
-                                {fullEvent.contentGroup?.people && fullEvent.contentGroup?.people.length > 0 ? (
-                                    <AuthorList contentPeopleData={fullEvent.contentGroup.people} />
+                                {content?.people && content?.people.length > 0 ? (
+                                    <AuthorList contentPeopleData={content.people} />
                                 ) : undefined}
                                 <Box>
                                     <Markdown>{abstractText}</Markdown>
@@ -227,11 +223,11 @@ function EventBoxPopover({
 export default function EventBox({
     sortedEvents,
     roomName,
-    setScrollToEvent,
+    scrollToEventCbs,
 }: {
     sortedEvents: ReadonlyArray<TimelineEvent>;
     roomName: string;
-    setScrollToEvent?: (f: () => void) => void;
+    scrollToEventCbs: Map<string, () => void>;
 }): JSX.Element | null {
     const event = sortedEvents[0];
     const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
@@ -272,19 +268,19 @@ export default function EventBox({
     }, []);
 
     useEffect(() => {
-        setScrollToEvent?.(scrollToEvent);
-    }, [scrollToEvent, setScrollToEvent]);
+        scrollToEventCbs.set(event.id, scrollToEvent);
+    }, [event.id, scrollToEvent, scrollToEventCbs]);
 
-    const [getFullEventInfo, fullEventInfo] = useTimeline_SelectEventLazyQuery();
+    const [getContent, content] = useSchedule_SelectContentGroupLazyQuery();
     useEffect(() => {
-        if (isOpen && !fullEventInfo.data) {
-            getFullEventInfo({
+        if (isOpen && !content.data && event.contentGroupId) {
+            getContent({
                 variables: {
-                    id: event.id,
+                    id: event.contentGroupId,
                 },
             });
         }
-    }, [event.id, fullEventInfo.data, getFullEventInfo, isOpen]);
+    }, [content.data, getContent, isOpen, event.contentGroupId]);
 
     const borderColour = useColorModeValue("blue.200", "blue.800");
     return (
@@ -304,7 +300,7 @@ export default function EventBox({
                 borderStyle="solid"
                 p={2}
                 boxSizing="border-box"
-                fontSize="70%"
+                fontSize="sm"
                 lineHeight="120%"
                 textAlign="left"
                 onClick={onOpen}
@@ -339,7 +335,7 @@ export default function EventBox({
                     durationSeconds={durationSeconds}
                     roomName={roomName}
                     events={sortedEvents}
-                    fullEvent={fullEventInfo.data?.Event_by_pk}
+                    content={content.data?.ContentGroup_by_pk}
                     isOpen={isOpen}
                     onClose={onClose}
                 />

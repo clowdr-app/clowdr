@@ -1,6 +1,6 @@
 import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Route, RouteComponentProps, Switch } from "react-router-dom";
+import { Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import "./App.css";
 import Routing from "./AppRouting";
 import { GlobalChatStateContext, GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
@@ -184,12 +184,18 @@ function AppPage({ rootUrl }: AppProps) {
         </Box>
     ) : undefined;
 
+    const locationMatchSchedule = useRouteMatch([
+        `/conference/${conference?.slug ?? "NONE"}/schedule`,
+        `/conference/${conference?.slug ?? "NONE"}/schedule2`,
+    ]);
+    const isSchedulePage = locationMatchSchedule !== null;
+
     const centerBgColour = useColorModeValue("gray.100", "gray.800");
     const borderColour = useColorModeValue("gray.200", "gray.600");
     const centerBar = (
         <Box
             overflowX="hidden"
-            overflowY="auto"
+            overflowY={isSchedulePage ? "hidden" : "auto"}
             height="100%"
             width={contentWidthPc + "%"}
             flex="1 0 300px"
@@ -200,13 +206,23 @@ function AppPage({ rootUrl }: AppProps) {
             borderX="1px solid"
             borderLeftColor={borderColour}
             borderRightColor={borderColour}
+            display={isSchedulePage ? "flex" : undefined}
+            flexDir={isSchedulePage ? "column" : undefined}
         >
             <MenuBar />
-            <VStack spacing={5} width="100%" p={2}>
+            <VStack
+                spacing={5}
+                width="100%"
+                p={2}
+                flex={isSchedulePage ? "0 1 100%" : undefined}
+                overflow={isSchedulePage ? "hidden" : undefined}
+            >
                 {center}
-                <Box h="40px" display="inline-block" flex="0 0 40px">
-                    &nbsp;
-                </Box>
+                {!isSchedulePage ? (
+                    <Box h="40px" display="inline-block" flex="0 0 40px">
+                        &nbsp;
+                    </Box>
+                ) : undefined}
             </VStack>
         </Box>
     );

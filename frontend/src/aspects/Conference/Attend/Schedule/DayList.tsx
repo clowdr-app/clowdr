@@ -97,7 +97,7 @@ export default function DayList({
                     colorScheme="red"
                     borderWidth={1}
                     borderStyle="solid"
-                    size="lg"
+                    size="sm"
                     flex="1 1 auto"
                     position="relative"
                     height="auto"
@@ -124,7 +124,7 @@ export default function DayList({
                         colorScheme="blue"
                         borderWidth={1}
                         borderStyle="solid"
-                        size="lg"
+                        size="sm"
                         flex="1 1 auto"
                         position="relative"
                         height="auto"

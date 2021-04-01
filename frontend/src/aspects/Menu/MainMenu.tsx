@@ -60,7 +60,7 @@ export function MenuBar(): JSX.Element {
                     to={`/conference/${conference.slug}`}
                     size="sm"
                     aria-label="Conference home"
-                    variant="ghost"
+                    variant="solid"
                 >
                     {conference.shortName}
                 </LinkButton>

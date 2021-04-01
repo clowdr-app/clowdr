@@ -20,7 +20,7 @@ import DayList from "./DayList";
 import NowMarker from "./NowMarker";
 import RoomNameBox from "./RoomNameBox";
 import RoomTimeline from "./RoomTimeline";
-import { ScrollerProvider, useScrollerParams } from "./Scroller";
+import { ScalingProvider, useScalingParams } from "./Scaling";
 import TimeBar from "./TimeBar";
 import useTimelineParameters, { TimelineParameters } from "./useTimelineParameters";
 
@@ -303,10 +303,10 @@ function ScheduleFrame({
         [alternateBgColor, borderColour, frame.items, roomColWidth]
     );
 
-    const { visibleTimeSpanSeconds } = useScrollerParams();
+    const { visibleTimeSpanSeconds } = useScalingParams();
     const { fullTimeSpanSeconds } = useTimelineParameters();
 
-    const innerHeightPx = (1920 * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
+    const innerHeightPx = ((window.innerHeight - 200) * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
 
     // const roomMarkers = useGenerateMarkers("100%", "", true, false, false);
 
@@ -440,30 +440,62 @@ function ScheduleInner({
         frames,
     ]);
     const timeBarWidth = 50;
-    const roomColWidth = Math.min(500, Math.max(150, window.innerWidth / maxParallelRooms - timeBarWidth - 70));
+    const roomColWidth = Math.min(
+        500,
+        Math.max(
+            150,
+            (window.innerWidth >= 1280 ? window.innerWidth * 0.6 : window.innerWidth) / maxParallelRooms -
+                timeBarWidth -
+                70
+        )
+    );
 
     const frameEls = useMemo(() => {
-        return frames.map((frame) => (
-            <TimelineParameters
-                earliestEventStart={frame.startTimeMs}
-                latestEventEnd={frame.endTimeMs}
-                key={`frame-${frame.startTimeMs}`}
-            >
-                <ScrollerProvider>
-                    <ScheduleFrame
-                        frame={frame}
-                        alternateBgColor={alternateBgColor}
-                        borderColour={borderColour}
-                        maxParallelRooms={maxParallelRooms}
-                        scrollToEventCbs={scrollToEventCbs}
-                        scrollToNow={scrollToNow}
-                        contentGroups={contentGroups}
-                        roomColWidth={roomColWidth}
-                        timeBarWidth={timeBarWidth}
-                    />
-                </ScrollerProvider>
-            </TimelineParameters>
-        ));
+        return frames.map((frame) => {
+            const avgEventDurationI = frame.items.reduce(
+                (acc, item) => {
+                    const { sum, count } = item.session.events.reduce(
+                        (acc, event) => ({
+                            sum: acc.sum + event.durationMs,
+                            count: acc.count + 1,
+                        }),
+                        { sum: 0, count: 0 }
+                    );
+                    return { sum: acc.sum + sum, count: acc.count + count };
+                },
+                { sum: 0, count: 0 }
+            );
+            const avgEventsPerRoomI = frame.items.reduce(
+                (acc, item) => ({
+                    sum: acc.sum + item.session.events.length,
+                    count: acc.count + 1,
+                }),
+                { sum: 0, count: 0 }
+            );
+            const avgEventDuration = avgEventDurationI.count > 0 ? avgEventDurationI.sum / avgEventDurationI.count : 1;
+            const avgEventsPerRoom = avgEventsPerRoomI.count > 0 ? avgEventsPerRoomI.sum / avgEventsPerRoomI.count : 1;
+            return (
+                <TimelineParameters
+                    earliestEventStart={frame.startTimeMs}
+                    latestEventEnd={frame.endTimeMs}
+                    key={`frame-${frame.startTimeMs}`}
+                >
+                    <ScalingProvider avgEventDuration={avgEventDuration} avgEventsPerRoom={avgEventsPerRoom}>
+                        <ScheduleFrame
+                            frame={frame}
+                            alternateBgColor={alternateBgColor}
+                            borderColour={borderColour}
+                            maxParallelRooms={maxParallelRooms}
+                            scrollToEventCbs={scrollToEventCbs}
+                            scrollToNow={scrollToNow}
+                            contentGroups={contentGroups}
+                            roomColWidth={roomColWidth}
+                            timeBarWidth={timeBarWidth}
+                        />
+                    </ScalingProvider>
+                </TimelineParameters>
+            );
+        });
     }, [
         alternateBgColor,
         borderColour,

@@ -1,7 +1,7 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import React, { useMemo } from "react";
-import { useScrollerParams } from "./Scroller";
+import { useScalingParams } from "./Scaling";
 import TimeMarker from "./TimeMarker";
 import useTimelineParameters from "./useTimelineParameters";
 
@@ -34,7 +34,7 @@ export function useGenerateMarkers(
     includeSubMarkers = true,
     showTimeLabel = true
 ): JSX.Element[] {
-    const scroller = useScrollerParams();
+    const scroller = useScalingParams();
     const timeline = useTimelineParameters();
 
     const orange = "#DD6B20";

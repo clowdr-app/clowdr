@@ -342,7 +342,7 @@ function ScheduleFrame({
     );
 
     return (
-        <Box w="100%">
+        <Box w="100%" borderBottomStyle="solid" borderBottomWidth="3px" borderBottomColor={borderColour}>
             <Box
                 flex="1 0 max-content"
                 role="list"

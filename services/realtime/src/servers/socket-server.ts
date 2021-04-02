@@ -32,7 +32,7 @@ socketServer.adapter(
 const jwksClient = jwksRsa({
     cache: true,
     rateLimit: true,
-    jwksRequestsPerMinute: 1,
+    jwksRequestsPerMinute: 20,
     jwksUri: `https://${process.env.AUTH0_API_DOMAIN}/.well-known/jwks.json`,
     getKeysInterceptor: async () => {
         return testJWKs as SigningKey[];

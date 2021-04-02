@@ -1,12 +1,14 @@
 export interface Message {
     sId: string;
+    userId: string;
     chatId: string;
     message: string;
 }
 
 export interface Reaction {
     sId: string;
-    messageSId: string;
+    userId: string;
     chatId: string;
+    messageSId: string;
     reaction: string;
 }

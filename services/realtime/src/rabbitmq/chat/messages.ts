@@ -1,5 +1,7 @@
 import { Channel } from "amqplib";
 import { is } from "typescript-is";
+import { RoomPrivacy_Enum } from "../../generated/graphql";
+import { canIUDMessage as canIUDMessageOrReaction } from "../../lib/permissions";
 import { downlink, uplink } from "../../rabbitmq";
 import { Message } from "../../types/chat";
 
@@ -53,13 +55,27 @@ async function writebackDownChannel() {
     return channel;
 }
 
-export async function send(message: Message): Promise<void> {
-    // TODO: Check permissions
+export async function send(message: Message, userId: string, confSlugs: string[]): Promise<boolean> {
+    if (
+        await canIUDMessageOrReaction(
+            userId,
+            message.chatId,
+            confSlugs,
+            true,
+            false,
+            "messages.send:test-attendee-id",
+            "messages.send:test-conference-id",
+            RoomPrivacy_Enum.Private
+        )
+    ) {
+        message.userId = userId;
 
-    const channel = await uplinkChannel();
-    channel.publish(exchange, message.chatId, Buffer.from(JSON.stringify(message)), {
-        persistent: true,
-    });
+        const channel = await uplinkChannel();
+        return channel.publish(exchange, message.chatId, Buffer.from(JSON.stringify(message)), {
+            persistent: true,
+        });
+    }
+    return false;
 }
 
 export async function onDistributionMessage(handler: (message: Message) => Promise<void>): Promise<void> {

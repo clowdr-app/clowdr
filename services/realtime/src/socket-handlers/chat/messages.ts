@@ -5,8 +5,8 @@ import { send } from "../../rabbitmq/chat/messages";
 import { Message } from "../../types/chat";
 
 export function onSend(
-    _conferenceSlugs: string[],
-    _userId: string,
+    conferenceSlugs: string[],
+    userId: string,
     socketId: string,
     socket: Socket
 ): (message: any, cb?: () => void) => Promise<void> {
@@ -14,8 +14,11 @@ export function onSend(
         if (message) {
             try {
                 assert(is<Message>(message), "Data does not match expected type.");
-                await send(message);
-                socket.emit("chat.messages.send.ack", message.sId);
+                if (await send(message, userId, conferenceSlugs)) {
+                    socket.emit("chat.messages.send.ack", message.sId);
+                } else {
+                    socket.emit("chat.messages.send.nack", message.sId);
+                }
             } catch (e) {
                 console.error(`Error processing chat.messages.send (socket: ${socketId}, sId: ${message.sId})`, e);
                 try {

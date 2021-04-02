@@ -1,6 +1,7 @@
 import assert from "assert";
-import redis from "redis";
+import redis, { Callback } from "redis";
 import Redlock from "redlock";
+import { promisify } from "util";
 
 assert(process.env.REDIS_URL, "REDIS_URL env var not defined.");
 
@@ -12,3 +13,11 @@ export const redlock = new Redlock([redisClient], {
     retryDelay: 200,
     retryJitter: 200,
 });
+
+export const redisClientP = {
+    get: promisify(redisClient.get).bind(redisClient),
+    set: promisify(
+        (key: string, value: string, flag: string, mode: string, duration: number, cb?: Callback<"OK" | undefined>) =>
+            redisClient.set(key, value, flag, mode, duration, cb)
+    ),
+};

@@ -25,7 +25,7 @@ async function wait(ms: number) {
 async function Main(
     messagesPerSecond = 10,
     message = "Test message",
-    chatId = "testChat1",
+    chatId = process.env.CHAT_ID ?? "testChat1",
     floodReactionsEveryNMessages = 3,
     reactions = [":thumbsup:", ":)", "+1"]
 ) {
@@ -94,8 +94,9 @@ async function Main(
         while (true) {
             const msg: Message = {
                 sId: uuidv4(),
-                message: `${totalMessagesSent}: ${message}`,
+                userId,
                 chatId,
+                message: `${totalMessagesSent}: ${message}`,
             };
 
             try {
@@ -127,9 +128,10 @@ async function Main(
                     for (const reaction of reactions) {
                         const rct: Reaction = {
                             sId: uuidv4(),
-                            reaction,
+                            userId,
                             chatId,
                             messageSId: msg.sId,
+                            reaction,
                         };
                         client.emit("chat.reactions.send", rct);
                         // We don't bother with an ack mechanism for reactions

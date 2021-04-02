@@ -96,6 +96,20 @@
             },
             "args": ["run", "gql-cdg"]
         },
+        // Real-time service -- GraphQL Codegen
+        {
+            "label": "Real-time service -- GraphQL Codegen",
+            "type": "shell",
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/realtime"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["run", "gql-cdg"]
+        },
         // Real-time service -- Local Development
         {
             "label": "Real-time Service -- Local Development",

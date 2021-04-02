@@ -20,7 +20,7 @@ async function wait(ms: number) {
     });
 }
 
-async function Main(chatId = "testChat1") {
+async function Main(chatId = process.env.CHAT_ID ?? "testChat1") {
     try {
         process.stdout.write("Attempting to obtain test JWT...");
         const jwtResponse = await fetch(serverURL + `test/jwt?userId=${userId}&confSlug=${confSlug}`, {

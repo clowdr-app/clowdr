@@ -1,22 +1,26 @@
 import { gql } from "@apollo/client/core";
+import { StackStatus } from "@aws-sdk/client-cloudformation";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
-import { AwsService } from "../aws/aws.service";
-import { GetObsoleteChannelStacksDocument, GetRoomsNeedingChannelStackDocument } from "../generated/graphql";
-import { ChannelStackCreateJobService } from "../hasura/channel-stack-create-job/channel-stack-create-job.service";
-import { GraphQlService } from "../hasura/graphql.service";
-import { MediaLiveChannelService } from "../hasura/media-live-channel/media-live-channel.service";
-import { shortId } from "../utils/id";
+import { add, sub } from "date-fns";
+import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
+import { GetObsoleteChannelStacksDocument, GetRoomsNeedingChannelStackDocument } from "../../generated/graphql";
+import { GraphQlService } from "../../hasura/graphql.service";
+import { shortId } from "../../utils/id";
+import { ChannelStackCreateJobService } from "../channel-stack-create-job/channel-stack-create-job.service";
+import { ChannelsService } from "../channels/channels.service";
+import { MediaLiveChannelService } from "../media-live-channel/media-live-channel.service";
 
 @Injectable()
 export class ChannelSyncService {
     private readonly logger: Bunyan;
     constructor(
         @RootLogger() logger: Bunyan,
-        private awsService: AwsService,
+        private cloudFormationService: CloudFormationService,
         private graphQlService: GraphQlService,
         private channelStackCreateJobService: ChannelStackCreateJobService,
-        private mediaLiveChannelService: MediaLiveChannelService
+        private mediaLiveChannelService: MediaLiveChannelService,
+        private channelsService: ChannelsService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
@@ -27,8 +31,21 @@ export class ChannelSyncService {
         this.logger.info("Syncing channel stacks");
         if (!this.syncInProgress) {
             this.syncInProgress = true;
-            await this.ensureChannelStacksCreated();
-            await this.ensureOldChannelStacksDestroyed();
+            try {
+                await this.ensureChannelStacksCreated();
+            } catch (e) {
+                this.logger.error(e, "Failure while ensuring channel stacks created");
+            }
+            try {
+                await this.ensureOldChannelStacksDestroyed();
+            } catch (e) {
+                this.logger.error(e, "Failure while ensuring old channel stacks destroyed");
+            }
+            try {
+                await this.pollOldChannelStackCreateJobs();
+            } catch (e) {
+                this.logger.error(e, "Failure while polling potentially-stuck channel stack create jobs");
+            }
             this.syncInProgress = false;
         } else {
             this.logger.info("Channel sync already in progress, skipping");
@@ -37,7 +54,7 @@ export class ChannelSyncService {
 
     public async getRoomsNeedingChannelStack(): Promise<{ roomId: string; roomName: string; conferenceId: string }[]> {
         const now = new Date();
-        const future = new Date(now.getTime() + 60 * 60 * 1000);
+        const future = add(now, { hours: 1 });
 
         gql`
             query GetRoomsNeedingChannelStack($now: timestamptz, $future: timestamptz) {
@@ -105,7 +122,7 @@ export class ChannelSyncService {
         `;
 
         // Look for rooms that have no events ending since at least 24 hours ago
-        const past = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
+        const past = sub(new Date(), { hours: 24 });
 
         const result = await this.graphQlService.apolloClient.query({
             query: GetObsoleteChannelStacksDocument,
@@ -123,15 +140,17 @@ export class ChannelSyncService {
         const roomsNeedingChannelStack = await this.getRoomsNeedingChannelStack();
 
         if (roomsNeedingChannelStack.length > 0) {
-            this.logger.info({ msg: "Found rooms that need a channel stack", rooms: roomsNeedingChannelStack });
+            this.logger.info({ rooms: roomsNeedingChannelStack }, "Found rooms that need a channel stack");
         }
 
         for (const roomNeedingChannelStack of roomsNeedingChannelStack) {
-            this.logger.info({
-                msg: "Creating channel stack",
-                roomId: roomNeedingChannelStack.roomId,
-                roomName: roomNeedingChannelStack.roomName,
-            });
+            this.logger.info(
+                {
+                    roomId: roomNeedingChannelStack.roomId,
+                    roomName: roomNeedingChannelStack.roomName,
+                },
+                "Creating channel stack"
+            );
             const stackLogicalResourceId = `room-${shortId(10)}`;
 
             const jobId = await this.channelStackCreateJobService.createChannelStackCreateJob(
@@ -139,7 +158,7 @@ export class ChannelSyncService {
                 roomNeedingChannelStack.conferenceId,
                 stackLogicalResourceId
             );
-            this.awsService
+            this.channelsService
                 .createNewChannelStack(
                     roomNeedingChannelStack.roomId,
                     roomNeedingChannelStack.roomName,
@@ -147,11 +166,14 @@ export class ChannelSyncService {
                     stackLogicalResourceId
                 )
                 .catch(async (e) => {
-                    this.logger.error(e, {
-                        msg: "Failed to create channel stack",
-                        roomId: roomNeedingChannelStack.roomId,
-                        conferenceId: roomNeedingChannelStack.conferenceId,
-                    });
+                    this.logger.error(
+                        e,
+                        {
+                            roomId: roomNeedingChannelStack.roomId,
+                            conferenceId: roomNeedingChannelStack.conferenceId,
+                        },
+                        "Failed to create channel stack"
+                    );
                     await this.channelStackCreateJobService.failChannelStackCreateJob(jobId, JSON.stringify(e));
                 });
         }
@@ -168,23 +190,32 @@ export class ChannelSyncService {
 
         for (const obsoleteChannelStack of obsoleteChannelStacks) {
             try {
-                if (obsoleteChannelStack.cloudFormationStackArn) {
-                    this.logger.info({ obsoleteChannelStack }, "Deleting channel stack");
-                    const alreadyDeleted = await this.awsService.deleteChannelStack(
-                        obsoleteChannelStack.cloudFormationStackArn
-                    );
-                    if (alreadyDeleted) {
-                        this.logger.info({ obsoleteChannelStack }, "Channel stack is already deleted, removing record");
-                        await this.mediaLiveChannelService.deleteMediaLiveChannel(
-                            obsoleteChannelStack.mediaLiveChannelId
-                        );
-                    }
-                } else {
-                    this.logger.info({ obsoleteChannelStack }, "No known Arn for channel stack, removing record");
-                    await this.mediaLiveChannelService.deleteMediaLiveChannel(obsoleteChannelStack.mediaLiveChannelId);
-                }
+                this.logger.info({ obsoleteChannelStack }, "Deleting obsolete channel stack");
+                await this.channelsService.deleteChannelStack(obsoleteChannelStack.mediaLiveChannelId);
             } catch (e) {
                 this.logger.error({ obsoleteChannelStack, err: e }, "Failed to clean up an obsolete channel stack");
+            }
+        }
+    }
+
+    public async pollOldChannelStackCreateJobs(): Promise<void> {
+        this.logger.info("Polling status of old channel stack create jobs");
+
+        const oldJobs = await this.channelStackCreateJobService.findPotentiallyStuckChannelStackCreateJobs();
+
+        for (const oldJob of oldJobs) {
+            try {
+                this.logger.info({ oldJob }, "Polling status of a potentially stuck channel stack create job");
+                const stack = await this.cloudFormationService.getStackStatus(oldJob.stackLogicalResourceId);
+                if (!stack) {
+                    this.logger.warn({ oldJob }, "Could not retrieve status of a channel stack create job");
+                } else if (
+                    [StackStatus.CREATE_COMPLETE as string, StackStatus.UPDATE_COMPLETE].includes(stack.stackStatus)
+                ) {
+                    await this.channelsService.handleCompletedChannelStack(oldJob.stackLogicalResourceId, stack.arn);
+                }
+            } catch (e) {
+                this.logger.error({ err: e, oldJob }, "Failed to poll status of stuck channel stack create job");
             }
         }
     }

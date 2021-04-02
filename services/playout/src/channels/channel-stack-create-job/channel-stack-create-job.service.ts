@@ -1,15 +1,17 @@
 import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
+import { sub } from "date-fns";
 import {
     CompleteChannelStackCreateJobDocument,
     CreateChannelStackCreateJobDocument,
     FailChannelStackCreateJobDocument,
     FindChannelStackCreateJobByLogicalResourceIdDocument,
+    FindPotentiallyStuckChannelStackCreateJobsDocument,
     GetChannelStackCreateJobDocument,
     JobStatus_Enum,
 } from "../../generated/graphql";
-import { GraphQlService } from "../graphql.service";
+import { GraphQlService } from "../../hasura/graphql.service";
 
 @Injectable()
 export class ChannelStackCreateJobService {
@@ -114,12 +116,13 @@ export class ChannelStackCreateJobService {
 
     public async findChannelStackCreateJobByLogicalResourceId(
         stackLogicalResourceId: string
-    ): Promise<{ jobId: string; conferenceId: string } | null> {
+    ): Promise<{ jobId: string; conferenceId: string; roomId: string } | null> {
         gql`
             query FindChannelStackCreateJobByLogicalResourceId($stackLogicalResourceId: String!) {
                 job_queues_ChannelStackCreateJob(where: { stackLogicalResourceId: { _eq: $stackLogicalResourceId } }) {
                     id
                     conferenceId
+                    roomId
                 }
             }
         `;
@@ -135,9 +138,36 @@ export class ChannelStackCreateJobService {
             return {
                 jobId: result.data.job_queues_ChannelStackCreateJob[0].id,
                 conferenceId: result.data.job_queues_ChannelStackCreateJob[0].conferenceId,
+                roomId: result.data.job_queues_ChannelStackCreateJob[0].roomId,
             };
         } else {
             return null;
         }
+    }
+
+    public async findPotentiallyStuckChannelStackCreateJobs(): Promise<
+        { jobId: string; stackLogicalResourceId: string }[]
+    > {
+        gql`
+            query FindPotentiallyStuckChannelStackCreateJobs($past: timestamptz!) {
+                job_queues_ChannelStackCreateJob(
+                    where: { updated_at: { _lte: $past }, jobStatusName: { _eq: IN_PROGRESS } }
+                ) {
+                    jobId: id
+                    stackLogicalResourceId
+                }
+            }
+        `;
+
+        const past = sub(new Date(), { minutes: 15 }).toISOString();
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: FindPotentiallyStuckChannelStackCreateJobsDocument,
+            variables: {
+                past,
+            },
+        });
+
+        return result.data.job_queues_ChannelStackCreateJob;
     }
 }

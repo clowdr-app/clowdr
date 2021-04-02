@@ -47,7 +47,25 @@ import {
     VideoDescriptionScalingBehavior,
 } from "@aws-sdk/client-medialive";
 import { AdMarkers, Origination, PlaylistType, StreamOrder } from "@aws-sdk/client-mediapackage";
-import { truncate } from "../utils/string";
+import { truncate } from "../../utils/string";
+
+export interface ChannelStackDescription {
+    rtmpAInputUri: string;
+    rtmpAInputId: string;
+    rtmpBInputUri: string;
+    rtmpBInputId: string;
+    mp4InputId: string;
+    loopingMp4InputId: string;
+    mp4InputAttachmentName: string;
+    loopingMp4InputAttachmentName: string;
+    rtmpAInputAttachmentName: string;
+    rtmpBInputAttachmentName: string;
+    mediaLiveChannelId: string;
+    mediaPackageChannelId: string;
+    cloudFrontDistributionId: string;
+    cloudFrontDomain: string;
+    endpointUri: string;
+}
 
 export interface ChannelStackProps extends cdk.StackProps {
     inputSecurityGroupId: string;

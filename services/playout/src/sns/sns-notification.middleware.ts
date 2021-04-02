@@ -20,7 +20,7 @@ export class SnsNotificationMiddleware implements NestMiddleware {
             req.body = JSON.parse(req.body);
             await validate(req.body);
         } catch (e) {
-            this._logger.warn(e, { msg: "Invalid SNS notification", req: req.body });
+            this._logger.warn({ err: e, req: req.body }, "Invalid SNS notification");
             throw new HttpException("Invalid notification", HttpStatus.UNAUTHORIZED);
         }
         next();

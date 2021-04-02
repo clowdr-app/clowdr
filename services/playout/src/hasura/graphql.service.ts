@@ -6,19 +6,19 @@ import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
 import fetch from "cross-fetch";
 import WebSocket from "ws";
 import { HASURA_MODULE_OPTIONS } from "../constants";
-import { HasuraModuleOptions } from "./hasura-data.module";
+import { HasuraDataModuleOptions } from "./hasura-data.module";
 
 @Injectable()
 export class GraphQlService implements OnModuleInit {
     private readonly logger: Bunyan;
-    private readonly config: HasuraModuleOptions;
+    private readonly config: HasuraDataModuleOptions;
     private _apolloClient: ApolloClient<NormalizedCacheObject>;
 
     get apolloClient(): ApolloClient<NormalizedCacheObject> {
         return this._apolloClient;
     }
 
-    constructor(@RootLogger() logger: Bunyan, @Inject(HASURA_MODULE_OPTIONS) config: HasuraModuleOptions) {
+    constructor(@RootLogger() logger: Bunyan, @Inject(HASURA_MODULE_OPTIONS) config: HasuraDataModuleOptions) {
         this.config = config;
         this.logger = logger.child({ component: this.constructor.name });
     }

@@ -36,6 +36,7 @@ export class AwsStack extends cdk.Stack {
                 actions: [
                     "cloudformation:CreateChangeSet",
                     "cloudformation:CreateStack",
+                    "cloudformation:DeleteStack",
                     "cloudformation:DeleteChangeSet",
                     "cloudformation:DescribeChangeSet",
                     "cloudformation:DescribeStacks",

@@ -1,20 +1,10 @@
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
-import {
-    DynamicModule,
-    FactoryProvider,
-    Global,
-    MiddlewareConsumer,
-    Module,
-    ModuleMetadata,
-    NestModule,
-} from "@nestjs/common";
+import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import assert from "assert";
 import { AWS_MODULE_OPTIONS } from "../constants";
-import { AwsController } from "./aws.controller";
 import { AwsService } from "./aws.service";
 import { CloudFormationService } from "./cloud-formation/cloud-formation.service";
-import { SnsNotificationMiddleware } from "./sns-notification.middleware";
 
 export type AwsModuleOptions = {
     credentials: {
@@ -29,10 +19,9 @@ export type AwsModuleOptions = {
 @Global()
 @Module({
     providers: [AwsService, CloudFormationService],
-    exports: [AwsService],
-    controllers: [AwsController],
+    exports: [AwsService, CloudFormationService],
 })
-export class AwsModule implements NestModule {
+export class AwsModule {
     static forRoot(config: AwsModuleOptions): DynamicModule {
         return {
             module: AwsModule,
@@ -71,10 +60,6 @@ export class AwsModule implements NestModule {
 
     constructor(private awsService: AwsService, @RootLogger() logger: Bunyan, private configService: ConfigService) {
         this.logger = logger.child({ component: this.constructor.name });
-    }
-
-    public configure(consumer: MiddlewareConsumer): void {
-        consumer.apply(SnsNotificationMiddleware).forRoutes(AwsController);
     }
 
     async onModuleInit(): Promise<void> {

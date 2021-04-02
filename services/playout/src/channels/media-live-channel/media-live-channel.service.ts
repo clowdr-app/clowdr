@@ -1,9 +1,13 @@
 import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
-import { ChannelStackDescription } from "../../aws/aws.service";
-import { CreateMediaLiveChannelDocument, DeleteMediaLiveChannelDocument } from "../../generated/graphql";
-import { GraphQlService } from "../graphql.service";
+import {
+    CreateMediaLiveChannelDocument,
+    DeleteMediaLiveChannelDocument,
+    FindMediaLiveChannelsByStackArnDocument,
+} from "../../generated/graphql";
+import { GraphQlService } from "../../hasura/graphql.service";
+import { ChannelStackDescription } from "../channels/channelStack";
 
 @Injectable()
 export class MediaLiveChannelService {
@@ -17,7 +21,8 @@ export class MediaLiveChannelService {
         stackDescription: ChannelStackDescription,
         cloudFormationStackArn: string,
         jobId: string,
-        conferenceId: string
+        conferenceId: string,
+        roomId: string
     ): Promise<void> {
         gql`
             mutation CreateMediaLiveChannel(
@@ -35,6 +40,7 @@ export class MediaLiveChannelService {
                 $vonageInputAttachmentName: String!
                 $conferenceId: uuid!
                 $channelStackCreateJobId: uuid!
+                $roomId: uuid!
             ) {
                 insert_MediaLiveChannel_one(
                     object: {
@@ -52,6 +58,7 @@ export class MediaLiveChannelService {
                         vonageInputAttachmentName: $vonageInputAttachmentName
                         conferenceId: $conferenceId
                         channelStackCreateJobId: $channelStackCreateJobId
+                        roomId: $roomId
                     }
                 ) {
                     id
@@ -63,10 +70,10 @@ export class MediaLiveChannelService {
             mutation: CreateMediaLiveChannelDocument,
             variables: {
                 channelStackCreateJobId: jobId,
-                cloudFormationStackArn: cloudFormationStackArn,
+                cloudFormationStackArn,
                 cloudFrontDistributionId: stackDescription.cloudFrontDistributionId,
                 cloudFrontDomain: stackDescription.cloudFrontDomain,
-                conferenceId: conferenceId,
+                conferenceId,
                 endpointUri: stackDescription.endpointUri,
                 loopingMp4InputAttachmentName: stackDescription.loopingMp4InputAttachmentName,
                 mediaLiveChannelId: stackDescription.mediaLiveChannelId,
@@ -76,32 +83,58 @@ export class MediaLiveChannelService {
                 rtmpInputId: stackDescription.rtmpAInputId,
                 rtmpInputUri: stackDescription.rtmpAInputUri,
                 vonageInputAttachmentName: stackDescription.rtmpAInputAttachmentName,
+                roomId,
             },
         });
 
-        this.logger.info({
-            msg: "Created MediaLiveChannel",
-            mediaLiveChannelId: result.data?.insert_MediaLiveChannel_one?.id,
-        });
+        this.logger.info(
+            {
+                mediaLiveChannelId: result.data?.insert_MediaLiveChannel_one?.id,
+            },
+            "Created MediaLiveChannel"
+        );
     }
 
     /**
      * @summary Deletes the database entry for a MediaLive channel stack
      */
-    public async deleteMediaLiveChannel(mediaLiveChannelId: string): Promise<void> {
+    public async deleteMediaLiveChannel(
+        mediaLiveChannelId: string
+    ): Promise<{ cloudFormationStackArn?: string | null }> {
         gql`
             mutation DeleteMediaLiveChannel($id: uuid!) {
                 delete_MediaLiveChannel_by_pk(id: $id) {
                     id
+                    cloudFormationStackArn
                 }
             }
         `;
 
-        await this.graphQlService.apolloClient.mutate({
+        const result = await this.graphQlService.apolloClient.mutate({
             mutation: DeleteMediaLiveChannelDocument,
             variables: {
                 id: mediaLiveChannelId,
             },
         });
+
+        return { cloudFormationStackArn: result.data?.delete_MediaLiveChannel_by_pk?.cloudFormationStackArn };
+    }
+
+    public async findMediaLiveChannelsByStackArn(stackArn: string): Promise<string[]> {
+        gql`
+            query FindMediaLiveChannelsByStackArn($stackArn: String!) {
+                MediaLiveChannel(where: { cloudFormationStackArn: { _eq: $stackArn } }) {
+                    id
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: FindMediaLiveChannelsByStackArnDocument,
+            variables: {
+                stackArn,
+            },
+        });
+        return result.data.MediaLiveChannel.map((c) => c.id);
     }
 }

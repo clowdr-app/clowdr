@@ -1,5 +1,5 @@
 import { LoggingModule } from "@eropple/nestjs-bunyan";
-import { HasuraModule as ExternalHasuraModule } from "@golevelup/nestjs-hasura";
+import { HasuraModule } from "@golevelup/nestjs-hasura";
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import assert from "assert";
@@ -7,20 +7,21 @@ import { v4 as uuidv4 } from "uuid";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AwsModule, AwsModuleOptions } from "./aws/aws.module";
-import { ChannelSyncModule } from "./channel-sync/channel-sync.module";
-import { HasuraDataModule, HasuraModuleOptions } from "./hasura/hasura-data.module";
+import { ChannelsModule } from "./channels/channels.module";
+import { HasuraDataModule, HasuraDataModuleOptions } from "./hasura/hasura-data.module";
 import { JsonBodyMiddleware } from "./json-body.middleware";
 import { ROOT_LOGGER } from "./logger";
+import { SnsModule } from "./sns/sns.module";
 import { TextBodyMiddleware } from "./text-body.middleware";
 
 @Module({
     imports: [
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
         LoggingModule.forRoot(ROOT_LOGGER, {
             dropHeaders: ["x-hasura-event-secret"],
             correlationIdHeader: "x-b3-traceid",
         }),
-        ExternalHasuraModule.forRootAsync(ExternalHasuraModule, {
+        HasuraModule.forRootAsync(HasuraModule, {
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
                 webhookConfig: {
@@ -61,7 +62,7 @@ import { TextBodyMiddleware } from "./text-body.middleware";
                 assert(graphQlApiDomain, "Missing GRAPHQL_API_DOMAIN");
                 const hasuraAdminSecret = configService.get<string>("HASURA_ADMIN_SECRET");
                 assert(hasuraAdminSecret, "Missing HASURA_ADMIN_SECRET");
-                const config: HasuraModuleOptions = {
+                const config: HasuraDataModuleOptions = {
                     graphQlApiDomain,
                     useSecureProtocols,
                     hasuraAdminSecret,
@@ -70,7 +71,8 @@ import { TextBodyMiddleware } from "./text-body.middleware";
             },
             inject: [ConfigService],
         }),
-        ChannelSyncModule,
+        ChannelsModule,
+        SnsModule,
     ],
     controllers: [AppController],
     providers: [AppService],

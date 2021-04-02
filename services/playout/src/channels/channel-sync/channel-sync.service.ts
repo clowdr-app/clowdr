@@ -9,7 +9,6 @@ import { GraphQlService } from "../../hasura/graphql.service";
 import { shortId } from "../../utils/id";
 import { ChannelStackCreateJobService } from "../channel-stack-create-job/channel-stack-create-job.service";
 import { ChannelsService } from "../channels/channels.service";
-import { MediaLiveChannelService } from "../media-live-channel/media-live-channel.service";
 
 @Injectable()
 export class ChannelSyncService {
@@ -19,7 +18,6 @@ export class ChannelSyncService {
         private cloudFormationService: CloudFormationService,
         private graphQlService: GraphQlService,
         private channelStackCreateJobService: ChannelStackCreateJobService,
-        private mediaLiveChannelService: MediaLiveChannelService,
         private channelsService: ChannelsService
     ) {
         this.logger = logger.child({ component: this.constructor.name });

@@ -1,4 +1,13 @@
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
+
+[build]
+command = "cd shared && npm i && cd ../frontend && npm i && npm run build"
+publish = "frontend/build"
+
+[build.environment]
+
+NPM_VERSION = "7.8"
+NODE_VERSION = "15.4"

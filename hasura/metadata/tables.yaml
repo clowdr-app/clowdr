@@ -406,6 +406,7 @@
         remote_table:
           schema: chat
           name: Message
+        insertion_order: null
         column_mapping:
           id: duplicatedMessageId
   - name: duplicateOutgoing
@@ -840,6 +841,7 @@
         remote_table:
           schema: public
           name: Attendee
+        insertion_order: null
         column_mapping:
           attendeeId: id
   - name: chat
@@ -848,6 +850,7 @@
         remote_table:
           schema: chat
           name: Chat
+        insertion_order: null
         column_mapping:
           chatId: id
   select_permissions:
@@ -1091,17 +1094,17 @@
     using:
       foreign_key_constraint_on: chatId
   computed_fields:
-  - name: unreadCount
-    definition:
-      function:
-        schema: chat
-        name: unreadCount
-    comment: ""
   - name: unnotifiedCount
     definition:
       function:
         schema: chat
         name: unnotifiedCount
+    comment: ""
+  - name: unreadCount
+    definition:
+      function:
+        schema: chat
+        name: unreadCount
     comment: ""
   insert_permissions:
   - role: user
@@ -1209,6 +1212,7 @@
         remote_table:
           schema: public
           name: Attendee
+        insertion_order: null
         column_mapping:
           attendeeId: id
   - name: chat
@@ -1217,6 +1221,7 @@
         remote_table:
           schema: chat
           name: Chat
+        insertion_order: null
         column_mapping:
           chatId: id
 - table:
@@ -1330,6 +1335,19 @@
   - role: user
     permission:
       filter: {}
+- table:
+    schema: job_queues
+    name: ChannelStackCreateJob
+  object_relationships:
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: jobStatus
+    using:
+      foreign_key_constraint_on: jobStatusName
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
 - table:
     schema: job_queues
     name: CombineVideosJob
@@ -1772,6 +1790,7 @@
         remote_table:
           schema: public
           name: Invitation
+        insertion_order: null
         column_mapping:
           id: attendeeId
   - name: profile
@@ -1780,6 +1799,7 @@
         remote_table:
           schema: public
           name: AttendeeProfile
+        insertion_order: null
         column_mapping:
           id: attendeeId
   - name: user
@@ -2588,6 +2608,7 @@
         remote_table:
           schema: public
           name: Conference
+        insertion_order: null
         column_mapping:
           id: demoCodeId
   - name: usedBy
@@ -2728,6 +2749,7 @@
         remote_table:
           schema: public
           name: Room
+        insertion_order: null
         column_mapping:
           id: originatingContentGroupId
   array_relationships:
@@ -3382,6 +3404,7 @@
         remote_table:
           schema: public
           name: BroadcastContentItem
+        insertion_order: null
         column_mapping:
           id: contentItemId
   - name: conference
@@ -3863,6 +3886,7 @@
         remote_table:
           schema: public
           name: BroadcastContentItem
+        insertion_order: null
         column_mapping:
           id: eventId
   - name: conference
@@ -3877,6 +3901,7 @@
         remote_table:
           schema: public
           name: EventVonageSession
+        insertion_order: null
         column_mapping:
           id: eventId
   - name: originatingData
@@ -4103,6 +4128,27 @@
       interval_sec: 10
       timeout_sec: 60
     webhook: '{{ACTION_BASE_URL}}/event/updated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: Playout_EventUpdated
+    definition:
+      enable_manual: true
+      update:
+        columns:
+        - durationSeconds
+        - intendedRoomModeName
+        - endTime
+        - startTime
+        - conferenceId
+        - contentGroupId
+        - id
+        - roomId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
@@ -4895,6 +4941,7 @@
         remote_table:
           schema: public
           name: Conference
+        insertion_order: null
         column_mapping:
           slug: slug
   - name: permission
@@ -4903,6 +4950,7 @@
         remote_table:
           schema: public
           name: Permission
+        insertion_order: null
         column_mapping:
           permission_name: name
   - name: user
@@ -4911,6 +4959,7 @@
         remote_table:
           schema: public
           name: User
+        insertion_order: null
         column_mapping:
           user_id: id
   select_permissions:
@@ -5666,24 +5715,24 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: channelStackCreateJob
+    using:
+      foreign_key_constraint_on: channelStackCreateJobId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
   - name: room
     using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: Room
-        column_mapping:
-          id: mediaLiveChannelId
+      foreign_key_constraint_on: roomId
   select_permissions:
   - role: user
     permission:
       columns:
       - cloudFrontDomain
+      - conferenceId
       - endpointUri
       - id
+      - roomId
       filter:
         _or:
         - conference:
@@ -5950,6 +5999,7 @@
         remote_table:
           schema: public
           name: ContentItem
+        insertion_order: null
         column_mapping:
           id: requiredContentId
   - name: contentType
@@ -6410,7 +6460,13 @@
       foreign_key_constraint_on: currentModeName
   - name: mediaLiveChannel
     using:
-      foreign_key_constraint_on: mediaLiveChannelId
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: MediaLiveChannel
+        insertion_order: null
+        column_mapping:
+          id: roomId
   - name: originatingContentGroup
     using:
       foreign_key_constraint_on: originatingContentGroupId
@@ -6424,6 +6480,13 @@
     using:
       foreign_key_constraint_on: roomPrivacyName
   array_relationships:
+  - name: channelStackCreateJobs
+    using:
+      foreign_key_constraint_on:
+        column: roomId
+        table:
+          schema: job_queues
+          name: ChannelStackCreateJob
   - name: events
     using:
       foreign_key_constraint_on:
@@ -6536,21 +6599,20 @@
   - role: user
     permission:
       columns:
-      - id
-      - created_at
-      - updated_at
-      - conferenceId
-      - name
-      - currentModeName
-      - originatingDataId
       - capacity
-      - publicVonageSessionId
-      - mediaLiveChannelId
-      - priority
-      - roomPrivacyName
       - chatId
-      - originatingEventId
+      - conferenceId
+      - created_at
+      - currentModeName
+      - id
+      - name
       - originatingContentGroupId
+      - originatingDataId
+      - originatingEventId
+      - priority
+      - publicVonageSessionId
+      - roomPrivacyName
+      - updated_at
       filter:
         _and:
         - conference:
@@ -7419,6 +7481,7 @@
         remote_table:
           schema: public
           name: OnlineStatus
+        insertion_order: null
         column_mapping:
           id: userId
   array_relationships:

@@ -2,7 +2,7 @@
     "scripts": {
         "start": "npm run build-shared && snowpack dev --polyfill-node",
         "build": "npm run build-shared && snowpack build --polyfill-node",
-        "build-shared": "npm run --prefix=../shared/ --cwd=../shared/ build",
+        "build-shared": "npm run --prefix=../ --workspace=shared build",
         "test": "npm run build-shared && jest --config jest.config.js",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",

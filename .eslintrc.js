@@ -23,24 +23,15 @@ module.exports = {
     plugins: ["react", "@typescript-eslint", "jest"],
     rules: {
         semi: ["warn", "always"],
-        quotes: ["error", "double"],
+        quotes: ["error", "double", { avoidEscape: true }],
         "jest/no-disabled-tests": "warn",
         "jest/no-focused-tests": "error",
         "jest/no-identical-title": "error",
         "jest/prefer-to-have-length": "warn",
         "jest/valid-expect": "error",
         "@typescript-eslint/no-explicit-any": "off",
-        "no-unused-vars": [
-            "warn",
-            {
-                vars: "all",
-                args: "after-used",
-                ignoreRestSiblings: false,
-                argsIgnorePattern: "^_",
-                varsIgnorePattern: "(^_)|(.*Query$)",
-            },
-        ],
         "@typescript-eslint/no-empty-interface": "off",
+        "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": [
             "warn",
             {

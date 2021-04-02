@@ -1,32 +1,23 @@
-import { gql } from "@apollo/client/core";
+import { ApolloQueryResult, gql } from "@apollo/client/core";
 import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
 import AmazonS3URI from "amazon-s3-uri";
-import assert from "assert";
+import { add } from "date-fns";
 import R from "ramda";
 import {
-    CreateMediaLiveChannelDocument,
-    DeleteMediaLiveChannelDocument,
+    DetachMediaLiveChannelDocument,
     GetConferenceIdFromChannelResourceIdDocument,
     GetMediaLiveChannelByRoomDocument,
     GetRoomsWithEventsDocument,
     GetRoomsWithEventsStartingDocument,
+    GetRoomsWithEventsStartingQuery,
     GetRoomsWithNoEventsDocument,
     GetTransitionsByRoomDocument,
     InputType_Enum,
-    SetMediaLiveChannelForRoomDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { createDistribution } from "../lib/aws/cloudFront";
-import {
-    ChannelState,
-    createChannel as createMediaLiveChannel,
-    createLoopingMP4Input,
-    createMP4Input,
-    createRtmpInput,
-    getMediaLiveChannelState,
-} from "../lib/aws/mediaLive";
-import { createChannel as createMediaPackageChannel, createOriginEndpoint } from "../lib/aws/mediaPackage";
-import { CloudFront, MediaLive, MediaPackage, shortId } from "./aws/awsClient";
+import { ChannelState, getMediaLiveChannelState } from "../lib/aws/mediaLive";
+import { callWithRetry } from "../utils";
+import { MediaLive, shortId } from "./aws/awsClient";
 import { getConferenceConfiguration } from "./conferenceConfiguration";
 
 gql`
@@ -48,51 +39,54 @@ gql`
         }
     }
 
-    mutation DeleteMediaLiveChannel($id: uuid!) {
-        delete_MediaLiveChannel_by_pk(id: $id) {
+    mutation DetachMediaLiveChannel($id: uuid!) {
+        update_MediaLiveChannel_by_pk(pk_columns: { id: $id }, _set: { roomId: null }) {
             id
         }
     }
 `;
 
-export async function ensureUpcomingChannelsCreated(holdOffOnCreatingChannel: {
+export async function ensureUpcomingChannelsStarted(holdOffOnStartingChannel: {
     [roomId: string]: boolean;
 }): Promise<void> {
     console.log("Ensuring channels created for rooms with upcoming events");
     const now = new Date();
     const from = now.toISOString();
-    const to = new Date(now.getTime() + 120 * 60 * 1000).toISOString();
+    const to = add(now, { minutes: 30 }).toISOString();
 
-    const roomsResult = await apolloClient.query({
-        query: GetRoomsWithEventsStartingDocument,
-        variables: {
-            from,
-            to,
-        },
-    });
-
-    if (roomsResult.error || roomsResult.errors) {
-        console.error("Failure while retrieving rooms with upcoming events", roomsResult.error, roomsResult.errors);
-    }
-
-    if (roomsResult.data.Room.length === 0) {
-        console.log("No rooms have events starting soon");
+    let roomsResult: ApolloQueryResult<GetRoomsWithEventsStartingQuery>;
+    try {
+        roomsResult = await callWithRetry(() =>
+            apolloClient.query({
+                query: GetRoomsWithEventsStartingDocument,
+                variables: {
+                    from,
+                    to,
+                },
+            })
+        );
+    } catch (e) {
+        console.error("Failure while retrieving rooms with upcoming events", e);
+        throw new Error("Failure while retrieving rooms with upcoming events");
     }
 
     console.log(`Found ${roomsResult.data.Room.length} rooms with upcoming events`);
 
     for (const room of roomsResult.data.Room) {
-        console.log("Syncing channel for room", room.id);
+        console.log("Syncing channel for room", { roomId: room.id });
 
-        if (holdOffOnCreatingChannel[room.id]) {
-            console.warn("Channel sync has requested a hold on restarting the channel", room.id);
+        if (holdOffOnStartingChannel[room.id]) {
+            console.warn("Channel sync has requested a hold on restarting the channel", { roomId: room.id });
             continue;
         }
 
-        let needToCreateChannel = false;
         if (room.mediaLiveChannel) {
             const channelState = await getMediaLiveChannelState(room.mediaLiveChannel.mediaLiveChannelId);
-            console.log("Checked channel state", room.id, room.mediaLiveChannel.mediaLiveChannelId, channelState);
+            console.log("Checked channel state", {
+                roomId: room.id,
+                mediaLiveChannelId: room.mediaLiveChannel.mediaLiveChannelId,
+                channelState,
+            });
             if (
                 [
                     ChannelState.CREATE_FAILED,
@@ -102,56 +96,61 @@ export async function ensureUpcomingChannelsCreated(holdOffOnCreatingChannel: {
                     "MISSING",
                 ].includes(channelState)
             ) {
-                console.log("Removing old/broken channel from room", room.id, room.mediaLiveChannel.id, channelState);
+                console.log("Detaching broken channel stack from room", {
+                    roomId: room.id,
+                    mediaLiveChannelId: room.mediaLiveChannel.id,
+                    channelState,
+                });
                 try {
                     await apolloClient.mutate({
-                        mutation: DeleteMediaLiveChannelDocument,
+                        mutation: DetachMediaLiveChannelDocument,
                         variables: {
                             id: room.mediaLiveChannel.id,
                         },
                     });
                 } catch (e) {
-                    console.error("Failed to delete MediaLive channel record", e);
+                    console.error("Failed to delete MediaLive channel record", e, {
+                        mediaLiveChannelId: room.mediaLiveChannel.id,
+                    });
                 }
-
-                needToCreateChannel = true;
             }
 
             if ([ChannelState.IDLE.toString(), ChannelState.STOPPING].includes(channelState)) {
-                console.log(
-                    "Starting stopped channel",
-                    room.id,
-                    room.mediaLiveChannel.mediaLiveChannelId,
-                    channelState
-                );
+                console.log("Starting stopped channel", {
+                    roomId: room.id,
+                    mediaLiveChannelId: room.mediaLiveChannel.mediaLiveChannelId,
+                    channelState,
+                });
                 await MediaLive.startChannel({
                     ChannelId: room.mediaLiveChannel.mediaLiveChannelId,
                 });
             }
 
             if (channelState === ChannelState.RUNNING) {
-                console.log("Channel is already running", room.id, room.mediaLiveChannel.mediaLiveChannelId);
+                console.log("Channel is already running", {
+                    roomId: room.id,
+                    mediaLiveChannelId: room.mediaLiveChannel.mediaLiveChannelId,
+                });
             }
 
             if (
                 [ChannelState.STARTING.toString(), ChannelState.CREATING, ChannelState.UPDATING].includes(channelState)
             ) {
-                console.log(
-                    "Channel is still starting",
-                    room.id,
-                    room.mediaLiveChannel.mediaLiveChannelId,
-                    channelState
-                );
+                console.log("Channel is still starting", {
+                    roomId: room.id,
+                    mediaLiveChannelId: room.mediaLiveChannel.mediaLiveChannelId,
+                    channelState,
+                });
             }
 
             if (channelState === ChannelState.RECOVERING) {
-                console.log("Channel is recovering", room.id, room.mediaLiveChannel.mediaLiveChannelId);
+                console.log("Channel is recovering", {
+                    roomId: room.id,
+                    mediaLiveChannelId: room.mediaLiveChannel.mediaLiveChannelId,
+                });
             }
-        }
-
-        if (needToCreateChannel || !room.mediaLiveChannel) {
-            console.log("Creating new MediaLive channel for room", room.id);
-            await createNewChannelForRoom(room.id, room.conferenceId);
+        } else {
+            console.log("No channel stack available for room yet, skipping sync", { roomId: room.id });
         }
     }
 }
@@ -160,9 +159,13 @@ gql`
     query GetRoomsWithNoEvents($from: timestamptz, $to: timestamptz) {
         Room(
             where: {
-                mediaLiveChannelId: { _is_null: false }
-                _not: { events: { startTime: { _gte: $from, _lte: $to } } }
-                _and: { _not: { events: { startTime: { _lte: $from }, endTime: { _gte: $from } } } }
+                _not: {
+                    _or: [
+                        { events: { startTime: { _gte: $from, _lte: $to } } }
+                        { events: { startTime: { _lte: $from }, endTime: { _gte: $from } } }
+                        { _not: { mediaLiveChannel: {} } }
+                    ]
+                }
             }
         ) {
             id
@@ -216,212 +219,6 @@ export async function stopChannelsWithoutUpcomingOrCurrentEvents(): Promise<void
                 });
             }
         }
-    }
-
-    // TODO: delete channels that are no longer required
-}
-
-gql`
-    mutation CreateMediaLiveChannel(
-        $cloudFrontDistributionId: String!
-        $mediaLiveChannelId: String!
-        $mediaPackageChannelId: String!
-        $mp4InputId: String!
-        $rtmpInputId: String!
-        $rtmpInputUri: String!
-        $endpointUri: String!
-        $cloudFrontDomain: String!
-        $mp4InputAttachmentName: String!
-        $loopingMp4InputAttachmentName: String!
-        $vonageInputAttachmentName: String!
-        $conferenceId: uuid!
-    ) {
-        insert_MediaLiveChannel_one(
-            object: {
-                cloudFrontDistributionId: $cloudFrontDistributionId
-                mediaLiveChannelId: $mediaLiveChannelId
-                mediaPackageChannelId: $mediaPackageChannelId
-                mp4InputId: $mp4InputId
-                rtmpInputId: $rtmpInputId
-                rtmpInputUri: $rtmpInputUri
-                endpointUri: $endpointUri
-                cloudFrontDomain: $cloudFrontDomain
-                mp4InputAttachmentName: $mp4InputAttachmentName
-                loopingMp4InputAttachmentName: $loopingMp4InputAttachmentName
-                vonageInputAttachmentName: $vonageInputAttachmentName
-                conferenceId: $conferenceId
-            }
-        ) {
-            id
-        }
-    }
-
-    mutation SetMediaLiveChannelForRoom($roomId: uuid!, $mediaLiveChannelId: uuid!) {
-        update_Room_by_pk(pk_columns: { id: $roomId }, _set: { mediaLiveChannelId: $mediaLiveChannelId }) {
-            id
-        }
-    }
-`;
-
-interface ChannelResources {
-    mediaLiveChannelIds: string[];
-    mediaLiveInputIds: string[];
-    mediaPackageChannelIds: string[];
-    mediaPackageOriginEndpointIds: string[];
-    cloudFrontDistributionIds: string[];
-}
-
-async function cleanUpChannelResources(channelResources: ChannelResources) {
-    try {
-        for (const mediaLiveChannelId of channelResources.mediaLiveChannelIds) {
-            await MediaLive.deleteChannel({
-                ChannelId: mediaLiveChannelId,
-            });
-        }
-    } catch (e) {
-        console.error("Failed to clean up MediaLive channels", e, channelResources.mediaLiveChannelIds);
-    }
-
-    try {
-        for (const mediaPackageOriginEndpointId of channelResources.mediaPackageOriginEndpointIds) {
-            await MediaPackage.deleteOriginEndpoint({
-                Id: mediaPackageOriginEndpointId,
-            });
-        }
-    } catch (e) {
-        console.error(
-            "Failed to clean up MediaPackage origin endpoints",
-            e,
-            channelResources.mediaPackageOriginEndpointIds
-        );
-    }
-
-    try {
-        // This may fail because the channel must be fully deleted before inputs can be deleted
-        // TODO: come up with a better solution
-        for (const mediaPackageChannelId of channelResources.mediaPackageChannelIds) {
-            await MediaPackage.deleteChannel({
-                Id: mediaPackageChannelId,
-            });
-        }
-    } catch (e) {
-        console.error("Failed to clean up MediaPackage channels", e, channelResources.mediaPackageChannelIds);
-    }
-
-    try {
-        for (const mediaLiveInputId of channelResources.mediaLiveInputIds) {
-            await MediaLive.deleteInput({
-                InputId: mediaLiveInputId,
-            });
-        }
-    } catch (e) {
-        console.error("Failed to clean up MediaLive inputs", e, channelResources.mediaLiveInputIds);
-    }
-
-    try {
-        // This will likely fail because CloudFront distributions must be disabled before deletion
-        // TODO: come up with a better solution (polling? wait for event? scheduled reaping?)
-        for (const cloudFrontDistributionId of channelResources.cloudFrontDistributionIds) {
-            await CloudFront.deleteDistribution({
-                Id: cloudFrontDistributionId,
-            });
-        }
-    } catch (e) {
-        console.error("Failed to clean up CloudFront distribution", e, channelResources.cloudFrontDistributionIds);
-    }
-}
-
-async function getInputLossSlateUrl(conferenceId: string): Promise<string | null> {
-    const inputLossSlateUrl = await getConferenceConfiguration<string>(conferenceId, "INPUT_LOSS_SLATE");
-    return inputLossSlateUrl;
-}
-
-async function createNewChannelForRoom(roomId: string, conferenceId: string): Promise<void> {
-    assert(
-        process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID,
-        "AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID environment variable must be defined"
-    );
-    let rtmpInput;
-    let mp4InputId;
-    let loopingMp4InputId;
-    let mediaPackageChannelId;
-    let originEndpoint;
-    let mediaLiveChannel;
-    let cloudFrontDistribution;
-    try {
-        rtmpInput = await createRtmpInput(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
-        mp4InputId = await createMP4Input(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
-        loopingMp4InputId = await createLoopingMP4Input(roomId, process.env.AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID);
-
-        mediaPackageChannelId = await createMediaPackageChannel(roomId);
-        originEndpoint = await createOriginEndpoint(roomId, mediaPackageChannelId);
-
-        const inputLossSlateUrl = await getInputLossSlateUrl(conferenceId);
-
-        mediaLiveChannel = await createMediaLiveChannel(
-            roomId,
-            rtmpInput.id,
-            mp4InputId,
-            loopingMp4InputId,
-            mediaPackageChannelId,
-            inputLossSlateUrl
-        );
-        cloudFrontDistribution = await createDistribution(roomId, originEndpoint);
-
-        const result = await apolloClient.mutate({
-            mutation: CreateMediaLiveChannelDocument,
-            variables: {
-                cloudFrontDistributionId: cloudFrontDistribution.id,
-                cloudFrontDomain: cloudFrontDistribution.domain,
-                endpointUri: originEndpoint.endpointUri,
-                mediaLiveChannelId: mediaLiveChannel.channelId,
-                rtmpInputId: rtmpInput.id,
-                rtmpInputUri: rtmpInput.rtmpUri,
-                mediaPackageChannelId: mediaPackageChannelId,
-                mp4InputId: mp4InputId,
-                mp4InputAttachmentName: mediaLiveChannel.mp4InputAttachmentName,
-                loopingMp4InputAttachmentName: mediaLiveChannel.loopingMp4InputAttachmentName,
-                vonageInputAttachmentName: mediaLiveChannel.vonageInputAttachmentName,
-                conferenceId,
-            },
-        });
-
-        if (result.errors) {
-            console.error(
-                "Failure while saving details of new MediaLive channel",
-                mediaLiveChannel.channelId,
-                roomId,
-                result.errors
-            );
-            throw new Error("Failure while saving details of new MediaLive channel");
-        }
-
-        const updateResult = await apolloClient.mutate({
-            mutation: SetMediaLiveChannelForRoomDocument,
-            variables: {
-                roomId,
-                mediaLiveChannelId: result.data?.insert_MediaLiveChannel_one?.id,
-            },
-        });
-
-        if (updateResult.errors) {
-            console.error(
-                "Failure while storing new MediaLive channel against room",
-                result.data?.insert_MediaLiveChannel_one?.id,
-                roomId,
-                result.errors
-            );
-        }
-    } catch (e) {
-        // If any of the above process failed, attempt to clean up
-        console.error("Failed to create new MediaLive channel. Attempting to clean up any resources.", e);
-        await cleanUpChannelResources({
-            mediaLiveChannelIds: [mediaLiveChannel?.channelId].filter(notEmpty),
-            cloudFrontDistributionIds: [cloudFrontDistribution?.id].filter(notEmpty),
-            mediaLiveInputIds: [rtmpInput?.id, mp4InputId, loopingMp4InputId].filter(notEmpty),
-            mediaPackageChannelIds: [mediaPackageChannelId].filter(notEmpty),
-            mediaPackageOriginEndpointIds: [originEndpoint?.id].filter(notEmpty),
-        });
     }
 }
 

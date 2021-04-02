@@ -259,7 +259,6 @@ export interface VideoContentBlob extends BaseContentBlob {
     transcode?: TranscodeDetails;
     subtitles: Record<LanguageCode, SubtitleDetails>;
     broadcastTranscode?: BroadcastTranscodeDetails;
-    // vimeoUpload?: VimeoPublishDetails;
 }
 
 type LanguageCode = string;
@@ -296,44 +295,3 @@ export interface VimeoPublishDetails {
 interface BaseContentBlob {
     type: string;
 }
-
-// export enum ContentItemPublishState {
-//     Publishable,
-//     NotPublishable,
-//     AlreadyPublishedAndUpToDate,
-//     AlreadyPublishedButNotPublishable,
-//     AlreadyPublishedButPublishable,
-// }
-
-// function contentItemDataVersionVideoPublished(version: ContentItemVersionData): boolean {
-//     return version.data.baseType === ContentBaseType.Video && !!version.data.vimeoUpload;
-// }
-
-// export function contentItemPublishState(data: ContentItemDataBlob): ContentItemPublishState {
-//     const latestVersion = R.last(data);
-
-//     const previousVersionPublished = !!R.init(data).find(contentItemDataVersionVideoPublished);
-//     const currentVersionPublishable =
-//         latestVersion &&
-//         latestVersion.data.baseType === ContentBaseType.Video &&
-//         latestVersion.data.transcode &&
-//         Object.keys(latestVersion.data.subtitles).length > 0;
-
-//     const currentVersionPublished = latestVersion && contentItemDataVersionVideoPublished(latestVersion);
-
-//     if (previousVersionPublished) {
-//         if (currentVersionPublished) {
-//             return ContentItemPublishState.AlreadyPublishedAndUpToDate;
-//         } else if (currentVersionPublishable) {
-//             return ContentItemPublishState.AlreadyPublishedButPublishable;
-//         } else {
-//             return ContentItemPublishState.AlreadyPublishedButNotPublishable;
-//         }
-//     } else if (currentVersionPublished) {
-//         return ContentItemPublishState.AlreadyPublishedAndUpToDate;
-//     } else if (currentVersionPublishable) {
-//         return ContentItemPublishState.Publishable;
-//     } else {
-//         return ContentItemPublishState.NotPublishable;
-//     }
-// }

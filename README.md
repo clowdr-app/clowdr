@@ -7,12 +7,15 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
 
 ## Structure
 
-| Folder           | Contents                                                         | ReadMe                                    |
-| ---------------- | ---------------------------------------------------------------- | ----------------------------------------- |
-| frontend         | The frontend React web app                                       | [ReadMe here](frontend/README.md)         |
-| hasura           | The Hasura GraphQL configuration, actions and seed data.         | [ReadMe here](hasura/README.md)           |
-| services         | Micro-services                                                   |                                           |
-| services/actions | At the moment, a "general" service for handling any/all actions. | [ReadMe here](services/actions/README.md) |
+| Folder            | Contents                                                             | ReadMe                                                 |
+| ----------------- | -------------------------------------------------------------------- | ------------------------------------------------------ |
+| aws               | Infrastructure as code for AWS                                       | [AWS Readme](aws/README.md)                            |
+| frontend          | The frontend React web app                                           | [Frontend Readme](frontend/README.md)                  |
+| hasura            | The Hasura GraphQL configuration, actions and seed data.             | [Hasura Readme](hasura/README.md)                      |
+| services          | Micro-services                                                       |                                                        |
+| services/actions  | A service that handles most Hasura actions.                          | [Actions service readme](services/actions/README.md)   |
+| services/realtime | A service that handles realtime interactions like chat and presence. | [Realtime service readme](services/realtime/README.md) |
+| services/playout  | A service that controls video broadcast pipelines.                   | [Playout service readme](services/playout/README.md)   |
 
 ## Quick vs. Full Setup
 
@@ -37,7 +40,8 @@ parts of the platform, follow all the steps below.
 2. [Node.js](https://nodejs.org/en/) (and NPM)
 3. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
 4. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
-5. [Frontend pre-requsities](frontend/README.md#Pre-requisites)
+5. [Playout service pre-requisites](services/playout/README.md#Pre-requisites)
+6. [Frontend pre-requsities](frontend/README.md#Pre-requisites)
 
 ## Setting Up
 
@@ -64,6 +68,9 @@ parts of the platform, follow all the steps below.
    cd services/actions
      npm i
      cd ../..
+   cd services/playout
+     npm i
+     cd ../..
    cd services/realtime
      npm i
      cd ../..
@@ -81,15 +88,19 @@ parts of the platform, follow all the steps below.
 6. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
 7. Follow the Actions Service setup: [Clowdr Actions Service
    ReadMe](services/actions/README.md#Setting-up)
-8. Follow the Frontend setup: [Clowdr Frontend
-   ReadMe](frontend/README.md#Setting-up)
-9. If running this software in a production environment, you will need to insert
-   rows into the `system.Configuration` table (via Hasura, select the `system`
-   schema to find the `Configuration` table).
-   - Fill out values for all available keys.
-   - Refer to the `description` field of each key (in `system.ConfigurationKey`)
-     for expected values.
-10. Follow the instructions below for Auth0 setup.
+8. Follow the Playout Service setup: [Clowdr Playout Service
+   ReadMe](services/playout/README.md#Setting-up)
+9. Follow the Realtime Service setup: [Clowdr Realtime Service
+   ReadMe](services/realtime/README.md#Setting-up)
+10. Follow the Frontend setup: [Clowdr Frontend
+    ReadMe](frontend/README.md#Setting-up)
+11. If running this software in a production environment, you will need to insert
+    rows into the `system.Configuration` table (via Hasura, select the `system`
+    schema to find the `Configuration` table).
+    - Fill out values for all available keys.
+    - Refer to the `description` field of each key (in `system.ConfigurationKey`)
+      for expected values.
+12. Follow the instructions below for Auth0 setup.
 
 ### Expose local services at a public URL
 

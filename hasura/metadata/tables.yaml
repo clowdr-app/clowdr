@@ -96,25 +96,19 @@
       - updated_at
       filter:
         _and:
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _where:
-                _and:
+        - conference:
+            _and:
+            - slug:
+                _in: X-Hasura-Conference-Slugs
+            - userPermissions:
+                _and: 
                 - user_id:
                     _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
                 - permission_name:
                     _in:
                     - CONFERENCE_VIEW_ATTENDEES
                     - CONFERENCE_MANAGE_SCHEDULE
                     - CONFERENCE_MODERATE_ATTENDEES
-              _table:
-                schema: public
-                name: FlatUserPermission
         - _or:
           - room:
               _or:
@@ -136,47 +130,35 @@
       - enableMandatorySubscribe
       - restrictToAdmins
       filter:
-        _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _where:
-              _and:
+        conference:
+          _and:
+          - slug:
+              _in: X-Hasura-Conference-Slugs
+          - userPermissions:
+              _and: 
               - user_id:
                   _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
                   - CONFERENCE_MANAGE_CONTENT
                   - CONFERENCE_MANAGE_SCHEDULE
-            _table:
-              schema: public
-              name: FlatUserPermission
       check: null
   delete_permissions:
   - role: user
     permission:
       filter:
-        _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _where:
-              _and:
+        conference:
+          _and:
+          - slug:
+              _in: X-Hasura-Conference-Slugs
+          - userPermissions:
+              _and: 
               - user_id:
                   _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
               - permission_name:
                   _in:
                   - CONFERENCE_MANAGE_CONTENT
                   - CONFERENCE_MANAGE_SCHEDULE
-            _table:
-              schema: public
-              name: FlatUserPermission
   event_triggers:
   - name: ChatInserted
     definition:
@@ -442,24 +424,18 @@
             - _and:
               - restrictToAdmins:
                   _eq: false
-              - _and:
-                - conference:
-                    slug:
-                      _eq: X-Hasura-Conference-Slug
-                - _exists:
-                    _where:
-                      _and:
+              - conference:
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
                       - user_id:
                           _eq: X-Hasura-User-Id
-                      - slug:
-                          _eq: X-Hasura-Conference-Slug
                       - permission_name:
                           _in:
                           - CONFERENCE_MANAGE_ATTENDEES
                           - CONFERENCE_VIEW_ATTENDEES
-                    _table:
-                      schema: public
-                      name: FlatUserPermission
               - _or:
                 - room:
                     _or:
@@ -474,24 +450,18 @@
             - _and:
               - restrictToAdmins:
                   _eq: true
-              - _and:
-                - conference:
-                    slug:
-                      _eq: X-Hasura-Conference-Slug
-                - _exists:
-                    _where:
-                      _and:
+              - conference:
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
                       - user_id:
                           _eq: X-Hasura-User-Id
-                      - slug:
-                          _eq: X-Hasura-Conference-Slug
                       - permission_name:
                           _in:
                           - CONFERENCE_MANAGE_ATTENDEES
-                          - CONFERENCE_MODERATE_ATTENDEES
-                    _table:
-                      schema: public
-                      name: FlatUserPermission
+                          - CONFERENCE_VIEW_ATTENDEES
               - _or:
                 - room:
                     _or:
@@ -532,9 +502,6 @@
       filter:
         chat:
           _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
           - _or:
             - room:
                 _or:
@@ -546,21 +513,19 @@
                         _eq: X-Hasura-User-Id
             - _not:
                 room: {}
-          - _exists:
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_ATTENDEES
-                    - CONFERENCE_MODERATE_ATTENDEES
-                    - CONFERENCE_VIEW_ATTENDEES
-              _table:
-                schema: public
-                name: FlatUserPermission
+          - conference:
+              _and:
+              - slug:
+                  _in: X-Hasura-Conference-Slugs
+              - userPermissions:
+                  _and: 
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_ATTENDEES
+                      - CONFERENCE_MODERATE_ATTENDEES
+                      - CONFERENCE_VIEW_ATTENDEES
   update_permissions:
   - role: user
     permission:
@@ -579,24 +544,18 @@
             - _and:
               - restrictToAdmins:
                   _eq: false
-              - _and:
-                - conference:
-                    slug:
-                      _eq: X-Hasura-Conference-Slug
-                - _exists:
-                    _where:
-                      _and:
+              - conference:
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
                       - user_id:
                           _eq: X-Hasura-User-Id
-                      - slug:
-                          _eq: X-Hasura-Conference-Slug
                       - permission_name:
                           _in:
                           - CONFERENCE_MANAGE_ATTENDEES
                           - CONFERENCE_VIEW_ATTENDEES
-                    _table:
-                      schema: public
-                      name: FlatUserPermission
               - _or:
                 - room:
                     _or:
@@ -611,24 +570,18 @@
             - _and:
               - restrictToAdmins:
                   _eq: true
-              - _and:
-                - conference:
-                    slug:
-                      _eq: X-Hasura-Conference-Slug
-                - _exists:
-                    _where:
-                      _and:
+              - conference:
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
                       - user_id:
                           _eq: X-Hasura-User-Id
-                      - slug:
-                          _eq: X-Hasura-Conference-Slug
                       - permission_name:
                           _in:
                           - CONFERENCE_MANAGE_ATTENDEES
                           - CONFERENCE_MODERATE_ATTENDEES
-                    _table:
-                      schema: public
-                      name: FlatUserPermission
               - _or:
                 - room:
                     _or:
@@ -654,24 +607,18 @@
             - _and:
               - restrictToAdmins:
                   _eq: false
-              - _and:
-                - conference:
-                    slug:
-                      _eq: X-Hasura-Conference-Slug
-                - _exists:
-                    _where:
-                      _and:
+              - conference:
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
                       - user_id:
                           _eq: X-Hasura-User-Id
-                      - slug:
-                          _eq: X-Hasura-Conference-Slug
                       - permission_name:
                           _in:
                           - CONFERENCE_MANAGE_ATTENDEES
                           - CONFERENCE_VIEW_ATTENDEES
-                    _table:
-                      schema: public
-                      name: FlatUserPermission
               - _or:
                 - room:
                     _or:
@@ -686,24 +633,18 @@
             - _and:
               - restrictToAdmins:
                   _eq: true
-              - _and:
-                - conference:
-                    slug:
-                      _eq: X-Hasura-Conference-Slug
-                - _exists:
-                    _where:
-                      _and:
+              - conference:
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
                       - user_id:
                           _eq: X-Hasura-User-Id
-                      - slug:
-                          _eq: X-Hasura-Conference-Slug
                       - permission_name:
                           _in:
                           - CONFERENCE_MANAGE_ATTENDEES
                           - CONFERENCE_MODERATE_ATTENDEES
-                    _table:
-                      schema: public
-                      name: FlatUserPermission
               - _or:
                 - room:
                     _or:
@@ -893,8 +834,18 @@
             chat:
               _and:
               - conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
+                      - user_id:
+                          _eq: X-Hasura-User-Id
+                      - permission_name:
+                          _in:
+                          - CONFERENCE_MANAGE_ATTENDEES
+                          - CONFERENCE_MODERATE_ATTENDEES
+                          - CONFERENCE_VIEW_ATTENDEES
               - _or:
                 - room:
                     _or:
@@ -906,21 +857,6 @@
                             _eq: X-Hasura-User-Id
                 - _not:
                     room: {}
-              - _exists:
-                  _where:
-                    _and:
-                    - user_id:
-                        _eq: X-Hasura-User-Id
-                    - slug:
-                        _eq: X-Hasura-Conference-Slug
-                    - permission_name:
-                        _in:
-                        - CONFERENCE_MANAGE_ATTENDEES
-                        - CONFERENCE_MODERATE_ATTENDEES
-                        - CONFERENCE_VIEW_ATTENDEES
-                  _table:
-                    schema: public
-                    name: FlatUserPermission
       columns:
       - data
       - id
@@ -947,8 +883,18 @@
           chat:
             _and:
             - conference:
-                slug:
-                  _eq: X-Hasura-Conference-Slug
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
+                      - user_id:
+                          _eq: X-Hasura-User-Id
+                      - permission_name:
+                          _in:
+                          - CONFERENCE_MANAGE_ATTENDEES
+                          - CONFERENCE_MODERATE_ATTENDEES
+                          - CONFERENCE_VIEW_ATTENDEES
             - _or:
               - room:
                   _or:
@@ -960,21 +906,6 @@
                           _eq: X-Hasura-User-Id
               - _not:
                   room: {}
-            - _exists:
-                _where:
-                  _and:
-                  - user_id:
-                      _eq: X-Hasura-User-Id
-                  - slug:
-                      _eq: X-Hasura-Conference-Slug
-                  - permission_name:
-                      _in:
-                      - CONFERENCE_MANAGE_ATTENDEES
-                      - CONFERENCE_MODERATE_ATTENDEES
-                      - CONFERENCE_VIEW_ATTENDEES
-                _table:
-                  schema: public
-                  name: FlatUserPermission
   delete_permissions:
   - role: user
     permission:
@@ -987,8 +918,18 @@
             chat:
               _and:
               - conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
+                  _and:
+                  - slug:
+                      _in: X-Hasura-Conference-Slugs
+                  - userPermissions:
+                      _and: 
+                      - user_id:
+                          _eq: X-Hasura-User-Id
+                      - permission_name:
+                          _in:
+                          - CONFERENCE_MANAGE_ATTENDEES
+                          - CONFERENCE_MODERATE_ATTENDEES
+                          - CONFERENCE_VIEW_ATTENDEES
               - _or:
                 - room:
                     _or:
@@ -1000,21 +941,6 @@
                             _eq: X-Hasura-User-Id
                 - _not:
                     room: {}
-              - _exists:
-                  _where:
-                    _and:
-                    - user_id:
-                        _eq: X-Hasura-User-Id
-                    - slug:
-                        _eq: X-Hasura-Conference-Slug
-                    - permission_name:
-                        _in:
-                        - CONFERENCE_MANAGE_ATTENDEES
-                        - CONFERENCE_MODERATE_ATTENDEES
-                        - CONFERENCE_VIEW_ATTENDEES
-                  _table:
-                    schema: public
-                    name: FlatUserPermission
   event_triggers:
   - name: ReactionDeleted
     definition:
@@ -1351,21 +1277,16 @@
         - attendee:
             userId:
               _eq: X-Hasura-User-Id
-        - _exists:
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-            _table:
-              schema: public
-              name: FlatUserPermission
         - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
+            _and:
+            - slug:
+                _in: X-Hasura-Conference-Slugs
+            - userPermissions:
+                _and: 
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_CONTENT
       columns:
       - conferenceId
       - createdByAttendeeId
@@ -1386,22 +1307,16 @@
       - outputName
       - updated_at
       filter:
-        _and:
-        - _exists:
-            _where:
-              _and:
+        conference:
+          _and:
+          - slug:
+              _in: X-Hasura-Conference-Slugs
+          - userPermissions:
+              _and: 
               - user_id:
                   _eq: X-Hasura-User-Id
               - permission_name:
                   _eq: CONFERENCE_MANAGE_CONTENT
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-            _table:
-              schema: public
-              name: FlatUserPermission
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
   event_triggers:
   - name: CombineVideosJobCreated
     definition:
@@ -2344,6 +2259,14 @@
         table:
           schema: public
           name: OriginatingData
+  - name: publicPermissions
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: FlatUnauthPermission
+        column_mapping:
+          slug: slug
   - name: roles
     using:
       foreign_key_constraint_on:
@@ -2372,6 +2295,14 @@
         table:
           schema: public
           name: Tag
+  - name: userPermissions
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: FlatUserPermission
+        column_mapping:
+          slug: slug
   insert_permissions:
   - role: user
     permission:

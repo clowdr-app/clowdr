@@ -139,6 +139,8 @@ export class ChannelsService {
         const cloudFormationNotificationsTopicArn = this.configService.get<string>(
             "AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN"
         );
+        const awsContentBucketId = this.configService.get<string>("AWS_CONTENT_BUCKET_ID");
+        assert(awsContentBucketId, "Missing AWS_CONTENT_BUCKET_ID");
         assert(cloudFormationNotificationsTopicArn, "Missing AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN");
         const region = this.configService.get<string>("AWS_REGION");
         assert(region, "Missing AWS_REGION");
@@ -163,6 +165,7 @@ export class ChannelsService {
             },
             description: `Broadcast channel stack for room ${roomId}`,
             mediaLiveServiceRoleArn,
+            awsContentBucketId,
         };
 
         this.logger.info("Starting deployment");

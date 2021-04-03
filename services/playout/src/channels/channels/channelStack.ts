@@ -74,6 +74,7 @@ export interface ChannelStackProps extends cdk.StackProps {
     conferenceId: string;
     awsPrefix: string;
     mediaLiveServiceRoleArn: string;
+    awsContentBucketId: string;
     generateId(): string;
 }
 
@@ -233,7 +234,7 @@ export class ChannelStack extends cdk.Stack {
             type: "MP4_FILE",
             sources: [
                 {
-                    url: `s3ssl://${process.env.AWS_CONTENT_BUCKET_ID}/$urlPath$`,
+                    url: `s3ssl://${props.awsContentBucketId}/$urlPath$`,
                 },
             ],
             inputSecurityGroups: [props.inputSecurityGroupId],

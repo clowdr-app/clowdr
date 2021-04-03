@@ -8,6 +8,7 @@ import {
     GetConferenceIdFromChannelResourceIdDocument,
     GetMediaLiveChannelByRoomDocument,
     GetRoomsWithEventsDocument,
+    GetRoomsWithEventsQuery,
     GetRoomsWithEventsStartingDocument,
     GetRoomsWithEventsStartingQuery,
     GetRoomsWithNoEventsDocument,
@@ -223,23 +224,35 @@ export async function stopChannelsWithoutUpcomingOrCurrentEvents(): Promise<void
 }
 
 gql`
-    query GetRoomsWithEvents {
-        Room(where: { events: { intendedRoomModeName: { _in: [Q_AND_A, PRERECORDED, PRESENTATION] } } }) {
+    query GetRoomsWithEvents($now: timestamptz!) {
+        Room(
+            where: {
+                events: { intendedRoomModeName: { _in: [Q_AND_A, PRERECORDED, PRESENTATION] }, endTime: { _gte: $now } }
+            }
+        ) {
             id
         }
     }
 `;
 
 export async function syncChannelSchedules(): Promise<{ [roomId: string]: boolean }> {
-    console.log("Syncing channel schedules");
+    console.log("Syncing room schedules to channels");
     // TODO: only look at future/current events?
-    const rooms = await apolloClient.query({
-        query: GetRoomsWithEventsDocument,
-    });
 
-    if (rooms.error || rooms.errors) {
-        console.error("Could not get rooms with events to sync channel schedules", rooms.error, rooms.errors);
+    let rooms: ApolloQueryResult<GetRoomsWithEventsQuery>;
+    try {
+        rooms = await apolloClient.query({
+            query: GetRoomsWithEventsDocument,
+            variables: {
+                now: new Date().toISOString(),
+            },
+        });
+    } catch (e) {
+        console.error("Could not get rooms with events to sync channel schedules", e);
+        return {};
     }
+
+    console.log(`Found ${rooms.data.Room.length} rooms for channel sync`);
 
     const holdOffOnCreatingChannel: { [roomId: string]: boolean } = {};
     for (const room of rooms.data.Room) {
@@ -294,7 +307,7 @@ interface ComparableScheduleAction {
 
 // Return value: whether to hold off on recreating the channel
 export async function syncChannelSchedule(roomId: string): Promise<boolean> {
-    console.log("Attempting to sync channel schedule", roomId);
+    console.log("Attempting to sync channel schedule", { roomId });
     const channelResult = await apolloClient.query({
         query: GetMediaLiveChannelByRoomDocument,
         variables: {
@@ -303,7 +316,7 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
     });
 
     if (!channelResult.data.Room_by_pk?.mediaLiveChannel?.mediaLiveChannelId) {
-        console.warn("No MediaLive channel details found for room. Skipping schedule sync.", roomId);
+        console.warn("No MediaLive channel details found for room. Skipping schedule sync.", { roomId });
         return false;
     }
 
@@ -314,7 +327,11 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
     });
 
     if (mediaLiveChannel.State !== "IDLE" && mediaLiveChannel.State !== "RUNNING") {
-        console.warn("Cannot sync channel schedule", roomId, channel.id, mediaLiveChannel.State);
+        console.warn("Cannot sync channel schedule", {
+            roomId,
+            mediaLiveChannelId: channel.id,
+            channelState: mediaLiveChannel.State,
+        });
         return true;
     }
 

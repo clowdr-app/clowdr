@@ -228,6 +228,7 @@ gql`
         Room(
             where: {
                 events: { intendedRoomModeName: { _in: [Q_AND_A, PRERECORDED, PRESENTATION] }, endTime: { _gte: $now } }
+                mediaLiveChannel: {}
             }
         ) {
             id

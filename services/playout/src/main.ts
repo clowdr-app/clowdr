@@ -27,6 +27,6 @@ async function bootstrap() {
         logger: new BunyanLoggerService(ROOT_LOGGER),
     });
     app.useGlobalPipes(new ValidationPipe());
-    await app.listen(3003);
+    await app.listen(process.env.PORT ? parseInt(process.env.PORT, 10) : 3003);
 }
 bootstrap();

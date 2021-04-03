@@ -155,7 +155,6 @@ export interface RoomData extends BaseData {
     originatingDataId: string | null;
     capacity: number | null;
     publicVonageSessionId: string | null;
-    mediaLiveChannelId: string | null;
     priority: number;
     roomPrivacyName: RoomPrivacy_Enum;
 }

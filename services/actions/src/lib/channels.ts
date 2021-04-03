@@ -231,6 +231,7 @@ gql`
 `;
 
 export async function syncChannelSchedules(): Promise<{ [roomId: string]: boolean }> {
+    console.log("Syncing channel schedules");
     // TODO: only look at future/current events?
     const rooms = await apolloClient.query({
         query: GetRoomsWithEventsDocument,

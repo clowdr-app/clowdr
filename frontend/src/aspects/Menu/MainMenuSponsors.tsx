@@ -13,7 +13,7 @@ import { LinkButton } from "../Chakra/LinkButton";
 import { useConference } from "../Conference/useConference";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import FAIcon from "../Icons/FAIcon";
-import PageCountText from "../Presence/PageCountText";
+import PageCountText from "../Realtime/PageCountText";
 
 gql`
     query MainMenuSponsors_GetSponsors($conferenceId: uuid!) {

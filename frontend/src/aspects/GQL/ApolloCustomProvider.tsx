@@ -7,7 +7,8 @@ import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AppLoadingScreen from "../../AppLoadingScreen";
-import { PresenceStateProvider } from "../Presence/PresenceStateProvider";
+import { PresenceStateProvider } from "../Realtime/PresenceStateProvider";
+import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
 
 interface ConferenceAuthCtx {
     setConferenceId: (value: string | null) => void;
@@ -307,7 +308,7 @@ function ApolloCustomProviderInner({
         slug: string | undefined;
         client: ApolloClient<NormalizedCacheObject>;
     } | null>(null);
-    const [presenceToken, setPresenceToken] = useState<string | null>(null);
+    const [realtimeToken, setPresenceToken] = useState<string | null>(null);
 
     const mutex = useRef(new Mutex());
     const isReconnecting = useRef(false);
@@ -373,10 +374,12 @@ function ApolloCustomProviderInner({
 
     return (
         <ApolloCustomContext.Provider value={ctx}>
-            {presenceToken ? (
-                <PresenceStateProvider token={presenceToken}>
-                    <ApolloProvider client={client.client}>{children}</ApolloProvider>
-                </PresenceStateProvider>
+            {realtimeToken ? (
+                <RealtimeServiceProvider token={realtimeToken}>
+                    <PresenceStateProvider>
+                        <ApolloProvider client={client.client}>{children}</ApolloProvider>
+                    </PresenceStateProvider>
+                </RealtimeServiceProvider>
             ) : (
                 <ApolloProvider client={client.client}>{children}</ApolloProvider>
             )}

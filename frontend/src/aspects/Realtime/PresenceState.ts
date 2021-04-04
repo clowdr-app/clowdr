@@ -1,79 +1,21 @@
 import { Mutex } from "async-mutex";
-import io from "socket.io-client";
 import { Observable, Observer } from "../Chat/ChatGlobalState";
+import { realtimeService } from "./RealtimeService";
 
 export class PresenceState {
-    private socket: SocketIOClient.Socket | undefined;
+    // private socket: SocketIOClient.Socket | undefined;
     private mutex: Mutex = new Mutex();
 
-    async begin(token: string): Promise<void> {
-        const release = await this.mutex.acquire();
-        try {
-            if (this.socket) {
-                this.socket.close();
-                this.socket = undefined;
-            }
+    setup(): void {
+        realtimeService.socket?.on("entered", this.onEntered.bind(this));
+        realtimeService.socket?.on("left", this.onLeft.bind(this));
+        realtimeService.socket?.on("presences", this.onListPresent.bind(this));
 
-            const url = import.meta.env.SNOWPACK_PUBLIC_PRESENCE_SERVICE_URL;
-            this.socket = io(url, {
-                transports: ["websocket"],
-                auth: {
-                    token,
-                },
-            } as any);
-
-            this.socket.on("connect", this.onConnect.bind(this));
-            this.socket.on("disconnect", this.onDisconnect.bind(this));
-            this.socket.on("connect_error", this.onConnectError.bind(this));
-            this.socket.on("unauthorized", this.onUnauthorized.bind(this));
-
-            this.socket.on("entered", this.onEntered.bind(this));
-            this.socket.on("left", this.onLeft.bind(this));
-            this.socket.on("presences", this.onListPresent.bind(this));
-        } catch (e) {
-            console.error("Failed to create socket for presence service.");
-            this.socket = undefined;
-        } finally {
-            release();
-        }
-    }
-
-    end(): void {
-        (async () => {
-            const release = await this.mutex.acquire();
-            try {
-                this.presences = {};
-                this.socket?.disconnect();
-                this.socket = undefined;
-            } catch (e) {
-                console.error("Error ending presence state", e);
-            } finally {
-                release();
-            }
-        })();
-    }
-
-    private onConnect() {
-        console.log("Connected to presence service");
         this.pageChanged(window.location.pathname);
     }
 
-    private onDisconnect() {
-        console.log("Disconnected from presence service");
-    }
-
-    private onConnectError(e: any) {
-        // TODO
-        console.error("Error connecting to presence service", e);
-    }
-
-    private onUnauthorized(error: any) {
-        if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
-            // TODO
-            console.warn("User token has expired");
-        } else {
-            console.error("Error connecting to presence servie", error);
-        }
+    teardown(): void {
+        this.presences = {};
     }
 
     async sha256(message: string): Promise<string> {
@@ -133,8 +75,8 @@ export class PresenceState {
         // TODO: Similar mechanism for just the conference slug
 
         // console.log("Presence:pageChanged", newPath);
-        this.socket?.emit("leavePage", this.oldPath);
-        this.socket?.emit("enterPage", newPath);
+        realtimeService.socket?.emit("leavePage", this.oldPath);
+        realtimeService.socket?.emit("enterPage", newPath);
         this.oldPath = newPath;
     }
 
@@ -164,7 +106,7 @@ export class PresenceState {
                 unsubscribe = this.observers[listId].subscribe(observer);
 
                 if (this.observers[listId].observers.size === 1) {
-                    this.socket?.emit("observePage", path);
+                    realtimeService.socket?.emit("observePage", path);
                 }
             } catch (e) {
                 console.error("Error subscribing to presence observer", e);
@@ -187,7 +129,7 @@ export class PresenceState {
                     const info = await promise;
                     if (info.listId) {
                         if (this.observers[info.listId].observers.size === 0) {
-                            this.socket?.emit("unobservePage", path);
+                            realtimeService.socket?.emit("unobservePage", path);
                         }
                     }
                     info.unsubscribe();

@@ -10,17 +10,15 @@ export function usePresenceState(): PresenceState {
 
 export function PresenceStateProvider({
     children,
-    token,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
-    token: string;
 }): JSX.Element {
     useEffect(() => {
-        State.begin(token);
+        State.setup();
         return () => {
-            State.end();
+            State.teardown();
         };
-    }, [token]);
+    }, []);
 
     const location = useLocation();
     useEffect(() => {

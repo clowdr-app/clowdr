@@ -52,7 +52,7 @@ import { Attendee, useMaybeCurrentAttendee } from "../Conference/useCurrentAtten
 import { useRestorableState } from "../Generic/useRestorableState";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
-import { usePresenceState } from "../Presence/PresenceStateProvider";
+import { usePresenceState } from "../Realtime/PresenceStateProvider";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";

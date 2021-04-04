@@ -360,7 +360,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                         url={hlsUri}
                         config={{
                             file: {
-                                hlsVersion: "1.0.0-rc.4",
+                                hlsVersion: "1.0.0",
                                 hlsOptions: {
                                     subtitleDisplay: false,
                                 },

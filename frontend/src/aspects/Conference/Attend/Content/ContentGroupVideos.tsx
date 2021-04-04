@@ -161,7 +161,7 @@ export function ContentGroupVideo({
         return {
             file: {
                 tracks: [track],
-                hlsVersion: "1.0.0-rc.4",
+                hlsVersion: "1.0.0",
                 hlsOptions: {
                     subtitleDisplay: false,
                     maxBufferLength: 0.05,

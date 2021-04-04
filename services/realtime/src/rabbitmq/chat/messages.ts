@@ -1,9 +1,10 @@
-import { Channel } from "amqplib";
+import { Channel, ConsumeMessage } from "amqplib";
 import { is } from "typescript-is";
 import { RoomPrivacy_Enum } from "../../generated/graphql";
 import { canIUDMessage as canIUDMessageOrReaction } from "../../lib/permissions";
 import { downlink, uplink } from "../../rabbitmq";
-import { Message } from "../../types/chat";
+import { Action, Message, MessageDeleteAction, MessageInsertAction, MessageUpdateAction } from "../../types/chat";
+import { MessageWritebackQueueSize } from "./params";
 
 const exchange = "chat.messages";
 const exchangeParams = {
@@ -24,19 +25,30 @@ async function uplinkChannel() {
 const distributionQueue = "*.distribution";
 const writebackQueue = "*.writeback";
 
-let _downlinkChannel: Channel;
-async function downlinkChannel() {
-    if (!_downlinkChannel) {
+let _distributionDownlinkChannel: Channel;
+async function distributionDownlinkChannel() {
+    if (!_distributionDownlinkChannel) {
         const connection = await downlink();
-        _downlinkChannel = await connection.createChannel();
+        _distributionDownlinkChannel = await connection.createChannel();
 
-        await _downlinkChannel.assertExchange(exchange, "topic", exchangeParams);
+        await _distributionDownlinkChannel.assertExchange(exchange, "topic", exchangeParams);
     }
-    return _downlinkChannel;
+    return _distributionDownlinkChannel;
+}
+
+let _writebackDownlinkChannel: Channel;
+async function writebackDownlinkChannel() {
+    if (!_writebackDownlinkChannel) {
+        const connection = await downlink();
+        _writebackDownlinkChannel = await connection.createChannel();
+
+        await _writebackDownlinkChannel.assertExchange(exchange, "topic", exchangeParams);
+    }
+    return _writebackDownlinkChannel;
 }
 
 async function distributionDownChannel() {
-    const channel = await downlinkChannel();
+    const channel = await distributionDownlinkChannel();
     await channel.assertQueue(distributionQueue, {
         autoDelete: true,
         durable: false,
@@ -46,51 +58,117 @@ async function distributionDownChannel() {
 }
 
 async function writebackDownChannel() {
-    const channel = await downlinkChannel();
-    await _downlinkChannel.assertQueue(writebackQueue, {
+    const channel = await writebackDownlinkChannel();
+    // Prefetch enables us to fetch N messages before we have to ack some to receive more messages
+    channel.prefetch(MessageWritebackQueueSize);
+    await _writebackDownlinkChannel.assertQueue(writebackQueue, {
         autoDelete: false,
         durable: true,
     });
-    await _downlinkChannel.bindQueue(writebackQueue, exchange, "*");
+    await _writebackDownlinkChannel.bindQueue(writebackQueue, exchange, "*");
     return channel;
 }
 
-export async function send(message: Message, userId: string, confSlugs: string[]): Promise<boolean> {
+export async function action(action: Action<Message>, userId: string, confSlugs: string[]): Promise<boolean> {
     if (
         await canIUDMessageOrReaction(
             userId,
-            message.chatId,
+            action.data.chatId,
             confSlugs,
-            true,
+            action.data.senderId ?? undefined,
             false,
             "messages.send:test-attendee-id",
             "messages.send:test-conference-id",
-            RoomPrivacy_Enum.Private
+            "messages.send:test-room-id",
+            "messages.send:test-room-name",
+            RoomPrivacy_Enum.Private,
+            []
         )
     ) {
-        message.userId = userId;
+        if (action.op === "INSERT") {
+            if ("id" in action.data) {
+                delete (action.data as any).id;
+            }
+        }
 
-        const channel = await uplinkChannel();
-        return channel.publish(exchange, message.chatId, Buffer.from(JSON.stringify(message)), {
-            persistent: true,
-        });
+        return publishAction(action);
     }
     return false;
 }
 
-export async function onDistributionMessage(handler: (message: Message) => Promise<void>): Promise<void> {
+async function publishAction(action: Action<Message>): Promise<boolean> {
+    const channel = await uplinkChannel();
+    return channel.publish(exchange, action.data.chatId, Buffer.from(JSON.stringify(action)), {
+        persistent: true,
+    });
+}
+
+export async function onDistributionMessage(handler: (message: Action<Message>) => Promise<void>): Promise<void> {
     const channel = await distributionDownChannel();
     channel.consume(distributionQueue, (rabbitMQMsg) => {
-        if (rabbitMQMsg) {
-            // Ack immediately
-            channel.ack(rabbitMQMsg);
+        try {
+            if (rabbitMQMsg) {
+                // Ack immediately
+                channel.ack(rabbitMQMsg);
 
-            const message = JSON.parse(rabbitMQMsg.content.toString());
-            if (is<Message>(message)) {
-                handler(message);
-            } else {
-                console.warn("Invalid chat message received. Data does not match type. (Distribution queue)", message);
+                const message = JSON.parse(rabbitMQMsg.content.toString());
+                if (
+                    is<MessageInsertAction>(message) ||
+                    is<MessageUpdateAction>(message) ||
+                    is<MessageDeleteAction>(message)
+                ) {
+                    handler(message);
+                } else {
+                    console.warn(
+                        "Invalid chat message received. Data does not match type. (Distribution queue)",
+                        message
+                    );
+                }
             }
+        } catch (e) {
+            console.error("Error processing chat message for distribution", e);
         }
     });
+}
+
+export async function onWritebackMessage(
+    handler: (rabbitMQMsg: ConsumeMessage, message: Action<Message>) => Promise<void>
+): Promise<void> {
+    const channel = await writebackDownChannel();
+    channel.consume(writebackQueue, (rabbitMQMsg) => {
+        try {
+            if (rabbitMQMsg) {
+                // Do not ack until the message has been written into the db
+
+                const message = JSON.parse(rabbitMQMsg.content.toString());
+                if (
+                    is<MessageInsertAction>(message) ||
+                    is<MessageUpdateAction>(message) ||
+                    is<MessageDeleteAction>(message)
+                ) {
+                    handler(rabbitMQMsg, message);
+                } else {
+                    console.warn("Invalid chat message received. Data does not match type. (Writeback queue)", message);
+                    // Ack invalid messages to remove them from the queue
+                    channel.ack(rabbitMQMsg);
+                }
+            }
+        } catch (e) {
+            console.error("Error processing chat message for writeback", e);
+        }
+    });
+}
+
+export async function onWritebackMessagesComplete(rabbitMQMsgs: ConsumeMessage[]): Promise<void> {
+    const channel = await writebackDownChannel();
+    for (const rabbitMQMsg of rabbitMQMsgs) {
+        channel.ack(rabbitMQMsg);
+    }
+}
+
+export async function onWritebackMessagesFail(rabbitMQMsgs: ConsumeMessage[]): Promise<void> {
+    const channel = await writebackDownChannel();
+    for (const rabbitMQMsg of rabbitMQMsgs) {
+        channel.nack(rabbitMQMsg, undefined, true);
+    }
 }

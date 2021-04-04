@@ -1,8 +1,8 @@
 import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { send } from "../../rabbitmq/chat/messages";
-import { Message } from "../../types/chat";
+import { action } from "../../rabbitmq/chat/messages";
+import { MessageAction } from "../../types/chat";
 
 export function onSend(
     conferenceSlugs: string[],
@@ -10,21 +10,21 @@ export function onSend(
     socketId: string,
     socket: Socket
 ): (message: any, cb?: () => void) => Promise<void> {
-    return async (message, cb) => {
-        if (message) {
+    return async (actionData, cb) => {
+        if (actionData) {
             try {
-                assert(is<Message>(message), "Data does not match expected type.");
-                if (await send(message, userId, conferenceSlugs)) {
-                    socket.emit("chat.messages.send.ack", message.sId);
+                assert(is<MessageAction>(actionData), "Data does not match expected type.");
+                if (await action(actionData, userId, conferenceSlugs)) {
+                    socket.emit("chat.messages.send.ack", actionData.data.sId);
                 } else {
-                    socket.emit("chat.messages.send.nack", message.sId);
+                    socket.emit("chat.messages.send.nack", actionData.data.sId);
                 }
             } catch (e) {
-                console.error(`Error processing chat.messages.send (socket: ${socketId}, sId: ${message.sId})`, e);
+                console.error(`Error processing chat.messages.send (socket: ${socketId})`, e, actionData);
                 try {
-                    socket.emit("chat.messages.send.nack", message.sId);
+                    socket.emit("chat.messages.send.nack", actionData.sId);
                 } catch (e2) {
-                    console.error(`Error nacking chat.messages.send (socket: ${socketId}, sId: ${message.sId})`, e);
+                    console.error(`Error nacking chat.messages.send (socket: ${socketId})`, e, actionData);
                 }
             }
         }

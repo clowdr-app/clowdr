@@ -2,7 +2,8 @@ import assert from "assert";
 import fetch from "node-fetch";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { Message, Reaction } from "../types/chat";
+import { Chat_MessageType_Enum } from "../generated/graphql";
+import { Action, Message, Reaction } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
 assert(
@@ -10,10 +11,12 @@ assert(
     `SERVER_URL env var should have a trailing slash: ${process.env.SERVER_URL}`
 );
 assert(process.env.USER_ID, "Missing USER_ID env var");
+assert(process.env.ATTENDEE_ID, "Missing ATTENDEE_ID env var");
 assert(process.env.CONFERENCE_SLUG, "Missing CONFERENCE_SLUG env var");
 
 const serverURL = process.env.SERVER_URL;
 const userId = process.env.USER_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
+const attendeeId = process.env.ATTENDEE_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
 const confSlug = process.env.CONFERENCE_SLUG;
 
 async function wait(ms: number) {
@@ -23,7 +26,10 @@ async function wait(ms: number) {
 }
 
 async function Main(
-    messagesPerSecond = 10,
+    // The practical upper limit is ~15 messages/s (due to this test publisher
+    // code's performance). We could do better if we didn't print to the console
+    // but then we wouldn't have any feedback.
+    messagesPerSecond = 15,
     message = "Test message",
     chatId = process.env.CHAT_ID ?? "testChat1",
     floodReactionsEveryNMessages = 3,
@@ -86,28 +92,38 @@ async function Main(
         });
 
         console.info(`Sending test messages (${messagesPerSecond} msg/s)`);
-        console.info("    . = 1 message sent");
-        console.info("    * = 1 message sent and reactions sent");
 
         let messagesSinceLastReactionsFlood = 0;
+        const startedSendingAt = Date.now();
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            const msg: Message = {
-                sId: uuidv4(),
-                userId,
-                chatId,
-                message: `${totalMessagesSent}: ${message}`,
+            const action: Action<Message> = {
+                op: "INSERT",
+                data: {
+                    sId: uuidv4(),
+                    senderId: attendeeId,
+                    chatId,
+                    message: `${totalMessagesSent}: ${message}`,
+                    data: {},
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                    duplicatedMessageId: undefined,
+                    isPinned: false,
+                    remoteServiceId: undefined,
+                    systemId: undefined,
+                    type: Chat_MessageType_Enum.Message,
+                },
             };
 
             try {
-                client.emit("chat.messages.send", msg);
+                client.emit("chat.messages.send", action);
 
                 const startedWaitingForAckAt = Date.now();
-                while (lastAckInfo.msgSId !== msg.sId && Date.now() - startedWaitingForAckAt < 10 * 1000) {
-                    await wait(100);
+                while (lastAckInfo.msgSId !== action.data.sId && Date.now() - startedWaitingForAckAt < 10 * 1000) {
+                    await wait(5);
                 }
 
-                if (lastAckInfo.msgSId !== msg.sId) {
+                if (lastAckInfo.msgSId !== action.data.sId) {
                     throw new Error("Sending message timed out");
                 } else if (!lastAckInfo.ack) {
                     throw new Error("Message send was not acknowledged.");
@@ -117,20 +133,16 @@ async function Main(
             }
 
             totalMessagesSent++;
-            if (messagesSent === 0) {
-                process.stdout.write(`${messagesPerSecond}|`);
-            }
 
             messagesSinceLastReactionsFlood++;
             if (messagesSinceLastReactionsFlood === floodReactionsEveryNMessages) {
-                process.stdout.write("*");
                 try {
                     for (const reaction of reactions) {
                         const rct: Reaction = {
                             sId: uuidv4(),
                             userId,
                             chatId,
-                            messageSId: msg.sId,
+                            messageSId: action.data.sId,
                             reaction,
                         };
                         client.emit("chat.reactions.send", rct);
@@ -140,19 +152,30 @@ async function Main(
                     console.error("Error sending reactions", e);
                 }
                 messagesSinceLastReactionsFlood = 0;
-            } else {
-                process.stdout.write(".");
             }
 
             messagesSent++;
             if (messagesSent === messagesPerSecond) {
                 messagesSent = 0;
-                process.stdout.write(`|${totalMessagesSent}\n`);
+                process.stdout.write(
+                    `${messagesPerSecond}|${totalMessagesSent}|${(
+                        totalMessagesSent /
+                        ((Date.now() - startedSendingAt) / 1000)
+                    ).toFixed(1)}msgs/s\n`
+                );
             }
 
             nextSendAt = nextSendAt + interval;
             const now = Date.now();
-            await wait(nextSendAt - now);
+            const offset = nextSendAt - now;
+            if (offset > 0) {
+                if (offset > 5) {
+                    await wait(offset);
+                }
+            } else {
+                // console.info(`Publisher can't keep up (running ${(nextSendAt - now).toFixed(2)}ms slow)`);
+                nextSendAt = now + interval;
+            }
         }
     } catch (e) {
         process.stdout.write("\n");

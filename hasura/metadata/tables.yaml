@@ -101,7 +101,7 @@
             - slug:
                 _in: X-Hasura-Conference-Slugs
             - userPermissions:
-                _and: 
+                _and:
                 - user_id:
                     _eq: X-Hasura-User-Id
                 - permission_name:
@@ -135,7 +135,7 @@
           - slug:
               _in: X-Hasura-Conference-Slugs
           - userPermissions:
-              _and: 
+              _and:
               - user_id:
                   _eq: X-Hasura-User-Id
               - permission_name:
@@ -152,7 +152,7 @@
           - slug:
               _in: X-Hasura-Conference-Slugs
           - userPermissions:
-              _and: 
+              _and:
               - user_id:
                   _eq: X-Hasura-User-Id
               - permission_name:
@@ -429,7 +429,7 @@
                   - slug:
                       _in: X-Hasura-Conference-Slugs
                   - userPermissions:
-                      _and: 
+                      _and:
                       - user_id:
                           _eq: X-Hasura-User-Id
                       - permission_name:
@@ -455,7 +455,7 @@
                   - slug:
                       _in: X-Hasura-Conference-Slugs
                   - userPermissions:
-                      _and: 
+                      _and:
                       - user_id:
                           _eq: X-Hasura-User-Id
                       - permission_name:
@@ -480,6 +480,7 @@
       - id
       - isPinned
       - message
+      - sId
       - senderId
       - type
       backend_only: false
@@ -495,6 +496,7 @@
       - isPinned
       - message
       - remoteServiceId
+      - sId
       - senderId
       - systemId
       - type
@@ -518,7 +520,7 @@
               - slug:
                   _in: X-Hasura-Conference-Slugs
               - userPermissions:
-                  _and: 
+                  _and:
                   - user_id:
                       _eq: X-Hasura-User-Id
                   - permission_name:
@@ -549,7 +551,7 @@
                   - slug:
                       _in: X-Hasura-Conference-Slugs
                   - userPermissions:
-                      _and: 
+                      _and:
                       - user_id:
                           _eq: X-Hasura-User-Id
                       - permission_name:
@@ -575,7 +577,7 @@
                   - slug:
                       _in: X-Hasura-Conference-Slugs
                   - userPermissions:
-                      _and: 
+                      _and:
                       - user_id:
                           _eq: X-Hasura-User-Id
                       - permission_name:
@@ -612,7 +614,7 @@
                   - slug:
                       _in: X-Hasura-Conference-Slugs
                   - userPermissions:
-                      _and: 
+                      _and:
                       - user_id:
                           _eq: X-Hasura-User-Id
                       - permission_name:
@@ -638,7 +640,7 @@
                   - slug:
                       _in: X-Hasura-Conference-Slugs
                   - userPermissions:
-                      _and: 
+                      _and:
                       - user_id:
                           _eq: X-Hasura-User-Id
                       - permission_name:
@@ -838,7 +840,7 @@
                   - slug:
                       _in: X-Hasura-Conference-Slugs
                   - userPermissions:
-                      _and: 
+                      _and:
                       - user_id:
                           _eq: X-Hasura-User-Id
                       - permission_name:
@@ -861,6 +863,7 @@
       - data
       - id
       - messageId
+      - sId
       - senderId
       - symbol
       - type
@@ -874,6 +877,7 @@
       - id
       - messageId
       - remoteServiceId
+      - sId
       - senderId
       - symbol
       - type
@@ -883,18 +887,18 @@
           chat:
             _and:
             - conference:
-                  _and:
-                  - slug:
-                      _in: X-Hasura-Conference-Slugs
-                  - userPermissions:
-                      _and: 
-                      - user_id:
-                          _eq: X-Hasura-User-Id
-                      - permission_name:
-                          _in:
-                          - CONFERENCE_MANAGE_ATTENDEES
-                          - CONFERENCE_MODERATE_ATTENDEES
-                          - CONFERENCE_VIEW_ATTENDEES
+                _and:
+                - slug:
+                    _in: X-Hasura-Conference-Slugs
+                - userPermissions:
+                    _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - permission_name:
+                        _in:
+                        - CONFERENCE_MANAGE_ATTENDEES
+                        - CONFERENCE_MODERATE_ATTENDEES
+                        - CONFERENCE_VIEW_ATTENDEES
             - _or:
               - room:
                   _or:
@@ -922,7 +926,7 @@
                   - slug:
                       _in: X-Hasura-Conference-Slugs
                   - userPermissions:
-                      _and: 
+                      _and:
                       - user_id:
                           _eq: X-Hasura-User-Id
                       - permission_name:
@@ -1282,7 +1286,7 @@
             - slug:
                 _in: X-Hasura-Conference-Slugs
             - userPermissions:
-                _and: 
+                _and:
                 - user_id:
                     _eq: X-Hasura-User-Id
                 - permission_name:
@@ -1312,7 +1316,7 @@
           - slug:
               _in: X-Hasura-Conference-Slugs
           - userPermissions:
-              _and: 
+              _and:
               - user_id:
                   _eq: X-Hasura-User-Id
               - permission_name:

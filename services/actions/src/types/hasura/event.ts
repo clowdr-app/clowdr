@@ -232,6 +232,7 @@ export interface MessageData {
     duplicatedMessageId: number | null | undefined;
     systemId: string | null | undefined;
     remoteServiceId: string | null | undefined;
+    sId: string;
 }
 
 export interface ReactionData {

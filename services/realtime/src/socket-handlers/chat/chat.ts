@@ -24,7 +24,10 @@ export function onSubscribe(
                         false,
                         "chat.onSubscribe:test-attendee-id",
                         "chat.onSubscribe:test-conference-id",
-                        RoomPrivacy_Enum.Private
+                        "chat.onSubscribe:test-room-id",
+                        "chat.onSubscribe:test-room-name",
+                        RoomPrivacy_Enum.Private,
+                        []
                     )
                 ) {
                     socket.join(generateRoomName(chatId));

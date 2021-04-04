@@ -2,7 +2,7 @@ import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { action } from "../../rabbitmq/chat/messages";
-import { MessageAction } from "../../types/chat";
+import { Action, Message } from "../../types/chat";
 
 export function onSend(
     conferenceSlugs: string[],
@@ -13,7 +13,7 @@ export function onSend(
     return async (actionData, cb) => {
         if (actionData) {
             try {
-                assert(is<MessageAction>(actionData), "Data does not match expected type.");
+                assert(is<Action<Message>>(actionData), "Data does not match expected type.");
                 if (await action(actionData, userId, conferenceSlugs)) {
                     socket.emit("chat.messages.send.ack", actionData.data.sId);
                 } else {

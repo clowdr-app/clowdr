@@ -773,6 +773,22 @@
         attendee:
           userId:
             _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: ChatPinChanged
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{REALTIME_BASE_URL}}/chat/pinChanged'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: chat
     name: PinnedOrSubscribed
@@ -1129,6 +1145,22 @@
         attendee:
           userId:
             _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: ChatSubscriptionChanged
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{REALTIME_BASE_URL}}/chat/subscriptionChanged'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: chat
     name: SubscriptionsWithUnnotifiedMessages

@@ -1,13 +1,15 @@
+import { getAttendeeInfo } from "../../../lib/cache/attendeeInfo";
+import { getSubscriptions } from "../../../lib/cache/subscription";
+import { sendNotifications } from "../../../lib/notifications";
 import { onDistributionMessage } from "../../../rabbitmq/chat/messages";
-import { generateRoomName } from "../../../socket-emitter/chat";
+import { redisClientP } from "../../../redis";
+import { chatListenersKeyName, generateRoomName } from "../../../socket-emitter/chat";
 import { emitter } from "../../../socket-emitter/socket-emitter";
 import { Action, Message } from "../../../types/chat";
 
 console.info("Chat messages distribution worker running");
 
 async function onMessage(action: Action<Message>) {
-    // console.info("Message for distribution", action);
-
     const eventName =
         action.op === "INSERT"
             ? "receive"
@@ -17,11 +19,33 @@ async function onMessage(action: Action<Message>) {
             ? "delete"
             : "unknown";
 
-    emitter.to(generateRoomName(action.data.chatId)).emit(`chat.messages.${eventName}`, JSON.stringify(action));
+    const chatId = action.data.chatId;
+    emitter.to(generateRoomName(chatId)).emit(`chat.messages.${eventName}`, JSON.stringify(action));
 
-    // TODO: Lookup subscribers
-    // TODO: Filter out subscribers who have a socket connected and are pub / sub'd
-    // TODO: Choose web-push, email or no distribution channel for remaining subscribers
+    if (action.op === "INSERT") {
+        const subscriptions = await getSubscriptions(chatId, {
+            chatId,
+            attendeeIds: [],
+        });
+        if (subscriptions) {
+            const listenerUserIds = (await redisClientP.smembers(chatListenersKeyName(chatId))).map(
+                (x) => x.split("¬")[1]
+            );
+            const subscribedAttendeeIds = subscriptions.attendeeIds;
+            const subscribedUserIds = (
+                await Promise.all(
+                    subscribedAttendeeIds.map((attendeeId) =>
+                        getAttendeeInfo(attendeeId, {
+                            displayName: "unknown",
+                        })
+                    )
+                )
+            )
+                .filter((x) => !!x?.userId && !listenerUserIds.includes(x.userId))
+                .map((x) => x?.userId) as string[];
+            sendNotifications(subscribedUserIds, action.data);
+        }
+    }
 }
 
 async function Main() {

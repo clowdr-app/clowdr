@@ -1,6 +1,7 @@
 import assert from "assert";
 import express from "express";
 import path from "path";
+import { router as chatRouter } from "../http-routers/chat";
 import { router as presenceRouter } from "../http-routers/presence";
 import { router as testRouter } from "../http-routers/test";
 
@@ -13,6 +14,7 @@ const server = express();
 
 server.use(presenceRouter);
 server.use("/test", testRouter);
+server.use("/chat", chatRouter);
 
 const INDEX_FILE = "../resources/index.html";
 server.use((_req, res) => res.sendFile(path.resolve(path.join(__dirname, INDEX_FILE))));

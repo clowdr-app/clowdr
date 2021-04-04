@@ -3,6 +3,7 @@ import socketIO, { Socket } from "socket.io";
 import { createAdapter } from "socket.io-redis";
 import { testJWKs } from "../jwks";
 import { redisClient } from "../redis";
+import { notificationsRoomName } from "../socket-emitter/chat";
 import { onConnect as onConnectChat } from "../socket-events/chat";
 import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
@@ -80,5 +81,7 @@ socketServer.on("connection", function (socket: Socket) {
 
         onConnectPresence(socket, userId, conferenceSlugs);
         onConnectChat(socket, userId, conferenceSlugs);
+
+        socket.join(notificationsRoomName(userId));
     }
 });

@@ -3,8 +3,8 @@ import { is } from "typescript-is";
 import { RoomPrivacy_Enum } from "../../generated/graphql";
 import { canIUDMessage as canIUDMessageOrReaction } from "../../lib/permissions";
 import { downlink, uplink } from "../../rabbitmq";
-import { Action, Message, MessageDeleteAction, MessageInsertAction, MessageUpdateAction } from "../../types/chat";
-import { MessageWritebackQueueSize } from "./params";
+import { Action, Message } from "../../types/chat";
+import { MessageDistributionQueueSize, MessageWritebackQueueSize } from "./params";
 
 const exchange = "chat.messages";
 const exchangeParams = {
@@ -49,6 +49,7 @@ async function writebackDownlinkChannel() {
 
 async function distributionDownChannel() {
     const channel = await distributionDownlinkChannel();
+    channel.prefetch(MessageDistributionQueueSize);
     await channel.assertQueue(distributionQueue, {
         autoDelete: true,
         durable: false,
@@ -112,11 +113,7 @@ export async function onDistributionMessage(handler: (message: Action<Message>) 
                 channel.ack(rabbitMQMsg);
 
                 const message = JSON.parse(rabbitMQMsg.content.toString());
-                if (
-                    is<MessageInsertAction>(message) ||
-                    is<MessageUpdateAction>(message) ||
-                    is<MessageDeleteAction>(message)
-                ) {
+                if (is<Action<Message>>(message)) {
                     handler(message);
                 } else {
                     console.warn(
@@ -141,11 +138,7 @@ export async function onWritebackMessage(
                 // Do not ack until the message has been written into the db
 
                 const message = JSON.parse(rabbitMQMsg.content.toString());
-                if (
-                    is<MessageInsertAction>(message) ||
-                    is<MessageUpdateAction>(message) ||
-                    is<MessageDeleteAction>(message)
-                ) {
+                if (is<Action<Message>>(message)) {
                     handler(rabbitMQMsg, message);
                 } else {
                     console.warn("Invalid chat message received. Data does not match type. (Writeback queue)", message);

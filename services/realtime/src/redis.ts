@@ -16,8 +16,11 @@ export const redlock = new Redlock([redisClient], {
 
 export const redisClientP = {
     get: promisify(redisClient.get).bind(redisClient),
-    set: promisify(
-        (key: string, value: string, flag: string, mode: string, duration: number, cb?: Callback<"OK" | undefined>) =>
-            redisClient.set(key, value, flag, mode, duration, cb)
+    set: promisify((key: string, value: string, mode: string, duration: number, cb?: Callback<"OK" | undefined>) =>
+        redisClient.set(key, value, mode, duration, cb)
     ),
+    del: promisify((key: string, cb?: Callback<number>) => redisClient.del(key, cb)),
+    sadd: promisify((key: string, value: string, cb?: Callback<number>) => redisClient.sadd(key, value, cb)),
+    srem: promisify((key: string, value: string, cb?: Callback<number>) => redisClient.srem(key, value, cb)),
+    smembers: promisify((key: string, cb?: Callback<string[]>) => redisClient.smembers(key, cb)),
 };

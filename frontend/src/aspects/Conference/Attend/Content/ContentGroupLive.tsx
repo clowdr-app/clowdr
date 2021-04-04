@@ -10,7 +10,7 @@ import {
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
 import FAIcon from "../../../Icons/FAIcon";
-import PageCountText from "../../../Presence/PageCountText";
+import PageCountText from "../../../Realtime/PageCountText";
 import { useConference } from "../../useConference";
 
 export function ContentGroupLive({

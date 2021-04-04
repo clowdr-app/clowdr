@@ -27,6 +27,3 @@ export type Action<T> = {
     op: "INSERT" | "UPDATE" | "DELETE";
     data: T;
 };
-
-// For use with typescript-is
-export type MessageAction = { op: "INSERT" | "UPDATE" | "DELETE"; data: Message };

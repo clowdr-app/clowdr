@@ -31867,6 +31867,22 @@ export type ChatInfoQuery = { __typename?: "query_root" } & {
     >;
 };
 
+export type PinsQueryVariables = Exact<{
+    chatId: Scalars["uuid"];
+}>;
+
+export type PinsQuery = { __typename?: "query_root" } & {
+    chat_Pin: Array<{ __typename?: "chat_Pin" } & Pick<Chat_Pin, "chatId" | "attendeeId">>;
+};
+
+export type SubscriptionsQueryVariables = Exact<{
+    chatId: Scalars["uuid"];
+}>;
+
+export type SubscriptionsQuery = { __typename?: "query_root" } & {
+    chat_Subscription: Array<{ __typename?: "chat_Subscription" } & Pick<Chat_Subscription, "chatId" | "attendeeId">>;
+};
+
 export type UserPermissionsQueryVariables = Exact<{
     userId: Scalars["String"];
 }>;
@@ -32072,6 +32088,128 @@ export const ChatInfoDocument: DocumentNode<ChatInfoQuery, ChatInfoQueryVariable
                                         ],
                                     },
                                 },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+export const PinsDocument: DocumentNode<PinsQuery, PinsQueryVariables> = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Pins" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "chatId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_Pin" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "chatId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "chatId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                                { kind: "Field", name: { kind: "Name", value: "attendeeId" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+export const SubscriptionsDocument: DocumentNode<SubscriptionsQuery, SubscriptionsQueryVariables> = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Subscriptions" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "chatId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_Subscription" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "chatId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "chatId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                                { kind: "Field", name: { kind: "Name", value: "attendeeId" } },
                             ],
                         },
                     },

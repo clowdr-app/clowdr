@@ -18,7 +18,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
-import PageCountText from "../../../Presence/PageCountText";
+import PageCountText from "../../../Realtime/PageCountText";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
 import { useConference } from "../../useConference";
 import { RoomParticipants } from "./RoomParticipants";

@@ -330,7 +330,7 @@ export function SendSubmissionRequestsModalInner({
                                     mt={4}
                                     colorScheme="green"
                                 >
-                                    Send {uploaderIds.length} emails
+                                    Send {uploaderIds.length} emails ({requiredItems.length} items)
                                 </Button>
                             </ModalFooter>
                         </ModalContent>

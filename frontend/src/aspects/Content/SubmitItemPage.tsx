@@ -5,6 +5,7 @@ import {
     Container,
     Divider,
     Heading,
+    Link,
     ListItem,
     Spinner,
     Text,
@@ -249,6 +250,16 @@ export default function SubmitItemPage({
                                                         regarding the maximum duration of your video.
                                                     </ListItem>
                                                     <ListItem>Maximum 1080p video quality</ListItem>
+                                                    <ListItem>
+                                                        Please refer to{" "}
+                                                        <Link
+                                                            href="https://clowdr.org/resources/video-subtitles"
+                                                            isExternal
+                                                        >
+                                                            these instructions
+                                                        </Link>{" "}
+                                                        for further information.
+                                                    </ListItem>
                                                 </UnorderedList>
                                             </Box>
                                         ) : undefined}

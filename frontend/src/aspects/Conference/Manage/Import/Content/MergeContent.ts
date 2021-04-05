@@ -161,6 +161,7 @@ function mergeRequiredItem(
     mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "typeName", item1, item2);
+    mergeFieldInPlace(context, changes, result, "isHidden", item1, item2);
     mergeFieldInPlace(context, changes, result, "uploadsRemaining", item1, item2, true, (_ctx, x, y) => {
         if (x !== null) {
             if (y !== null) {

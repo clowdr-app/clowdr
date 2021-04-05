@@ -43,7 +43,7 @@
         "*.{js,jsx,ts,tsx,css,json,md}": "prettier --write"
     },
     "engines": {
-        "node": "15.4.0",
+        "node": "15.13.0",
         "npm": "7.8.x"
     },
     "workspaces": [

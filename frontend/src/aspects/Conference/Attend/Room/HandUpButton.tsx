@@ -107,6 +107,10 @@ export function HandUpButton({
     const roomModeName = useMemo(() => {
         switch (currentRoomEvent?.intendedRoomModeName) {
             case undefined:
+            case RoomMode_Enum.Exhibition:
+            case RoomMode_Enum.None:
+            case RoomMode_Enum.Shuffle:
+            case RoomMode_Enum.VideoPlayer:
                 return "";
             case RoomMode_Enum.Breakout:
                 return "breakout";

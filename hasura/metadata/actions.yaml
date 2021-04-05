@@ -267,7 +267,6 @@ custom_types:
         schema: public
         name: Room
       name: room
-      source: default
       type: object
       field_mapping:
         roomId: id
@@ -277,7 +276,6 @@ custom_types:
         schema: public
         name: Room
       name: room
-      source: default
       type: object
       field_mapping:
         roomId: id

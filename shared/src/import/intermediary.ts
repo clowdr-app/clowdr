@@ -5,12 +5,20 @@ import type { ContentItemDataBlob, ContentRole } from "../content";
 declare enum RoomMode_Enum {
     /** Users may participate in the general video chat. */
     Breakout = "BREAKOUT",
+    /** An exhibition hall. */
+    Exhibition = "EXHIBITION",
+    /** An empty room. */
+    None = "NONE",
     /** Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users. */
     Prerecorded = "PRERECORDED",
     /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
     Presentation = "PRESENTATION",
     /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
     QAndA = "Q_AND_A",
+    /** A shuffle queue. */
+    Shuffle = "SHUFFLE",
+    /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
+    VideoPlayer = "VIDEO_PLAYER",
     /** Event is taking place in a Zoom room. */
     Zoom = "ZOOM",
 }

@@ -39,7 +39,11 @@ function copyAuthorsToUploaders(
                         groupPerson.roleName
                     }\n${JSON.stringify(groupPerson)}`
                 );
-                if (person.email) {
+                if (
+                    person.email &&
+                    (groupPerson.roleName.toLowerCase() === "author" ||
+                        groupPerson.roleName.toLowerCase() === "presenter")
+                ) {
                     const email = person.email.trim().toLowerCase();
                     if (!requiredItem.uploaders.some((uploader) => uploader.email.trim().toLowerCase() === email)) {
                         requiredItem.uploaders.push({

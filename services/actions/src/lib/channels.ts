@@ -1,7 +1,7 @@
 import { ApolloQueryResult, gql } from "@apollo/client/core";
 import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
 import AmazonS3URI from "amazon-s3-uri";
-import { add } from "date-fns";
+import { addMinutes } from "date-fns";
 import R from "ramda";
 import {
     DetachMediaLiveChannelDocument,
@@ -53,7 +53,7 @@ export async function ensureUpcomingChannelsStarted(holdOffOnStartingChannel: {
     console.log("Ensuring channels created for rooms with upcoming events");
     const now = new Date();
     const from = now.toISOString();
-    const to = add(now, { minutes: 30 }).toISOString();
+    const to = addMinutes(now, 30).toISOString();
 
     let roomsResult: ApolloQueryResult<GetRoomsWithEventsStartingQuery>;
     try {

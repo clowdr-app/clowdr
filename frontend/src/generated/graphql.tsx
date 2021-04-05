@@ -5795,6 +5795,7 @@ export type Event = {
   readonly executedTransitions: ReadonlyArray<ExecutedTransitions>;
   /** An aggregated array relationship */
   readonly executedTransitions_aggregate: ExecutedTransitions_Aggregate;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
   readonly id: Scalars['uuid'];
   readonly intendedRoomModeName: RoomMode_Enum;
   readonly name: Scalars['String'];
@@ -5806,6 +5807,7 @@ export type Event = {
   readonly roomId: Scalars['uuid'];
   /** An object relationship */
   readonly roomMode: RoomMode;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime: Scalars['timestamptz'];
   /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
@@ -7304,6 +7306,7 @@ export type Event_Bool_Exp = {
   readonly eventTags?: Maybe<EventTag_Bool_Exp>;
   readonly eventVonageSession?: Maybe<EventVonageSession_Bool_Exp>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Bool_Exp>;
+  readonly hallwayId?: Maybe<Uuid_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly intendedRoomModeName?: Maybe<RoomMode_Enum_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
@@ -7312,6 +7315,7 @@ export type Event_Bool_Exp = {
   readonly room?: Maybe<Room_Bool_Exp>;
   readonly roomId?: Maybe<Uuid_Comparison_Exp>;
   readonly roomMode?: Maybe<RoomMode_Bool_Exp>;
+  readonly shufflePeriodId?: Maybe<Uuid_Comparison_Exp>;
   readonly startTime?: Maybe<Timestamptz_Comparison_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -7343,6 +7347,7 @@ export type Event_Insert_Input = {
   readonly eventTags?: Maybe<EventTag_Arr_Rel_Insert_Input>;
   readonly eventVonageSession?: Maybe<EventVonageSession_Obj_Rel_Insert_Input>;
   readonly executedTransitions?: Maybe<ExecutedTransitions_Arr_Rel_Insert_Input>;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly intendedRoomModeName?: Maybe<RoomMode_Enum>;
   readonly name?: Maybe<Scalars['String']>;
@@ -7351,6 +7356,7 @@ export type Event_Insert_Input = {
   readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
   readonly roomId?: Maybe<Scalars['uuid']>;
   readonly roomMode?: Maybe<RoomMode_Obj_Rel_Insert_Input>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -7364,10 +7370,12 @@ export type Event_Max_Fields = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
   readonly endTime?: Maybe<Scalars['timestamptz']>;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -7379,10 +7387,12 @@ export type Event_Max_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly durationSeconds?: Maybe<Order_By>;
   readonly endTime?: Maybe<Order_By>;
+  readonly hallwayId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly roomId?: Maybe<Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
   readonly startTime?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -7395,10 +7405,12 @@ export type Event_Min_Fields = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
   readonly endTime?: Maybe<Scalars['timestamptz']>;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -7410,10 +7422,12 @@ export type Event_Min_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly durationSeconds?: Maybe<Order_By>;
   readonly endTime?: Maybe<Order_By>;
+  readonly hallwayId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly roomId?: Maybe<Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
   readonly startTime?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -7455,6 +7469,7 @@ export type Event_Order_By = {
   readonly eventTags_aggregate?: Maybe<EventTag_Aggregate_Order_By>;
   readonly eventVonageSession?: Maybe<EventVonageSession_Order_By>;
   readonly executedTransitions_aggregate?: Maybe<ExecutedTransitions_Aggregate_Order_By>;
+  readonly hallwayId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly intendedRoomModeName?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
@@ -7463,6 +7478,7 @@ export type Event_Order_By = {
   readonly room?: Maybe<Room_Order_By>;
   readonly roomId?: Maybe<Order_By>;
   readonly roomMode?: Maybe<RoomMode_Order_By>;
+  readonly shufflePeriodId?: Maybe<Order_By>;
   readonly startTime?: Maybe<Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -7486,6 +7502,8 @@ export enum Event_Select_Column {
   /** column name */
   EndTime = 'endTime',
   /** column name */
+  HallwayId = 'hallwayId',
+  /** column name */
   Id = 'id',
   /** column name */
   IntendedRoomModeName = 'intendedRoomModeName',
@@ -7495,6 +7513,8 @@ export enum Event_Select_Column {
   OriginatingDataId = 'originatingDataId',
   /** column name */
   RoomId = 'roomId',
+  /** column name */
+  ShufflePeriodId = 'shufflePeriodId',
   /** column name */
   StartTime = 'startTime',
   /** column name */
@@ -7508,11 +7528,13 @@ export type Event_Set_Input = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
   readonly endTime?: Maybe<Scalars['timestamptz']>;
+  readonly hallwayId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly intendedRoomModeName?: Maybe<RoomMode_Enum>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -7574,6 +7596,8 @@ export enum Event_Update_Column {
   /** column name */
   EndTime = 'endTime',
   /** column name */
+  HallwayId = 'hallwayId',
+  /** column name */
   Id = 'id',
   /** column name */
   IntendedRoomModeName = 'intendedRoomModeName',
@@ -7583,6 +7607,8 @@ export enum Event_Update_Column {
   OriginatingDataId = 'originatingDataId',
   /** column name */
   RoomId = 'roomId',
+  /** column name */
+  ShufflePeriodId = 'shufflePeriodId',
   /** column name */
   StartTime = 'startTime',
   /** column name */
@@ -9787,6 +9813,10 @@ export type JoinRoomVonageSessionOutput = {
 /** columns and relationships of "MediaLiveChannel" */
 export type MediaLiveChannel = {
   readonly __typename?: 'MediaLiveChannel';
+  /** An object relationship */
+  readonly channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob>;
+  readonly channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  readonly cloudFormationStackArn?: Maybe<Scalars['String']>;
   readonly cloudFrontDistributionId: Scalars['String'];
   readonly cloudFrontDomain: Scalars['String'];
   /** An object relationship */
@@ -9802,6 +9832,7 @@ export type MediaLiveChannel = {
   readonly mp4InputId: Scalars['String'];
   /** An object relationship */
   readonly room?: Maybe<Room>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly rtmpInputId: Scalars['String'];
   readonly rtmpInputUri: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
@@ -9848,6 +9879,9 @@ export type MediaLiveChannel_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<MediaLiveChannel_Bool_Exp>>>;
   readonly _not?: Maybe<MediaLiveChannel_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<MediaLiveChannel_Bool_Exp>>>;
+  readonly channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+  readonly channelStackCreateJobId?: Maybe<Uuid_Comparison_Exp>;
+  readonly cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
   readonly cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
   readonly cloudFrontDomain?: Maybe<String_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
@@ -9861,6 +9895,7 @@ export type MediaLiveChannel_Bool_Exp = {
   readonly mp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
   readonly mp4InputId?: Maybe<String_Comparison_Exp>;
   readonly room?: Maybe<Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
   readonly rtmpInputId?: Maybe<String_Comparison_Exp>;
   readonly rtmpInputUri?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -9870,11 +9905,16 @@ export type MediaLiveChannel_Bool_Exp = {
 /** unique or primary key constraints on table "MediaLiveChannel" */
 export enum MediaLiveChannel_Constraint {
   /** unique or primary key constraint */
-  MediaLiveChannelPkey = 'MediaLiveChannel_pkey'
+  MediaLiveChannelPkey = 'MediaLiveChannel_pkey',
+  /** unique or primary key constraint */
+  MediaLiveChannelRoomIdKey = 'MediaLiveChannel_roomId_key'
 }
 
 /** input type for inserting data into table "MediaLiveChannel" */
 export type MediaLiveChannel_Insert_Input = {
+  readonly channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Obj_Rel_Insert_Input>;
+  readonly channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  readonly cloudFormationStackArn?: Maybe<Scalars['String']>;
   readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
   readonly cloudFrontDomain?: Maybe<Scalars['String']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
@@ -9888,6 +9928,7 @@ export type MediaLiveChannel_Insert_Input = {
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mp4InputId?: Maybe<Scalars['String']>;
   readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly rtmpInputId?: Maybe<Scalars['String']>;
   readonly rtmpInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -9897,6 +9938,8 @@ export type MediaLiveChannel_Insert_Input = {
 /** aggregate max on columns */
 export type MediaLiveChannel_Max_Fields = {
   readonly __typename?: 'MediaLiveChannel_max_fields';
+  readonly channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  readonly cloudFormationStackArn?: Maybe<Scalars['String']>;
   readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
   readonly cloudFrontDomain?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
@@ -9908,6 +9951,7 @@ export type MediaLiveChannel_Max_Fields = {
   readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mp4InputId?: Maybe<Scalars['String']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly rtmpInputId?: Maybe<Scalars['String']>;
   readonly rtmpInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -9916,6 +9960,8 @@ export type MediaLiveChannel_Max_Fields = {
 
 /** order by max() on columns of table "MediaLiveChannel" */
 export type MediaLiveChannel_Max_Order_By = {
+  readonly channelStackCreateJobId?: Maybe<Order_By>;
+  readonly cloudFormationStackArn?: Maybe<Order_By>;
   readonly cloudFrontDistributionId?: Maybe<Order_By>;
   readonly cloudFrontDomain?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
@@ -9927,6 +9973,7 @@ export type MediaLiveChannel_Max_Order_By = {
   readonly mediaPackageChannelId?: Maybe<Order_By>;
   readonly mp4InputAttachmentName?: Maybe<Order_By>;
   readonly mp4InputId?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
   readonly rtmpInputId?: Maybe<Order_By>;
   readonly rtmpInputUri?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -9936,6 +9983,8 @@ export type MediaLiveChannel_Max_Order_By = {
 /** aggregate min on columns */
 export type MediaLiveChannel_Min_Fields = {
   readonly __typename?: 'MediaLiveChannel_min_fields';
+  readonly channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  readonly cloudFormationStackArn?: Maybe<Scalars['String']>;
   readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
   readonly cloudFrontDomain?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
@@ -9947,6 +9996,7 @@ export type MediaLiveChannel_Min_Fields = {
   readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mp4InputId?: Maybe<Scalars['String']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly rtmpInputId?: Maybe<Scalars['String']>;
   readonly rtmpInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -9955,6 +10005,8 @@ export type MediaLiveChannel_Min_Fields = {
 
 /** order by min() on columns of table "MediaLiveChannel" */
 export type MediaLiveChannel_Min_Order_By = {
+  readonly channelStackCreateJobId?: Maybe<Order_By>;
+  readonly cloudFormationStackArn?: Maybe<Order_By>;
   readonly cloudFrontDistributionId?: Maybe<Order_By>;
   readonly cloudFrontDomain?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
@@ -9966,6 +10018,7 @@ export type MediaLiveChannel_Min_Order_By = {
   readonly mediaPackageChannelId?: Maybe<Order_By>;
   readonly mp4InputAttachmentName?: Maybe<Order_By>;
   readonly mp4InputId?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
   readonly rtmpInputId?: Maybe<Order_By>;
   readonly rtmpInputUri?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -9996,6 +10049,9 @@ export type MediaLiveChannel_On_Conflict = {
 
 /** ordering options when selecting data from "MediaLiveChannel" */
 export type MediaLiveChannel_Order_By = {
+  readonly channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Order_By>;
+  readonly channelStackCreateJobId?: Maybe<Order_By>;
+  readonly cloudFormationStackArn?: Maybe<Order_By>;
   readonly cloudFrontDistributionId?: Maybe<Order_By>;
   readonly cloudFrontDomain?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
@@ -10009,6 +10065,7 @@ export type MediaLiveChannel_Order_By = {
   readonly mp4InputAttachmentName?: Maybe<Order_By>;
   readonly mp4InputId?: Maybe<Order_By>;
   readonly room?: Maybe<Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
   readonly rtmpInputId?: Maybe<Order_By>;
   readonly rtmpInputUri?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -10023,6 +10080,10 @@ export type MediaLiveChannel_Pk_Columns_Input = {
 /** select columns of table "MediaLiveChannel" */
 export enum MediaLiveChannel_Select_Column {
   /** column name */
+  ChannelStackCreateJobId = 'channelStackCreateJobId',
+  /** column name */
+  CloudFormationStackArn = 'cloudFormationStackArn',
+  /** column name */
   CloudFrontDistributionId = 'cloudFrontDistributionId',
   /** column name */
   CloudFrontDomain = 'cloudFrontDomain',
@@ -10044,6 +10105,8 @@ export enum MediaLiveChannel_Select_Column {
   Mp4InputAttachmentName = 'mp4InputAttachmentName',
   /** column name */
   Mp4InputId = 'mp4InputId',
+  /** column name */
+  RoomId = 'roomId',
   /** column name */
   RtmpInputId = 'rtmpInputId',
   /** column name */
@@ -10056,6 +10119,8 @@ export enum MediaLiveChannel_Select_Column {
 
 /** input type for updating data in table "MediaLiveChannel" */
 export type MediaLiveChannel_Set_Input = {
+  readonly channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  readonly cloudFormationStackArn?: Maybe<Scalars['String']>;
   readonly cloudFrontDistributionId?: Maybe<Scalars['String']>;
   readonly cloudFrontDomain?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
@@ -10067,6 +10132,7 @@ export type MediaLiveChannel_Set_Input = {
   readonly mediaPackageChannelId?: Maybe<Scalars['String']>;
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mp4InputId?: Maybe<Scalars['String']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
   readonly rtmpInputId?: Maybe<Scalars['String']>;
   readonly rtmpInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -10075,6 +10141,10 @@ export type MediaLiveChannel_Set_Input = {
 
 /** update columns of table "MediaLiveChannel" */
 export enum MediaLiveChannel_Update_Column {
+  /** column name */
+  ChannelStackCreateJobId = 'channelStackCreateJobId',
+  /** column name */
+  CloudFormationStackArn = 'cloudFormationStackArn',
   /** column name */
   CloudFrontDistributionId = 'cloudFrontDistributionId',
   /** column name */
@@ -10097,6 +10167,8 @@ export enum MediaLiveChannel_Update_Column {
   Mp4InputAttachmentName = 'mp4InputAttachmentName',
   /** column name */
   Mp4InputId = 'mp4InputId',
+  /** column name */
+  RoomId = 'roomId',
   /** column name */
   RtmpInputId = 'rtmpInputId',
   /** column name */
@@ -11811,6 +11883,10 @@ export enum Role_Update_Column {
 export type Room = {
   readonly __typename?: 'Room';
   readonly capacity?: Maybe<Scalars['Int']>;
+  /** An array relationship */
+  readonly channelStackCreateJobs: ReadonlyArray<Job_Queues_ChannelStackCreateJob>;
+  /** An aggregated array relationship */
+  readonly channelStackCreateJobs_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
   /** An object relationship */
   readonly chat?: Maybe<Chat_Chat>;
   readonly chatId?: Maybe<Scalars['uuid']>;
@@ -11832,7 +11908,6 @@ export type Room = {
   readonly id: Scalars['uuid'];
   /** An object relationship */
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel>;
-  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name: Scalars['String'];
   /** An object relationship */
   readonly originatingContentGroup?: Maybe<ContentGroup>;
@@ -11865,6 +11940,26 @@ export type Room = {
   /** An aggregated array relationship */
   readonly transitions_aggregate: Transitions_Aggregate;
   readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "Room" */
+export type RoomChannelStackCreateJobsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Room" */
+export type RoomChannelStackCreateJobs_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
 };
 
 
@@ -12097,12 +12192,20 @@ export enum RoomMode_Constraint {
 export enum RoomMode_Enum {
   /** Users may participate in the general video chat. */
   Breakout = 'BREAKOUT',
+  /** An exhibition hall. */
+  Exhibition = 'EXHIBITION',
+  /** An empty room. */
+  None = 'NONE',
   /** Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users. */
   Prerecorded = 'PRERECORDED',
   /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
   Presentation = 'PRESENTATION',
   /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
   QAndA = 'Q_AND_A',
+  /** A shuffle queue. */
+  Shuffle = 'SHUFFLE',
+  /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
+  VideoPlayer = 'VIDEO_PLAYER',
   /** Event is taking place in a Zoom room. */
   Zoom = 'ZOOM'
 }
@@ -13036,6 +13139,7 @@ export type Room_Bool_Exp = {
   readonly _not?: Maybe<Room_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Room_Bool_Exp>>>;
   readonly capacity?: Maybe<Int_Comparison_Exp>;
+  readonly channelStackCreateJobs?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
@@ -13047,7 +13151,6 @@ export type Room_Bool_Exp = {
   readonly executedTransitions?: Maybe<ExecutedTransitions_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Bool_Exp>;
-  readonly mediaLiveChannelId?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingContentGroup?: Maybe<ContentGroup_Bool_Exp>;
   readonly originatingContentGroupId?: Maybe<Uuid_Comparison_Exp>;
@@ -13071,8 +13174,6 @@ export enum Room_Constraint {
   /** unique or primary key constraint */
   RoomConferenceIdNameKey = 'Room_conferenceId_name_key',
   /** unique or primary key constraint */
-  RoomMediaLiveChannelIdKey = 'Room_mediaLiveChannelId_key',
-  /** unique or primary key constraint */
   RoomOriginatingEventIdKey = 'Room_originatingEventId_key',
   /** unique or primary key constraint */
   RoomPkey = 'Room_pkey'
@@ -13087,6 +13188,7 @@ export type Room_Inc_Input = {
 /** input type for inserting data into table "Room" */
 export type Room_Insert_Input = {
   readonly capacity?: Maybe<Scalars['Int']>;
+  readonly channelStackCreateJobs?: Maybe<Job_Queues_ChannelStackCreateJob_Arr_Rel_Insert_Input>;
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
@@ -13098,7 +13200,6 @@ export type Room_Insert_Input = {
   readonly executedTransitions?: Maybe<ExecutedTransitions_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Obj_Rel_Insert_Input>;
-  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingContentGroup?: Maybe<ContentGroup_Obj_Rel_Insert_Input>;
   readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
@@ -13125,7 +13226,6 @@ export type Room_Max_Fields = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -13142,7 +13242,6 @@ export type Room_Max_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingContentGroupId?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -13160,7 +13259,6 @@ export type Room_Min_Fields = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -13177,7 +13275,6 @@ export type Room_Min_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingContentGroupId?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
@@ -13212,6 +13309,7 @@ export type Room_On_Conflict = {
 /** ordering options when selecting data from "Room" */
 export type Room_Order_By = {
   readonly capacity?: Maybe<Order_By>;
+  readonly channelStackCreateJobs_aggregate?: Maybe<Job_Queues_ChannelStackCreateJob_Aggregate_Order_By>;
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
@@ -13223,7 +13321,6 @@ export type Room_Order_By = {
   readonly executedTransitions_aggregate?: Maybe<ExecutedTransitions_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly mediaLiveChannel?: Maybe<MediaLiveChannel_Order_By>;
-  readonly mediaLiveChannelId?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingContentGroup?: Maybe<ContentGroup_Order_By>;
   readonly originatingContentGroupId?: Maybe<Order_By>;
@@ -13262,8 +13359,6 @@ export enum Room_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  MediaLiveChannelId = 'mediaLiveChannelId',
-  /** column name */
   Name = 'name',
   /** column name */
   OriginatingContentGroupId = 'originatingContentGroupId',
@@ -13289,7 +13384,6 @@ export type Room_Set_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly currentModeName?: Maybe<RoomMode_Enum>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly mediaLiveChannelId?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingContentGroupId?: Maybe<Scalars['uuid']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
@@ -13366,8 +13460,6 @@ export enum Room_Update_Column {
   CurrentModeName = 'currentModeName',
   /** column name */
   Id = 'id',
-  /** column name */
-  MediaLiveChannelId = 'mediaLiveChannelId',
   /** column name */
   Name = 'name',
   /** column name */
@@ -13514,6 +13606,7 @@ export type Tag = {
   /** An object relationship */
   readonly originatingData?: Maybe<OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority: Scalars['Int'];
   readonly updatedAt: Scalars['timestamptz'];
 };
 
@@ -13567,9 +13660,17 @@ export type Tag_Aggregate = {
 /** aggregate fields of "Tag" */
 export type Tag_Aggregate_Fields = {
   readonly __typename?: 'Tag_aggregate_fields';
+  readonly avg?: Maybe<Tag_Avg_Fields>;
   readonly count?: Maybe<Scalars['Int']>;
   readonly max?: Maybe<Tag_Max_Fields>;
   readonly min?: Maybe<Tag_Min_Fields>;
+  readonly stddev?: Maybe<Tag_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Tag_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Tag_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Tag_Sum_Fields>;
+  readonly var_pop?: Maybe<Tag_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Tag_Var_Samp_Fields>;
+  readonly variance?: Maybe<Tag_Variance_Fields>;
 };
 
 
@@ -13581,15 +13682,34 @@ export type Tag_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "Tag" */
 export type Tag_Aggregate_Order_By = {
+  readonly avg?: Maybe<Tag_Avg_Order_By>;
   readonly count?: Maybe<Order_By>;
   readonly max?: Maybe<Tag_Max_Order_By>;
   readonly min?: Maybe<Tag_Min_Order_By>;
+  readonly stddev?: Maybe<Tag_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Tag_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Tag_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Tag_Sum_Order_By>;
+  readonly var_pop?: Maybe<Tag_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Tag_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Tag_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "Tag" */
 export type Tag_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<Tag_Insert_Input>;
   readonly on_conflict?: Maybe<Tag_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Tag_Avg_Fields = {
+  readonly __typename?: 'Tag_avg_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "Tag" */
+export type Tag_Avg_Order_By = {
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "Tag". All fields are combined with a logical 'AND'. */
@@ -13607,6 +13727,7 @@ export type Tag_Bool_Exp = {
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly priority?: Maybe<Int_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -13615,6 +13736,11 @@ export enum Tag_Constraint {
   /** unique or primary key constraint */
   TagPkey = 'Tag_pkey'
 }
+
+/** input type for incrementing integer column in table "Tag" */
+export type Tag_Inc_Input = {
+  readonly priority?: Maybe<Scalars['Int']>;
+};
 
 /** input type for inserting data into table "Tag" */
 export type Tag_Insert_Input = {
@@ -13628,6 +13754,7 @@ export type Tag_Insert_Input = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -13640,6 +13767,7 @@ export type Tag_Max_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -13651,6 +13779,7 @@ export type Tag_Max_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -13663,6 +13792,7 @@ export type Tag_Min_Fields = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -13674,6 +13804,7 @@ export type Tag_Min_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -13711,6 +13842,7 @@ export type Tag_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -13734,6 +13866,8 @@ export enum Tag_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Priority = 'priority',
+  /** column name */
   UpdatedAt = 'updatedAt'
 }
 
@@ -13745,7 +13879,52 @@ export type Tag_Set_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Tag_Stddev_Fields = {
+  readonly __typename?: 'Tag_stddev_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "Tag" */
+export type Tag_Stddev_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Tag_Stddev_Pop_Fields = {
+  readonly __typename?: 'Tag_stddev_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "Tag" */
+export type Tag_Stddev_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Tag_Stddev_Samp_Fields = {
+  readonly __typename?: 'Tag_stddev_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "Tag" */
+export type Tag_Stddev_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Tag_Sum_Fields = {
+  readonly __typename?: 'Tag_sum_fields';
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "Tag" */
+export type Tag_Sum_Order_By = {
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** update columns of table "Tag" */
@@ -13763,8 +13942,43 @@ export enum Tag_Update_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Priority = 'priority',
+  /** column name */
   UpdatedAt = 'updatedAt'
 }
+
+/** aggregate var_pop on columns */
+export type Tag_Var_Pop_Fields = {
+  readonly __typename?: 'Tag_var_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "Tag" */
+export type Tag_Var_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Tag_Var_Samp_Fields = {
+  readonly __typename?: 'Tag_var_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "Tag" */
+export type Tag_Var_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Tag_Variance_Fields = {
+  readonly __typename?: 'Tag_variance_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "Tag" */
+export type Tag_Variance_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "TranscriptionJob" */
 export type TranscriptionJob = {
@@ -17100,6 +17314,7 @@ export type Chat_Message = {
   /** An aggregated array relationship */
   readonly reactions_aggregate: Chat_Reaction_Aggregate;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId: Scalars['uuid'];
   /** An object relationship */
   readonly sender?: Maybe<Attendee>;
   readonly senderId?: Maybe<Scalars['uuid']>;
@@ -17416,6 +17631,7 @@ export type Chat_Message_Bool_Exp = {
   readonly message?: Maybe<String_Comparison_Exp>;
   readonly reactions?: Maybe<Chat_Reaction_Bool_Exp>;
   readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
+  readonly sId?: Maybe<Uuid_Comparison_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
   readonly systemId?: Maybe<String_Comparison_Exp>;
@@ -17429,6 +17645,8 @@ export enum Chat_Message_Constraint {
   MessageDuplicatedMessageIdKey = 'Message_duplicatedMessageId_key',
   /** unique or primary key constraint */
   MessagePkey = 'Message_pkey',
+  /** unique or primary key constraint */
+  MessageSIdKey = 'Message_sId_key',
   /** unique or primary key constraint */
   MessageSystemIdKey = 'Message_systemId_key'
 }
@@ -17469,6 +17687,7 @@ export type Chat_Message_Insert_Input = {
   readonly message?: Maybe<Scalars['String']>;
   readonly reactions?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId?: Maybe<Scalars['uuid']>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
@@ -17485,6 +17704,7 @@ export type Chat_Message_Max_Fields = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -17498,6 +17718,7 @@ export type Chat_Message_Max_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly remoteServiceId?: Maybe<Order_By>;
+  readonly sId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -17512,6 +17733,7 @@ export type Chat_Message_Min_Fields = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -17525,6 +17747,7 @@ export type Chat_Message_Min_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly remoteServiceId?: Maybe<Order_By>;
+  readonly sId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -17567,6 +17790,7 @@ export type Chat_Message_Order_By = {
   readonly message?: Maybe<Order_By>;
   readonly reactions_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
   readonly remoteServiceId?: Maybe<Order_By>;
+  readonly sId?: Maybe<Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
@@ -17603,6 +17827,8 @@ export enum Chat_Message_Select_Column {
   /** column name */
   RemoteServiceId = 'remoteServiceId',
   /** column name */
+  SId = 'sId',
+  /** column name */
   SenderId = 'senderId',
   /** column name */
   SystemId = 'systemId',
@@ -17622,6 +17848,7 @@ export type Chat_Message_Set_Input = {
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_MessageType_Enum>;
@@ -17698,6 +17925,8 @@ export enum Chat_Message_Update_Column {
   Message = 'message',
   /** column name */
   RemoteServiceId = 'remoteServiceId',
+  /** column name */
+  SId = 'sId',
   /** column name */
   SenderId = 'senderId',
   /** column name */
@@ -18039,6 +18268,7 @@ export type Chat_Reaction = {
   readonly message: Chat_Message;
   readonly messageId: Scalars['Int'];
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId: Scalars['uuid'];
   /** An object relationship */
   readonly sender: Attendee;
   readonly senderId: Scalars['uuid'];
@@ -18324,6 +18554,7 @@ export type Chat_Reaction_Bool_Exp = {
   readonly message?: Maybe<Chat_Message_Bool_Exp>;
   readonly messageId?: Maybe<Int_Comparison_Exp>;
   readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
+  readonly sId?: Maybe<Uuid_Comparison_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
   readonly symbol?: Maybe<String_Comparison_Exp>;
@@ -18334,7 +18565,9 @@ export type Chat_Reaction_Bool_Exp = {
 /** unique or primary key constraints on table "chat.Reaction" */
 export enum Chat_Reaction_Constraint {
   /** unique or primary key constraint */
-  ReactionPkey = 'Reaction_pkey'
+  ReactionPkey = 'Reaction_pkey',
+  /** unique or primary key constraint */
+  ReactionSIdKey = 'Reaction_sId_key'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -18370,6 +18603,7 @@ export type Chat_Reaction_Insert_Input = {
   readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
   readonly messageId?: Maybe<Scalars['Int']>;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId?: Maybe<Scalars['uuid']>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
@@ -18385,6 +18619,7 @@ export type Chat_Reaction_Max_Fields = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -18397,6 +18632,7 @@ export type Chat_Reaction_Max_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
   readonly remoteServiceId?: Maybe<Order_By>;
+  readonly sId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -18410,6 +18646,7 @@ export type Chat_Reaction_Min_Fields = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -18422,6 +18659,7 @@ export type Chat_Reaction_Min_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
   readonly remoteServiceId?: Maybe<Order_By>;
+  readonly sId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -18460,6 +18698,7 @@ export type Chat_Reaction_Order_By = {
   readonly message?: Maybe<Chat_Message_Order_By>;
   readonly messageId?: Maybe<Order_By>;
   readonly remoteServiceId?: Maybe<Order_By>;
+  readonly sId?: Maybe<Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
@@ -18492,6 +18731,8 @@ export enum Chat_Reaction_Select_Column {
   /** column name */
   RemoteServiceId = 'remoteServiceId',
   /** column name */
+  SId = 'sId',
+  /** column name */
   SenderId = 'senderId',
   /** column name */
   Symbol = 'symbol',
@@ -18509,6 +18750,7 @@ export type Chat_Reaction_Set_Input = {
   readonly id?: Maybe<Scalars['Int']>;
   readonly messageId?: Maybe<Scalars['Int']>;
   readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_ReactionType_Enum>;
@@ -18589,6 +18831,8 @@ export enum Chat_Reaction_Update_Column {
   MessageId = 'messageId',
   /** column name */
   RemoteServiceId = 'remoteServiceId',
+  /** column name */
+  SId = 'sId',
   /** column name */
   SenderId = 'senderId',
   /** column name */
@@ -19449,6 +19693,241 @@ export enum Chat_Typer_Update_Column {
   ChatId = 'chatId',
   /** column name */
   MessageTypeName = 'messageTypeName',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob = {
+  readonly __typename?: 'job_queues_ChannelStackCreateJob';
+  /** An object relationship */
+  readonly conference: Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly jobStatus: JobStatus;
+  readonly jobStatusName: JobStatus_Enum;
+  readonly message?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  readonly room: Room;
+  readonly roomId: Scalars['uuid'];
+  readonly stackLogicalResourceId: Scalars['String'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Aggregate = {
+  readonly __typename?: 'job_queues_ChannelStackCreateJob_aggregate';
+  readonly aggregate?: Maybe<Job_Queues_ChannelStackCreateJob_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Job_Queues_ChannelStackCreateJob>;
+};
+
+/** aggregate fields of "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Aggregate_Fields = {
+  readonly __typename?: 'job_queues_ChannelStackCreateJob_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Job_Queues_ChannelStackCreateJob_Max_Fields>;
+  readonly min?: Maybe<Job_Queues_ChannelStackCreateJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Job_Queues_ChannelStackCreateJob_Max_Order_By>;
+  readonly min?: Maybe<Job_Queues_ChannelStackCreateJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Job_Queues_ChannelStackCreateJob_Insert_Input>;
+  readonly on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ChannelStackCreateJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ChannelStackCreateJob_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>>>;
+  readonly _not?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly jobStatus?: Maybe<JobStatus_Bool_Exp>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+  readonly message?: Maybe<String_Comparison_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+  readonly stackLogicalResourceId?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ChannelStackCreateJob" */
+export enum Job_Queues_ChannelStackCreateJob_Constraint {
+  /** unique or primary key constraint */
+  ChannelStackCreateJobPkey = 'ChannelStackCreateJob_pkey',
+  /** unique or primary key constraint */
+  ChannelStackCreateJobStackLogicalResourceIdKey = 'ChannelStackCreateJob_stackLogicalResourceId_key'
+}
+
+/** input type for inserting data into table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Insert_Input = {
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly stackLogicalResourceId?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ChannelStackCreateJob_Max_Fields = {
+  readonly __typename?: 'job_queues_ChannelStackCreateJob_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly stackLogicalResourceId?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly stackLogicalResourceId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ChannelStackCreateJob_Min_Fields = {
+  readonly __typename?: 'job_queues_ChannelStackCreateJob_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly stackLogicalResourceId?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly stackLogicalResourceId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Mutation_Response = {
+  readonly __typename?: 'job_queues_ChannelStackCreateJob_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Job_Queues_ChannelStackCreateJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_ChannelStackCreateJob_Insert_Input;
+  readonly on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_On_Conflict = {
+  readonly constraint: Job_Queues_ChannelStackCreateJob_Constraint;
+  readonly update_columns: ReadonlyArray<Job_Queues_ChannelStackCreateJob_Update_Column>;
+  readonly where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Order_By = {
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly jobStatus?: Maybe<JobStatus_Order_By>;
+  readonly jobStatusName?: Maybe<Order_By>;
+  readonly message?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly stackLogicalResourceId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "job_queues.ChannelStackCreateJob" */
+export enum Job_Queues_ChannelStackCreateJob_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  StackLogicalResourceId = 'stackLogicalResourceId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly jobStatusName?: Maybe<JobStatus_Enum>;
+  readonly message?: Maybe<Scalars['String']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly stackLogicalResourceId?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "job_queues.ChannelStackCreateJob" */
+export enum Job_Queues_ChannelStackCreateJob_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  StackLogicalResourceId = 'stackLogicalResourceId',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -21619,6 +22098,10 @@ export type Mutation_Root = {
   readonly delete_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** delete single row from the table: "chat.Typer" */
   readonly delete_chat_Typer_by_pk?: Maybe<Chat_Typer>;
+  /** delete data from the table: "job_queues.ChannelStackCreateJob" */
+  readonly delete_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.ChannelStackCreateJob" */
+  readonly delete_job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
   /** delete data from the table: "job_queues.CombineVideosJob" */
   readonly delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.CombineVideosJob" */
@@ -21943,6 +22426,10 @@ export type Mutation_Root = {
   readonly insert_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** insert a single row into the table: "chat.Typer" */
   readonly insert_chat_Typer_one?: Maybe<Chat_Typer>;
+  /** insert data into the table: "job_queues.ChannelStackCreateJob" */
+  readonly insert_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.ChannelStackCreateJob" */
+  readonly insert_job_queues_ChannelStackCreateJob_one?: Maybe<Job_Queues_ChannelStackCreateJob>;
   /** insert data into the table: "job_queues.CombineVideosJob" */
   readonly insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.CombineVideosJob" */
@@ -22283,6 +22770,10 @@ export type Mutation_Root = {
   readonly update_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
   /** update single row of the table: "chat.Typer" */
   readonly update_chat_Typer_by_pk?: Maybe<Chat_Typer>;
+  /** update data of the table: "job_queues.ChannelStackCreateJob" */
+  readonly update_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.ChannelStackCreateJob" */
+  readonly update_job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
   /** update data of the table: "job_queues.CombineVideosJob" */
   readonly update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** update single row of the table: "job_queues.CombineVideosJob" */
@@ -23139,6 +23630,18 @@ export type Mutation_RootDelete_Chat_TyperArgs = {
 export type Mutation_RootDelete_Chat_Typer_By_PkArgs = {
   attendeeId: Scalars['uuid'];
   chatId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackCreateJobArgs = {
+  where: Job_Queues_ChannelStackCreateJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackCreateJob_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -24234,6 +24737,20 @@ export type Mutation_RootInsert_Chat_Typer_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackCreateJobArgs = {
+  objects: ReadonlyArray<Job_Queues_ChannelStackCreateJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackCreateJob_OneArgs = {
+  object: Job_Queues_ChannelStackCreateJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Job_Queues_CombineVideosJobArgs = {
   objects: ReadonlyArray<Job_Queues_CombineVideosJob_Insert_Input>;
   on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
@@ -25245,6 +25762,7 @@ export type Mutation_RootUpdate_Room_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_TagArgs = {
+  _inc?: Maybe<Tag_Inc_Input>;
   _set?: Maybe<Tag_Set_Input>;
   where: Tag_Bool_Exp;
 };
@@ -25252,6 +25770,7 @@ export type Mutation_RootUpdate_TagArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Tag_By_PkArgs = {
+  _inc?: Maybe<Tag_Inc_Input>;
   _set?: Maybe<Tag_Set_Input>;
   pk_columns: Tag_Pk_Columns_Input;
 };
@@ -25567,6 +26086,20 @@ export type Mutation_RootUpdate_Chat_TyperArgs = {
 export type Mutation_RootUpdate_Chat_Typer_By_PkArgs = {
   _set?: Maybe<Chat_Typer_Set_Input>;
   pk_columns: Chat_Typer_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackCreateJobArgs = {
+  _set?: Maybe<Job_Queues_ChannelStackCreateJob_Set_Input>;
+  where: Job_Queues_ChannelStackCreateJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackCreateJob_By_PkArgs = {
+  _set?: Maybe<Job_Queues_ChannelStackCreateJob_Set_Input>;
+  pk_columns: Job_Queues_ChannelStackCreateJob_Pk_Columns_Input;
 };
 
 
@@ -26240,6 +26773,12 @@ export type Query_Root = {
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "getUploadAgreement" */
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+  /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
+  readonly job_queues_ChannelStackCreateJob: ReadonlyArray<Job_Queues_ChannelStackCreateJob>;
+  /** fetch aggregated fields from the table: "job_queues.ChannelStackCreateJob" */
+  readonly job_queues_ChannelStackCreateJob_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
+  /** fetch data from the table: "job_queues.ChannelStackCreateJob" using primary key columns */
+  readonly job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
   /** fetch data from the table: "job_queues.CombineVideosJob" */
   readonly job_queues_CombineVideosJob: ReadonlyArray<Job_Queues_CombineVideosJob>;
   /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -28114,6 +28653,32 @@ export type Query_RootGetContentItemArgs = {
 /** query root */
 export type Query_RootGetUploadAgreementArgs = {
   magicToken: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackCreateJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackCreateJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackCreateJob_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -30273,6 +30838,12 @@ export type Subscription_Root = {
   readonly getContentItem?: Maybe<ReadonlyArray<Maybe<GetContentItemOutput>>>;
   /** perform the action: "getUploadAgreement" */
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+  /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
+  readonly job_queues_ChannelStackCreateJob: ReadonlyArray<Job_Queues_ChannelStackCreateJob>;
+  /** fetch aggregated fields from the table: "job_queues.ChannelStackCreateJob" */
+  readonly job_queues_ChannelStackCreateJob_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
+  /** fetch data from the table: "job_queues.ChannelStackCreateJob" using primary key columns */
+  readonly job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
   /** fetch data from the table: "job_queues.CombineVideosJob" */
   readonly job_queues_CombineVideosJob: ReadonlyArray<Job_Queues_CombineVideosJob>;
   /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -32151,6 +32722,32 @@ export type Subscription_RootGetUploadAgreementArgs = {
 
 
 /** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackCreateJobArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackCreateJob_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackCreateJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootJob_Queues_CombineVideosJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Job_Queues_CombineVideosJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -33125,7 +33722,7 @@ export type ContentGroupList_ContentGroupTagDataFragment = { readonly __typename
     & ContentGroupList_ContentGroupDataFragment
   ) };
 
-export type ContentGroupList_TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string };
+export type ContentGroupList_TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly colour: string, readonly name: string, readonly priority: number };
 
 export type ContentOfTagQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -33404,6 +34001,21 @@ export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly so
     & RoomListRoomDetailsFragment
   )> };
 
+export type GetAllTodaysRoomsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  todayStart: Scalars['timestamptz'];
+  todayEnd: Scalars['timestamptz'];
+}>;
+
+
+export type GetAllTodaysRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<(
+    { readonly __typename?: 'Room' }
+    & RoomListRoomDetailsFragment
+  )>, readonly programRooms: ReadonlyArray<(
+    { readonly __typename?: 'Room' }
+    & RoomListRoomDetailsFragment
+  )> };
+
 export type RoomListRoomDetailsFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum, readonly originatingContentGroupId?: Maybe<any>, readonly originatingEventId?: Maybe<any> };
 
 export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
@@ -33447,73 +34059,7 @@ export type RoomSponsorContent_ContentGroupDataFragment = { readonly __typename?
 
 export type RoomSponsorContent_ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly contentTypeName: ContentType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
 
-export type Timeline_ContentItemFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly contentTypeName: ContentType_Enum, readonly name: string, readonly isHidden: boolean, readonly layoutData?: Maybe<any> };
-
-export type Timeline_ContentItem_WithDataFragment = (
-  { readonly __typename?: 'ContentItem', readonly data: any }
-  & Timeline_ContentItemFragment
-);
-
-export type Timeline_ContentPersonFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> };
-
-export type Timeline_ContentGroupPersonFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
-    { readonly __typename?: 'ContentPerson' }
-    & Timeline_ContentPersonFragment
-  ) };
-
-export type Timeline_ContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly abstractContentItems: ReadonlyArray<(
-    { readonly __typename?: 'ContentItem' }
-    & Timeline_ContentItem_WithDataFragment
-  )>, readonly people: ReadonlyArray<(
-    { readonly __typename?: 'ContentGroupPerson' }
-    & Timeline_ContentGroupPersonFragment
-  )> };
-
-export type Timeline_Event_FullInfoFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroup?: Maybe<(
-    { readonly __typename?: 'ContentGroup' }
-    & Timeline_ContentGroupFragment
-  )> };
-
-export type Timeline_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly roomId: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly contentGroupId?: Maybe<any> };
-
-export type Timeline_RoomFragment = { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly priority: number };
-
-export type Timeline_ContentGroup_PartialInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string };
-
-export type Timeline_SelectEventQueryVariables = Exact<{
-  id: Scalars['uuid'];
-}>;
-
-
-export type Timeline_SelectEventQuery = { readonly __typename?: 'query_root', readonly Event_by_pk?: Maybe<(
-    { readonly __typename?: 'Event' }
-    & Timeline_Event_FullInfoFragment
-  )> };
-
-export type Timeline_SelectRoomsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type Timeline_SelectRoomsQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<(
-    { readonly __typename?: 'Room' }
-    & Timeline_RoomFragment
-  )>, readonly Event: ReadonlyArray<(
-    { readonly __typename?: 'Event' }
-    & Timeline_EventFragment
-  )>, readonly ContentGroup: ReadonlyArray<(
-    { readonly __typename?: 'ContentGroup' }
-    & Timeline_ContentGroup_PartialInfoFragment
-  )> };
-
-export type Timeline_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
-
-export type Timeline_EventTagFragment = { readonly __typename?: 'EventTag', readonly id: any, readonly tag: (
-    { readonly __typename?: 'Tag' }
-    & Timeline_TagFragment
-  ) };
-
-export type Schedule_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string };
+export type Schedule_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
 
 export type Schedule_EventTagFragment = { readonly __typename?: 'EventTag', readonly id: any, readonly tag: (
     { readonly __typename?: 'Tag' }
@@ -33741,7 +34287,7 @@ export type ContentGroupFullNestedInfoFragment = { readonly __typename?: 'Conten
     & ContentGroupPersonInfoFragment
   )>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
-export type TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any> };
+export type TagInfoFragment = { readonly __typename?: 'Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number };
 
 export type HallwayInfoFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number };
 
@@ -33978,6 +34524,7 @@ export type UpdateTagMutationVariables = Exact<{
   name: Scalars['String'];
   colour: Scalars['String'];
   originatingDataId?: Maybe<Scalars['uuid']>;
+  priority?: Scalars['Int'];
 }>;
 
 
@@ -35300,6 +35847,7 @@ export const ContentGroupList_TagInfoFragmentDoc = gql`
   id
   colour
   name
+  priority
 }
     `;
 export const ContentItemDataFragmentDoc = gql`
@@ -35539,109 +36087,12 @@ export const RoomSponsorContent_ContentGroupDataFragmentDoc = gql`
   }
 }
     ${RoomSponsorContent_ContentItemDataFragmentDoc}`;
-export const Timeline_ContentItemFragmentDoc = gql`
-    fragment Timeline_ContentItem on ContentItem {
-  id
-  contentTypeName
-  name
-  isHidden
-  layoutData
-}
-    `;
-export const Timeline_ContentItem_WithDataFragmentDoc = gql`
-    fragment Timeline_ContentItem_WithData on ContentItem {
-  ...Timeline_ContentItem
-  data
-}
-    ${Timeline_ContentItemFragmentDoc}`;
-export const Timeline_ContentPersonFragmentDoc = gql`
-    fragment Timeline_ContentPerson on ContentPerson {
-  id
-  name
-  affiliation
-}
-    `;
-export const Timeline_ContentGroupPersonFragmentDoc = gql`
-    fragment Timeline_ContentGroupPerson on ContentGroupPerson {
-  id
-  priority
-  roleName
-  person {
-    ...Timeline_ContentPerson
-  }
-}
-    ${Timeline_ContentPersonFragmentDoc}`;
-export const Timeline_ContentGroupFragmentDoc = gql`
-    fragment Timeline_ContentGroup on ContentGroup {
-  id
-  contentGroupTypeName
-  title
-  abstractContentItems: contentItems(where: {contentTypeName: {_eq: ABSTRACT}}) {
-    ...Timeline_ContentItem_WithData
-  }
-  people {
-    ...Timeline_ContentGroupPerson
-  }
-}
-    ${Timeline_ContentItem_WithDataFragmentDoc}
-${Timeline_ContentGroupPersonFragmentDoc}`;
-export const Timeline_Event_FullInfoFragmentDoc = gql`
-    fragment Timeline_Event_FullInfo on Event {
-  id
-  roomId
-  intendedRoomModeName
-  name
-  startTime
-  durationSeconds
-  contentGroup {
-    ...Timeline_ContentGroup
-  }
-}
-    ${Timeline_ContentGroupFragmentDoc}`;
-export const Timeline_EventFragmentDoc = gql`
-    fragment Timeline_Event on Event {
-  id
-  roomId
-  name
-  startTime
-  durationSeconds
-  contentGroupId
-}
-    `;
-export const Timeline_RoomFragmentDoc = gql`
-    fragment Timeline_Room on Room {
-  id
-  name
-  currentModeName
-  priority
-}
-    `;
-export const Timeline_ContentGroup_PartialInfoFragmentDoc = gql`
-    fragment Timeline_ContentGroup_PartialInfo on ContentGroup {
-  id
-  title
-}
-    `;
-export const Timeline_TagFragmentDoc = gql`
-    fragment Timeline_Tag on Tag {
-  id
-  name
-  colour
-}
-    `;
-export const Timeline_EventTagFragmentDoc = gql`
-    fragment Timeline_EventTag on EventTag {
-  id
-  tag {
-    ...Timeline_Tag
-  }
-}
-    ${Timeline_TagFragmentDoc}`;
 export const Schedule_TagFragmentDoc = gql`
     fragment Schedule_Tag on Tag {
   id
   name
   colour
+  priority
 }
     `;
 export const Schedule_EventTagFragmentDoc = gql`
@@ -35871,6 +36322,7 @@ export const TagInfoFragmentDoc = gql`
   colour
   name
   originatingDataId
+  priority
 }
     `;
 export const HallwayInfoFragmentDoc = gql`
@@ -38132,6 +38584,50 @@ export function useGetAllRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllRoomsQueryHookResult = ReturnType<typeof useGetAllRoomsQuery>;
 export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLazyQuery>;
 export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
+export const GetAllTodaysRoomsDocument = gql`
+    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
+  socialRooms: Room(
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
+    order_by: {name: asc}
+  ) {
+    ...RoomListRoomDetails
+  }
+  programRooms: Room(
+    where: {conferenceId: {_eq: $conferenceId}, events: {startTime: {_lte: $todayEnd}, endTime: {_gte: $todayStart}}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
+    order_by: {name: asc}
+  ) {
+    ...RoomListRoomDetails
+  }
+}
+    ${RoomListRoomDetailsFragmentDoc}`;
+
+/**
+ * __useGetAllTodaysRoomsQuery__
+ *
+ * To run a query within a React component, call `useGetAllTodaysRoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllTodaysRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllTodaysRoomsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      todayStart: // value for 'todayStart'
+ *      todayEnd: // value for 'todayEnd'
+ *   },
+ * });
+ */
+export function useGetAllTodaysRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>) {
+        return Apollo.useQuery<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>(GetAllTodaysRoomsDocument, baseOptions);
+      }
+export function useGetAllTodaysRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>) {
+          return Apollo.useLazyQuery<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>(GetAllTodaysRoomsDocument, baseOptions);
+        }
+export type GetAllTodaysRoomsQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsQuery>;
+export type GetAllTodaysRoomsLazyQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsLazyQuery>;
+export type GetAllTodaysRoomsQueryResult = Apollo.QueryResult<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>;
 export const RoomPage_GetRoomDetailsDocument = gql`
     query RoomPage_GetRoomDetails($roomId: uuid!) {
   Room_by_pk(id: $roomId) {
@@ -38237,82 +38733,6 @@ export function useRoomSponsorContent_GetContentItemsLazyQuery(baseOptions?: Apo
 export type RoomSponsorContent_GetContentItemsQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetContentItemsQuery>;
 export type RoomSponsorContent_GetContentItemsLazyQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetContentItemsLazyQuery>;
 export type RoomSponsorContent_GetContentItemsQueryResult = Apollo.QueryResult<RoomSponsorContent_GetContentItemsQuery, RoomSponsorContent_GetContentItemsQueryVariables>;
-export const Timeline_SelectEventDocument = gql`
-    query Timeline_SelectEvent($id: uuid!) {
-  Event_by_pk(id: $id) {
-    ...Timeline_Event_FullInfo
-  }
-}
-    ${Timeline_Event_FullInfoFragmentDoc}`;
-
-/**
- * __useTimeline_SelectEventQuery__
- *
- * To run a query within a React component, call `useTimeline_SelectEventQuery` and pass it any options that fit your needs.
- * When your component renders, `useTimeline_SelectEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTimeline_SelectEventQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useTimeline_SelectEventQuery(baseOptions: Apollo.QueryHookOptions<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>) {
-        return Apollo.useQuery<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>(Timeline_SelectEventDocument, baseOptions);
-      }
-export function useTimeline_SelectEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>) {
-          return Apollo.useLazyQuery<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>(Timeline_SelectEventDocument, baseOptions);
-        }
-export type Timeline_SelectEventQueryHookResult = ReturnType<typeof useTimeline_SelectEventQuery>;
-export type Timeline_SelectEventLazyQueryHookResult = ReturnType<typeof useTimeline_SelectEventLazyQuery>;
-export type Timeline_SelectEventQueryResult = Apollo.QueryResult<Timeline_SelectEventQuery, Timeline_SelectEventQueryVariables>;
-export const Timeline_SelectRoomsDocument = gql`
-    query Timeline_SelectRooms($conferenceId: uuid!) {
-  Room(
-    where: {conferenceId: {_eq: $conferenceId}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}, events: {}}
-  ) {
-    ...Timeline_Room
-  }
-  Event(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...Timeline_Event
-  }
-  ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...Timeline_ContentGroup_PartialInfo
-  }
-}
-    ${Timeline_RoomFragmentDoc}
-${Timeline_EventFragmentDoc}
-${Timeline_ContentGroup_PartialInfoFragmentDoc}`;
-
-/**
- * __useTimeline_SelectRoomsQuery__
- *
- * To run a query within a React component, call `useTimeline_SelectRoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTimeline_SelectRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTimeline_SelectRoomsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useTimeline_SelectRoomsQuery(baseOptions: Apollo.QueryHookOptions<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>) {
-        return Apollo.useQuery<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>(Timeline_SelectRoomsDocument, baseOptions);
-      }
-export function useTimeline_SelectRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>) {
-          return Apollo.useLazyQuery<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>(Timeline_SelectRoomsDocument, baseOptions);
-        }
-export type Timeline_SelectRoomsQueryHookResult = ReturnType<typeof useTimeline_SelectRoomsQuery>;
-export type Timeline_SelectRoomsLazyQueryHookResult = ReturnType<typeof useTimeline_SelectRoomsLazyQuery>;
-export type Timeline_SelectRoomsQueryResult = Apollo.QueryResult<Timeline_SelectRoomsQuery, Timeline_SelectRoomsQueryVariables>;
 export const Schedule_SelectContentGroupDocument = gql`
     query Schedule_SelectContentGroup($id: uuid!) {
   ContentGroup_by_pk(id: $id) {
@@ -39631,10 +40051,10 @@ export type UpdatePersonMutationHookResult = ReturnType<typeof useUpdatePersonMu
 export type UpdatePersonMutationResult = Apollo.MutationResult<UpdatePersonMutation>;
 export type UpdatePersonMutationOptions = Apollo.BaseMutationOptions<UpdatePersonMutation, UpdatePersonMutationVariables>;
 export const UpdateTagDocument = gql`
-    mutation UpdateTag($id: uuid!, $name: String!, $colour: String!, $originatingDataId: uuid = null) {
+    mutation UpdateTag($id: uuid!, $name: String!, $colour: String!, $originatingDataId: uuid = null, $priority: Int! = 10) {
   update_Tag_by_pk(
     pk_columns: {id: $id}
-    _set: {name: $name, colour: $colour, originatingDataId: $originatingDataId}
+    _set: {name: $name, colour: $colour, originatingDataId: $originatingDataId, priority: $priority}
   ) {
     ...TagInfo
   }
@@ -39659,6 +40079,7 @@ export type UpdateTagMutationFn = Apollo.MutationFunction<UpdateTagMutation, Upd
  *      name: // value for 'name'
  *      colour: // value for 'colour'
  *      originatingDataId: // value for 'originatingDataId'
+ *      priority: // value for 'priority'
  *   },
  * });
  */

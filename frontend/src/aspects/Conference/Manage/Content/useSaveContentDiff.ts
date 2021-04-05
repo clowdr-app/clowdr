@@ -161,6 +161,7 @@ gql`
         colour
         name
         originatingDataId
+        priority
     }
 
     fragment HallwayInfo on Hallway {
@@ -446,10 +447,16 @@ gql`
         }
     }
 
-    mutation UpdateTag($id: uuid!, $name: String!, $colour: String!, $originatingDataId: uuid = null) {
+    mutation UpdateTag(
+        $id: uuid!
+        $name: String!
+        $colour: String!
+        $originatingDataId: uuid = null
+        $priority: Int! = 10
+    ) {
         update_Tag_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, colour: $colour, originatingDataId: $originatingDataId }
+            _set: { name: $name, colour: $colour, originatingDataId: $originatingDataId, priority: $priority }
         ) {
             ...TagInfo
         }
@@ -749,10 +756,12 @@ export function useSaveContentDiff():
                                             colour: tag.colour,
                                             name: tag.name,
                                             originatingDataId: tag.originatingDataId,
+                                            priority: tag.priority,
                                         },
                                     });
                                     ok = true;
-                                } catch (_e) {
+                                } catch (e) {
+                                    console.error("Error updating tag", e);
                                     ok = false;
                                 }
                                 return [tag.id, ok];
@@ -818,7 +827,8 @@ export function useSaveContentDiff():
                                         },
                                     });
                                     ok = true;
-                                } catch (_e) {
+                                } catch (e) {
+                                    console.error("Error updating content person", e);
                                     ok = false;
                                 }
                                 return [person.id, ok];
@@ -862,7 +872,8 @@ export function useSaveContentDiff():
                                         },
                                     });
                                     ok = true;
-                                } catch (_e) {
+                                } catch (e) {
+                                    console.error("Error updating hallway", e);
                                     ok = false;
                                 }
                                 return [hallway.id, ok];
@@ -973,7 +984,9 @@ export function useSaveContentDiff():
                             groupResults.set(key, true);
                         }
                     }
-                } catch {
+                } catch (e) {
+                    console.error("Bulk save error", e);
+
                     for (const key of newGroups.keys()) {
                         groupResults.set(key, false);
                     }
@@ -1245,6 +1258,7 @@ export function useSaveContentDiff():
 
                                 ok = true;
                             } catch (e) {
+                                console.error("Error updating content group", e, group);
                                 ok = false;
                             }
                             return [group.id, ok];
@@ -1266,7 +1280,8 @@ export function useSaveContentDiff():
                             tagResults.set(key, true);
                         }
                     }
-                } catch {
+                } catch (e) {
+                    console.error("Error deleting tags", e, deletedTagKeys);
                     for (const key of deletedTagKeys.keys()) {
                         tagResults.set(key, false);
                     }
@@ -1283,7 +1298,8 @@ export function useSaveContentDiff():
                             hallwayResults.set(key, true);
                         }
                     }
-                } catch {
+                } catch (e) {
+                    console.error("Error deleting hallways", e, deletedHallwayKeys);
                     for (const key of deletedHallwayKeys.keys()) {
                         hallwayResults.set(key, false);
                     }
@@ -1300,7 +1316,8 @@ export function useSaveContentDiff():
                             peopleResults.set(key, true);
                         }
                     }
-                } catch {
+                } catch (e) {
+                    console.error("Error deleting persons", e, deletedPersonKeys);
                     for (const key of deletedPersonKeys.keys()) {
                         peopleResults.set(key, false);
                     }
@@ -1317,7 +1334,8 @@ export function useSaveContentDiff():
                             originatingDataResults.set(key, true);
                         }
                     }
-                } catch {
+                } catch (e) {
+                    console.error("Error deleting originating datas", e, deletedOriginatingDataKeys);
                     for (const key of deletedOriginatingDataKeys.keys()) {
                         originatingDataResults.set(key, false);
                     }

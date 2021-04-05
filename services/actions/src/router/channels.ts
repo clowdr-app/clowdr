@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import {
-    ensureUpcomingChannelsCreated,
+    ensureUpcomingChannelsStarted,
     stopChannelsWithoutUpcomingOrCurrentEvents,
     syncChannelSchedules,
 } from "../lib/channels";
@@ -12,11 +12,10 @@ export const router = express.Router();
 router.use(checkEventSecret);
 
 router.post("/sync", async (_req: Request, res: Response) => {
-    // todo: destroy channels for rooms with no ongoing events in the last 30 mins
     // todo: sync input switches
     try {
         const holdOffOnCreatingChannel = await syncChannelSchedules();
-        await ensureUpcomingChannelsCreated(holdOffOnCreatingChannel);
+        await ensureUpcomingChannelsStarted(holdOffOnCreatingChannel);
         await stopChannelsWithoutUpcomingOrCurrentEvents();
     } catch (e) {
         console.error("Failure while ensuring creation of upcoming channels", e);

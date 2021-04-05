@@ -112,13 +112,6 @@ export interface CombineVideosJobData extends BaseData {
     message: string | null;
 }
 
-// export interface PublishVideoJobData extends BaseData {
-//     contentItemId: string;
-//     jobStatusName: JobStatus_Enum;
-//     conferenceId: string;
-//     vimeoVideoUrl: string | null;
-// }
-
 export interface BroadcastContentItemDataBase extends BaseData {
     contentItemId: string | null;
     eventId: string | null;
@@ -162,7 +155,6 @@ export interface RoomData extends BaseData {
     originatingDataId: string | null;
     capacity: number | null;
     publicVonageSessionId: string | null;
-    mediaLiveChannelId: string | null;
     priority: number;
     roomPrivacyName: RoomPrivacy_Enum;
 }

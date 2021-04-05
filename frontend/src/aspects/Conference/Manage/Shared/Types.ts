@@ -19,4 +19,5 @@ export type TagDescriptor = {
     name: string;
     colour: string;
     originatingDataId?: string;
+    priority?: number;
 };

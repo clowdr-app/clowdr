@@ -10,7 +10,7 @@ interface MediaLiveEventChannelStateChange extends MediaLiveEventBase {
 
 interface MediaLiveEventChannelStateChangeDetail {
     pipelines_running_count: number;
-    state: "RUNNING" | "STOPPED" | "STOPPING" | "CREATED" | "DELETED" | "STARTING";
+    state: "RUNNING" | "STOPPED" | "STOPPING" | "DELETING" | "CREATED" | "DELETED" | "STARTING";
     pipeline?: string;
     channel_arn: string;
     message: string;

@@ -68,13 +68,6 @@
         table:
           schema: chat
           name: Subscription
-  - name: typers
-    using:
-      foreign_key_constraint_on:
-        column: chatId
-        table:
-          schema: chat
-          name: Typer
   select_permissions:
   - role: unauthenticated
     permission:
@@ -1037,17 +1030,17 @@
     using:
       foreign_key_constraint_on: chatId
   computed_fields:
-  - name: unreadCount
-    definition:
-      function:
-        schema: chat
-        name: unreadCount
-    comment: ""
   - name: unnotifiedCount
     definition:
       function:
         schema: chat
         name: unnotifiedCount
+    comment: ""
+  - name: unreadCount
+    definition:
+      function:
+        schema: chat
+        name: unreadCount
     comment: ""
   insert_permissions:
   - role: user
@@ -1182,116 +1175,18 @@
         column_mapping:
           chatId: id
 - table:
-    schema: chat
-    name: Typer
+    schema: job_queues
+    name: ChannelStackCreateJob
   object_relationships:
-  - name: attendee
+  - name: conference
     using:
-      foreign_key_constraint_on: attendeeId
-  - name: chat
+      foreign_key_constraint_on: conferenceId
+  - name: jobStatus
     using:
-      foreign_key_constraint_on: chatId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        attendee:
-          userId:
-            _eq: X-Hasura-User-Id
-      columns:
-      - attendeeId
-      - chatId
-      - updated_at
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - updated_at
-      - attendeeId
-      - chatId
-      filter:
-        chat:
-          _or:
-          - _and:
-            - restrictToAdmins:
-                _eq: false
-            - conference:
-                groups:
-                  _and:
-                  - enabled:
-                      _eq: true
-                  - groupRoles:
-                      role:
-                        rolePermissions:
-                          _or:
-                          - permissionName:
-                              _eq: CONFERENCE_MANAGE_ATTENDEES
-                          - permissionName:
-                              _eq: CONFERENCE_VIEW_ATTENDEES
-                  - _or:
-                    - includeUnauthenticated:
-                        _eq: true
-                    - groupAttendees:
-                        attendee:
-                          userId:
-                            _eq: X-Hasura-User-Id
-            - _or:
-              - room:
-                  _or:
-                  - roomPrivacyName:
-                      _eq: PUBLIC
-                  - roomPeople:
-                      attendee:
-                        userId:
-                          _eq: X-Hasura-User-Id
-              - _not:
-                  room: {}
-          - _and:
-            - restrictToAdmins:
-                _eq: true
-            - conference:
-                groups:
-                  _and:
-                  - enabled:
-                      _eq: true
-                  - groupRoles:
-                      role:
-                        rolePermissions:
-                          permissionName:
-                            _eq: CONFERENCE_MANAGE_ATTENDEES
-                  - _or:
-                    - includeUnauthenticated:
-                        _eq: true
-                    - groupAttendees:
-                        attendee:
-                          userId:
-                            _eq: X-Hasura-User-Id
-            - _or:
-              - room:
-                  _or:
-                  - roomPrivacyName:
-                      _eq: PUBLIC
-                  - roomPeople:
-                      attendee:
-                        userId:
-                          _eq: X-Hasura-User-Id
-              - _not:
-                  room: {}
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - updated_at
-      filter:
-        attendee:
-          userId:
-            _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter: {}
+      foreign_key_constraint_on: jobStatusName
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
 - table:
     schema: job_queues
     name: CombineVideosJob
@@ -3915,11 +3810,13 @@
       - conferenceId
       - contentGroupId
       - durationSeconds
+      - hallwayId
       - id
       - intendedRoomModeName
       - name
       - originatingDataId
       - roomId
+      - shufflePeriodId
       - startTime
       backend_only: false
   select_permissions:
@@ -3930,11 +3827,13 @@
       - contentGroupId
       - durationSeconds
       - endTime
+      - hallwayId
       - id
       - intendedRoomModeName
       - name
       - originatingDataId
       - roomId
+      - shufflePeriodId
       - startTime
       filter:
         conference:
@@ -3959,11 +3858,13 @@
       - created_at
       - durationSeconds
       - endTime
+      - hallwayId
       - id
       - intendedRoomModeName
       - name
       - originatingDataId
       - roomId
+      - shufflePeriodId
       - startTime
       - updated_at
       filter:
@@ -4002,10 +3903,12 @@
       columns:
       - contentGroupId
       - durationSeconds
+      - hallwayId
       - intendedRoomModeName
       - name
       - originatingDataId
       - roomId
+      - shufflePeriodId
       - startTime
       filter:
         _and:
@@ -4070,6 +3973,27 @@
       interval_sec: 10
       timeout_sec: 60
     webhook: '{{ACTION_BASE_URL}}/event/updated'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  - name: Playout_EventUpdated
+    definition:
+      enable_manual: true
+      update:
+        columns:
+        - durationSeconds
+        - intendedRoomModeName
+        - endTime
+        - startTime
+        - conferenceId
+        - contentGroupId
+        - id
+        - roomId
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
@@ -5633,24 +5557,24 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: channelStackCreateJob
+    using:
+      foreign_key_constraint_on: channelStackCreateJobId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
   - name: room
     using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: Room
-        column_mapping:
-          id: mediaLiveChannelId
+      foreign_key_constraint_on: roomId
   select_permissions:
   - role: user
     permission:
       columns:
       - cloudFrontDomain
+      - conferenceId
       - endpointUri
       - id
+      - roomId
       filter:
         _or:
         - conference:
@@ -6377,7 +6301,12 @@
       foreign_key_constraint_on: currentModeName
   - name: mediaLiveChannel
     using:
-      foreign_key_constraint_on: mediaLiveChannelId
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: MediaLiveChannel
+        column_mapping:
+          id: roomId
   - name: originatingContentGroup
     using:
       foreign_key_constraint_on: originatingContentGroupId
@@ -6391,6 +6320,13 @@
     using:
       foreign_key_constraint_on: roomPrivacyName
   array_relationships:
+  - name: channelStackCreateJobs
+    using:
+      foreign_key_constraint_on:
+        column: roomId
+        table:
+          schema: job_queues
+          name: ChannelStackCreateJob
   - name: events
     using:
       foreign_key_constraint_on:
@@ -6503,21 +6439,20 @@
   - role: user
     permission:
       columns:
-      - id
-      - created_at
-      - updated_at
-      - conferenceId
-      - name
-      - currentModeName
-      - originatingDataId
       - capacity
-      - publicVonageSessionId
-      - mediaLiveChannelId
-      - priority
-      - roomPrivacyName
       - chatId
-      - originatingEventId
+      - conferenceId
+      - created_at
+      - currentModeName
+      - id
+      - name
       - originatingContentGroupId
+      - originatingDataId
+      - originatingEventId
+      - priority
+      - publicVonageSessionId
+      - roomPrivacyName
+      - updated_at
       filter:
         _and:
         - conference:
@@ -7100,6 +7035,7 @@
       - id
       - name
       - originatingDataId
+      - priority
       backend_only: false
   select_permissions:
   - role: unauthenticated
@@ -7110,6 +7046,7 @@
       - id
       - name
       - originatingDataId
+      - priority
       filter:
         conference:
           _and:
@@ -7134,6 +7071,7 @@
       - id
       - name
       - originatingDataId
+      - priority
       - updated_at
       filter:
         _and:
@@ -7173,6 +7111,7 @@
       - colour
       - name
       - originatingDataId
+      - priority
       filter:
         _and:
         - conference:

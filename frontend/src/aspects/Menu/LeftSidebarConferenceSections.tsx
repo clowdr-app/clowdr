@@ -6,14 +6,20 @@ import {
     AccordionPanel,
     Box,
     Button,
+    ButtonGroup,
     Flex,
     Heading,
     HStack,
     useDisclosure,
 } from "@chakra-ui/react";
+import { DateTime } from "luxon";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { AttendeeFieldsFragment, RoomListRoomDetailsFragment, useGetAllRoomsQuery } from "../../generated/graphql";
+import {
+    AttendeeFieldsFragment,
+    RoomListRoomDetailsFragment,
+    useGetAllTodaysRoomsQuery,
+} from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
 import { RoomList } from "../Conference/Attend/Room/RoomList";
@@ -29,9 +35,11 @@ import { ToggleNavButton } from "./ToggleNavButton";
 function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     const conference = useConference();
 
-    const result = useGetAllRoomsQuery({
+    const result = useGetAllTodaysRoomsQuery({
         variables: {
             conferenceId: conference.id,
+            todayStart: DateTime.local().startOf("day").minus({ minutes: 10 }).toISO(),
+            todayEnd: DateTime.local().endOf("day").plus({ minutes: 10 }).toISO(),
         },
     });
 
@@ -41,36 +49,44 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     return (
         <>
             <AccordionPanel pb={4} px={"3px"}>
-                <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" mb={2} textAlign="left" ml={1}>
-                    Social rooms
-                </Heading>
+                <Flex mb={2} ml={1} mr={1}>
+                    <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
+                        Social rooms
+                    </Heading>
+                    <ButtonGroup ml="auto">
+                        <Button onClick={onCreateRoomOpen} colorScheme="green" size="xs">
+                            <FAIcon icon="plus-square" iconStyle="s" />
+                        </Button>
+                        <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="xs" mt={-1}>
+                            All rooms
+                        </LinkButton>
+                    </ButtonGroup>
+                </Flex>
                 <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
                     {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                        <RoomList rooms={rooms} layout="list" limit={5} />
+                        <RoomList
+                            rooms={rooms}
+                            layout="list"
+                            limit={5}
+                            noRoomsMessage="No social rooms at the moment."
+                        />
                     )}
                 </ApolloQueryWrapper>
-                <HStack justifyContent="center" mt={4}>
-                    <Button onClick={onCreateRoomOpen} colorScheme="green" size="sm">
-                        <FAIcon icon="plus-square" iconStyle="s" mr={3} /> New room
-                    </Button>
-                    <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="sm">
-                        View all rooms
-                    </LinkButton>
-                </HStack>
-                <Heading
-                    as="h3"
-                    fontWeight="normal"
-                    fontStyle="italic"
-                    fontSize="md"
-                    mb={2}
-                    textAlign="left"
-                    mt={4}
-                    ml={1}
-                >
-                    Program rooms
-                </Heading>
                 <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
-                    {(rooms: readonly RoomListRoomDetailsFragment[]) => <RoomList rooms={rooms} layout="list" />}
+                    {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                        <RoomList rooms={rooms} layout="list">
+                            <Flex mb={2} mt={4} ml={1} mr={1}>
+                                <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
+                                    Today&apos;s Program rooms
+                                </Heading>
+                                <ButtonGroup ml="auto">
+                                    <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="xs">
+                                        All rooms
+                                    </LinkButton>
+                                </ButtonGroup>
+                            </Flex>
+                        </RoomList>
+                    )}
                 </ApolloQueryWrapper>
             </AccordionPanel>
             <CreateRoomModal
@@ -186,7 +202,7 @@ export function LeftSidebarConferenceSections_Inner({
                         <>
                             <AccordionButton>
                                 <Box flex="1" textAlign="left">
-                                    Schedule
+                                    Happening soon
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>

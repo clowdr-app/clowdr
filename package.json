@@ -4,9 +4,10 @@
     "description": "Development setup",
     "main": "index.js",
     "scripts": {
-        "heroku-postbuild": "cd shared && npm ci && cd ../services/realtime && npm ci && npm run build && cd ../../services/actions && npm ci && npm run build",
-        "run-services-actions": "heroku local -p 3001 web",
-        "run-services-realtime": "npx foreman start --procfile ./Realtime.Procfile -p 3002"
+        "heroku-postbuild": "cd shared && npm ci && cd ../services/realtime && npm ci && npm run build && cd ../../services/actions && npm ci && npm run build && cd ../../services/playout && npm ci && npm run build",
+        "run-services-actions": "npx foreman start --procfile ./Procfile -p 3001",
+        "run-services-realtime": "npx foreman start --procfile ./Realtime.Procfile -p 3002",
+        "run-services-playout": "npx foreman start --procfile ./Playout.Procfile -p 3003"
     },
     "repository": {
         "type": "git",
@@ -30,7 +31,7 @@
         "lint-staged": "^10.5.4",
         "prettier": "^2.2.1",
         "prettier-plugin-organize-imports": "^1.1.1",
-        "typescript": "^4.1.5"
+        "typescript": "^4.2.3"
     },
     "husky": {
         "hooks": {
@@ -42,8 +43,8 @@
         "*.{js,jsx,ts,tsx,css,json,md}": "prettier --write"
     },
     "engines": {
-        "node": "15.4.0",
-        "npm": "7.3.x"
+        "node": "15.13.0",
+        "npm": "7.8.x"
     },
     "workspaces": [
         "shared"

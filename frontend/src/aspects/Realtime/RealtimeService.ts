@@ -13,7 +13,9 @@ export class RealtimeService {
                 this.socket = undefined;
             }
 
-            const url = import.meta.env.SNOWPACK_PUBLIC_REALTIME_SERVICE_URL;
+            const url =
+                import.meta.env.SNOWPACK_PUBLIC_REALTIME_SERVICE_URL ??
+                import.meta.env.SNOWPACK_PUBLIC_PRESENCE_SERVICE_URL;
             this.socket = io(url, {
                 transports: ["websocket"],
                 auth: {

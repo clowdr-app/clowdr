@@ -125,6 +125,35 @@
             },
             "args": ["run", "dev"]
         },
+        // Playout service -- Local Development
+        {
+            "label": "Playout Service -- Local Development",
+            "type": "shell",
+            "isBackground": true,
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/playout"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["run", "start:dev"]
+        },
+        // Playout service -- GraphQL Codegen
+        {
+            "label": "Playout service -- GraphQL Codegen",
+            "type": "shell",
+            "command": "npm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/playout"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["run", "gql-cdg"]
+        },
         // Shared -- GraphQL Codegen
         {
             "label": "Shared -- GraphQL Codegen",
@@ -239,6 +268,7 @@
                 "Hasura Console -- Local Development",
                 "Actions Service -- Local Development",
                 "Real-time Service -- Local Development",
+                "Playout Service -- Local Development",
                 "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",

@@ -28,9 +28,11 @@ interface Props {
     layout: "grid" | "list";
     limit?: number;
     onClick?: () => void;
+    noRoomsMessage?: string;
+    children?: React.ReactChild | React.ReactChildren;
 }
 
-export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element {
+export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, children }: Props): JSX.Element {
     const conference = useConference();
     const roomParticipants = useRoomParticipants();
 
@@ -80,7 +82,7 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
             } else {
                 return (
                     <VStack spacing={1} width="100%" px={2}>
-                        <HStack width="100%" fontSize="sm" my={1}>
+                        <HStack width="100%" fontSize="sm" my={"3px"}>
                             {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
                                 <FAIcon icon="lock" iconStyle="s" textAlign="center" />
                             ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
@@ -128,7 +130,6 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
                         height="100%"
                         linkProps={{ m: "3px" }}
                         onClick={onClick}
-                        size="sm"
                     >
                         {toButtonContents(room)}
                     </LinkButton>
@@ -162,39 +163,45 @@ export function RoomList({ rooms, layout, limit, onClick }: Props): JSX.Element 
 
     return (
         <>
-            {layout === "grid" ? (
-                <FormControl mb={4} maxW={400}>
-                    <FormLabel mt={4} textAlign="center">
-                        {resultCountStr}
-                    </FormLabel>
-                    <InputGroup>
-                        <InputLeftAddon aria-hidden>Search</InputLeftAddon>
-                        <Input
-                            aria-label={"Search found " + ariaSearchResultStr}
-                            type="text"
-                            placeholder="Search"
-                            value={search}
-                            onChange={(ev) => {
-                                setSearch(ev.target.value);
-                            }}
-                        />
-                        <InputRightElement>
-                            <FAIcon iconStyle="s" icon="search" />
-                        </InputRightElement>
-                    </InputGroup>
-                    <FormHelperText>
-                        Only key rooms are shown by default. Enter a search term to search all rooms.
-                    </FormHelperText>
-                </FormControl>
+            {roomElements.length > 0 ? (
+                <>
+                    {children}
+                    {layout === "grid" ? (
+                        <FormControl mb={4} maxW={400}>
+                            <FormLabel mt={4} textAlign="center">
+                                {resultCountStr}
+                            </FormLabel>
+                            <InputGroup>
+                                <InputLeftAddon aria-hidden>Search</InputLeftAddon>
+                                <Input
+                                    aria-label={"Search found " + ariaSearchResultStr}
+                                    type="text"
+                                    placeholder="Search"
+                                    value={search}
+                                    onChange={(ev) => {
+                                        setSearch(ev.target.value);
+                                    }}
+                                />
+                                <InputRightElement>
+                                    <FAIcon iconStyle="s" icon="search" />
+                                </InputRightElement>
+                            </InputGroup>
+                            <FormHelperText>
+                                Only key rooms are shown by default. Enter a search term to search all rooms.
+                            </FormHelperText>
+                        </FormControl>
+                    ) : undefined}
+                    <SimpleGrid
+                        columns={layout === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}
+                        autoRows="min-content"
+                        spacing={layout === "grid" ? [1, 1, 3] : 1}
+                        maxW="100%"
+                    >
+                        {limitedElements.map((e) => e.el)}
+                    </SimpleGrid>
+                </>
             ) : undefined}
-            <SimpleGrid
-                columns={layout === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}
-                autoRows="min-content"
-                spacing={layout === "grid" ? [1, 1, 3] : 1}
-                maxW="100%"
-            >
-                {limitedElements.map((e) => e.el)}
-            </SimpleGrid>
+            {roomElements.length === 0 ? <Text>{noRoomsMessage}</Text> : undefined}
         </>
     );
 }

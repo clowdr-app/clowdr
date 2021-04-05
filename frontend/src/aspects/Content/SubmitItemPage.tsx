@@ -5,6 +5,7 @@ import {
     Container,
     Divider,
     Heading,
+    Link,
     ListItem,
     Spinner,
     Text,
@@ -244,8 +245,21 @@ export default function SubmitItemPage({
                                                         This video will be live streamed during the conference just
                                                         prior to your Q&amp;A session.
                                                     </ListItem>
-                                                    <ListItem>Maximum 5 minute video duration</ListItem>
+                                                    <ListItem>
+                                                        Your conference organisers should have sent instructions
+                                                        regarding the maximum duration of your video.
+                                                    </ListItem>
                                                     <ListItem>Maximum 1080p video quality</ListItem>
+                                                    <ListItem>
+                                                        Please refer to{" "}
+                                                        <Link
+                                                            href="https://clowdr.org/resources/video-subtitles"
+                                                            isExternal
+                                                        >
+                                                            these instructions
+                                                        </Link>{" "}
+                                                        for further information.
+                                                    </ListItem>
                                                 </UnorderedList>
                                             </Box>
                                         ) : undefined}

@@ -4,15 +4,16 @@
     "description": "Presence counters",
     "main": "build/web-server.js",
     "engines": {
-        "node": "15.11.x"
+        "node": "15.13.x",
+        "npm": "7.8.x"
     },
     "scripts": {
         "build": "npm run build-shared && npm run gql-cdg && npm run build-this && npm run-script copy-resources",
         "build-this": "ttsc",
-        "build-shared": "npm run --prefix=../../shared/ --cwd=../../shared/ build",
+        "build-shared": "npm run --prefix=../../ --workspace=shared build",
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
         "start": "node build/server.js",
-        "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ --cwd=../../ run-services-realtime\"",
+        "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ run-services-realtime\"",
         "dev": "npm run build-shared && node-env-run -E ./.env -e \"npm run dev-stage2\"",
         "gql-cdg": "npx --no-install -p @graphql-codegen/cli graphql-codegen -- --config codegen.js",
         "test-publisher": "node-env-run -E ./src/test/.publisher.env -e \"ts-node ./src/test/publisher.ts\"",

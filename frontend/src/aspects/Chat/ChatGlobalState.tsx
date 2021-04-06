@@ -1434,9 +1434,8 @@ export class GlobalChatState {
                     socket.emit("chat.pins.changed.on", this.attendee.id);
 
                     // TODO: Actions
-                    //    - Chat: subscribe / unsubscribe
-                    //    - Messages: send (remember ack/nack)
                     //    - Reactions: send
+                    //    - Unread counts: update
                 }
             }
         } catch (e) {

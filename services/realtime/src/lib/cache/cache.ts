@@ -21,22 +21,22 @@ export class Cache<T> {
         acquireLock = true
     ): Promise<T | undefined> {
         const cacheKey = this.generateCacheKey(itemKey);
+        const existingValStr = await redisClientP.get(cacheKey);
+        if (existingValStr !== null) {
+            const existingVal = JSON.parse(existingValStr);
+            const fetchedAt: number = existingVal.fetchedAt;
+
+            if (existingVal.value === "undefined" || refetchNow) {
+                if (Date.now() - fetchedAt < this.rateLimitPeriodMs) {
+                    return existingVal.value === "undefined" ? undefined : this.parse(existingVal.value);
+                }
+            } else {
+                return this.parse(existingVal.value);
+            }
+        }
+
         const lease = acquireLock ? await redlock.acquire(`locks:${cacheKey}`, 5000) : undefined;
         try {
-            const existingValStr = await redisClientP.get(cacheKey);
-            if (existingValStr !== null) {
-                const existingVal = JSON.parse(existingValStr);
-                const fetchedAt: number = existingVal.fetchedAt;
-
-                if (existingVal.value === "undefined" || refetchNow) {
-                    if (Date.now() - fetchedAt < this.rateLimitPeriodMs) {
-                        return existingVal.value === "undefined" ? undefined : this.parse(existingVal.value);
-                    }
-                } else {
-                    return this.parse(existingVal.value);
-                }
-            }
-
             console.info("Fetching from original source for cache", cacheKey);
             const val = await this.fetch(itemKey, testMode_ExpectedValue);
             await this.set(itemKey, val, false);

@@ -11,27 +11,20 @@ import {
     RenderProps,
     VStack,
 } from "@chakra-ui/react";
+import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
-    AddReactionDocument,
-    AddReactionMutation,
-    AddReactionMutationVariables,
-    ChatMessageDataFragment,
     ChatReactionDataFragment,
     Chat_MessageType_Enum,
     Chat_Reaction_Insert_Input,
-    DeleteMessageDocument,
-    DeleteMessageMutation,
-    DeleteMessageMutationVariables,
-    DeleteReactionDocument,
-    DeleteReactionMutation,
-    DeleteReactionMutationVariables,
     InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
     InitialChatState_ChatFragment,
+    Maybe,
     PinChatDocument,
     PinChatMutation,
     PinChatMutationVariables,
@@ -45,10 +38,6 @@ import {
     SelectMessagesPageDocument,
     SelectMessagesPageQuery,
     SelectMessagesPageQueryVariables,
-    SendChatMessageDocument,
-    SendChatMessageMutation,
-    SendChatMessageMutationVariables,
-    ShortChatMessageDataFragment,
     SubscribeChatDocument,
     SubscribeChatMutation,
     SubscribeChatMutationVariables,
@@ -61,7 +50,7 @@ import {
 } from "../../generated/graphql";
 import type { Attendee } from "../Conference/useCurrentAttendee";
 import { realtimeService } from "../Realtime/RealtimeService";
-import type { Message, Notification, Reaction } from "../Realtime/RealtimeServiceCommonTypes";
+import type { Action, Message, Notification, Reaction } from "../Realtime/RealtimeServiceCommonTypes";
 import { Markdown } from "../Text/Markdown";
 import type { AnswerMessageData, AnswerReactionData, MessageData } from "./Types/Messages";
 
@@ -106,12 +95,10 @@ gql`
         message
         type
         senderId
-        remoteServiceId
     }
 
     fragment InitialChatState_Chat on chat_Chat {
         id
-        remoteServiceId
         contentGroup {
             id
             title
@@ -246,20 +233,21 @@ gql`
 
 gql`
     fragment ChatReactionData on chat_Reaction {
+        sId
         data
-        id
         senderId
         symbol
         type
-        messageId
-        remoteServiceId
+        messageSId
+        duplicateSId
     }
 
     fragment ChatMessageData on chat_Message {
         created_at
         data
-        duplicatedMessageId
+        duplicatedMessageSId
         id
+        sId
         message
         reactions {
             ...ChatReactionData
@@ -267,7 +255,6 @@ gql`
         senderId
         type
         chatId
-        remoteServiceId
     }
 
     query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
@@ -291,43 +278,22 @@ gql`
     fragment ShortChatMessageData on chat_Message {
         created_at
         data
-        duplicatedMessageId
-        id
+        duplicatedMessageSId
         message
         senderId
         type
         chatId
-        remoteServiceId
+        sId
     }
 
-    mutation SendChatMessage(
-        $chatId: uuid!
-        $senderId: uuid!
-        $type: chat_MessageType_enum!
-        $message: String!
-        $data: jsonb = {}
-        $isPinned: Boolean = false
-    ) {
-        insert_chat_Message_one(
-            object: {
-                chatId: $chatId
-                data: $data
-                isPinned: $isPinned
-                message: $message
-                senderId: $senderId
-                type: $type
-            }
-        ) {
-            ...ShortChatMessageData
-        }
-    }
-
-    mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
-        insert_chat_Reaction_one(
-            object: { messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data }
-        ) {
-            id
-        }
+    fragment ShortChatReactionData on chat_Reaction {
+        data
+        senderId
+        symbol
+        type
+        messageSId
+        sId
+        duplicateSId
     }
 `;
 
@@ -369,43 +335,13 @@ gql`
     }
 `;
 
-gql`
-    mutation DeleteMessage($id: Int!) {
-        delete_chat_Message_by_pk(id: $id) {
-            id
-        }
-    }
-`;
-
-gql`
-    mutation AddReaction($reaction: chat_Reaction_insert_input!) {
-        insert_chat_Reaction_one(object: $reaction) {
-            ...ChatReactionData
-        }
-    }
-
-    mutation DeleteReaction($reactionId: Int!) {
-        delete_chat_Reaction_by_pk(id: $reactionId) {
-            id
-        }
-    }
-`;
-
-// gql`
-//     subscription MessageReactions($messageIds: [Int!]!) {
-//         chat_Reaction(where: { messageId: { _in: $messageIds } }) {
-//             ...ChatReactionData
-//         }
-//     }
-// `;
-
 // CHAT_TODO
 // gql`
 //     fragment ChatFlagData on chat_Flag {
 //         discussionChatId
 //         flaggedById
 //         id
-//         messageId
+//         messageSId
 //         notes
 //         resolution
 //         resolved_at
@@ -415,10 +351,34 @@ gql`
 //     }
 // `;
 
+export type ChatMessageData = {
+    created_at: string;
+    data: any;
+    duplicatedMessageSId?: Maybe<string>;
+    id: number;
+    sId: string;
+    message: string;
+    senderId?: Maybe<string>;
+    type: Chat_MessageType_Enum;
+    chatId: string;
+    reactions: ReadonlyArray<{ readonly __typename?: "chat_Reaction" } & ChatReactionDataFragment>;
+};
+
+export type ShortChatMessageData = {
+    created_at: string;
+    data: any;
+    duplicatedMessageSId?: Maybe<string>;
+    message: string;
+    senderId?: Maybe<string>;
+    type: Chat_MessageType_Enum;
+    chatId: string;
+    sId: string;
+};
+
 export class MessageState {
     constructor(
         private readonly globalState: GlobalChatState,
-        private readonly initialState: ChatMessageDataFragment | ShortChatMessageDataFragment
+        private readonly initialState: ChatMessageData | ShortChatMessageData
     ) {
         if ("reactions" in initialState) {
             this.reactions = [...initialState.reactions];
@@ -427,17 +387,22 @@ export class MessageState {
         }
     }
 
-    public get created_at(): string {
-        return this.initialState.created_at;
+    createdAtN: number | undefined;
+    public get created_at(): number {
+        this.createdAtN = this.createdAtN ?? Date.parse(this.initialState.created_at);
+        return this.createdAtN;
     }
     public get data(): any {
         return this.initialState.data;
     }
-    public get duplicatedMessageId(): number | null | undefined {
-        return this.initialState.duplicatedMessageId;
+    public get duplicatedMessageSId(): string | null | undefined {
+        return this.initialState.duplicatedMessageSId;
     }
-    public get id(): number {
-        return this.initialState.id;
+    public get id(): number | undefined {
+        return "id" in this.initialState ? this.initialState.id : undefined;
+    }
+    public get sId(): string {
+        return this.initialState.sId;
     }
     public get message(): string {
         return this.initialState.message;
@@ -452,52 +417,66 @@ export class MessageState {
         return this.initialState.chatId;
     }
 
+    private updatedAt = Date.now();
+    public updatedAtObs = new Observable<number>((observer) => {
+        observer(this.updatedAt);
+    });
+    public update(msg: Message): void {
+        this.initialState.data = msg.data;
+        this.initialState.duplicatedMessageSId = msg.duplicatedMessageSId;
+        this.initialState.message = msg.message;
+        this.initialState.senderId = msg.senderId;
+        this.initialState.type = msg.type;
+        this.updatedAt = Date.now();
+        this.updatedAtObs.publish(this.updatedAt);
+    }
+
     private reactions: ChatReactionDataFragment[];
     private reactionsObs = new Observable<ChatReactionDataFragment[]>((observer) => {
         observer([...this.reactions]);
     });
     public async addReaction(reaction: Chat_Reaction_Insert_Input): Promise<void> {
-        try {
-            const result = await this.globalState.apolloClient.mutate<
-                AddReactionMutation,
-                AddReactionMutationVariables
-            >({
-                mutation: AddReactionDocument,
-                variables: {
-                    reaction: {
-                        ...reaction,
-                        senderId: this.globalState.attendee.id,
-                        messageId: this.id,
-                    },
-                },
-            });
-
-            if (result.data?.insert_chat_Reaction_one) {
-                this.reactions.push(result.data.insert_chat_Reaction_one);
-                this.reactionsObs.publish([...this.reactions]);
-            }
-        } catch (e) {
-            if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
-                console.error(`Error adding reaction: ${this.id} / ${reaction.symbol}`, e);
-            }
-        }
+        // CHAT_TODO
+        // try {
+        //     const result = await this.globalState.apolloClient.mutate<
+        //         AddReactionMutation,
+        //         AddReactionMutationVariables
+        //     >({
+        //         mutation: AddReactionDocument,
+        //         variables: {
+        //             reaction: {
+        //                 ...reaction,
+        //                 senderId: this.globalState.attendee.id,
+        //                 messageSId: this.sId,
+        //             },
+        //         },
+        //     });
+        //     if (result.data?.insert_chat_Reaction_one) {
+        //         this.reactions.push(result.data.insert_chat_Reaction_one);
+        //         this.reactionsObs.publish([...this.reactions]);
+        //     }
+        // } catch (e) {
+        //     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+        //         console.error(`Error adding reaction: ${this.sId} / ${reaction.symbol}`, e);
+        //     }
+        // }
     }
-    public async deleteReaction(reactionId: number): Promise<void> {
-        try {
-            await this.globalState.apolloClient.mutate<DeleteReactionMutation, DeleteReactionMutationVariables>({
-                mutation: DeleteReactionDocument,
-                variables: {
-                    reactionId,
-                },
-            });
-
-            this.reactions = this.reactions.filter((x) => x.id !== reactionId);
-            this.reactionsObs.publish([...this.reactions]);
-        } catch (e) {
-            if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
-                console.error(`Error adding reaction: ${this.id} / ${reactionId}`, e);
-            }
-        }
+    public async deleteReaction(reactionSId: string): Promise<void> {
+        // CHAT_TODO
+        // try {
+        //     await this.globalState.apolloClient.mutate<DeleteReactionMutation, DeleteReactionMutationVariables>({
+        //         mutation: DeleteReactionDocument,
+        //         variables: {
+        //             reactionId,
+        //         },
+        //     });
+        //     this.reactions = this.reactions.filter((x) => x.id !== reactionId);
+        //     this.reactionsObs.publish([...this.reactions]);
+        // } catch (e) {
+        //     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+        //         console.error(`Error adding reaction: ${this.sId} / ${reactionId}`, e);
+        //     }
+        // }
     }
     public get Reactions(): Observable<ChatReactionDataFragment[]> {
         return this.reactionsObs;
@@ -531,7 +510,7 @@ type MessageUpdate =
       }
     | {
           op: "deleted";
-          messageIds: number[];
+          messageSIds: string[];
       };
 
 export class ChatState {
@@ -566,7 +545,7 @@ export class ChatState {
     }
 
     public async teardown(): Promise<void> {
-        // CHAT_TODO: await this.unsubscribeFromMoreMessages(true);
+        await this.unsubscribe(true);
     }
 
     public get Id(): string {
@@ -778,13 +757,13 @@ export class ChatState {
         return this.unreadCountObs;
     }
 
-    private messages = new Map<number, MessageState>();
+    private messages = new Map<string, MessageState>();
     private fetchMoreAttempts = 0;
     private lastHistoricallyFetchedMessageId = Math.pow(2, 31) - 1;
     private messagesObs = new Observable<MessageUpdate>((observer) => {
         observer({
             op: "initial",
-            messages: R.sortBy((x) => -x.id, [...this.messages.values()]),
+            messages: R.sortBy((x) => -x.created_at, [...this.messages.values()]),
         });
     });
     private mightHaveMoreMessagesObs = new Observable<boolean>((observer) => {
@@ -825,7 +804,7 @@ export class ChatState {
                 });
                 if (result.data.chat_Message.length > 0) {
                     result.data.chat_Message.forEach((msg) => {
-                        const existing = this.messages.get(msg.id);
+                        const existing = this.messages.get(msg.sId);
                         if (existing) {
                             // This mostly only happens when the subscription initially
                             // pulls in data faster than selecting the first page does
@@ -834,8 +813,8 @@ export class ChatState {
                     });
 
                     newMessageStates = result.data.chat_Message
-                        .filter((msg) => !this.messages.has(msg.id))
-                        .map((message) => new MessageState(this.globalState, message));
+                        .filter((msg) => !this.messages.has(msg.sId))
+                        .map((message) => new MessageState(this.globalState, { ...message }));
                     if (newMessageStates.length > 0) {
                         if (result.data.chat_Message.length > 0) {
                             this.fetchMoreAttempts = 0;
@@ -848,9 +827,10 @@ export class ChatState {
                                 ? -1
                                 : result.data.chat_Message.length === 0
                                 ? Math.max(this.lastHistoricallyFetchedMessageId, 0)
-                                : newMessageStates[newMessageStates.length - 1].id;
+                                : newMessageStates[newMessageStates.length - 1].id ??
+                                  this.lastHistoricallyFetchedMessageId;
                         newMessageStates.forEach((state) => {
-                            this.messages.set(state.id, state);
+                            this.messages.set(state.sId, state);
                         });
                     }
                 }
@@ -892,16 +872,16 @@ export class ChatState {
             release();
         }
     }
-    public async unsubscribe(): Promise<void> {
+    public async unsubscribe(force = false): Promise<void> {
         const release = await this.subMutex.acquire();
 
         try {
             this.subCount--;
-            if (this.subCount === 0) {
+            if (this.subCount === 0 || force) {
                 const socket = await this.globalState.socket;
                 socket?.emit("chat.unsubscribe", this.Id);
             }
-            if (this.subCount < 0) {
+            if (!force && this.subCount < 0) {
                 console.warn(
                     "Chat sub count went negative..hmmm...suggests the ref count is going out of sync somehow.",
                     this.subCount
@@ -914,87 +894,72 @@ export class ChatState {
         }
     }
 
-    public async onMessageAdded(_msg: Message): Promise<void> {
-        // CHAT_TODO
-        // const release = await this.messagesMutex.acquire();
-        // let newMessageStates: MessageState[] | undefined;
-        // try {
-        //     const attrs = msg.attributes as Record<string, any>;
-        //     const existing = this.messages.get(attrs.id);
-        //     if (!existing) {
-        //         let senderId = null;
-        //         try {
-        //             const member = await msg.getMember();
-        //             senderId = member.identity;
-        //         } catch {
-        //             // Ignore - maybe system sent the message
-        //         }
-        //         newMessageStates = [
-        //             new MessageState(this.globalState, {
-        //                 id: attrs.id,
-        //                 data: attrs.data,
-        //                 type: attrs.type,
-        //                 chatId: this.Id,
-        //                 message: msg.body,
-        //                 created_at: msg.dateCreated.toISOString(),
-        //                 senderId,
-        //             }),
-        //         ];
-        //         newMessageStates.forEach((msg) => {
-        //             this.messages.set(msg.id, msg);
-        //         });
-        //     }
-        // } catch (e) {
-        //     console.error(`Error processing new messages from remote service: ${this.Id}`, e);
-        // } finally {
-        //     release();
-        //     if (newMessageStates && newMessageStates.length > 0) {
-        //         this.messagesObs.publish({
-        //             op: "loaded_new",
-        //             messages: newMessageStates,
-        //         });
-        //     }
-        // }
+    public async onMessageAdded(msg: Message): Promise<void> {
+        const release = await this.messagesMutex.acquire();
+        let newMessageStates: MessageState[] | undefined;
+        try {
+            const existing = this.messages.get(msg.sId);
+            if (!existing) {
+                newMessageStates = [
+                    new MessageState(this.globalState, {
+                        sId: msg.sId,
+                        data: msg.data,
+                        type: msg.type,
+                        chatId: this.Id,
+                        message: msg.message,
+                        created_at: msg.created_at,
+                        senderId: msg.senderId,
+                    }),
+                ];
+                newMessageStates.forEach((msg) => {
+                    this.messages.set(msg.sId, msg);
+                });
+            }
+        } catch (e) {
+            console.error(`Error processing new messages from remote service: ${this.Id}`, e);
+        } finally {
+            release();
+            if (newMessageStates && newMessageStates.length > 0) {
+                this.messagesObs.publish({
+                    op: "loaded_new",
+                    messages: newMessageStates,
+                });
+            }
+        }
     }
 
-    public async onMessageRemoved(_msg: Message): Promise<void> {
-        // CHAT_TODO
-        // const release = await this.messagesMutex.acquire();
-        // let deletedId: number | undefined;
-        // try {
-        //     const attrs = msg.attributes as Record<string, any>;
-        //     if (this.messages.delete(attrs.id)) {
-        //         deletedId = attrs.id;
-        //     }
-        // } catch (e) {
-        //     console.error(`Error processing removed messages from remote service: ${this.Id}`, e);
-        // } finally {
-        //     release();
-        //     if (deletedId) {
-        //         this.messagesObs.publish({
-        //             op: "deleted",
-        //             messageIds: [deletedId],
-        //         });
-        //     }
-        // }
+    public async onMessageRemoved(msg: Message): Promise<void> {
+        const release = await this.messagesMutex.acquire();
+        let deletedSId: string | undefined;
+        try {
+            if (this.messages.delete(msg.sId)) {
+                deletedSId = msg.sId;
+            }
+        } catch (e) {
+            console.error(`Error processing removed messages from remote service: ${this.Id}`, e);
+        } finally {
+            release();
+            if (deletedSId) {
+                this.messagesObs.publish({
+                    op: "deleted",
+                    messageSIds: [deletedSId],
+                });
+            }
+        }
     }
 
-    public async onMessageUpdated(_msg: Message): Promise<void> {
-        // CHAT_TODO
-        // const release = await this.messagesMutex.acquire();
-        // try {
-        //     if (updateReasons && updateReasons.includes("attributes")) {
-        //         const attrs = ev.attributes as Record<string, any>;
-        //         const existingMsg = this.messages.get(attrs.id);
-        //         if (existingMsg) {
-        //             existingMsg.updateReactions(attrs.reactions);
-        //         }
-        //     }
-        // } catch (e) {
-        //     console.error(`Error processing updated messages from remote service: ${this.Id}`, e);
-        // } finally {
-        //     release();
-        // }
+    public async onMessageUpdated(msg: Message): Promise<void> {
+        const release = await this.messagesMutex.acquire();
+        try {
+            const existingMsg = this.messages.get(msg.sId);
+            if (existingMsg) {
+                existingMsg.update(msg);
+            }
+        } catch (e) {
+            console.error(`Error processing updated messages from remote service: ${this.Id}`, e);
+        } finally {
+            release();
+        }
     }
 
     private isSending = false;
@@ -1004,6 +969,8 @@ export class ChatState {
     public get IsSending(): Observable<boolean> {
         return this.isSendingObs;
     }
+    public ackSendMessage: ((sId: string) => void) | undefined;
+    public nackSendMessage: ((sId: string) => void) | undefined;
     public async send(
         chatId: string,
         senderId: string,
@@ -1012,55 +979,70 @@ export class ChatState {
         data: MessageData,
         isPinned: boolean
     ): Promise<void> {
-        // CHAT_TODO
-
         const release = await this.sendMutex.acquire();
 
-        this.unreadCount = 0;
-        this.unreadCountObs.publish(0);
+        // CHAT_TODO
+        // this.unreadCount = 0;
+        // this.unreadCountObs.publish(0);
 
         this.isSending = true;
         this.isSendingObs.publish(this.isSending);
         try {
-            const newMsg = (
-                await this.globalState.apolloClient.mutate<SendChatMessageMutation, SendChatMessageMutationVariables>({
-                    mutation: SendChatMessageDocument,
-                    variables: {
-                        chatId,
-                        message,
-                        senderId,
-                        type,
-                        data,
-                        isPinned,
-                    },
-                })
-            ).data?.insert_chat_Message_one;
+            const socket = await this.globalState.socket;
+            assert(socket, "Not connected to chat service.");
+            const sId = uuidv4();
+            const newMsg: Message = {
+                sId,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                chatId,
+                message,
+                senderId,
+                type,
+                data,
+                isPinned,
+            };
+            const action: Action<Message> = {
+                op: "INSERT",
+                data: newMsg,
+            };
+            socket.emit("chat.messages.send", action);
+            const ackdSId = await new Promise<string>((resolve, reject) => {
+                this.ackSendMessage = resolve;
+                this.nackSendMessage = (nackSId) => {
+                    if (nackSId === sId) {
+                        reject("Send nack'd");
+                    }
+                };
+            });
+            assert(
+                ackdSId === sId,
+                `Message failed to send - ack received for wrong message: (ackd) ${ackdSId} !== ${sId} (expected)`
+            );
 
             if (newMsg) {
                 const release2 = await this.messagesMutex.acquire();
                 const newMsgState = new MessageState(this.globalState, newMsg);
                 try {
-                    if (!this.messages.has(newMsg.id)) {
-                        this.messages.set(newMsg.id, newMsgState);
+                    if (!this.messages.has(newMsg.sId)) {
+                        this.messages.set(newMsg.sId, newMsgState);
                     }
                 } finally {
                     release2();
-
                     this.messagesObs.publish({
                         op: "loaded_new",
                         messages: [newMsgState],
                     });
                 }
-
                 if (type === Chat_MessageType_Enum.Answer && newMsg) {
-                    const answeringIds = (data as AnswerMessageData).questionMessagesIds;
-                    if (answeringIds.length > 0) {
-                        const answeringId = answeringIds[0];
+                    const answeringSIds = (data as AnswerMessageData).questionMessagesSIds;
+                    if (answeringSIds && answeringSIds.length > 0) {
+                        const answeringSId = answeringSIds[0];
                         const reactionData: AnswerReactionData = {
-                            answerMessageId: newMsg.id,
-                            duplicateAnswerMessageId: newMsg.duplicatedMessageId ?? undefined,
+                            answerMessageSId: newMsg.sId,
+                            duplicateAnswerMessageSId: newMsg.duplicatedMessageSId ?? undefined,
                         };
-                        const targetMsg = this.messages.get(answeringId);
+                        const targetMsg = this.messages.get(answeringSId);
                         if (targetMsg) {
                             await targetMsg.addReaction({
                                 data: reactionData,
@@ -1077,29 +1059,42 @@ export class ChatState {
         } finally {
             this.isSending = false;
             release();
-
             this.isSendingObs.publish(this.isSending);
         }
     }
 
-    public async deleteMessage(messageId: number): Promise<void> {
-        // CHAT_TODO
-
+    public async deleteMessage(messageSId: string): Promise<void> {
         const release = await this.messagesMutex.acquire();
-
         try {
-            await this.globalState.apolloClient.mutate<DeleteMessageMutation, DeleteMessageMutationVariables>({
-                mutation: DeleteMessageDocument,
-                variables: {
-                    id: messageId,
-                },
-            });
-            this.messagesObs.publish({
-                op: "deleted",
-                messageIds: [messageId],
-            });
+            const socket = await this.globalState.socket;
+            assert(socket, "Not connected to chat service.");
+
+            const msg = this.messages.get(messageSId);
+            if (msg) {
+                const action: Action<Message> = {
+                    op: "DELETE",
+                    data: {
+                        chatId: msg.chatId,
+                        created_at: new Date(msg.created_at).toISOString(),
+                        data: msg.data,
+                        isPinned: false,
+                        message: msg.message,
+                        sId: msg.sId,
+                        senderId: msg.senderId,
+                        type: msg.type,
+                        updated_at: new Date(msg.created_at).toISOString(),
+                        duplicatedMessageSId: msg.duplicatedMessageSId,
+                        systemId: undefined,
+                    },
+                };
+                socket.emit("chat.messages.send", action);
+                this.messagesObs.publish({
+                    op: "deleted",
+                    messageSIds: [messageSId],
+                });
+            }
         } catch (e) {
-            console.error(`Error deleting message: ${this.Id} @ ${messageId}`, e);
+            console.error(`Error deleting message: ${this.Id} @ ${messageSId}`, e);
             throw e;
         } finally {
             release();
@@ -1113,7 +1108,7 @@ export class ChatState {
     // public get ReadUpToMsgId(): number {
     //     return this.readUpToMsgId;
     // }
-    public setAllMessagesRead(_messageId: number): void {
+    public setAllMessagesRead(_messageSId: string): void {
         // CHAT_TODO
         //     this.readUpToMsgId = Math.max(this.readUpToMsgId, messageId);
         //     this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
@@ -1341,7 +1336,7 @@ export class GlobalChatState {
                         const existing = this.chatStates?.get(chatId);
                         existing?.setIsSubscribed(true);
                     });
-                    socket.on("chat:unsubscribed", (chatId: string) => {
+                    socket.on("chat.unsubscribed", (chatId: string) => {
                         // console.info(`Chat unsubscribed: ${chatId}`);
                         const existing = this.chatStates?.get(chatId);
                         existing?.setIsSubscribed(false);
@@ -1383,7 +1378,7 @@ export class GlobalChatState {
                             }
                         }
                     });
-                    socket.on("chat:unpinned", (chatId: string) => {
+                    socket.on("chat.unpinned", (chatId: string) => {
                         // console.info(`Chat unpinned: ${chatId}`);
                         const existing = this.chatStates?.get(chatId);
                         existing?.setIsPinned(false);
@@ -1407,11 +1402,19 @@ export class GlobalChatState {
 
                     socket.on("chat.messages.send.ack", (messageSid: string) => {
                         console.info("Chat message send ack'd", messageSid);
-                        // CHAT_TODO
+                        if (this.chatStates) {
+                            for (const existing of this.chatStates) {
+                                existing[1].ackSendMessage?.(messageSid);
+                            }
+                        }
                     });
                     socket.on("chat.messages.send.nack", (messageSid: string) => {
                         console.info("Chat message send nack'd", messageSid);
-                        // CHAT_TODO
+                        if (this.chatStates) {
+                            for (const existing of this.chatStates) {
+                                existing[1].nackSendMessage?.(messageSid);
+                            }
+                        }
                     });
 
                     socket.on("chat.reactions.receive", (msg: Reaction) => {
@@ -1458,10 +1461,10 @@ export class GlobalChatState {
                         socket.off("notification");
 
                         socket.off("chat.subscribed");
-                        socket.off("chat:unsubscribed");
+                        socket.off("chat.unsubscribed");
 
                         socket.off("chat.pinned");
-                        socket.off("chat:unpinned");
+                        socket.off("chat.unpinned");
 
                         socket.off("chat.messages.receive");
                         socket.off("chat.messages.update");

@@ -13,13 +13,24 @@ function areMessageDatasEqual(type: Chat_MessageType_Enum, x: MessageData, y: Me
             const xD = x as AnswerMessageData;
             const yD = y as AnswerMessageData;
             return (
-                xD.questionMessagesIds &&
-                yD.questionMessagesIds &&
-                xD.questionMessagesIds instanceof Array &&
-                yD.questionMessagesIds instanceof Array &&
-                xD.questionMessagesIds.length === yD.questionMessagesIds.length &&
-                xD.questionMessagesIds.every((a) => yD.questionMessagesIds.includes(a)) &&
-                yD.questionMessagesIds.every((a) => xD.questionMessagesIds.includes(a))
+                !!(
+                    xD.questionMessagesIds &&
+                    yD.questionMessagesIds &&
+                    xD.questionMessagesIds instanceof Array &&
+                    yD.questionMessagesIds instanceof Array &&
+                    xD.questionMessagesIds.length === yD.questionMessagesIds.length &&
+                    xD.questionMessagesIds.every((a) => yD.questionMessagesIds?.includes(a)) &&
+                    yD.questionMessagesIds.every((a) => xD.questionMessagesIds?.includes(a))
+                ) ||
+                !!(
+                    xD.questionMessagesSIds &&
+                    yD.questionMessagesSIds &&
+                    xD.questionMessagesSIds instanceof Array &&
+                    yD.questionMessagesSIds instanceof Array &&
+                    xD.questionMessagesSIds.length === yD.questionMessagesSIds.length &&
+                    xD.questionMessagesSIds.every((a) => yD.questionMessagesSIds?.includes(a)) &&
+                    yD.questionMessagesSIds.every((a) => xD.questionMessagesSIds?.includes(a))
+                )
             );
         }
         case Chat_MessageType_Enum.DuplicationMarker:
@@ -62,13 +73,13 @@ function areReactionsEqual(x: readonly ChatReactionDataFragment[], y: readonly C
         return false;
     }
 
-    const xS = [...x].sort((x, y) => x.id - y.id);
-    const yS = [...y].sort((x, y) => x.id - y.id);
+    const xS = [...x].sort((x, y) => x.sId.localeCompare(y.sId));
+    const yS = [...y].sort((x, y) => x.sId.localeCompare(y.sId));
     for (let idx = 0; idx < xS.length; idx++) {
         const a = xS[idx];
         const b = yS[idx];
         if (
-            a.id !== b.id ||
+            a.sId !== b.sId ||
             a.symbol !== b.symbol ||
             a.type !== b.type ||
             a.senderId !== b.senderId ||
@@ -83,10 +94,10 @@ function areReactionsEqual(x: readonly ChatReactionDataFragment[], y: readonly C
 export function areMessagesEqual(x: ChatMessageDataFragment, y: ChatMessageDataFragment): boolean {
     // Some assumptions are baked in: senderIds, chatIds and types don't change
     return (
-        x.id === y.id &&
+        x.sId === y.sId &&
         x.message === y.message &&
         areMessageDatasEqual(x.type, x.data, y.data) &&
-        x.duplicatedMessageId === y.duplicatedMessageId &&
+        x.duplicatedMessageSId === y.duplicatedMessageSId &&
         areReactionsEqual(x.reactions, y.reactions)
     );
 }

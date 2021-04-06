@@ -164,7 +164,7 @@
       foreign_key_constraint_on: flaggedById
   - name: message
     using:
-      foreign_key_constraint_on: messageId
+      foreign_key_constraint_on: messageSId
   insert_permissions:
   - role: user
     permission:
@@ -247,7 +247,7 @@
       - discussionChatId
       - flaggedById
       - id
-      - messageId
+      - messageSId
       - notes
       - type
       backend_only: false
@@ -255,16 +255,16 @@
   - role: user
     permission:
       columns:
-      - id
-      - messageId
-      - notes
-      - resolution
-      - type
       - created_at
-      - resolved_at
-      - updated_at
       - discussionChatId
       - flaggedById
+      - id
+      - messageSId
+      - notes
+      - resolution
+      - resolved_at
+      - type
+      - updated_at
       filter:
         _or:
         - flaggedBy:
@@ -368,10 +368,10 @@
           schema: chat
           name: Message
         column_mapping:
-          id: duplicatedMessageId
+          sId: duplicatedMessageSId
   - name: duplicateOutgoing
     using:
-      foreign_key_constraint_on: duplicatedMessageId
+      foreign_key_constraint_on: duplicatedMessageSId
   - name: sender
     using:
       foreign_key_constraint_on: senderId
@@ -379,14 +379,14 @@
   - name: flags
     using:
       foreign_key_constraint_on:
-        column: messageId
+        column: messageSId
         table:
           schema: chat
           name: Flag
   - name: reactions
     using:
       foreign_key_constraint_on:
-        column: messageId
+        column: messageSId
         table:
           schema: chat
           name: Reaction
@@ -455,7 +455,7 @@
       columns:
       - chatId
       - data
-      - duplicatedMessageId
+      - duplicatedMessageSId
       - id
       - isPinned
       - message
@@ -470,11 +470,10 @@
       - chatId
       - created_at
       - data
-      - duplicatedMessageId
+      - duplicatedMessageSId
       - id
       - isPinned
       - message
-      - remoteServiceId
       - sId
       - senderId
       - systemId
@@ -512,7 +511,7 @@
     permission:
       columns:
       - data
-      - duplicatedMessageId
+      - duplicatedMessageSId
       - isPinned
       - message
       filter:
@@ -724,10 +723,10 @@
   object_relationships:
   - name: duplicate
     using:
-      foreign_key_constraint_on: duplicateId
+      foreign_key_constraint_on: duplicateSId
   - name: message
     using:
-      foreign_key_constraint_on: messageId
+      foreign_key_constraint_on: messageSId
   - name: sender
     using:
       foreign_key_constraint_on: senderId
@@ -735,7 +734,7 @@
   - name: duplicates
     using:
       foreign_key_constraint_on:
-        column: duplicateId
+        column: duplicateSId
         table:
           schema: chat
           name: Reaction
@@ -776,8 +775,7 @@
                     room: {}
       columns:
       - data
-      - id
-      - messageId
+      - messageSId
       - sId
       - senderId
       - symbol
@@ -789,9 +787,8 @@
       columns:
       - created_at
       - data
-      - id
-      - messageId
-      - remoteServiceId
+      - duplicateSId
+      - messageSId
       - sId
       - senderId
       - symbol

@@ -107,7 +107,7 @@ async function Main(
                     data: {},
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
-                    duplicatedMessageId: undefined,
+                    duplicatedMessageSId: undefined,
                     isPinned: false,
                     remoteServiceId: undefined,
                     systemId: undefined,

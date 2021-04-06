@@ -21,7 +21,7 @@ export async function subscriptionChanged(req: Request, res: Response, _next?: N
             emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("chat.subscribed", sub.chatId);
         } else if (data.event.op === "DELETE") {
             await deleteSubscription(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("chat:unsubscribed", sub.chatId);
+            emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("chat.unsubscribed", sub.chatId);
         }
 
         res.status(200).send("OK");
@@ -46,7 +46,7 @@ export async function pinChanged(req: Request, res: Response, _next?: NextFuncti
             emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("chat.pinned", sub.chatId);
         } else if (data.event.op === "DELETE") {
             await deletePin(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("chat:unpinned", sub.chatId);
+            emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("chat.unpinned", sub.chatId);
         }
 
         res.status(200).send("OK");

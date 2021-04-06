@@ -22,7 +22,7 @@ async function onMessage(action: Action<Message>) {
             : "unknown";
 
     const chatId = action.data.chatId;
-    emitter.to(generateRoomName(chatId)).emit(`chat.messages.${eventName}`, JSON.stringify(action.data));
+    emitter.to(generateRoomName(chatId)).emit(`chat.messages.${eventName}`, action.data);
 
     if (action.op === "INSERT") {
         const subscriptions = await getSubscriptions(chatId, {

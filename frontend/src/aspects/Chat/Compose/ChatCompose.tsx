@@ -180,9 +180,16 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                             p={1}
                         >
                             {(composeCtx.newMessageData as AnswerMessageData).questionMessagesIds &&
-                            (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds[0]
+                            (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds?.[0]
                                 ? `Answering message ${
-                                      (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds[0]
+                                      (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds?.[0]
+                                  }`
+                                : (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds &&
+                                  (composeCtx.newMessageData as AnswerMessageData).questionMessagesSIds?.[0]
+                                ? `Answering message ${
+                                      (composeCtx.newMessageData as AnswerMessageData).questionMessagesSIds?.[0]?.split(
+                                          "-"
+                                      )[0]
                                   }`
                                 : "Select a question to answer"}
                         </Text>

@@ -12,14 +12,14 @@ interface MessageListProps {
     fetchMore: () => void;
     initMessagesRef: React.MutableRefObject<((messages: MessageState[]) => void) | null>;
     insertMessagesRef: React.MutableRefObject<((messages: MessageState[], areNew: boolean) => void) | null>;
-    deleteMessagesRef: React.MutableRefObject<((messageIds: number[]) => void) | null>;
+    deleteMessagesRef: React.MutableRefObject<((messageSIds: string[]) => void) | null>;
     setHasReachedEndRef: React.MutableRefObject<((value: boolean) => void) | null>;
 }
 
 export function ChatMessageList(props: BoxProps): JSX.Element {
     const initMessages = React.useRef<((messages: MessageState[]) => void) | null>(null);
     const insertMessages = React.useRef<((messages: MessageState[], areNew: boolean) => void) | null>(null);
-    const deleteMessages = React.useRef<((messageIds: number[]) => void) | null>(null);
+    const deleteMessages = React.useRef<((messageSIds: string[]) => void) | null>(null);
     const setHasReachedEnd = React.useRef<((value: boolean) => void) | null>(null);
 
     const config = useChatConfiguration();
@@ -60,7 +60,7 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
                     insertMessages.current?.(update.messages, true);
                     break;
                 case "deleted":
-                    deleteMessages.current?.(update.messageIds);
+                    deleteMessages.current?.(update.messageSIds);
                     break;
             }
         });
@@ -93,7 +93,7 @@ function MessageList({
     const [hasReachedEnd, setHasReachedEnd] = useState<boolean>(false);
     const [_lastRenderTime, setLastRenderTime] = useState<number>(-1);
     const messageElements = React.useRef<JSX.Element[] | null>(null);
-    const positionObservables = React.useRef<Map<number, Observable<number>>>(new Map());
+    const positionObservables = React.useRef<Map<string, Observable<number>>>(new Map());
 
     const config = useChatConfiguration();
 
@@ -116,18 +116,18 @@ function MessageList({
             messageElements.current = [];
             messages.forEach((msg) => {
                 const obs = new Observable<number>((observer) => {
-                    const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
+                    const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.sId);
                     if (idx !== undefined && idx !== -1) {
                         observer(idx);
                     }
                 });
-                positionObservables.current.set(msg.id, obs);
-                messageElements.current?.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
+                positionObservables.current.set(msg.sId, obs);
+                messageElements.current?.push(<MessageBox key={msg.sId} message={msg} positionObservable={obs} />);
             });
 
             if (messageElements.current.length > 0) {
                 const latest = messageElements.current[0].props.message as MessageState;
-                config.state.setAllMessagesRead(latest.id);
+                config.state.setAllMessagesRead(latest.sId);
             }
 
             setLastRenderTime(Date.now());
@@ -139,13 +139,13 @@ function MessageList({
             const newMessageElements: JSX.Element[] = [];
             messages.forEach((msg) => {
                 const obs = new Observable<number>((observer) => {
-                    const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.id.toString());
+                    const idx = messageElements.current?.findIndex((el) => (el.key as string) === msg.sId);
                     if (idx !== undefined && idx !== -1) {
                         observer(idx);
                     }
                 });
-                positionObservables.current.set(msg.id, obs);
-                newMessageElements.push(<MessageBox key={msg.id} message={msg} positionObservable={obs} />);
+                positionObservables.current.set(msg.sId, obs);
+                newMessageElements.push(<MessageBox key={msg.sId} message={msg} positionObservable={obs} />);
             });
 
             if (messageElements.current) {
@@ -175,7 +175,7 @@ function MessageList({
 
                 if (messageElements.current && messageElements.current.length > 0) {
                     const latest = messageElements.current[0].props.message as MessageState;
-                    config.state.setAllMessagesRead(latest.id);
+                    config.state.setAllMessagesRead(latest.sId);
                 }
             }
 
@@ -184,10 +184,9 @@ function MessageList({
         [config.state]
     );
 
-    const deleteMessages = useCallback((messageIds: number[]) => {
+    const deleteMessages = useCallback((messageSIds: string[]) => {
         if (messageElements.current) {
-            const ids = messageIds.map((id) => id.toString());
-            messageElements.current = messageElements.current.filter((el) => !ids.includes(el.key as string));
+            messageElements.current = messageElements.current.filter((el) => !messageSIds.includes(el.key as string));
             setLastRenderTime(Date.now());
         }
     }, []);
@@ -260,7 +259,7 @@ function MessageList({
 
                     if (shouldAutoScroll.current && messageElements.current && messageElements.current.length > 0) {
                         const latest = messageElements.current[0].props.message as MessageState;
-                        config.state.setAllMessagesRead(latest.id);
+                        config.state.setAllMessagesRead(latest.sId);
                     }
                 }}
             >

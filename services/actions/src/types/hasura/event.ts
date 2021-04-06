@@ -221,9 +221,8 @@ export interface MessageData {
     message: string;
     data: any;
     isPinned: boolean;
-    duplicatedMessageId: number | null | undefined;
+    duplicatedMessageSId: string | null | undefined;
     systemId: string | null | undefined;
-    remoteServiceId: string | null | undefined;
     sId: string;
 }
 

@@ -14,14 +14,14 @@ import { ChatTypingIndicators } from "./ChatTypingIndicators";
 
 export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
     const config = useChatConfiguration();
-    const setAnsweringQuestionIdRef = React.useRef<{
-        f: (ids: number[] | null) => void;
-        answeringIds: number[] | null;
+    const setAnsweringQuestionSIdRef = React.useRef<{
+        f: (sIds: string[] | null) => void;
+        answeringSIds: string[] | null;
     }>({
         f: () => {
             /* EMPTY */
         },
-        answeringIds: null,
+        answeringSIds: null,
     });
 
     return (
@@ -40,7 +40,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                 {/* <ChatSelector flex="0 0 auto" /> */}
                 <ChatProfileModalProvider>
                     <EmojiPickerProvider>
-                        <ReceiveMessageQueriesProvider setAnsweringQuestionId={setAnsweringQuestionIdRef}>
+                        <ReceiveMessageQueriesProvider setAnsweringQuestionSId={setAnsweringQuestionSIdRef}>
                             <Box role="region" aria-label="Messages" flex="0 1 100%" pos="relative" overflow="hidden">
                                 <ChatMessageList pos="relative" h="100%" zIndex={1} />
                                 <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
@@ -58,7 +58,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                     <>
                         <ChatTypingIndicators flex="0 0 auto" />
                         <SendMessageQueriesProvider>
-                            <ComposeContextProvider setAnsweringQuestionIdRef={setAnsweringQuestionIdRef}>
+                            <ComposeContextProvider setAnsweringQuestionSIdRef={setAnsweringQuestionSIdRef}>
                                 <ChatCompose role="region" aria-label="Compose message" flex="0 0 auto" />
                             </ComposeContextProvider>
                         </SendMessageQueriesProvider>

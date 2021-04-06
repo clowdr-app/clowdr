@@ -58,10 +58,10 @@ export function defaultAvailableMessageType(config: ChatConfiguration): Chat_Mes
 
 export function ComposeContextProvider({
     children,
-    setAnsweringQuestionIdRef,
+    setAnsweringQuestionSIdRef,
 }: {
     children: React.ReactNode | React.ReactNodeArray;
-    setAnsweringQuestionIdRef: React.RefObject<{ f: (ids: number[] | null) => void; answeringIds: number[] | null }>;
+    setAnsweringQuestionSIdRef: React.RefObject<{ f: (sIds: string[] | null) => void; answeringSIds: string[] | null }>;
 }): JSX.Element {
     const config = useChatConfiguration();
     const defaultType = defaultAvailableMessageType(config);
@@ -173,14 +173,14 @@ export function ComposeContextProvider({
     );
 
     useEffect(() => {
-        if (setAnsweringQuestionIdRef?.current) {
-            setAnsweringQuestionIdRef.current.f = setAnsweringQuestionId;
-            setAnsweringQuestionIdRef.current.answeringIds =
+        if (setAnsweringQuestionSIdRef?.current) {
+            setAnsweringQuestionSIdRef.current.f = setAnsweringQuestionId;
+            setAnsweringQuestionSIdRef.current.answeringSIds =
                 newMessageType === Chat_MessageType_Enum.Answer
-                    ? (newMessageData as AnswerMessageData).questionMessagesIds ?? null
+                    ? (newMessageData as AnswerMessageData).questionMessagesSIds ?? null
                     : null;
         }
-    }, [newMessageData, newMessageType, setAnsweringQuestionId, setAnsweringQuestionIdRef]);
+    }, [newMessageData, newMessageType, setAnsweringQuestionId, setAnsweringQuestionSIdRef]);
 
     const send = useCallback(
         (data?: MessageData) => {

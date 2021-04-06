@@ -78,6 +78,16 @@ function MessageBody({
         return message.Reactions.subscribe(setReactions);
     }, [message.Reactions]);
 
+    const [_updatedAt, setUpdatedAt] = useState<number>(-1);
+    useEffect(() => {
+        const unsub = message.updatedAtObs.subscribe((v) => {
+            setUpdatedAt(v);
+        });
+        return () => {
+            unsub();
+        };
+    }, [message.updatedAtObs]);
+
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
 
     const pictureSizeMinPx = 35;
@@ -239,10 +249,13 @@ function MessageBody({
                         w="auto"
                         h="auto"
                         onClick={() => {
-                            if (message.duplicatedMessageId) {
-                                messages.setAnsweringQuestionId.current?.f([message.id, message.duplicatedMessageId]);
+                            if (message.duplicatedMessageSId) {
+                                messages.setAnsweringQuestionSId.current?.f([
+                                    message.sId,
+                                    message.duplicatedMessageSId,
+                                ]);
                             } else {
-                                messages.setAnsweringQuestionId.current?.f([message.id]);
+                                messages.setAnsweringQuestionSId.current?.f([message.sId]);
                             }
                         }}
                     >
@@ -257,10 +270,13 @@ function MessageBody({
                         w="auto"
                         h="auto"
                         onClick={() => {
-                            if (message.duplicatedMessageId) {
-                                messages.setAnsweringQuestionId.current?.f([message.id, message.duplicatedMessageId]);
+                            if (message.duplicatedMessageSId) {
+                                messages.setAnsweringQuestionSId.current?.f([
+                                    message.sId,
+                                    message.duplicatedMessageSId,
+                                ]);
                             } else {
-                                messages.setAnsweringQuestionId.current?.f([message.id]);
+                                messages.setAnsweringQuestionSId.current?.f([message.sId]);
                             }
                         }}
                     >
@@ -270,11 +286,11 @@ function MessageBody({
             ) : undefined,
         [
             config.spacing,
-            message.duplicatedMessageId,
-            message.id,
+            message.duplicatedMessageSId,
+            message.sId,
             reactions,
             message.type,
-            messages.setAnsweringQuestionId,
+            messages.setAnsweringQuestionSId,
             smallFontSize,
         ]
     );
@@ -444,7 +460,7 @@ export default function MessageBox({
             pb="4px"
             bgColor={isQuestion || isAnswer ? bgColour : undefined}
             mt={config.spacing}
-            id={`message-${message.id}`}
+            id={`message-${message.sId}`}
             alignItems="flex-start"
             lineHeight={lineHeight + "ex"}
             _hover={{}}

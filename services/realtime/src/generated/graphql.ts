@@ -17954,8 +17954,9 @@ export type Chat_Reaction = {
     duplicates_aggregate: Chat_Reaction_Aggregate;
     id: Scalars["Int"];
     /** An object relationship */
-    message: Chat_Message;
-    messageId: Scalars["Int"];
+    message?: Maybe<Chat_Message>;
+    messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     remoteServiceId?: Maybe<Scalars["String"]>;
     sId: Scalars["uuid"];
     /** An object relationship */
@@ -18237,6 +18238,7 @@ export type Chat_Reaction_Bool_Exp = {
     id?: Maybe<Int_Comparison_Exp>;
     message?: Maybe<Chat_Message_Bool_Exp>;
     messageId?: Maybe<Int_Comparison_Exp>;
+    messageSId?: Maybe<Uuid_Comparison_Exp>;
     remoteServiceId?: Maybe<String_Comparison_Exp>;
     sId?: Maybe<Uuid_Comparison_Exp>;
     sender?: Maybe<Attendee_Bool_Exp>;
@@ -18286,6 +18288,7 @@ export type Chat_Reaction_Insert_Input = {
     id?: Maybe<Scalars["Int"]>;
     message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
     messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
@@ -18302,6 +18305,7 @@ export type Chat_Reaction_Max_Fields = {
     duplicateId?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["Int"]>;
     messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
@@ -18315,6 +18319,7 @@ export type Chat_Reaction_Max_Order_By = {
     duplicateId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     messageId?: Maybe<Order_By>;
+    messageSId?: Maybe<Order_By>;
     remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     senderId?: Maybe<Order_By>;
@@ -18329,6 +18334,7 @@ export type Chat_Reaction_Min_Fields = {
     duplicateId?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["Int"]>;
     messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
@@ -18342,6 +18348,7 @@ export type Chat_Reaction_Min_Order_By = {
     duplicateId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     messageId?: Maybe<Order_By>;
+    messageSId?: Maybe<Order_By>;
     remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     senderId?: Maybe<Order_By>;
@@ -18381,6 +18388,7 @@ export type Chat_Reaction_Order_By = {
     id?: Maybe<Order_By>;
     message?: Maybe<Chat_Message_Order_By>;
     messageId?: Maybe<Order_By>;
+    messageSId?: Maybe<Order_By>;
     remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     sender?: Maybe<Attendee_Order_By>;
@@ -18413,6 +18421,8 @@ export enum Chat_Reaction_Select_Column {
     /** column name */
     MessageId = "messageId",
     /** column name */
+    MessageSId = "messageSId",
+    /** column name */
     RemoteServiceId = "remoteServiceId",
     /** column name */
     SId = "sId",
@@ -18433,6 +18443,7 @@ export type Chat_Reaction_Set_Input = {
     duplicateId?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["Int"]>;
     messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
@@ -18513,6 +18524,8 @@ export enum Chat_Reaction_Update_Column {
     Id = "id",
     /** column name */
     MessageId = "messageId",
+    /** column name */
+    MessageSId = "messageSId",
     /** column name */
     RemoteServiceId = "remoteServiceId",
     /** column name */

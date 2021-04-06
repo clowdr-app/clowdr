@@ -16770,7 +16770,7 @@ export type Chat_Flag = {
   readonly id: Scalars['Int'];
   /** An object relationship */
   readonly message: Chat_Message;
-  readonly messageId: Scalars['Int'];
+  readonly messageSId: Scalars['uuid'];
   readonly notes?: Maybe<Scalars['String']>;
   readonly resolution?: Maybe<Scalars['String']>;
   readonly resolved_at?: Maybe<Scalars['timestamptz']>;
@@ -16999,13 +16999,11 @@ export type Chat_Flag_Arr_Rel_Insert_Input = {
 export type Chat_Flag_Avg_Fields = {
   readonly __typename?: 'chat_Flag_avg_fields';
   readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "chat.Flag" */
 export type Chat_Flag_Avg_Order_By = {
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "chat.Flag". All fields are combined with a logical 'AND'. */
@@ -17020,7 +17018,7 @@ export type Chat_Flag_Bool_Exp = {
   readonly flaggedById?: Maybe<Uuid_Comparison_Exp>;
   readonly id?: Maybe<Int_Comparison_Exp>;
   readonly message?: Maybe<Chat_Message_Bool_Exp>;
-  readonly messageId?: Maybe<Int_Comparison_Exp>;
+  readonly messageSId?: Maybe<Uuid_Comparison_Exp>;
   readonly notes?: Maybe<String_Comparison_Exp>;
   readonly resolution?: Maybe<String_Comparison_Exp>;
   readonly resolved_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -17031,7 +17029,7 @@ export type Chat_Flag_Bool_Exp = {
 /** unique or primary key constraints on table "chat.Flag" */
 export enum Chat_Flag_Constraint {
   /** unique or primary key constraint */
-  FlagMessageIdFlaggedByIdTypeKey = 'Flag_messageId_flaggedById_type_key',
+  FlagMessageSIdFlaggedByIdTypeKey = 'Flag_messageSId_flaggedById_type_key',
   /** unique or primary key constraint */
   FlagPkey = 'Flag_pkey'
 }
@@ -17039,7 +17037,6 @@ export enum Chat_Flag_Constraint {
 /** input type for incrementing integer column in table "chat.Flag" */
 export type Chat_Flag_Inc_Input = {
   readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
 };
 
 /** input type for inserting data into table "chat.Flag" */
@@ -17051,7 +17048,7 @@ export type Chat_Flag_Insert_Input = {
   readonly flaggedById?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
-  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly notes?: Maybe<Scalars['String']>;
   readonly resolution?: Maybe<Scalars['String']>;
   readonly resolved_at?: Maybe<Scalars['timestamptz']>;
@@ -17066,7 +17063,7 @@ export type Chat_Flag_Max_Fields = {
   readonly discussionChatId?: Maybe<Scalars['uuid']>;
   readonly flaggedById?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly notes?: Maybe<Scalars['String']>;
   readonly resolution?: Maybe<Scalars['String']>;
   readonly resolved_at?: Maybe<Scalars['timestamptz']>;
@@ -17079,7 +17076,7 @@ export type Chat_Flag_Max_Order_By = {
   readonly discussionChatId?: Maybe<Order_By>;
   readonly flaggedById?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly notes?: Maybe<Order_By>;
   readonly resolution?: Maybe<Order_By>;
   readonly resolved_at?: Maybe<Order_By>;
@@ -17093,7 +17090,7 @@ export type Chat_Flag_Min_Fields = {
   readonly discussionChatId?: Maybe<Scalars['uuid']>;
   readonly flaggedById?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly notes?: Maybe<Scalars['String']>;
   readonly resolution?: Maybe<Scalars['String']>;
   readonly resolved_at?: Maybe<Scalars['timestamptz']>;
@@ -17106,7 +17103,7 @@ export type Chat_Flag_Min_Order_By = {
   readonly discussionChatId?: Maybe<Order_By>;
   readonly flaggedById?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly notes?: Maybe<Order_By>;
   readonly resolution?: Maybe<Order_By>;
   readonly resolved_at?: Maybe<Order_By>;
@@ -17144,7 +17141,7 @@ export type Chat_Flag_Order_By = {
   readonly flaggedById?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Chat_Message_Order_By>;
-  readonly messageId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly notes?: Maybe<Order_By>;
   readonly resolution?: Maybe<Order_By>;
   readonly resolved_at?: Maybe<Order_By>;
@@ -17168,7 +17165,7 @@ export enum Chat_Flag_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  MessageId = 'messageId',
+  MessageSId = 'messageSId',
   /** column name */
   Notes = 'notes',
   /** column name */
@@ -17187,7 +17184,7 @@ export type Chat_Flag_Set_Input = {
   readonly discussionChatId?: Maybe<Scalars['uuid']>;
   readonly flaggedById?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly notes?: Maybe<Scalars['String']>;
   readonly resolution?: Maybe<Scalars['String']>;
   readonly resolved_at?: Maybe<Scalars['timestamptz']>;
@@ -17199,52 +17196,44 @@ export type Chat_Flag_Set_Input = {
 export type Chat_Flag_Stddev_Fields = {
   readonly __typename?: 'chat_Flag_stddev_fields';
   readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "chat.Flag" */
 export type Chat_Flag_Stddev_Order_By = {
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Chat_Flag_Stddev_Pop_Fields = {
   readonly __typename?: 'chat_Flag_stddev_pop_fields';
   readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "chat.Flag" */
 export type Chat_Flag_Stddev_Pop_Order_By = {
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Chat_Flag_Stddev_Samp_Fields = {
   readonly __typename?: 'chat_Flag_stddev_samp_fields';
   readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "chat.Flag" */
 export type Chat_Flag_Stddev_Samp_Order_By = {
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type Chat_Flag_Sum_Fields = {
   readonly __typename?: 'chat_Flag_sum_fields';
   readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "chat.Flag" */
 export type Chat_Flag_Sum_Order_By = {
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** update columns of table "chat.Flag" */
@@ -17258,7 +17247,7 @@ export enum Chat_Flag_Update_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  MessageId = 'messageId',
+  MessageSId = 'messageSId',
   /** column name */
   Notes = 'notes',
   /** column name */
@@ -17275,39 +17264,33 @@ export enum Chat_Flag_Update_Column {
 export type Chat_Flag_Var_Pop_Fields = {
   readonly __typename?: 'chat_Flag_var_pop_fields';
   readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "chat.Flag" */
 export type Chat_Flag_Var_Pop_Order_By = {
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Chat_Flag_Var_Samp_Fields = {
   readonly __typename?: 'chat_Flag_var_samp_fields';
   readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "chat.Flag" */
 export type Chat_Flag_Var_Samp_Order_By = {
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Chat_Flag_Variance_Fields = {
   readonly __typename?: 'chat_Flag_variance_fields';
   readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "chat.Flag" */
 export type Chat_Flag_Variance_Order_By = {
   readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /**
@@ -17327,7 +17310,7 @@ export type Chat_Message = {
   readonly duplicateIncoming?: Maybe<Chat_Message>;
   /** An object relationship */
   readonly duplicateOutgoing?: Maybe<Chat_Message>;
-  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly duplicatedMessageSId?: Maybe<Scalars['uuid']>;
   /** An array relationship */
   readonly flags: ReadonlyArray<Chat_Flag>;
   /** An aggregated array relationship */
@@ -17339,7 +17322,6 @@ export type Chat_Message = {
   readonly reactions: ReadonlyArray<Chat_Reaction>;
   /** An aggregated array relationship */
   readonly reactions_aggregate: Chat_Reaction_Aggregate;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sId: Scalars['uuid'];
   /** An object relationship */
   readonly sender?: Maybe<Attendee>;
@@ -17629,13 +17611,11 @@ export type Chat_Message_Arr_Rel_Insert_Input = {
 /** aggregate avg on columns */
 export type Chat_Message_Avg_Fields = {
   readonly __typename?: 'chat_Message_avg_fields';
-  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "chat.Message" */
 export type Chat_Message_Avg_Order_By = {
-  readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
 };
 
@@ -17650,13 +17630,12 @@ export type Chat_Message_Bool_Exp = {
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Bool_Exp>;
   readonly duplicateOutgoing?: Maybe<Chat_Message_Bool_Exp>;
-  readonly duplicatedMessageId?: Maybe<Int_Comparison_Exp>;
+  readonly duplicatedMessageSId?: Maybe<Uuid_Comparison_Exp>;
   readonly flags?: Maybe<Chat_Flag_Bool_Exp>;
   readonly id?: Maybe<Int_Comparison_Exp>;
   readonly isPinned?: Maybe<Boolean_Comparison_Exp>;
   readonly message?: Maybe<String_Comparison_Exp>;
   readonly reactions?: Maybe<Chat_Reaction_Bool_Exp>;
-  readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
   readonly sId?: Maybe<Uuid_Comparison_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
@@ -17668,7 +17647,7 @@ export type Chat_Message_Bool_Exp = {
 /** unique or primary key constraints on table "chat.Message" */
 export enum Chat_Message_Constraint {
   /** unique or primary key constraint */
-  MessageDuplicatedMessageIdKey = 'Message_duplicatedMessageId_key',
+  MessageDuplicatedMessageSIdKey = 'Message_duplicatedMessageSId_key',
   /** unique or primary key constraint */
   MessagePkey = 'Message_pkey',
   /** unique or primary key constraint */
@@ -17694,7 +17673,6 @@ export type Chat_Message_Delete_Key_Input = {
 
 /** input type for incrementing integer column in table "chat.Message" */
 export type Chat_Message_Inc_Input = {
-  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
 };
 
@@ -17706,13 +17684,12 @@ export type Chat_Message_Insert_Input = {
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
   readonly duplicateOutgoing?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
-  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly duplicatedMessageSId?: Maybe<Scalars['uuid']>;
   readonly flags?: Maybe<Chat_Flag_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly reactions?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sId?: Maybe<Scalars['uuid']>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
@@ -17726,10 +17703,9 @@ export type Chat_Message_Max_Fields = {
   readonly __typename?: 'chat_Message_max_fields';
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly duplicatedMessageSId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
@@ -17740,10 +17716,9 @@ export type Chat_Message_Max_Fields = {
 export type Chat_Message_Max_Order_By = {
   readonly chatId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
-  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly duplicatedMessageSId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
-  readonly remoteServiceId?: Maybe<Order_By>;
   readonly sId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
@@ -17755,10 +17730,9 @@ export type Chat_Message_Min_Fields = {
   readonly __typename?: 'chat_Message_min_fields';
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly duplicatedMessageSId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Scalars['String']>;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
@@ -17769,10 +17743,9 @@ export type Chat_Message_Min_Fields = {
 export type Chat_Message_Min_Order_By = {
   readonly chatId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
-  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly duplicatedMessageSId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
-  readonly remoteServiceId?: Maybe<Order_By>;
   readonly sId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly systemId?: Maybe<Order_By>;
@@ -17809,13 +17782,12 @@ export type Chat_Message_Order_By = {
   readonly data?: Maybe<Order_By>;
   readonly duplicateIncoming?: Maybe<Chat_Message_Order_By>;
   readonly duplicateOutgoing?: Maybe<Chat_Message_Order_By>;
-  readonly duplicatedMessageId?: Maybe<Order_By>;
+  readonly duplicatedMessageSId?: Maybe<Order_By>;
   readonly flags_aggregate?: Maybe<Chat_Flag_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly isPinned?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly reactions_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
-  readonly remoteServiceId?: Maybe<Order_By>;
   readonly sId?: Maybe<Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
@@ -17843,15 +17815,13 @@ export enum Chat_Message_Select_Column {
   /** column name */
   Data = 'data',
   /** column name */
-  DuplicatedMessageId = 'duplicatedMessageId',
+  DuplicatedMessageSId = 'duplicatedMessageSId',
   /** column name */
   Id = 'id',
   /** column name */
   IsPinned = 'isPinned',
   /** column name */
   Message = 'message',
-  /** column name */
-  RemoteServiceId = 'remoteServiceId',
   /** column name */
   SId = 'sId',
   /** column name */
@@ -17869,11 +17839,10 @@ export type Chat_Message_Set_Input = {
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
-  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
+  readonly duplicatedMessageSId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['Int']>;
   readonly isPinned?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
   readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly systemId?: Maybe<Scalars['String']>;
@@ -17884,52 +17853,44 @@ export type Chat_Message_Set_Input = {
 /** aggregate stddev on columns */
 export type Chat_Message_Stddev_Fields = {
   readonly __typename?: 'chat_Message_stddev_fields';
-  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "chat.Message" */
 export type Chat_Message_Stddev_Order_By = {
-  readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Chat_Message_Stddev_Pop_Fields = {
   readonly __typename?: 'chat_Message_stddev_pop_fields';
-  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "chat.Message" */
 export type Chat_Message_Stddev_Pop_Order_By = {
-  readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Chat_Message_Stddev_Samp_Fields = {
   readonly __typename?: 'chat_Message_stddev_samp_fields';
-  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "chat.Message" */
 export type Chat_Message_Stddev_Samp_Order_By = {
-  readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type Chat_Message_Sum_Fields = {
   readonly __typename?: 'chat_Message_sum_fields';
-  readonly duplicatedMessageId?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "chat.Message" */
 export type Chat_Message_Sum_Order_By = {
-  readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
 };
 
@@ -17942,15 +17903,13 @@ export enum Chat_Message_Update_Column {
   /** column name */
   Data = 'data',
   /** column name */
-  DuplicatedMessageId = 'duplicatedMessageId',
+  DuplicatedMessageSId = 'duplicatedMessageSId',
   /** column name */
   Id = 'id',
   /** column name */
   IsPinned = 'isPinned',
   /** column name */
   Message = 'message',
-  /** column name */
-  RemoteServiceId = 'remoteServiceId',
   /** column name */
   SId = 'sId',
   /** column name */
@@ -17966,39 +17925,33 @@ export enum Chat_Message_Update_Column {
 /** aggregate var_pop on columns */
 export type Chat_Message_Var_Pop_Fields = {
   readonly __typename?: 'chat_Message_var_pop_fields';
-  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "chat.Message" */
 export type Chat_Message_Var_Pop_Order_By = {
-  readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Chat_Message_Var_Samp_Fields = {
   readonly __typename?: 'chat_Message_var_samp_fields';
-  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "chat.Message" */
 export type Chat_Message_Var_Samp_Order_By = {
-  readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Chat_Message_Variance_Fields = {
   readonly __typename?: 'chat_Message_variance_fields';
-  readonly duplicatedMessageId?: Maybe<Scalars['Float']>;
   readonly id?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "chat.Message" */
 export type Chat_Message_Variance_Order_By = {
-  readonly duplicatedMessageId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
 };
 
@@ -18191,16 +18144,14 @@ export type Chat_Reaction = {
   readonly data: Scalars['jsonb'];
   /** An object relationship */
   readonly duplicate?: Maybe<Chat_Reaction>;
-  readonly duplicateId?: Maybe<Scalars['Int']>;
+  readonly duplicateSId?: Maybe<Scalars['uuid']>;
   /** An array relationship */
   readonly duplicates: ReadonlyArray<Chat_Reaction>;
   /** An aggregated array relationship */
   readonly duplicates_aggregate: Chat_Reaction_Aggregate;
-  readonly id: Scalars['Int'];
   /** An object relationship */
   readonly message: Chat_Message;
-  readonly messageId: Scalars['Int'];
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly messageSId: Scalars['uuid'];
   readonly sId: Scalars['uuid'];
   /** An object relationship */
   readonly sender: Attendee;
@@ -18412,17 +18363,9 @@ export type Chat_Reaction_Aggregate = {
 /** aggregate fields of "chat.Reaction" */
 export type Chat_Reaction_Aggregate_Fields = {
   readonly __typename?: 'chat_Reaction_aggregate_fields';
-  readonly avg?: Maybe<Chat_Reaction_Avg_Fields>;
   readonly count?: Maybe<Scalars['Int']>;
   readonly max?: Maybe<Chat_Reaction_Max_Fields>;
   readonly min?: Maybe<Chat_Reaction_Min_Fields>;
-  readonly stddev?: Maybe<Chat_Reaction_Stddev_Fields>;
-  readonly stddev_pop?: Maybe<Chat_Reaction_Stddev_Pop_Fields>;
-  readonly stddev_samp?: Maybe<Chat_Reaction_Stddev_Samp_Fields>;
-  readonly sum?: Maybe<Chat_Reaction_Sum_Fields>;
-  readonly var_pop?: Maybe<Chat_Reaction_Var_Pop_Fields>;
-  readonly var_samp?: Maybe<Chat_Reaction_Var_Samp_Fields>;
-  readonly variance?: Maybe<Chat_Reaction_Variance_Fields>;
 };
 
 
@@ -18434,17 +18377,9 @@ export type Chat_Reaction_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "chat.Reaction" */
 export type Chat_Reaction_Aggregate_Order_By = {
-  readonly avg?: Maybe<Chat_Reaction_Avg_Order_By>;
   readonly count?: Maybe<Order_By>;
   readonly max?: Maybe<Chat_Reaction_Max_Order_By>;
   readonly min?: Maybe<Chat_Reaction_Min_Order_By>;
-  readonly stddev?: Maybe<Chat_Reaction_Stddev_Order_By>;
-  readonly stddev_pop?: Maybe<Chat_Reaction_Stddev_Pop_Order_By>;
-  readonly stddev_samp?: Maybe<Chat_Reaction_Stddev_Samp_Order_By>;
-  readonly sum?: Maybe<Chat_Reaction_Sum_Order_By>;
-  readonly var_pop?: Maybe<Chat_Reaction_Var_Pop_Order_By>;
-  readonly var_samp?: Maybe<Chat_Reaction_Var_Samp_Order_By>;
-  readonly variance?: Maybe<Chat_Reaction_Variance_Order_By>;
 };
 
 /** append existing jsonb value of filtered columns with new jsonb value */
@@ -18458,21 +18393,6 @@ export type Chat_Reaction_Arr_Rel_Insert_Input = {
   readonly on_conflict?: Maybe<Chat_Reaction_On_Conflict>;
 };
 
-/** aggregate avg on columns */
-export type Chat_Reaction_Avg_Fields = {
-  readonly __typename?: 'chat_Reaction_avg_fields';
-  readonly duplicateId?: Maybe<Scalars['Float']>;
-  readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Avg_Order_By = {
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "chat.Reaction". All fields are combined with a logical 'AND'. */
 export type Chat_Reaction_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Reaction_Bool_Exp>>>;
@@ -18481,12 +18401,10 @@ export type Chat_Reaction_Bool_Exp = {
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
   readonly duplicate?: Maybe<Chat_Reaction_Bool_Exp>;
-  readonly duplicateId?: Maybe<Int_Comparison_Exp>;
+  readonly duplicateSId?: Maybe<Uuid_Comparison_Exp>;
   readonly duplicates?: Maybe<Chat_Reaction_Bool_Exp>;
-  readonly id?: Maybe<Int_Comparison_Exp>;
   readonly message?: Maybe<Chat_Message_Bool_Exp>;
-  readonly messageId?: Maybe<Int_Comparison_Exp>;
-  readonly remoteServiceId?: Maybe<String_Comparison_Exp>;
+  readonly messageSId?: Maybe<Uuid_Comparison_Exp>;
   readonly sId?: Maybe<Uuid_Comparison_Exp>;
   readonly sender?: Maybe<Attendee_Bool_Exp>;
   readonly senderId?: Maybe<Uuid_Comparison_Exp>;
@@ -18518,24 +18436,15 @@ export type Chat_Reaction_Delete_Key_Input = {
   readonly data?: Maybe<Scalars['String']>;
 };
 
-/** input type for incrementing integer column in table "chat.Reaction" */
-export type Chat_Reaction_Inc_Input = {
-  readonly duplicateId?: Maybe<Scalars['Int']>;
-  readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
-};
-
 /** input type for inserting data into table "chat.Reaction" */
 export type Chat_Reaction_Insert_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly duplicate?: Maybe<Chat_Reaction_Obj_Rel_Insert_Input>;
-  readonly duplicateId?: Maybe<Scalars['Int']>;
+  readonly duplicateSId?: Maybe<Scalars['uuid']>;
   readonly duplicates?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
-  readonly id?: Maybe<Scalars['Int']>;
   readonly message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
-  readonly messageId?: Maybe<Scalars['Int']>;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly sId?: Maybe<Scalars['uuid']>;
   readonly sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly senderId?: Maybe<Scalars['uuid']>;
@@ -18548,10 +18457,8 @@ export type Chat_Reaction_Insert_Input = {
 export type Chat_Reaction_Max_Fields = {
   readonly __typename?: 'chat_Reaction_max_fields';
   readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly duplicateId?: Maybe<Scalars['Int']>;
-  readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly duplicateSId?: Maybe<Scalars['uuid']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
@@ -18561,10 +18468,8 @@ export type Chat_Reaction_Max_Fields = {
 /** order by max() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Max_Order_By = {
   readonly created_at?: Maybe<Order_By>;
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly remoteServiceId?: Maybe<Order_By>;
+  readonly duplicateSId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly sId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
@@ -18575,10 +18480,8 @@ export type Chat_Reaction_Max_Order_By = {
 export type Chat_Reaction_Min_Fields = {
   readonly __typename?: 'chat_Reaction_min_fields';
   readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly duplicateId?: Maybe<Scalars['Int']>;
-  readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly duplicateSId?: Maybe<Scalars['uuid']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
@@ -18588,10 +18491,8 @@ export type Chat_Reaction_Min_Fields = {
 /** order by min() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Min_Order_By = {
   readonly created_at?: Maybe<Order_By>;
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly remoteServiceId?: Maybe<Order_By>;
+  readonly duplicateSId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly sId?: Maybe<Order_By>;
   readonly senderId?: Maybe<Order_By>;
   readonly symbol?: Maybe<Order_By>;
@@ -18625,12 +18526,10 @@ export type Chat_Reaction_Order_By = {
   readonly created_at?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
   readonly duplicate?: Maybe<Chat_Reaction_Order_By>;
-  readonly duplicateId?: Maybe<Order_By>;
+  readonly duplicateSId?: Maybe<Order_By>;
   readonly duplicates_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
-  readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Chat_Message_Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-  readonly remoteServiceId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly sId?: Maybe<Order_By>;
   readonly sender?: Maybe<Attendee_Order_By>;
   readonly senderId?: Maybe<Order_By>;
@@ -18641,7 +18540,7 @@ export type Chat_Reaction_Order_By = {
 
 /** primary key columns input for table: "chat.Reaction" */
 export type Chat_Reaction_Pk_Columns_Input = {
-  readonly id: Scalars['Int'];
+  readonly sId: Scalars['uuid'];
 };
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
@@ -18656,13 +18555,9 @@ export enum Chat_Reaction_Select_Column {
   /** column name */
   Data = 'data',
   /** column name */
-  DuplicateId = 'duplicateId',
+  DuplicateSId = 'duplicateSId',
   /** column name */
-  Id = 'id',
-  /** column name */
-  MessageId = 'messageId',
-  /** column name */
-  RemoteServiceId = 'remoteServiceId',
+  MessageSId = 'messageSId',
   /** column name */
   SId = 'sId',
   /** column name */
@@ -18679,75 +18574,13 @@ export enum Chat_Reaction_Select_Column {
 export type Chat_Reaction_Set_Input = {
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
-  readonly duplicateId?: Maybe<Scalars['Int']>;
-  readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
-  readonly remoteServiceId?: Maybe<Scalars['String']>;
+  readonly duplicateSId?: Maybe<Scalars['uuid']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly sId?: Maybe<Scalars['uuid']>;
   readonly senderId?: Maybe<Scalars['uuid']>;
   readonly symbol?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Chat_ReactionType_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate stddev on columns */
-export type Chat_Reaction_Stddev_Fields = {
-  readonly __typename?: 'chat_Reaction_stddev_fields';
-  readonly duplicateId?: Maybe<Scalars['Float']>;
-  readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Stddev_Order_By = {
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Chat_Reaction_Stddev_Pop_Fields = {
-  readonly __typename?: 'chat_Reaction_stddev_pop_fields';
-  readonly duplicateId?: Maybe<Scalars['Float']>;
-  readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Stddev_Pop_Order_By = {
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Chat_Reaction_Stddev_Samp_Fields = {
-  readonly __typename?: 'chat_Reaction_stddev_samp_fields';
-  readonly duplicateId?: Maybe<Scalars['Float']>;
-  readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Stddev_Samp_Order_By = {
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Chat_Reaction_Sum_Fields = {
-  readonly __typename?: 'chat_Reaction_sum_fields';
-  readonly duplicateId?: Maybe<Scalars['Int']>;
-  readonly id?: Maybe<Scalars['Int']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Sum_Order_By = {
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** update columns of table "chat.Reaction" */
@@ -18757,13 +18590,9 @@ export enum Chat_Reaction_Update_Column {
   /** column name */
   Data = 'data',
   /** column name */
-  DuplicateId = 'duplicateId',
+  DuplicateSId = 'duplicateSId',
   /** column name */
-  Id = 'id',
-  /** column name */
-  MessageId = 'messageId',
-  /** column name */
-  RemoteServiceId = 'remoteServiceId',
+  MessageSId = 'messageSId',
   /** column name */
   SId = 'sId',
   /** column name */
@@ -18775,51 +18604,6 @@ export enum Chat_Reaction_Update_Column {
   /** column name */
   UpdatedAt = 'updated_at'
 }
-
-/** aggregate var_pop on columns */
-export type Chat_Reaction_Var_Pop_Fields = {
-  readonly __typename?: 'chat_Reaction_var_pop_fields';
-  readonly duplicateId?: Maybe<Scalars['Float']>;
-  readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Var_Pop_Order_By = {
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Chat_Reaction_Var_Samp_Fields = {
-  readonly __typename?: 'chat_Reaction_var_samp_fields';
-  readonly duplicateId?: Maybe<Scalars['Float']>;
-  readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Var_Samp_Order_By = {
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Chat_Reaction_Variance_Fields = {
-  readonly __typename?: 'chat_Reaction_variance_fields';
-  readonly duplicateId?: Maybe<Scalars['Float']>;
-  readonly id?: Maybe<Scalars['Float']>;
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Variance_Order_By = {
-  readonly duplicateId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
-};
 
 /** columns and relationships of "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex = {
@@ -23188,7 +22972,7 @@ export type Mutation_RootDelete_Chat_ReactionType_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Chat_Reaction_By_PkArgs = {
-  id: Scalars['Int'];
+  sId: Scalars['uuid'];
 };
 
 
@@ -25557,7 +25341,6 @@ export type Mutation_RootUpdate_Chat_ReactionArgs = {
   _delete_at_path?: Maybe<Chat_Reaction_Delete_At_Path_Input>;
   _delete_elem?: Maybe<Chat_Reaction_Delete_Elem_Input>;
   _delete_key?: Maybe<Chat_Reaction_Delete_Key_Input>;
-  _inc?: Maybe<Chat_Reaction_Inc_Input>;
   _prepend?: Maybe<Chat_Reaction_Prepend_Input>;
   _set?: Maybe<Chat_Reaction_Set_Input>;
   where: Chat_Reaction_Bool_Exp;
@@ -25584,7 +25367,6 @@ export type Mutation_RootUpdate_Chat_Reaction_By_PkArgs = {
   _delete_at_path?: Maybe<Chat_Reaction_Delete_At_Path_Input>;
   _delete_elem?: Maybe<Chat_Reaction_Delete_Elem_Input>;
   _delete_key?: Maybe<Chat_Reaction_Delete_Key_Input>;
-  _inc?: Maybe<Chat_Reaction_Inc_Input>;
   _prepend?: Maybe<Chat_Reaction_Prepend_Input>;
   _set?: Maybe<Chat_Reaction_Set_Input>;
   pk_columns: Chat_Reaction_Pk_Columns_Input;
@@ -28031,7 +27813,7 @@ export type Query_RootChat_Reaction_AggregateArgs = {
 
 /** query root */
 export type Query_RootChat_Reaction_By_PkArgs = {
-  id: Scalars['Int'];
+  sId: Scalars['uuid'];
 };
 
 
@@ -32015,7 +31797,7 @@ export type Subscription_RootChat_Reaction_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootChat_Reaction_By_PkArgs = {
-  id: Scalars['Int'];
+  sId: Scalars['uuid'];
 };
 
 
@@ -32853,9 +32635,9 @@ export type Uuid_Comparison_Exp = {
 
 export type InitialChatState_ReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly notifiedUpToMessageId: number, readonly unreadCount?: Maybe<number> };
 
-export type ChatState_SubdMessageFragment = { readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any>, readonly remoteServiceId?: Maybe<string> };
+export type ChatState_SubdMessageFragment = { readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any> };
 
-export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly remoteServiceId?: Maybe<string>, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
+export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
     { readonly __typename?: 'chat_ReadUpToIndex' }
     & InitialChatState_ReadUpToIndexFragment
   )>, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> };
@@ -32924,9 +32706,9 @@ export type UnpinChatMutationVariables = Exact<{
 
 export type UnpinChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Pin_by_pk?: Maybe<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any }> };
 
-export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly id: number, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageId: number, readonly remoteServiceId?: Maybe<string> };
+export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly sId: any, readonly data: any, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageSId: any, readonly duplicateSId?: Maybe<any> };
 
-export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly remoteServiceId?: Maybe<string>, readonly reactions: ReadonlyArray<(
+export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageSId?: Maybe<any>, readonly id: number, readonly sId: any, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
     { readonly __typename?: 'chat_Reaction' }
     & ChatReactionDataFragment
   )> };
@@ -32943,31 +32725,9 @@ export type SelectMessagesPageQuery = { readonly __typename?: 'query_root', read
     & ChatMessageDataFragment
   )> };
 
-export type ShortChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageId?: Maybe<number>, readonly id: number, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly remoteServiceId?: Maybe<string> };
+export type ShortChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageSId?: Maybe<any>, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly sId: any };
 
-export type SendChatMessageMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  senderId: Scalars['uuid'];
-  type: Chat_MessageType_Enum;
-  message: Scalars['String'];
-  data?: Maybe<Scalars['jsonb']>;
-  isPinned?: Maybe<Scalars['Boolean']>;
-}>;
-
-
-export type SendChatMessageMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Message_one?: Maybe<(
-    { readonly __typename?: 'chat_Message' }
-    & ShortChatMessageDataFragment
-  )> };
-
-export type SendChatAnswerMutationVariables = Exact<{
-  data: Scalars['jsonb'];
-  senderId: Scalars['uuid'];
-  answeringId: Scalars['Int'];
-}>;
-
-
-export type SendChatAnswerMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
+export type ShortChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageSId: any, readonly sId: any, readonly duplicateSId?: Maybe<any> };
 
 export type SelectReadUpToIndicesQueryVariables = Exact<{
   chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -32999,30 +32759,6 @@ export type UpdateReadUpToIndexMutationVariables = Exact<{
 
 
 export type UpdateReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly update_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
-
-export type DeleteMessageMutationVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type DeleteMessageMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Message_by_pk?: Maybe<{ readonly __typename?: 'chat_Message', readonly id: number }> };
-
-export type AddReactionMutationVariables = Exact<{
-  reaction: Chat_Reaction_Insert_Input;
-}>;
-
-
-export type AddReactionMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Reaction_one?: Maybe<(
-    { readonly __typename?: 'chat_Reaction' }
-    & ChatReactionDataFragment
-  )> };
-
-export type DeleteReactionMutationVariables = Exact<{
-  reactionId: Scalars['Int'];
-}>;
-
-
-export type DeleteReactionMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Reaction_by_pk?: Maybe<{ readonly __typename?: 'chat_Reaction', readonly id: number }> };
 
 export type GetChatPathQueryVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -35060,7 +34796,6 @@ export const ChatState_SubdMessageFragmentDoc = gql`
   message
   type
   senderId
-  remoteServiceId
 }
     `;
 export const InitialChatState_ReadUpToIndexFragmentDoc = gql`
@@ -35075,7 +34810,6 @@ export const InitialChatState_ReadUpToIndexFragmentDoc = gql`
 export const InitialChatState_ChatFragmentDoc = gql`
     fragment InitialChatState_Chat on chat_Chat {
   id
-  remoteServiceId
   contentGroup {
     id
     title
@@ -35119,21 +34853,22 @@ export const InitialChatState_ChatFragmentDoc = gql`
     ${InitialChatState_ReadUpToIndexFragmentDoc}`;
 export const ChatReactionDataFragmentDoc = gql`
     fragment ChatReactionData on chat_Reaction {
+  sId
   data
-  id
   senderId
   symbol
   type
-  messageId
-  remoteServiceId
+  messageSId
+  duplicateSId
 }
     `;
 export const ChatMessageDataFragmentDoc = gql`
     fragment ChatMessageData on chat_Message {
   created_at
   data
-  duplicatedMessageId
+  duplicatedMessageSId
   id
+  sId
   message
   reactions {
     ...ChatReactionData
@@ -35141,20 +34876,29 @@ export const ChatMessageDataFragmentDoc = gql`
   senderId
   type
   chatId
-  remoteServiceId
 }
     ${ChatReactionDataFragmentDoc}`;
 export const ShortChatMessageDataFragmentDoc = gql`
     fragment ShortChatMessageData on chat_Message {
   created_at
   data
-  duplicatedMessageId
-  id
+  duplicatedMessageSId
   message
   senderId
   type
   chatId
-  remoteServiceId
+  sId
+}
+    `;
+export const ShortChatReactionDataFragmentDoc = gql`
+    fragment ShortChatReactionData on chat_Reaction {
+  data
+  senderId
+  symbol
+  type
+  messageSId
+  sId
+  duplicateSId
 }
     `;
 export const ContentGroupRoomEventFragmentDoc = gql`
@@ -36550,83 +36294,6 @@ export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
 export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
 export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
-export const SendChatMessageDocument = gql`
-    mutation SendChatMessage($chatId: uuid!, $senderId: uuid!, $type: chat_MessageType_enum!, $message: String!, $data: jsonb = {}, $isPinned: Boolean = false) {
-  insert_chat_Message_one(
-    object: {chatId: $chatId, data: $data, isPinned: $isPinned, message: $message, senderId: $senderId, type: $type}
-  ) {
-    ...ShortChatMessageData
-  }
-}
-    ${ShortChatMessageDataFragmentDoc}`;
-export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageMutation, SendChatMessageMutationVariables>;
-
-/**
- * __useSendChatMessageMutation__
- *
- * To run a mutation, you first call `useSendChatMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendChatMessageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendChatMessageMutation, { data, loading, error }] = useSendChatMessageMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      senderId: // value for 'senderId'
- *      type: // value for 'type'
- *      message: // value for 'message'
- *      data: // value for 'data'
- *      isPinned: // value for 'isPinned'
- *   },
- * });
- */
-export function useSendChatMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendChatMessageMutation, SendChatMessageMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendChatMessageMutation, SendChatMessageMutationVariables>(SendChatMessageDocument, options);
-      }
-export type SendChatMessageMutationHookResult = ReturnType<typeof useSendChatMessageMutation>;
-export type SendChatMessageMutationResult = Apollo.MutationResult<SendChatMessageMutation>;
-export type SendChatMessageMutationOptions = Apollo.BaseMutationOptions<SendChatMessageMutation, SendChatMessageMutationVariables>;
-export const SendChatAnswerDocument = gql`
-    mutation SendChatAnswer($data: jsonb!, $senderId: uuid!, $answeringId: Int!) {
-  insert_chat_Reaction_one(
-    object: {messageId: $answeringId, senderId: $senderId, symbol: "ANSWER", type: ANSWER, data: $data}
-  ) {
-    id
-  }
-}
-    `;
-export type SendChatAnswerMutationFn = Apollo.MutationFunction<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
-
-/**
- * __useSendChatAnswerMutation__
- *
- * To run a mutation, you first call `useSendChatAnswerMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendChatAnswerMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendChatAnswerMutation, { data, loading, error }] = useSendChatAnswerMutation({
- *   variables: {
- *      data: // value for 'data'
- *      senderId: // value for 'senderId'
- *      answeringId: // value for 'answeringId'
- *   },
- * });
- */
-export function useSendChatAnswerMutation(baseOptions?: Apollo.MutationHookOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendChatAnswerMutation, SendChatAnswerMutationVariables>(SendChatAnswerDocument, options);
-      }
-export type SendChatAnswerMutationHookResult = ReturnType<typeof useSendChatAnswerMutation>;
-export type SendChatAnswerMutationResult = Apollo.MutationResult<SendChatAnswerMutation>;
-export type SendChatAnswerMutationOptions = Apollo.BaseMutationOptions<SendChatAnswerMutation, SendChatAnswerMutationVariables>;
 export const SelectReadUpToIndicesDocument = gql`
     query SelectReadUpToIndices($chatIds: [uuid!]!, $attendeeId: uuid!) {
   chat_ReadUpToIndex(
@@ -36745,105 +36412,6 @@ export function useUpdateReadUpToIndexMutation(baseOptions?: Apollo.MutationHook
 export type UpdateReadUpToIndexMutationHookResult = ReturnType<typeof useUpdateReadUpToIndexMutation>;
 export type UpdateReadUpToIndexMutationResult = Apollo.MutationResult<UpdateReadUpToIndexMutation>;
 export type UpdateReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
-export const DeleteMessageDocument = gql`
-    mutation DeleteMessage($id: Int!) {
-  delete_chat_Message_by_pk(id: $id) {
-    id
-  }
-}
-    `;
-export type DeleteMessageMutationFn = Apollo.MutationFunction<DeleteMessageMutation, DeleteMessageMutationVariables>;
-
-/**
- * __useDeleteMessageMutation__
- *
- * To run a mutation, you first call `useDeleteMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteMessageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteMessageMutation, { data, loading, error }] = useDeleteMessageMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMessageMutation, DeleteMessageMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteMessageMutation, DeleteMessageMutationVariables>(DeleteMessageDocument, options);
-      }
-export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
-export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
-export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
-export const AddReactionDocument = gql`
-    mutation AddReaction($reaction: chat_Reaction_insert_input!) {
-  insert_chat_Reaction_one(object: $reaction) {
-    ...ChatReactionData
-  }
-}
-    ${ChatReactionDataFragmentDoc}`;
-export type AddReactionMutationFn = Apollo.MutationFunction<AddReactionMutation, AddReactionMutationVariables>;
-
-/**
- * __useAddReactionMutation__
- *
- * To run a mutation, you first call `useAddReactionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddReactionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addReactionMutation, { data, loading, error }] = useAddReactionMutation({
- *   variables: {
- *      reaction: // value for 'reaction'
- *   },
- * });
- */
-export function useAddReactionMutation(baseOptions?: Apollo.MutationHookOptions<AddReactionMutation, AddReactionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddReactionMutation, AddReactionMutationVariables>(AddReactionDocument, options);
-      }
-export type AddReactionMutationHookResult = ReturnType<typeof useAddReactionMutation>;
-export type AddReactionMutationResult = Apollo.MutationResult<AddReactionMutation>;
-export type AddReactionMutationOptions = Apollo.BaseMutationOptions<AddReactionMutation, AddReactionMutationVariables>;
-export const DeleteReactionDocument = gql`
-    mutation DeleteReaction($reactionId: Int!) {
-  delete_chat_Reaction_by_pk(id: $reactionId) {
-    id
-  }
-}
-    `;
-export type DeleteReactionMutationFn = Apollo.MutationFunction<DeleteReactionMutation, DeleteReactionMutationVariables>;
-
-/**
- * __useDeleteReactionMutation__
- *
- * To run a mutation, you first call `useDeleteReactionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteReactionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteReactionMutation, { data, loading, error }] = useDeleteReactionMutation({
- *   variables: {
- *      reactionId: // value for 'reactionId'
- *   },
- * });
- */
-export function useDeleteReactionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteReactionMutation, DeleteReactionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteReactionMutation, DeleteReactionMutationVariables>(DeleteReactionDocument, options);
-      }
-export type DeleteReactionMutationHookResult = ReturnType<typeof useDeleteReactionMutation>;
-export type DeleteReactionMutationResult = Apollo.MutationResult<DeleteReactionMutation>;
-export type DeleteReactionMutationOptions = Apollo.BaseMutationOptions<DeleteReactionMutation, DeleteReactionMutationVariables>;
 export const GetChatPathDocument = gql`
     query GetChatPath($chatId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {

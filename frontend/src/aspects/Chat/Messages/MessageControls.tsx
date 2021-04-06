@@ -117,14 +117,12 @@ export default function MessageControls({
             {isOwnMessage || canDelete
                 ? buttonF("Delete message", "trash-alt", "red.400", async () => {
                       try {
-                          await messages.delete(message.id);
+                          await messages.delete(message.sId);
                           toast({
                               title: "Deleted",
                               status: "success",
-                              duration: 10000,
+                              duration: 1000,
                               isClosable: true,
-                              description:
-                                  "It may take a little while for the message to be removed from all user's views.",
                               position: "bottom-right",
                           });
                       } catch (e) {

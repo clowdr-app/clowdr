@@ -80,7 +80,7 @@ async function processInsertQueue() {
     const insertObjects = insertQueue.map<Chat_Message_Insert_Input>((msg) => ({
         chatId: msg.actionMsg.chatId,
         data: msg.actionMsg.data,
-        duplicatedMessageId: msg.actionMsg.duplicatedMessageId,
+        duplicatedMessageSId: msg.actionMsg.duplicatedMessageSId,
         isPinned: msg.actionMsg.isPinned,
         message: msg.actionMsg.message,
         remoteServiceId: msg.actionMsg.remoteServiceId,

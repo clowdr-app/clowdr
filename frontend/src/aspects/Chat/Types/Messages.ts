@@ -5,7 +5,8 @@ export interface EmoteMessageData {}
 export interface QuestionMessageData {}
 
 export interface AnswerMessageData {
-    questionMessagesIds: number[];
+    questionMessagesIds?: number[];
+    questionMessagesSIds?: string[];
 }
 
 export interface PollMessageData {
@@ -17,7 +18,8 @@ export interface PollMessageData {
 }
 
 export interface PollResultsMessageData {
-    pollMessageId: string;
+    pollMessageId?: string;
+    pollMessageSId?: string;
 }
 
 export interface DuplicationMarkerMessageData {
@@ -49,8 +51,11 @@ export type MessageData =
     | DuplicationMarkerMessageData;
 
 export interface AnswerReactionData {
-    answerMessageId: number;
-    duplicateAnswerMessageId: number | undefined;
+    answerMessageId?: number;
+    duplicateAnswerMessageId?: number;
+
+    answerMessageSId?: string;
+    duplicateAnswerMessageSId?: string;
 }
 
 export interface EmojiReactionData {}

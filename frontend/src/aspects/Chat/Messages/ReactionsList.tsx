@@ -52,7 +52,7 @@ function ReactionsListInner({
 } & BoxProps): JSX.Element {
     const reactionsGrouped: Array<[
         string,
-        { senderIds: string[]; attendeeSentThisReactionId: number | false }
+        { senderIds: string[]; attendeeSentThisReactionSId: string | false }
     ]> = useMemo(() => {
         return R.sortWith(
             [(x, y) => y[1].senderIds.length - x[1].senderIds.length, (x, y) => x[0].localeCompare(y[0])],
@@ -62,20 +62,20 @@ function ReactionsListInner({
                         if (reaction.type === Chat_ReactionType_Enum.Emoji) {
                             const info = acc.get(reaction.symbol) ?? {
                                 senderIds: [],
-                                attendeeSentThisReactionId: false,
+                                attendeeSentThisReactionSId: false,
                             };
                             acc.set(reaction.symbol, {
                                 senderIds: [...info.senderIds, reaction.senderId],
-                                attendeeSentThisReactionId:
-                                    info.attendeeSentThisReactionId !== false
-                                        ? info.attendeeSentThisReactionId
+                                attendeeSentThisReactionSId:
+                                    info.attendeeSentThisReactionSId !== false
+                                        ? info.attendeeSentThisReactionSId
                                         : currentAttendeeId && reaction.senderId === currentAttendeeId
-                                        ? reaction.id
+                                        ? reaction.sId
                                         : false,
                             });
                         }
                         return acc;
-                    }, new Map<string, { senderIds: string[]; attendeeSentThisReactionId: number | false }>())
+                    }, new Map<string, { senderIds: string[]; attendeeSentThisReactionSId: string | false }>())
                     .entries(),
             ]
         );
@@ -91,8 +91,8 @@ function ReactionsListInner({
                     reaction={reaction}
                     senderIds={info.senderIds}
                     onClick={async () => {
-                        if (info.attendeeSentThisReactionId) {
-                            await message.deleteReaction(info.attendeeSentThisReactionId);
+                        if (info.attendeeSentThisReactionSId) {
+                            await message.deleteReaction(info.attendeeSentThisReactionSId);
                         } else {
                             await message.addReaction({
                                 data: {},

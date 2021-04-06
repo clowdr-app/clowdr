@@ -61,8 +61,14 @@ export function MainMenuSponsors(): JSX.Element {
                 if (latestData?.type === ContentType_Enum.ImageUrl) {
                     return latestData.url;
                 } else if (latestData?.type === ContentType_Enum.ImageFile) {
-                    const { bucket, key } = new AmazonS3URI(latestData.s3Url);
-                    return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                    try {
+                        const { bucket, key } = new AmazonS3URI(latestData.s3Url);
+                        return `https://s3.${
+                            import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                        }.amazonaws.com/${bucket}/${key}`;
+                    } catch {
+                        return null;
+                    }
                 }
             }
 

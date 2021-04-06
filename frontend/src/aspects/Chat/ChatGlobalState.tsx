@@ -1,7 +1,19 @@
 /* eslint-disable react/prop-types */
 import { ApolloClient, ApolloError, gql } from "@apollo/client";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    CloseButton,
+    createStandaloneToast,
+    Heading,
+    RenderProps,
+    VStack,
+} from "@chakra-ui/react";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
+import React from "react";
 import {
     AddReactionDocument,
     AddReactionMutation,
@@ -27,6 +39,9 @@ import {
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
     SelectInitialChatStateQueryVariables,
+    SelectInitialChatStatesDocument,
+    SelectInitialChatStatesQuery,
+    SelectInitialChatStatesQueryVariables,
     SelectMessagesPageDocument,
     SelectMessagesPageQuery,
     SelectMessagesPageQueryVariables,
@@ -46,7 +61,8 @@ import {
 } from "../../generated/graphql";
 import type { Attendee } from "../Conference/useCurrentAttendee";
 import { realtimeService } from "../Realtime/RealtimeService";
-import type { Message, Reaction } from "./RealtimeServiceCommonTypes";
+import type { Message, Notification, Reaction } from "../Realtime/RealtimeServiceCommonTypes";
+import { Markdown } from "../Text/Markdown";
 import type { AnswerMessageData, AnswerReactionData, MessageData } from "./Types/Messages";
 
 export type Observer<V> = (v: V) => true | void;
@@ -981,118 +997,6 @@ export class ChatState {
         // }
     }
 
-    // CHAT_TODO
-    // private readonly toast = createStandaloneToast();
-    // private latestNotifiedIndex: number;
-    // private async computeNotifications(message: MessageState) {
-    //     if (this.latestNotifiedIndex < message.id) {
-    //         if (this.latestNotifiedIndex !== -1 && this.readUpToMsgId < message.id) {
-    //             const remoteChat = await this.remoteChat;
-    //             const remoteUnreadCount =
-    //                 message.senderId === this.globalState.attendee.id
-    //                     ? 0
-    //                     : (await remoteChat?.getUnconsumedMessagesCount()) ?? Number.POSITIVE_INFINITY;
-    //             const newCount = Math.min(this.unreadCount + 1, remoteUnreadCount);
-    //             if (this.unreadCount !== newCount) {
-    //                 this.unreadCount = newCount;
-    //                 this.unreadCountObs.publish(this.unreadCount);
-    //             }
-    //         }
-
-    //         const prevNotifIndex = this.latestNotifiedIndex;
-    //         this.latestNotifiedIndex = message.id;
-
-    //         if (
-    //             this.isSubscribed &&
-    //             prevNotifIndex !== -1 &&
-    //             this.readUpToMsgId < message.id &&
-    //             this.globalState.attendee.id !== message.senderId &&
-    //             message.chatId !== this.globalState.suppressNotificationsForChatId &&
-    //             message.type !== Chat_MessageType_Enum.DuplicationMarker &&
-    //             message.type !== Chat_MessageType_Enum.Emote
-    //         ) {
-    //             const chatPath = `/conference/${this.globalState.conference.slug}/chat/${this.Id}`;
-    //             const chatName = this.Name;
-    //             const chatIsDM = this.IsDM;
-    //             const globalState = this.globalState;
-
-    //             this.toast({
-    //                 position: "top-right",
-    //                 description: message.message,
-    //                 isClosable: true,
-    //                 duration: 15000,
-    //                 render: function ChatNotification(props: RenderProps) {
-    //                     return (
-    //                         <VStack
-    //                             alignItems="flex-start"
-    //                             background="purple.700"
-    //                             color="gray.50"
-    //                             w="auto"
-    //                             h="auto"
-    //                             p={5}
-    //                             opacity={0.95}
-    //                             borderRadius={10}
-    //                             position="relative"
-    //                             pt={2}
-    //                         >
-    //                             <CloseButton position="absolute" top={2} right={2} onClick={props.onClose} />
-    //                             <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
-    //                                 New{" "}
-    //                                 {message.type === Chat_MessageType_Enum.Message
-    //                                     ? "message"
-    //                                     : message.type === Chat_MessageType_Enum.Answer
-    //                                     ? "answer"
-    //                                     : message.type === Chat_MessageType_Enum.Question
-    //                                     ? "question"
-    //                                     : "message"}
-    //                             </Heading>
-    //                             <Heading
-    //                                 textAlign="left"
-    //                                 as="h3"
-    //                                 fontSize="0.9rem"
-    //                                 fontStyle="italic"
-    //                                 maxW="250px"
-    //                                 noOfLines={1}
-    //                             >
-    //                                 {chatIsDM ? "from " : "in "}
-    //                                 {chatName}
-    //                             </Heading>
-    //                             <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
-    //                                 <Markdown restrictHeadingSize>{message.message}</Markdown>
-    //                             </Box>
-    //                             <ButtonGroup isAttached>
-    //                                 {globalState.openChatInSidebar ? (
-    //                                     <Button
-    //                                         colorScheme="green"
-    //                                         onClick={() => {
-    //                                             props.onClose();
-    //                                             globalState.openChatInSidebar?.(message.chatId);
-    //                                             globalState.showSidebar?.();
-    //                                         }}
-    //                                     >
-    //                                         Go to chat
-    //                                     </Button>
-    //                                 ) : undefined}
-    //                                 {chatPath ? (
-    //                                     <Button
-    //                                         colorScheme="blue"
-    //                                         onClick={() => {
-    //                                             props.onClose();
-    //                                             window.open(chatPath, "_blank");
-    //                                         }}
-    //                                     >
-    //                                         <ExternalLinkIcon />
-    //                                     </Button>
-    //                                 ) : undefined}
-    //                             </ButtonGroup>
-    //                         </VStack>
-    //                     );
-    //                 },
-    //             });
-    //         }
-    //     }
-    // }
-
     private isSending = false;
     private isSendingObs = new Observable<boolean>((observer) => {
         observer(this.isSending);
@@ -1295,9 +1199,12 @@ export class GlobalChatState {
         };
     }
 
+    private readonly toast = createStandaloneToast();
+
     private mutex = new Mutex();
     private hasInitialised = false;
     private hasTorndown = false;
+    private ongoingNotifications: (string | number)[] = [];
     public async init(): Promise<void> {
         const release = await this.mutex.acquire();
 
@@ -1341,47 +1248,161 @@ export class GlobalChatState {
 
                     this.chatStatesObs.publish(this.chatStates);
 
-                    socket.on("notification", (notification: any) => {
-                        console.info("Notification", notification);
-                        // CHAT_TODO
-                        // Note: Working, just needs hooking up
-                        // (and possibly extra info from the server side to deliver the notification seamlessly)
+                    socket.on("notification", (notification: Notification) => {
+                        // console.info("Notification", notification);
+
+                        const openChatInSidebar = this.openChatInSidebar;
+                        const showSidebar = this.showSidebar;
+
+                        const notificationId = this.toast({
+                            position: "top-right",
+                            isClosable: true,
+                            duration: 7000,
+                            render: function ChatNotification(props: RenderProps) {
+                                return (
+                                    <VStack
+                                        alignItems="flex-start"
+                                        background="purple.700"
+                                        color="gray.50"
+                                        w="auto"
+                                        h="auto"
+                                        p={5}
+                                        opacity={0.95}
+                                        borderRadius={10}
+                                        position="relative"
+                                        pt={2}
+                                    >
+                                        <CloseButton position="absolute" top={2} right={2} onClick={props.onClose} />
+                                        <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
+                                            {notification.title}
+                                        </Heading>
+                                        {notification.subtitle ? (
+                                            <Heading
+                                                textAlign="left"
+                                                as="h3"
+                                                fontSize="0.9rem"
+                                                fontStyle="italic"
+                                                maxW="250px"
+                                                noOfLines={1}
+                                            >
+                                                {notification.subtitle}
+                                            </Heading>
+                                        ) : undefined}
+                                        <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
+                                            <Markdown restrictHeadingSize>{notification.description}</Markdown>
+                                        </Box>
+                                        <ButtonGroup isAttached>
+                                            {openChatInSidebar && notification.chatId ? (
+                                                <Button
+                                                    colorScheme="green"
+                                                    onClick={() => {
+                                                        props.onClose();
+                                                        if (notification.chatId) {
+                                                            openChatInSidebar?.(notification.chatId);
+                                                            showSidebar?.();
+                                                        }
+                                                    }}
+                                                >
+                                                    Go to chat
+                                                </Button>
+                                            ) : undefined}
+                                            {notification.linkURL ? (
+                                                <Button
+                                                    colorScheme="blue"
+                                                    onClick={() => {
+                                                        props.onClose();
+                                                        if (notification.linkURL) {
+                                                            window.open(notification.linkURL, "_blank");
+                                                        }
+                                                    }}
+                                                >
+                                                    <ExternalLinkIcon />
+                                                </Button>
+                                            ) : undefined}
+                                        </ButtonGroup>
+                                    </VStack>
+                                );
+                            },
+                        });
+                        if (notificationId) {
+                            let numPopped = 0;
+                            while (this.ongoingNotifications.length - numPopped >= 3) {
+                                this.toast.close(this.ongoingNotifications[numPopped]);
+
+                                numPopped++;
+                            }
+                            this.ongoingNotifications = this.ongoingNotifications.slice(numPopped);
+                            this.ongoingNotifications.push(notificationId);
+                        }
                     });
 
                     socket.on("chat.subscribed", (chatId: string) => {
-                        console.info(`Chat subscribed: ${chatId}`);
-                        // CHAT_TODO
-                        // Note: Working, just needs hooking up
+                        // console.info(`Chat subscribed: ${chatId}`);
+                        const existing = this.chatStates?.get(chatId);
+                        existing?.setIsSubscribed(true);
                     });
                     socket.on("chat:unsubscribed", (chatId: string) => {
-                        console.info(`Chat unsubscribed: ${chatId}`);
-                        // CHAT_TODO
-                        // Note: Working, just needs hooking up
+                        // console.info(`Chat unsubscribed: ${chatId}`);
+                        const existing = this.chatStates?.get(chatId);
+                        existing?.setIsSubscribed(false);
                     });
 
-                    socket.on("chat.pinned", (chatId: string) => {
-                        console.info(`Chat pinned: ${chatId}`);
-                        // CHAT_TODO
-                        // Note: Working, just needs hooking up
+                    socket.on("chat.pinned", async (chatId: string) => {
+                        // console.info(`Chat pinned: ${chatId}`);
+                        const existing = this.chatStates?.get(chatId);
+                        if (existing) {
+                            existing.setIsPinned(true);
+                        } else {
+                            try {
+                                const newlyPinSubChats = await this.apolloClient.query<
+                                    SelectInitialChatStatesQuery,
+                                    SelectInitialChatStatesQueryVariables
+                                >({
+                                    query: SelectInitialChatStatesDocument,
+                                    variables: {
+                                        attendeeId: this.attendee.id,
+                                        chatIds: [chatId],
+                                    },
+                                    fetchPolicy: "network-only",
+                                });
+
+                                const release = await this.mutex.acquire();
+                                try {
+                                    this.chatStates = this.chatStates ?? new Map();
+                                    for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
+                                        const newState = new ChatState(this, pinSubChat);
+                                        await newState.fetchReadUpToIdx();
+                                        this.chatStates.set(pinSubChat.id, newState);
+                                    }
+                                    this.chatStatesObs.publish(this.chatStates);
+                                } finally {
+                                    release();
+                                }
+                            } catch (e) {
+                                console.error(`Error initialising newly pinned chat: ${chatId}`, e);
+                            }
+                        }
                     });
                     socket.on("chat:unpinned", (chatId: string) => {
-                        console.info(`Chat unpinned: ${chatId}`);
-                        // CHAT_TODO
-                        // Note: Working, just needs hooking up
+                        // console.info(`Chat unpinned: ${chatId}`);
+                        const existing = this.chatStates?.get(chatId);
+                        existing?.setIsPinned(false);
                     });
 
                     socket.on("chat.messages.receive", (msg: Message) => {
-                        console.info("Chat message received", msg);
-                        // CHAT_TODO
-                        // Note: Working, just needs hooking up
+                        // console.info("Chat message received", msg);
+                        const existing = this.chatStates?.get(msg.chatId);
+                        existing?.onMessageAdded(msg);
                     });
                     socket.on("chat.messages.update", (msg: Message) => {
-                        console.info("Chat message updated", msg);
-                        // CHAT_TODO
+                        // console.info("Chat message updated", msg);
+                        const existing = this.chatStates?.get(msg.chatId);
+                        existing?.onMessageUpdated(msg);
                     });
                     socket.on("chat.messages.delete", (msg: Message) => {
-                        console.info("Chat message deleted", msg);
-                        // CHAT_TODO
+                        // console.info("Chat message deleted", msg);
+                        const existing = this.chatStates?.get(msg.chatId);
+                        existing?.onMessageRemoved(msg);
                     });
 
                     socket.on("chat.messages.send.ack", (messageSid: string) => {
@@ -1555,65 +1576,6 @@ export class GlobalChatState {
     //                 await chatState.updateReadUpToIdx(newData);
     //             }
     //         }
-    //     }
-    // }
-
-    // CHAT_TODO
-    // private pinsSubsMutex = new Mutex();
-    // private async pollPinsSubs() {
-    //     const release = await this.pinsSubsMutex.acquire();
-
-    //     try {
-    //         if (this.chatStates) {
-    //             const allPinsSubs = await this.apolloClient.query<
-    //                 SelectPinnedOrSubscribedQuery,
-    //                 SelectPinnedOrSubscribedQueryVariables
-    //             >({
-    //                 query: SelectPinnedOrSubscribedDocument,
-    //                 variables: {
-    //                     attendeeId: this.attendee.id,
-    //                 },
-    //                 fetchPolicy: "network-only",
-    //             });
-    //             const newlyPinSubIds: string[] = [];
-    //             for (const pinSub of allPinsSubs.data.chat_PinnedOrSubscribed) {
-    //                 if (pinSub.chat) {
-    //                     const isPinned = pinSub.chat.pins.length > 0;
-    //                     const isSubscribed = pinSub.chat.subscriptions.length > 0;
-
-    //                     const existing = this.chatStates.get(pinSub.chatId);
-    //                     if (existing) {
-    //                         existing.setIsPinned(isPinned);
-    //                         existing.setIsSubscribed(isSubscribed);
-    //                     } else {
-    //                         newlyPinSubIds.push(pinSub.chatId);
-    //                     }
-    //                 }
-    //             }
-    //             if (newlyPinSubIds.length > 0) {
-    //                 const newlyPinSubChats = await this.apolloClient.query<
-    //                     SelectInitialChatStatesQuery,
-    //                     SelectInitialChatStatesQueryVariables
-    //                 >({
-    //                     query: SelectInitialChatStatesDocument,
-    //                     variables: {
-    //                         attendeeId: this.attendee.id,
-    //                         chatIds: newlyPinSubIds,
-    //                     },
-    //                     fetchPolicy: "network-only",
-    //                 });
-    //                 for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
-    //                     const newState = new ChatState(this, pinSubChat);
-    //                     await newState.updateReadUpToIdx();
-    //                     this.chatStates.set(pinSubChat.id, newState);
-    //                 }
-    //                 this.chatStatesObs.publish(this.chatStates);
-    //             }
-    //         }
-    //     } catch (e) {
-    //         console.error("Failed to fetch unread counts", e);
-    //     } finally {
-    //         release();
     //     }
     // }
 

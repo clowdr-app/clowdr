@@ -27,3 +27,11 @@ export type Action<T> = {
     op: "INSERT" | "UPDATE" | "DELETE";
     data: T;
 };
+
+export interface Notification {
+    title: string;
+    subtitle?: string;
+    description: string;
+    chatId?: string;
+    linkURL?: string;
+}

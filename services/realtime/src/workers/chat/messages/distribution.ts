@@ -1,4 +1,6 @@
+import { Chat_MessageType_Enum, RoomPrivacy_Enum } from "../../../generated/graphql";
 import { getAttendeeInfo } from "../../../lib/cache/attendeeInfo";
+import { getChatInfo } from "../../../lib/cache/chatInfo";
 import { getSubscriptions } from "../../../lib/cache/subscription";
 import { chatListenersKeyName, generateRoomName } from "../../../lib/chat";
 import { sendNotifications } from "../../../lib/notifications";
@@ -43,7 +45,52 @@ async function onMessage(action: Action<Message>) {
             )
                 .filter((x) => !!x?.userId && !listenerUserIds.includes(x.userId))
                 .map((x) => x?.userId) as string[];
-            sendNotifications(subscribedUserIds, action.data);
+
+            const chatInfo = await getChatInfo(chatId, {
+                conference: {
+                    id: "distribution.onMessage:unknown-conference-id",
+                    slug: "distribution.onMessage:unknown-conference-slug",
+                },
+                contentGroups: [],
+                restrictToAdmins: false,
+                rooms: [],
+            });
+            if (chatInfo) {
+                const room = chatInfo.rooms.length > 0 ? chatInfo.rooms[0] : undefined;
+                const otherAttendeeId =
+                    room?.privacy === RoomPrivacy_Enum.Dm
+                        ? room.people.find((x) => x.attendeeId !== action.data.senderId)?.attendeeId
+                        : undefined;
+                const otherAttendeeInfo = otherAttendeeId
+                    ? await getAttendeeInfo(otherAttendeeId, {
+                          displayName: "distribution.onMessage:unknown-attendee-displayName",
+                      })
+                    : undefined;
+
+                const chatName =
+                    chatInfo.contentGroups && chatInfo.contentGroups.length > 0
+                        ? chatInfo.contentGroups && chatInfo.contentGroups[0].title
+                        : room?.name ?? "Unknown chat";
+                sendNotifications(subscribedUserIds, {
+                    description: action.data.message,
+                    title: `New ${
+                        action.data.type === Chat_MessageType_Enum.Message
+                            ? "message"
+                            : action.data.type === Chat_MessageType_Enum.Answer
+                            ? "answer"
+                            : action.data.type === Chat_MessageType_Enum.Question
+                            ? "question"
+                            : action.data.type === Chat_MessageType_Enum.Emote
+                            ? "emote"
+                            : action.data.type === Chat_MessageType_Enum.DuplicationMarker
+                            ? "event"
+                            : "message"
+                    }`,
+                    chatId,
+                    linkURL: `/conference/${chatInfo.conference.slug}/chat/${chatId}`,
+                    subtitle: otherAttendeeInfo ? `from ${otherAttendeeInfo.displayName}` : `in ${chatName}`,
+                });
+            }
         }
     }
 }

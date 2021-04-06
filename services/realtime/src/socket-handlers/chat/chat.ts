@@ -2,9 +2,9 @@ import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { RoomPrivacy_Enum } from "../../generated/graphql";
+import { chatListenersKeyName, generateRoomName, socketChatsKeyName } from "../../lib/chat";
 import { canSelectChat } from "../../lib/permissions";
 import { redisClientP } from "../../redis";
-import { chatListenersKeyName, generateRoomName } from "../../socket-emitter/chat";
 
 export function onSubscribe(
     conferenceSlugs: string[],
@@ -31,9 +31,13 @@ export function onSubscribe(
                         []
                     )
                 ) {
-                    socket.join(generateRoomName(chatId));
+                    const existingChats = await redisClientP.smembers(socketChatsKeyName(socketId));
+                    if (!existingChats.includes(chatId)) {
+                        socket.join(generateRoomName(chatId));
 
-                    await redisClientP.sadd(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+                        await redisClientP.sadd(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+                        await redisClientP.sadd(socketChatsKeyName(socketId), chatId);
+                    }
                 }
             } catch (e) {
                 console.error(`Error processing chat.subscribe (socket: ${socketId}, chatId: ${chatId})`, e);
@@ -71,6 +75,7 @@ export function onUnsubscribe(
                 ) {
                     socket.leave(generateRoomName(chatId));
                     await redisClientP.srem(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+                    await redisClientP.srem(socketChatsKeyName(socketId), chatId);
                 }
             } catch (e) {
                 console.error(`Error processing chat.unsubscribe (socket: ${socketId}, chatId: ${chatId})`, e);

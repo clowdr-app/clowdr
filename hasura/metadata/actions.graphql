@@ -21,23 +21,6 @@ type Query {
 }
 
 
-type Mutation {
-  generateChatRemoteServiceIds : GenerateChatRemoteServiceIdsOutput
-}
-
-
-type Mutation {
-  generateChatRemoteToken (
-    attendeeId: uuid!
-  ): ChatRemoteToken
-}
-
-
-type Mutation {
-  generateChatRemoteUserIds : GenerateChatRemoteUserIdsOutput
-}
-
-
 type Query {
   getContentItem (
     magicToken: String!

@@ -1,4 +1,6 @@
 import { Socket } from "socket.io";
+import { chatListenersKeyName, socketChatsKeyName } from "../lib/chat";
+import { redisClientP } from "../redis";
 import * as chat from "../socket-handlers/chat/chat";
 import * as chat_messages from "../socket-handlers/chat/messages";
 import * as chat_pins from "../socket-handlers/chat/pins";
@@ -24,4 +26,18 @@ export function onConnect(socket: Socket, userId: string, conferenceSlugs: strin
 
     socket.on("chat.pins.changed.on", chat_pins.onListenForPinsChanged(conferenceSlugs, userId, socketId, socket));
     socket.on("chat.pins.changed.off", chat_pins.onUnlistenForPinsChanged(conferenceSlugs, userId, socketId, socket));
+}
+
+export async function onDisconnect(socketId: string, userId: string, cb?: () => void): Promise<void> {
+    try {
+        const chatIds = await redisClientP.smembers(socketChatsKeyName(socketId));
+        redisClientP.del(socketChatsKeyName(socketId));
+        for (const chatId of chatIds) {
+            await redisClientP.srem(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+        }
+
+        cb?.();
+    } catch (e) {
+        console.error(`Error exiting all presences on socket ${socketId}`, e);
+    }
 }

@@ -1,7 +1,7 @@
 import assert from "assert";
 import fetch from "node-fetch";
 import { io } from "socket.io-client";
-import { Action, Message } from "../types/chat";
+import { Message } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
 assert(
@@ -65,8 +65,8 @@ async function Main(chatId = process.env.CHAT_ID ?? "testChat1") {
             throw new Error(connected.done);
         }
 
-        client.on("chat.messages.receive", (action: Action<Message>) => {
-            console.info("Message received", action);
+        client.on("chat.messages.receive", (msg: Message) => {
+            console.info("Message received", msg);
         });
 
         client.emit("chat.subscribe", chatId);

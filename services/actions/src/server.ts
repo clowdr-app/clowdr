@@ -20,7 +20,6 @@ import { router as analyticsRouter } from "./router/analytics";
 import { router as attendeeGoogleAccountRouter } from "./router/attendeeGoogleAccount";
 import { router as broadcastContentItemRouter } from "./router/broadcastContentItem";
 import { router as channelsRouter } from "./router/channels";
-import { router as chatRouter } from "./router/chat";
 import { router as combineVideosJobRouter } from "./router/combineVideosJob";
 import { router as companionRouter } from "./router/companion";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
@@ -98,7 +97,6 @@ app.use("/channels", channelsRouter);
 
 app.use("/profile", profileRouter);
 app.use("/shuffle", shuffleRoomsRouter);
-app.use("/chat", chatRouter);
 
 app.use("/queues", queuesRouter);
 app.use("/analytics", analyticsRouter);

@@ -3,18 +3,19 @@ import { Observable, Observer } from "../Chat/ChatGlobalState";
 import { realtimeService } from "./RealtimeService";
 
 export class PresenceState {
-    // private socket: SocketIOClient.Socket | undefined;
-    private mutex: Mutex = new Mutex();
-
+    private offSocketAvailable: (() => void) | undefined;
     setup(): void {
-        realtimeService.socket?.on("entered", this.onEntered.bind(this));
-        realtimeService.socket?.on("left", this.onLeft.bind(this));
-        realtimeService.socket?.on("presences", this.onListPresent.bind(this));
+        this.offSocketAvailable = realtimeService.onSocketAvailable((socket) => {
+            socket.on("entered", this.onEntered.bind(this));
+            socket.on("left", this.onLeft.bind(this));
+            socket.on("presences", this.onListPresent.bind(this));
 
-        this.pageChanged(window.location.pathname);
+            this.pageChanged(window.location.pathname);
+        });
     }
 
     teardown(): void {
+        this.offSocketAvailable?.();
         this.presences = {};
     }
 

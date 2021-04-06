@@ -5750,6 +5750,7 @@ export type Event = {
     executedTransitions: Array<ExecutedTransitions>;
     /** An aggregated array relationship */
     executedTransitions_aggregate: ExecutedTransitions_Aggregate;
+    hallwayId?: Maybe<Scalars["uuid"]>;
     id: Scalars["uuid"];
     intendedRoomModeName: RoomMode_Enum;
     name: Scalars["String"];
@@ -5761,6 +5762,7 @@ export type Event = {
     roomId: Scalars["uuid"];
     /** An object relationship */
     roomMode: RoomMode;
+    shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime: Scalars["timestamptz"];
     /** An array relationship */
     transitions: Array<Transitions>;
@@ -7239,6 +7241,7 @@ export type Event_Bool_Exp = {
     eventTags?: Maybe<EventTag_Bool_Exp>;
     eventVonageSession?: Maybe<EventVonageSession_Bool_Exp>;
     executedTransitions?: Maybe<ExecutedTransitions_Bool_Exp>;
+    hallwayId?: Maybe<Uuid_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     intendedRoomModeName?: Maybe<RoomMode_Enum_Comparison_Exp>;
     name?: Maybe<String_Comparison_Exp>;
@@ -7247,6 +7250,7 @@ export type Event_Bool_Exp = {
     room?: Maybe<Room_Bool_Exp>;
     roomId?: Maybe<Uuid_Comparison_Exp>;
     roomMode?: Maybe<RoomMode_Bool_Exp>;
+    shufflePeriodId?: Maybe<Uuid_Comparison_Exp>;
     startTime?: Maybe<Timestamptz_Comparison_Exp>;
     transitions?: Maybe<Transitions_Bool_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -7278,6 +7282,7 @@ export type Event_Insert_Input = {
     eventTags?: Maybe<EventTag_Arr_Rel_Insert_Input>;
     eventVonageSession?: Maybe<EventVonageSession_Obj_Rel_Insert_Input>;
     executedTransitions?: Maybe<ExecutedTransitions_Arr_Rel_Insert_Input>;
+    hallwayId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     intendedRoomModeName?: Maybe<RoomMode_Enum>;
     name?: Maybe<Scalars["String"]>;
@@ -7286,6 +7291,7 @@ export type Event_Insert_Input = {
     room?: Maybe<Room_Obj_Rel_Insert_Input>;
     roomId?: Maybe<Scalars["uuid"]>;
     roomMode?: Maybe<RoomMode_Obj_Rel_Insert_Input>;
+    shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime?: Maybe<Scalars["timestamptz"]>;
     transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -7299,10 +7305,12 @@ export type Event_Max_Fields = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     durationSeconds?: Maybe<Scalars["Int"]>;
     endTime?: Maybe<Scalars["timestamptz"]>;
+    hallwayId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
+    shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime?: Maybe<Scalars["timestamptz"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
@@ -7314,10 +7322,12 @@ export type Event_Max_Order_By = {
     createdAt?: Maybe<Order_By>;
     durationSeconds?: Maybe<Order_By>;
     endTime?: Maybe<Order_By>;
+    hallwayId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
     roomId?: Maybe<Order_By>;
+    shufflePeriodId?: Maybe<Order_By>;
     startTime?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
@@ -7330,10 +7340,12 @@ export type Event_Min_Fields = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     durationSeconds?: Maybe<Scalars["Int"]>;
     endTime?: Maybe<Scalars["timestamptz"]>;
+    hallwayId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
+    shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime?: Maybe<Scalars["timestamptz"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
@@ -7345,10 +7357,12 @@ export type Event_Min_Order_By = {
     createdAt?: Maybe<Order_By>;
     durationSeconds?: Maybe<Order_By>;
     endTime?: Maybe<Order_By>;
+    hallwayId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
     roomId?: Maybe<Order_By>;
+    shufflePeriodId?: Maybe<Order_By>;
     startTime?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
@@ -7390,6 +7404,7 @@ export type Event_Order_By = {
     eventTags_aggregate?: Maybe<EventTag_Aggregate_Order_By>;
     eventVonageSession?: Maybe<EventVonageSession_Order_By>;
     executedTransitions_aggregate?: Maybe<ExecutedTransitions_Aggregate_Order_By>;
+    hallwayId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     intendedRoomModeName?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
@@ -7398,6 +7413,7 @@ export type Event_Order_By = {
     room?: Maybe<Room_Order_By>;
     roomId?: Maybe<Order_By>;
     roomMode?: Maybe<RoomMode_Order_By>;
+    shufflePeriodId?: Maybe<Order_By>;
     startTime?: Maybe<Order_By>;
     transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
     updatedAt?: Maybe<Order_By>;
@@ -7421,6 +7437,8 @@ export enum Event_Select_Column {
     /** column name */
     EndTime = "endTime",
     /** column name */
+    HallwayId = "hallwayId",
+    /** column name */
     Id = "id",
     /** column name */
     IntendedRoomModeName = "intendedRoomModeName",
@@ -7430,6 +7448,8 @@ export enum Event_Select_Column {
     OriginatingDataId = "originatingDataId",
     /** column name */
     RoomId = "roomId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StartTime = "startTime",
     /** column name */
@@ -7443,11 +7463,13 @@ export type Event_Set_Input = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     durationSeconds?: Maybe<Scalars["Int"]>;
     endTime?: Maybe<Scalars["timestamptz"]>;
+    hallwayId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     intendedRoomModeName?: Maybe<RoomMode_Enum>;
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     roomId?: Maybe<Scalars["uuid"]>;
+    shufflePeriodId?: Maybe<Scalars["uuid"]>;
     startTime?: Maybe<Scalars["timestamptz"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
@@ -7509,6 +7531,8 @@ export enum Event_Update_Column {
     /** column name */
     EndTime = "endTime",
     /** column name */
+    HallwayId = "hallwayId",
+    /** column name */
     Id = "id",
     /** column name */
     IntendedRoomModeName = "intendedRoomModeName",
@@ -7518,6 +7542,8 @@ export enum Event_Update_Column {
     OriginatingDataId = "originatingDataId",
     /** column name */
     RoomId = "roomId",
+    /** column name */
+    ShufflePeriodId = "shufflePeriodId",
     /** column name */
     StartTime = "startTime",
     /** column name */
@@ -9702,6 +9728,10 @@ export type JoinRoomVonageSessionOutput = {
 /** columns and relationships of "MediaLiveChannel" */
 export type MediaLiveChannel = {
     __typename?: "MediaLiveChannel";
+    /** An object relationship */
+    channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob>;
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId: Scalars["String"];
     cloudFrontDomain: Scalars["String"];
     /** An object relationship */
@@ -9717,6 +9747,7 @@ export type MediaLiveChannel = {
     mp4InputId: Scalars["String"];
     /** An object relationship */
     room?: Maybe<Room>;
+    roomId?: Maybe<Scalars["uuid"]>;
     rtmpInputId: Scalars["String"];
     rtmpInputUri: Scalars["String"];
     updatedAt: Scalars["timestamptz"];
@@ -9762,6 +9793,9 @@ export type MediaLiveChannel_Bool_Exp = {
     _and?: Maybe<Array<Maybe<MediaLiveChannel_Bool_Exp>>>;
     _not?: Maybe<MediaLiveChannel_Bool_Exp>;
     _or?: Maybe<Array<Maybe<MediaLiveChannel_Bool_Exp>>>;
+    channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+    channelStackCreateJobId?: Maybe<Uuid_Comparison_Exp>;
+    cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
     cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
     cloudFrontDomain?: Maybe<String_Comparison_Exp>;
     conference?: Maybe<Conference_Bool_Exp>;
@@ -9775,6 +9809,7 @@ export type MediaLiveChannel_Bool_Exp = {
     mp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
     mp4InputId?: Maybe<String_Comparison_Exp>;
     room?: Maybe<Room_Bool_Exp>;
+    roomId?: Maybe<Uuid_Comparison_Exp>;
     rtmpInputId?: Maybe<String_Comparison_Exp>;
     rtmpInputUri?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -9785,10 +9820,15 @@ export type MediaLiveChannel_Bool_Exp = {
 export enum MediaLiveChannel_Constraint {
     /** unique or primary key constraint */
     MediaLiveChannelPkey = "MediaLiveChannel_pkey",
+    /** unique or primary key constraint */
+    MediaLiveChannelRoomIdKey = "MediaLiveChannel_roomId_key",
 }
 
 /** input type for inserting data into table "MediaLiveChannel" */
 export type MediaLiveChannel_Insert_Input = {
+    channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Obj_Rel_Insert_Input>;
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId?: Maybe<Scalars["String"]>;
     cloudFrontDomain?: Maybe<Scalars["String"]>;
     conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
@@ -9802,6 +9842,7 @@ export type MediaLiveChannel_Insert_Input = {
     mp4InputAttachmentName?: Maybe<Scalars["String"]>;
     mp4InputId?: Maybe<Scalars["String"]>;
     room?: Maybe<Room_Obj_Rel_Insert_Input>;
+    roomId?: Maybe<Scalars["uuid"]>;
     rtmpInputId?: Maybe<Scalars["String"]>;
     rtmpInputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -9811,6 +9852,8 @@ export type MediaLiveChannel_Insert_Input = {
 /** aggregate max on columns */
 export type MediaLiveChannel_Max_Fields = {
     __typename?: "MediaLiveChannel_max_fields";
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId?: Maybe<Scalars["String"]>;
     cloudFrontDomain?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
@@ -9822,6 +9865,7 @@ export type MediaLiveChannel_Max_Fields = {
     mediaPackageChannelId?: Maybe<Scalars["String"]>;
     mp4InputAttachmentName?: Maybe<Scalars["String"]>;
     mp4InputId?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
     rtmpInputId?: Maybe<Scalars["String"]>;
     rtmpInputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -9830,6 +9874,8 @@ export type MediaLiveChannel_Max_Fields = {
 
 /** order by max() on columns of table "MediaLiveChannel" */
 export type MediaLiveChannel_Max_Order_By = {
+    channelStackCreateJobId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
     cloudFrontDistributionId?: Maybe<Order_By>;
     cloudFrontDomain?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
@@ -9841,6 +9887,7 @@ export type MediaLiveChannel_Max_Order_By = {
     mediaPackageChannelId?: Maybe<Order_By>;
     mp4InputAttachmentName?: Maybe<Order_By>;
     mp4InputId?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
     rtmpInputId?: Maybe<Order_By>;
     rtmpInputUri?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
@@ -9850,6 +9897,8 @@ export type MediaLiveChannel_Max_Order_By = {
 /** aggregate min on columns */
 export type MediaLiveChannel_Min_Fields = {
     __typename?: "MediaLiveChannel_min_fields";
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId?: Maybe<Scalars["String"]>;
     cloudFrontDomain?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
@@ -9861,6 +9910,7 @@ export type MediaLiveChannel_Min_Fields = {
     mediaPackageChannelId?: Maybe<Scalars["String"]>;
     mp4InputAttachmentName?: Maybe<Scalars["String"]>;
     mp4InputId?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
     rtmpInputId?: Maybe<Scalars["String"]>;
     rtmpInputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -9869,6 +9919,8 @@ export type MediaLiveChannel_Min_Fields = {
 
 /** order by min() on columns of table "MediaLiveChannel" */
 export type MediaLiveChannel_Min_Order_By = {
+    channelStackCreateJobId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
     cloudFrontDistributionId?: Maybe<Order_By>;
     cloudFrontDomain?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
@@ -9880,6 +9932,7 @@ export type MediaLiveChannel_Min_Order_By = {
     mediaPackageChannelId?: Maybe<Order_By>;
     mp4InputAttachmentName?: Maybe<Order_By>;
     mp4InputId?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
     rtmpInputId?: Maybe<Order_By>;
     rtmpInputUri?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
@@ -9910,6 +9963,9 @@ export type MediaLiveChannel_On_Conflict = {
 
 /** ordering options when selecting data from "MediaLiveChannel" */
 export type MediaLiveChannel_Order_By = {
+    channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Order_By>;
+    channelStackCreateJobId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
     cloudFrontDistributionId?: Maybe<Order_By>;
     cloudFrontDomain?: Maybe<Order_By>;
     conference?: Maybe<Conference_Order_By>;
@@ -9923,6 +9979,7 @@ export type MediaLiveChannel_Order_By = {
     mp4InputAttachmentName?: Maybe<Order_By>;
     mp4InputId?: Maybe<Order_By>;
     room?: Maybe<Room_Order_By>;
+    roomId?: Maybe<Order_By>;
     rtmpInputId?: Maybe<Order_By>;
     rtmpInputUri?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
@@ -9937,6 +9994,10 @@ export type MediaLiveChannel_Pk_Columns_Input = {
 /** select columns of table "MediaLiveChannel" */
 export enum MediaLiveChannel_Select_Column {
     /** column name */
+    ChannelStackCreateJobId = "channelStackCreateJobId",
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
+    /** column name */
     CloudFrontDistributionId = "cloudFrontDistributionId",
     /** column name */
     CloudFrontDomain = "cloudFrontDomain",
@@ -9958,6 +10019,8 @@ export enum MediaLiveChannel_Select_Column {
     Mp4InputAttachmentName = "mp4InputAttachmentName",
     /** column name */
     Mp4InputId = "mp4InputId",
+    /** column name */
+    RoomId = "roomId",
     /** column name */
     RtmpInputId = "rtmpInputId",
     /** column name */
@@ -9970,6 +10033,8 @@ export enum MediaLiveChannel_Select_Column {
 
 /** input type for updating data in table "MediaLiveChannel" */
 export type MediaLiveChannel_Set_Input = {
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId?: Maybe<Scalars["String"]>;
     cloudFrontDomain?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
@@ -9981,6 +10046,7 @@ export type MediaLiveChannel_Set_Input = {
     mediaPackageChannelId?: Maybe<Scalars["String"]>;
     mp4InputAttachmentName?: Maybe<Scalars["String"]>;
     mp4InputId?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
     rtmpInputId?: Maybe<Scalars["String"]>;
     rtmpInputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -9989,6 +10055,10 @@ export type MediaLiveChannel_Set_Input = {
 
 /** update columns of table "MediaLiveChannel" */
 export enum MediaLiveChannel_Update_Column {
+    /** column name */
+    ChannelStackCreateJobId = "channelStackCreateJobId",
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
     /** column name */
     CloudFrontDistributionId = "cloudFrontDistributionId",
     /** column name */
@@ -10011,6 +10081,8 @@ export enum MediaLiveChannel_Update_Column {
     Mp4InputAttachmentName = "mp4InputAttachmentName",
     /** column name */
     Mp4InputId = "mp4InputId",
+    /** column name */
+    RoomId = "roomId",
     /** column name */
     RtmpInputId = "rtmpInputId",
     /** column name */
@@ -11696,6 +11768,10 @@ export enum Role_Update_Column {
 export type Room = {
     __typename?: "Room";
     capacity?: Maybe<Scalars["Int"]>;
+    /** An array relationship */
+    channelStackCreateJobs: Array<Job_Queues_ChannelStackCreateJob>;
+    /** An aggregated array relationship */
+    channelStackCreateJobs_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
     /** An object relationship */
     chat?: Maybe<Chat_Chat>;
     chatId?: Maybe<Scalars["uuid"]>;
@@ -11717,7 +11793,6 @@ export type Room = {
     id: Scalars["uuid"];
     /** An object relationship */
     mediaLiveChannel?: Maybe<MediaLiveChannel>;
-    mediaLiveChannelId?: Maybe<Scalars["uuid"]>;
     name: Scalars["String"];
     /** An object relationship */
     originatingContentGroup?: Maybe<ContentGroup>;
@@ -11750,6 +11825,24 @@ export type Room = {
     /** An aggregated array relationship */
     transitions_aggregate: Transitions_Aggregate;
     updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "Room" */
+export type RoomChannelStackCreateJobsArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+/** columns and relationships of "Room" */
+export type RoomChannelStackCreateJobs_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
 };
 
 /** columns and relationships of "Room" */
@@ -11965,12 +12058,20 @@ export enum RoomMode_Constraint {
 export enum RoomMode_Enum {
     /** Users may participate in the general video chat. */
     Breakout = "BREAKOUT",
+    /** An exhibition hall. */
+    Exhibition = "EXHIBITION",
+    /** An empty room. */
+    None = "NONE",
     /** Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users. */
     Prerecorded = "PRERECORDED",
     /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
     Presentation = "PRESENTATION",
     /** A live Q&A/discussion should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
     QAndA = "Q_AND_A",
+    /** A shuffle queue. */
+    Shuffle = "SHUFFLE",
+    /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
+    VideoPlayer = "VIDEO_PLAYER",
     /** Event is taking place in a Zoom room. */
     Zoom = "ZOOM",
 }
@@ -12899,6 +13000,7 @@ export type Room_Bool_Exp = {
     _not?: Maybe<Room_Bool_Exp>;
     _or?: Maybe<Array<Maybe<Room_Bool_Exp>>>;
     capacity?: Maybe<Int_Comparison_Exp>;
+    channelStackCreateJobs?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
     chat?: Maybe<Chat_Chat_Bool_Exp>;
     chatId?: Maybe<Uuid_Comparison_Exp>;
     conference?: Maybe<Conference_Bool_Exp>;
@@ -12910,7 +13012,6 @@ export type Room_Bool_Exp = {
     executedTransitions?: Maybe<ExecutedTransitions_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     mediaLiveChannel?: Maybe<MediaLiveChannel_Bool_Exp>;
-    mediaLiveChannelId?: Maybe<Uuid_Comparison_Exp>;
     name?: Maybe<String_Comparison_Exp>;
     originatingContentGroup?: Maybe<ContentGroup_Bool_Exp>;
     originatingContentGroupId?: Maybe<Uuid_Comparison_Exp>;
@@ -12934,8 +13035,6 @@ export enum Room_Constraint {
     /** unique or primary key constraint */
     RoomConferenceIdNameKey = "Room_conferenceId_name_key",
     /** unique or primary key constraint */
-    RoomMediaLiveChannelIdKey = "Room_mediaLiveChannelId_key",
-    /** unique or primary key constraint */
     RoomOriginatingEventIdKey = "Room_originatingEventId_key",
     /** unique or primary key constraint */
     RoomPkey = "Room_pkey",
@@ -12950,6 +13049,7 @@ export type Room_Inc_Input = {
 /** input type for inserting data into table "Room" */
 export type Room_Insert_Input = {
     capacity?: Maybe<Scalars["Int"]>;
+    channelStackCreateJobs?: Maybe<Job_Queues_ChannelStackCreateJob_Arr_Rel_Insert_Input>;
     chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
     chatId?: Maybe<Scalars["uuid"]>;
     conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
@@ -12961,7 +13061,6 @@ export type Room_Insert_Input = {
     executedTransitions?: Maybe<ExecutedTransitions_Arr_Rel_Insert_Input>;
     id?: Maybe<Scalars["uuid"]>;
     mediaLiveChannel?: Maybe<MediaLiveChannel_Obj_Rel_Insert_Input>;
-    mediaLiveChannelId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     originatingContentGroup?: Maybe<ContentGroup_Obj_Rel_Insert_Input>;
     originatingContentGroupId?: Maybe<Scalars["uuid"]>;
@@ -12988,7 +13087,6 @@ export type Room_Max_Fields = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    mediaLiveChannelId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     originatingContentGroupId?: Maybe<Scalars["uuid"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
@@ -13005,7 +13103,6 @@ export type Room_Max_Order_By = {
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    mediaLiveChannelId?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingContentGroupId?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
@@ -13023,7 +13120,6 @@ export type Room_Min_Fields = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
-    mediaLiveChannelId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     originatingContentGroupId?: Maybe<Scalars["uuid"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
@@ -13040,7 +13136,6 @@ export type Room_Min_Order_By = {
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    mediaLiveChannelId?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingContentGroupId?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
@@ -13075,6 +13170,7 @@ export type Room_On_Conflict = {
 /** ordering options when selecting data from "Room" */
 export type Room_Order_By = {
     capacity?: Maybe<Order_By>;
+    channelStackCreateJobs_aggregate?: Maybe<Job_Queues_ChannelStackCreateJob_Aggregate_Order_By>;
     chat?: Maybe<Chat_Chat_Order_By>;
     chatId?: Maybe<Order_By>;
     conference?: Maybe<Conference_Order_By>;
@@ -13086,7 +13182,6 @@ export type Room_Order_By = {
     executedTransitions_aggregate?: Maybe<ExecutedTransitions_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     mediaLiveChannel?: Maybe<MediaLiveChannel_Order_By>;
-    mediaLiveChannelId?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     originatingContentGroup?: Maybe<ContentGroup_Order_By>;
     originatingContentGroupId?: Maybe<Order_By>;
@@ -13125,8 +13220,6 @@ export enum Room_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    MediaLiveChannelId = "mediaLiveChannelId",
-    /** column name */
     Name = "name",
     /** column name */
     OriginatingContentGroupId = "originatingContentGroupId",
@@ -13152,7 +13245,6 @@ export type Room_Set_Input = {
     created_at?: Maybe<Scalars["timestamptz"]>;
     currentModeName?: Maybe<RoomMode_Enum>;
     id?: Maybe<Scalars["uuid"]>;
-    mediaLiveChannelId?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     originatingContentGroupId?: Maybe<Scalars["uuid"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
@@ -13229,8 +13321,6 @@ export enum Room_Update_Column {
     CurrentModeName = "currentModeName",
     /** column name */
     Id = "id",
-    /** column name */
-    MediaLiveChannelId = "mediaLiveChannelId",
     /** column name */
     Name = "name",
     /** column name */
@@ -16032,10 +16122,6 @@ export type Chat_Chat = {
     subscriptions: Array<Chat_Subscription>;
     /** An aggregated array relationship */
     subscriptions_aggregate: Chat_Subscription_Aggregate;
-    /** An array relationship */
-    typers: Array<Chat_Typer>;
-    /** An aggregated array relationship */
-    typers_aggregate: Chat_Typer_Aggregate;
     updated_at: Scalars["timestamptz"];
 };
 
@@ -16183,24 +16269,6 @@ export type Chat_ChatSubscriptions_AggregateArgs = {
     where?: Maybe<Chat_Subscription_Bool_Exp>;
 };
 
-/** columns and relationships of "chat.Chat" */
-export type Chat_ChatTypersArgs = {
-    distinct_on?: Maybe<Array<Chat_Typer_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_Typer_Order_By>>;
-    where?: Maybe<Chat_Typer_Bool_Exp>;
-};
-
-/** columns and relationships of "chat.Chat" */
-export type Chat_ChatTypers_AggregateArgs = {
-    distinct_on?: Maybe<Array<Chat_Typer_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_Typer_Order_By>>;
-    where?: Maybe<Chat_Typer_Bool_Exp>;
-};
-
 /** aggregated selection of "chat.Chat" */
 export type Chat_Chat_Aggregate = {
     __typename?: "chat_Chat_aggregate";
@@ -16260,7 +16328,6 @@ export type Chat_Chat_Bool_Exp = {
     restrictToAdmins?: Maybe<Boolean_Comparison_Exp>;
     room?: Maybe<Room_Bool_Exp>;
     subscriptions?: Maybe<Chat_Subscription_Bool_Exp>;
-    typers?: Maybe<Chat_Typer_Bool_Exp>;
     updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -16292,7 +16359,6 @@ export type Chat_Chat_Insert_Input = {
     restrictToAdmins?: Maybe<Scalars["Boolean"]>;
     room?: Maybe<Room_Arr_Rel_Insert_Input>;
     subscriptions?: Maybe<Chat_Subscription_Arr_Rel_Insert_Input>;
-    typers?: Maybe<Chat_Typer_Arr_Rel_Insert_Input>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -16382,7 +16448,6 @@ export type Chat_Chat_Order_By = {
     restrictToAdmins?: Maybe<Order_By>;
     room_aggregate?: Maybe<Room_Aggregate_Order_By>;
     subscriptions_aggregate?: Maybe<Chat_Subscription_Aggregate_Order_By>;
-    typers_aggregate?: Maybe<Chat_Typer_Aggregate_Order_By>;
     updated_at?: Maybe<Order_By>;
 };
 
@@ -17875,98 +17940,6 @@ export enum Chat_Pin_Update_Column {
     WasManuallyPinned = "wasManuallyPinned",
 }
 
-/** columns and relationships of "chat.PinnedOrSubscribed" */
-export type Chat_PinnedOrSubscribed = {
-    __typename?: "chat_PinnedOrSubscribed";
-    /** An object relationship */
-    attendee?: Maybe<Attendee>;
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
-    chat?: Maybe<Chat_Chat>;
-    chatId?: Maybe<Scalars["uuid"]>;
-};
-
-/** aggregated selection of "chat.PinnedOrSubscribed" */
-export type Chat_PinnedOrSubscribed_Aggregate = {
-    __typename?: "chat_PinnedOrSubscribed_aggregate";
-    aggregate?: Maybe<Chat_PinnedOrSubscribed_Aggregate_Fields>;
-    nodes: Array<Chat_PinnedOrSubscribed>;
-};
-
-/** aggregate fields of "chat.PinnedOrSubscribed" */
-export type Chat_PinnedOrSubscribed_Aggregate_Fields = {
-    __typename?: "chat_PinnedOrSubscribed_aggregate_fields";
-    count?: Maybe<Scalars["Int"]>;
-    max?: Maybe<Chat_PinnedOrSubscribed_Max_Fields>;
-    min?: Maybe<Chat_PinnedOrSubscribed_Min_Fields>;
-};
-
-/** aggregate fields of "chat.PinnedOrSubscribed" */
-export type Chat_PinnedOrSubscribed_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Chat_PinnedOrSubscribed_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "chat.PinnedOrSubscribed" */
-export type Chat_PinnedOrSubscribed_Aggregate_Order_By = {
-    count?: Maybe<Order_By>;
-    max?: Maybe<Chat_PinnedOrSubscribed_Max_Order_By>;
-    min?: Maybe<Chat_PinnedOrSubscribed_Min_Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "chat.PinnedOrSubscribed". All fields are combined with a logical 'AND'. */
-export type Chat_PinnedOrSubscribed_Bool_Exp = {
-    _and?: Maybe<Array<Maybe<Chat_PinnedOrSubscribed_Bool_Exp>>>;
-    _not?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
-    _or?: Maybe<Array<Maybe<Chat_PinnedOrSubscribed_Bool_Exp>>>;
-    attendee?: Maybe<Attendee_Bool_Exp>;
-    attendeeId?: Maybe<Uuid_Comparison_Exp>;
-    chat?: Maybe<Chat_Chat_Bool_Exp>;
-    chatId?: Maybe<Uuid_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Chat_PinnedOrSubscribed_Max_Fields = {
-    __typename?: "chat_PinnedOrSubscribed_max_fields";
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chatId?: Maybe<Scalars["uuid"]>;
-};
-
-/** order by max() on columns of table "chat.PinnedOrSubscribed" */
-export type Chat_PinnedOrSubscribed_Max_Order_By = {
-    attendeeId?: Maybe<Order_By>;
-    chatId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Chat_PinnedOrSubscribed_Min_Fields = {
-    __typename?: "chat_PinnedOrSubscribed_min_fields";
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chatId?: Maybe<Scalars["uuid"]>;
-};
-
-/** order by min() on columns of table "chat.PinnedOrSubscribed" */
-export type Chat_PinnedOrSubscribed_Min_Order_By = {
-    attendeeId?: Maybe<Order_By>;
-    chatId?: Maybe<Order_By>;
-};
-
-/** ordering options when selecting data from "chat.PinnedOrSubscribed" */
-export type Chat_PinnedOrSubscribed_Order_By = {
-    attendee?: Maybe<Attendee_Order_By>;
-    attendeeId?: Maybe<Order_By>;
-    chat?: Maybe<Chat_Chat_Order_By>;
-    chatId?: Maybe<Order_By>;
-};
-
-/** select columns of table "chat.PinnedOrSubscribed" */
-export enum Chat_PinnedOrSubscribed_Select_Column {
-    /** column name */
-    AttendeeId = "attendeeId",
-    /** column name */
-    ChatId = "chatId",
-}
-
 /** columns and relationships of "chat.Reaction" */
 export type Chat_Reaction = {
     __typename?: "chat_Reaction";
@@ -19103,303 +19076,236 @@ export enum Chat_Subscription_Update_Column {
     WasManuallySubscribed = "wasManuallySubscribed",
 }
 
-/** columns and relationships of "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages = {
-    __typename?: "chat_SubscriptionsWithUnnotifiedMessages";
+/** columns and relationships of "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob = {
+    __typename?: "job_queues_ChannelStackCreateJob";
     /** An object relationship */
-    attendee?: Maybe<Attendee>;
-    attendeeId?: Maybe<Scalars["uuid"]>;
+    conference: Conference;
+    conferenceId: Scalars["uuid"];
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
     /** An object relationship */
-    chat?: Maybe<Chat_Chat>;
-    chatId?: Maybe<Scalars["uuid"]>;
-};
-
-/** aggregated selection of "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Aggregate = {
-    __typename?: "chat_SubscriptionsWithUnnotifiedMessages_aggregate";
-    aggregate?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Aggregate_Fields>;
-    nodes: Array<Chat_SubscriptionsWithUnnotifiedMessages>;
-};
-
-/** aggregate fields of "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Aggregate_Fields = {
-    __typename?: "chat_SubscriptionsWithUnnotifiedMessages_aggregate_fields";
-    count?: Maybe<Scalars["Int"]>;
-    max?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Max_Fields>;
-    min?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Min_Fields>;
-};
-
-/** aggregate fields of "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Aggregate_Order_By = {
-    count?: Maybe<Order_By>;
-    max?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Max_Order_By>;
-    min?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Arr_Rel_Insert_Input = {
-    data: Array<Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input>;
-};
-
-/** Boolean expression to filter rows from the table "chat.SubscriptionsWithUnnotifiedMessages". All fields are combined with a logical 'AND'. */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp = {
-    _and?: Maybe<Array<Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>>>;
-    _not?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
-    _or?: Maybe<Array<Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>>>;
-    attendee?: Maybe<Attendee_Bool_Exp>;
-    attendeeId?: Maybe<Uuid_Comparison_Exp>;
-    chat?: Maybe<Chat_Chat_Bool_Exp>;
-    chatId?: Maybe<Uuid_Comparison_Exp>;
-};
-
-/** input type for inserting data into table "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input = {
-    attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
-    chatId?: Maybe<Scalars["uuid"]>;
-};
-
-/** aggregate max on columns */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Max_Fields = {
-    __typename?: "chat_SubscriptionsWithUnnotifiedMessages_max_fields";
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chatId?: Maybe<Scalars["uuid"]>;
-};
-
-/** order by max() on columns of table "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Max_Order_By = {
-    attendeeId?: Maybe<Order_By>;
-    chatId?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Min_Fields = {
-    __typename?: "chat_SubscriptionsWithUnnotifiedMessages_min_fields";
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chatId?: Maybe<Scalars["uuid"]>;
-};
-
-/** order by min() on columns of table "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Min_Order_By = {
-    attendeeId?: Maybe<Order_By>;
-    chatId?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Mutation_Response = {
-    __typename?: "chat_SubscriptionsWithUnnotifiedMessages_mutation_response";
-    /** number of affected rows by the mutation */
-    affected_rows: Scalars["Int"];
-    /** data of the affected rows by the mutation */
-    returning: Array<Chat_SubscriptionsWithUnnotifiedMessages>;
-};
-
-/** input type for inserting object relation for remote table "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Obj_Rel_Insert_Input = {
-    data: Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input;
-};
-
-/** ordering options when selecting data from "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Order_By = {
-    attendee?: Maybe<Attendee_Order_By>;
-    attendeeId?: Maybe<Order_By>;
-    chat?: Maybe<Chat_Chat_Order_By>;
-    chatId?: Maybe<Order_By>;
-};
-
-/** select columns of table "chat.SubscriptionsWithUnnotifiedMessages" */
-export enum Chat_SubscriptionsWithUnnotifiedMessages_Select_Column {
-    /** column name */
-    AttendeeId = "attendeeId",
-    /** column name */
-    ChatId = "chatId",
-}
-
-/** input type for updating data in table "chat.SubscriptionsWithUnnotifiedMessages" */
-export type Chat_SubscriptionsWithUnnotifiedMessages_Set_Input = {
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chatId?: Maybe<Scalars["uuid"]>;
-};
-
-/** columns and relationships of "chat.Typer" */
-export type Chat_Typer = {
-    __typename?: "chat_Typer";
+    jobStatus: JobStatus;
+    jobStatusName: JobStatus_Enum;
+    message?: Maybe<Scalars["String"]>;
     /** An object relationship */
-    attendee: Attendee;
-    attendeeId: Scalars["uuid"];
-    /** An object relationship */
-    chat: Chat_Chat;
-    chatId: Scalars["uuid"];
-    messageTypeName: Chat_MessageType_Enum;
+    room: Room;
+    roomId: Scalars["uuid"];
+    stackLogicalResourceId: Scalars["String"];
     updated_at: Scalars["timestamptz"];
 };
 
-/** aggregated selection of "chat.Typer" */
-export type Chat_Typer_Aggregate = {
-    __typename?: "chat_Typer_aggregate";
-    aggregate?: Maybe<Chat_Typer_Aggregate_Fields>;
-    nodes: Array<Chat_Typer>;
+/** aggregated selection of "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Aggregate = {
+    __typename?: "job_queues_ChannelStackCreateJob_aggregate";
+    aggregate?: Maybe<Job_Queues_ChannelStackCreateJob_Aggregate_Fields>;
+    nodes: Array<Job_Queues_ChannelStackCreateJob>;
 };
 
-/** aggregate fields of "chat.Typer" */
-export type Chat_Typer_Aggregate_Fields = {
-    __typename?: "chat_Typer_aggregate_fields";
+/** aggregate fields of "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Aggregate_Fields = {
+    __typename?: "job_queues_ChannelStackCreateJob_aggregate_fields";
     count?: Maybe<Scalars["Int"]>;
-    max?: Maybe<Chat_Typer_Max_Fields>;
-    min?: Maybe<Chat_Typer_Min_Fields>;
+    max?: Maybe<Job_Queues_ChannelStackCreateJob_Max_Fields>;
+    min?: Maybe<Job_Queues_ChannelStackCreateJob_Min_Fields>;
 };
 
-/** aggregate fields of "chat.Typer" */
-export type Chat_Typer_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Chat_Typer_Select_Column>>;
+/** aggregate fields of "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Select_Column>>;
     distinct?: Maybe<Scalars["Boolean"]>;
 };
 
-/** order by aggregate values of table "chat.Typer" */
-export type Chat_Typer_Aggregate_Order_By = {
+/** order by aggregate values of table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Aggregate_Order_By = {
     count?: Maybe<Order_By>;
-    max?: Maybe<Chat_Typer_Max_Order_By>;
-    min?: Maybe<Chat_Typer_Min_Order_By>;
+    max?: Maybe<Job_Queues_ChannelStackCreateJob_Max_Order_By>;
+    min?: Maybe<Job_Queues_ChannelStackCreateJob_Min_Order_By>;
 };
 
-/** input type for inserting array relation for remote table "chat.Typer" */
-export type Chat_Typer_Arr_Rel_Insert_Input = {
-    data: Array<Chat_Typer_Insert_Input>;
-    on_conflict?: Maybe<Chat_Typer_On_Conflict>;
+/** input type for inserting array relation for remote table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Arr_Rel_Insert_Input = {
+    data: Array<Job_Queues_ChannelStackCreateJob_Insert_Input>;
+    on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
 };
 
-/** Boolean expression to filter rows from the table "chat.Typer". All fields are combined with a logical 'AND'. */
-export type Chat_Typer_Bool_Exp = {
-    _and?: Maybe<Array<Maybe<Chat_Typer_Bool_Exp>>>;
-    _not?: Maybe<Chat_Typer_Bool_Exp>;
-    _or?: Maybe<Array<Maybe<Chat_Typer_Bool_Exp>>>;
-    attendee?: Maybe<Attendee_Bool_Exp>;
-    attendeeId?: Maybe<Uuid_Comparison_Exp>;
-    chat?: Maybe<Chat_Chat_Bool_Exp>;
-    chatId?: Maybe<Uuid_Comparison_Exp>;
-    messageTypeName?: Maybe<Chat_MessageType_Enum_Comparison_Exp>;
+/** Boolean expression to filter rows from the table "job_queues.ChannelStackCreateJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ChannelStackCreateJob_Bool_Exp = {
+    _and?: Maybe<Array<Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>>>;
+    _not?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+    _or?: Maybe<Array<Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>>>;
+    conference?: Maybe<Conference_Bool_Exp>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    jobStatus?: Maybe<JobStatus_Bool_Exp>;
+    jobStatusName?: Maybe<JobStatus_Enum_Comparison_Exp>;
+    message?: Maybe<String_Comparison_Exp>;
+    room?: Maybe<Room_Bool_Exp>;
+    roomId?: Maybe<Uuid_Comparison_Exp>;
+    stackLogicalResourceId?: Maybe<String_Comparison_Exp>;
     updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
-/** unique or primary key constraints on table "chat.Typer" */
-export enum Chat_Typer_Constraint {
+/** unique or primary key constraints on table "job_queues.ChannelStackCreateJob" */
+export enum Job_Queues_ChannelStackCreateJob_Constraint {
     /** unique or primary key constraint */
-    TyperPkey = "Typer_pkey",
+    ChannelStackCreateJobPkey = "ChannelStackCreateJob_pkey",
+    /** unique or primary key constraint */
+    ChannelStackCreateJobStackLogicalResourceIdKey = "ChannelStackCreateJob_stackLogicalResourceId_key",
 }
 
-/** input type for inserting data into table "chat.Typer" */
-export type Chat_Typer_Insert_Input = {
-    attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
-    chatId?: Maybe<Scalars["uuid"]>;
-    messageTypeName?: Maybe<Chat_MessageType_Enum>;
+/** input type for inserting data into table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Insert_Input = {
+    conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobStatus?: Maybe<JobStatus_Obj_Rel_Insert_Input>;
+    jobStatusName?: Maybe<JobStatus_Enum>;
+    message?: Maybe<Scalars["String"]>;
+    room?: Maybe<Room_Obj_Rel_Insert_Input>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    stackLogicalResourceId?: Maybe<Scalars["String"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
 /** aggregate max on columns */
-export type Chat_Typer_Max_Fields = {
-    __typename?: "chat_Typer_max_fields";
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chatId?: Maybe<Scalars["uuid"]>;
+export type Job_Queues_ChannelStackCreateJob_Max_Fields = {
+    __typename?: "job_queues_ChannelStackCreateJob_max_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    message?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    stackLogicalResourceId?: Maybe<Scalars["String"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
-/** order by max() on columns of table "chat.Typer" */
-export type Chat_Typer_Max_Order_By = {
-    attendeeId?: Maybe<Order_By>;
-    chatId?: Maybe<Order_By>;
+/** order by max() on columns of table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Max_Order_By = {
+    conferenceId?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
+    stackLogicalResourceId?: Maybe<Order_By>;
     updated_at?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
-export type Chat_Typer_Min_Fields = {
-    __typename?: "chat_Typer_min_fields";
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chatId?: Maybe<Scalars["uuid"]>;
+export type Job_Queues_ChannelStackCreateJob_Min_Fields = {
+    __typename?: "job_queues_ChannelStackCreateJob_min_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    message?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    stackLogicalResourceId?: Maybe<Scalars["String"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
-/** order by min() on columns of table "chat.Typer" */
-export type Chat_Typer_Min_Order_By = {
-    attendeeId?: Maybe<Order_By>;
-    chatId?: Maybe<Order_By>;
+/** order by min() on columns of table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Min_Order_By = {
+    conferenceId?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
+    stackLogicalResourceId?: Maybe<Order_By>;
     updated_at?: Maybe<Order_By>;
 };
 
-/** response of any mutation on the table "chat.Typer" */
-export type Chat_Typer_Mutation_Response = {
-    __typename?: "chat_Typer_mutation_response";
+/** response of any mutation on the table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Mutation_Response = {
+    __typename?: "job_queues_ChannelStackCreateJob_mutation_response";
     /** number of affected rows by the mutation */
     affected_rows: Scalars["Int"];
     /** data of the affected rows by the mutation */
-    returning: Array<Chat_Typer>;
+    returning: Array<Job_Queues_ChannelStackCreateJob>;
 };
 
-/** input type for inserting object relation for remote table "chat.Typer" */
-export type Chat_Typer_Obj_Rel_Insert_Input = {
-    data: Chat_Typer_Insert_Input;
-    on_conflict?: Maybe<Chat_Typer_On_Conflict>;
+/** input type for inserting object relation for remote table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Obj_Rel_Insert_Input = {
+    data: Job_Queues_ChannelStackCreateJob_Insert_Input;
+    on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
 };
 
-/** on conflict condition type for table "chat.Typer" */
-export type Chat_Typer_On_Conflict = {
-    constraint: Chat_Typer_Constraint;
-    update_columns: Array<Chat_Typer_Update_Column>;
-    where?: Maybe<Chat_Typer_Bool_Exp>;
+/** on conflict condition type for table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_On_Conflict = {
+    constraint: Job_Queues_ChannelStackCreateJob_Constraint;
+    update_columns: Array<Job_Queues_ChannelStackCreateJob_Update_Column>;
+    where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
 };
 
-/** ordering options when selecting data from "chat.Typer" */
-export type Chat_Typer_Order_By = {
-    attendee?: Maybe<Attendee_Order_By>;
-    attendeeId?: Maybe<Order_By>;
-    chat?: Maybe<Chat_Chat_Order_By>;
-    chatId?: Maybe<Order_By>;
-    messageTypeName?: Maybe<Order_By>;
+/** ordering options when selecting data from "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Order_By = {
+    conference?: Maybe<Conference_Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    jobStatus?: Maybe<JobStatus_Order_By>;
+    jobStatusName?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    room?: Maybe<Room_Order_By>;
+    roomId?: Maybe<Order_By>;
+    stackLogicalResourceId?: Maybe<Order_By>;
     updated_at?: Maybe<Order_By>;
 };
 
-/** primary key columns input for table: "chat.Typer" */
-export type Chat_Typer_Pk_Columns_Input = {
-    attendeeId: Scalars["uuid"];
-    chatId: Scalars["uuid"];
+/** primary key columns input for table: "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Pk_Columns_Input = {
+    id: Scalars["uuid"];
 };
 
-/** select columns of table "chat.Typer" */
-export enum Chat_Typer_Select_Column {
+/** select columns of table "job_queues.ChannelStackCreateJob" */
+export enum Job_Queues_ChannelStackCreateJob_Select_Column {
     /** column name */
-    AttendeeId = "attendeeId",
+    ConferenceId = "conferenceId",
     /** column name */
-    ChatId = "chatId",
+    CreatedAt = "created_at",
     /** column name */
-    MessageTypeName = "messageTypeName",
+    Id = "id",
+    /** column name */
+    JobStatusName = "jobStatusName",
+    /** column name */
+    Message = "message",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    StackLogicalResourceId = "stackLogicalResourceId",
     /** column name */
     UpdatedAt = "updated_at",
 }
 
-/** input type for updating data in table "chat.Typer" */
-export type Chat_Typer_Set_Input = {
-    attendeeId?: Maybe<Scalars["uuid"]>;
-    chatId?: Maybe<Scalars["uuid"]>;
-    messageTypeName?: Maybe<Chat_MessageType_Enum>;
+/** input type for updating data in table "job_queues.ChannelStackCreateJob" */
+export type Job_Queues_ChannelStackCreateJob_Set_Input = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobStatusName?: Maybe<JobStatus_Enum>;
+    message?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    stackLogicalResourceId?: Maybe<Scalars["String"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
-/** update columns of table "chat.Typer" */
-export enum Chat_Typer_Update_Column {
+/** update columns of table "job_queues.ChannelStackCreateJob" */
+export enum Job_Queues_ChannelStackCreateJob_Update_Column {
     /** column name */
-    AttendeeId = "attendeeId",
+    ConferenceId = "conferenceId",
     /** column name */
-    ChatId = "chatId",
+    CreatedAt = "created_at",
     /** column name */
-    MessageTypeName = "messageTypeName",
+    Id = "id",
+    /** column name */
+    JobStatusName = "jobStatusName",
+    /** column name */
+    Message = "message",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    StackLogicalResourceId = "stackLogicalResourceId",
     /** column name */
     UpdatedAt = "updated_at",
 }
@@ -21551,12 +21457,10 @@ export type Mutation_Root = {
     delete_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
     /** delete single row from the table: "chat.Subscription" */
     delete_chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
-    /** delete data from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
-    delete_chat_SubscriptionsWithUnnotifiedMessages?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Mutation_Response>;
-    /** delete data from the table: "chat.Typer" */
-    delete_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
-    /** delete single row from the table: "chat.Typer" */
-    delete_chat_Typer_by_pk?: Maybe<Chat_Typer>;
+    /** delete data from the table: "job_queues.ChannelStackCreateJob" */
+    delete_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
+    /** delete single row from the table: "job_queues.ChannelStackCreateJob" */
+    delete_job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
     /** delete data from the table: "job_queues.CombineVideosJob" */
     delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.CombineVideosJob" */
@@ -21609,12 +21513,6 @@ export type Mutation_Root = {
     delete_system_ConfigurationKey_by_pk?: Maybe<System_ConfigurationKey>;
     /** delete single row from the table: "system.Configuration" */
     delete_system_Configuration_by_pk?: Maybe<System_Configuration>;
-    /** perform the action: "generateChatRemoteServiceIds" */
-    generateChatRemoteServiceIds?: Maybe<GenerateChatRemoteServiceIdsOutput>;
-    /** perform the action: "generateChatRemoteToken" */
-    generateChatRemoteToken?: Maybe<ChatRemoteToken>;
-    /** perform the action: "generateChatRemoteUserIds" */
-    generateChatRemoteUserIds?: Maybe<GenerateChatRemoteUserIdsOutput>;
     /** perform the action: "getGoogleOAuthUrl" */
     getGoogleOAuthUrl?: Maybe<GetGoogleOAuthUrlOutput>;
     /** insert data into the table: "Attendee" */
@@ -21873,14 +21771,10 @@ export type Mutation_Root = {
     insert_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
     /** insert a single row into the table: "chat.Subscription" */
     insert_chat_Subscription_one?: Maybe<Chat_Subscription>;
-    /** insert data into the table: "chat.SubscriptionsWithUnnotifiedMessages" */
-    insert_chat_SubscriptionsWithUnnotifiedMessages?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Mutation_Response>;
-    /** insert a single row into the table: "chat.SubscriptionsWithUnnotifiedMessages" */
-    insert_chat_SubscriptionsWithUnnotifiedMessages_one?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages>;
-    /** insert data into the table: "chat.Typer" */
-    insert_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
-    /** insert a single row into the table: "chat.Typer" */
-    insert_chat_Typer_one?: Maybe<Chat_Typer>;
+    /** insert data into the table: "job_queues.ChannelStackCreateJob" */
+    insert_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
+    /** insert a single row into the table: "job_queues.ChannelStackCreateJob" */
+    insert_job_queues_ChannelStackCreateJob_one?: Maybe<Job_Queues_ChannelStackCreateJob>;
     /** insert data into the table: "job_queues.CombineVideosJob" */
     insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.CombineVideosJob" */
@@ -22215,12 +22109,10 @@ export type Mutation_Root = {
     update_chat_Subscription?: Maybe<Chat_Subscription_Mutation_Response>;
     /** update single row of the table: "chat.Subscription" */
     update_chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
-    /** update data of the table: "chat.SubscriptionsWithUnnotifiedMessages" */
-    update_chat_SubscriptionsWithUnnotifiedMessages?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Mutation_Response>;
-    /** update data of the table: "chat.Typer" */
-    update_chat_Typer?: Maybe<Chat_Typer_Mutation_Response>;
-    /** update single row of the table: "chat.Typer" */
-    update_chat_Typer_by_pk?: Maybe<Chat_Typer>;
+    /** update data of the table: "job_queues.ChannelStackCreateJob" */
+    update_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
+    /** update single row of the table: "job_queues.ChannelStackCreateJob" */
+    update_job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
     /** update data of the table: "job_queues.CombineVideosJob" */
     update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** update single row of the table: "job_queues.CombineVideosJob" */
@@ -22931,19 +22823,13 @@ export type Mutation_RootDelete_Chat_Subscription_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootDelete_Chat_SubscriptionsWithUnnotifiedMessagesArgs = {
-    where: Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp;
+export type Mutation_RootDelete_Job_Queues_ChannelStackCreateJobArgs = {
+    where: Job_Queues_ChannelStackCreateJob_Bool_Exp;
 };
 
 /** mutation root */
-export type Mutation_RootDelete_Chat_TyperArgs = {
-    where: Chat_Typer_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Chat_Typer_By_PkArgs = {
-    attendeeId: Scalars["uuid"];
-    chatId: Scalars["uuid"];
+export type Mutation_RootDelete_Job_Queues_ChannelStackCreateJob_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 /** mutation root */
@@ -23074,11 +22960,6 @@ export type Mutation_RootDelete_System_ConfigurationKey_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_System_Configuration_By_PkArgs = {
     key: System_ConfigurationKey_Enum;
-};
-
-/** mutation root */
-export type Mutation_RootGenerateChatRemoteTokenArgs = {
-    attendeeId: Scalars["uuid"];
 };
 
 /** mutation root */
@@ -23856,25 +23737,15 @@ export type Mutation_RootInsert_Chat_Subscription_OneArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootInsert_Chat_SubscriptionsWithUnnotifiedMessagesArgs = {
-    objects: Array<Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input>;
+export type Mutation_RootInsert_Job_Queues_ChannelStackCreateJobArgs = {
+    objects: Array<Job_Queues_ChannelStackCreateJob_Insert_Input>;
+    on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
 };
 
 /** mutation root */
-export type Mutation_RootInsert_Chat_SubscriptionsWithUnnotifiedMessages_OneArgs = {
-    object: Chat_SubscriptionsWithUnnotifiedMessages_Insert_Input;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Chat_TyperArgs = {
-    objects: Array<Chat_Typer_Insert_Input>;
-    on_conflict?: Maybe<Chat_Typer_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Chat_Typer_OneArgs = {
-    object: Chat_Typer_Insert_Input;
-    on_conflict?: Maybe<Chat_Typer_On_Conflict>;
+export type Mutation_RootInsert_Job_Queues_ChannelStackCreateJob_OneArgs = {
+    object: Job_Queues_ChannelStackCreateJob_Insert_Input;
+    on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
 };
 
 /** mutation root */
@@ -25030,21 +24901,15 @@ export type Mutation_RootUpdate_Chat_Subscription_By_PkArgs = {
 };
 
 /** mutation root */
-export type Mutation_RootUpdate_Chat_SubscriptionsWithUnnotifiedMessagesArgs = {
-    _set?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Set_Input>;
-    where: Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp;
+export type Mutation_RootUpdate_Job_Queues_ChannelStackCreateJobArgs = {
+    _set?: Maybe<Job_Queues_ChannelStackCreateJob_Set_Input>;
+    where: Job_Queues_ChannelStackCreateJob_Bool_Exp;
 };
 
 /** mutation root */
-export type Mutation_RootUpdate_Chat_TyperArgs = {
-    _set?: Maybe<Chat_Typer_Set_Input>;
-    where: Chat_Typer_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Chat_Typer_By_PkArgs = {
-    _set?: Maybe<Chat_Typer_Set_Input>;
-    pk_columns: Chat_Typer_Pk_Columns_Input;
+export type Mutation_RootUpdate_Job_Queues_ChannelStackCreateJob_By_PkArgs = {
+    _set?: Maybe<Job_Queues_ChannelStackCreateJob_Set_Input>;
+    pk_columns: Job_Queues_ChannelStackCreateJob_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -25648,10 +25513,6 @@ export type Query_Root = {
     chat_Pin_aggregate: Chat_Pin_Aggregate;
     /** fetch data from the table: "chat.Pin" using primary key columns */
     chat_Pin_by_pk?: Maybe<Chat_Pin>;
-    /** fetch data from the table: "chat.PinnedOrSubscribed" */
-    chat_PinnedOrSubscribed: Array<Chat_PinnedOrSubscribed>;
-    /** fetch aggregated fields from the table: "chat.PinnedOrSubscribed" */
-    chat_PinnedOrSubscribed_aggregate: Chat_PinnedOrSubscribed_Aggregate;
     /** fetch data from the table: "chat.Reaction" */
     chat_Reaction: Array<Chat_Reaction>;
     /** fetch data from the table: "chat.ReactionType" */
@@ -25676,22 +25537,18 @@ export type Query_Root = {
     chat_Subscription_aggregate: Chat_Subscription_Aggregate;
     /** fetch data from the table: "chat.Subscription" using primary key columns */
     chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
-    /** fetch data from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
-    chat_SubscriptionsWithUnnotifiedMessages: Array<Chat_SubscriptionsWithUnnotifiedMessages>;
-    /** fetch aggregated fields from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
-    chat_SubscriptionsWithUnnotifiedMessages_aggregate: Chat_SubscriptionsWithUnnotifiedMessages_Aggregate;
-    /** fetch data from the table: "chat.Typer" */
-    chat_Typer: Array<Chat_Typer>;
-    /** fetch aggregated fields from the table: "chat.Typer" */
-    chat_Typer_aggregate: Chat_Typer_Aggregate;
-    /** fetch data from the table: "chat.Typer" using primary key columns */
-    chat_Typer_by_pk?: Maybe<Chat_Typer>;
     /** perform the action: "echo" */
     echo?: Maybe<EchoOutput>;
     /** perform the action: "getContentItem" */
     getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
     /** perform the action: "getUploadAgreement" */
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+    /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
+    job_queues_ChannelStackCreateJob: Array<Job_Queues_ChannelStackCreateJob>;
+    /** fetch aggregated fields from the table: "job_queues.ChannelStackCreateJob" */
+    job_queues_ChannelStackCreateJob_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
+    /** fetch data from the table: "job_queues.ChannelStackCreateJob" using primary key columns */
+    job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
     /** fetch data from the table: "job_queues.CombineVideosJob" */
     job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
     /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -27194,24 +27051,6 @@ export type Query_RootChat_Pin_By_PkArgs = {
 };
 
 /** query root */
-export type Query_RootChat_PinnedOrSubscribedArgs = {
-    distinct_on?: Maybe<Array<Chat_PinnedOrSubscribed_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_PinnedOrSubscribed_Order_By>>;
-    where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
-};
-
-/** query root */
-export type Query_RootChat_PinnedOrSubscribed_AggregateArgs = {
-    distinct_on?: Maybe<Array<Chat_PinnedOrSubscribed_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_PinnedOrSubscribed_Order_By>>;
-    where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
-};
-
-/** query root */
 export type Query_RootChat_ReactionArgs = {
     distinct_on?: Maybe<Array<Chat_Reaction_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -27306,48 +27145,6 @@ export type Query_RootChat_Subscription_By_PkArgs = {
 };
 
 /** query root */
-export type Query_RootChat_SubscriptionsWithUnnotifiedMessagesArgs = {
-    distinct_on?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Order_By>>;
-    where?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
-};
-
-/** query root */
-export type Query_RootChat_SubscriptionsWithUnnotifiedMessages_AggregateArgs = {
-    distinct_on?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Order_By>>;
-    where?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
-};
-
-/** query root */
-export type Query_RootChat_TyperArgs = {
-    distinct_on?: Maybe<Array<Chat_Typer_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_Typer_Order_By>>;
-    where?: Maybe<Chat_Typer_Bool_Exp>;
-};
-
-/** query root */
-export type Query_RootChat_Typer_AggregateArgs = {
-    distinct_on?: Maybe<Array<Chat_Typer_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_Typer_Order_By>>;
-    where?: Maybe<Chat_Typer_Bool_Exp>;
-};
-
-/** query root */
-export type Query_RootChat_Typer_By_PkArgs = {
-    attendeeId: Scalars["uuid"];
-    chatId: Scalars["uuid"];
-};
-
-/** query root */
 export type Query_RootEchoArgs = {
     message: Scalars["String"];
 };
@@ -27360,6 +27157,29 @@ export type Query_RootGetContentItemArgs = {
 /** query root */
 export type Query_RootGetUploadAgreementArgs = {
     magicToken: Scalars["String"];
+};
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackCreateJobArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackCreateJob_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackCreateJob_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 /** query root */
@@ -29425,10 +29245,6 @@ export type Subscription_Root = {
     chat_Pin_aggregate: Chat_Pin_Aggregate;
     /** fetch data from the table: "chat.Pin" using primary key columns */
     chat_Pin_by_pk?: Maybe<Chat_Pin>;
-    /** fetch data from the table: "chat.PinnedOrSubscribed" */
-    chat_PinnedOrSubscribed: Array<Chat_PinnedOrSubscribed>;
-    /** fetch aggregated fields from the table: "chat.PinnedOrSubscribed" */
-    chat_PinnedOrSubscribed_aggregate: Chat_PinnedOrSubscribed_Aggregate;
     /** fetch data from the table: "chat.Reaction" */
     chat_Reaction: Array<Chat_Reaction>;
     /** fetch data from the table: "chat.ReactionType" */
@@ -29453,22 +29269,18 @@ export type Subscription_Root = {
     chat_Subscription_aggregate: Chat_Subscription_Aggregate;
     /** fetch data from the table: "chat.Subscription" using primary key columns */
     chat_Subscription_by_pk?: Maybe<Chat_Subscription>;
-    /** fetch data from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
-    chat_SubscriptionsWithUnnotifiedMessages: Array<Chat_SubscriptionsWithUnnotifiedMessages>;
-    /** fetch aggregated fields from the table: "chat.SubscriptionsWithUnnotifiedMessages" */
-    chat_SubscriptionsWithUnnotifiedMessages_aggregate: Chat_SubscriptionsWithUnnotifiedMessages_Aggregate;
-    /** fetch data from the table: "chat.Typer" */
-    chat_Typer: Array<Chat_Typer>;
-    /** fetch aggregated fields from the table: "chat.Typer" */
-    chat_Typer_aggregate: Chat_Typer_Aggregate;
-    /** fetch data from the table: "chat.Typer" using primary key columns */
-    chat_Typer_by_pk?: Maybe<Chat_Typer>;
     /** perform the action: "echo" */
     echo?: Maybe<EchoOutput>;
     /** perform the action: "getContentItem" */
     getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
     /** perform the action: "getUploadAgreement" */
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+    /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
+    job_queues_ChannelStackCreateJob: Array<Job_Queues_ChannelStackCreateJob>;
+    /** fetch aggregated fields from the table: "job_queues.ChannelStackCreateJob" */
+    job_queues_ChannelStackCreateJob_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
+    /** fetch data from the table: "job_queues.ChannelStackCreateJob" using primary key columns */
+    job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
     /** fetch data from the table: "job_queues.CombineVideosJob" */
     job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
     /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -30971,24 +30783,6 @@ export type Subscription_RootChat_Pin_By_PkArgs = {
 };
 
 /** subscription root */
-export type Subscription_RootChat_PinnedOrSubscribedArgs = {
-    distinct_on?: Maybe<Array<Chat_PinnedOrSubscribed_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_PinnedOrSubscribed_Order_By>>;
-    where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
-};
-
-/** subscription root */
-export type Subscription_RootChat_PinnedOrSubscribed_AggregateArgs = {
-    distinct_on?: Maybe<Array<Chat_PinnedOrSubscribed_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_PinnedOrSubscribed_Order_By>>;
-    where?: Maybe<Chat_PinnedOrSubscribed_Bool_Exp>;
-};
-
-/** subscription root */
 export type Subscription_RootChat_ReactionArgs = {
     distinct_on?: Maybe<Array<Chat_Reaction_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -31083,48 +30877,6 @@ export type Subscription_RootChat_Subscription_By_PkArgs = {
 };
 
 /** subscription root */
-export type Subscription_RootChat_SubscriptionsWithUnnotifiedMessagesArgs = {
-    distinct_on?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Order_By>>;
-    where?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
-};
-
-/** subscription root */
-export type Subscription_RootChat_SubscriptionsWithUnnotifiedMessages_AggregateArgs = {
-    distinct_on?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_SubscriptionsWithUnnotifiedMessages_Order_By>>;
-    where?: Maybe<Chat_SubscriptionsWithUnnotifiedMessages_Bool_Exp>;
-};
-
-/** subscription root */
-export type Subscription_RootChat_TyperArgs = {
-    distinct_on?: Maybe<Array<Chat_Typer_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_Typer_Order_By>>;
-    where?: Maybe<Chat_Typer_Bool_Exp>;
-};
-
-/** subscription root */
-export type Subscription_RootChat_Typer_AggregateArgs = {
-    distinct_on?: Maybe<Array<Chat_Typer_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Chat_Typer_Order_By>>;
-    where?: Maybe<Chat_Typer_Bool_Exp>;
-};
-
-/** subscription root */
-export type Subscription_RootChat_Typer_By_PkArgs = {
-    attendeeId: Scalars["uuid"];
-    chatId: Scalars["uuid"];
-};
-
-/** subscription root */
 export type Subscription_RootEchoArgs = {
     message: Scalars["String"];
 };
@@ -31137,6 +30889,29 @@ export type Subscription_RootGetContentItemArgs = {
 /** subscription root */
 export type Subscription_RootGetUploadAgreementArgs = {
     magicToken: Scalars["String"];
+};
+
+/** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackCreateJobArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+/** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackCreateJob_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+};
+
+/** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackCreateJob_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 /** subscription root */

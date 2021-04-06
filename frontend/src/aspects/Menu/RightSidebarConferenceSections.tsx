@@ -237,7 +237,6 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }):
 
 function ChatsPanel({
     confSlug,
-    onChatIdChange,
     pageChatId,
     switchToPageChat,
     openChat,
@@ -245,7 +244,6 @@ function ChatsPanel({
     setUnread,
 }: {
     confSlug: string;
-    onChatIdChange: (id: string | null) => void;
     pageChatId: string | null;
     switchToPageChat: () => void;
     openChat: React.MutableRefObject<((chatId: string) => void) | null>;
@@ -314,7 +312,9 @@ function ChatsPanel({
             unsubscribeChatStates();
         };
     }, [globalChatState]);
-    const pinnedChats = useMemo(() => (pinnedChatsMap ? [...pinnedChatsMap.values()] : undefined), [pinnedChatsMap]);
+    const pinnedChats = useMemo(() => (pinnedChatsMap !== null ? [...pinnedChatsMap.values()] : undefined), [
+        pinnedChatsMap,
+    ]);
 
     const [currentChatId, _setCurrentChatId] = useState<string | null>(null);
     const [currentChat, setCurrentChat] = useState<ChatState | null>(null);
@@ -347,10 +347,6 @@ function ChatsPanel({
     closeChat.current = useCallback(() => {
         setCurrentChatId(null);
     }, [setCurrentChatId]);
-
-    useEffect(() => {
-        onChatIdChange(currentChat?.Id ?? null);
-    }, [onChatIdChange, currentChat?.Id]);
 
     const history = useHistory();
 
@@ -951,7 +947,6 @@ function RightSidebarConferenceSections_Inner({
     const roomId = roomMatch?.params?.roomId;
     const itemId = itemMatch?.params?.itemId;
     const [pageChatId, setPageChatId] = useState<string | null>(null);
-    const [nonPageChatId, setNonPageChatId] = useState<string | null>(null);
 
     const [currentTab, setCurrentTab] = useRestorableState<RightSidebarTabs>(
         "RightSideBar_CurrentTab",
@@ -961,20 +956,6 @@ function RightSidebarConferenceSections_Inner({
     );
 
     const chatState = useGlobalChatState();
-
-    useEffect(() => {
-        switch (currentTab) {
-            case RightSidebarTabs.PageChat:
-                chatState.suppressNotificationsForChatId = pageChatId;
-                break;
-            case RightSidebarTabs.Chats:
-                chatState.suppressNotificationsForChatId = nonPageChatId;
-                break;
-            case RightSidebarTabs.Presence:
-                chatState.suppressNotificationsForChatId = null;
-                break;
-        }
-    }, [chatState, currentTab, nonPageChatId, pageChatId]);
 
     useEffect(() => {
         if (roomId || itemId) {
@@ -1035,7 +1016,6 @@ function RightSidebarConferenceSections_Inner({
         () => (
             <ChatsPanel
                 confSlug={confSlug}
-                onChatIdChange={setNonPageChatId}
                 pageChatId={pageChatId}
                 switchToPageChat={switchToPageChat}
                 openChat={openChatCb}

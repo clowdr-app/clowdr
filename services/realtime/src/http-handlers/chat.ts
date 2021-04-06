@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { deletePin, insertPin } from "../lib/cache/pin";
 import { deleteSubscription, insertSubscription } from "../lib/cache/subscription";
-import { generateChatPinsChangedRoomName, generateChatSubscriptionsChangedRoomName } from "../socket-emitter/chat";
+import { generateChatPinsChangedRoomName, generateChatSubscriptionsChangedRoomName } from "../lib/chat";
 import { emitter } from "../socket-emitter/socket-emitter";
 import { Payload, Pin, Subscription } from "../types/hasura";
 
@@ -18,10 +18,10 @@ export async function subscriptionChanged(req: Request, res: Response, _next?: N
 
         if (data.event.op === "INSERT" || data.event.op === "MANUAL") {
             await insertSubscription(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("subscribed", sub.chatId);
+            emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("chat.subscribed", sub.chatId);
         } else if (data.event.op === "DELETE") {
             await deleteSubscription(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("unsubscribed", sub.chatId);
+            emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("chat:unsubscribed", sub.chatId);
         }
 
         res.status(200).send("OK");
@@ -43,10 +43,10 @@ export async function pinChanged(req: Request, res: Response, _next?: NextFuncti
 
         if (data.event.op === "INSERT" || data.event.op === "MANUAL") {
             await insertPin(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("pinned", sub.chatId);
+            emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("chat.pinned", sub.chatId);
         } else if (data.event.op === "DELETE") {
             await deletePin(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("unpinned", sub.chatId);
+            emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("chat:unpinned", sub.chatId);
         }
 
         res.status(200).send("OK");

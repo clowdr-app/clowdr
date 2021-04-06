@@ -2,7 +2,7 @@ import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { getAttendeeInfo } from "../../lib/cache/attendeeInfo";
-import { generateChatSubscriptionsChangedRoomName } from "../../socket-emitter/chat";
+import { generateChatSubscriptionsChangedRoomName } from "../../lib/chat";
 
 export function onListenForSubscriptionsChanged(
     _conferenceSlugs: string[],
@@ -20,7 +20,7 @@ export function onListenForSubscriptionsChanged(
                     userId,
                 });
 
-                if (attendeeInfo?.userId === attendeeId) {
+                if (attendeeInfo?.userId === userId) {
                     socket.join(generateChatSubscriptionsChangedRoomName(attendeeId));
                 }
             } catch (e) {
@@ -51,7 +51,7 @@ export function onUnlistenForSubscriptionsChanged(
                     userId,
                 });
 
-                if (attendeeInfo?.userId === attendeeId) {
+                if (attendeeInfo?.userId === userId) {
                     socket.leave(generateChatSubscriptionsChangedRoomName(attendeeId));
                 }
             } catch (e) {

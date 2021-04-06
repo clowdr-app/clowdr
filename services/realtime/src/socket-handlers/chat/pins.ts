@@ -2,7 +2,7 @@ import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { getAttendeeInfo } from "../../lib/cache/attendeeInfo";
-import { generateChatPinsChangedRoomName } from "../../socket-emitter/chat";
+import { generateChatPinsChangedRoomName } from "../../lib/chat";
 
 export function onListenForPinsChanged(
     _conferenceSlugs: string[],
@@ -20,7 +20,7 @@ export function onListenForPinsChanged(
                     userId,
                 });
 
-                if (attendeeInfo?.userId === attendeeId) {
+                if (attendeeInfo?.userId === userId) {
                     socket.join(generateChatPinsChangedRoomName(attendeeId));
                 }
             } catch (e) {
@@ -51,7 +51,7 @@ export function onUnlistenForPinsChanged(
                     userId,
                 });
 
-                if (attendeeInfo?.userId === attendeeId) {
+                if (attendeeInfo?.userId === userId) {
                     socket.leave(generateChatPinsChangedRoomName(attendeeId));
                 }
             } catch (e) {

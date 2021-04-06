@@ -1,20 +1,7 @@
 /* eslint-disable react/prop-types */
 import { ApolloClient, ApolloError, gql } from "@apollo/client";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
-import {
-    Box,
-    Button,
-    ButtonGroup,
-    CloseButton,
-    createStandaloneToast,
-    Heading,
-    RenderProps,
-    VStack,
-} from "@chakra-ui/react";
-import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
-import React from "react";
 import {
     AddReactionDocument,
     AddReactionMutation,
@@ -29,9 +16,6 @@ import {
     DeleteReactionDocument,
     DeleteReactionMutation,
     DeleteReactionMutationVariables,
-    GetRemoteChatServiceTokenDocument,
-    GetRemoteChatServiceTokenMutation,
-    GetRemoteChatServiceTokenMutationVariables,
     InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
@@ -43,15 +27,9 @@ import {
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
     SelectInitialChatStateQueryVariables,
-    SelectInitialChatStatesDocument,
-    SelectInitialChatStatesQuery,
-    SelectInitialChatStatesQueryVariables,
     SelectMessagesPageDocument,
     SelectMessagesPageQuery,
     SelectMessagesPageQueryVariables,
-    SelectPinnedOrSubscribedDocument,
-    SelectPinnedOrSubscribedQuery,
-    SelectPinnedOrSubscribedQueryVariables,
     SendChatMessageDocument,
     SendChatMessageMutation,
     SendChatMessageMutationVariables,
@@ -67,7 +45,8 @@ import {
     UnsubscribeChatMutationVariables,
 } from "../../generated/graphql";
 import type { Attendee } from "../Conference/useCurrentAttendee";
-import { Markdown } from "../Text/Markdown";
+import { realtimeService } from "../Realtime/RealtimeService";
+import type { Message, Reaction } from "./RealtimeServiceCommonTypes";
 import type { AnswerMessageData, AnswerReactionData, MessageData } from "./Types/Messages";
 
 export type Observer<V> = (v: V) => true | void;
@@ -159,7 +138,7 @@ gql`
     }
 
     query InitialChatState($attendeeId: uuid!) {
-        chat_PinnedOrSubscribed(where: { attendeeId: { _eq: $attendeeId } }) {
+        chat_Pin(where: { attendeeId: { _eq: $attendeeId } }) {
             chatId
             attendeeId
             chat {
@@ -180,25 +159,25 @@ gql`
         }
     }
 
-    query SelectPinnedOrSubscribed($attendeeId: uuid!) {
-        chat_PinnedOrSubscribed(where: { attendeeId: { _eq: $attendeeId } }) {
-            chatId
-            attendeeId
-            chat {
-                id
-                pins(where: { attendeeId: { _eq: $attendeeId } }) {
-                    attendeeId
-                    chatId
-                    wasManuallyPinned
-                }
-                subscriptions(where: { attendeeId: { _eq: $attendeeId } }) {
-                    attendeeId
-                    chatId
-                    wasManuallySubscribed
-                }
-            }
-        }
-    }
+    # query SelectPinnedOrSubscribed($attendeeId: uuid!) {
+    #     chat_PinnedOrSubscribed(where: { attendeeId: { _eq: $attendeeId } }) {
+    #         chatId
+    #         attendeeId
+    #         chat {
+    #             id
+    #             pins(where: { attendeeId: { _eq: $attendeeId } }) {
+    #                 attendeeId
+    #                 chatId
+    #                 wasManuallyPinned
+    #             }
+    #             subscriptions(where: { attendeeId: { _eq: $attendeeId } }) {
+    #                 attendeeId
+    #                 chatId
+    #                 wasManuallySubscribed
+    #             }
+    #         }
+    #     }
+    # }
 `;
 
 gql`
@@ -396,15 +375,6 @@ gql`
     }
 `;
 
-gql`
-    mutation GetRemoteChatServiceToken($attendeeId: uuid!) {
-        generateChatRemoteToken(attendeeId: $attendeeId) {
-            expiry
-            jwt
-        }
-    }
-`;
-
 // gql`
 //     subscription MessageReactions($messageIds: [Int!]!) {
 //         chat_Reaction(where: { messageId: { _in: $messageIds } }) {
@@ -553,10 +523,7 @@ export class ChatState {
 
     private pinSubMutex = new Mutex();
     private messagesMutex = new Mutex();
-    private remoteChatMutex = new Mutex();
     private sendMutex = new Mutex();
-
-    private remoteChat: Promise<Channel> | null;
 
     constructor(
         private readonly globalState: GlobalChatState,
@@ -575,19 +542,15 @@ export class ChatState {
         this.isPinned = initialState.pins.length > 0;
         this.isSubscribed = initialState.subscriptions.length > 0;
         this.unreadCount = 0;
-        this.readUpToMsgId = -1;
-        this.readUpTo_ExistsInDb = false;
-        this.latestNotifiedIndex = -1;
 
-        this.remoteChat = null;
+        // CHAT_TODO
+        // this.readUpToMsgId = -1;
+        // this.readUpTo_ExistsInDb = false;
+        // this.latestNotifiedIndex = -1;
     }
 
     public async teardown(): Promise<void> {
-        await this.unsubscribeFromMoreMessages(true);
-        // if (this.readUpTo_Timeout) {
-        //     clearTimeout(this.readUpTo_Timeout.id);
-        //     await this.saveReadUpToIndex();
-        // }
+        // CHAT_TODO: await this.unsubscribeFromMoreMessages(true);
     }
 
     public get Id(): string {
@@ -653,10 +616,6 @@ export class ChatState {
         this.isPinned = !this.isPinned;
         this.isPinnedObs.publish(this.isPinned);
 
-        if (this.isPinned) {
-            await this.subscribeToMoreMessages();
-        }
-
         const release = await this.pinSubMutex.acquire();
         this.isTogglingPinned = true;
 
@@ -713,10 +672,6 @@ export class ChatState {
         }
     }
 
-    public get isPinned_InternalUseOnly(): boolean {
-        return this.isPinned;
-    }
-
     public isSubscribed: boolean;
     private isSubscribedObs = new Observable<boolean>((observer) => {
         observer(this.isSubscribed);
@@ -735,10 +690,6 @@ export class ChatState {
 
         const release = await this.pinSubMutex.acquire();
         this.isTogglingSubscribed = true;
-
-        if (this.isSubscribed) {
-            await this.subscribeToMoreMessages();
-        }
 
         try {
             if (isSubd) {
@@ -773,14 +724,18 @@ export class ChatState {
                     });
                     this.isSubscribed =
                         !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
-                    this.readUpTo_ExistsInDb = true;
+
+                    // CHAT_TODO
+                    // this.readUpTo_ExistsInDb = true;
                 } catch (e) {
                     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
                         this.isSubscribed = isSubd;
                         throw e;
                     } else {
                         this.isSubscribed = true;
-                        this.readUpTo_ExistsInDb = true;
+
+                        // CHAT_TODO
+                        // this.readUpTo_ExistsInDb = true;
                     }
                 }
             }
@@ -903,266 +858,240 @@ export class ChatState {
             }
         }
     }
-    private subscribedToMoreMessages = false;
-    public async subscribeToMoreMessages(): Promise<void> {
-        const release = await this.remoteChatMutex.acquire();
+
+    private subMutex = new Mutex();
+    private subCount = 0;
+    public async subscribe(): Promise<void> {
+        const release = await this.subMutex.acquire();
 
         try {
-            if (this.initialState.remoteServiceId) {
-                if (!this.subscribedToMoreMessages) {
-                    this.subscribedToMoreMessages = true;
+            this.subCount++;
+            if (this.subCount === 1) {
+                const socket = await this.globalState.socket;
+                socket?.emit("chat.subscribe", this.Id);
+            }
+        } catch (e) {
+            console.error(`Error subscribing to chat: ${this.Id}`, e);
+        } finally {
+            release();
+        }
+    }
+    public async unsubscribe(): Promise<void> {
+        const release = await this.subMutex.acquire();
 
-                    const remoteServiceClient = await this.globalState.remoteServiceClient;
-                    this.remoteChat = remoteServiceClient?.getChannelBySid(this.initialState.remoteServiceId) ?? null;
-                    const remoteChat = await this.remoteChat;
-                    try {
-                        if (remoteChat?.status !== "joined") {
-                            await remoteChat?.join();
-                        } else {
-                            await remoteChat?._subscribe();
-                        }
-                    } catch (e) {
-                        console.error(`Error joining remote service for chat: ${this.Id}`, e);
-                    }
-                    remoteChat?.on("messageAdded", this.messageAddedListener.bind(this));
-                    remoteChat?.on("messageRemoved", this.messageRemovedListener.bind(this));
-                    remoteChat?.on("messageUpdated", this.messageUpdatedListener.bind(this));
-
-                    if (remoteChat?.lastMessage) {
-                        await remoteChat?.getMessages(
-                            ChatState.DefaultPageSize,
-                            remoteChat.lastMessage.index,
-                            "backwards"
-                        );
-                    }
-                }
-            } else {
+        try {
+            this.subCount--;
+            if (this.subCount === 0) {
+                const socket = await this.globalState.socket;
+                socket?.emit("chat.unsubscribe", this.Id);
+            }
+            if (this.subCount < 0) {
                 console.warn(
-                    `Live messages and reactions unavailable for chat ${this.initialState.id} because the remote service has not been set up for this chat yet.`
+                    "Chat sub count went negative..hmmm...suggests the ref count is going out of sync somehow.",
+                    this.subCount
                 );
             }
         } catch (e) {
-            console.error(`Error subscribing to new messages: ${this.Id}`, e);
-        } finally {
-            release();
-        }
-    }
-    public async unsubscribeFromMoreMessages(force = false): Promise<void> {
-        const release = await this.remoteChatMutex.acquire();
-
-        try {
-            if (force || (!this.isSubscribed && !this.isPinned)) {
-                const remoteChat = await this.remoteChat;
-                remoteChat?._unsubscribe();
-                // This API has an "on" but not an "off"...WTH?!
-                // remoteChat?.off("messageAdded", this.messageAddedListener);
-                // remoteChat?.off("messageRemoved", this.messageRemovedListener);
-                // remoteChat?.off("messageUpdated", this.messageUpdatedListener);
-            }
-        } catch (e) {
-            console.error(`Error unsubscribing from new messages: ${this.Id}`, e);
+            console.error(`Error unsubscribing from chat: ${this.Id}`, e);
         } finally {
             release();
         }
     }
 
-    private async messageAddedListener(msg: TwilioMessage) {
-        const release = await this.messagesMutex.acquire();
-        let newMessageStates: MessageState[] | undefined;
-        try {
-            const attrs = msg.attributes as Record<string, any>;
-            const existing = this.messages.get(attrs.id);
-            if (!existing) {
-                let senderId = null;
-                try {
-                    const member = await msg.getMember();
-                    senderId = member.identity;
-                } catch {
-                    // Ignore - maybe system sent the message
-                }
-                newMessageStates = [
-                    new MessageState(this.globalState, {
-                        id: attrs.id,
-                        data: attrs.data,
-                        type: attrs.type,
-                        chatId: this.Id,
-                        message: msg.body,
-                        created_at: msg.dateCreated.toISOString(),
-                        senderId,
-                    }),
-                ];
-                newMessageStates.forEach((msg) => {
-                    this.messages.set(msg.id, msg);
-                });
-            }
-        } catch (e) {
-            console.error(`Error processing new messages from remote service: ${this.Id}`, e);
-        } finally {
-            release();
-            if (newMessageStates && newMessageStates.length > 0) {
-                this.messagesObs.publish({
-                    op: "loaded_new",
-                    messages: newMessageStates,
-                });
-                await this.computeNotifications(newMessageStates[0]);
-            }
-        }
+    public async onMessageAdded(_msg: Message): Promise<void> {
+        // CHAT_TODO
+        // const release = await this.messagesMutex.acquire();
+        // let newMessageStates: MessageState[] | undefined;
+        // try {
+        //     const attrs = msg.attributes as Record<string, any>;
+        //     const existing = this.messages.get(attrs.id);
+        //     if (!existing) {
+        //         let senderId = null;
+        //         try {
+        //             const member = await msg.getMember();
+        //             senderId = member.identity;
+        //         } catch {
+        //             // Ignore - maybe system sent the message
+        //         }
+        //         newMessageStates = [
+        //             new MessageState(this.globalState, {
+        //                 id: attrs.id,
+        //                 data: attrs.data,
+        //                 type: attrs.type,
+        //                 chatId: this.Id,
+        //                 message: msg.body,
+        //                 created_at: msg.dateCreated.toISOString(),
+        //                 senderId,
+        //             }),
+        //         ];
+        //         newMessageStates.forEach((msg) => {
+        //             this.messages.set(msg.id, msg);
+        //         });
+        //     }
+        // } catch (e) {
+        //     console.error(`Error processing new messages from remote service: ${this.Id}`, e);
+        // } finally {
+        //     release();
+        //     if (newMessageStates && newMessageStates.length > 0) {
+        //         this.messagesObs.publish({
+        //             op: "loaded_new",
+        //             messages: newMessageStates,
+        //         });
+        //     }
+        // }
     }
 
-    private async messageRemovedListener(msg: TwilioMessage) {
-        const release = await this.messagesMutex.acquire();
-        let deletedId: number | undefined;
-        try {
-            const attrs = msg.attributes as Record<string, any>;
-            if (this.messages.delete(attrs.id)) {
-                deletedId = attrs.id;
-            }
-        } catch (e) {
-            console.error(`Error processing removed messages from remote service: ${this.Id}`, e);
-        } finally {
-            release();
-            if (deletedId) {
-                this.messagesObs.publish({
-                    op: "deleted",
-                    messageIds: [deletedId],
-                });
-            }
-        }
+    public async onMessageRemoved(_msg: Message): Promise<void> {
+        // CHAT_TODO
+        // const release = await this.messagesMutex.acquire();
+        // let deletedId: number | undefined;
+        // try {
+        //     const attrs = msg.attributes as Record<string, any>;
+        //     if (this.messages.delete(attrs.id)) {
+        //         deletedId = attrs.id;
+        //     }
+        // } catch (e) {
+        //     console.error(`Error processing removed messages from remote service: ${this.Id}`, e);
+        // } finally {
+        //     release();
+        //     if (deletedId) {
+        //         this.messagesObs.publish({
+        //             op: "deleted",
+        //             messageIds: [deletedId],
+        //         });
+        //     }
+        // }
     }
 
-    private async messageUpdatedListener({
-        message: ev,
-        updateReasons,
-    }: {
-        message: TwilioMessage;
-        updateReasons: Array<TwilioMessage.UpdateReason>;
-    }) {
-        const release = await this.messagesMutex.acquire();
-        try {
-            if (updateReasons && updateReasons.includes("attributes")) {
-                const attrs = ev.attributes as Record<string, any>;
-                const existingMsg = this.messages.get(attrs.id);
-                if (existingMsg) {
-                    existingMsg.updateReactions(attrs.reactions);
-                }
-            }
-        } catch (e) {
-            console.error(`Error processing updated messages from remote service: ${this.Id}`, e);
-        } finally {
-            release();
-        }
+    public async onMessageUpdated(_msg: Message): Promise<void> {
+        // CHAT_TODO
+        // const release = await this.messagesMutex.acquire();
+        // try {
+        //     if (updateReasons && updateReasons.includes("attributes")) {
+        //         const attrs = ev.attributes as Record<string, any>;
+        //         const existingMsg = this.messages.get(attrs.id);
+        //         if (existingMsg) {
+        //             existingMsg.updateReactions(attrs.reactions);
+        //         }
+        //     }
+        // } catch (e) {
+        //     console.error(`Error processing updated messages from remote service: ${this.Id}`, e);
+        // } finally {
+        //     release();
+        // }
     }
 
-    private readonly toast = createStandaloneToast();
-    private latestNotifiedIndex: number;
-    private async computeNotifications(message: MessageState) {
-        if (this.latestNotifiedIndex < message.id) {
-            if (this.latestNotifiedIndex !== -1 && this.readUpToMsgId < message.id) {
-                const remoteChat = await this.remoteChat;
-                const remoteUnreadCount =
-                    message.senderId === this.globalState.attendee.id
-                        ? 0
-                        : (await remoteChat?.getUnconsumedMessagesCount()) ?? Number.POSITIVE_INFINITY;
-                const newCount = Math.min(this.unreadCount + 1, remoteUnreadCount);
-                if (this.unreadCount !== newCount) {
-                    this.unreadCount = newCount;
-                    this.unreadCountObs.publish(this.unreadCount);
-                }
-            }
+    // CHAT_TODO
+    // private readonly toast = createStandaloneToast();
+    // private latestNotifiedIndex: number;
+    // private async computeNotifications(message: MessageState) {
+    //     if (this.latestNotifiedIndex < message.id) {
+    //         if (this.latestNotifiedIndex !== -1 && this.readUpToMsgId < message.id) {
+    //             const remoteChat = await this.remoteChat;
+    //             const remoteUnreadCount =
+    //                 message.senderId === this.globalState.attendee.id
+    //                     ? 0
+    //                     : (await remoteChat?.getUnconsumedMessagesCount()) ?? Number.POSITIVE_INFINITY;
+    //             const newCount = Math.min(this.unreadCount + 1, remoteUnreadCount);
+    //             if (this.unreadCount !== newCount) {
+    //                 this.unreadCount = newCount;
+    //                 this.unreadCountObs.publish(this.unreadCount);
+    //             }
+    //         }
 
-            const prevNotifIndex = this.latestNotifiedIndex;
-            this.latestNotifiedIndex = message.id;
+    //         const prevNotifIndex = this.latestNotifiedIndex;
+    //         this.latestNotifiedIndex = message.id;
 
-            if (
-                this.isSubscribed &&
-                prevNotifIndex !== -1 &&
-                this.readUpToMsgId < message.id &&
-                this.globalState.attendee.id !== message.senderId &&
-                message.chatId !== this.globalState.suppressNotificationsForChatId &&
-                message.type !== Chat_MessageType_Enum.DuplicationMarker &&
-                message.type !== Chat_MessageType_Enum.Emote
-            ) {
-                const chatPath = `/conference/${this.globalState.conference.slug}/chat/${this.Id}`;
-                const chatName = this.Name;
-                const chatIsDM = this.IsDM;
-                const globalState = this.globalState;
+    //         if (
+    //             this.isSubscribed &&
+    //             prevNotifIndex !== -1 &&
+    //             this.readUpToMsgId < message.id &&
+    //             this.globalState.attendee.id !== message.senderId &&
+    //             message.chatId !== this.globalState.suppressNotificationsForChatId &&
+    //             message.type !== Chat_MessageType_Enum.DuplicationMarker &&
+    //             message.type !== Chat_MessageType_Enum.Emote
+    //         ) {
+    //             const chatPath = `/conference/${this.globalState.conference.slug}/chat/${this.Id}`;
+    //             const chatName = this.Name;
+    //             const chatIsDM = this.IsDM;
+    //             const globalState = this.globalState;
 
-                this.toast({
-                    position: "top-right",
-                    description: message.message,
-                    isClosable: true,
-                    duration: 15000,
-                    render: function ChatNotification(props: RenderProps) {
-                        return (
-                            <VStack
-                                alignItems="flex-start"
-                                background="purple.700"
-                                color="gray.50"
-                                w="auto"
-                                h="auto"
-                                p={5}
-                                opacity={0.95}
-                                borderRadius={10}
-                                position="relative"
-                                pt={2}
-                            >
-                                <CloseButton position="absolute" top={2} right={2} onClick={props.onClose} />
-                                <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
-                                    New{" "}
-                                    {message.type === Chat_MessageType_Enum.Message
-                                        ? "message"
-                                        : message.type === Chat_MessageType_Enum.Answer
-                                        ? "answer"
-                                        : message.type === Chat_MessageType_Enum.Question
-                                        ? "question"
-                                        : "message"}
-                                </Heading>
-                                <Heading
-                                    textAlign="left"
-                                    as="h3"
-                                    fontSize="0.9rem"
-                                    fontStyle="italic"
-                                    maxW="250px"
-                                    noOfLines={1}
-                                >
-                                    {chatIsDM ? "from " : "in "}
-                                    {chatName}
-                                </Heading>
-                                <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
-                                    <Markdown restrictHeadingSize>{message.message}</Markdown>
-                                </Box>
-                                <ButtonGroup isAttached>
-                                    {globalState.openChatInSidebar ? (
-                                        <Button
-                                            colorScheme="green"
-                                            onClick={() => {
-                                                props.onClose();
-                                                globalState.openChatInSidebar?.(message.chatId);
-                                                globalState.showSidebar?.();
-                                            }}
-                                        >
-                                            Go to chat
-                                        </Button>
-                                    ) : undefined}
-                                    {chatPath ? (
-                                        <Button
-                                            colorScheme="blue"
-                                            onClick={() => {
-                                                props.onClose();
-                                                window.open(chatPath, "_blank");
-                                            }}
-                                        >
-                                            <ExternalLinkIcon />
-                                        </Button>
-                                    ) : undefined}
-                                </ButtonGroup>
-                            </VStack>
-                        );
-                    },
-                });
-            }
-        }
-    }
+    //             this.toast({
+    //                 position: "top-right",
+    //                 description: message.message,
+    //                 isClosable: true,
+    //                 duration: 15000,
+    //                 render: function ChatNotification(props: RenderProps) {
+    //                     return (
+    //                         <VStack
+    //                             alignItems="flex-start"
+    //                             background="purple.700"
+    //                             color="gray.50"
+    //                             w="auto"
+    //                             h="auto"
+    //                             p={5}
+    //                             opacity={0.95}
+    //                             borderRadius={10}
+    //                             position="relative"
+    //                             pt={2}
+    //                         >
+    //                             <CloseButton position="absolute" top={2} right={2} onClick={props.onClose} />
+    //                             <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
+    //                                 New{" "}
+    //                                 {message.type === Chat_MessageType_Enum.Message
+    //                                     ? "message"
+    //                                     : message.type === Chat_MessageType_Enum.Answer
+    //                                     ? "answer"
+    //                                     : message.type === Chat_MessageType_Enum.Question
+    //                                     ? "question"
+    //                                     : "message"}
+    //                             </Heading>
+    //                             <Heading
+    //                                 textAlign="left"
+    //                                 as="h3"
+    //                                 fontSize="0.9rem"
+    //                                 fontStyle="italic"
+    //                                 maxW="250px"
+    //                                 noOfLines={1}
+    //                             >
+    //                                 {chatIsDM ? "from " : "in "}
+    //                                 {chatName}
+    //                             </Heading>
+    //                             <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
+    //                                 <Markdown restrictHeadingSize>{message.message}</Markdown>
+    //                             </Box>
+    //                             <ButtonGroup isAttached>
+    //                                 {globalState.openChatInSidebar ? (
+    //                                     <Button
+    //                                         colorScheme="green"
+    //                                         onClick={() => {
+    //                                             props.onClose();
+    //                                             globalState.openChatInSidebar?.(message.chatId);
+    //                                             globalState.showSidebar?.();
+    //                                         }}
+    //                                     >
+    //                                         Go to chat
+    //                                     </Button>
+    //                                 ) : undefined}
+    //                                 {chatPath ? (
+    //                                     <Button
+    //                                         colorScheme="blue"
+    //                                         onClick={() => {
+    //                                             props.onClose();
+    //                                             window.open(chatPath, "_blank");
+    //                                         }}
+    //                                     >
+    //                                         <ExternalLinkIcon />
+    //                                     </Button>
+    //                                 ) : undefined}
+    //                             </ButtonGroup>
+    //                         </VStack>
+    //                     );
+    //                 },
+    //             });
+    //         }
+    //     }
+    // }
 
     private isSending = false;
     private isSendingObs = new Observable<boolean>((observer) => {
@@ -1179,6 +1108,8 @@ export class ChatState {
         data: MessageData,
         isPinned: boolean
     ): Promise<void> {
+        // CHAT_TODO
+
         const release = await this.sendMutex.acquire();
 
         this.unreadCount = 0;
@@ -1248,6 +1179,8 @@ export class ChatState {
     }
 
     public async deleteMessage(messageId: number): Promise<void> {
+        // CHAT_TODO
+
         const release = await this.messagesMutex.acquire();
 
         try {
@@ -1269,30 +1202,32 @@ export class ChatState {
         }
     }
 
-    private readUpToMsgId: number;
-    private readUpTo_ExistsInDb: boolean;
-    private readUpTo_Timeout: { id: number; firstTimestampMs: number } | undefined;
-    public get ReadUpToMsgId(): number {
-        return this.readUpToMsgId;
+    // CHAT_TODO
+    // private readUpToMsgId: number;
+    // private readUpTo_ExistsInDb: boolean;
+    // private readUpTo_Timeout: { id: number; firstTimestampMs: number } | undefined;
+    // public get ReadUpToMsgId(): number {
+    //     return this.readUpToMsgId;
+    // }
+    public setAllMessagesRead(_messageId: number): void {
+        // CHAT_TODO
+        //     this.readUpToMsgId = Math.max(this.readUpToMsgId, messageId);
+        //     this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
+        //     this.unreadCount = 0;
+        //     this.unreadCountObs.publish(0);
+        //     (async () => {
+        //         const remoteChat = await this.remoteChat;
+        //         await remoteChat?.setAllMessagesConsumed();
+        //     })();
     }
-    public setAllMessagesRead(messageId: number): void {
-        this.readUpToMsgId = Math.max(this.readUpToMsgId, messageId);
-        this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
-        this.unreadCount = 0;
-        this.unreadCountObs.publish(0);
-
-        (async () => {
-            const remoteChat = await this.remoteChat;
-            await remoteChat?.setAllMessagesConsumed();
-        })();
-    }
-    public async updateReadUpToIdx(): Promise<void> {
-        const remoteChat = await this.remoteChat;
-        const newCount = (await remoteChat?.getUnconsumedMessagesCount()) ?? 0;
-        if (this.unreadCount !== newCount) {
-            this.unreadCount = newCount;
-            this.unreadCountObs.publish(this.unreadCount);
-        }
+    public async fetchReadUpToIdx(): Promise<void> {
+        // CHAT_TODO
+        //     const remoteChat = await this.remoteChat;
+        //     const newCount = (await remoteChat?.getUnconsumedMessagesCount()) ?? 0;
+        //     if (this.unreadCount !== newCount) {
+        //         this.unreadCount = newCount;
+        //         this.unreadCountObs.publish(this.unreadCount);
+        //     }
     }
 
     static compare(x: ChatState, y: ChatState): number {
@@ -1310,22 +1245,10 @@ export class ChatState {
 }
 
 export class GlobalChatState {
-    private _suppressNotificationsForChatId: string | null = null;
-    public get suppressNotificationsForChatId(): string | null {
-        return this._suppressNotificationsForChatId;
-    }
-    public set suppressNotificationsForChatId(value: string | null) {
-        this._suppressNotificationsForChatId = value;
-        this.suppressNotificationsForChatIdObs.publish(value);
-    }
-    public suppressNotificationsForChatIdObs: Observable<string | null> = new Observable((observe) => {
-        observe(this.suppressNotificationsForChatId);
-    });
     public openChatInSidebar: ((chatId: string) => void) | null = null;
     public showSidebar: (() => void) | null = null;
 
-    private remoteServiceToken: string | null = null;
-    public remoteServiceClient: Promise<Twilio.Chat.Client | null> | null = null;
+    public socket: Promise<SocketIOClient.Socket | null> | null = null;
 
     constructor(
         public readonly conference: {
@@ -1382,70 +1305,7 @@ export class GlobalChatState {
             if (!this.hasInitialised) {
                 this.hasInitialised = true;
                 if (!this.hasTorndown) {
-                    // eslint-disable-next-line no-async-promise-executor
-                    this.remoteServiceClient = new Promise(async (resolve, reject) => {
-                        let resolved = false;
-
-                        try {
-                            let retry: boolean;
-                            let attempCount = 0;
-
-                            do {
-                                retry = false;
-                                attempCount++;
-
-                                if (!this.remoteServiceToken) {
-                                    const { token } = await this.fetchFreshToken();
-                                    if (token) {
-                                        this.remoteServiceToken = token;
-                                        console.info("RemoteService token obtained.");
-                                    } else {
-                                        this.remoteServiceToken = null;
-
-                                        console.warn("RemoteService token not obtained.");
-                                        throw new Error("RemoteService token not obtained.");
-                                    }
-                                }
-
-                                assert(this.remoteServiceToken);
-
-                                try {
-                                    const result = await Twilio.Chat.Client.create(this.remoteServiceToken);
-                                    resolve(result);
-                                    resolved = true;
-                                    console.info("Created RemoteService client.");
-
-                                    // Enable underlying service features
-                                    this.enableAutoRenewConnection();
-
-                                    // TODO: Attach to events
-                                } catch (e) {
-                                    if (e.toString().includes("expired")) {
-                                        console.info("RemoteService token (probably) expired.");
-
-                                        this.remoteServiceToken = null;
-
-                                        if (attempCount < 2) {
-                                            retry = true;
-                                        }
-                                    }
-
-                                    if (!retry) {
-                                        console.error("Could not create RemoteService client!", e);
-                                        throw e;
-                                    }
-                                }
-                            } while (retry);
-
-                            if (!resolved) {
-                                resolve(null);
-                            }
-                        } catch (e) {
-                            if (!resolved) {
-                                reject(e);
-                            }
-                        }
-                    });
+                    this.socket = new Promise((resolve) => realtimeService.onSocketAvailable(resolve));
 
                     const initialData = await this.apolloClient.query<
                         InitialChatStateQuery,
@@ -1459,7 +1319,10 @@ export class GlobalChatState {
 
                     console.info("Initial chat data", initialData);
 
-                    await this.remoteServiceClient;
+                    const socket = await this.socket;
+                    if (!socket) {
+                        throw new Error("No websocket connection to realtime/chat service!");
+                    }
 
                     console.info("Remote service client configured.", initialData);
 
@@ -1467,13 +1330,10 @@ export class GlobalChatState {
                         this.chatStates = new Map();
                     }
                     await Promise.all(
-                        initialData.data.chat_PinnedOrSubscribed.map(async (item) => {
+                        initialData.data.chat_Pin.map(async (item) => {
                             if (item.chat) {
                                 const newState = new ChatState(this, item.chat);
-                                if (newState.isSubscribed || newState.isPinned_InternalUseOnly) {
-                                    await newState.subscribeToMoreMessages();
-                                }
-                                await newState.updateReadUpToIdx();
+                                await newState.fetchReadUpToIdx();
                                 this.chatStates?.set(item.chat.id, newState);
                             }
                         })
@@ -1481,9 +1341,78 @@ export class GlobalChatState {
 
                     this.chatStatesObs.publish(this.chatStates);
 
-                    // await this.setupUnreadCountPolling();
-                    await this.setupPinsSubsPolling();
-                    // await this.setupReactionsSubscription();
+                    socket.on("notification", (notification: any) => {
+                        console.info("Notification", notification);
+                        // CHAT_TODO
+                        // Note: Working, just needs hooking up
+                        // (and possibly extra info from the server side to deliver the notification seamlessly)
+                    });
+
+                    socket.on("chat.subscribed", (chatId: string) => {
+                        console.info(`Chat subscribed: ${chatId}`);
+                        // CHAT_TODO
+                        // Note: Working, just needs hooking up
+                    });
+                    socket.on("chat:unsubscribed", (chatId: string) => {
+                        console.info(`Chat unsubscribed: ${chatId}`);
+                        // CHAT_TODO
+                        // Note: Working, just needs hooking up
+                    });
+
+                    socket.on("chat.pinned", (chatId: string) => {
+                        console.info(`Chat pinned: ${chatId}`);
+                        // CHAT_TODO
+                        // Note: Working, just needs hooking up
+                    });
+                    socket.on("chat:unpinned", (chatId: string) => {
+                        console.info(`Chat unpinned: ${chatId}`);
+                        // CHAT_TODO
+                        // Note: Working, just needs hooking up
+                    });
+
+                    socket.on("chat.messages.receive", (msg: Message) => {
+                        console.info("Chat message received", msg);
+                        // CHAT_TODO
+                        // Note: Working, just needs hooking up
+                    });
+                    socket.on("chat.messages.update", (msg: Message) => {
+                        console.info("Chat message updated", msg);
+                        // CHAT_TODO
+                    });
+                    socket.on("chat.messages.delete", (msg: Message) => {
+                        console.info("Chat message deleted", msg);
+                        // CHAT_TODO
+                    });
+
+                    socket.on("chat.messages.send.ack", (messageSid: string) => {
+                        console.info("Chat message send ack'd", messageSid);
+                        // CHAT_TODO
+                    });
+                    socket.on("chat.messages.send.nack", (messageSid: string) => {
+                        console.info("Chat message send nack'd", messageSid);
+                        // CHAT_TODO
+                    });
+
+                    socket.on("chat.reactions.receive", (msg: Reaction) => {
+                        console.info("Chat reaction received", msg);
+                        // CHAT_TODO
+                    });
+                    socket.on("chat.reactions.update", (msg: Reaction) => {
+                        console.info("Chat reaction updated", msg);
+                        // CHAT_TODO
+                    });
+                    socket.on("chat.reactions.delete", (msg: Reaction) => {
+                        console.info("Chat reaction deleted", msg);
+                        // CHAT_TODO
+                    });
+
+                    socket.emit("chat.subscriptions.changed.on", this.attendee.id);
+                    socket.emit("chat.pins.changed.on", this.attendee.id);
+
+                    // TODO: Actions
+                    //    - Chat: subscribe / unsubscribe
+                    //    - Messages: send (remember ack/nack)
+                    //    - Reactions: send
                 }
             }
         } catch (e) {
@@ -1493,48 +1422,6 @@ export class GlobalChatState {
         }
     }
 
-    private async fetchFreshToken(): Promise<{
-        token: string | null;
-        expiry: Date | null;
-    }> {
-        console.info(
-            `Fetching fresh chat token for ${this.attendee.displayName} (${this.attendee.id}), ${this.conference.name} (${this.conference.id})`
-        );
-
-        const result = await this.apolloClient.mutate<
-            GetRemoteChatServiceTokenMutation,
-            GetRemoteChatServiceTokenMutationVariables
-        >({
-            mutation: GetRemoteChatServiceTokenDocument,
-            variables: {
-                attendeeId: this.attendee.id,
-            },
-        });
-        return {
-            token: result.data?.generateChatRemoteToken?.jwt ?? "Unknown token",
-            expiry: new Date(result.data?.generateChatRemoteToken?.expiry ?? 0),
-        };
-    }
-
-    async enableAutoRenewConnection(): Promise<void> {
-        console.info("Enabling auto-renew connection.");
-        (await this.remoteServiceClient)?.on("tokenAboutToExpire", async () => {
-            console.info("Token about to expire");
-
-            const { token } = await this.fetchFreshToken();
-            if (token) {
-                this.remoteServiceToken = token;
-                console.info("Twilio token for renewal obtained.");
-
-                await (await this.remoteServiceClient)?.updateToken(token);
-            } else {
-                this.remoteServiceToken = null;
-                console.warn("Twilio token for renewal not obtained.");
-                throw new Error("Twilio token for renewal not obtained.");
-            }
-        });
-    }
-
     public async teardown(): Promise<void> {
         const release = await this.mutex.acquire();
 
@@ -1542,9 +1429,30 @@ export class GlobalChatState {
             if (!this.hasTorndown) {
                 this.hasTorndown = true;
                 if (this.hasInitialised) {
-                    // await this.teardownReactionsSubscription();
-                    await this.teardownPinsSubsPolling();
-                    // await this.teardownUnreadCountPolling();
+                    const socket = await this.socket;
+                    if (socket) {
+                        socket.emit("chat.subscriptions.changed.off", this.attendee.id);
+                        socket.emit("chat.pins.changed.off", this.attendee.id);
+
+                        socket.off("notification");
+
+                        socket.off("chat.subscribed");
+                        socket.off("chat:unsubscribed");
+
+                        socket.off("chat.pinned");
+                        socket.off("chat:unpinned");
+
+                        socket.off("chat.messages.receive");
+                        socket.off("chat.messages.update");
+                        socket.off("chat.messages.delete");
+
+                        socket.off("chat.messages.send.ack");
+                        socket.off("chat.messages.send.nack");
+
+                        socket.off("chat.reactions.receive");
+                        socket.off("chat.reactions.update");
+                        socket.off("chat.reactions.delete");
+                    }
 
                     if (this.chatStates) {
                         await Promise.all(
@@ -1582,10 +1490,7 @@ export class GlobalChatState {
                             this.chatStates = new Map<string, ChatState>();
                         }
                         const newState = new ChatState(this, result.data.chat_Chat_by_pk);
-                        if (newState.isSubscribed || newState.isPinned_InternalUseOnly) {
-                            await newState.subscribeToMoreMessages();
-                        }
-                        await newState.updateReadUpToIdx();
+                        await newState.fetchReadUpToIdx();
                         this.chatStates.set(chatId, newState);
                         this.chatStatesObs.publish(this.chatStates);
                     } else {
@@ -1600,40 +1505,8 @@ export class GlobalChatState {
         }
     }
 
-    // private unreadCountPollMutex = new Mutex();
+    // CHAT_TODO
     // private unreadCountMutex = new Mutex();
-    // private unreadCount_IntervalId: number | undefined;
-    // private async setupUnreadCountPolling() {
-    //     const release = await this.unreadCountPollMutex.acquire();
-
-    //     try {
-    //         if (this.unreadCount_IntervalId === undefined) {
-    //             this.unreadCount_IntervalId = setInterval(
-    //                 (() => {
-    //                     this.pollUnreadCount();
-    //                 }) as TimerHandler,
-    //                 30 * 1000
-    //             );
-    //         }
-    //     } catch (e) {
-    //         console.error("Failed to setup polling unread count", e);
-    //     } finally {
-    //         release();
-    //     }
-    // }
-    // private async teardownUnreadCountPolling() {
-    //     const release = await this.unreadCountPollMutex.acquire();
-
-    //     try {
-    //         if (this.unreadCount_IntervalId === undefined) {
-    //             clearInterval(this.unreadCount_IntervalId);
-    //         }
-    //     } catch (e) {
-    //         console.error("Failed to tear down polling unread count", e);
-    //     } finally {
-    //         release();
-    //     }
-    // }
     // private async pollUnreadCount() {
     //     const release = await this.unreadCountMutex.acquire();
 
@@ -1685,143 +1558,70 @@ export class GlobalChatState {
     //     }
     // }
 
-    private pinsSubsPollMutex = new Mutex();
-    private pinsSubsMutex = new Mutex();
-    private pinsSubs_IntervalId: number | undefined;
-    private async setupPinsSubsPolling() {
-        const release = await this.pinsSubsPollMutex.acquire();
+    // CHAT_TODO
+    // private pinsSubsMutex = new Mutex();
+    // private async pollPinsSubs() {
+    //     const release = await this.pinsSubsMutex.acquire();
 
-        try {
-            if (this.pinsSubs_IntervalId === undefined) {
-                this.pinsSubs_IntervalId = setInterval(
-                    (() => {
-                        this.pollPinsSubs();
-                    }) as TimerHandler,
-                    30 * 1000
-                );
-            }
-        } catch (e) {
-            console.error("Failed to setup polling unread count", e);
-        } finally {
-            release();
-        }
-    }
-    private async teardownPinsSubsPolling() {
-        const release = await this.pinsSubsPollMutex.acquire();
+    //     try {
+    //         if (this.chatStates) {
+    //             const allPinsSubs = await this.apolloClient.query<
+    //                 SelectPinnedOrSubscribedQuery,
+    //                 SelectPinnedOrSubscribedQueryVariables
+    //             >({
+    //                 query: SelectPinnedOrSubscribedDocument,
+    //                 variables: {
+    //                     attendeeId: this.attendee.id,
+    //                 },
+    //                 fetchPolicy: "network-only",
+    //             });
+    //             const newlyPinSubIds: string[] = [];
+    //             for (const pinSub of allPinsSubs.data.chat_PinnedOrSubscribed) {
+    //                 if (pinSub.chat) {
+    //                     const isPinned = pinSub.chat.pins.length > 0;
+    //                     const isSubscribed = pinSub.chat.subscriptions.length > 0;
 
-        try {
-            if (this.pinsSubs_IntervalId === undefined) {
-                clearInterval(this.pinsSubs_IntervalId);
-            }
-        } catch (e) {
-            console.error("Failed to tear down polling unread count", e);
-        } finally {
-            release();
-        }
-    }
-    private async pollPinsSubs() {
-        const release = await this.pinsSubsMutex.acquire();
+    //                     const existing = this.chatStates.get(pinSub.chatId);
+    //                     if (existing) {
+    //                         existing.setIsPinned(isPinned);
+    //                         existing.setIsSubscribed(isSubscribed);
+    //                     } else {
+    //                         newlyPinSubIds.push(pinSub.chatId);
+    //                     }
+    //                 }
+    //             }
+    //             if (newlyPinSubIds.length > 0) {
+    //                 const newlyPinSubChats = await this.apolloClient.query<
+    //                     SelectInitialChatStatesQuery,
+    //                     SelectInitialChatStatesQueryVariables
+    //                 >({
+    //                     query: SelectInitialChatStatesDocument,
+    //                     variables: {
+    //                         attendeeId: this.attendee.id,
+    //                         chatIds: newlyPinSubIds,
+    //                     },
+    //                     fetchPolicy: "network-only",
+    //                 });
+    //                 for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
+    //                     const newState = new ChatState(this, pinSubChat);
+    //                     await newState.updateReadUpToIdx();
+    //                     this.chatStates.set(pinSubChat.id, newState);
+    //                 }
+    //                 this.chatStatesObs.publish(this.chatStates);
+    //             }
+    //         }
+    //     } catch (e) {
+    //         console.error("Failed to fetch unread counts", e);
+    //     } finally {
+    //         release();
+    //     }
+    // }
 
-        try {
-            if (this.chatStates) {
-                const allPinsSubs = await this.apolloClient.query<
-                    SelectPinnedOrSubscribedQuery,
-                    SelectPinnedOrSubscribedQueryVariables
-                >({
-                    query: SelectPinnedOrSubscribedDocument,
-                    variables: {
-                        attendeeId: this.attendee.id,
-                    },
-                    fetchPolicy: "network-only",
-                });
-                const newlyPinSubIds: string[] = [];
-                for (const pinSub of allPinsSubs.data.chat_PinnedOrSubscribed) {
-                    if (pinSub.chat) {
-                        const isPinned = pinSub.chat.pins.length > 0;
-                        const isSubscribed = pinSub.chat.subscriptions.length > 0;
-
-                        const existing = this.chatStates.get(pinSub.chatId);
-                        if (existing) {
-                            existing.setIsPinned(isPinned);
-                            existing.setIsSubscribed(isSubscribed);
-                        } else {
-                            newlyPinSubIds.push(pinSub.chatId);
-                        }
-                    }
-                }
-                if (newlyPinSubIds.length > 0) {
-                    const newlyPinSubChats = await this.apolloClient.query<
-                        SelectInitialChatStatesQuery,
-                        SelectInitialChatStatesQueryVariables
-                    >({
-                        query: SelectInitialChatStatesDocument,
-                        variables: {
-                            attendeeId: this.attendee.id,
-                            chatIds: newlyPinSubIds,
-                        },
-                        fetchPolicy: "network-only",
-                    });
-                    for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
-                        const newState = new ChatState(this, pinSubChat);
-                        if (newState.isSubscribed || newState.isPinned_InternalUseOnly) {
-                            await newState.subscribeToMoreMessages();
-                        }
-                        await newState.updateReadUpToIdx();
-                        this.chatStates.set(pinSubChat.id, newState);
-                    }
-                    this.chatStatesObs.publish(this.chatStates);
-                }
-            }
-        } catch (e) {
-            console.error("Failed to fetch unread counts", e);
-        } finally {
-            release();
-        }
-    }
-
+    // CHAT_TODO
     // private reactionsSubscription_MessagesMutex = new Mutex();
     // private reactionsSubscription_SetupMutex = new Mutex();
     // private reactionsSubscription_Messages = new Map<number, MessageState>();
-    // private reactionsSubscription_ReconfigureTimeoutId: number | undefined;
     // private reactionsSubscription: ZenObservable.Subscription | null = null;
-
-    // public async addMessageIdForReactionSubscription(msg: MessageState): Promise<void> {
-    //     const release = await this.reactionsSubscription_MessagesMutex.acquire();
-
-    //     try {
-    //         this.reactionsSubscription_Messages.set(msg.id, msg);
-    //         await this.reconfigureReactionsSubscription();
-    //     } catch (e) {
-    //         console.error(`Failed to add message to reactions subscription: ${msg.id}`, e);
-    //     } finally {
-    //         release();
-    //     }
-    // }
-    // public async removeMessageIdForReactionSubscription(msg: MessageState): Promise<void> {
-    //     const release = await this.reactionsSubscription_MessagesMutex.acquire();
-
-    //     try {
-    //         this.reactionsSubscription_Messages.delete(msg.id);
-    //         await this.reconfigureReactionsSubscription();
-    //     } catch (e) {
-    //         console.error(`Failed to remove message from reactions subscription: ${msg.id}`, e);
-    //     } finally {
-    //         release();
-    //     }
-    // }
-    // private async reconfigureReactionsSubscription(): Promise<void> {
-    //     if (this.reactionsSubscription_ReconfigureTimeoutId !== undefined) {
-    //         clearTimeout(this.reactionsSubscription_ReconfigureTimeoutId);
-    //     }
-
-    //     this.reactionsSubscription_ReconfigureTimeoutId = setTimeout(
-    //         (async () => {
-    //             await this.teardownReactionsSubscription();
-    //             await this.setupReactionsSubscription();
-    //         }) as TimerHandler,
-    //         1500
-    //     );
-    // }
     // private async setupReactionsSubscription(): Promise<void> {
     //     const release = await this.reactionsSubscription_SetupMutex.acquire();
 

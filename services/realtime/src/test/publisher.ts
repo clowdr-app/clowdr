@@ -29,7 +29,7 @@ async function Main(
     // The practical upper limit is ~15 messages/s (due to this test publisher
     // code's performance). We could do better if we didn't print to the console
     // but then we wouldn't have any feedback.
-    messagesPerSecond = 15,
+    messagesPerSecond = 1,
     message = "Test message",
     chatId = process.env.CHAT_ID ?? "testChat1",
     floodReactionsEveryNMessages = 3,

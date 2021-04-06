@@ -1,9 +1,9 @@
 import { getAttendeeInfo } from "../../../lib/cache/attendeeInfo";
 import { getSubscriptions } from "../../../lib/cache/subscription";
+import { chatListenersKeyName, generateRoomName } from "../../../lib/chat";
 import { sendNotifications } from "../../../lib/notifications";
 import { onDistributionMessage } from "../../../rabbitmq/chat/messages";
 import { redisClientP } from "../../../redis";
-import { chatListenersKeyName, generateRoomName } from "../../../socket-emitter/chat";
 import { emitter } from "../../../socket-emitter/socket-emitter";
 import { Action, Message } from "../../../types/chat";
 
@@ -20,7 +20,7 @@ async function onMessage(action: Action<Message>) {
             : "unknown";
 
     const chatId = action.data.chatId;
-    emitter.to(generateRoomName(chatId)).emit(`chat.messages.${eventName}`, JSON.stringify(action));
+    emitter.to(generateRoomName(chatId)).emit(`chat.messages.${eventName}`, JSON.stringify(action.data));
 
     if (action.op === "INSERT") {
         const subscriptions = await getSubscriptions(chatId, {
@@ -31,7 +31,7 @@ async function onMessage(action: Action<Message>) {
             const listenerUserIds = (await redisClientP.smembers(chatListenersKeyName(chatId))).map(
                 (x) => x.split("¬")[1]
             );
-            const subscribedAttendeeIds = subscriptions.attendeeIds;
+            const subscribedAttendeeIds = subscriptions.attendeeIds.filter((x) => x !== action.data.senderId);
             const subscribedUserIds = (
                 await Promise.all(
                     subscribedAttendeeIds.map((attendeeId) =>

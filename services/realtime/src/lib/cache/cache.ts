@@ -82,7 +82,7 @@ export class Cache<T> {
         try {
             const existingValue = await this.get(itemKey, testMode_ExpectedExistingValue, false, false);
             const newValue = value(existingValue);
-            console.info("New value", newValue);
+            // console.info("New value", newValue);
             await this.set(itemKey, newValue, false);
         } finally {
             lease?.unlock();

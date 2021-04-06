@@ -5,6 +5,24 @@ export class RealtimeService {
     public socket: SocketIOClient.Socket | undefined;
     private mutex: Mutex = new Mutex();
 
+    private _onSocketAvailable: Map<number, (socket: SocketIOClient.Socket) => void> = new Map();
+    private _onSocketAvailableGen = 1;
+    onSocketAvailable(handler: (socket: SocketIOClient.Socket) => void): () => void {
+        if (this.socket) {
+            const sock = this.socket;
+            setTimeout(() => handler(sock), 1);
+            return () => {
+                // Empty
+            };
+        } else {
+            const id = this._onSocketAvailableGen++;
+            this._onSocketAvailable.set(id, handler);
+            return () => {
+                this._onSocketAvailable.delete(id);
+            };
+        }
+    }
+
     async begin(token: string): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -27,6 +45,11 @@ export class RealtimeService {
             this.socket.on("disconnect", this.onDisconnect.bind(this));
             this.socket.on("connect_error", this.onConnectError.bind(this));
             this.socket.on("unauthorized", this.onUnauthorized.bind(this));
+
+            for (const handler of this._onSocketAvailable.values()) {
+                handler(this.socket);
+            }
+            this._onSocketAvailable.clear();
         } catch (e) {
             console.error("Failed to create socket for realtime service.");
             this.socket = undefined;

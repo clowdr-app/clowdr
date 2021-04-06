@@ -1,5 +1,5 @@
-import { notificationsRoomName } from "../socket-emitter/chat";
 import { emitter } from "../socket-emitter/socket-emitter";
+import { notificationsRoomName } from "./chat";
 
 export async function sendNotifications(userIds: string[], notification: any): Promise<void> {
     // TODO: Choose web-push, web-socket, email or no notification channel

@@ -32,6 +32,6 @@ export interface Subscription {
 export interface Pin {
     chatId: string;
     attendeeId: string;
-    wasManuallySubscribed: boolean;
+    wasManuallyPinned: boolean;
     created_at: string;
 }

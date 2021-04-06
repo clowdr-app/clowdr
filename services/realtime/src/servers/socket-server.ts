@@ -2,9 +2,9 @@ import jwksRsa, { SigningKey } from "jwks-rsa";
 import socketIO, { Socket } from "socket.io";
 import { createAdapter } from "socket.io-redis";
 import { testJWKs } from "../jwks";
+import { notificationsRoomName } from "../lib/chat";
 import { redisClient } from "../redis";
-import { notificationsRoomName } from "../socket-emitter/chat";
-import { onConnect as onConnectChat } from "../socket-events/chat";
+import { onConnect as onConnectChat, onDisconnect as onDisconnectChat } from "../socket-events/chat";
 import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
 import { authorize } from "./authorize";
@@ -77,6 +77,7 @@ socketServer.on("connection", function (socket: Socket) {
             console.log(`Client disconnected: ${userId} / ${socketId}: ${conferenceSlugs}`);
 
             onDisconnectPresence(socketId, userId);
+            onDisconnectChat(socketId, userId);
         });
 
         onConnectPresence(socket, userId, conferenceSlugs);

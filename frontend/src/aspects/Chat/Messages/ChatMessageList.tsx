@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { MessageState } from "../ChatGlobalState";
 import { Observable } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
-import { useGlobalChatState } from "../GlobalChatStateProvider";
 import MessageBox from "./MessageBox";
 
 interface MessageListProps {
@@ -28,10 +27,10 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
     const pageSize = config.messageBatchSize ?? 30;
 
     useEffect(() => {
-        config.state.subscribeToMoreMessages();
+        config.state.subscribe();
 
         return () => {
-            config.state.unsubscribeFromMoreMessages();
+            config.state.unsubscribe();
         };
     }, [config.state]);
 
@@ -269,18 +268,6 @@ function MessageList({
             </Observer>
         );
     }, [config.state]);
-
-    const globalState = useGlobalChatState();
-    useEffect(() => {
-        return globalState.suppressNotificationsForChatIdObs.subscribe((v) => {
-            if (v === chatId) {
-                ref.current?.scroll({
-                    behavior: "auto",
-                    top: 0,
-                });
-            }
-        });
-    }, [chatId, globalState.suppressNotificationsForChatIdObs]);
 
     return (
         <Box {...rest}>

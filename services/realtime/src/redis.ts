@@ -19,8 +19,14 @@ export const redisClientP = {
     set: promisify((key: string, value: string, mode: string, duration: number, cb?: Callback<"OK" | undefined>) =>
         redisClient.set(key, value, mode, duration, cb)
     ),
+    setForever: promisify((key: string, value: string, cb?: Callback<"OK" | undefined>) =>
+        redisClient.set(key, value, cb)
+    ),
     del: promisify((key: string, cb?: Callback<number>) => redisClient.del(key, cb)),
     sadd: promisify((key: string, value: string, cb?: Callback<number>) => redisClient.sadd(key, value, cb)),
     srem: promisify((key: string, value: string, cb?: Callback<number>) => redisClient.srem(key, value, cb)),
     smembers: promisify((key: string, cb?: Callback<string[]>) => redisClient.smembers(key, cb)),
+    scan: promisify((cursor: string, pattern: string, cb?: Callback<[string, string[]]>) =>
+        redisClient.scan(cursor, "match", pattern, cb)
+    ),
 };

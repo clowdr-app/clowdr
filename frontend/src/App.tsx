@@ -1,6 +1,6 @@
 import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
+import { Route, RouteComponentProps, Switch, useLocation, useRouteMatch } from "react-router-dom";
 import "./App.css";
 import Routing from "./AppRouting";
 import { GlobalChatStateContext, GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
@@ -12,6 +12,7 @@ import ConferenceCurrentUserActivePermissionsProvider, {
 import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conference/useCurrentAttendee";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
+import DownForMaintenancePage from "./aspects/Maintenance/DownForMaintenancePage";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu, { MenuBar } from "./aspects/Menu/MainMenu";
 import RightSidebar from "./aspects/Menu/RightSidebar";
@@ -26,7 +27,19 @@ interface AppProps {
     rootUrl: string | undefined;
 }
 
+function useQuery() {
+    return new URLSearchParams(useLocation().search);
+}
+
 export default function App(): JSX.Element {
+    const query = useQuery();
+    const bypassDfmMatch = query.get("bypassMaintenance");
+    console.info("bypassDfmMatch", bypassDfmMatch);
+
+    if (!bypassDfmMatch) {
+        return <DownForMaintenancePage />;
+    }
+
     return (
         <Switch>
             <Route

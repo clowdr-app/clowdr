@@ -21,10 +21,6 @@ import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 export default function Routing({ rootUrl }: { rootUrl?: string }): JSX.Element {
     return (
         <Switch>
-            {/* <Route path="/">
-                <DownForMaintenancePage />
-            </Route> */}
-
             <Route exact path="/auth0/email-verification/result">
                 {(props) => {
                     const searchParams = new URLSearchParams(props.location.search);

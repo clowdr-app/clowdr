@@ -1,10 +1,12 @@
 import {
     Box,
     Button,
+    Center,
     Flex,
     Link,
     Modal,
     ModalBody,
+    ModalCloseButton,
     ModalContent,
     ModalHeader,
     ModalOverlay,
@@ -34,8 +36,6 @@ import type { TimelineEvent } from "./DayList";
 import useTimelineParameters from "./useTimelineParameters";
 
 function EventBoxPopover({
-    topPc,
-    heightPc: heightPc,
     eventStartMs,
     durationSeconds,
     roomName,
@@ -44,8 +44,6 @@ function EventBoxPopover({
     isOpen,
     onClose,
 }: {
-    topPc: number;
-    heightPc: number;
     eventStartMs: number;
     durationSeconds: number;
     roomName: string;
@@ -105,44 +103,46 @@ function EventBoxPopover({
             size="4xl"
         >
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent pb={4}>
+                <ModalCloseButton />
                 {content ? (
                     <>
                         <ModalHeader fontWeight="semibold" pr={1}>
+                            <Text
+                                aria-label={`Starts at ${DateTime.fromISO(event0.startTime)
+                                    .setZone(timelineParams.timezone)
+                                    .toLocaleString({
+                                        weekday: "long",
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                    })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
+                                mb={2}
+                                fontSize="sm"
+                                fontStyle="italic"
+                            >
+                                {DateTime.fromMillis(eventStartMs).setZone(timelineParams.timezone).toLocaleString({
+                                    weekday: "short",
+                                    month: "short",
+                                    day: "2-digit",
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                    hour12: false,
+                                })}{" "}
+                                -{" "}
+                                {DateTime.fromMillis(eventStartMs + durationSeconds * 1000)
+                                    .setZone(timelineParams.timezone)
+                                    .toLocaleString({
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                        hour12: false,
+                                    })}
+                            </Text>
                             <Flex direction="row">
-                                <Box>
-                                    <Text
-                                        aria-label={`Starts at ${DateTime.fromISO(event0.startTime)
-                                            .setZone(timelineParams.timezone)
-                                            .toLocaleString({
-                                                weekday: "long",
-                                                hour: "numeric",
-                                                minute: "numeric",
-                                            })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
-                                        mb={2}
-                                        fontSize="sm"
-                                        fontStyle="italic"
-                                    >
-                                        {DateTime.fromMillis(eventStartMs)
-                                            .setZone(timelineParams.timezone)
-                                            .toLocaleString({
-                                                weekday: "short",
-                                                month: "short",
-                                                day: "2-digit",
-                                                hour: "numeric",
-                                                minute: "numeric",
-                                                hour12: false,
-                                            })}{" "}
-                                        -{" "}
-                                        {DateTime.fromMillis(eventStartMs + durationSeconds * 1000)
-                                            .setZone(timelineParams.timezone)
-                                            .toLocaleString({
-                                                hour: "numeric",
-                                                minute: "numeric",
-                                                hour12: false,
-                                            })}
-                                    </Text>
-                                </Box>
+                                <Text>
+                                    <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
+                                        <Twemoji className="twemoji" text={eventTitle} />
+                                    </Link>
+                                </Text>
                                 <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
                                     <LinkButton
                                         ml={1}
@@ -171,16 +171,8 @@ function EventBoxPopover({
                                         </Text>
                                         {/* TODO: Time until event starts */}
                                     </LinkButton>
-                                    {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
-                                    <FAIcon iconStyle="s" icon="times" />
-                                </Button> */}
                                 </Flex>
                             </Flex>
-                            <Text>
-                                <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
-                                    <Twemoji className="twemoji" text={eventTitle} />
-                                </Link>
-                            </Text>
                         </ModalHeader>
                         <ModalBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
                             <Box>
@@ -192,7 +184,9 @@ function EventBoxPopover({
                         </ModalBody>
                     </>
                 ) : (
-                    <Spinner label="Loading event info" />
+                    <Center mt={4}>
+                        <Spinner label="Loading event info" />
+                    </Center>
                 )}
             </ModalContent>
         </Modal>
@@ -308,8 +302,6 @@ export default function EventBox({
             </Button>
             {isOpen ? (
                 <EventBoxPopover
-                    topPc={topPc}
-                    heightPc={heightPc}
                     eventStartMs={eventStartMs}
                     durationSeconds={durationSeconds}
                     roomName={roomName}

@@ -8,8 +8,11 @@ import {
     DeleteRoomChimeMeetingDocument,
     GetRoomChimeMeetingDocument,
     GetRoomConferenceIdDocument,
+    GetRoomThatAttendeeCanJoinDocument,
+    GetRoomVonageMeetingDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { callWithRetry } from "../utils";
 import { createChimeMeeting, doesChimeMeetingExist } from "./aws/chime";
 
 export async function createContentGroupBreakoutRoom(contentGroupId: string, conferenceId: string): Promise<string> {
@@ -103,9 +106,49 @@ export async function getRoomConferenceId(roomId: string): Promise<string> {
     return room.data.Room_by_pk.conferenceId;
 }
 
-export async function canUserJoinRoom(_attendeeId: string, _roomId: string): Promise<boolean> {
-    // todo: write logic
-    return false;
+export async function canUserJoinRoom(attendeeId: string, roomId: string, conferenceId: string): Promise<boolean> {
+    gql`
+        query GetRoomThatAttendeeCanJoin($roomId: uuid, $attendeeId: uuid, $conferenceId: uuid) {
+            Room(
+                where: {
+                    id: { _eq: $roomId }
+                    conference: { attendees: { id: { _eq: $attendeeId } }, id: { _eq: $conferenceId } }
+                    _or: [
+                        { roomPeople: { attendee: { id: { _eq: $attendeeId } } } }
+                        { roomPrivacyName: { _eq: PUBLIC } }
+                    ]
+                }
+            ) {
+                id
+                publicVonageSessionId
+                conference {
+                    attendees(where: { id: { _eq: $attendeeId } }) {
+                        id
+                    }
+                }
+            }
+            FlatUserPermission(
+                where: {
+                    user: { attendees: { id: { _eq: $attendeeId } } }
+                    conference: { id: { _eq: $conferenceId } }
+                    permission_name: { _eq: "CONFERENCE_VIEW_ATTENDEES" }
+                }
+            ) {
+                permission_name
+            }
+        }
+    `;
+    const result = await callWithRetry(() =>
+        apolloClient.query({
+            query: GetRoomThatAttendeeCanJoinDocument,
+            variables: {
+                roomId,
+                attendeeId,
+                conferenceId,
+            },
+        })
+    );
+    return result.data.FlatUserPermission.length > 0 && result.data.Room.length > 0;
 }
 
 export async function createRoomChimeMeeting(roomId: string, conferenceId: string): Promise<Meeting> {
@@ -193,6 +236,26 @@ export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeti
     return null;
 }
 
+export async function getExistingRoomVonageMeeting(roomId: string): Promise<string | null> {
+    gql`
+        query GetRoomVonageMeeting($roomId: uuid!) {
+            Room_by_pk(id: $roomId) {
+                id
+                publicVonageSessionId
+            }
+        }
+    `;
+
+    const result = await apolloClient.query({
+        query: GetRoomVonageMeetingDocument,
+        variables: {
+            roomId,
+        },
+    });
+
+    return result.data.Room_by_pk?.publicVonageSessionId ?? null;
+}
+
 export async function deleteRoomChimeMeeting(roomChimeMeetingId: string): Promise<void> {
     gql`
         mutation DeleteRoomChimeMeeting($roomChimeMeetingId: uuid!) {
@@ -220,11 +283,23 @@ export async function getRoomChimeMeeting(roomId: string, conferenceId: string):
         const chimeMeetingData = await createRoomChimeMeeting(roomId, conferenceId);
         return chimeMeetingData;
     } catch (e) {
-        const existingChimeMeetingId = await getExistingRoomChimeMeeting(roomId);
-        if (existingChimeMeetingId) {
-            return existingChimeMeetingId;
+        const existingChimeMeetingData = await getExistingRoomChimeMeeting(roomId);
+        if (existingChimeMeetingData) {
+            return existingChimeMeetingData;
         }
 
-        throw new Error("Could not get Chime meeting id");
+        throw new Error("Could not get Chime meeting data");
     }
+}
+
+export async function getRoomVonageMeeting(roomId: string): Promise<string | null> {
+    const existingVonageMeetingId = await getExistingRoomVonageMeeting(roomId);
+
+    if (existingVonageMeetingId) {
+        return existingVonageMeetingId;
+    }
+
+    // todo: create session if appropriate
+
+    return null;
 }

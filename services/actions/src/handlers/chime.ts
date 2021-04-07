@@ -8,9 +8,10 @@ export async function handleJoinRoom(
 ): Promise<JoinRoomChimeSessionOutput> {
     const roomConferenceId = await getRoomConferenceId(payload.roomId);
     const attendee = await getAttendee(userId, roomConferenceId);
-    const canJoinRoom = await canUserJoinRoom(attendee.id, payload.roomId);
+    const canJoinRoom = await canUserJoinRoom(attendee.id, payload.roomId, roomConferenceId);
 
     if (!canJoinRoom) {
+        console.warn("User tried to join a Chime room, but was not permitted", { payload, userId });
         throw new Error("User is not permitted to join this room");
     }
 

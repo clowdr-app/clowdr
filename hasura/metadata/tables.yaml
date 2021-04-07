@@ -1760,6 +1760,7 @@
         remote_table:
           schema: public
           name: FlatUnauthPermission
+        insertion_order: null
         column_mapping:
           slug: slug
   - name: roles
@@ -1796,6 +1797,7 @@
         remote_table:
           schema: public
           name: FlatUserPermission
+        insertion_order: null
         column_mapping:
           slug: slug
   insert_permissions:

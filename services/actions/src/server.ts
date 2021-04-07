@@ -20,6 +20,7 @@ import { router as analyticsRouter } from "./router/analytics";
 import { router as attendeeGoogleAccountRouter } from "./router/attendeeGoogleAccount";
 import { router as broadcastContentItemRouter } from "./router/broadcastContentItem";
 import { router as channelsRouter } from "./router/channels";
+import { router as chimeRouter } from "./router/chime";
 import { router as combineVideosJobRouter } from "./router/combineVideosJob";
 import { router as companionRouter } from "./router/companion";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
@@ -79,6 +80,7 @@ app.use("/mediaPackage", mediaPackageRouter);
 app.use("/google", googleRouter);
 
 app.use("/vonage", vonageRouter);
+app.use("/chime", chimeRouter);
 
 app.use("/contentItem", contentItemRouter);
 app.use("/conferencePrepareJob", conferencePrepareJobRouter);

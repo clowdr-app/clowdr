@@ -73,15 +73,19 @@ router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomVona
         body = req.body;
         assertType<ActionPayload<joinRoomVonageSessionArgs>>(body);
     } catch (e) {
-        console.error(`${req.originalUrl}: invalid request`, req.body.input, e);
-        return res.status(200).json({});
+        console.error("Invalid request", { url: req.originalUrl, input: req.body.input, err: e });
+        return res.status(200).json({
+            message: "Invalid request",
+        });
     }
 
     try {
         const result = await handleJoinRoom(body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e) {
-        console.error(`${req.originalUrl}: failure while handling request`, req.body.input, e);
-        return res.status(200).json({});
+        console.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
+        return res.status(200).json({
+            message: "Failure while handling request",
+        });
     }
 });

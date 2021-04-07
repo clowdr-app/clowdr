@@ -258,6 +258,7 @@ type JoinEventVonageSessionOutput {
 type JoinRoomVonageSessionOutput {
   sessionId : String
   accessToken : String
+  message : String
 }
 
 type ProfilePhotoURLResponse {

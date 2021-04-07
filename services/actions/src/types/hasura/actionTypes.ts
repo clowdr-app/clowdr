@@ -98,6 +98,7 @@ type JoinEventVonageSessionOutput = {
 type JoinRoomVonageSessionOutput = {
     sessionId?: Maybe<string>;
     accessToken?: Maybe<string>;
+    message?: Maybe<string>;
 };
 
 type ProfilePhotoURLResponse = {

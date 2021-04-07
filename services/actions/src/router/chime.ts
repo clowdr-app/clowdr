@@ -11,7 +11,7 @@ export const router = express.Router();
 router.use(checkEventSecret);
 
 router.post("/joinEvent", json(), async (req: Request, res: Response<JoinRoomChimeSessionOutput>) => {
-    let body: ActionPayload<joinRoomVonageSessionArgs>;
+    let body: ActionPayload<joinRoomChimeSessionArgs>;
     try {
         body = req.body;
         assertType<ActionPayload<joinRoomChimeSessionArgs>>(body);

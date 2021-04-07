@@ -4,7 +4,11 @@ import { realtimeService } from "./RealtimeService";
 
 export class PresenceState {
     private offSocketAvailable: (() => void) | undefined;
+    private offSocketUnavailable: (() => void) | undefined;
     setup(): void {
+        this.offSocketAvailable?.();
+        this.offSocketUnavailable?.();
+
         this.offSocketAvailable = realtimeService.onSocketAvailable((socket) => {
             socket.on("entered", this.onEntered.bind(this));
             socket.on("left", this.onLeft.bind(this));
@@ -12,10 +16,17 @@ export class PresenceState {
 
             this.pageChanged(window.location.pathname);
         });
+        this.offSocketUnavailable =
+            realtimeService.onSocketUnavailable((socket) => {
+                socket.off("entered");
+                socket.off("left");
+                socket.off("presences");
+            }) ?? undefined;
     }
 
     teardown(): void {
         this.offSocketAvailable?.();
+        this.offSocketUnavailable?.();
         this.presences = {};
     }
 

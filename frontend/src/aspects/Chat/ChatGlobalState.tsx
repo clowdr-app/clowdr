@@ -1237,6 +1237,8 @@ export class GlobalChatState {
     private hasInitialised = false;
     private hasTorndown = false;
     private ongoingNotifications: (string | number)[] = [];
+    private offSocketAvailable: (() => void) | null = null;
+    private offSocketUnavailable: (() => void) | null = null;
     public async init(): Promise<void> {
         const release = await this.mutex.acquire();
 
@@ -1244,7 +1246,9 @@ export class GlobalChatState {
             if (!this.hasInitialised) {
                 this.hasInitialised = true;
                 if (!this.hasTorndown) {
-                    realtimeService.onSocketAvailable((socket) => {
+                    this.offSocketAvailable?.();
+                    this.offSocketUnavailable?.();
+                    this.offSocketAvailable = realtimeService.onSocketAvailable((socket) => {
                         this.socket = socket;
 
                         console.info("Connection to chat established.");
@@ -1456,6 +1460,9 @@ export class GlobalChatState {
                             }
                         }
                     });
+                    this.offSocketUnavailable = realtimeService.onSocketUnavailable((socket) => {
+                        this.offSocketEvents(socket, true);
+                    });
 
                     const initialData = await this.apolloClient.query<
                         InitialChatStateQuery,
@@ -1496,32 +1503,14 @@ export class GlobalChatState {
         const release = await this.mutex.acquire();
 
         try {
+            this.offSocketAvailable?.();
+
             if (!this.hasTorndown) {
                 this.hasTorndown = true;
                 if (this.hasInitialised) {
                     const socket = this.socket;
                     if (socket) {
-                        socket.emit("chat.subscriptions.changed.off", this.attendee.id);
-                        socket.emit("chat.pins.changed.off", this.attendee.id);
-
-                        socket.off("notification");
-
-                        socket.off("chat.subscribed");
-                        socket.off("chat.unsubscribed");
-
-                        socket.off("chat.pinned");
-                        socket.off("chat.unpinned");
-
-                        socket.off("chat.messages.receive");
-                        socket.off("chat.messages.update");
-                        socket.off("chat.messages.delete");
-
-                        socket.off("chat.messages.send.ack");
-                        socket.off("chat.messages.send.nack");
-
-                        socket.off("chat.reactions.receive");
-                        socket.off("chat.reactions.update");
-                        socket.off("chat.reactions.delete");
+                        this.offSocketEvents(socket);
                     }
 
                     if (this.chatStates) {
@@ -1536,6 +1525,32 @@ export class GlobalChatState {
         } finally {
             release();
         }
+    }
+
+    private offSocketEvents(socket: SocketIOClient.Socket, disconnected = false) {
+        if (!disconnected) {
+            socket.emit("chat.subscriptions.changed.off", this.attendee.id);
+            socket.emit("chat.pins.changed.off", this.attendee.id);
+        }
+
+        socket.off("notification");
+
+        socket.off("chat.subscribed");
+        socket.off("chat.unsubscribed");
+
+        socket.off("chat.pinned");
+        socket.off("chat.unpinned");
+
+        socket.off("chat.messages.receive");
+        socket.off("chat.messages.update");
+        socket.off("chat.messages.delete");
+
+        socket.off("chat.messages.send.ack");
+        socket.off("chat.messages.send.nack");
+
+        socket.off("chat.reactions.receive");
+        socket.off("chat.reactions.update");
+        socket.off("chat.reactions.delete");
     }
 
     private async fetchChat(chatId: string) {

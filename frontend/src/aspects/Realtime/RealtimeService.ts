@@ -21,6 +21,17 @@ export class RealtimeService {
         };
     }
 
+    private _onSocketUnavailable: Map<number, (socket: SocketIOClient.Socket) => void> = new Map();
+    private _onSocketUnavailableGen = 1;
+    onSocketUnavailable(handler: (socket: SocketIOClient.Socket) => void): () => void {
+        const id = this._onSocketUnavailableGen++;
+        this._onSocketUnavailable.set(id, handler);
+
+        return () => {
+            this._onSocketUnavailable.delete(id);
+        };
+    }
+
     async begin(token: string): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -77,6 +88,12 @@ export class RealtimeService {
 
     private onDisconnect() {
         console.log("Disconnected from realtime service");
+
+        if (this.socket) {
+            for (const handler of this._onSocketUnavailable.values()) {
+                handler(this.socket);
+            }
+        }
     }
 
     private onConnectError(e: any) {

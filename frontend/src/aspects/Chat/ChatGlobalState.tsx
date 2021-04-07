@@ -1617,7 +1617,7 @@ export class GlobalChatState {
         }
     }
 
-    private readonly oldChatTimeoutPeriodMs = 3 * 60 * 1000; // 3 minutes
+    private readonly oldChatTimeoutPeriodMs = 15 * 1000; // 15 seconds
     private readonly maxNotSubscribedListeningChats = 5;
     public async onChatChannelUnsubscribe(): Promise<void> {
         await this.unsubscribeOldOrExcess();

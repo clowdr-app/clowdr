@@ -14,6 +14,10 @@ assert(process.env.CONFERENCE_SLUG, "Missing CONFERENCE_SLUG env var");
 const serverURL = process.env.SERVER_URL;
 const userId = process.env.USER_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
 const confSlug = process.env.CONFERENCE_SLUG;
+const silentMode = !!process.env.SILENT_MODE;
+
+// Grr npm...
+process.title = process.env.WINDOW_TITLE ?? process.title;
 
 async function wait(ms: number) {
     await new Promise<void>((resolve) => {
@@ -21,7 +25,15 @@ async function wait(ms: number) {
     });
 }
 
-async function Main(chatId = process.env.CHAT_ID ?? "testChat1") {
+async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9aff8265ed") {
+    console.info(`Configuration:
+    Server URL: ${serverURL}
+    User Id: ${userId}
+    Conference slug: ${confSlug}
+    Chat Id: ${chatId}
+    Silent Mode: ${silentMode}
+`);
+
     try {
         process.stdout.write("Attempting to obtain test JWT...");
         const jwtResponse = await fetch(serverURL + `test/jwt?userId=${userId}&confSlug=${confSlug}`, {
@@ -66,11 +78,15 @@ async function Main(chatId = process.env.CHAT_ID ?? "testChat1") {
         }
 
         client.on("chat.messages.receive", (msg: Message) => {
-            console.info("Message received", msg);
+            if (!silentMode) {
+                console.info("Message received", msg);
+            }
         });
 
         client.on("chat.reactions.receive", (msg: Message) => {
-            console.info("Reaction received", msg);
+            if (!silentMode) {
+                console.info("Reaction received", msg);
+            }
         });
 
         client.emit("chat.subscribe", chatId);

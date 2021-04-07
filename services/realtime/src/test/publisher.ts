@@ -16,8 +16,12 @@ assert(process.env.CONFERENCE_SLUG, "Missing CONFERENCE_SLUG env var");
 
 const serverURL = process.env.SERVER_URL;
 const userId = process.env.USER_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
+// AttendeeId must be a valid uuid (VSCode: Ctrl+Shift+[)
 const attendeeId = process.env.ATTENDEE_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
 const confSlug = process.env.CONFERENCE_SLUG;
+
+// Grr npm...
+process.title = process.env.WINDOW_TITLE ?? process.title;
 
 async function wait(ms: number) {
     await new Promise<void>((resolve) => {
@@ -31,7 +35,7 @@ async function Main(
     // but then we wouldn't have any feedback.
     messagesPerSecond = parseInt(process.env.MPS ?? "1", 10),
     message = "Test message",
-    chatId = process.env.CHAT_ID ?? "testChat1",
+    chatId = process.env.CHAT_ID ?? "a3b29b3b-c092-4319-b045-bdbd44bdcd88", // This is just a random uuid (VSCode: Ctrl+Shift+[)
     floodReactionsEveryNMessages = 3,
     reactions = [":thumbsup:", ":)", "+1"]
 ) {

@@ -27,7 +27,7 @@ export function onSubscribe(
                         "chat.onSubscribe:test-conference-id",
                         "chat.onSubscribe:test-room-id",
                         "chat.onSubscribe:test-room-name",
-                        RoomPrivacy_Enum.Private,
+                        RoomPrivacy_Enum.Public,
                         []
                     )
                 ) {
@@ -69,7 +69,7 @@ export function onUnsubscribe(
                         "chat.onSubscribe:test-conference-id",
                         "chat.onSubscribe:test-room-id",
                         "chat.onSubscribe:test-room-name",
-                        RoomPrivacy_Enum.Private,
+                        RoomPrivacy_Enum.Public,
                         []
                     )
                 ) {

@@ -95,10 +95,10 @@ export async function action(action: Action<Reaction>, userId: string, confSlugs
             action.data.senderId ?? undefined,
             false,
             "reactions.send:test-attendee-id",
-            "reactions.send:test-conference-id",
+            "reactions.send:test-attendee-displayName",
             "reactions.send:test-room-id",
             "reactions.send:test-room-name",
-            RoomPrivacy_Enum.Private,
+            RoomPrivacy_Enum.Public,
             []
         )
     ) {

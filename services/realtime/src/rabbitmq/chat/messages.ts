@@ -79,10 +79,10 @@ export async function action(action: Action<Message>, userId: string, confSlugs:
             action.data.senderId ?? undefined,
             false,
             "messages.send:test-attendee-id",
-            "messages.send:test-conference-id",
+            "messages.send:test-attendee-displayName",
             "messages.send:test-room-id",
             "messages.send:test-room-name",
-            RoomPrivacy_Enum.Private,
+            RoomPrivacy_Enum.Public,
             []
         )
     ) {

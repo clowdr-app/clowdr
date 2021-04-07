@@ -62,7 +62,7 @@ export function useGenerateMarkers(
                     <TimeMarker
                         width={markerWidth}
                         showTimeLabel={showTimeLabel}
-                        showDate={currDate.ordinal > prevOrdinal || (currDate.hour >= 12 && prevHour < 12)}
+                        showDate={false} // {currDate.ordinal > prevOrdinal || (currDate.hour >= 12 && prevHour < 12)}
                         time={currentMarkerTime}
                         key={`marker-${currentMarkerTime}`}
                         roundTop={false}

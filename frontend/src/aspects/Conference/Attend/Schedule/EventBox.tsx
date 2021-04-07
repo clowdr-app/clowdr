@@ -3,13 +3,11 @@ import {
     Button,
     Flex,
     Link,
-    Popover,
-    PopoverArrow,
-    PopoverBody,
-    PopoverContent,
-    PopoverHeader,
-    PopoverTrigger,
-    Portal,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
     Spinner,
     Text,
     useColorModeValue,
@@ -97,126 +95,107 @@ function EventBoxPopover({
     const timelineParams = useTimelineParameters();
 
     return (
-        <Popover
-            variant="responsive"
+        <Modal
             closeOnEsc={true}
-            trigger="click"
-            placement="right-start"
             isOpen={isOpen}
             onClose={onClose}
             returnFocusOnClose={false}
             autoFocus={true}
+            scrollBehavior="inside"
+            size="4xl"
         >
-            <PopoverTrigger>
-                <div
-                    style={{
-                        visibility: "hidden",
-                        zIndex: 0,
-                        position: "absolute",
-                        top: topPc + "%",
-                        height: heightPc + "%",
-                        width: "100%",
-                        left: 0,
-                        transition: "none",
-                    }}
-                ></div>
-            </PopoverTrigger>
-            <Portal>
-                <PopoverContent
-                    overflowY="auto"
-                    overflowX="hidden"
-                    onMouseDown={(ev) => {
-                        ev.stopPropagation();
-                    }}
-                    onMouseMove={(ev) => {
-                        ev.stopPropagation();
-                    }}
-                    maxH="70vh"
-                    // width={Math.min(window.innerWidth * 0.7, Math.min(window.innerWidth - 200, 900))}
-                >
-                    {content ? (
-                        <>
-                            <PopoverHeader fontWeight="semibold" pr={1}>
-                                <Flex direction="row">
-                                    <Text>
-                                        <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
-                                            <Twemoji className="twemoji" text={eventTitle} />
-                                        </Link>
+            <ModalOverlay />
+            <ModalContent>
+                {content ? (
+                    <>
+                        <ModalHeader fontWeight="semibold" pr={1}>
+                            <Flex direction="row">
+                                <Box>
+                                    <Text
+                                        aria-label={`Starts at ${DateTime.fromISO(event0.startTime)
+                                            .setZone(timelineParams.timezone)
+                                            .toLocaleString({
+                                                weekday: "long",
+                                                hour: "numeric",
+                                                minute: "numeric",
+                                            })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
+                                        mb={2}
+                                        fontSize="sm"
+                                        fontStyle="italic"
+                                    >
+                                        {DateTime.fromMillis(eventStartMs)
+                                            .setZone(timelineParams.timezone)
+                                            .toLocaleString({
+                                                weekday: "short",
+                                                month: "short",
+                                                day: "2-digit",
+                                                hour: "numeric",
+                                                minute: "numeric",
+                                                hour12: false,
+                                            })}{" "}
+                                        -{" "}
+                                        {DateTime.fromMillis(eventStartMs + durationSeconds * 1000)
+                                            .setZone(timelineParams.timezone)
+                                            .toLocaleString({
+                                                hour: "numeric",
+                                                minute: "numeric",
+                                                hour12: false,
+                                            })}
                                     </Text>
-                                    <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
-                                        <LinkButton
-                                            ml={1}
-                                            mr={1}
-                                            size="sm"
-                                            colorScheme={isLive ? "red" : "green"}
-                                            to={eventUrl}
-                                            title={
-                                                isLive
-                                                    ? `Event is happening now. Go to room ${roomName}`
-                                                    : content.title
-                                                    ? "View this event"
-                                                    : `Go to room ${roomName}`
-                                            }
-                                            textDecoration="none"
-                                        >
-                                            {isLive ? (
-                                                <>
-                                                    <FAIcon iconStyle="s" icon="link" mr={2} /> LIVE
-                                                </>
-                                            ) : (
-                                                <FAIcon iconStyle="s" icon="link" />
-                                            )}
-                                            <Text as="span" ml={1}>
-                                                View
-                                            </Text>
-                                            {/* TODO: Time until event starts */}
-                                        </LinkButton>
-                                        {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
+                                </Box>
+                                <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
+                                    <LinkButton
+                                        ml={1}
+                                        mr={1}
+                                        size="xs"
+                                        colorScheme={isLive ? "red" : "green"}
+                                        to={eventUrl}
+                                        title={
+                                            isLive
+                                                ? `Event is happening now. Go to room ${roomName}`
+                                                : content.title
+                                                ? "View this event"
+                                                : `Go to room ${roomName}`
+                                        }
+                                        textDecoration="none"
+                                    >
+                                        {isLive ? (
+                                            <>
+                                                <FAIcon iconStyle="s" icon="link" mr={2} /> LIVE
+                                            </>
+                                        ) : (
+                                            <FAIcon iconStyle="s" icon="link" />
+                                        )}
+                                        <Text as="span" ml={1}>
+                                            View
+                                        </Text>
+                                        {/* TODO: Time until event starts */}
+                                    </LinkButton>
+                                    {/* <Button colorScheme="gray" size="sm" onClick={onClose}>
                                     <FAIcon iconStyle="s" icon="times" />
                                 </Button> */}
-                                    </Flex>
                                 </Flex>
-                                <Text
-                                    aria-label={`Starts at ${DateTime.fromISO(event0.startTime)
-                                        .setZone(timelineParams.timezone)
-                                        .toLocaleString({
-                                            weekday: "long",
-                                            hour: "numeric",
-                                            minute: "numeric",
-                                        })} and lasts ${Math.round(durationSeconds / 60)} minutes.`}
-                                    mb={2}
-                                >
-                                    {DateTime.fromMillis(eventStartMs).setZone(timelineParams.timezone).toLocaleString({
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                        hour12: false,
-                                    })}{" "}
-                                    -{" "}
-                                    {DateTime.fromMillis(eventStartMs + durationSeconds * 1000)
-                                        .setZone(timelineParams.timezone)
-                                        .toLocaleString({
-                                            hour: "numeric",
-                                            minute: "numeric",
-                                            hour12: false,
-                                        })}
-                                </Text>
-                            </PopoverHeader>
-                            <PopoverArrow />
-                            <PopoverBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
-                                {content?.people && content?.people.length > 0 ? (
-                                    <AuthorList contentPeopleData={content.people} />
-                                ) : undefined}
-                                <Box>
-                                    <Markdown>{abstractText}</Markdown>
-                                </Box>
-                            </PopoverBody>
-                        </>
-                    ) : (
-                        <Spinner label="Loading event info" />
-                    )}
-                </PopoverContent>
-            </Portal>
-        </Popover>
+                            </Flex>
+                            <Text>
+                                <Link ref={ref} as={ReactLink} to={eventUrl} textDecoration="none">
+                                    <Twemoji className="twemoji" text={eventTitle} />
+                                </Link>
+                            </Text>
+                        </ModalHeader>
+                        <ModalBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
+                            <Box>
+                                <Markdown>{abstractText}</Markdown>
+                            </Box>
+                            {content?.people && content?.people.length > 0 ? (
+                                <AuthorList contentPeopleData={content.people} />
+                            ) : undefined}
+                        </ModalBody>
+                    </>
+                ) : (
+                    <Spinner label="Loading event info" />
+                )}
+            </ModalContent>
+        </Modal>
     );
 }
 

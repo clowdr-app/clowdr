@@ -1,9 +1,11 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Heading, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import assert from "assert";
+import { DateTime } from "luxon";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
+import Color from "tinycolor2";
 import {
     Permission_Enum,
     Schedule_ContentGroupSummaryFragment,
@@ -272,6 +274,7 @@ function ScheduleFrame({
     scrollToEventCbs,
     scrollToNow,
     contentGroups,
+    isNewDay,
 }: {
     frame: Frame;
     alternateBgColor: string;
@@ -282,6 +285,7 @@ function ScheduleFrame({
     timeBarWidth: number;
     scrollToEventCbs: Map<string, () => void>;
     scrollToNow: { f: () => void };
+    isNewDay: boolean;
 }): JSX.Element {
     const roomNameBoxes = useMemo(
         () =>
@@ -314,18 +318,11 @@ function ScheduleFrame({
 
     const roomTimelines = useMemo(
         () =>
-            frame.items.map((item, idx) => {
+            frame.items.map((item) => {
                 const room = item.session.room;
 
                 return (
-                    <Box
-                        key={room.id}
-                        h="100%"
-                        w={roomColWidth + "px"}
-                        borderBottomWidth={idx !== frame.items.length - 1 ? 1 : 0}
-                        borderBottomStyle="solid"
-                        borderBottomColor={borderColour}
-                    >
+                    <Box key={room.id} h="100%" w={roomColWidth + "px"}>
                         <RoomTimeline
                             room={room}
                             hideTimeShiftButtons={true}
@@ -338,11 +335,61 @@ function ScheduleFrame({
                     </Box>
                 );
             }, [] as (JSX.Element | undefined)[]),
-        [borderColour, contentGroups, frame.items, roomColWidth, scrollToEventCbs]
+        [contentGroups, frame.items, roomColWidth, scrollToEventCbs]
     );
 
+    const timelineParams = useTimelineParameters();
+    const startTime = useMemo(() => DateTime.fromMillis(frame.startTimeMs).setZone(timelineParams.timezone), [
+        frame.startTimeMs,
+        timelineParams.timezone,
+    ]);
+    const borderColourRaw = useToken("colors", borderColour);
+    const { colorMode } = useColorMode();
+
     return (
-        <Box w="100%" borderBottomStyle="solid" borderBottomWidth="3px" borderBottomColor={borderColour}>
+        <Box w="100%">
+            <Box
+                borderTopStyle="solid"
+                borderTopWidth="2px"
+                borderTopColor={borderColour}
+                borderBottomStyle="solid"
+                borderBottomWidth="1px"
+                borderBottomColor={Color(borderColourRaw).darken(30).toRgbString()}
+                mt={4}
+                px={2}
+                py={1}
+                fontSize={isNewDay ? "md" : "sm"}
+                fontWeight={isNewDay ? "bold" : undefined}
+                flex="1 0 max-content"
+                display="flex"
+                justifyContent="stretch"
+                alignItems="stretch"
+                backgroundColor={
+                    isNewDay
+                        ? colorMode === "dark"
+                            ? "rgba(230, 200, 50, 0.3)"
+                            : "orange.100"
+                        : colorMode === "dark"
+                        ? "gray.700"
+                        : "gray.200"
+                }
+            >
+                {startTime.toLocaleString(
+                    isNewDay
+                        ? {
+                              weekday: "short",
+                              month: "short",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                          }
+                        : {
+                              weekday: "short",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                          }
+                )}
+            </Box>
             <Box
                 flex="1 0 max-content"
                 role="list"
@@ -451,7 +498,7 @@ function ScheduleInner({
     );
 
     const frameEls = useMemo(() => {
-        return frames.map((frame) => {
+        return frames.map((frame, idx) => {
             const avgEventDurationI = frame.items.reduce(
                 (acc, item) => {
                     const { sum, count } = item.session.events.reduce(
@@ -474,6 +521,8 @@ function ScheduleInner({
             );
             const avgEventDuration = avgEventDurationI.count > 0 ? avgEventDurationI.sum / avgEventDurationI.count : 1;
             const avgEventsPerRoom = avgEventsPerRoomI.count > 0 ? avgEventsPerRoomI.sum / avgEventsPerRoomI.count : 1;
+            const isNewDay =
+                idx === 0 || new Date(frames[idx - 1].startTimeMs).getDay() !== new Date(frame.startTimeMs).getDay();
             return (
                 <TimelineParameters
                     earliestEventStart={frame.startTimeMs}
@@ -491,6 +540,7 @@ function ScheduleInner({
                             contentGroups={contentGroups}
                             roomColWidth={roomColWidth}
                             timeBarWidth={timeBarWidth}
+                            isNewDay={isNewDay}
                         />
                     </ScalingProvider>
                 </TimelineParameters>

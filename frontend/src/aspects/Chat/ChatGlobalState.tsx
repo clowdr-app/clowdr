@@ -450,7 +450,7 @@ export class MessageState {
                 updated_at: now.toISOString(),
                 senderId: this.globalState.attendee.id,
             };
-            const socket = await this.globalState.socket;
+            const socket = this.globalState.socket;
             assert(socket, "Not connected to chat service.");
             const action: Action<Reaction> = {
                 op: "INSERT",
@@ -467,7 +467,7 @@ export class MessageState {
         try {
             const rct = this.reactions.find((x) => x.sId === reactionSId);
             assert(rct, "Reaction not found");
-            const socket = await this.globalState.socket;
+            const socket = this.globalState.socket;
             assert(socket, "Not connected to chat service.");
             const action: Action<Reaction> = {
                 op: "DELETE",
@@ -882,13 +882,18 @@ export class ChatState {
         try {
             this.subCount++;
             if (this.subCount === 1) {
-                const socket = await this.globalState.socket;
-                socket?.emit("chat.subscribe", this.Id);
+                this.reestablishSubscription();
             }
         } catch (e) {
             console.error(`Error subscribing to chat: ${this.Id}`, e);
         } finally {
             release();
+        }
+    }
+    public reestablishSubscription(): void {
+        if (this.subCount > 0) {
+            const socket = this.globalState.socket;
+            socket?.emit("chat.subscribe", this.Id);
         }
     }
     public async unsubscribe(force = false): Promise<void> {
@@ -897,7 +902,7 @@ export class ChatState {
         try {
             this.subCount--;
             if (this.subCount === 0 || force) {
-                const socket = await this.globalState.socket;
+                const socket = this.globalState.socket;
                 socket?.emit("chat.unsubscribe", this.Id);
             }
             if (!force && this.subCount < 0) {
@@ -1019,7 +1024,7 @@ export class ChatState {
         this.isSending = true;
         this.isSendingObs.publish(this.isSending);
         try {
-            const socket = await this.globalState.socket;
+            const socket = this.globalState.socket;
             assert(socket, "Not connected to chat service.");
             const sId = uuidv4();
             const newMsg: Message = {
@@ -1098,7 +1103,7 @@ export class ChatState {
     public async deleteMessage(messageSId: string): Promise<void> {
         const release = await this.messagesMutex.acquire();
         try {
-            const socket = await this.globalState.socket;
+            const socket = this.globalState.socket;
             assert(socket, "Not connected to chat service.");
 
             const msg = this.messages.get(messageSId);
@@ -1179,7 +1184,7 @@ export class GlobalChatState {
     public openChatInSidebar: ((chatId: string) => void) | null = null;
     public showSidebar: (() => void) | null = null;
 
-    public socket: Promise<SocketIOClient.Socket | null> | null = null;
+    public socket: SocketIOClient.Socket | null = null;
 
     constructor(
         public readonly conference: {
@@ -1239,7 +1244,218 @@ export class GlobalChatState {
             if (!this.hasInitialised) {
                 this.hasInitialised = true;
                 if (!this.hasTorndown) {
-                    this.socket = new Promise((resolve) => realtimeService.onSocketAvailable(resolve));
+                    realtimeService.onSocketAvailable((socket) => {
+                        this.socket = socket;
+
+                        console.info("Connection to chat established.");
+
+                        socket.on("notification", (notification: Notification) => {
+                            // console.info("Notification", notification);
+
+                            const openChatInSidebar = this.openChatInSidebar;
+                            const showSidebar = this.showSidebar;
+
+                            const notificationId = this.toast({
+                                position: "top-right",
+                                isClosable: true,
+                                duration: 7000,
+                                render: function ChatNotification(props: RenderProps) {
+                                    return (
+                                        <VStack
+                                            alignItems="flex-start"
+                                            background="purple.700"
+                                            color="gray.50"
+                                            w="auto"
+                                            h="auto"
+                                            p={5}
+                                            opacity={0.95}
+                                            borderRadius={10}
+                                            position="relative"
+                                            pt={2}
+                                        >
+                                            <CloseButton
+                                                position="absolute"
+                                                top={2}
+                                                right={2}
+                                                onClick={props.onClose}
+                                            />
+                                            <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
+                                                {notification.title}
+                                            </Heading>
+                                            {notification.subtitle ? (
+                                                <Heading
+                                                    textAlign="left"
+                                                    as="h3"
+                                                    fontSize="0.9rem"
+                                                    fontStyle="italic"
+                                                    maxW="250px"
+                                                    noOfLines={1}
+                                                >
+                                                    {notification.subtitle}
+                                                </Heading>
+                                            ) : undefined}
+                                            <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
+                                                <Markdown restrictHeadingSize>{notification.description}</Markdown>
+                                            </Box>
+                                            <ButtonGroup isAttached>
+                                                {openChatInSidebar && notification.chatId ? (
+                                                    <Button
+                                                        colorScheme="green"
+                                                        onClick={() => {
+                                                            props.onClose();
+                                                            if (notification.chatId) {
+                                                                openChatInSidebar?.(notification.chatId);
+                                                                showSidebar?.();
+                                                            }
+                                                        }}
+                                                    >
+                                                        Go to chat
+                                                    </Button>
+                                                ) : undefined}
+                                                {notification.linkURL ? (
+                                                    <Button
+                                                        colorScheme="blue"
+                                                        onClick={() => {
+                                                            props.onClose();
+                                                            if (notification.linkURL) {
+                                                                window.open(notification.linkURL, "_blank");
+                                                            }
+                                                        }}
+                                                    >
+                                                        <ExternalLinkIcon />
+                                                    </Button>
+                                                ) : undefined}
+                                            </ButtonGroup>
+                                        </VStack>
+                                    );
+                                },
+                            });
+                            if (notificationId) {
+                                let numPopped = 0;
+                                while (this.ongoingNotifications.length - numPopped >= 3) {
+                                    this.toast.close(this.ongoingNotifications[numPopped]);
+
+                                    numPopped++;
+                                }
+                                this.ongoingNotifications = this.ongoingNotifications.slice(numPopped);
+                                this.ongoingNotifications.push(notificationId);
+                            }
+                        });
+
+                        socket.on("chat.subscribed", (chatId: string) => {
+                            // console.info(`Chat subscribed: ${chatId}`);
+                            const existing = this.chatStates?.get(chatId);
+                            existing?.setIsSubscribed(true);
+                        });
+                        socket.on("chat.unsubscribed", (chatId: string) => {
+                            // console.info(`Chat unsubscribed: ${chatId}`);
+                            const existing = this.chatStates?.get(chatId);
+                            existing?.setIsSubscribed(false);
+                        });
+
+                        socket.on("chat.pinned", async (chatId: string) => {
+                            // console.info(`Chat pinned: ${chatId}`);
+                            const existing = this.chatStates?.get(chatId);
+                            if (existing) {
+                                existing.setIsPinned(true);
+                            } else {
+                                try {
+                                    const newlyPinSubChats = await this.apolloClient.query<
+                                        SelectInitialChatStatesQuery,
+                                        SelectInitialChatStatesQueryVariables
+                                    >({
+                                        query: SelectInitialChatStatesDocument,
+                                        variables: {
+                                            attendeeId: this.attendee.id,
+                                            chatIds: [chatId],
+                                        },
+                                        fetchPolicy: "network-only",
+                                    });
+
+                                    const release = await this.mutex.acquire();
+                                    try {
+                                        this.chatStates = this.chatStates ?? new Map();
+                                        for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
+                                            const newState = new ChatState(this, pinSubChat);
+                                            await newState.fetchReadUpToIdx();
+                                            this.chatStates.set(pinSubChat.id, newState);
+                                        }
+                                        this.chatStatesObs.publish(this.chatStates);
+                                    } finally {
+                                        release();
+                                    }
+                                } catch (e) {
+                                    console.error(`Error initialising newly pinned chat: ${chatId}`, e);
+                                }
+                            }
+                        });
+                        socket.on("chat.unpinned", (chatId: string) => {
+                            // console.info(`Chat unpinned: ${chatId}`);
+                            const existing = this.chatStates?.get(chatId);
+                            existing?.setIsPinned(false);
+                        });
+
+                        socket.on("chat.messages.receive", (msg: Message) => {
+                            // console.info("Chat message received", msg);
+                            const existing = this.chatStates?.get(msg.chatId);
+                            existing?.onMessageAdded(msg);
+                        });
+                        socket.on("chat.messages.update", (msg: Message) => {
+                            // console.info("Chat message updated", msg);
+                            const existing = this.chatStates?.get(msg.chatId);
+                            existing?.onMessageUpdated(msg);
+                        });
+                        socket.on("chat.messages.delete", (msg: Message) => {
+                            // console.info("Chat message deleted", msg);
+                            const existing = this.chatStates?.get(msg.chatId);
+                            existing?.onMessageRemoved(msg);
+                        });
+
+                        socket.on("chat.messages.send.ack", (messageSid: string) => {
+                            // console.info("Chat message send ack'd", messageSid);
+                            if (this.chatStates) {
+                                for (const existing of this.chatStates) {
+                                    existing[1].ackSendMessage?.(messageSid);
+                                }
+                            }
+                        });
+                        socket.on("chat.messages.send.nack", (messageSid: string) => {
+                            // console.info("Chat message send nack'd", messageSid);
+                            if (this.chatStates) {
+                                for (const existing of this.chatStates) {
+                                    existing[1].nackSendMessage?.(messageSid);
+                                }
+                            }
+                        });
+
+                        socket.on("chat.reactions.receive", (msg: Reaction) => {
+                            // console.info("Chat reaction received", msg);
+                            const existing = this.chatStates?.get(msg.chatId);
+                            existing?.onReactionAdded(msg);
+                        });
+                        socket.on("chat.reactions.update", (msg: Reaction) => {
+                            // console.info("Chat reaction updated", msg);
+                            const existing = this.chatStates?.get(msg.chatId);
+                            existing?.onReactionUpdated(msg);
+                        });
+                        socket.on("chat.reactions.delete", (msg: Reaction) => {
+                            // console.info("Chat reaction deleted", msg);
+                            const existing = this.chatStates?.get(msg.chatId);
+                            existing?.onReactionRemoved(msg);
+                        });
+
+                        socket.emit("chat.subscriptions.changed.on", this.attendee.id);
+                        socket.emit("chat.pins.changed.on", this.attendee.id);
+
+                        // TODO: Actions
+                        //    - Unread counts: update
+
+                        if (this.chatStates) {
+                            for (const chatState of this.chatStates) {
+                                chatState[1].reestablishSubscription();
+                            }
+                        }
+                    });
 
                     const initialData = await this.apolloClient.query<
                         InitialChatStateQuery,
@@ -1252,13 +1468,6 @@ export class GlobalChatState {
                     });
 
                     console.info("Initial chat data", initialData);
-
-                    const socket = await this.socket;
-                    if (!socket) {
-                        throw new Error("No websocket connection to realtime/chat service!");
-                    }
-
-                    console.info("Remote service client configured.", initialData);
 
                     if (!this.chatStates) {
                         this.chatStates = new Map();
@@ -1274,203 +1483,6 @@ export class GlobalChatState {
                     );
 
                     this.chatStatesObs.publish(this.chatStates);
-
-                    socket.on("notification", (notification: Notification) => {
-                        // console.info("Notification", notification);
-
-                        const openChatInSidebar = this.openChatInSidebar;
-                        const showSidebar = this.showSidebar;
-
-                        const notificationId = this.toast({
-                            position: "top-right",
-                            isClosable: true,
-                            duration: 7000,
-                            render: function ChatNotification(props: RenderProps) {
-                                return (
-                                    <VStack
-                                        alignItems="flex-start"
-                                        background="purple.700"
-                                        color="gray.50"
-                                        w="auto"
-                                        h="auto"
-                                        p={5}
-                                        opacity={0.95}
-                                        borderRadius={10}
-                                        position="relative"
-                                        pt={2}
-                                    >
-                                        <CloseButton position="absolute" top={2} right={2} onClick={props.onClose} />
-                                        <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
-                                            {notification.title}
-                                        </Heading>
-                                        {notification.subtitle ? (
-                                            <Heading
-                                                textAlign="left"
-                                                as="h3"
-                                                fontSize="0.9rem"
-                                                fontStyle="italic"
-                                                maxW="250px"
-                                                noOfLines={1}
-                                            >
-                                                {notification.subtitle}
-                                            </Heading>
-                                        ) : undefined}
-                                        <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
-                                            <Markdown restrictHeadingSize>{notification.description}</Markdown>
-                                        </Box>
-                                        <ButtonGroup isAttached>
-                                            {openChatInSidebar && notification.chatId ? (
-                                                <Button
-                                                    colorScheme="green"
-                                                    onClick={() => {
-                                                        props.onClose();
-                                                        if (notification.chatId) {
-                                                            openChatInSidebar?.(notification.chatId);
-                                                            showSidebar?.();
-                                                        }
-                                                    }}
-                                                >
-                                                    Go to chat
-                                                </Button>
-                                            ) : undefined}
-                                            {notification.linkURL ? (
-                                                <Button
-                                                    colorScheme="blue"
-                                                    onClick={() => {
-                                                        props.onClose();
-                                                        if (notification.linkURL) {
-                                                            window.open(notification.linkURL, "_blank");
-                                                        }
-                                                    }}
-                                                >
-                                                    <ExternalLinkIcon />
-                                                </Button>
-                                            ) : undefined}
-                                        </ButtonGroup>
-                                    </VStack>
-                                );
-                            },
-                        });
-                        if (notificationId) {
-                            let numPopped = 0;
-                            while (this.ongoingNotifications.length - numPopped >= 3) {
-                                this.toast.close(this.ongoingNotifications[numPopped]);
-
-                                numPopped++;
-                            }
-                            this.ongoingNotifications = this.ongoingNotifications.slice(numPopped);
-                            this.ongoingNotifications.push(notificationId);
-                        }
-                    });
-
-                    socket.on("chat.subscribed", (chatId: string) => {
-                        // console.info(`Chat subscribed: ${chatId}`);
-                        const existing = this.chatStates?.get(chatId);
-                        existing?.setIsSubscribed(true);
-                    });
-                    socket.on("chat.unsubscribed", (chatId: string) => {
-                        // console.info(`Chat unsubscribed: ${chatId}`);
-                        const existing = this.chatStates?.get(chatId);
-                        existing?.setIsSubscribed(false);
-                    });
-
-                    socket.on("chat.pinned", async (chatId: string) => {
-                        // console.info(`Chat pinned: ${chatId}`);
-                        const existing = this.chatStates?.get(chatId);
-                        if (existing) {
-                            existing.setIsPinned(true);
-                        } else {
-                            try {
-                                const newlyPinSubChats = await this.apolloClient.query<
-                                    SelectInitialChatStatesQuery,
-                                    SelectInitialChatStatesQueryVariables
-                                >({
-                                    query: SelectInitialChatStatesDocument,
-                                    variables: {
-                                        attendeeId: this.attendee.id,
-                                        chatIds: [chatId],
-                                    },
-                                    fetchPolicy: "network-only",
-                                });
-
-                                const release = await this.mutex.acquire();
-                                try {
-                                    this.chatStates = this.chatStates ?? new Map();
-                                    for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
-                                        const newState = new ChatState(this, pinSubChat);
-                                        await newState.fetchReadUpToIdx();
-                                        this.chatStates.set(pinSubChat.id, newState);
-                                    }
-                                    this.chatStatesObs.publish(this.chatStates);
-                                } finally {
-                                    release();
-                                }
-                            } catch (e) {
-                                console.error(`Error initialising newly pinned chat: ${chatId}`, e);
-                            }
-                        }
-                    });
-                    socket.on("chat.unpinned", (chatId: string) => {
-                        // console.info(`Chat unpinned: ${chatId}`);
-                        const existing = this.chatStates?.get(chatId);
-                        existing?.setIsPinned(false);
-                    });
-
-                    socket.on("chat.messages.receive", (msg: Message) => {
-                        // console.info("Chat message received", msg);
-                        const existing = this.chatStates?.get(msg.chatId);
-                        existing?.onMessageAdded(msg);
-                    });
-                    socket.on("chat.messages.update", (msg: Message) => {
-                        // console.info("Chat message updated", msg);
-                        const existing = this.chatStates?.get(msg.chatId);
-                        existing?.onMessageUpdated(msg);
-                    });
-                    socket.on("chat.messages.delete", (msg: Message) => {
-                        // console.info("Chat message deleted", msg);
-                        const existing = this.chatStates?.get(msg.chatId);
-                        existing?.onMessageRemoved(msg);
-                    });
-
-                    socket.on("chat.messages.send.ack", (messageSid: string) => {
-                        console.info("Chat message send ack'd", messageSid);
-                        if (this.chatStates) {
-                            for (const existing of this.chatStates) {
-                                existing[1].ackSendMessage?.(messageSid);
-                            }
-                        }
-                    });
-                    socket.on("chat.messages.send.nack", (messageSid: string) => {
-                        console.info("Chat message send nack'd", messageSid);
-                        if (this.chatStates) {
-                            for (const existing of this.chatStates) {
-                                existing[1].nackSendMessage?.(messageSid);
-                            }
-                        }
-                    });
-
-                    socket.on("chat.reactions.receive", (msg: Reaction) => {
-                        console.info("Chat reaction received", msg);
-                        const existing = this.chatStates?.get(msg.chatId);
-                        existing?.onReactionAdded(msg);
-                    });
-                    socket.on("chat.reactions.update", (msg: Reaction) => {
-                        // console.info("Chat reaction updated", msg);
-                        const existing = this.chatStates?.get(msg.chatId);
-                        existing?.onReactionUpdated(msg);
-                    });
-                    socket.on("chat.reactions.delete", (msg: Reaction) => {
-                        // console.info("Chat reaction deleted", msg);
-                        const existing = this.chatStates?.get(msg.chatId);
-                        existing?.onReactionRemoved(msg);
-                    });
-
-                    socket.emit("chat.subscriptions.changed.on", this.attendee.id);
-                    socket.emit("chat.pins.changed.on", this.attendee.id);
-
-                    // TODO: Actions
-                    //    - Reactions: send
-                    //    - Unread counts: update
                 }
             }
         } catch (e) {
@@ -1487,7 +1499,7 @@ export class GlobalChatState {
             if (!this.hasTorndown) {
                 this.hasTorndown = true;
                 if (this.hasInitialised) {
-                    const socket = await this.socket;
+                    const socket = this.socket;
                     if (socket) {
                         socket.emit("chat.subscriptions.changed.off", this.attendee.id);
                         socket.emit("chat.pins.changed.off", this.attendee.id);

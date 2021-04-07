@@ -8,19 +8,17 @@ export class RealtimeService {
     private _onSocketAvailable: Map<number, (socket: SocketIOClient.Socket) => void> = new Map();
     private _onSocketAvailableGen = 1;
     onSocketAvailable(handler: (socket: SocketIOClient.Socket) => void): () => void {
+        const id = this._onSocketAvailableGen++;
+        this._onSocketAvailable.set(id, handler);
+
         if (this.socket) {
             const sock = this.socket;
             setTimeout(() => handler(sock), 1);
-            return () => {
-                // Empty
-            };
-        } else {
-            const id = this._onSocketAvailableGen++;
-            this._onSocketAvailable.set(id, handler);
-            return () => {
-                this._onSocketAvailable.delete(id);
-            };
         }
+
+        return () => {
+            this._onSocketAvailable.delete(id);
+        };
     }
 
     async begin(token: string): Promise<void> {
@@ -45,11 +43,6 @@ export class RealtimeService {
             this.socket.on("disconnect", this.onDisconnect.bind(this));
             this.socket.on("connect_error", this.onConnectError.bind(this));
             this.socket.on("unauthorized", this.onUnauthorized.bind(this));
-
-            for (const handler of this._onSocketAvailable.values()) {
-                handler(this.socket);
-            }
-            this._onSocketAvailable.clear();
         } catch (e) {
             console.error("Failed to create socket for realtime service.");
             this.socket = undefined;
@@ -74,6 +67,12 @@ export class RealtimeService {
 
     private onConnect() {
         console.log("Connected to realtime service");
+
+        if (this.socket) {
+            for (const handler of this._onSocketAvailable.values()) {
+                handler(this.socket);
+            }
+        }
     }
 
     private onDisconnect() {

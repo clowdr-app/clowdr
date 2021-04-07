@@ -59,15 +59,12 @@ async function onMessage(action: Action<Message>) {
             });
             if (chatInfo) {
                 const room = chatInfo.rooms.length > 0 ? chatInfo.rooms[0] : undefined;
-                const otherAttendeeId =
-                    room?.privacy === RoomPrivacy_Enum.Dm
-                        ? room.people.find((x) => x.attendeeId !== action.data.senderId)?.attendeeId
+                const attendeeInfo =
+                    room?.privacy === RoomPrivacy_Enum.Dm && action.data.senderId
+                        ? await getAttendeeInfo(action.data.senderId, {
+                              displayName: "distribution.onMessage:unknown-attendee-displayName",
+                          })
                         : undefined;
-                const otherAttendeeInfo = otherAttendeeId
-                    ? await getAttendeeInfo(otherAttendeeId, {
-                          displayName: "distribution.onMessage:unknown-attendee-displayName",
-                      })
-                    : undefined;
 
                 const chatName =
                     chatInfo.contentGroups && chatInfo.contentGroups.length > 0
@@ -90,7 +87,7 @@ async function onMessage(action: Action<Message>) {
                     }`,
                     chatId,
                     linkURL: `/conference/${chatInfo.conference.slug}/chat/${chatId}`,
-                    subtitle: otherAttendeeInfo ? `from ${otherAttendeeInfo.displayName}` : `in ${chatName}`,
+                    subtitle: attendeeInfo ? `from ${attendeeInfo.displayName}` : `in ${chatName}`,
                 });
             }
         }

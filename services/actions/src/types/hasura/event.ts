@@ -206,35 +206,3 @@ export interface AttendeeGoogleAccountData extends BaseData {
 }
 
 export interface UserData extends BaseData {}
-
-export interface ChatData {
-    id: string;
-}
-
-export interface MessageData {
-    id: number;
-    created_at: string;
-    updated_at: string;
-    type: string;
-    chatId: string;
-    senderId: string | null | undefined;
-    message: string;
-    data: any;
-    isPinned: boolean;
-    duplicatedMessageSId: string | null | undefined;
-    systemId: string | null | undefined;
-    sId: string;
-}
-
-export interface ReactionData {
-    id: number;
-    created_at: string;
-    updated_at: string;
-    messageId: number;
-    type: string;
-    senderId: string;
-    symbol: string;
-    data: any;
-    duplicateId?: number | null | undefined;
-    remoteServiceId?: string | null | undefined;
-}

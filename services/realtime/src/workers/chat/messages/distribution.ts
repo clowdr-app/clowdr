@@ -34,17 +34,19 @@ async function onMessage(action: Action<Message>) {
                 (x) => x.split("¬")[1]
             );
             const subscribedAttendeeIds = subscriptions.attendeeIds.filter((x) => x !== action.data.senderId);
-            const subscribedUserIds = (
-                await Promise.all(
-                    subscribedAttendeeIds.map((attendeeId) =>
-                        getAttendeeInfo(attendeeId, {
-                            displayName: "unknown",
-                        })
+            const subscribedUserIds = new Set(
+                (
+                    await Promise.all(
+                        subscribedAttendeeIds.map((attendeeId) =>
+                            getAttendeeInfo(attendeeId, {
+                                displayName: "unknown",
+                            })
+                        )
                     )
                 )
-            )
-                .filter((x) => !!x?.userId && !listenerUserIds.includes(x.userId))
-                .map((x) => x?.userId) as string[];
+                    .filter((x) => !!x?.userId && !listenerUserIds.includes(x.userId))
+                    .map((x) => x?.userId) as string[]
+            );
 
             const chatInfo = await getChatInfo(chatId, {
                 conference: {

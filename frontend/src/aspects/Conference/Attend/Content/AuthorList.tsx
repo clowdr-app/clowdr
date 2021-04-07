@@ -1,10 +1,13 @@
 import { gql } from "@apollo/client";
-import { Badge, HStack, Text, VStack } from "@chakra-ui/react";
+import { Badge, HStack, Link, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { Link as ReactLink } from "react-router-dom";
 import type {
     ContentGroupList_ContentPersonDataFragment,
     ContentPersonDataFragment,
 } from "../../../../generated/graphql";
+import { FAIcon } from "../../../Icons/FAIcon";
+import { useConference } from "../../useConference";
 
 gql`
     fragment ContentPersonData on ContentGroupPerson {
@@ -13,6 +16,7 @@ gql`
             id
             name
             affiliation
+            attendeeId
         }
         roleName
         priority
@@ -71,12 +75,18 @@ export function AuthorList({
     return (
         <>
             {authorEls.length > 0 ? (
-                <HStack spacing="0" gridGap="8" wrap="wrap">
+                <HStack spacing="0" gridGap="8" wrap="wrap" alignItems="flex-start">
                     {authorEls}
                 </HStack>
             ) : undefined}
             {presenterEls.length > 0 ? (
-                <HStack spacing="0" gridGap="8" wrap="wrap" mt={authorEls.length > 0 ? 8 : undefined}>
+                <HStack
+                    spacing="0"
+                    gridGap="8"
+                    wrap="wrap"
+                    alignItems="flex-start"
+                    mt={authorEls.length > 0 ? 8 : undefined}
+                >
                     {presenterEls}
                 </HStack>
             ) : undefined}
@@ -85,6 +95,7 @@ export function AuthorList({
                     spacing="0"
                     gridGap="8"
                     wrap="wrap"
+                    alignItems="flex-start"
                     mt={authorEls.length > 0 || presenterEls.length > 0 ? 8 : undefined}
                 >
                     {chairEls}
@@ -95,6 +106,7 @@ export function AuthorList({
                     spacing="0"
                     gridGap="8"
                     wrap="wrap"
+                    alignItems="flex-start"
                     mt={chairEls.length > 0 || authorEls.length > 0 || presenterEls.length > 0 ? 8 : undefined}
                 >
                     {othersEls}
@@ -113,9 +125,24 @@ export function Author({
     hideRole?: boolean;
     badgeColour?: string;
 }): JSX.Element {
+    const conference = useConference();
     return (
         <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
-            <Text fontWeight="bold">{contentPersonData.person.name}</Text>
+            <Text fontWeight="bold">
+                {contentPersonData.person.attendeeId ? (
+                    <Link
+                        as={ReactLink}
+                        to={`/conference/${conference.slug}/profile/view/${contentPersonData.person.attendeeId}`}
+                        target="_blank"
+                        textDecoration="none"
+                    >
+                        <FAIcon iconStyle="s" icon="user" mr={2} fontSize="xs" pb={"4px"} />
+                        {contentPersonData.person.name}
+                    </Link>
+                ) : (
+                    contentPersonData.person.name
+                )}
+            </Text>
             {!hideRole ? (
                 <Badge
                     ml="2"
@@ -131,7 +158,7 @@ export function Author({
                     {contentPersonData.roleName}
                 </Badge>
             ) : undefined}
-            <Text fontSize="sm">
+            <Text fontSize="sm" maxW={180}>
                 {contentPersonData.person.affiliation &&
                 contentPersonData.person.affiliation !== "None" &&
                 contentPersonData.person.affiliation !== "undefined" ? (

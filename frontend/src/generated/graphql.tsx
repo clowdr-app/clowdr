@@ -33706,7 +33706,7 @@ export type ConferenceLandingPageContentGroupQuery = { readonly __typename?: 'qu
     & ContentGroupDataFragment
   )> };
 
-export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } };
+export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any> } };
 
 export type ContentGroupRoomEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
 
@@ -35866,6 +35866,7 @@ export const ContentPersonDataFragmentDoc = gql`
     id
     name
     affiliation
+    attendeeId
   }
   roleName
   priority

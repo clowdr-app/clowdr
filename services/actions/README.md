@@ -154,6 +154,7 @@ You will not have the information required for all environment variables yet. Se
 | AWS_SECRET_ACCESS_KEY                            | The secret access key for your AWS user                                                                                       | Yes      |
 | AWS_REGION                                       | The AWS region to operate in                                                                                                  | Yes      |
 | AWS_CONTENT_BUCKET_ID                            | The S3 bucket ID for content storage                                                                                          | Yes      |
+| AWS_CHIME_MANAGER_ROLE_ARN                       | The IAM role providing management access to Amazon Chime                                                                      | Yes      |                |
 | AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN   | The IAM role to be passed to Elastic Transcoder                                                                               | Yes      |
 | AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN          | The ARN of the SNS topic for Elastic Transcoder notifications                                                                 | Yes      |
 | AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID            | The ID of the security group to be used for MediaLive RTMP Push inputs                                                        | Yes      |

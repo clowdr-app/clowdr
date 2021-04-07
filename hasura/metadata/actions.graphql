@@ -79,6 +79,13 @@ type Mutation {
 
 
 type Mutation {
+  joinRoomChimeSession (
+    roomId: uuid!
+  ): JoinRoomChimeSessionOutput
+}
+
+
+type Mutation {
   joinRoomVonageSession (
     roomId: uuid!
   ): JoinRoomVonageSessionOutput
@@ -320,6 +327,10 @@ type PresenceFlushOutput {
   ok : String
 }
 
+type JoinRoomChimeSessionOutput {
+  meeting : jsonb
+  attendee : jsonb
+  message : String
 type VAPIDPublicKeyOutput {
   key : String!
 }

@@ -367,6 +367,7 @@
         remote_table:
           schema: chat
           name: Message
+        insertion_order: null
         column_mapping:
           sId: duplicatedMessageSId
   - name: duplicateOutgoing
@@ -1126,6 +1127,7 @@
         remote_table:
           schema: public
           name: Invitation
+        insertion_order: null
         column_mapping:
           id: attendeeId
   - name: profile
@@ -1134,6 +1136,7 @@
         remote_table:
           schema: public
           name: AttendeeProfile
+        insertion_order: null
         column_mapping:
           id: attendeeId
   - name: user
@@ -2011,6 +2014,7 @@
         remote_table:
           schema: public
           name: Conference
+        insertion_order: null
         column_mapping:
           id: demoCodeId
   - name: usedBy
@@ -2151,6 +2155,7 @@
         remote_table:
           schema: public
           name: Room
+        insertion_order: null
         column_mapping:
           id: originatingContentGroupId
   array_relationships:
@@ -2805,6 +2810,7 @@
         remote_table:
           schema: public
           name: BroadcastContentItem
+        insertion_order: null
         column_mapping:
           id: contentItemId
   - name: conference
@@ -3286,6 +3292,7 @@
         remote_table:
           schema: public
           name: BroadcastContentItem
+        insertion_order: null
         column_mapping:
           id: eventId
   - name: conference
@@ -3300,6 +3307,7 @@
         remote_table:
           schema: public
           name: EventVonageSession
+        insertion_order: null
         column_mapping:
           id: eventId
   - name: originatingData
@@ -4347,6 +4355,7 @@
         remote_table:
           schema: public
           name: Conference
+        insertion_order: null
         column_mapping:
           slug: slug
   - name: permission
@@ -4355,6 +4364,7 @@
         remote_table:
           schema: public
           name: Permission
+        insertion_order: null
         column_mapping:
           permission_name: name
   - name: user
@@ -4363,6 +4373,7 @@
         remote_table:
           schema: public
           name: User
+        insertion_order: null
         column_mapping:
           user_id: id
   select_permissions:
@@ -5499,6 +5510,7 @@
         remote_table:
           schema: public
           name: ContentItem
+        insertion_order: null
         column_mapping:
           id: requiredContentId
   - name: contentType
@@ -5963,6 +5975,7 @@
         remote_table:
           schema: public
           name: MediaLiveChannel
+        insertion_order: null
         column_mapping:
           id: roomId
   - name: originatingContentGroup
@@ -6979,6 +6992,7 @@
         remote_table:
           schema: public
           name: OnlineStatus
+        insertion_order: null
         column_mapping:
           id: userId
   array_relationships:
@@ -7179,6 +7193,84 @@
         - conference:
             slug:
               _eq: X-Hasura-Conference-Slug
+- table:
+    schema: room
+    name: RoomChimeMeeting
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Conference
+        insertion_order: null
+        column_mapping:
+          conferenceId: id
+  - name: room
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Room
+        insertion_order: null
+        column_mapping:
+          roomId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - created_at
+      - id
+      - roomId
+      - updated_at
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+          - _and:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW_ATTENDEES
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - _or:
+              - room:
+                  _or:
+                  - roomPrivacyName:
+                      _eq: PUBLIC
+                  - roomPeople:
+                      attendee:
+                        userId:
+                          _eq: X-Hasura-User-Id
+      limit: 1
 - table:
     schema: room
     name: ShuffleAlgorithm

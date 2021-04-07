@@ -1,3 +1,4 @@
+import { Chime } from "@aws-sdk/client-chime";
 import { CloudFront } from "@aws-sdk/client-cloudfront";
 import { ElasticTranscoder } from "@aws-sdk/client-elastic-transcoder";
 import { IAM } from "@aws-sdk/client-iam";
@@ -6,10 +7,14 @@ import { MediaLive } from "@aws-sdk/client-medialive";
 import { MediaPackage } from "@aws-sdk/client-mediapackage";
 import { S3 } from "@aws-sdk/client-s3";
 import { SNS } from "@aws-sdk/client-sns";
+import { STS } from "@aws-sdk/client-sts";
 import { Transcribe } from "@aws-sdk/client-transcribe";
 import { fromEnv } from "@aws-sdk/credential-provider-env";
+import { Credentials } from "@aws-sdk/types/types/credentials";
 import assert from "assert";
+import { sub } from "date-fns";
 import { customAlphabet } from "nanoid";
+import { v4 as uuidv4 } from "uuid";
 import { getHostUrl } from "../../utils";
 
 assert(process.env.AWS_PREFIX, "Missing AWS_PREFIX environment variable");
@@ -54,50 +59,47 @@ const credentials = fromEnv();
 const region = process.env.AWS_REGION;
 
 const iam = new IAM({
-    apiVersion: "2010-05-08",
     credentials,
     region,
 });
 
 const s3 = new S3({
-    apiVersion: "2006-03-01",
     credentials,
     region,
     signingRegion: region,
 });
 
 const sns = new SNS({
-    apiVersion: "2010-03-31",
     credentials,
     region,
 });
 
 const transcribe = new Transcribe({
-    apiVersion: "2017-10-26",
     credentials,
     region,
 });
 
 const transcoder = new ElasticTranscoder({
-    apiVersion: "2012-09-25",
     credentials,
     region,
 });
 
 const mediaLive = new MediaLive({
-    apiVersion: "2017-10-14",
     credentials,
     region,
 });
 
 const mediaPackage = new MediaPackage({
-    apiVersion: "2017-10-14",
     credentials,
     region,
 });
 
 const cloudFront = new CloudFront({
-    apiVersion: "2020-05-31",
+    credentials,
+    region,
+});
+
+const sts = new STS({
     credentials,
     region,
 });
@@ -105,6 +107,41 @@ const cloudFront = new CloudFront({
 let mediaconvert: MediaConvert | null = null;
 
 const shortId = customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", 5);
+
+let chimeCredentials: Credentials | null;
+
+async function getNewChimeCredentials(): Promise<Credentials> {
+    const result = await sts.assumeRole({
+        RoleArn: process.env.AWS_CHIME_MANAGER_ROLE_ARN,
+        RoleSessionName: uuidv4(),
+    });
+
+    assert(result.Credentials);
+    assert(result.Credentials.AccessKeyId);
+    assert(result.Credentials.SecretAccessKey);
+
+    return {
+        accessKeyId: result.Credentials.AccessKeyId,
+        secretAccessKey: result.Credentials.SecretAccessKey,
+        expiration: result.Credentials.Expiration,
+        sessionToken: result.Credentials.SessionToken,
+    };
+}
+
+export async function getChimeClient(): Promise<Chime> {
+    if (
+        !chimeCredentials ||
+        !chimeCredentials.expiration ||
+        chimeCredentials.expiration <= sub(new Date(), { minutes: 1 })
+    ) {
+        chimeCredentials = await getNewChimeCredentials();
+    }
+
+    return new Chime({
+        credentials: chimeCredentials,
+        region,
+    });
+}
 
 async function getMediaConvertClient(): Promise<MediaConvert> {
     let mediaConvertEndpoint = process.env.AWS_MEDIACONVERT_API_ENDPOINT;
@@ -227,6 +264,7 @@ export {
     mediaLive as MediaLive,
     mediaPackage as MediaPackage,
     cloudFront as CloudFront,
+    sts as STS,
     initialiseAwsClient,
     shortId,
 };

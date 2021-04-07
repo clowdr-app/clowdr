@@ -111,6 +111,16 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
+- name: joinRoomChimeSession
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/chime/joinRoom'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: joinRoomVonageSession
   definition:
     kind: synchronous
@@ -252,6 +262,7 @@ custom_types:
         schema: public
         name: Room
       name: room
+      source: default
       type: object
       field_mapping:
         roomId: id
@@ -261,6 +272,7 @@ custom_types:
         schema: public
         name: Room
       name: room
+      source: default
       type: object
       field_mapping:
         roomId: id
@@ -275,4 +287,5 @@ custom_types:
   - name: PresenceSummaryOutput
   - name: PresenceFlushOutput
   - name: VAPIDPublicKeyOutput
+  - name: JoinRoomChimeSessionOutput
   scalars: []

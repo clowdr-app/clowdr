@@ -61,6 +61,27 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
+        const chimeFullAccessPolicy = new iam.Policy(this, "ChimeFullAccess");
+        chimeFullAccessPolicy.addStatements(
+            new iam.PolicyStatement({
+                actions: [
+                    "chime:CreateMeeting",
+                    "chime:DeleteMeeting",
+                    "chime:GetMeeting",
+                    "chime:ListMeetings",
+                    "chime:CreateAttendee",
+                    "chime:BatchCreateAttendee",
+                    "chime:DeleteAttendee",
+                    "chime:GetAttendee",
+                    "chime:ListAttendees",
+                ],
+                effect: iam.Effect.ALLOW,
+                resources: ["*"],
+            })
+        );
+        const chimeManagerRole = new iam.Role(this, "ChimeManager", { assumedBy: actionsUser });
+        chimeFullAccessPolicy.attachToRole(chimeManagerRole);
+
         const accessKey = new iam.CfnAccessKey(this, "accessKey", {
             userName: actionsUser.userName,
         });
@@ -323,7 +344,7 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
-        events.EventBus.grantPutEvents(new iam.ServicePrincipal("medialive.amazonaws.com"));
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("medialive.amazonaws.com"));
         const mediaLiveEventRule = new events.Rule(this, "MediaLiveEventRule", {
             enabled: true,
         });
@@ -372,7 +393,7 @@ export class AwsStack extends cdk.Stack {
                 effect: iam.Effect.ALLOW,
             })
         );
-        events.EventBus.grantPutEvents(new iam.ServicePrincipal("mediapackage.amazonaws.com"));
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("mediapackage.amazonaws.com"));
         const mediaPackageHarvestEventRule = new events.Rule(this, "MediaPackageHarvestEventRule", {
             enabled: true,
         });
@@ -442,6 +463,10 @@ export class AwsStack extends cdk.Stack {
         });
 
         // Service roles
+        new cdk.CfnOutput(this, "ChimeManagerRoleArn", {
+            value: chimeManagerRole.roleArn,
+        });
+
         new cdk.CfnOutput(this, "MediaConvertServiceRoleArn", {
             value: mediaConvertAccessRole.roleArn,
         });

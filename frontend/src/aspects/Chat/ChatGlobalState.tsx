@@ -820,6 +820,8 @@ export class ChatState {
                         maxCount: pageSize,
                         startAtIndex: this.lastHistoricallyFetchedMessageId,
                     },
+                    fetchPolicy:
+                        this.lastHistoricallyFetchedMessageId === Math.pow(2, 31) - 1 ? "network-only" : undefined,
                 });
                 if (result.data.chat_Message.length > 0) {
                     result.data.chat_Message.forEach((msg) => {
@@ -875,12 +877,14 @@ export class ChatState {
     }
 
     private subMutex = new Mutex();
-    private subCount = 0;
+    public subCount = 0;
+    public lastUnsubscribe: number | null = null;
     public async subscribe(): Promise<void> {
         const release = await this.subMutex.acquire();
 
         try {
             this.subCount++;
+            this.lastUnsubscribe = null;
             if (this.subCount === 1) {
                 this.reestablishSubscription();
             }
@@ -900,10 +904,12 @@ export class ChatState {
         const release = await this.subMutex.acquire();
 
         try {
+            this.lastUnsubscribe = Date.now();
             this.subCount--;
-            if (this.subCount === 0 || force) {
-                const socket = this.globalState.socket;
-                socket?.emit("chat.unsubscribe", this.Id);
+            if (force) {
+                this.doUnsubscribe(true);
+            } else {
+                this.globalState.onChatChannelUnsubscribe();
             }
             if (!force && this.subCount < 0) {
                 console.warn(
@@ -915,6 +921,12 @@ export class ChatState {
             console.error(`Error unsubscribing from chat: ${this.Id}`, e);
         } finally {
             release();
+        }
+    }
+    public async doUnsubscribe(force = false): Promise<void> {
+        if (this.subCount === 0 || force) {
+            const socket = this.globalState.socket;
+            socket?.emit("chat.unsubscribe", this.Id);
         }
     }
 
@@ -1259,91 +1271,105 @@ export class GlobalChatState {
                             const openChatInSidebar = this.openChatInSidebar;
                             const showSidebar = this.showSidebar;
 
-                            const notificationId = this.toast({
-                                position: "top-right",
-                                isClosable: true,
-                                duration: 7000,
-                                render: function ChatNotification(props: RenderProps) {
-                                    return (
-                                        <VStack
-                                            alignItems="flex-start"
-                                            background="purple.700"
-                                            color="gray.50"
-                                            w="auto"
-                                            h="auto"
-                                            p={5}
-                                            opacity={0.95}
-                                            borderRadius={10}
-                                            position="relative"
-                                            pt={2}
-                                        >
-                                            <CloseButton
-                                                position="absolute"
-                                                top={2}
-                                                right={2}
-                                                onClick={props.onClose}
-                                            />
-                                            <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
-                                                {notification.title}
-                                            </Heading>
-                                            {notification.subtitle ? (
-                                                <Heading
-                                                    textAlign="left"
-                                                    as="h3"
-                                                    fontSize="0.9rem"
-                                                    fontStyle="italic"
-                                                    maxW="250px"
-                                                    noOfLines={1}
+                            setTimeout(
+                                () => {
+                                    const notificationId = this.toast({
+                                        position: "top-right",
+                                        isClosable: true,
+                                        duration: 7000,
+                                        render: function ChatNotification(props: RenderProps) {
+                                            return (
+                                                <VStack
+                                                    alignItems="flex-start"
+                                                    background="purple.700"
+                                                    color="gray.50"
+                                                    w="auto"
+                                                    h="auto"
+                                                    p={5}
+                                                    opacity={0.95}
+                                                    borderRadius={10}
+                                                    position="relative"
+                                                    pt={2}
                                                 >
-                                                    {notification.subtitle}
-                                                </Heading>
-                                            ) : undefined}
-                                            <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
-                                                <Markdown restrictHeadingSize>{notification.description}</Markdown>
-                                            </Box>
-                                            <ButtonGroup isAttached>
-                                                {openChatInSidebar && notification.chatId ? (
-                                                    <Button
-                                                        colorScheme="green"
-                                                        onClick={() => {
-                                                            props.onClose();
-                                                            if (notification.chatId) {
-                                                                openChatInSidebar?.(notification.chatId);
-                                                                showSidebar?.();
-                                                            }
-                                                        }}
-                                                    >
-                                                        Go to chat
-                                                    </Button>
-                                                ) : undefined}
-                                                {notification.linkURL ? (
-                                                    <Button
-                                                        colorScheme="blue"
-                                                        onClick={() => {
-                                                            props.onClose();
-                                                            if (notification.linkURL) {
-                                                                window.open(notification.linkURL, "_blank");
-                                                            }
-                                                        }}
-                                                    >
-                                                        <ExternalLinkIcon />
-                                                    </Button>
-                                                ) : undefined}
-                                            </ButtonGroup>
-                                        </VStack>
-                                    );
-                                },
-                            });
-                            if (notificationId) {
-                                let numPopped = 0;
-                                while (this.ongoingNotifications.length - numPopped >= 3) {
-                                    this.toast.close(this.ongoingNotifications[numPopped]);
+                                                    <CloseButton
+                                                        position="absolute"
+                                                        top={2}
+                                                        right={2}
+                                                        onClick={props.onClose}
+                                                    />
+                                                    <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
+                                                        {notification.title}
+                                                    </Heading>
+                                                    {notification.subtitle ? (
+                                                        <Heading
+                                                            textAlign="left"
+                                                            as="h3"
+                                                            fontSize="0.9rem"
+                                                            fontStyle="italic"
+                                                            maxW="250px"
+                                                            noOfLines={1}
+                                                        >
+                                                            {notification.subtitle}
+                                                        </Heading>
+                                                    ) : undefined}
+                                                    <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
+                                                        <Markdown restrictHeadingSize>
+                                                            {notification.description}
+                                                        </Markdown>
+                                                    </Box>
+                                                    <ButtonGroup isAttached>
+                                                        {openChatInSidebar && notification.chatId ? (
+                                                            <Button
+                                                                colorScheme="green"
+                                                                onClick={() => {
+                                                                    props.onClose();
+                                                                    if (notification.chatId) {
+                                                                        openChatInSidebar?.(notification.chatId);
+                                                                        showSidebar?.();
+                                                                    }
+                                                                }}
+                                                            >
+                                                                Go to chat
+                                                            </Button>
+                                                        ) : undefined}
+                                                        {notification.linkURL ? (
+                                                            <Button
+                                                                colorScheme="blue"
+                                                                onClick={() => {
+                                                                    props.onClose();
+                                                                    if (notification.linkURL) {
+                                                                        window.open(notification.linkURL, "_blank");
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <ExternalLinkIcon />
+                                                            </Button>
+                                                        ) : undefined}
+                                                    </ButtonGroup>
+                                                </VStack>
+                                            );
+                                        },
+                                    });
+                                    if (notificationId) {
+                                        let numPopped = 0;
+                                        while (this.ongoingNotifications.length - numPopped >= 3) {
+                                            this.toast.close(this.ongoingNotifications[numPopped]);
 
-                                    numPopped++;
-                                }
-                                this.ongoingNotifications = this.ongoingNotifications.slice(numPopped);
-                                this.ongoingNotifications.push(notificationId);
-                            }
+                                            numPopped++;
+                                        }
+                                        this.ongoingNotifications = this.ongoingNotifications.slice(numPopped);
+                                        this.ongoingNotifications.push(notificationId);
+                                    }
+                                },
+                                // We delay the notification slightly to give a chance for the message to be written
+                                // into the db, so that if the chat state is not already loaded, the message is fetched
+                                // from the db.
+                                // This is not ideal but I don't see a way around it right now.
+                                // See: MESSAGE_WRITEBACK_INTERVAL
+                                notification.chatId && (!this.chatStates || !this.chatStates.has(notification.chatId))
+                                    ? 1100
+                                    : 1
+                            );
                         });
 
                         socket.on("chat.subscribed", (chatId: string) => {
@@ -1568,6 +1594,7 @@ export class GlobalChatState {
                             chatId,
                             attendeeId: this.attendee.id,
                         },
+                        fetchPolicy: "network-only",
                     });
 
                     if (result.data.chat_Chat_by_pk) {
@@ -1587,6 +1614,56 @@ export class GlobalChatState {
             }
         } catch (e) {
             console.error(`Failed to fetch chat: ${chatId}`, e);
+        }
+    }
+
+    private readonly oldChatTimeoutPeriodMs = 3 * 60 * 1000; // 3 minutes
+    private readonly maxNotSubscribedListeningChats = 5;
+    public async onChatChannelUnsubscribe(): Promise<void> {
+        await this.unsubscribeOldOrExcess();
+
+        setTimeout(() => {
+            this.unsubscribeOldOrExcess();
+        }, this.oldChatTimeoutPeriodMs);
+    }
+    private async unsubscribeOldOrExcess(): Promise<void> {
+        if (this.chatStates) {
+            const cutoff = Date.now() - this.oldChatTimeoutPeriodMs;
+            const possiblyDeadChats = [...this.chatStates.values()]
+                .filter((x) => x.subCount === 0)
+                .sort((x, y) =>
+                    !x.lastUnsubscribe && !y.lastUnsubscribe
+                        ? 0
+                        : !x.lastUnsubscribe
+                        ? 1
+                        : !y.lastUnsubscribe
+                        ? -1
+                        : y.lastUnsubscribe - x.lastUnsubscribe
+                );
+            const excessDeadChats = possiblyDeadChats.slice(this.maxNotSubscribedListeningChats);
+            const oldDeadChats = possiblyDeadChats
+                .slice(0, this.maxNotSubscribedListeningChats)
+                .filter((x) => x.lastUnsubscribe && x.lastUnsubscribe < cutoff);
+            const allDeadChats = [...excessDeadChats, ...oldDeadChats];
+
+            const release = await this.mutex.acquire();
+
+            try {
+                await Promise.all(
+                    allDeadChats.map(async (chat) => {
+                        await chat.teardown();
+                    })
+                );
+                const states = this.chatStates;
+                allDeadChats.forEach((chat) => {
+                    states.delete(chat.Id);
+                });
+                this.chatStatesObs.publish(states);
+            } catch (e) {
+                console.error("One or more errors tearing down old chats", e);
+            } finally {
+                release();
+            }
         }
     }
 

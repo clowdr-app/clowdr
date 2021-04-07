@@ -11,7 +11,7 @@ export class RealtimeService {
         const id = this._onSocketAvailableGen++;
         this._onSocketAvailable.set(id, handler);
 
-        if (this.socket) {
+        if (this.socket && this.socket.connected) {
             const sock = this.socket;
             setTimeout(() => handler(sock), 1);
         }

@@ -1,22 +1,32 @@
 import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { send } from "../../rabbitmq/chat/reactions";
-import { Reaction } from "../../types/chat";
+import { validate as uuidValidate } from "uuid";
+import { action } from "../../rabbitmq/chat/reactions";
+import { Action, Reaction } from "../../types/chat";
 
 export function onSend(
-    _conferenceSlugs: string[],
-    _userId: string,
+    conferenceSlugs: string[],
+    userId: string,
     socketId: string,
     _socket: Socket
 ): (reaction: any, cb?: () => void) => Promise<void> {
-    return async (reaction, cb) => {
-        if (reaction) {
+    return async (actionData, cb) => {
+        if (actionData) {
             try {
-                assert(is<Reaction>(reaction), "Data does not match expected type.");
-                await send(reaction);
+                assert(is<Action<Reaction>>(actionData), "Data does not match expected type.");
+                assert(uuidValidate(actionData.data.sId), "sId invalid");
+                assert(uuidValidate(actionData.data.chatId), "chatId invalid");
+                assert(uuidValidate(actionData.data.messageSId), "messageSId invalid");
+                assert(!actionData.data.senderId || uuidValidate(actionData.data.senderId), "senderId invalid");
+                assert(
+                    !actionData.data.duplicateSId || uuidValidate(actionData.data.duplicateSId),
+                    "duplicatedMessageSId invalid"
+                );
+
+                await action(actionData, userId, conferenceSlugs);
             } catch (e) {
-                console.error(`Error processing chat.reactions.send (socket: ${socketId}, sId: ${reaction.sId})`, e);
+                console.error(`Error processing chat.reactions.send (socket: ${socketId})`, e, actionData);
             }
         }
 

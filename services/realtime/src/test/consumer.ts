@@ -69,6 +69,10 @@ async function Main(chatId = process.env.CHAT_ID ?? "testChat1") {
             console.info("Message received", msg);
         });
 
+        client.on("chat.reactions.receive", (msg: Message) => {
+            console.info("Reaction received", msg);
+        });
+
         client.emit("chat.subscribe", chatId);
 
         // eslint-disable-next-line no-constant-condition

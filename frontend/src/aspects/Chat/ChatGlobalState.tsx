@@ -19,7 +19,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
     ChatReactionDataFragment,
     Chat_MessageType_Enum,
-    Chat_Reaction_Insert_Input,
+    Chat_ReactionType_Enum,
     InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
@@ -240,6 +240,9 @@ gql`
         type
         messageSId
         duplicateSId
+        created_at
+        updated_at
+        chatId
     }
 
     fragment ChatMessageData on chat_Message {
@@ -435,48 +438,47 @@ export class MessageState {
     private reactionsObs = new Observable<ChatReactionDataFragment[]>((observer) => {
         observer([...this.reactions]);
     });
-    public async addReaction(reaction: Chat_Reaction_Insert_Input): Promise<void> {
-        // CHAT_TODO
-        // try {
-        //     const result = await this.globalState.apolloClient.mutate<
-        //         AddReactionMutation,
-        //         AddReactionMutationVariables
-        //     >({
-        //         mutation: AddReactionDocument,
-        //         variables: {
-        //             reaction: {
-        //                 ...reaction,
-        //                 senderId: this.globalState.attendee.id,
-        //                 messageSId: this.sId,
-        //             },
-        //         },
-        //     });
-        //     if (result.data?.insert_chat_Reaction_one) {
-        //         this.reactions.push(result.data.insert_chat_Reaction_one);
-        //         this.reactionsObs.publish([...this.reactions]);
-        //     }
-        // } catch (e) {
-        //     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
-        //         console.error(`Error adding reaction: ${this.sId} / ${reaction.symbol}`, e);
-        //     }
-        // }
+    public async addReaction(rct: Pick<Reaction, "data" | "type" | "symbol" | "duplicateSId">): Promise<void> {
+        try {
+            const now = new Date();
+            const fullRct: Reaction = {
+                ...rct,
+                chatId: this.chatId,
+                created_at: now.toISOString(),
+                messageSId: this.sId,
+                sId: uuidv4(),
+                updated_at: now.toISOString(),
+                senderId: this.globalState.attendee.id,
+            };
+            const socket = await this.globalState.socket;
+            assert(socket, "Not connected to chat service.");
+            const action: Action<Reaction> = {
+                op: "INSERT",
+                data: fullRct,
+            };
+            socket.emit("chat.reactions.send", action);
+            this.reactions.push(fullRct);
+            this.reactionsObs.publish([...this.reactions]);
+        } catch (e) {
+            console.error(`Error adding reaction: ${this.sId} / ${rct.symbol}`, e);
+        }
     }
     public async deleteReaction(reactionSId: string): Promise<void> {
-        // CHAT_TODO
-        // try {
-        //     await this.globalState.apolloClient.mutate<DeleteReactionMutation, DeleteReactionMutationVariables>({
-        //         mutation: DeleteReactionDocument,
-        //         variables: {
-        //             reactionId,
-        //         },
-        //     });
-        //     this.reactions = this.reactions.filter((x) => x.id !== reactionId);
-        //     this.reactionsObs.publish([...this.reactions]);
-        // } catch (e) {
-        //     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
-        //         console.error(`Error adding reaction: ${this.sId} / ${reactionId}`, e);
-        //     }
-        // }
+        try {
+            const rct = this.reactions.find((x) => x.sId === reactionSId);
+            assert(rct, "Reaction not found");
+            const socket = await this.globalState.socket;
+            assert(socket, "Not connected to chat service.");
+            const action: Action<Reaction> = {
+                op: "DELETE",
+                data: rct,
+            };
+            socket.emit("chat.reactions.send", action);
+            this.reactions = this.reactions.filter((x) => x.sId !== reactionSId);
+            this.reactionsObs.publish([...this.reactions]);
+        } catch (e) {
+            console.error(`Error adding reaction: ${this.sId} / ${reactionSId}`, e);
+        }
     }
     public get Reactions(): Observable<ChatReactionDataFragment[]> {
         return this.reactionsObs;
@@ -491,6 +493,23 @@ export class MessageState {
 
     public updateReactions(reactions: ChatReactionDataFragment[]): void {
         this.reactions = reactions;
+        this.reactionsObs.publish([...this.reactions]);
+    }
+
+    public async onReactionAdded(rct: Reaction): Promise<void> {
+        if (!this.reactions.some((x) => x.sId === rct.sId)) {
+            this.reactions.push(rct);
+            this.reactionsObs.publish([...this.reactions]);
+        }
+    }
+
+    public async onReactionRemoved(rct: Reaction): Promise<void> {
+        this.reactions = this.reactions.filter((x) => x.sId !== rct.sId);
+        this.reactionsObs.publish([...this.reactions]);
+    }
+
+    public async onReactionUpdated(rct: Reaction): Promise<void> {
+        this.reactions = this.reactions.map((x) => (x.sId === rct.sId ? rct : x));
         this.reactionsObs.publish([...this.reactions]);
     }
 }
@@ -962,6 +981,19 @@ export class ChatState {
         }
     }
 
+    public async onReactionAdded(rct: Reaction): Promise<void> {
+        const msg = this.messages.get(rct.messageSId);
+        msg?.onReactionAdded(rct);
+    }
+    public async onReactionUpdated(rct: Reaction): Promise<void> {
+        const msg = this.messages.get(rct.messageSId);
+        msg?.onReactionUpdated(rct);
+    }
+    public async onReactionRemoved(rct: Reaction): Promise<void> {
+        const msg = this.messages.get(rct.messageSId);
+        msg?.onReactionRemoved(rct);
+    }
+
     private isSending = false;
     private isSendingObs = new Observable<boolean>((observer) => {
         observer(this.isSending);
@@ -973,7 +1005,6 @@ export class ChatState {
     public nackSendMessage: ((sId: string) => void) | undefined;
     public async send(
         chatId: string,
-        senderId: string,
         type: Chat_MessageType_Enum,
         message: string,
         data: MessageData,
@@ -997,7 +1028,7 @@ export class ChatState {
                 updated_at: new Date().toISOString(),
                 chatId,
                 message,
-                senderId,
+                senderId: this.globalState.attendee.id,
                 type,
                 data,
                 isPinned,
@@ -1046,7 +1077,8 @@ export class ChatState {
                         if (targetMsg) {
                             await targetMsg.addReaction({
                                 data: reactionData,
-                                senderId,
+                                symbol: "",
+                                type: Chat_ReactionType_Enum.Answer,
                             });
                         }
                     }
@@ -1419,15 +1451,18 @@ export class GlobalChatState {
 
                     socket.on("chat.reactions.receive", (msg: Reaction) => {
                         console.info("Chat reaction received", msg);
-                        // CHAT_TODO
+                        const existing = this.chatStates?.get(msg.chatId);
+                        existing?.onReactionAdded(msg);
                     });
                     socket.on("chat.reactions.update", (msg: Reaction) => {
-                        console.info("Chat reaction updated", msg);
-                        // CHAT_TODO
+                        // console.info("Chat reaction updated", msg);
+                        const existing = this.chatStates?.get(msg.chatId);
+                        existing?.onReactionUpdated(msg);
                     });
                     socket.on("chat.reactions.delete", (msg: Reaction) => {
-                        console.info("Chat reaction deleted", msg);
-                        // CHAT_TODO
+                        // console.info("Chat reaction deleted", msg);
+                        const existing = this.chatStates?.get(msg.chatId);
+                        existing?.onReactionRemoved(msg);
                     });
 
                     socket.emit("chat.subscriptions.changed.on", this.attendee.id);
@@ -1578,74 +1613,6 @@ export class GlobalChatState {
     //                 await chatState.updateReadUpToIdx(newData);
     //             }
     //         }
-    //     }
-    // }
-
-    // CHAT_TODO
-    // private reactionsSubscription_MessagesMutex = new Mutex();
-    // private reactionsSubscription_SetupMutex = new Mutex();
-    // private reactionsSubscription_Messages = new Map<number, MessageState>();
-    // private reactionsSubscription: ZenObservable.Subscription | null = null;
-    // private async setupReactionsSubscription(): Promise<void> {
-    //     const release = await this.reactionsSubscription_SetupMutex.acquire();
-
-    //     try {
-    //         if (!this.reactionsSubscription) {
-    //             const messageIds = [...this.reactionsSubscription_Messages.values()].map((x) => x.id);
-    //             if (messageIds.length > 0) {
-    //                 const sub = this.apolloClient.subscribe<
-    //                     MessageReactionsSubscription,
-    //                     MessageReactionsSubscriptionVariables
-    //                 >({
-    //                     query: MessageReactionsDocument,
-    //                     variables: {
-    //                         messageIds,
-    //                     },
-    //                 });
-    //                 this.reactionsSubscription = sub.subscribe(({ data }) => {
-    //                     try {
-    //                         if (data?.chat_Reaction) {
-    //                             const messageReactions = new Map<number, ChatReactionDataFragment[]>();
-    //                             for (const reaction of data.chat_Reaction) {
-    //                                 let existing = messageReactions.get(reaction.messageId);
-    //                                 if (!existing) {
-    //                                     existing = [];
-    //                                     messageReactions.set(reaction.messageId, existing);
-    //                                 }
-    //                                 existing.push(reaction);
-    //                             }
-
-    //                             for (const [msgId, reactions] of messageReactions) {
-    //                                 const msg = this.reactionsSubscription_Messages.get(msgId);
-    //                                 if (msg) {
-    //                                     msg.updateReactions(reactions);
-    //                                 }
-    //                             }
-    //                         }
-    //                     } catch (e) {
-    //                         console.error("Error updating reactions", e);
-    //                     }
-    //                 });
-    //             }
-    //         }
-    //     } catch (e) {
-    //         console.error("Failed to setup reactions subscriptions", e);
-    //     } finally {
-    //         release();
-    //     }
-    // }
-    // private async teardownReactionsSubscription(): Promise<void> {
-    //     const release = await this.reactionsSubscription_SetupMutex.acquire();
-
-    //     try {
-    //         if (this.reactionsSubscription) {
-    //             this.reactionsSubscription.unsubscribe();
-    //             this.reactionsSubscription = null;
-    //         }
-    //     } catch (e) {
-    //         console.error("Failed to teardown reactions subscriptions", e);
-    //     } finally {
-    //         release();
     //     }
     // }
 }

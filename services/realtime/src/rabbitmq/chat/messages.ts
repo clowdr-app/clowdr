@@ -1,7 +1,7 @@
 import { Channel, ConsumeMessage } from "amqplib";
 import { is } from "typescript-is";
 import { RoomPrivacy_Enum } from "../../generated/graphql";
-import { canIUDMessage as canIUDMessageOrReaction } from "../../lib/permissions";
+import { canIUDMessage } from "../../lib/permissions";
 import { downlink, uplink } from "../../rabbitmq";
 import { Action, Message } from "../../types/chat";
 import { MessageDistributionQueueSize, MessageWritebackQueueSize } from "./params";
@@ -22,8 +22,8 @@ async function uplinkChannel() {
     return _uplinkChannel;
 }
 
-const distributionQueue = "*.distribution";
-const writebackQueue = "*.writeback";
+const distributionQueue = `${exchange}.distribution`;
+const writebackQueue = `${exchange}.writeback`;
 
 let _distributionDownlinkChannel: Channel;
 async function distributionDownlinkChannel() {
@@ -72,7 +72,7 @@ async function writebackDownChannel() {
 
 export async function action(action: Action<Message>, userId: string, confSlugs: string[]): Promise<boolean> {
     if (
-        await canIUDMessageOrReaction(
+        await canIUDMessage(
             userId,
             action.data.chatId,
             confSlugs,
@@ -90,7 +90,10 @@ export async function action(action: Action<Message>, userId: string, confSlugs:
             if ("id" in action.data) {
                 delete (action.data as any).id;
             }
+
+            action.data.created_at = new Date().toISOString();
         }
+        action.data.updated_at = new Date().toISOString();
 
         return publishAction(action);
     }

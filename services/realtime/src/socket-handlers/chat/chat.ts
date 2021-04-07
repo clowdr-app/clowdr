@@ -2,7 +2,7 @@ import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { RoomPrivacy_Enum } from "../../generated/graphql";
-import { chatListenersKeyName, generateRoomName, socketChatsKeyName } from "../../lib/chat";
+import { chatListenersKeyName, generateChatRoomName, socketChatsKeyName } from "../../lib/chat";
 import { canSelectChat } from "../../lib/permissions";
 import { redisClientP } from "../../redis";
 
@@ -33,7 +33,7 @@ export function onSubscribe(
                 ) {
                     const existingChats = await redisClientP.smembers(socketChatsKeyName(socketId));
                     if (!existingChats.includes(chatId)) {
-                        socket.join(generateRoomName(chatId));
+                        socket.join(generateChatRoomName(chatId));
 
                         await redisClientP.sadd(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
                         await redisClientP.sadd(socketChatsKeyName(socketId), chatId);
@@ -73,7 +73,7 @@ export function onUnsubscribe(
                         []
                     )
                 ) {
-                    socket.leave(generateRoomName(chatId));
+                    socket.leave(generateChatRoomName(chatId));
                     await redisClientP.srem(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
                     await redisClientP.srem(socketChatsKeyName(socketId), chatId);
                 }

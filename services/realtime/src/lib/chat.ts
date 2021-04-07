@@ -1,4 +1,4 @@
-export function generateRoomName(chatId: string): string {
+export function generateChatRoomName(chatId: string): string {
     return `chat:chat.${chatId}`;
 }
 

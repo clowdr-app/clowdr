@@ -193,7 +193,6 @@ export function ComposeContextProvider({
                     const isEmote = /^\p{Emoji}$/iu.test(newMessage);
                     sendQueries.send(
                         config.state.Id,
-                        config.currentAttendeeId,
                         newMessageType === Chat_MessageType_Enum.Message && isEmote
                             ? Chat_MessageType_Enum.Emote
                             : newMessageType,

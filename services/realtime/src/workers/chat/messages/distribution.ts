@@ -2,7 +2,7 @@ import { Chat_MessageType_Enum, RoomPrivacy_Enum } from "../../../generated/grap
 import { getAttendeeInfo } from "../../../lib/cache/attendeeInfo";
 import { getChatInfo } from "../../../lib/cache/chatInfo";
 import { getSubscriptions } from "../../../lib/cache/subscription";
-import { chatListenersKeyName, generateRoomName } from "../../../lib/chat";
+import { chatListenersKeyName, generateChatRoomName } from "../../../lib/chat";
 import { sendNotifications } from "../../../lib/notifications";
 import { onDistributionMessage } from "../../../rabbitmq/chat/messages";
 import { redisClientP } from "../../../redis";
@@ -22,7 +22,7 @@ async function onMessage(action: Action<Message>) {
             : "unknown";
 
     const chatId = action.data.chatId;
-    emitter.to(generateRoomName(chatId)).emit(`chat.messages.${eventName}`, action.data);
+    emitter.to(generateChatRoomName(chatId)).emit(`chat.messages.${eventName}`, action.data);
 
     if (action.op === "INSERT") {
         const subscriptions = await getSubscriptions(chatId, {

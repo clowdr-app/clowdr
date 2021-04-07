@@ -17651,6 +17651,8 @@ export enum Chat_Message_Constraint {
   /** unique or primary key constraint */
   MessagePkey = 'Message_pkey',
   /** unique or primary key constraint */
+  MessageSIdChatIdKey = 'Message_sId_chatId_key',
+  /** unique or primary key constraint */
   MessageSIdKey = 'Message_sId_key',
   /** unique or primary key constraint */
   MessageSystemIdKey = 'Message_systemId_key'
@@ -18140,6 +18142,7 @@ export enum Chat_Pin_Update_Column {
 /** columns and relationships of "chat.Reaction" */
 export type Chat_Reaction = {
   readonly __typename?: 'chat_Reaction';
+  readonly chatId: Scalars['uuid'];
   readonly created_at: Scalars['timestamptz'];
   readonly data: Scalars['jsonb'];
   /** An object relationship */
@@ -18398,6 +18401,7 @@ export type Chat_Reaction_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Chat_Reaction_Bool_Exp>>>;
   readonly _not?: Maybe<Chat_Reaction_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Chat_Reaction_Bool_Exp>>>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
   readonly duplicate?: Maybe<Chat_Reaction_Bool_Exp>;
@@ -18438,6 +18442,7 @@ export type Chat_Reaction_Delete_Key_Input = {
 
 /** input type for inserting data into table "chat.Reaction" */
 export type Chat_Reaction_Insert_Input = {
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly duplicate?: Maybe<Chat_Reaction_Obj_Rel_Insert_Input>;
@@ -18456,6 +18461,7 @@ export type Chat_Reaction_Insert_Input = {
 /** aggregate max on columns */
 export type Chat_Reaction_Max_Fields = {
   readonly __typename?: 'chat_Reaction_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicateSId?: Maybe<Scalars['uuid']>;
   readonly messageSId?: Maybe<Scalars['uuid']>;
@@ -18467,6 +18473,7 @@ export type Chat_Reaction_Max_Fields = {
 
 /** order by max() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Max_Order_By = {
+  readonly chatId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly duplicateSId?: Maybe<Order_By>;
   readonly messageSId?: Maybe<Order_By>;
@@ -18479,6 +18486,7 @@ export type Chat_Reaction_Max_Order_By = {
 /** aggregate min on columns */
 export type Chat_Reaction_Min_Fields = {
   readonly __typename?: 'chat_Reaction_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly duplicateSId?: Maybe<Scalars['uuid']>;
   readonly messageSId?: Maybe<Scalars['uuid']>;
@@ -18490,6 +18498,7 @@ export type Chat_Reaction_Min_Fields = {
 
 /** order by min() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Min_Order_By = {
+  readonly chatId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly duplicateSId?: Maybe<Order_By>;
   readonly messageSId?: Maybe<Order_By>;
@@ -18523,6 +18532,7 @@ export type Chat_Reaction_On_Conflict = {
 
 /** ordering options when selecting data from "chat.Reaction" */
 export type Chat_Reaction_Order_By = {
+  readonly chatId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
   readonly duplicate?: Maybe<Chat_Reaction_Order_By>;
@@ -18551,6 +18561,8 @@ export type Chat_Reaction_Prepend_Input = {
 /** select columns of table "chat.Reaction" */
 export enum Chat_Reaction_Select_Column {
   /** column name */
+  ChatId = 'chatId',
+  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   Data = 'data',
@@ -18572,6 +18584,7 @@ export enum Chat_Reaction_Select_Column {
 
 /** input type for updating data in table "chat.Reaction" */
 export type Chat_Reaction_Set_Input = {
+  readonly chatId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly duplicateSId?: Maybe<Scalars['uuid']>;
@@ -18585,6 +18598,8 @@ export type Chat_Reaction_Set_Input = {
 
 /** update columns of table "chat.Reaction" */
 export enum Chat_Reaction_Update_Column {
+  /** column name */
+  ChatId = 'chatId',
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
@@ -32706,7 +32721,7 @@ export type UnpinChatMutationVariables = Exact<{
 
 export type UnpinChatMutation = { readonly __typename?: 'mutation_root', readonly delete_chat_Pin_by_pk?: Maybe<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any }> };
 
-export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly sId: any, readonly data: any, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageSId: any, readonly duplicateSId?: Maybe<any> };
+export type ChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly sId: any, readonly data: any, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageSId: any, readonly duplicateSId?: Maybe<any>, readonly created_at: any, readonly updated_at: any, readonly chatId: any };
 
 export type ChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageSId?: Maybe<any>, readonly id: number, readonly sId: any, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly reactions: ReadonlyArray<(
     { readonly __typename?: 'chat_Reaction' }
@@ -34860,6 +34875,9 @@ export const ChatReactionDataFragmentDoc = gql`
   type
   messageSId
   duplicateSId
+  created_at
+  updated_at
+  chatId
 }
     `;
 export const ChatMessageDataFragmentDoc = gql`

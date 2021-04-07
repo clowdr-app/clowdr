@@ -1,4 +1,4 @@
-import { Chat_MessageType_Enum } from "../generated/graphql";
+import type { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../generated/graphql";
 
 export interface Message {
     created_at: string;
@@ -16,11 +16,18 @@ export interface Message {
 }
 
 export interface Reaction {
-    sId: string;
-    userId: string;
     chatId: string;
+
+    sId: string;
+    senderId: string;
     messageSId: string;
-    reaction: string;
+
+    type: Chat_ReactionType_Enum;
+    symbol: string;
+    data: any;
+    created_at: string;
+    updated_at: string;
+    duplicateSId?: string | null | undefined;
 }
 
 export type Action<T> = {

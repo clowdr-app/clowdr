@@ -5,7 +5,6 @@ import type { MessageData } from "../Types/Messages";
 
 type SendMesasageCallback = (
     chatId: string,
-    senderId: string,
     type: Chat_MessageType_Enum,
     message: string,
     data: MessageData,

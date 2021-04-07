@@ -16536,7 +16536,7 @@ export type Chat_Flag = {
     id: Scalars["Int"];
     /** An object relationship */
     message: Chat_Message;
-    messageId: Scalars["Int"];
+    messageSId: Scalars["uuid"];
     notes?: Maybe<Scalars["String"]>;
     resolution?: Maybe<Scalars["String"]>;
     resolved_at?: Maybe<Scalars["timestamptz"]>;
@@ -16763,13 +16763,11 @@ export type Chat_Flag_Arr_Rel_Insert_Input = {
 export type Chat_Flag_Avg_Fields = {
     __typename?: "chat_Flag_avg_fields";
     id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
 };
 
 /** order by avg() on columns of table "chat.Flag" */
 export type Chat_Flag_Avg_Order_By = {
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "chat.Flag". All fields are combined with a logical 'AND'. */
@@ -16784,7 +16782,7 @@ export type Chat_Flag_Bool_Exp = {
     flaggedById?: Maybe<Uuid_Comparison_Exp>;
     id?: Maybe<Int_Comparison_Exp>;
     message?: Maybe<Chat_Message_Bool_Exp>;
-    messageId?: Maybe<Int_Comparison_Exp>;
+    messageSId?: Maybe<Uuid_Comparison_Exp>;
     notes?: Maybe<String_Comparison_Exp>;
     resolution?: Maybe<String_Comparison_Exp>;
     resolved_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -16795,7 +16793,7 @@ export type Chat_Flag_Bool_Exp = {
 /** unique or primary key constraints on table "chat.Flag" */
 export enum Chat_Flag_Constraint {
     /** unique or primary key constraint */
-    FlagMessageIdFlaggedByIdTypeKey = "Flag_messageId_flaggedById_type_key",
+    FlagMessageSIdFlaggedByIdTypeKey = "Flag_messageSId_flaggedById_type_key",
     /** unique or primary key constraint */
     FlagPkey = "Flag_pkey",
 }
@@ -16803,7 +16801,6 @@ export enum Chat_Flag_Constraint {
 /** input type for incrementing integer column in table "chat.Flag" */
 export type Chat_Flag_Inc_Input = {
     id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
 };
 
 /** input type for inserting data into table "chat.Flag" */
@@ -16815,7 +16812,7 @@ export type Chat_Flag_Insert_Input = {
     flaggedById?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["Int"]>;
     message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
-    messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     notes?: Maybe<Scalars["String"]>;
     resolution?: Maybe<Scalars["String"]>;
     resolved_at?: Maybe<Scalars["timestamptz"]>;
@@ -16830,7 +16827,7 @@ export type Chat_Flag_Max_Fields = {
     discussionChatId?: Maybe<Scalars["uuid"]>;
     flaggedById?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     notes?: Maybe<Scalars["String"]>;
     resolution?: Maybe<Scalars["String"]>;
     resolved_at?: Maybe<Scalars["timestamptz"]>;
@@ -16843,7 +16840,7 @@ export type Chat_Flag_Max_Order_By = {
     discussionChatId?: Maybe<Order_By>;
     flaggedById?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
+    messageSId?: Maybe<Order_By>;
     notes?: Maybe<Order_By>;
     resolution?: Maybe<Order_By>;
     resolved_at?: Maybe<Order_By>;
@@ -16857,7 +16854,7 @@ export type Chat_Flag_Min_Fields = {
     discussionChatId?: Maybe<Scalars["uuid"]>;
     flaggedById?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     notes?: Maybe<Scalars["String"]>;
     resolution?: Maybe<Scalars["String"]>;
     resolved_at?: Maybe<Scalars["timestamptz"]>;
@@ -16870,7 +16867,7 @@ export type Chat_Flag_Min_Order_By = {
     discussionChatId?: Maybe<Order_By>;
     flaggedById?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
+    messageSId?: Maybe<Order_By>;
     notes?: Maybe<Order_By>;
     resolution?: Maybe<Order_By>;
     resolved_at?: Maybe<Order_By>;
@@ -16908,7 +16905,7 @@ export type Chat_Flag_Order_By = {
     flaggedById?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     message?: Maybe<Chat_Message_Order_By>;
-    messageId?: Maybe<Order_By>;
+    messageSId?: Maybe<Order_By>;
     notes?: Maybe<Order_By>;
     resolution?: Maybe<Order_By>;
     resolved_at?: Maybe<Order_By>;
@@ -16932,7 +16929,7 @@ export enum Chat_Flag_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
-    MessageId = "messageId",
+    MessageSId = "messageSId",
     /** column name */
     Notes = "notes",
     /** column name */
@@ -16951,7 +16948,7 @@ export type Chat_Flag_Set_Input = {
     discussionChatId?: Maybe<Scalars["uuid"]>;
     flaggedById?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
+    messageSId?: Maybe<Scalars["uuid"]>;
     notes?: Maybe<Scalars["String"]>;
     resolution?: Maybe<Scalars["String"]>;
     resolved_at?: Maybe<Scalars["timestamptz"]>;
@@ -16963,52 +16960,44 @@ export type Chat_Flag_Set_Input = {
 export type Chat_Flag_Stddev_Fields = {
     __typename?: "chat_Flag_stddev_fields";
     id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
 };
 
 /** order by stddev() on columns of table "chat.Flag" */
 export type Chat_Flag_Stddev_Order_By = {
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Chat_Flag_Stddev_Pop_Fields = {
     __typename?: "chat_Flag_stddev_pop_fields";
     id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
 };
 
 /** order by stddev_pop() on columns of table "chat.Flag" */
 export type Chat_Flag_Stddev_Pop_Order_By = {
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Chat_Flag_Stddev_Samp_Fields = {
     __typename?: "chat_Flag_stddev_samp_fields";
     id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
 };
 
 /** order by stddev_samp() on columns of table "chat.Flag" */
 export type Chat_Flag_Stddev_Samp_Order_By = {
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type Chat_Flag_Sum_Fields = {
     __typename?: "chat_Flag_sum_fields";
     id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
 };
 
 /** order by sum() on columns of table "chat.Flag" */
 export type Chat_Flag_Sum_Order_By = {
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
 };
 
 /** update columns of table "chat.Flag" */
@@ -17022,7 +17011,7 @@ export enum Chat_Flag_Update_Column {
     /** column name */
     Id = "id",
     /** column name */
-    MessageId = "messageId",
+    MessageSId = "messageSId",
     /** column name */
     Notes = "notes",
     /** column name */
@@ -17039,39 +17028,33 @@ export enum Chat_Flag_Update_Column {
 export type Chat_Flag_Var_Pop_Fields = {
     __typename?: "chat_Flag_var_pop_fields";
     id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
 };
 
 /** order by var_pop() on columns of table "chat.Flag" */
 export type Chat_Flag_Var_Pop_Order_By = {
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Chat_Flag_Var_Samp_Fields = {
     __typename?: "chat_Flag_var_samp_fields";
     id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
 };
 
 /** order by var_samp() on columns of table "chat.Flag" */
 export type Chat_Flag_Var_Samp_Order_By = {
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Chat_Flag_Variance_Fields = {
     __typename?: "chat_Flag_variance_fields";
     id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
 };
 
 /** order by variance() on columns of table "chat.Flag" */
 export type Chat_Flag_Variance_Order_By = {
     id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
 };
 
 /**
@@ -17091,7 +17074,7 @@ export type Chat_Message = {
     duplicateIncoming?: Maybe<Chat_Message>;
     /** An object relationship */
     duplicateOutgoing?: Maybe<Chat_Message>;
-    duplicatedMessageId?: Maybe<Scalars["Int"]>;
+    duplicatedMessageSId?: Maybe<Scalars["uuid"]>;
     /** An array relationship */
     flags: Array<Chat_Flag>;
     /** An aggregated array relationship */
@@ -17103,7 +17086,6 @@ export type Chat_Message = {
     reactions: Array<Chat_Reaction>;
     /** An aggregated array relationship */
     reactions_aggregate: Chat_Reaction_Aggregate;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId: Scalars["uuid"];
     /** An object relationship */
     sender?: Maybe<Attendee>;
@@ -17386,13 +17368,11 @@ export type Chat_Message_Arr_Rel_Insert_Input = {
 /** aggregate avg on columns */
 export type Chat_Message_Avg_Fields = {
     __typename?: "chat_Message_avg_fields";
-    duplicatedMessageId?: Maybe<Scalars["Float"]>;
     id?: Maybe<Scalars["Float"]>;
 };
 
 /** order by avg() on columns of table "chat.Message" */
 export type Chat_Message_Avg_Order_By = {
-    duplicatedMessageId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
 };
 
@@ -17407,13 +17387,12 @@ export type Chat_Message_Bool_Exp = {
     data?: Maybe<Jsonb_Comparison_Exp>;
     duplicateIncoming?: Maybe<Chat_Message_Bool_Exp>;
     duplicateOutgoing?: Maybe<Chat_Message_Bool_Exp>;
-    duplicatedMessageId?: Maybe<Int_Comparison_Exp>;
+    duplicatedMessageSId?: Maybe<Uuid_Comparison_Exp>;
     flags?: Maybe<Chat_Flag_Bool_Exp>;
     id?: Maybe<Int_Comparison_Exp>;
     isPinned?: Maybe<Boolean_Comparison_Exp>;
     message?: Maybe<String_Comparison_Exp>;
     reactions?: Maybe<Chat_Reaction_Bool_Exp>;
-    remoteServiceId?: Maybe<String_Comparison_Exp>;
     sId?: Maybe<Uuid_Comparison_Exp>;
     sender?: Maybe<Attendee_Bool_Exp>;
     senderId?: Maybe<Uuid_Comparison_Exp>;
@@ -17425,9 +17404,11 @@ export type Chat_Message_Bool_Exp = {
 /** unique or primary key constraints on table "chat.Message" */
 export enum Chat_Message_Constraint {
     /** unique or primary key constraint */
-    MessageDuplicatedMessageIdKey = "Message_duplicatedMessageId_key",
+    MessageDuplicatedMessageSIdKey = "Message_duplicatedMessageSId_key",
     /** unique or primary key constraint */
     MessagePkey = "Message_pkey",
+    /** unique or primary key constraint */
+    MessageSIdChatIdKey = "Message_sId_chatId_key",
     /** unique or primary key constraint */
     MessageSIdKey = "Message_sId_key",
     /** unique or primary key constraint */
@@ -17451,7 +17432,6 @@ export type Chat_Message_Delete_Key_Input = {
 
 /** input type for incrementing integer column in table "chat.Message" */
 export type Chat_Message_Inc_Input = {
-    duplicatedMessageId?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["Int"]>;
 };
 
@@ -17463,13 +17443,12 @@ export type Chat_Message_Insert_Input = {
     data?: Maybe<Scalars["jsonb"]>;
     duplicateIncoming?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
     duplicateOutgoing?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
-    duplicatedMessageId?: Maybe<Scalars["Int"]>;
+    duplicatedMessageSId?: Maybe<Scalars["uuid"]>;
     flags?: Maybe<Chat_Flag_Arr_Rel_Insert_Input>;
     id?: Maybe<Scalars["Int"]>;
     isPinned?: Maybe<Scalars["Boolean"]>;
     message?: Maybe<Scalars["String"]>;
     reactions?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
     senderId?: Maybe<Scalars["uuid"]>;
@@ -17483,10 +17462,9 @@ export type Chat_Message_Max_Fields = {
     __typename?: "chat_Message_max_fields";
     chatId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
-    duplicatedMessageId?: Maybe<Scalars["Int"]>;
+    duplicatedMessageSId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["Int"]>;
     message?: Maybe<Scalars["String"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
     systemId?: Maybe<Scalars["String"]>;
@@ -17497,10 +17475,9 @@ export type Chat_Message_Max_Fields = {
 export type Chat_Message_Max_Order_By = {
     chatId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
-    duplicatedMessageId?: Maybe<Order_By>;
+    duplicatedMessageSId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     message?: Maybe<Order_By>;
-    remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     senderId?: Maybe<Order_By>;
     systemId?: Maybe<Order_By>;
@@ -17512,10 +17489,9 @@ export type Chat_Message_Min_Fields = {
     __typename?: "chat_Message_min_fields";
     chatId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
-    duplicatedMessageId?: Maybe<Scalars["Int"]>;
+    duplicatedMessageSId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["Int"]>;
     message?: Maybe<Scalars["String"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
     systemId?: Maybe<Scalars["String"]>;
@@ -17526,10 +17502,9 @@ export type Chat_Message_Min_Fields = {
 export type Chat_Message_Min_Order_By = {
     chatId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
-    duplicatedMessageId?: Maybe<Order_By>;
+    duplicatedMessageSId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     message?: Maybe<Order_By>;
-    remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     senderId?: Maybe<Order_By>;
     systemId?: Maybe<Order_By>;
@@ -17566,13 +17541,12 @@ export type Chat_Message_Order_By = {
     data?: Maybe<Order_By>;
     duplicateIncoming?: Maybe<Chat_Message_Order_By>;
     duplicateOutgoing?: Maybe<Chat_Message_Order_By>;
-    duplicatedMessageId?: Maybe<Order_By>;
+    duplicatedMessageSId?: Maybe<Order_By>;
     flags_aggregate?: Maybe<Chat_Flag_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
     isPinned?: Maybe<Order_By>;
     message?: Maybe<Order_By>;
     reactions_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
-    remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     sender?: Maybe<Attendee_Order_By>;
     senderId?: Maybe<Order_By>;
@@ -17600,15 +17574,13 @@ export enum Chat_Message_Select_Column {
     /** column name */
     Data = "data",
     /** column name */
-    DuplicatedMessageId = "duplicatedMessageId",
+    DuplicatedMessageSId = "duplicatedMessageSId",
     /** column name */
     Id = "id",
     /** column name */
     IsPinned = "isPinned",
     /** column name */
     Message = "message",
-    /** column name */
-    RemoteServiceId = "remoteServiceId",
     /** column name */
     SId = "sId",
     /** column name */
@@ -17626,11 +17598,10 @@ export type Chat_Message_Set_Input = {
     chatId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     data?: Maybe<Scalars["jsonb"]>;
-    duplicatedMessageId?: Maybe<Scalars["Int"]>;
+    duplicatedMessageSId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["Int"]>;
     isPinned?: Maybe<Scalars["Boolean"]>;
     message?: Maybe<Scalars["String"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
     systemId?: Maybe<Scalars["String"]>;
@@ -17641,52 +17612,44 @@ export type Chat_Message_Set_Input = {
 /** aggregate stddev on columns */
 export type Chat_Message_Stddev_Fields = {
     __typename?: "chat_Message_stddev_fields";
-    duplicatedMessageId?: Maybe<Scalars["Float"]>;
     id?: Maybe<Scalars["Float"]>;
 };
 
 /** order by stddev() on columns of table "chat.Message" */
 export type Chat_Message_Stddev_Order_By = {
-    duplicatedMessageId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Chat_Message_Stddev_Pop_Fields = {
     __typename?: "chat_Message_stddev_pop_fields";
-    duplicatedMessageId?: Maybe<Scalars["Float"]>;
     id?: Maybe<Scalars["Float"]>;
 };
 
 /** order by stddev_pop() on columns of table "chat.Message" */
 export type Chat_Message_Stddev_Pop_Order_By = {
-    duplicatedMessageId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Chat_Message_Stddev_Samp_Fields = {
     __typename?: "chat_Message_stddev_samp_fields";
-    duplicatedMessageId?: Maybe<Scalars["Float"]>;
     id?: Maybe<Scalars["Float"]>;
 };
 
 /** order by stddev_samp() on columns of table "chat.Message" */
 export type Chat_Message_Stddev_Samp_Order_By = {
-    duplicatedMessageId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type Chat_Message_Sum_Fields = {
     __typename?: "chat_Message_sum_fields";
-    duplicatedMessageId?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["Int"]>;
 };
 
 /** order by sum() on columns of table "chat.Message" */
 export type Chat_Message_Sum_Order_By = {
-    duplicatedMessageId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
 };
 
@@ -17699,15 +17662,13 @@ export enum Chat_Message_Update_Column {
     /** column name */
     Data = "data",
     /** column name */
-    DuplicatedMessageId = "duplicatedMessageId",
+    DuplicatedMessageSId = "duplicatedMessageSId",
     /** column name */
     Id = "id",
     /** column name */
     IsPinned = "isPinned",
     /** column name */
     Message = "message",
-    /** column name */
-    RemoteServiceId = "remoteServiceId",
     /** column name */
     SId = "sId",
     /** column name */
@@ -17723,39 +17684,33 @@ export enum Chat_Message_Update_Column {
 /** aggregate var_pop on columns */
 export type Chat_Message_Var_Pop_Fields = {
     __typename?: "chat_Message_var_pop_fields";
-    duplicatedMessageId?: Maybe<Scalars["Float"]>;
     id?: Maybe<Scalars["Float"]>;
 };
 
 /** order by var_pop() on columns of table "chat.Message" */
 export type Chat_Message_Var_Pop_Order_By = {
-    duplicatedMessageId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Chat_Message_Var_Samp_Fields = {
     __typename?: "chat_Message_var_samp_fields";
-    duplicatedMessageId?: Maybe<Scalars["Float"]>;
     id?: Maybe<Scalars["Float"]>;
 };
 
 /** order by var_samp() on columns of table "chat.Message" */
 export type Chat_Message_Var_Samp_Order_By = {
-    duplicatedMessageId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Chat_Message_Variance_Fields = {
     __typename?: "chat_Message_variance_fields";
-    duplicatedMessageId?: Maybe<Scalars["Float"]>;
     id?: Maybe<Scalars["Float"]>;
 };
 
 /** order by variance() on columns of table "chat.Message" */
 export type Chat_Message_Variance_Order_By = {
-    duplicatedMessageId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
 };
 
@@ -17943,21 +17898,19 @@ export enum Chat_Pin_Update_Column {
 /** columns and relationships of "chat.Reaction" */
 export type Chat_Reaction = {
     __typename?: "chat_Reaction";
+    chatId: Scalars["uuid"];
     created_at: Scalars["timestamptz"];
     data: Scalars["jsonb"];
     /** An object relationship */
     duplicate?: Maybe<Chat_Reaction>;
-    duplicateId?: Maybe<Scalars["Int"]>;
+    duplicateSId?: Maybe<Scalars["uuid"]>;
     /** An array relationship */
     duplicates: Array<Chat_Reaction>;
     /** An aggregated array relationship */
     duplicates_aggregate: Chat_Reaction_Aggregate;
-    id: Scalars["Int"];
     /** An object relationship */
-    message?: Maybe<Chat_Message>;
-    messageId?: Maybe<Scalars["Int"]>;
-    messageSId?: Maybe<Scalars["uuid"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
+    message: Chat_Message;
+    messageSId: Scalars["uuid"];
     sId: Scalars["uuid"];
     /** An object relationship */
     sender: Attendee;
@@ -18165,17 +18118,9 @@ export type Chat_Reaction_Aggregate = {
 /** aggregate fields of "chat.Reaction" */
 export type Chat_Reaction_Aggregate_Fields = {
     __typename?: "chat_Reaction_aggregate_fields";
-    avg?: Maybe<Chat_Reaction_Avg_Fields>;
     count?: Maybe<Scalars["Int"]>;
     max?: Maybe<Chat_Reaction_Max_Fields>;
     min?: Maybe<Chat_Reaction_Min_Fields>;
-    stddev?: Maybe<Chat_Reaction_Stddev_Fields>;
-    stddev_pop?: Maybe<Chat_Reaction_Stddev_Pop_Fields>;
-    stddev_samp?: Maybe<Chat_Reaction_Stddev_Samp_Fields>;
-    sum?: Maybe<Chat_Reaction_Sum_Fields>;
-    var_pop?: Maybe<Chat_Reaction_Var_Pop_Fields>;
-    var_samp?: Maybe<Chat_Reaction_Var_Samp_Fields>;
-    variance?: Maybe<Chat_Reaction_Variance_Fields>;
 };
 
 /** aggregate fields of "chat.Reaction" */
@@ -18186,17 +18131,9 @@ export type Chat_Reaction_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "chat.Reaction" */
 export type Chat_Reaction_Aggregate_Order_By = {
-    avg?: Maybe<Chat_Reaction_Avg_Order_By>;
     count?: Maybe<Order_By>;
     max?: Maybe<Chat_Reaction_Max_Order_By>;
     min?: Maybe<Chat_Reaction_Min_Order_By>;
-    stddev?: Maybe<Chat_Reaction_Stddev_Order_By>;
-    stddev_pop?: Maybe<Chat_Reaction_Stddev_Pop_Order_By>;
-    stddev_samp?: Maybe<Chat_Reaction_Stddev_Samp_Order_By>;
-    sum?: Maybe<Chat_Reaction_Sum_Order_By>;
-    var_pop?: Maybe<Chat_Reaction_Var_Pop_Order_By>;
-    var_samp?: Maybe<Chat_Reaction_Var_Samp_Order_By>;
-    variance?: Maybe<Chat_Reaction_Variance_Order_By>;
 };
 
 /** append existing jsonb value of filtered columns with new jsonb value */
@@ -18210,36 +18147,19 @@ export type Chat_Reaction_Arr_Rel_Insert_Input = {
     on_conflict?: Maybe<Chat_Reaction_On_Conflict>;
 };
 
-/** aggregate avg on columns */
-export type Chat_Reaction_Avg_Fields = {
-    __typename?: "chat_Reaction_avg_fields";
-    duplicateId?: Maybe<Scalars["Float"]>;
-    id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
-};
-
-/** order by avg() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Avg_Order_By = {
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "chat.Reaction". All fields are combined with a logical 'AND'. */
 export type Chat_Reaction_Bool_Exp = {
     _and?: Maybe<Array<Maybe<Chat_Reaction_Bool_Exp>>>;
     _not?: Maybe<Chat_Reaction_Bool_Exp>;
     _or?: Maybe<Array<Maybe<Chat_Reaction_Bool_Exp>>>;
+    chatId?: Maybe<Uuid_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
     data?: Maybe<Jsonb_Comparison_Exp>;
     duplicate?: Maybe<Chat_Reaction_Bool_Exp>;
-    duplicateId?: Maybe<Int_Comparison_Exp>;
+    duplicateSId?: Maybe<Uuid_Comparison_Exp>;
     duplicates?: Maybe<Chat_Reaction_Bool_Exp>;
-    id?: Maybe<Int_Comparison_Exp>;
     message?: Maybe<Chat_Message_Bool_Exp>;
-    messageId?: Maybe<Int_Comparison_Exp>;
     messageSId?: Maybe<Uuid_Comparison_Exp>;
-    remoteServiceId?: Maybe<String_Comparison_Exp>;
     sId?: Maybe<Uuid_Comparison_Exp>;
     sender?: Maybe<Attendee_Bool_Exp>;
     senderId?: Maybe<Uuid_Comparison_Exp>;
@@ -18271,25 +18191,16 @@ export type Chat_Reaction_Delete_Key_Input = {
     data?: Maybe<Scalars["String"]>;
 };
 
-/** input type for incrementing integer column in table "chat.Reaction" */
-export type Chat_Reaction_Inc_Input = {
-    duplicateId?: Maybe<Scalars["Int"]>;
-    id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
-};
-
 /** input type for inserting data into table "chat.Reaction" */
 export type Chat_Reaction_Insert_Input = {
+    chatId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     data?: Maybe<Scalars["jsonb"]>;
     duplicate?: Maybe<Chat_Reaction_Obj_Rel_Insert_Input>;
-    duplicateId?: Maybe<Scalars["Int"]>;
+    duplicateSId?: Maybe<Scalars["uuid"]>;
     duplicates?: Maybe<Chat_Reaction_Arr_Rel_Insert_Input>;
-    id?: Maybe<Scalars["Int"]>;
     message?: Maybe<Chat_Message_Obj_Rel_Insert_Input>;
-    messageId?: Maybe<Scalars["Int"]>;
     messageSId?: Maybe<Scalars["uuid"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     sender?: Maybe<Attendee_Obj_Rel_Insert_Input>;
     senderId?: Maybe<Scalars["uuid"]>;
@@ -18301,12 +18212,10 @@ export type Chat_Reaction_Insert_Input = {
 /** aggregate max on columns */
 export type Chat_Reaction_Max_Fields = {
     __typename?: "chat_Reaction_max_fields";
+    chatId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
-    duplicateId?: Maybe<Scalars["Int"]>;
-    id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
+    duplicateSId?: Maybe<Scalars["uuid"]>;
     messageSId?: Maybe<Scalars["uuid"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
     symbol?: Maybe<Scalars["String"]>;
@@ -18315,12 +18224,10 @@ export type Chat_Reaction_Max_Fields = {
 
 /** order by max() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Max_Order_By = {
+    chatId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
+    duplicateSId?: Maybe<Order_By>;
     messageSId?: Maybe<Order_By>;
-    remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     senderId?: Maybe<Order_By>;
     symbol?: Maybe<Order_By>;
@@ -18330,12 +18237,10 @@ export type Chat_Reaction_Max_Order_By = {
 /** aggregate min on columns */
 export type Chat_Reaction_Min_Fields = {
     __typename?: "chat_Reaction_min_fields";
+    chatId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
-    duplicateId?: Maybe<Scalars["Int"]>;
-    id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
+    duplicateSId?: Maybe<Scalars["uuid"]>;
     messageSId?: Maybe<Scalars["uuid"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
     symbol?: Maybe<Scalars["String"]>;
@@ -18344,12 +18249,10 @@ export type Chat_Reaction_Min_Fields = {
 
 /** order by min() on columns of table "chat.Reaction" */
 export type Chat_Reaction_Min_Order_By = {
+    chatId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
+    duplicateSId?: Maybe<Order_By>;
     messageSId?: Maybe<Order_By>;
-    remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     senderId?: Maybe<Order_By>;
     symbol?: Maybe<Order_By>;
@@ -18380,16 +18283,14 @@ export type Chat_Reaction_On_Conflict = {
 
 /** ordering options when selecting data from "chat.Reaction" */
 export type Chat_Reaction_Order_By = {
+    chatId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     data?: Maybe<Order_By>;
     duplicate?: Maybe<Chat_Reaction_Order_By>;
-    duplicateId?: Maybe<Order_By>;
+    duplicateSId?: Maybe<Order_By>;
     duplicates_aggregate?: Maybe<Chat_Reaction_Aggregate_Order_By>;
-    id?: Maybe<Order_By>;
     message?: Maybe<Chat_Message_Order_By>;
-    messageId?: Maybe<Order_By>;
     messageSId?: Maybe<Order_By>;
-    remoteServiceId?: Maybe<Order_By>;
     sId?: Maybe<Order_By>;
     sender?: Maybe<Attendee_Order_By>;
     senderId?: Maybe<Order_By>;
@@ -18400,7 +18301,7 @@ export type Chat_Reaction_Order_By = {
 
 /** primary key columns input for table: "chat.Reaction" */
 export type Chat_Reaction_Pk_Columns_Input = {
-    id: Scalars["Int"];
+    sId: Scalars["uuid"];
 };
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
@@ -18411,19 +18312,15 @@ export type Chat_Reaction_Prepend_Input = {
 /** select columns of table "chat.Reaction" */
 export enum Chat_Reaction_Select_Column {
     /** column name */
+    ChatId = "chatId",
+    /** column name */
     CreatedAt = "created_at",
     /** column name */
     Data = "data",
     /** column name */
-    DuplicateId = "duplicateId",
-    /** column name */
-    Id = "id",
-    /** column name */
-    MessageId = "messageId",
+    DuplicateSId = "duplicateSId",
     /** column name */
     MessageSId = "messageSId",
-    /** column name */
-    RemoteServiceId = "remoteServiceId",
     /** column name */
     SId = "sId",
     /** column name */
@@ -18438,13 +18335,11 @@ export enum Chat_Reaction_Select_Column {
 
 /** input type for updating data in table "chat.Reaction" */
 export type Chat_Reaction_Set_Input = {
+    chatId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     data?: Maybe<Scalars["jsonb"]>;
-    duplicateId?: Maybe<Scalars["Int"]>;
-    id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
+    duplicateSId?: Maybe<Scalars["uuid"]>;
     messageSId?: Maybe<Scalars["uuid"]>;
-    remoteServiceId?: Maybe<Scalars["String"]>;
     sId?: Maybe<Scalars["uuid"]>;
     senderId?: Maybe<Scalars["uuid"]>;
     symbol?: Maybe<Scalars["String"]>;
@@ -18452,82 +18347,18 @@ export type Chat_Reaction_Set_Input = {
     updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
-/** aggregate stddev on columns */
-export type Chat_Reaction_Stddev_Fields = {
-    __typename?: "chat_Reaction_stddev_fields";
-    duplicateId?: Maybe<Scalars["Float"]>;
-    id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Stddev_Order_By = {
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Chat_Reaction_Stddev_Pop_Fields = {
-    __typename?: "chat_Reaction_stddev_pop_fields";
-    duplicateId?: Maybe<Scalars["Float"]>;
-    id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_pop() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Stddev_Pop_Order_By = {
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Chat_Reaction_Stddev_Samp_Fields = {
-    __typename?: "chat_Reaction_stddev_samp_fields";
-    duplicateId?: Maybe<Scalars["Float"]>;
-    id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_samp() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Stddev_Samp_Order_By = {
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Chat_Reaction_Sum_Fields = {
-    __typename?: "chat_Reaction_sum_fields";
-    duplicateId?: Maybe<Scalars["Int"]>;
-    id?: Maybe<Scalars["Int"]>;
-    messageId?: Maybe<Scalars["Int"]>;
-};
-
-/** order by sum() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Sum_Order_By = {
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
-};
-
 /** update columns of table "chat.Reaction" */
 export enum Chat_Reaction_Update_Column {
+    /** column name */
+    ChatId = "chatId",
     /** column name */
     CreatedAt = "created_at",
     /** column name */
     Data = "data",
     /** column name */
-    DuplicateId = "duplicateId",
-    /** column name */
-    Id = "id",
-    /** column name */
-    MessageId = "messageId",
+    DuplicateSId = "duplicateSId",
     /** column name */
     MessageSId = "messageSId",
-    /** column name */
-    RemoteServiceId = "remoteServiceId",
     /** column name */
     SId = "sId",
     /** column name */
@@ -18539,51 +18370,6 @@ export enum Chat_Reaction_Update_Column {
     /** column name */
     UpdatedAt = "updated_at",
 }
-
-/** aggregate var_pop on columns */
-export type Chat_Reaction_Var_Pop_Fields = {
-    __typename?: "chat_Reaction_var_pop_fields";
-    duplicateId?: Maybe<Scalars["Float"]>;
-    id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_pop() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Var_Pop_Order_By = {
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Chat_Reaction_Var_Samp_Fields = {
-    __typename?: "chat_Reaction_var_samp_fields";
-    duplicateId?: Maybe<Scalars["Float"]>;
-    id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_samp() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Var_Samp_Order_By = {
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Chat_Reaction_Variance_Fields = {
-    __typename?: "chat_Reaction_variance_fields";
-    duplicateId?: Maybe<Scalars["Float"]>;
-    id?: Maybe<Scalars["Float"]>;
-    messageId?: Maybe<Scalars["Float"]>;
-};
-
-/** order by variance() on columns of table "chat.Reaction" */
-export type Chat_Reaction_Variance_Order_By = {
-    duplicateId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    messageId?: Maybe<Order_By>;
-};
 
 /** columns and relationships of "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex = {
@@ -22810,7 +22596,7 @@ export type Mutation_RootDelete_Chat_ReactionType_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Chat_Reaction_By_PkArgs = {
-    id: Scalars["Int"];
+    sId: Scalars["uuid"];
 };
 
 /** mutation root */
@@ -24857,7 +24643,6 @@ export type Mutation_RootUpdate_Chat_ReactionArgs = {
     _delete_at_path?: Maybe<Chat_Reaction_Delete_At_Path_Input>;
     _delete_elem?: Maybe<Chat_Reaction_Delete_Elem_Input>;
     _delete_key?: Maybe<Chat_Reaction_Delete_Key_Input>;
-    _inc?: Maybe<Chat_Reaction_Inc_Input>;
     _prepend?: Maybe<Chat_Reaction_Prepend_Input>;
     _set?: Maybe<Chat_Reaction_Set_Input>;
     where: Chat_Reaction_Bool_Exp;
@@ -24881,7 +24666,6 @@ export type Mutation_RootUpdate_Chat_Reaction_By_PkArgs = {
     _delete_at_path?: Maybe<Chat_Reaction_Delete_At_Path_Input>;
     _delete_elem?: Maybe<Chat_Reaction_Delete_Elem_Input>;
     _delete_key?: Maybe<Chat_Reaction_Delete_Key_Input>;
-    _inc?: Maybe<Chat_Reaction_Inc_Input>;
     _prepend?: Maybe<Chat_Reaction_Prepend_Input>;
     _set?: Maybe<Chat_Reaction_Set_Input>;
     pk_columns: Chat_Reaction_Pk_Columns_Input;
@@ -27106,7 +26890,7 @@ export type Query_RootChat_Reaction_AggregateArgs = {
 
 /** query root */
 export type Query_RootChat_Reaction_By_PkArgs = {
-    id: Scalars["Int"];
+    sId: Scalars["uuid"];
 };
 
 /** query root */
@@ -30838,7 +30622,7 @@ export type Subscription_RootChat_Reaction_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootChat_Reaction_By_PkArgs = {
-    id: Scalars["Int"];
+    sId: Scalars["uuid"];
 };
 
 /** subscription root */
@@ -31718,6 +31502,43 @@ export type DeleteChatMessagesMutation = { __typename?: "mutation_root" } & {
     >;
 };
 
+export type InsertChatReactionsMutationVariables = Exact<{
+    objects: Array<Chat_Reaction_Insert_Input> | Chat_Reaction_Insert_Input;
+}>;
+
+export type InsertChatReactionsMutation = { __typename?: "mutation_root" } & {
+    insert_chat_Reaction?: Maybe<
+        { __typename?: "chat_Reaction_mutation_response" } & {
+            returning: Array<{ __typename?: "chat_Reaction" } & Pick<Chat_Reaction, "sId">>;
+        }
+    >;
+};
+
+export type UpdateChatReactionMutationVariables = Exact<{
+    reactionId: Scalars["uuid"];
+    object: Chat_Reaction_Set_Input;
+}>;
+
+export type UpdateChatReactionMutation = { __typename?: "mutation_root" } & {
+    update_chat_Reaction?: Maybe<
+        { __typename?: "chat_Reaction_mutation_response" } & {
+            returning: Array<{ __typename?: "chat_Reaction" } & Pick<Chat_Reaction, "sId">>;
+        }
+    >;
+};
+
+export type DeleteChatReactionsMutationVariables = Exact<{
+    reactionIds: Array<Scalars["uuid"]> | Scalars["uuid"];
+}>;
+
+export type DeleteChatReactionsMutation = { __typename?: "mutation_root" } & {
+    delete_chat_Reaction?: Maybe<
+        { __typename?: "chat_Reaction_mutation_response" } & {
+            returning: Array<{ __typename?: "chat_Reaction" } & Pick<Chat_Reaction, "sId">>;
+        }
+    >;
+};
+
 export const EmptyQueryDocument: DocumentNode<EmptyQueryQuery, EmptyQueryQueryVariables> = {
     kind: "Document",
     definitions: [
@@ -32276,6 +32097,248 @@ export const DeleteChatMessagesDocument: DocumentNode<
                                                         value: {
                                                             kind: "Variable",
                                                             name: { kind: "Name", value: "messageIds" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "returning" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+export const InsertChatReactionsDocument: DocumentNode<
+    InsertChatReactionsMutation,
+    InsertChatReactionsMutationVariables
+> = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "InsertChatReactions" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "objects" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: {
+                            kind: "ListType",
+                            type: {
+                                kind: "NonNullType",
+                                type: {
+                                    kind: "NamedType",
+                                    name: { kind: "Name", value: "chat_Reaction_insert_input" },
+                                },
+                            },
+                        },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_chat_Reaction" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "objects" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "objects" } },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "on_conflict" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "constraint" },
+                                            value: { kind: "EnumValue", value: "Reaction_sId_key" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "update_columns" },
+                                            value: { kind: "ListValue", values: [] },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "returning" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+export const UpdateChatReactionDocument: DocumentNode<
+    UpdateChatReactionMutation,
+    UpdateChatReactionMutationVariables
+> = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "UpdateChatReaction" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "reactionId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "object" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "chat_Reaction_set_input" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_chat_Reaction" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "sId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "reactionId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "object" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "returning" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+export const DeleteChatReactionsDocument: DocumentNode<
+    DeleteChatReactionsMutation,
+    DeleteChatReactionsMutationVariables
+> = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "DeleteChatReactions" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "reactionIds" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: {
+                            kind: "ListType",
+                            type: {
+                                kind: "NonNullType",
+                                type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
+                            },
+                        },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "delete_chat_Reaction" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "sId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_in" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "reactionIds" },
                                                         },
                                                     },
                                                 ],

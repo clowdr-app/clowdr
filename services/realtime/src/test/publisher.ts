@@ -2,7 +2,7 @@ import assert from "assert";
 import fetch from "node-fetch";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { Chat_MessageType_Enum } from "../generated/graphql";
+import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../generated/graphql";
 import { Action, Message, Reaction } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
@@ -29,7 +29,7 @@ async function Main(
     // The practical upper limit is ~15 messages/s (due to this test publisher
     // code's performance). We could do better if we didn't print to the console
     // but then we wouldn't have any feedback.
-    messagesPerSecond = 1,
+    messagesPerSecond = parseInt(process.env.MPS ?? "1", 10),
     message = "Test message",
     chatId = process.env.CHAT_ID ?? "testChat1",
     floodReactionsEveryNMessages = 3,
@@ -138,12 +138,20 @@ async function Main(
             if (messagesSinceLastReactionsFlood === floodReactionsEveryNMessages) {
                 try {
                     for (const reaction of reactions) {
-                        const rct: Reaction = {
-                            sId: uuidv4(),
-                            userId,
-                            chatId,
-                            messageSId: action.data.sId,
-                            reaction,
+                        const now = new Date();
+                        const rct: Action<Reaction> = {
+                            op: "INSERT",
+                            data: {
+                                sId: uuidv4(),
+                                senderId: attendeeId,
+                                data: {},
+                                symbol: reaction,
+                                type: Chat_ReactionType_Enum.Emoji,
+                                chatId,
+                                messageSId: action.data.sId,
+                                created_at: now.toISOString(),
+                                updated_at: now.toISOString(),
+                            },
                         };
                         client.emit("chat.reactions.send", rct);
                         // We don't bother with an ack mechanism for reactions

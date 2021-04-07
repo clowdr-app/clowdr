@@ -166,3 +166,5 @@ export async function canIUDMessage(
 
     return false;
 }
+
+export const canIUDReaction = canIUDMessage;

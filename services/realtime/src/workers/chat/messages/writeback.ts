@@ -83,7 +83,6 @@ async function processInsertQueue() {
         duplicatedMessageSId: msg.actionMsg.duplicatedMessageSId,
         isPinned: msg.actionMsg.isPinned,
         message: msg.actionMsg.message,
-        remoteServiceId: msg.actionMsg.remoteServiceId,
         sId: msg.actionMsg.sId,
         senderId: msg.actionMsg.senderId,
         systemId: msg.actionMsg.systemId,
@@ -232,7 +231,7 @@ async function processInsertQueue() {
                     nacks.length + " failures"
                 );
                 nacks.forEach((x) =>
-                    console.error("Individual chat message writeback failure\n" + JSON.stringify(x, null, 2))
+                    console.error("Individual chat message writeback failure\n" + JSON.stringify(x.response, null, 2))
                 );
                 // TODO: Send email to system alerts address
                 try {

@@ -1,0 +1,1 @@
+ALTER TABLE "chat"."Reaction" ALTER COLUMN "chatId" DROP NOT NULL;

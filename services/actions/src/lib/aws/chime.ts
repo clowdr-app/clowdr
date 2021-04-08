@@ -1,18 +1,21 @@
-import { Attendee, Meeting } from "@aws-sdk/client-chime";
+import {
+    Attendee,
+    CreateAttendeeCommand,
+    CreateMeetingCommand,
+    GetMeetingCommand,
+    Meeting,
+} from "@aws-sdk/client-chime";
 import { callWithRetry } from "../../utils";
-import { getChimeClient } from "./awsClient";
+import { Chime } from "./awsClient";
 
 export async function createChimeMeeting(roomId: string): Promise<Meeting> {
-    const chime = await getChimeClient();
-
-    const result = await chime.createMeeting({
+    const query = new CreateMeetingCommand({
         ExternalMeetingId: roomId,
-        NotificationsConfiguration: {
-            SnsTopicArn: "todo",
-        },
         Tags: [{ Key: "environment", Value: process.env.AWS_PREFIX }],
         MediaRegion: process.env.AWS_REGION,
     });
+
+    const result = await Chime.send(query);
 
     if (!result.Meeting) {
         throw new Error("Failed to create Chime meeting");
@@ -22,13 +25,13 @@ export async function createChimeMeeting(roomId: string): Promise<Meeting> {
 }
 
 export async function doesChimeMeetingExist(chimeMeetingId: string): Promise<boolean> {
-    const chime = await getChimeClient();
-
     try {
         const meeting = await callWithRetry(async () =>
-            chime.getMeeting({
-                MeetingId: chimeMeetingId,
-            })
+            Chime.send(
+                new GetMeetingCommand({
+                    MeetingId: chimeMeetingId,
+                })
+            )
         );
         return meeting.Meeting ? true : false;
     } catch (e) {
@@ -43,13 +46,13 @@ export async function doesChimeMeetingExist(chimeMeetingId: string): Promise<boo
  * @returns Join token for the attendee.
  */
 export async function addAttendeeToChimeMeeting(attendeeId: string, chimeMeetingId: string): Promise<Attendee> {
-    const chime = await getChimeClient();
-
     const result = await callWithRetry(async () =>
-        chime.createAttendee({
-            ExternalUserId: attendeeId,
-            MeetingId: chimeMeetingId,
-        })
+        Chime.send(
+            new CreateAttendeeCommand({
+                ExternalUserId: attendeeId,
+                MeetingId: chimeMeetingId,
+            })
+        )
     );
 
     if (!result.Attendee) {

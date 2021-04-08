@@ -10,7 +10,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/joinEvent", json(), async (req: Request, res: Response<JoinRoomChimeSessionOutput>) => {
+router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomChimeSessionOutput>) => {
     let body: ActionPayload<joinRoomChimeSessionArgs>;
     try {
         body = req.body;

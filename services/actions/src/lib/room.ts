@@ -288,6 +288,7 @@ export async function getRoomChimeMeeting(roomId: string, conferenceId: string):
             return existingChimeMeetingData;
         }
 
+        console.error("Could not get Chime meeting data", { err: e, roomId, conferenceId });
         throw new Error("Could not get Chime meeting data");
     }
 }

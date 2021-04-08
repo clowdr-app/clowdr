@@ -17,7 +17,7 @@ assert(process.env.CONFERENCE_SLUG, "Missing CONFERENCE_SLUG env var");
 const serverURL = process.env.SERVER_URL;
 const userId = process.env.USER_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
 // AttendeeId must be a valid uuid (VSCode: Ctrl+Shift+[)
-const attendeeId = process.env.ATTENDEE_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
+const attendeeId = process.env.ATTENDEE_ID;
 const confSlug = process.env.CONFERENCE_SLUG;
 
 // Grr npm...

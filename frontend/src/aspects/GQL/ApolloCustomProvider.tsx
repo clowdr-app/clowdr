@@ -109,6 +109,7 @@ class AuthTokenCache {
             }
 
             if (!cacheEntry) {
+                console.log("Getting access token silently", { conferenceSlug });
                 const token = await getAccessTokenSilently({
                     ignoreCache: true,
                     "conference-slug": conferenceSlug ?? "/NONE",

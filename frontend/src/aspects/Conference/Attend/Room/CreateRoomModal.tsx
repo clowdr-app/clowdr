@@ -114,6 +114,7 @@ export function CreateRoomModal({
                             } else {
                                 toast({
                                     title: "Could not create room",
+                                    description: JSON.stringify(e),
                                     status: "error",
                                 });
                             }

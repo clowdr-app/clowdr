@@ -1,6 +1,15 @@
-import { Button } from "@chakra-ui/react";
-import { useMeetingManager, VideoTileGrid } from "amazon-chime-sdk-component-library-react";
+import { Button, Text, useToast } from "@chakra-ui/react";
+import {
+    LocalVideo,
+    MeetingStatus,
+    PreviewVideo,
+    useLocalVideo,
+    useMeetingManager,
+    useMeetingStatus,
+    VideoTileGrid,
+} from "amazon-chime-sdk-component-library-react";
 import React, { useCallback } from "react";
+import styled from "styled-components";
 
 export interface Meeting {
     MeetingId?: string;
@@ -25,6 +34,10 @@ export interface Attendee {
     JoinToken?: string;
 }
 
+const MyLocalVideo = styled<any>(LocalVideo)`
+    ${(props) => "position: static"}
+`;
+
 export function ChimeRoom({
     roomId,
     getMeetingData,
@@ -35,22 +48,46 @@ export function ChimeRoom({
     disable: boolean;
 }): JSX.Element {
     const meetingManager = useMeetingManager();
+    const { toggleVideo } = useLocalVideo();
+    const toast = useToast();
+    const meetingStatus = useMeetingStatus();
 
     const joinRoom = useCallback(async () => {
-        const meetingData = await getMeetingData?.();
+        try {
+            const meetingData = await getMeetingData?.();
 
-        if (!meetingData) {
-            return;
+            if (!meetingData) {
+                throw new Error("No meeting data returned");
+            }
+
+            await meetingManager.join(meetingData);
+
+            await meetingManager.start();
+        } catch (e) {
+            console.error("Failed to join Chime room", { err: e });
+            toast({ title: "Failed to get join room", status: "error", description: e.message });
         }
-
-        await meetingManager.join(meetingData);
-
-        await meetingManager.start();
-    }, [getMeetingData, meetingManager]);
+    }, [getMeetingData, meetingManager, toast]);
 
     return (
         <>
-            <VideoTileGrid />
+            {meetingStatus === MeetingStatus.Loading ? (
+                <PreviewVideo />
+            ) : (
+                <>
+                    <VideoTileGrid
+                        noRemoteVideoView={
+                            <Text>
+                                {meetingManager.meetingStatus}, {meetingStatus}
+                            </Text>
+                        }
+                        className="videos"
+                    ></VideoTileGrid>
+                    <MyLocalVideo />
+                </>
+            )}
+
+            <Button onClick={toggleVideo}>Toggle video</Button>
             <Button isDisabled={!roomId || !getMeetingData} onClick={() => joinRoom()}>
                 Join
             </Button>

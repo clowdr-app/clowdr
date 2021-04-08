@@ -24,7 +24,7 @@ export function SharedRoomContextProvider({
                 />
             </portals.InPortal>
             <portals.InPortal node={chimeNode}>
-                <ChimeRoom getMeetingData={async () => ({})} roomId="" disable={false} />
+                <ChimeRoom disable={false} />
             </portals.InPortal>
             <SharedRoomContext.Provider value={ctx}>{children}</SharedRoomContext.Provider>
         </>

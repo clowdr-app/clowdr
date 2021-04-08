@@ -30,24 +30,30 @@ export function ChimeRoom({
     getMeetingData,
     disable,
 }: {
-    roomId: string;
-    getMeetingData: () => Promise<{ meetingInfo: Meeting; attendeeInfo: Attendee }>;
+    roomId?: string;
+    getMeetingData?: () => Promise<{ meetingInfo: Meeting; attendeeInfo: Attendee }>;
     disable: boolean;
 }): JSX.Element {
     const meetingManager = useMeetingManager();
 
     const joinRoom = useCallback(async () => {
-        const meetingData = await getMeetingData();
+        const meetingData = await getMeetingData?.();
+
+        if (!meetingData) {
+            return;
+        }
 
         await meetingManager.join(meetingData);
 
         await meetingManager.start();
-    }, []);
+    }, [getMeetingData, meetingManager]);
 
     return (
         <>
             <VideoTileGrid />
-            <Button onClick={() => joinRoom()}>Join</Button>
+            <Button isDisabled={!roomId || !getMeetingData} onClick={() => joinRoom()}>
+                Join
+            </Button>
         </>
     );
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import type { HtmlPortalNode } from "react-reverse-portal";
+import type { ChimeRoom } from "../Conference/Attend/Room/Chime/ChimeRoom";
 import type { VonageRoom } from "../Conference/Attend/Room/Vonage/VonageRoom";
 
 export type SharedRoomContextInfo =

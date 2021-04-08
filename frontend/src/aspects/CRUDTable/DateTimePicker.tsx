@@ -17,28 +17,31 @@ import {
     setYear,
 } from "date-fns";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
-import React, { useCallback, useMemo } from "react";
+import React, { LegacyRef, useCallback, useMemo } from "react";
 import type { EditMode } from "./CRUDTable";
 
-export function DateTimePicker<D extends Date | undefined = Date | undefined>({
-    value,
-    editMode,
-    onChange,
-    onBlur,
-    onFocus,
-    allowUndefined = false,
-    size,
-    isDisabled = false,
-}: {
-    value?: Date;
-    onBlur?: (ev: React.FocusEvent) => void;
-    onFocus?: () => void;
-    editMode?: EditMode;
-    onChange?: (value: D) => void;
-    allowUndefined?: boolean;
-    size?: string;
-    isDisabled?: boolean;
-}): JSX.Element {
+export const DateTimePicker = React.forwardRef(function DateTimePicker<D extends Date | undefined = Date | undefined>(
+    {
+        value,
+        editMode,
+        onChange,
+        onBlur,
+        onFocus,
+        allowUndefined = false,
+        size,
+        isDisabled = false,
+    }: {
+        value?: Date;
+        onBlur?: (ev: React.FocusEvent) => void;
+        onFocus?: () => void;
+        editMode?: EditMode;
+        onChange?: (value: D) => void;
+        allowUndefined?: boolean;
+        size?: string;
+        isDisabled?: boolean;
+    },
+    ref: LegacyRef<HTMLInputElement>
+): JSX.Element {
     const localTimeZone = useMemo(() => {
         return Intl.DateTimeFormat().resolvedOptions().timeZone;
     }, []);
@@ -126,6 +129,7 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
                 onChange={(e) => setDateTime(e.target.value)}
                 mr={2}
                 isDisabled={isDisabled}
+                ref={ref}
             />
             <Input
                 size={size}
@@ -139,4 +143,4 @@ export function DateTimePicker<D extends Date | undefined = Date | undefined>({
             />
         </Box>
     );
-}
+});

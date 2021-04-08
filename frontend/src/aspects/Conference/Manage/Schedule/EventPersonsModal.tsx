@@ -24,7 +24,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     ContentPersonInfoFragment,
@@ -337,6 +337,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                     value,
                     onChange,
                     onBlur,
+                    ref,
                 }: CellProps<Partial<EventPersonInfoFragment>, ContentPersonInfoFragment | undefined>) {
                     if (isInCreate) {
                         return (
@@ -344,6 +345,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                                 value={value?.id ?? ""}
                                 onChange={(ev) => onChange?.(contentPeople.find((x) => x.id === ev.target.value))}
                                 onBlur={onBlur}
+                                ref={ref as LegacyRef<HTMLSelectElement>}
                             >
                                 <option value="">Select a person</option>
                                 {options}
@@ -382,6 +384,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                             value={props.value ?? ""}
                             onChange={(ev) => props.onChange?.(ev.target.value as RoomMode_Enum)}
                             onBlur={props.onBlur}
+                            ref={props.ref as LegacyRef<HTMLSelectElement>}
                         >
                             {roleOptions.map((option) => {
                                 return (

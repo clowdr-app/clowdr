@@ -43,6 +43,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, {
+    LegacyRef,
     MutableRefObject,
     ReactNode,
     ReactNodeArray,
@@ -80,7 +81,7 @@ export interface FilterProps<FV = any> {
 export interface CellProps<T, V = any> {
     value: V;
     staleRecord: T;
-    ref: ((instance: HTMLElement | null) => void) | MutableRefObject<HTMLElement | null> | null;
+    ref: LegacyRef<HTMLElement>;
     onChange?: (newValue: V) => void;
     onBlur?: (ev: React.FocusEvent) => void;
     onKeyUp?: (ev: React.KeyboardEvent) => void;
@@ -111,7 +112,16 @@ export interface RowSpecification<T> {
     canSelect?: (record: T) => true | string;
     canDelete?: (record: T) => true | string;
 
-    invalid?: (record: Partial<T>, isNew: boolean, dependentData: Map<string, Record<string, any>>) => string | false;
+    invalid?: (
+        record: Partial<T>,
+        isNew: boolean,
+        dependentData: Map<string, Record<string, any>>
+    ) =>
+        | {
+              reason: string;
+              columnId: string;
+          }
+        | false;
     warning?: (record: T) => string | undefined;
 
     pages?: {
@@ -137,7 +147,7 @@ const CRUDCell = React.forwardRef(function CRUDCell(
         record: unknown;
         backgroundColor?: string;
     },
-    ref: ((instance: HTMLElement | null) => void) | MutableRefObject<HTMLElement | null> | null
+    ref: LegacyRef<HTMLElement>
 ) {
     const [value, setValue] = useState<unknown>(initialValue);
     const updateTimeoutId = useRef<number | null>(null);
@@ -268,14 +278,16 @@ function CRUDRow<T>({
     }, [record]);
     const rowRef = useRef<HTMLTableRowElement>(null);
 
-    const [invalidReason, setInvalidReason] = useState<string>("");
+    const [invalidReason, setInvalidReason] = useState<{ reason: string; columnId: string } | null>(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const onBlur = useCallback(
         (newRecord: T, relatedTarget?: Element | null) => {
             if (
                 document.hasFocus() &&
                 (!relatedTarget || !rowRef.current?.contains(relatedTarget)) &&
-                !rowRef.current?.contains(document.activeElement)
+                !rowRef.current?.contains(document.activeElement) &&
+                relatedTarget?.id !== "continue-editing" &&
+                relatedTarget?.id !== "reset"
             ) {
                 if (record !== newRecord) {
                     const invld = row.invalid?.(newRecord, false, dependentData);
@@ -409,32 +421,15 @@ function CRUDRow<T>({
 
     const onCloseAlert = useCallback(
         (reset: boolean) => {
+            onClose();
+
             if (reset) {
                 setLocalRecord(record);
+            } else {
+                setTimeout(() => doFocusOnColumn(invalidReason?.columnId ?? ""), 100);
             }
-            onClose();
         },
-        [onClose, record]
-    );
-
-    const alertDlg = useMemo(
-        () => (
-            <AlertDialog isOpen={isOpen} onClose={() => onCloseAlert(true)} leastDestructiveRef={leastDestructiveRef}>
-                <AlertDialogOverlay>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>Changes are invalid</AlertDialogHeader>
-                        <AlertDialogBody>{invalidReason}</AlertDialogBody>
-                        <AlertDialogFooter>
-                            <Button onClick={() => onCloseAlert(true)}>Reset</Button>
-                            <Button colorScheme="green" onClick={() => onCloseAlert(false)} ref={leastDestructiveRef}>
-                                Continue editing
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-        ),
-        [invalidReason, isOpen, onCloseAlert]
+        [doFocusOnColumn, invalidReason?.columnId, onClose, record]
     );
 
     return (
@@ -449,7 +444,35 @@ function CRUDRow<T>({
             {editEl}
             {deleteEl}
             {cellEls}
-            {alertDlg}
+            <AlertDialog
+                isOpen={isOpen}
+                onClose={() => onCloseAlert(true)}
+                leastDestructiveRef={leastDestructiveRef}
+                returnFocusOnClose={false}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>Changes are invalid</AlertDialogHeader>
+                        <AlertDialogBody>
+                            {invalidReason?.reason ??
+                                "Reason has not been programmed - oops! Please report this issue to us."}
+                        </AlertDialogBody>
+                        <AlertDialogFooter>
+                            <Button id="reset" onClick={() => onCloseAlert(true)}>
+                                Reset
+                            </Button>
+                            <Button
+                                id="continue-editing"
+                                colorScheme="green"
+                                onClick={() => onCloseAlert(false)}
+                                ref={leastDestructiveRef}
+                            >
+                                Continue editing
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
         </Tr>
     );
 }

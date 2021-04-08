@@ -30,7 +30,7 @@ import {
     VisuallyHidden,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { LegacyRef, Ref, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     ContentGroupFullNestedInfoFragment,
@@ -281,9 +281,12 @@ function EditableScheduleTable(): JSX.Element {
                             <DateTimePicker
                                 size="sm"
                                 value={props.value}
-                                onChange={(v: Date) => props.onChange?.(v)}
+                                onChange={(v: Date | undefined) => {
+                                    props.onChange?.(v);
+                                }}
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (past || ongoing) && isLivestream}
+                                ref={props.ref as Ref<HTMLInputElement>}
                             />
                         </HStack>
                     );
@@ -312,7 +315,7 @@ function EditableScheduleTable(): JSX.Element {
                 filterFn: dateTimeFilterFn(["endTime"]),
                 filterEl: DateTimeColumnFilter,
                 sort: (x: Date, y: Date) => x.getTime() - y.getTime(),
-                cell: function EndTimeCell(props: CellProps<Partial<EventInfoFragment>, Date>) {
+                cell: function EndTimeCell(props: CellProps<Partial<EventInfoFragment>, Date | undefined>) {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
                     const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
@@ -334,9 +337,12 @@ function EditableScheduleTable(): JSX.Element {
                             <DateTimePicker
                                 size="sm"
                                 value={props.value}
-                                onChange={(v: Date) => props.onChange?.(v)}
+                                onChange={(v: Date | undefined) => {
+                                    props.onChange?.(v);
+                                }}
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (past || ongoing) && isLivestream}
+                                ref={props.ref as Ref<HTMLInputElement>}
                             />
                         </HStack>
                     );
@@ -411,6 +417,7 @@ function EditableScheduleTable(): JSX.Element {
                                 }
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
+                                ref={props.ref as LegacyRef<HTMLSelectElement>}
                             >
                                 {roomOptions}
                                 {props.value &&
@@ -471,6 +478,7 @@ function EditableScheduleTable(): JSX.Element {
                                 onChange={(ev) => props.onChange?.(ev.target.value as RoomMode_Enum)}
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
+                                ref={props.ref as LegacyRef<HTMLSelectElement>}
                             >
                                 {roomModeOptions.map((option) => {
                                     return (
@@ -523,6 +531,7 @@ function EditableScheduleTable(): JSX.Element {
                             onBlur={props.onBlur}
                             border="1px solid"
                             borderColor="rgba(255, 255, 255, 0.16)"
+                            ref={props.ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
@@ -600,6 +609,7 @@ function EditableScheduleTable(): JSX.Element {
                                 }
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
+                                ref={props.ref as LegacyRef<HTMLSelectElement>}
                             >
                                 <option value={""}>{"<None selected>"}</option>
                                 {contentGroupOptions}
@@ -637,11 +647,17 @@ function EditableScheduleTable(): JSX.Element {
                     ? liveStreamRoomModes.includes(record.intendedRoomModeName)
                     : false;
                 if (isNew && isLivestream && (ongoing || past)) {
-                    return "Cannot create a livestream event that is already ongoing or in the past.";
+                    return {
+                        reason: "Cannot create a livestream event that is already ongoing or in the past.",
+                        columnId: ColumnId.StartTime,
+                    };
                 }
 
                 if (!record.name && !record.contentGroupId) {
-                    return "Event must have a name or content.";
+                    return {
+                        reason: "Event must have a name or content.",
+                        columnId: ColumnId.Name,
+                    };
                 }
 
                 if (record.roomId) {
@@ -655,7 +671,10 @@ function EditableScheduleTable(): JSX.Element {
                             return areOverlapping(start, end, startE, endE);
                         })
                     ) {
-                        return "Events in a room cannot overlap.";
+                        return {
+                            reason: "Events in a room cannot overlap.",
+                            columnId: ColumnId.StartTime,
+                        };
                     }
                 }
 

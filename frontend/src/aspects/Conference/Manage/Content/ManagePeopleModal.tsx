@@ -22,7 +22,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useCallback, useMemo } from "react";
+import React, { LegacyRef, useCallback, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     ManageContentPeople_AttendeeFragment,
@@ -149,6 +149,7 @@ export default function ManagePersonsModal({
                             onBlur={props.onBlur}
                             border="1px solid"
                             borderColor="rgba(255, 255, 255, 0.16)"
+                            ref={props.ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
@@ -190,6 +191,7 @@ export default function ManagePersonsModal({
                             onBlur={props.onBlur}
                             border="1px solid"
                             borderColor="rgba(255, 255, 255, 0.16)"
+                            ref={props.ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
@@ -228,6 +230,7 @@ export default function ManagePersonsModal({
                             onBlur={props.onBlur}
                             border="1px solid"
                             borderColor="rgba(255, 255, 255, 0.16)"
+                            ref={props.ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
@@ -263,12 +266,14 @@ export default function ManagePersonsModal({
                     value,
                     onChange,
                     onBlur,
+                    ref,
                 }: CellProps<Partial<ContentPersonDescriptor>, ManageContentPeople_AttendeeFragment | undefined>) {
                     return (
                         <Select
                             value={value?.id ?? ""}
                             onChange={(ev) => onChange?.(attendees.find((x) => x.id === ev.target.value))}
                             onBlur={onBlur}
+                            ref={ref as LegacyRef<HTMLSelectElement>}
                         >
                             <option value="">Select a registrant</option>
                             {attendeeOptions}

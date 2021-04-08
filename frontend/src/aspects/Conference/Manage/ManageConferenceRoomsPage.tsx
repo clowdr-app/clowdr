@@ -33,7 +33,7 @@ import {
     UnorderedList,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     Permission_Enum,
@@ -438,6 +438,7 @@ function EditableRoomsCRUDTable() {
                             onBlur={props.onBlur}
                             border="1px solid"
                             borderColor="rgba(255, 255, 255, 0.16)"
+                            ref={props.ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
@@ -482,7 +483,7 @@ function EditableRoomsCRUDTable() {
                             onChange={(vStr, v) => props.onChange?.(vStr === "" ? undefined : v)}
                             onBlur={props.onBlur}
                         >
-                            <NumberInputField />
+                            <NumberInputField ref={props.ref as LegacyRef<HTMLInputElement>} />
                             <NumberInputStepper>
                                 <NumberIncrementStepper />
                                 <NumberDecrementStepper />
@@ -531,7 +532,7 @@ function EditableRoomsCRUDTable() {
                             onChange={(vStr, v) => props.onChange?.(vStr === "" ? 10 : v)}
                             onBlur={props.onBlur}
                         >
-                            <NumberInputField />
+                            <NumberInputField ref={props.ref as LegacyRef<HTMLInputElement>} />
                             <NumberInputStepper>
                                 <NumberIncrementStepper />
                                 <NumberDecrementStepper />
@@ -587,6 +588,7 @@ function EditableRoomsCRUDTable() {
                                 value={v}
                                 onChange={(ev) => props.onChange?.(ev.target.value as RoomPrivacy_Enum)}
                                 onBlur={props.onBlur}
+                                ref={props.ref as LegacyRef<HTMLSelectElement>}
                             >
                                 {v === "" || (v !== RoomPrivacy_Enum.Public && v !== RoomPrivacy_Enum.Private) ? (
                                     <option value="">&lt;Error&gt;</option>

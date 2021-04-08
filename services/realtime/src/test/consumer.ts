@@ -25,6 +25,13 @@ async function wait(ms: number) {
     });
 }
 
+type OngoingSample = { count: number; startAt: number };
+type Sample = OngoingSample & { endAt: number };
+let historicConsumptionRates_10s: Sample[] = [];
+let historicConsumptionRates_1min: Sample[] = [];
+let historicConsumptionRates_10min: Sample[] = [];
+let currentSample: OngoingSample | undefined;
+
 async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9aff8265ed") {
     console.info(`Configuration:
     Server URL: ${serverURL}
@@ -78,6 +85,88 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
         }
 
         client.on("chat.messages.receive", (msg: Message) => {
+            const now = Date.now();
+            if (!currentSample) {
+                currentSample = {
+                    startAt: now,
+                    count: 1,
+                };
+            } else {
+                currentSample.count++;
+
+                let period = now - currentSample.startAt;
+                if (period >= 10 * 1000) {
+                    historicConsumptionRates_10s.push({
+                        ...currentSample,
+                        endAt: now,
+                    });
+                    currentSample = {
+                        startAt: now,
+                        count: 0,
+                    };
+                    console.info(
+                        `${new Date().toISOString()}: 10s avg: ${(
+                            (1000 * historicConsumptionRates_10s[historicConsumptionRates_10s.length - 1].count) /
+                            (historicConsumptionRates_10s[historicConsumptionRates_10s.length - 1].endAt -
+                                historicConsumptionRates_10s[historicConsumptionRates_10s.length - 1].startAt)
+                        ).toFixed(1)} messages/s`
+                    );
+
+                    if (historicConsumptionRates_10s.length > 0) {
+                        period = now - historicConsumptionRates_10s[0].startAt;
+
+                        if (period >= 60 * 1000) {
+                            historicConsumptionRates_1min.push({
+                                startAt: historicConsumptionRates_10s[0].startAt,
+                                count: historicConsumptionRates_10s.reduce((acc, x) => acc + x.count, 0),
+                                endAt: now,
+                            });
+                            console.info(
+                                `${new Date().toISOString()}: 1m avg: ${(
+                                    (1000 *
+                                        historicConsumptionRates_1min[historicConsumptionRates_1min.length - 1].count) /
+                                    (historicConsumptionRates_1min[historicConsumptionRates_1min.length - 1].endAt -
+                                        historicConsumptionRates_1min[historicConsumptionRates_1min.length - 1].startAt)
+                                ).toFixed(1)} messages/s`
+                            );
+
+                            historicConsumptionRates_10s = [];
+
+                            if (historicConsumptionRates_1min.length > 0) {
+                                period = now - historicConsumptionRates_1min[0].startAt;
+
+                                if (period >= 10 * 60 * 1000) {
+                                    historicConsumptionRates_10min.push({
+                                        startAt: historicConsumptionRates_1min[0].startAt,
+                                        count: historicConsumptionRates_1min.reduce((acc, x) => acc + x.count, 0),
+                                        endAt: now,
+                                    });
+                                    console.info(
+                                        `${new Date().toISOString()}: 10m avg: ${(
+                                            (1000 *
+                                                historicConsumptionRates_10min[
+                                                    historicConsumptionRates_10min.length - 1
+                                                ].count) /
+                                            (historicConsumptionRates_10min[historicConsumptionRates_10min.length - 1]
+                                                .endAt -
+                                                historicConsumptionRates_10min[
+                                                    historicConsumptionRates_10min.length - 1
+                                                ].startAt)
+                                        ).toFixed(1)} messages/s`
+                                    );
+
+                                    historicConsumptionRates_1min = [];
+
+                                    if (historicConsumptionRates_10min.length > 10) {
+                                        historicConsumptionRates_10min = [];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             if (!silentMode) {
                 console.info("Message received", msg);
             }
@@ -94,7 +183,7 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
         // eslint-disable-next-line no-constant-condition
         while (true) {
             console.info("[Running]");
-            await wait(10000);
+            await wait(60000);
         }
     } catch (e) {
         process.stdout.write("\n");

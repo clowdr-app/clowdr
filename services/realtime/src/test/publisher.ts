@@ -98,7 +98,7 @@ async function Main(
         console.info(`Sending test messages (${messagesPerSecond} msg/s)`);
 
         let messagesSinceLastReactionsFlood = 0;
-        const startedSendingAt = Date.now();
+        let startedSendingAt = Date.now();
         // eslint-disable-next-line no-constant-condition
         while (true) {
             const action: Action<Message> = {
@@ -170,11 +170,13 @@ async function Main(
             if (messagesSent === messagesPerSecond) {
                 messagesSent = 0;
                 process.stdout.write(
-                    `${messagesPerSecond}|${totalMessagesSent}|${(
+                    `${new Date().toISOString()}: ${messagesPerSecond}|${totalMessagesSent}|${(
                         totalMessagesSent /
                         ((Date.now() - startedSendingAt) / 1000)
                     ).toFixed(1)}msgs/s\n`
                 );
+                totalMessagesSent = 0;
+                startedSendingAt = Date.now();
             }
 
             nextSendAt = nextSendAt + interval;

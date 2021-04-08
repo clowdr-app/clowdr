@@ -216,7 +216,7 @@ export function RoomBackstage({
             {!selectedEventId && sharedRoomContext ? (
                 <Box display="none">
                     <portals.OutPortal
-                        node={sharedRoomContext.portalNode}
+                        node={sharedRoomContext.vonagePortalNode}
                         vonageSessionId=""
                         getAccessToken={() => ""}
                         disable={true}

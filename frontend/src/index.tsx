@@ -1,7 +1,9 @@
+import { lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React from "react";
 import ReactDOM from "react-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
 import App from "./App";
 import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
 import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
@@ -12,17 +14,21 @@ import "./index.css";
 ReactDOM.render(
     <React.StrictMode>
         <VonageGlobalStateProvider>
-            <HelmetProvider>
-                <BrowserRouter>
-                    <ChakraCustomProvider>
-                        <Auth0CustomProvider>
-                            <ApolloCustomProvider>
-                                <App />
-                            </ApolloCustomProvider>
-                        </Auth0CustomProvider>
-                    </ChakraCustomProvider>
-                </BrowserRouter>
-            </HelmetProvider>
+            <ThemeProvider theme={lightTheme}>
+                <MeetingProvider>
+                    <HelmetProvider>
+                        <BrowserRouter>
+                            <ChakraCustomProvider>
+                                <Auth0CustomProvider>
+                                    <ApolloCustomProvider>
+                                        <App />
+                                    </ApolloCustomProvider>
+                                </Auth0CustomProvider>
+                            </ChakraCustomProvider>
+                        </BrowserRouter>
+                    </HelmetProvider>
+                </MeetingProvider>
+            </ThemeProvider>
         </VonageGlobalStateProvider>
     </React.StrictMode>,
     document.getElementById("root")

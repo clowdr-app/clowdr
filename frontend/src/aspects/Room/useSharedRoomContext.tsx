@@ -4,7 +4,8 @@ import type { VonageRoom } from "../Conference/Attend/Room/Vonage/VonageRoom";
 
 export type SharedRoomContextInfo =
     | {
-          portalNode: HtmlPortalNode<typeof VonageRoom>;
+          vonagePortalNode: HtmlPortalNode<typeof VonageRoom>;
+          chimePortalNode: HtmlPortalNode<typeof ChimeRoom>;
       }
     | undefined;
 

@@ -71,7 +71,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
                     <Box w="100%">
                         {event.eventVonageSession && sharedRoomContext ? (
                             <portals.OutPortal
-                                node={sharedRoomContext.portalNode}
+                                node={sharedRoomContext.vonagePortalNode}
                                 vonageSessionId={event.eventVonageSession.sessionId}
                                 getAccessToken={getAccessToken}
                                 disable={false}

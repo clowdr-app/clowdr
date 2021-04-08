@@ -36,6 +36,7 @@ import { useRealTime } from "../../../Generic/useRealTime";
 import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
+import { BreakoutChimeRoom } from "./BreakoutChimeRoom";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { RoomBackstage } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
@@ -370,6 +371,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     );
 
     const breakoutVonageRoomEl = useMemo(() => <BreakoutVonageRoom room={roomDetails} />, [roomDetails]);
+    const breakoutChimeRoomEl = useMemo(() => <BreakoutChimeRoom room={roomDetails} />, [roomDetails]);
 
     const currentEventRole = currentRoomEvent?.eventPeople.find(
         (p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id
@@ -660,7 +662,8 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
                 {showDefaultBreakoutRoom ? (
                     <Box display={showBackstage ? "none" : "block"} bgColor={bgColour} m={-2}>
-                        {breakoutVonageRoomEl}
+                        {/* {breakoutVonageRoomEl} */}
+                        {breakoutChimeRoomEl}
                     </Box>
                 ) : (
                     <></>

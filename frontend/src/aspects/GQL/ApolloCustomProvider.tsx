@@ -142,6 +142,11 @@ class AuthTokenCache {
     }
 }
 
+const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
+const httpProtocol = useSecureProtocols ? "https" : "http";
+const wsProtocol = useSecureProtocols ? "wss" : "ws";
+export const GraphQLHTTPUrl = `${httpProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`;
+
 async function createApolloClient(
     isAuthenticated: boolean,
     conferenceSlug: string | undefined,
@@ -149,10 +154,6 @@ async function createApolloClient(
     getAccessTokenSilently: (options?: any) => Promise<string>,
     tokenCache: AuthTokenCache
 ): Promise<ApolloClient<NormalizedCacheObject>> {
-    const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
-    const httpProtocol = useSecureProtocols ? "https" : "http";
-    const wsProtocol = useSecureProtocols ? "wss" : "ws";
-
     const authLink = setContext(async (_, { headers }) => {
         const newHeaders: any = { ...headers };
 
@@ -187,7 +188,7 @@ async function createApolloClient(
     });
 
     const httpLink = new HttpLink({
-        uri: `${httpProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`,
+        uri: GraphQLHTTPUrl,
     });
 
     const wsConnectionParams = await (async () => {

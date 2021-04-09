@@ -14,6 +14,7 @@ import GenericErrorPage from "./aspects/Errors/GenericErrorPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
 import { GoogleOAuth, GoogleOAuthRedirect } from "./aspects/Google/GoogleOAuth";
 import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
+import PushNotificationSettings from "./aspects/PushNotifications/PushNotificationSettings";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
@@ -21,6 +22,8 @@ import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 export default function Routing({ rootUrl }: { rootUrl?: string }): JSX.Element {
     return (
         <Switch>
+            <ProtectedRoute component={PushNotificationSettings} exact path="/user/pushNotifications" />
+
             <Route exact path="/auth0/email-verification/result">
                 {(props) => {
                     const searchParams = new URLSearchParams(props.location.search);

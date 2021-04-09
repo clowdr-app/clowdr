@@ -5363,6 +5363,13 @@
       filter: {}
 - table:
     schema: public
+    name: PushNotificationSubscription
+  object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: userId
+- table:
+    schema: public
     name: RequiredContentItem
   configuration:
     custom_root_fields: {}

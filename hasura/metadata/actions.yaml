@@ -209,6 +209,17 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: vapidPublicKey
+  definition:
+    kind: ""
+    handler: '{{REALTIME_BASE_URL}}/vapid/publicKey'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: unauthenticated
+  - role: user
 custom_types:
   enums: []
   input_objects:
@@ -263,4 +274,5 @@ custom_types:
   - name: GenerateChatRemoteUserIdsOutput
   - name: PresenceSummaryOutput
   - name: PresenceFlushOutput
+  - name: VAPIDPublicKeyOutput
   scalars: []

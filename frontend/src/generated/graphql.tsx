@@ -15250,6 +15250,11 @@ export enum User_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+export type VapidPublicKeyOutput = {
+  readonly __typename?: 'VAPIDPublicKeyOutput';
+  readonly key: Scalars['String'];
+};
+
 /** columns and relationships of "VideoRenderJob" */
 export type VideoRenderJob = {
   readonly __typename?: 'VideoRenderJob';
@@ -26176,6 +26181,8 @@ export type Query_Root = {
   readonly system_Configuration_aggregate: System_Configuration_Aggregate;
   /** fetch data from the table: "system.Configuration" using primary key columns */
   readonly system_Configuration_by_pk?: Maybe<System_Configuration>;
+  /** perform the action: "vapidPublicKey" */
+  readonly vapidPublicKey: VapidPublicKeyOutput;
 };
 
 
@@ -30160,6 +30167,8 @@ export type Subscription_Root = {
   readonly system_Configuration_aggregate: System_Configuration_Aggregate;
   /** fetch data from the table: "system.Configuration" using primary key columns */
   readonly system_Configuration_by_pk?: Maybe<System_Configuration>;
+  /** perform the action: "vapidPublicKey" */
+  readonly vapidPublicKey: VapidPublicKeyOutput;
 };
 
 
@@ -32343,7 +32352,11 @@ export enum System_ConfigurationKey_Enum {
   /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
   TermsLatestRevisionTimestamp = 'TERMS_LATEST_REVISION_TIMESTAMP',
   /** URL to the host T&Cs. Note: If self hosting Clowdr, this must be your organisation's terms - you cannot legally reuse, rely on or copy Clowdr's terms. */
-  TermsUrl = 'TERMS_URL'
+  TermsUrl = 'TERMS_URL',
+  /** VAPID keys are used for push notifications and are generated automatically by the realtime service on first use. */
+  VapidPrivateKey = 'VAPID_PRIVATE_KEY',
+  /** VAPID keys are used for push notifications and are generated automatically by the realtime service on first use. */
+  VapidPublicKey = 'VAPID_PUBLIC_KEY'
 }
 
 /** expression to compare columns of type system_ConfigurationKey_enum. All fields are combined with logical 'AND'. */
@@ -34646,6 +34659,11 @@ export type GetContentGroupChatIdQueryVariables = Exact<{
 
 
 export type GetContentGroupChatIdQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly chatId?: Maybe<any> }> };
+
+export type GetVapidPublicKeyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetVapidPublicKeyQuery = { readonly __typename?: 'query_root', readonly vapidPublicKey: { readonly __typename?: 'VAPIDPublicKeyOutput', readonly key: string } };
 
 export type GetRoomMembersQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -42857,6 +42875,40 @@ export function useGetContentGroupChatIdLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetContentGroupChatIdQueryHookResult = ReturnType<typeof useGetContentGroupChatIdQuery>;
 export type GetContentGroupChatIdLazyQueryHookResult = ReturnType<typeof useGetContentGroupChatIdLazyQuery>;
 export type GetContentGroupChatIdQueryResult = Apollo.QueryResult<GetContentGroupChatIdQuery, GetContentGroupChatIdQueryVariables>;
+export const GetVapidPublicKeyDocument = gql`
+    query GetVAPIDPublicKey {
+  vapidPublicKey {
+    key
+  }
+}
+    `;
+
+/**
+ * __useGetVapidPublicKeyQuery__
+ *
+ * To run a query within a React component, call `useGetVapidPublicKeyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVapidPublicKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVapidPublicKeyQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetVapidPublicKeyQuery(baseOptions?: Apollo.QueryHookOptions<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>(GetVapidPublicKeyDocument, options);
+      }
+export function useGetVapidPublicKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>(GetVapidPublicKeyDocument, options);
+        }
+export type GetVapidPublicKeyQueryHookResult = ReturnType<typeof useGetVapidPublicKeyQuery>;
+export type GetVapidPublicKeyLazyQueryHookResult = ReturnType<typeof useGetVapidPublicKeyLazyQuery>;
+export type GetVapidPublicKeyQueryResult = Apollo.QueryResult<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>;
 export const GetRoomMembersDocument = gql`
     query GetRoomMembers($roomId: uuid!) {
   RoomPerson(where: {roomId: {_eq: $roomId}}) {

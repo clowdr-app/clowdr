@@ -150,6 +150,11 @@ type Mutation {
 }
 
 
+type Query {
+  vapidPublicKey : VAPIDPublicKeyOutput!
+}
+
+
 
 
 input SampleInput {
@@ -313,5 +318,9 @@ type PresenceSummaryOutput {
 
 type PresenceFlushOutput {
   ok : String
+}
+
+type VAPIDPublicKeyOutput {
+  key : String!
 }
 

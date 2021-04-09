@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import type { IntermediaryAttendeeData } from "@clowdr-app/shared-types/build/import/intermediary";
 import assert from "assert";
+import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -122,9 +123,6 @@ export default function ImportPanel({
                     // Remove duplicates as compared to the existing data
                     .reduce<AttendeeFinalData[]>((acc, row) => {
                         const group = groupsData?.Group.find((g) => g.name.toLowerCase() === row.group.toLowerCase());
-                        if (!group) {
-                            return acc;
-                        }
 
                         const existingAttendee =
                             attendeesData?.Attendee &&
@@ -133,7 +131,7 @@ export default function ImportPanel({
                             });
 
                         if (existingAttendee) {
-                            if (!existingAttendee.groupAttendees.some((ga) => ga.groupId === group.id)) {
+                            if (!existingAttendee.groupAttendees.some((ga) => ga.groupId === group?.id)) {
                                 return [
                                     ...acc,
                                     {
@@ -283,24 +281,46 @@ export default function ImportPanel({
                     alignItems="flex-start"
                     justifyContent="center"
                 >
-                    <AlertIcon />
-                    <AlertTitle>Error: One or more rows has an invalid group</AlertTitle>
+                    <HStack>
+                        <AlertIcon />
+                        <AlertTitle>Error: One or more rows has an invalid group</AlertTitle>
+                    </HStack>
                     <AlertDescription>
-                        <VStack alignItems="flex-start">
-                            <Text>Make sure you created any groups you want to target before importing attendees.</Text>
-                            <LinkButton to={`/conference/${conference.slug}/manage/groups`} colorScheme="red">
+                        <VStack alignItems="flex-start" spacing={2} my={2}>
+                            <Text overflowWrap="normal">
+                                Make sure you created any groups before importing registrants.
+                            </Text>
+                            <Text overflowWrap="normal">
+                                {groupsData
+                                    ? `Currently available groups are: ${R.sortBy((x) => x.name, groupsData.Group)
+                                          .reduce<string>((acc, x) => `${acc}, ${x.name}`, "")
+                                          .substring(2)}`
+                                    : "Unable to load the list of groups - please refresh to try again."}
+                            </Text>
+                            <LinkButton to={`/conference/${conference.slug}/manage/groups`} colorScheme="red" mt={2}>
                                 Go to Manage Groups
                             </LinkButton>
                         </VStack>
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {finalData.length < totalInputLength ? (
+            {!noName && !noEmail && !noGroup && !groupsLoading && finalData.length < totalInputLength ? (
                 <Alert>
                     <AlertIcon />
                     <AlertTitle>
                         Your selected data has been de-duplicated against existing Clowdr data based on email address.
                     </AlertTitle>
+                </Alert>
+            ) : undefined}
+            {!noName && !noEmail && !noGroup && !groupsLoading ? (
+                <Alert>
+                    <AlertIcon />
+                    <AlertTitle>{finalData.length} unique registrant-group pairs will be imported.</AlertTitle>
+                    {finalData.length < totalInputLength ? (
+                        <AlertDescription>
+                            ({totalInputLength - finalData.length} were ignored due to de-duplication)
+                        </AlertDescription>
+                    ) : undefined}
                 </Alert>
             ) : undefined}
             <Box overflowX="auto" maxW="100%" w="100%">

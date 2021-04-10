@@ -1,13 +1,13 @@
 import { gql } from "@apollo/client";
-import { Badge, HStack, Link, Text, VStack } from "@chakra-ui/react";
+import { Badge, Button, HStack, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Link as ReactLink } from "react-router-dom";
 import type {
     ContentGroupList_ContentPersonDataFragment,
     ContentPersonDataFragment,
 } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
-import { useConference } from "../../useConference";
+import { useAttendee } from "../../AttendeesContext";
+import ProfileModal from "../Attendee/ProfileModal";
 
 gql`
     fragment ContentPersonData on ContentGroupPerson {
@@ -125,24 +125,29 @@ export function Author({
     hideRole?: boolean;
     badgeColour?: string;
 }): JSX.Element {
-    const conference = useConference();
+    const attendee = useAttendee(
+        contentPersonData.person.attendeeId && { attendee: contentPersonData.person.attendeeId }
+    );
+    const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
-            <Text fontWeight="bold">
-                {contentPersonData.person.attendeeId ? (
-                    <Link
-                        as={ReactLink}
-                        to={`/conference/${conference.slug}/profile/view/${contentPersonData.person.attendeeId}`}
-                        target="_blank"
-                        textDecoration="none"
-                    >
-                        <FAIcon iconStyle="s" icon="user" mr={2} fontSize="xs" pb={"4px"} />
-                        {contentPersonData.person.name}
-                    </Link>
-                ) : (
-                    contentPersonData.person.name
-                )}
-            </Text>
+            {contentPersonData.person.attendeeId ? (
+                <Button
+                    onClick={() => onOpen()}
+                    variant="ghost"
+                    p={0}
+                    m={0}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    h="auto"
+                    overflowWrap="normal"
+                >
+                    <FAIcon iconStyle="s" icon="user" mr={2} fontSize="xs" />
+                    {contentPersonData.person.name}
+                </Button>
+            ) : (
+                <Text fontWeight="bold">{contentPersonData.person.name}</Text>
+            )}
             {!hideRole ? (
                 <Badge
                     ml="2"
@@ -167,6 +172,16 @@ export function Author({
                     <>&nbsp;</>
                 )}
             </Text>
+            {attendee && attendee.profile ? (
+                <ProfileModal
+                    attendee={{
+                        ...attendee,
+                        profile: attendee.profile,
+                    }}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                />
+            ) : undefined}
         </VStack>
     );
 }

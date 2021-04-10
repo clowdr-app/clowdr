@@ -75,7 +75,7 @@ export default function PushNotificationSettings(): JSX.Element {
                     <AlertDescription as={VStack}>
                         <Text>
                             Due to Apple&apos;s decision to obstruct open web standards, by refusing to implement the
-                            Push API, Clowdr does not support push notifications in Safari nor any browser on iOS.
+                            Push API, Clowdr cannot support push notifications in Safari nor any browser on iOS.
                         </Text>
                         <Text fontStyle="italic">
                             (Don&apos;t be fooled: all iOS browser apps have to use Apple&apos;s web engine, including

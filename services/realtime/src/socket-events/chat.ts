@@ -30,11 +30,9 @@ export function onConnect(socket: Socket, userId: string, conferenceSlugs: strin
     socket.on("chat.pins.changed.off", chat_pins.onUnlistenForPinsChanged(conferenceSlugs, userId, socketId, socket));
 }
 
-export async function onDisconnect(socketId: string, userId: string, cb?: () => void): Promise<void> {
+export async function onDisconnect(socketId: string, userId: string): Promise<void> {
     try {
         await exitChats(socketId, userId);
-
-        cb?.();
     } catch (e) {
         console.error(`Error exiting all presences on socket ${socketId}`, e);
     }

@@ -5368,6 +5368,67 @@
   - name: user
     using:
       foreign_key_constraint_on: userId
+  insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      set:
+        userId: x-hasura-User-Id
+      columns:
+      - auth
+      - endpoint
+      - p256dh
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - created_at
+      - endpoint
+      - updated_at
+      - userId
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - auth
+      - endpoint
+      - p256dh
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: PushNotificationSubscriptionChanged
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+      delete:
+        columns: '*'
+      update:
+        columns:
+        - auth
+        - endpoint
+        - p256dh
+        - userId
+    retry_conf:
+      num_retries: 1
+      interval_sec: 120
+      timeout_sec: 60
+    webhook: '{{REALTIME_BASE_URL}}/pushNotificationSubscription/changed'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - table:
     schema: public
     name: RequiredContentItem
@@ -6907,6 +6968,13 @@
         table:
           schema: public
           name: Invitation
+  - name: pushNotificationSubscriptions
+    using:
+      foreign_key_constraint_on:
+        column: userId
+        table:
+          schema: public
+          name: PushNotificationSubscription
   select_permissions:
   - role: user
     permission:

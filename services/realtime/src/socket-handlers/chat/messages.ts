@@ -10,8 +10,8 @@ export function onSend(
     userId: string,
     socketId: string,
     socket: Socket
-): (message: any, cb?: () => void) => Promise<void> {
-    return async (actionData, cb) => {
+): (message: any) => Promise<void> {
+    return async (actionData) => {
         if (actionData) {
             try {
                 assert(is<Action<Message>>(actionData), "Data does not match expected type.");
@@ -37,7 +37,5 @@ export function onSend(
                 }
             }
         }
-
-        cb?.();
     };
 }

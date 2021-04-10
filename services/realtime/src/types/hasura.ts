@@ -35,3 +35,10 @@ export interface Pin {
     wasManuallyPinned: boolean;
     created_at: string;
 }
+
+export interface PushNotificationSubscription {
+    userId: string;
+    endpoint: string;
+    auth: string;
+    p256dh: string;
+}

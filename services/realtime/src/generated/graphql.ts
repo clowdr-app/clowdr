@@ -11073,6 +11073,207 @@ export type ProtectedEchoOutput = {
   message: Scalars['String'];
 };
 
+/** columns and relationships of "PushNotificationSubscription" */
+export type PushNotificationSubscription = {
+  __typename?: 'PushNotificationSubscription';
+  auth: Scalars['String'];
+  created_at: Scalars['timestamptz'];
+  endpoint: Scalars['String'];
+  p256dh: Scalars['String'];
+  updated_at: Scalars['timestamptz'];
+  /** An object relationship */
+  user: User;
+  userId: Scalars['String'];
+};
+
+/** aggregated selection of "PushNotificationSubscription" */
+export type PushNotificationSubscription_Aggregate = {
+  __typename?: 'PushNotificationSubscription_aggregate';
+  aggregate?: Maybe<PushNotificationSubscription_Aggregate_Fields>;
+  nodes: Array<PushNotificationSubscription>;
+};
+
+/** aggregate fields of "PushNotificationSubscription" */
+export type PushNotificationSubscription_Aggregate_Fields = {
+  __typename?: 'PushNotificationSubscription_aggregate_fields';
+  count?: Maybe<Scalars['Int']>;
+  max?: Maybe<PushNotificationSubscription_Max_Fields>;
+  min?: Maybe<PushNotificationSubscription_Min_Fields>;
+};
+
+
+/** aggregate fields of "PushNotificationSubscription" */
+export type PushNotificationSubscription_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<PushNotificationSubscription_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<PushNotificationSubscription_Max_Order_By>;
+  min?: Maybe<PushNotificationSubscription_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Arr_Rel_Insert_Input = {
+  data: Array<PushNotificationSubscription_Insert_Input>;
+  on_conflict?: Maybe<PushNotificationSubscription_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "PushNotificationSubscription". All fields are combined with a logical 'AND'. */
+export type PushNotificationSubscription_Bool_Exp = {
+  _and?: Maybe<Array<Maybe<PushNotificationSubscription_Bool_Exp>>>;
+  _not?: Maybe<PushNotificationSubscription_Bool_Exp>;
+  _or?: Maybe<Array<Maybe<PushNotificationSubscription_Bool_Exp>>>;
+  auth?: Maybe<String_Comparison_Exp>;
+  created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  endpoint?: Maybe<String_Comparison_Exp>;
+  p256dh?: Maybe<String_Comparison_Exp>;
+  updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  user?: Maybe<User_Bool_Exp>;
+  userId?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "PushNotificationSubscription" */
+export enum PushNotificationSubscription_Constraint {
+  /** unique or primary key constraint */
+  PushNotificationSubscriptionPkey = 'PushNotificationSubscription_pkey'
+}
+
+/** input type for inserting data into table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Insert_Input = {
+  auth?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpoint?: Maybe<Scalars['String']>;
+  p256dh?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  user?: Maybe<User_Obj_Rel_Insert_Input>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type PushNotificationSubscription_Max_Fields = {
+  __typename?: 'PushNotificationSubscription_max_fields';
+  auth?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpoint?: Maybe<Scalars['String']>;
+  p256dh?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Max_Order_By = {
+  auth?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  endpoint?: Maybe<Order_By>;
+  p256dh?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+  userId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type PushNotificationSubscription_Min_Fields = {
+  __typename?: 'PushNotificationSubscription_min_fields';
+  auth?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpoint?: Maybe<Scalars['String']>;
+  p256dh?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Min_Order_By = {
+  auth?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  endpoint?: Maybe<Order_By>;
+  p256dh?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+  userId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Mutation_Response = {
+  __typename?: 'PushNotificationSubscription_mutation_response';
+  /** number of affected rows by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  returning: Array<PushNotificationSubscription>;
+};
+
+/** input type for inserting object relation for remote table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Obj_Rel_Insert_Input = {
+  data: PushNotificationSubscription_Insert_Input;
+  on_conflict?: Maybe<PushNotificationSubscription_On_Conflict>;
+};
+
+/** on conflict condition type for table "PushNotificationSubscription" */
+export type PushNotificationSubscription_On_Conflict = {
+  constraint: PushNotificationSubscription_Constraint;
+  update_columns: Array<PushNotificationSubscription_Update_Column>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "PushNotificationSubscription" */
+export type PushNotificationSubscription_Order_By = {
+  auth?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  endpoint?: Maybe<Order_By>;
+  p256dh?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+  user?: Maybe<User_Order_By>;
+  userId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "PushNotificationSubscription" */
+export type PushNotificationSubscription_Pk_Columns_Input = {
+  endpoint: Scalars['String'];
+};
+
+/** select columns of table "PushNotificationSubscription" */
+export enum PushNotificationSubscription_Select_Column {
+  /** column name */
+  Auth = 'auth',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Endpoint = 'endpoint',
+  /** column name */
+  P256dh = 'p256dh',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserId = 'userId'
+}
+
+/** input type for updating data in table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Set_Input = {
+  auth?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpoint?: Maybe<Scalars['String']>;
+  p256dh?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "PushNotificationSubscription" */
+export enum PushNotificationSubscription_Update_Column {
+  /** column name */
+  Auth = 'auth',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Endpoint = 'endpoint',
+  /** column name */
+  P256dh = 'p256dh',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserId = 'userId'
+}
+
 export type RefreshYouTubeDataOutput = {
   __typename?: 'RefreshYouTubeDataOutput';
   message?: Maybe<Scalars['String']>;
@@ -14904,6 +15105,10 @@ export type User = {
   lastName: Scalars['String'];
   /** An object relationship */
   onlineStatus?: Maybe<OnlineStatus>;
+  /** An array relationship */
+  pushNotificationSubscriptions: Array<PushNotificationSubscription>;
+  /** An aggregated array relationship */
+  pushNotificationSubscriptions_aggregate: PushNotificationSubscription_Aggregate;
   updatedAt: Scalars['timestamptz'];
 };
 
@@ -15007,6 +15212,26 @@ export type UserInvitationsPendingConfirmation_AggregateArgs = {
   where?: Maybe<Invitation_Bool_Exp>;
 };
 
+
+/** columns and relationships of "User" */
+export type UserPushNotificationSubscriptionsArgs = {
+  distinct_on?: Maybe<Array<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
+export type UserPushNotificationSubscriptions_AggregateArgs = {
+  distinct_on?: Maybe<Array<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
 /** aggregated selection of "User" */
 export type User_Aggregate = {
   __typename?: 'User_aggregate';
@@ -15061,6 +15286,7 @@ export type User_Bool_Exp = {
   lastLoggedInAt?: Maybe<Timestamptz_Comparison_Exp>;
   lastName?: Maybe<String_Comparison_Exp>;
   onlineStatus?: Maybe<OnlineStatus_Bool_Exp>;
+  pushNotificationSubscriptions?: Maybe<PushNotificationSubscription_Bool_Exp>;
   updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -15088,6 +15314,7 @@ export type User_Insert_Input = {
   lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   lastName?: Maybe<Scalars['String']>;
   onlineStatus?: Maybe<OnlineStatus_Obj_Rel_Insert_Input>;
+  pushNotificationSubscriptions?: Maybe<PushNotificationSubscription_Arr_Rel_Insert_Input>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -15183,6 +15410,7 @@ export type User_Order_By = {
   lastLoggedInAt?: Maybe<Order_By>;
   lastName?: Maybe<Order_By>;
   onlineStatus?: Maybe<OnlineStatus_Order_By>;
+  pushNotificationSubscriptions_aggregate?: Maybe<PushNotificationSubscription_Aggregate_Order_By>;
   updatedAt?: Maybe<Order_By>;
 };
 
@@ -15247,6 +15475,11 @@ export enum User_Update_Column {
   /** column name */
   UpdatedAt = 'updatedAt'
 }
+
+export type VapidPublicKeyOutput = {
+  __typename?: 'VAPIDPublicKeyOutput';
+  key: Scalars['String'];
+};
 
 /** columns and relationships of "VideoRenderJob" */
 export type VideoRenderJob = {
@@ -21411,6 +21644,10 @@ export type Mutation_Root = {
   delete_Permission?: Maybe<Permission_Mutation_Response>;
   /** delete single row from the table: "Permission" */
   delete_Permission_by_pk?: Maybe<Permission>;
+  /** delete data from the table: "PushNotificationSubscription" */
+  delete_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
+  /** delete single row from the table: "PushNotificationSubscription" */
+  delete_PushNotificationSubscription_by_pk?: Maybe<PushNotificationSubscription>;
   /** delete data from the table: "RequiredContentItem" */
   delete_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** delete single row from the table: "RequiredContentItem" */
@@ -21725,6 +21962,10 @@ export type Mutation_Root = {
   insert_Permission?: Maybe<Permission_Mutation_Response>;
   /** insert a single row into the table: "Permission" */
   insert_Permission_one?: Maybe<Permission>;
+  /** insert data into the table: "PushNotificationSubscription" */
+  insert_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
+  /** insert a single row into the table: "PushNotificationSubscription" */
+  insert_PushNotificationSubscription_one?: Maybe<PushNotificationSubscription>;
   /** insert data into the table: "RequiredContentItem" */
   insert_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** insert a single row into the table: "RequiredContentItem" */
@@ -22063,6 +22304,10 @@ export type Mutation_Root = {
   update_Permission?: Maybe<Permission_Mutation_Response>;
   /** update single row of the table: "Permission" */
   update_Permission_by_pk?: Maybe<Permission>;
+  /** update data of the table: "PushNotificationSubscription" */
+  update_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
+  /** update single row of the table: "PushNotificationSubscription" */
+  update_PushNotificationSubscription_by_pk?: Maybe<PushNotificationSubscription>;
   /** update data of the table: "RequiredContentItem" */
   update_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** update single row of the table: "RequiredContentItem" */
@@ -22685,6 +22930,18 @@ export type Mutation_RootDelete_PermissionArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Permission_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_PushNotificationSubscriptionArgs = {
+  where: PushNotificationSubscription_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_PushNotificationSubscription_By_PkArgs = {
+  endpoint: Scalars['String'];
 };
 
 
@@ -23705,6 +23962,20 @@ export type Mutation_RootInsert_PermissionArgs = {
 export type Mutation_RootInsert_Permission_OneArgs = {
   object: Permission_Insert_Input;
   on_conflict?: Maybe<Permission_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_PushNotificationSubscriptionArgs = {
+  objects: Array<PushNotificationSubscription_Insert_Input>;
+  on_conflict?: Maybe<PushNotificationSubscription_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_PushNotificationSubscription_OneArgs = {
+  object: PushNotificationSubscription_Insert_Input;
+  on_conflict?: Maybe<PushNotificationSubscription_On_Conflict>;
 };
 
 
@@ -24981,6 +25252,20 @@ export type Mutation_RootUpdate_Permission_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_PushNotificationSubscriptionArgs = {
+  _set?: Maybe<PushNotificationSubscription_Set_Input>;
+  where: PushNotificationSubscription_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_PushNotificationSubscription_By_PkArgs = {
+  _set?: Maybe<PushNotificationSubscription_Set_Input>;
+  pk_columns: PushNotificationSubscription_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_RequiredContentItemArgs = {
   _inc?: Maybe<RequiredContentItem_Inc_Input>;
   _set?: Maybe<RequiredContentItem_Set_Input>;
@@ -25918,6 +26203,12 @@ export type Query_Root = {
   Permission_aggregate: Permission_Aggregate;
   /** fetch data from the table: "Permission" using primary key columns */
   Permission_by_pk?: Maybe<Permission>;
+  /** fetch data from the table: "PushNotificationSubscription" */
+  PushNotificationSubscription: Array<PushNotificationSubscription>;
+  /** fetch aggregated fields from the table: "PushNotificationSubscription" */
+  PushNotificationSubscription_aggregate: PushNotificationSubscription_Aggregate;
+  /** fetch data from the table: "PushNotificationSubscription" using primary key columns */
+  PushNotificationSubscription_by_pk?: Maybe<PushNotificationSubscription>;
   /** fetch data from the table: "RequiredContentItem" */
   RequiredContentItem: Array<RequiredContentItem>;
   /** fetch aggregated fields from the table: "RequiredContentItem" */
@@ -26174,6 +26465,8 @@ export type Query_Root = {
   system_Configuration_aggregate: System_Configuration_Aggregate;
   /** fetch data from the table: "system.Configuration" using primary key columns */
   system_Configuration_by_pk?: Maybe<System_Configuration>;
+  /** perform the action: "vapidPublicKey" */
+  vapidPublicKey: VapidPublicKeyOutput;
 };
 
 
@@ -27176,6 +27469,32 @@ export type Query_RootPermission_AggregateArgs = {
 /** query root */
 export type Query_RootPermission_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootPushNotificationSubscriptionArgs = {
+  distinct_on?: Maybe<Array<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPushNotificationSubscription_AggregateArgs = {
+  distinct_on?: Maybe<Array<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPushNotificationSubscription_By_PkArgs = {
+  endpoint: Scalars['String'];
 };
 
 
@@ -29902,6 +30221,12 @@ export type Subscription_Root = {
   Permission_aggregate: Permission_Aggregate;
   /** fetch data from the table: "Permission" using primary key columns */
   Permission_by_pk?: Maybe<Permission>;
+  /** fetch data from the table: "PushNotificationSubscription" */
+  PushNotificationSubscription: Array<PushNotificationSubscription>;
+  /** fetch aggregated fields from the table: "PushNotificationSubscription" */
+  PushNotificationSubscription_aggregate: PushNotificationSubscription_Aggregate;
+  /** fetch data from the table: "PushNotificationSubscription" using primary key columns */
+  PushNotificationSubscription_by_pk?: Maybe<PushNotificationSubscription>;
   /** fetch data from the table: "RequiredContentItem" */
   RequiredContentItem: Array<RequiredContentItem>;
   /** fetch aggregated fields from the table: "RequiredContentItem" */
@@ -30158,6 +30483,8 @@ export type Subscription_Root = {
   system_Configuration_aggregate: System_Configuration_Aggregate;
   /** fetch data from the table: "system.Configuration" using primary key columns */
   system_Configuration_by_pk?: Maybe<System_Configuration>;
+  /** perform the action: "vapidPublicKey" */
+  vapidPublicKey: VapidPublicKeyOutput;
 };
 
 
@@ -31160,6 +31487,32 @@ export type Subscription_RootPermission_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootPermission_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootPushNotificationSubscriptionArgs = {
+  distinct_on?: Maybe<Array<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPushNotificationSubscription_AggregateArgs = {
+  distinct_on?: Maybe<Array<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPushNotificationSubscription_By_PkArgs = {
+  endpoint: Scalars['String'];
 };
 
 
@@ -32718,6 +33071,19 @@ export type PinsQuery = (
   )> }
 );
 
+export type PushNotificationSubscriptionsQueryVariables = Exact<{
+  userId: Scalars['String'];
+}>;
+
+
+export type PushNotificationSubscriptionsQuery = (
+  { __typename?: 'query_root' }
+  & { PushNotificationSubscription: Array<(
+    { __typename?: 'PushNotificationSubscription' }
+    & Pick<PushNotificationSubscription, 'userId' | 'endpoint' | 'p256dh' | 'auth'>
+  )> }
+);
+
 export type SubscriptionsQueryVariables = Exact<{
   chatId: Scalars['uuid'];
 }>;
@@ -32741,6 +33107,19 @@ export type UserPermissionsQuery = (
   & { FlatUserPermission: Array<(
     { __typename?: 'FlatUserPermission' }
     & Pick<FlatUserPermission, 'slug' | 'permission_name' | 'user_id'>
+  )> }
+);
+
+export type DeletePushNotificationSubscriptionMutationVariables = Exact<{
+  endpoint: Scalars['String'];
+}>;
+
+
+export type DeletePushNotificationSubscriptionMutation = (
+  { __typename?: 'mutation_root' }
+  & { delete_PushNotificationSubscription_by_pk?: Maybe<(
+    { __typename?: 'PushNotificationSubscription' }
+    & Pick<PushNotificationSubscription, 'endpoint'>
   )> }
 );
 
@@ -32875,8 +33254,10 @@ export const EmptyQueryDocument: DocumentNode<EmptyQueryQuery, EmptyQueryQueryVa
 export const AttendeeInfoDocument: DocumentNode<AttendeeInfoQuery, AttendeeInfoQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AttendeeInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attendeeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Attendee_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attendeeId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}}]}}]}}]};
 export const ChatInfoDocument: DocumentNode<ChatInfoQuery, ChatInfoQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ChatInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"restrictToAdmins"}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"contentGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortTitle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"roomPrivacyName"}},{"kind":"Field","name":{"kind":"Name","value":"roomPeople"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attendee"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]}}]}}]}}]};
 export const PinsDocument: DocumentNode<PinsQuery, PinsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Pins"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat_Pin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"chatId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chatId"}},{"kind":"Field","name":{"kind":"Name","value":"attendeeId"}}]}}]}}]};
+export const PushNotificationSubscriptionsDocument: DocumentNode<PushNotificationSubscriptionsQuery, PushNotificationSubscriptionsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PushNotificationSubscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"PushNotificationSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"p256dh"}},{"kind":"Field","name":{"kind":"Name","value":"auth"}}]}}]}}]};
 export const SubscriptionsDocument: DocumentNode<SubscriptionsQuery, SubscriptionsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Subscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat_Subscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"chatId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chatId"}},{"kind":"Field","name":{"kind":"Name","value":"attendeeId"}}]}}]}}]};
 export const UserPermissionsDocument: DocumentNode<UserPermissionsQuery, UserPermissionsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserPermissions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"FlatUserPermission"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"permission_name"}},{"kind":"Field","name":{"kind":"Name","value":"user_id"}}]}}]}}]};
+export const DeletePushNotificationSubscriptionDocument: DocumentNode<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeletePushNotificationSubscription"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endpoint"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_PushNotificationSubscription_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"endpoint"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endpoint"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endpoint"}}]}}]}}]};
 export const VapidKeysDocument: DocumentNode<VapidKeysQuery, VapidKeysQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"VAPIDKeys"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"publicKey"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"VAPID_PUBLIC_KEY"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"privateKey"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"VAPID_PRIVATE_KEY"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]};
 export const SetVapidKeysDocument: DocumentNode<SetVapidKeysMutation, SetVapidKeysMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetVAPIDKeys"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicKey"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"privateKey"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_system_Configuration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"VAPID_PUBLIC_KEY"}},{"kind":"ObjectField","name":{"kind":"Name","value":"value"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicKey"}}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"VAPID_PRIVATE_KEY"}},{"kind":"ObjectField","name":{"kind":"Name","value":"value"},"value":{"kind":"Variable","name":{"kind":"Name","value":"privateKey"}}}]}]}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"Configuration_pkey"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"value"}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]};
 export const InsertChatMessagesDocument: DocumentNode<InsertChatMessagesMutation, InsertChatMessagesMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertChatMessages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"chat_Message_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_chat_Message"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"Message_sId_key"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"ListValue","values":[]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sId"}}]}}]}}]}}]};

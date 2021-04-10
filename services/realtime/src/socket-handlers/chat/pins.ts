@@ -9,8 +9,8 @@ export function onListenForPinsChanged(
     userId: string,
     socketId: string,
     socket: Socket
-): (attendeeId: any, cb?: () => void) => Promise<void> {
-    return async (attendeeId, cb) => {
+): (attendeeId: any) => Promise<void> {
+    return async (attendeeId) => {
         if (attendeeId) {
             try {
                 assert(is<string>(attendeeId), "Data does not match expected type.");
@@ -30,8 +30,6 @@ export function onListenForPinsChanged(
                 );
             }
         }
-
-        cb?.();
     };
 }
 
@@ -40,8 +38,8 @@ export function onUnlistenForPinsChanged(
     userId: string,
     socketId: string,
     socket: Socket
-): (attendeeId: any, cb?: () => void) => Promise<void> {
-    return async (attendeeId, cb) => {
+): (attendeeId: any) => Promise<void> {
+    return async (attendeeId) => {
         if (attendeeId) {
             try {
                 assert(is<string>(attendeeId), "Data does not match expected type.");
@@ -61,7 +59,5 @@ export function onUnlistenForPinsChanged(
                 );
             }
         }
-
-        cb?.();
     };
 }

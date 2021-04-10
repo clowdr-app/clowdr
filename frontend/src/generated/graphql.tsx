@@ -11075,6 +11075,207 @@ export type ProtectedEchoOutput = {
   readonly message: Scalars['String'];
 };
 
+/** columns and relationships of "PushNotificationSubscription" */
+export type PushNotificationSubscription = {
+  readonly __typename?: 'PushNotificationSubscription';
+  readonly auth: Scalars['String'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly endpoint: Scalars['String'];
+  readonly p256dh: Scalars['String'];
+  readonly updated_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly user: User;
+  readonly userId: Scalars['String'];
+};
+
+/** aggregated selection of "PushNotificationSubscription" */
+export type PushNotificationSubscription_Aggregate = {
+  readonly __typename?: 'PushNotificationSubscription_aggregate';
+  readonly aggregate?: Maybe<PushNotificationSubscription_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<PushNotificationSubscription>;
+};
+
+/** aggregate fields of "PushNotificationSubscription" */
+export type PushNotificationSubscription_Aggregate_Fields = {
+  readonly __typename?: 'PushNotificationSubscription_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<PushNotificationSubscription_Max_Fields>;
+  readonly min?: Maybe<PushNotificationSubscription_Min_Fields>;
+};
+
+
+/** aggregate fields of "PushNotificationSubscription" */
+export type PushNotificationSubscription_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<PushNotificationSubscription_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<PushNotificationSubscription_Max_Order_By>;
+  readonly min?: Maybe<PushNotificationSubscription_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<PushNotificationSubscription_Insert_Input>;
+  readonly on_conflict?: Maybe<PushNotificationSubscription_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "PushNotificationSubscription". All fields are combined with a logical 'AND'. */
+export type PushNotificationSubscription_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<PushNotificationSubscription_Bool_Exp>>>;
+  readonly _not?: Maybe<PushNotificationSubscription_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<PushNotificationSubscription_Bool_Exp>>>;
+  readonly auth?: Maybe<String_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly endpoint?: Maybe<String_Comparison_Exp>;
+  readonly p256dh?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly user?: Maybe<User_Bool_Exp>;
+  readonly userId?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "PushNotificationSubscription" */
+export enum PushNotificationSubscription_Constraint {
+  /** unique or primary key constraint */
+  PushNotificationSubscriptionPkey = 'PushNotificationSubscription_pkey'
+}
+
+/** input type for inserting data into table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Insert_Input = {
+  readonly auth?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endpoint?: Maybe<Scalars['String']>;
+  readonly p256dh?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type PushNotificationSubscription_Max_Fields = {
+  readonly __typename?: 'PushNotificationSubscription_max_fields';
+  readonly auth?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endpoint?: Maybe<Scalars['String']>;
+  readonly p256dh?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Max_Order_By = {
+  readonly auth?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly endpoint?: Maybe<Order_By>;
+  readonly p256dh?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type PushNotificationSubscription_Min_Fields = {
+  readonly __typename?: 'PushNotificationSubscription_min_fields';
+  readonly auth?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endpoint?: Maybe<Scalars['String']>;
+  readonly p256dh?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Min_Order_By = {
+  readonly auth?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly endpoint?: Maybe<Order_By>;
+  readonly p256dh?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly userId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Mutation_Response = {
+  readonly __typename?: 'PushNotificationSubscription_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<PushNotificationSubscription>;
+};
+
+/** input type for inserting object relation for remote table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Obj_Rel_Insert_Input = {
+  readonly data: PushNotificationSubscription_Insert_Input;
+  readonly on_conflict?: Maybe<PushNotificationSubscription_On_Conflict>;
+};
+
+/** on conflict condition type for table "PushNotificationSubscription" */
+export type PushNotificationSubscription_On_Conflict = {
+  readonly constraint: PushNotificationSubscription_Constraint;
+  readonly update_columns: ReadonlyArray<PushNotificationSubscription_Update_Column>;
+  readonly where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "PushNotificationSubscription" */
+export type PushNotificationSubscription_Order_By = {
+  readonly auth?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly endpoint?: Maybe<Order_By>;
+  readonly p256dh?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly user?: Maybe<User_Order_By>;
+  readonly userId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "PushNotificationSubscription" */
+export type PushNotificationSubscription_Pk_Columns_Input = {
+  readonly endpoint: Scalars['String'];
+};
+
+/** select columns of table "PushNotificationSubscription" */
+export enum PushNotificationSubscription_Select_Column {
+  /** column name */
+  Auth = 'auth',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Endpoint = 'endpoint',
+  /** column name */
+  P256dh = 'p256dh',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserId = 'userId'
+}
+
+/** input type for updating data in table "PushNotificationSubscription" */
+export type PushNotificationSubscription_Set_Input = {
+  readonly auth?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endpoint?: Maybe<Scalars['String']>;
+  readonly p256dh?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly userId?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "PushNotificationSubscription" */
+export enum PushNotificationSubscription_Update_Column {
+  /** column name */
+  Auth = 'auth',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Endpoint = 'endpoint',
+  /** column name */
+  P256dh = 'p256dh',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserId = 'userId'
+}
+
 export type RefreshYouTubeDataOutput = {
   readonly __typename?: 'RefreshYouTubeDataOutput';
   readonly message?: Maybe<Scalars['String']>;
@@ -14906,6 +15107,10 @@ export type User = {
   readonly lastName: Scalars['String'];
   /** An object relationship */
   readonly onlineStatus?: Maybe<OnlineStatus>;
+  /** An array relationship */
+  readonly pushNotificationSubscriptions: ReadonlyArray<PushNotificationSubscription>;
+  /** An aggregated array relationship */
+  readonly pushNotificationSubscriptions_aggregate: PushNotificationSubscription_Aggregate;
   readonly updatedAt: Scalars['timestamptz'];
 };
 
@@ -15009,6 +15214,26 @@ export type UserInvitationsPendingConfirmation_AggregateArgs = {
   where?: Maybe<Invitation_Bool_Exp>;
 };
 
+
+/** columns and relationships of "User" */
+export type UserPushNotificationSubscriptionsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** columns and relationships of "User" */
+export type UserPushNotificationSubscriptions_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
 /** aggregated selection of "User" */
 export type User_Aggregate = {
   readonly __typename?: 'User_aggregate';
@@ -15063,6 +15288,7 @@ export type User_Bool_Exp = {
   readonly lastLoggedInAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly lastName?: Maybe<String_Comparison_Exp>;
   readonly onlineStatus?: Maybe<OnlineStatus_Bool_Exp>;
+  readonly pushNotificationSubscriptions?: Maybe<PushNotificationSubscription_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -15090,6 +15316,7 @@ export type User_Insert_Input = {
   readonly lastLoggedInAt?: Maybe<Scalars['timestamptz']>;
   readonly lastName?: Maybe<Scalars['String']>;
   readonly onlineStatus?: Maybe<OnlineStatus_Obj_Rel_Insert_Input>;
+  readonly pushNotificationSubscriptions?: Maybe<PushNotificationSubscription_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -15185,6 +15412,7 @@ export type User_Order_By = {
   readonly lastLoggedInAt?: Maybe<Order_By>;
   readonly lastName?: Maybe<Order_By>;
   readonly onlineStatus?: Maybe<OnlineStatus_Order_By>;
+  readonly pushNotificationSubscriptions_aggregate?: Maybe<PushNotificationSubscription_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -21418,6 +21646,10 @@ export type Mutation_Root = {
   readonly delete_Permission?: Maybe<Permission_Mutation_Response>;
   /** delete single row from the table: "Permission" */
   readonly delete_Permission_by_pk?: Maybe<Permission>;
+  /** delete data from the table: "PushNotificationSubscription" */
+  readonly delete_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
+  /** delete single row from the table: "PushNotificationSubscription" */
+  readonly delete_PushNotificationSubscription_by_pk?: Maybe<PushNotificationSubscription>;
   /** delete data from the table: "RequiredContentItem" */
   readonly delete_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** delete single row from the table: "RequiredContentItem" */
@@ -21732,6 +21964,10 @@ export type Mutation_Root = {
   readonly insert_Permission?: Maybe<Permission_Mutation_Response>;
   /** insert a single row into the table: "Permission" */
   readonly insert_Permission_one?: Maybe<Permission>;
+  /** insert data into the table: "PushNotificationSubscription" */
+  readonly insert_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
+  /** insert a single row into the table: "PushNotificationSubscription" */
+  readonly insert_PushNotificationSubscription_one?: Maybe<PushNotificationSubscription>;
   /** insert data into the table: "RequiredContentItem" */
   readonly insert_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** insert a single row into the table: "RequiredContentItem" */
@@ -22070,6 +22306,10 @@ export type Mutation_Root = {
   readonly update_Permission?: Maybe<Permission_Mutation_Response>;
   /** update single row of the table: "Permission" */
   readonly update_Permission_by_pk?: Maybe<Permission>;
+  /** update data of the table: "PushNotificationSubscription" */
+  readonly update_PushNotificationSubscription?: Maybe<PushNotificationSubscription_Mutation_Response>;
+  /** update single row of the table: "PushNotificationSubscription" */
+  readonly update_PushNotificationSubscription_by_pk?: Maybe<PushNotificationSubscription>;
   /** update data of the table: "RequiredContentItem" */
   readonly update_RequiredContentItem?: Maybe<RequiredContentItem_Mutation_Response>;
   /** update single row of the table: "RequiredContentItem" */
@@ -22692,6 +22932,18 @@ export type Mutation_RootDelete_PermissionArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Permission_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_PushNotificationSubscriptionArgs = {
+  where: PushNotificationSubscription_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_PushNotificationSubscription_By_PkArgs = {
+  endpoint: Scalars['String'];
 };
 
 
@@ -23712,6 +23964,20 @@ export type Mutation_RootInsert_PermissionArgs = {
 export type Mutation_RootInsert_Permission_OneArgs = {
   object: Permission_Insert_Input;
   on_conflict?: Maybe<Permission_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_PushNotificationSubscriptionArgs = {
+  objects: ReadonlyArray<PushNotificationSubscription_Insert_Input>;
+  on_conflict?: Maybe<PushNotificationSubscription_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_PushNotificationSubscription_OneArgs = {
+  object: PushNotificationSubscription_Insert_Input;
+  on_conflict?: Maybe<PushNotificationSubscription_On_Conflict>;
 };
 
 
@@ -24988,6 +25254,20 @@ export type Mutation_RootUpdate_Permission_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_PushNotificationSubscriptionArgs = {
+  _set?: Maybe<PushNotificationSubscription_Set_Input>;
+  where: PushNotificationSubscription_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_PushNotificationSubscription_By_PkArgs = {
+  _set?: Maybe<PushNotificationSubscription_Set_Input>;
+  pk_columns: PushNotificationSubscription_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_RequiredContentItemArgs = {
   _inc?: Maybe<RequiredContentItem_Inc_Input>;
   _set?: Maybe<RequiredContentItem_Set_Input>;
@@ -25925,6 +26205,12 @@ export type Query_Root = {
   readonly Permission_aggregate: Permission_Aggregate;
   /** fetch data from the table: "Permission" using primary key columns */
   readonly Permission_by_pk?: Maybe<Permission>;
+  /** fetch data from the table: "PushNotificationSubscription" */
+  readonly PushNotificationSubscription: ReadonlyArray<PushNotificationSubscription>;
+  /** fetch aggregated fields from the table: "PushNotificationSubscription" */
+  readonly PushNotificationSubscription_aggregate: PushNotificationSubscription_Aggregate;
+  /** fetch data from the table: "PushNotificationSubscription" using primary key columns */
+  readonly PushNotificationSubscription_by_pk?: Maybe<PushNotificationSubscription>;
   /** fetch data from the table: "RequiredContentItem" */
   readonly RequiredContentItem: ReadonlyArray<RequiredContentItem>;
   /** fetch aggregated fields from the table: "RequiredContentItem" */
@@ -27185,6 +27471,32 @@ export type Query_RootPermission_AggregateArgs = {
 /** query root */
 export type Query_RootPermission_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** query root */
+export type Query_RootPushNotificationSubscriptionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPushNotificationSubscription_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootPushNotificationSubscription_By_PkArgs = {
+  endpoint: Scalars['String'];
 };
 
 
@@ -29911,6 +30223,12 @@ export type Subscription_Root = {
   readonly Permission_aggregate: Permission_Aggregate;
   /** fetch data from the table: "Permission" using primary key columns */
   readonly Permission_by_pk?: Maybe<Permission>;
+  /** fetch data from the table: "PushNotificationSubscription" */
+  readonly PushNotificationSubscription: ReadonlyArray<PushNotificationSubscription>;
+  /** fetch aggregated fields from the table: "PushNotificationSubscription" */
+  readonly PushNotificationSubscription_aggregate: PushNotificationSubscription_Aggregate;
+  /** fetch data from the table: "PushNotificationSubscription" using primary key columns */
+  readonly PushNotificationSubscription_by_pk?: Maybe<PushNotificationSubscription>;
   /** fetch data from the table: "RequiredContentItem" */
   readonly RequiredContentItem: ReadonlyArray<RequiredContentItem>;
   /** fetch aggregated fields from the table: "RequiredContentItem" */
@@ -31171,6 +31489,32 @@ export type Subscription_RootPermission_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootPermission_By_PkArgs = {
   name: Scalars['String'];
+};
+
+
+/** subscription root */
+export type Subscription_RootPushNotificationSubscriptionArgs = {
+  distinct_on?: Maybe<ReadonlyArray<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPushNotificationSubscription_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<PushNotificationSubscription_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<PushNotificationSubscription_Order_By>>;
+  where?: Maybe<PushNotificationSubscription_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootPushNotificationSubscription_By_PkArgs = {
+  endpoint: Scalars['String'];
 };
 
 
@@ -34664,6 +35008,20 @@ export type GetVapidPublicKeyQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetVapidPublicKeyQuery = { readonly __typename?: 'query_root', readonly vapidPublicKey: { readonly __typename?: 'VAPIDPublicKeyOutput', readonly key: string } };
+
+export type UpsertPushNotificationSubscriptionMutationVariables = Exact<{
+  object: PushNotificationSubscription_Insert_Input;
+}>;
+
+
+export type UpsertPushNotificationSubscriptionMutation = { readonly __typename?: 'mutation_root', readonly insert_PushNotificationSubscription_one?: Maybe<{ readonly __typename?: 'PushNotificationSubscription', readonly endpoint: string }> };
+
+export type DeletePushNotificationSubscriptionMutationVariables = Exact<{
+  endpoint: Scalars['String'];
+}>;
+
+
+export type DeletePushNotificationSubscriptionMutation = { readonly __typename?: 'mutation_root', readonly delete_PushNotificationSubscription?: Maybe<{ readonly __typename?: 'PushNotificationSubscription_mutation_response', readonly affected_rows: number }> };
 
 export type GetRoomMembersQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -42909,6 +43267,75 @@ export function useGetVapidPublicKeyLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetVapidPublicKeyQueryHookResult = ReturnType<typeof useGetVapidPublicKeyQuery>;
 export type GetVapidPublicKeyLazyQueryHookResult = ReturnType<typeof useGetVapidPublicKeyLazyQuery>;
 export type GetVapidPublicKeyQueryResult = Apollo.QueryResult<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>;
+export const UpsertPushNotificationSubscriptionDocument = gql`
+    mutation UpsertPushNotificationSubscription($object: PushNotificationSubscription_insert_input!) {
+  insert_PushNotificationSubscription_one(
+    object: $object
+    on_conflict: {constraint: PushNotificationSubscription_pkey, update_columns: [auth, endpoint, p256dh]}
+  ) {
+    endpoint
+  }
+}
+    `;
+export type UpsertPushNotificationSubscriptionMutationFn = Apollo.MutationFunction<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>;
+
+/**
+ * __useUpsertPushNotificationSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useUpsertPushNotificationSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertPushNotificationSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertPushNotificationSubscriptionMutation, { data, loading, error }] = useUpsertPushNotificationSubscriptionMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useUpsertPushNotificationSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>(UpsertPushNotificationSubscriptionDocument, options);
+      }
+export type UpsertPushNotificationSubscriptionMutationHookResult = ReturnType<typeof useUpsertPushNotificationSubscriptionMutation>;
+export type UpsertPushNotificationSubscriptionMutationResult = Apollo.MutationResult<UpsertPushNotificationSubscriptionMutation>;
+export type UpsertPushNotificationSubscriptionMutationOptions = Apollo.BaseMutationOptions<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>;
+export const DeletePushNotificationSubscriptionDocument = gql`
+    mutation DeletePushNotificationSubscription($endpoint: String!) {
+  delete_PushNotificationSubscription(where: {endpoint: {_eq: $endpoint}}) {
+    affected_rows
+  }
+}
+    `;
+export type DeletePushNotificationSubscriptionMutationFn = Apollo.MutationFunction<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>;
+
+/**
+ * __useDeletePushNotificationSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useDeletePushNotificationSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePushNotificationSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePushNotificationSubscriptionMutation, { data, loading, error }] = useDeletePushNotificationSubscriptionMutation({
+ *   variables: {
+ *      endpoint: // value for 'endpoint'
+ *   },
+ * });
+ */
+export function useDeletePushNotificationSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>(DeletePushNotificationSubscriptionDocument, options);
+      }
+export type DeletePushNotificationSubscriptionMutationHookResult = ReturnType<typeof useDeletePushNotificationSubscriptionMutation>;
+export type DeletePushNotificationSubscriptionMutationResult = Apollo.MutationResult<DeletePushNotificationSubscriptionMutation>;
+export type DeletePushNotificationSubscriptionMutationOptions = Apollo.BaseMutationOptions<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>;
 export const GetRoomMembersDocument = gql`
     query GetRoomMembers($roomId: uuid!) {
   RoomPerson(where: {roomId: {_eq: $roomId}}) {

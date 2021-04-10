@@ -68,8 +68,8 @@ export function onEnterPage(
     conferenceSlugs: string[],
     userId: string,
     socketId: string
-): (path: string, cb?: () => void) => Promise<void> {
-    return async (path, cb) => {
+): (path: string) => Promise<void> {
+    return async (path) => {
         try {
             if (typeof path === "string") {
                 const pageKey = getPageKey(conferenceSlugs, path);
@@ -78,8 +78,6 @@ export function onEnterPage(
                         if (err) {
                             throw err;
                         }
-
-                        cb?.();
                     });
                 } else {
                     console.info("User is not authorized to enter path", path);
@@ -95,8 +93,8 @@ export function onLeavePage(
     conferenceSlugs: string[],
     userId: string,
     socketId: string
-): (path: string, cb?: () => void) => Promise<void> {
-    return async (path, cb) => {
+): (path: string) => Promise<void> {
+    return async (path) => {
         try {
             if (typeof path === "string") {
                 const pageKey = getPageKey(conferenceSlugs, path);
@@ -105,8 +103,6 @@ export function onLeavePage(
                         if (err) {
                             throw err;
                         }
-
-                        cb?.();
                     });
                 } else {
                     console.info("User is not authorized to exit path", path);
@@ -122,8 +118,8 @@ export function onObservePage(
     conferenceSlugs: string[],
     socketId: string,
     socket: Socket
-): (path: string, cb?: () => void) => Promise<void> {
-    return async (path, cb) => {
+): (path: string) => Promise<void> {
+    return async (path) => {
         try {
             if (typeof path === "string") {
                 const listId = getPageKey(conferenceSlugs, path);
@@ -140,8 +136,6 @@ export function onObservePage(
 
                         // console.log(`Emitting presences for ${path} to ${userId} / ${socketId}`, userIds);
                         socket.emit("presences", { listId, userIds });
-
-                        cb?.();
                     });
                 } else {
                     console.info("User is not authorized to observe path", path);
@@ -157,8 +151,8 @@ export function onUnobservePage(
     conferenceSlugs: string[],
     socketId: string,
     socket: Socket
-): (path: string, cb?: () => void) => Promise<void> {
-    return async (path, cb) => {
+): (path: string) => Promise<void> {
+    return async (path) => {
         try {
             if (typeof path === "string") {
                 const pageKey = getPageKey(conferenceSlugs, path);
@@ -166,8 +160,6 @@ export function onUnobservePage(
                     const chan = presenceChannelName(pageKey);
                     // console.log(`${userId} unobserved ${pageKey}`);
                     await socket.leave(chan);
-
-                    cb?.();
                 } else {
                     console.info("User is not authorized to unobserve path", path);
                 }
@@ -183,14 +175,12 @@ export function onConnect(userId: string, socketId: string): void {
     redisClient.SADD(ALL_SESSION_USER_IDS_KEY, `${socketId}¬${userId}`);
 }
 
-export function onDisconnect(socketId: string, userId: string, cb?: () => void): void {
+export function onDisconnect(socketId: string, userId: string): void {
     try {
         exitAllPresences(userId, socketId, (err) => {
             if (err) {
                 throw err;
             }
-
-            cb?.();
         });
     } catch (e) {
         console.error(`Error exiting all presences on socket ${socketId}`, e);

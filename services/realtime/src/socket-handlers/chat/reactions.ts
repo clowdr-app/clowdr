@@ -10,8 +10,8 @@ export function onSend(
     userId: string,
     socketId: string,
     _socket: Socket
-): (reaction: any, cb?: () => void) => Promise<void> {
-    return async (actionData, cb) => {
+): (reaction: any) => Promise<void> {
+    return async (actionData) => {
         if (actionData) {
             try {
                 assert(is<Action<Reaction>>(actionData), "Data does not match expected type.");
@@ -29,7 +29,5 @@ export function onSend(
                 console.error(`Error processing chat.reactions.send (socket: ${socketId})`, e, actionData);
             }
         }
-
-        cb?.();
     };
 }

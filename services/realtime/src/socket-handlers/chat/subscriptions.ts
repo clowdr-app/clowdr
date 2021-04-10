@@ -9,8 +9,8 @@ export function onListenForSubscriptionsChanged(
     userId: string,
     socketId: string,
     socket: Socket
-): (attendeeId: any, cb?: () => void) => Promise<void> {
-    return async (attendeeId, cb) => {
+): (attendeeId: any) => Promise<void> {
+    return async (attendeeId) => {
         if (attendeeId) {
             try {
                 assert(is<string>(attendeeId), "Data does not match expected type.");
@@ -30,8 +30,6 @@ export function onListenForSubscriptionsChanged(
                 );
             }
         }
-
-        cb?.();
     };
 }
 
@@ -40,8 +38,8 @@ export function onUnlistenForSubscriptionsChanged(
     userId: string,
     socketId: string,
     socket: Socket
-): (attendeeId: any, cb?: () => void) => Promise<void> {
-    return async (attendeeId, cb) => {
+): (attendeeId: any) => Promise<void> {
+    return async (attendeeId) => {
         if (attendeeId) {
             try {
                 assert(is<string>(attendeeId), "Data does not match expected type.");
@@ -61,7 +59,5 @@ export function onUnlistenForSubscriptionsChanged(
                 );
             }
         }
-
-        cb?.();
     };
 }

@@ -114,6 +114,25 @@ export function MenuBar(): JSX.Element {
                                 <Box marginRight="auto" display="block" />
                             </Route>
                             <Route exact path="/user">
+                                {user ? (
+                                    <MenuItem
+                                        onClick={() => {
+                                            history.push("/user/pushNotifications");
+                                        }}
+                                    >
+                                        <FAIcon
+                                            display="inline"
+                                            verticalAlign="middle"
+                                            iconStyle="s"
+                                            icon="envelope-open-text"
+                                            mr={2}
+                                            aria-hidden={true}
+                                        />
+                                        <chakra.span display="inline" verticalAlign="middle">
+                                            Push notifications
+                                        </chakra.span>
+                                    </MenuItem>
+                                ) : undefined}
                                 <AuthenticationButton asMenuItem />
                                 <SignupButton asMenuItem />
                             </Route>
@@ -185,6 +204,25 @@ export function MenuBar(): JSX.Element {
                                             Manage conference
                                         </MenuItem>
                                     </RequireAtLeastOnePermissionWrapper>
+                                ) : undefined}
+                                {user ? (
+                                    <MenuItem
+                                        onClick={() => {
+                                            history.push("/user/pushNotifications");
+                                        }}
+                                    >
+                                        <FAIcon
+                                            display="inline"
+                                            verticalAlign="middle"
+                                            iconStyle="s"
+                                            icon="envelope-open-text"
+                                            mr={2}
+                                            aria-hidden={true}
+                                        />
+                                        <chakra.span display="inline" verticalAlign="middle">
+                                            Push notifications
+                                        </chakra.span>
+                                    </MenuItem>
                                 ) : undefined}
                                 {user && user.attendees.length > 0 ? (
                                     <MenuItem

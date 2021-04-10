@@ -1,15 +1,36 @@
-import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
+import { ApolloClient, gql } from "@apollo/client";
+import assert from "assert";
 import {
+    DeletePushNotificationSubscriptionDocument,
+    DeletePushNotificationSubscriptionMutation,
+    DeletePushNotificationSubscriptionMutationVariables,
     GetVapidPublicKeyDocument,
     GetVapidPublicKeyQuery,
     GetVapidPublicKeyQueryVariables,
+    UpsertPushNotificationSubscriptionDocument,
+    UpsertPushNotificationSubscriptionMutation,
+    UpsertPushNotificationSubscriptionMutationVariables,
 } from "../../generated/graphql";
-import { GraphQLHTTPUrl } from "../GQL/ApolloCustomProvider";
 
 gql`
     query GetVAPIDPublicKey {
         vapidPublicKey {
             key
+        }
+    }
+
+    mutation UpsertPushNotificationSubscription($object: PushNotificationSubscription_insert_input!) {
+        insert_PushNotificationSubscription_one(
+            object: $object
+            on_conflict: { constraint: PushNotificationSubscription_pkey, update_columns: [auth, endpoint, p256dh] }
+        ) {
+            endpoint
+        }
+    }
+
+    mutation DeletePushNotificationSubscription($endpoint: String!) {
+        delete_PushNotificationSubscription(where: { endpoint: { _eq: $endpoint } }) {
+            affected_rows
         }
     }
 `;
@@ -28,6 +49,8 @@ function urlB64ToUint8Array(base64String: string): Uint8Array {
 }
 
 class PushNotificationsState {
+    // CHAT_TODO: How do we handle the fact that the push notification subscription may be for a different Clowdr user?
+
     constructor() {
         this.init();
     }
@@ -116,7 +139,7 @@ class PushNotificationsState {
 
     // Subscribe and unsubscribe inspired by https://serviceworke.rs/push-subscription-management_index_doc.html
 
-    async subscribe(): Promise<void> {
+    async subscribe(apolloClient: ApolloClient<unknown>): Promise<void> {
         try {
             this.pushSubscription = undefined;
 
@@ -132,42 +155,50 @@ class PushNotificationsState {
                 }
 
                 try {
-                    const keyResponse = await new ApolloClient({
-                        uri: GraphQLHTTPUrl,
-                        cache: new InMemoryCache(),
-                    }).query<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>({
+                    const keyResponse = await apolloClient.query<
+                        GetVapidPublicKeyQuery,
+                        GetVapidPublicKeyQueryVariables
+                    >({
                         query: GetVapidPublicKeyDocument,
                     });
 
                     if (keyResponse.data?.vapidPublicKey?.key) {
                         console.info("Push notifications: Attempting to subscribe...");
-                        this.pushSubscription = await swRegistration.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: urlB64ToUint8Array(keyResponse.data.vapidPublicKey.key),
-                        });
-                        // CHAT_TODO: Don't log the endpoint here...
-                        console.info(
-                            `Push notifications: Subscribed. Saving to server...\n${JSON.stringify(
-                                this.pushSubscription,
-                                null,
-                                2
-                            )}`
-                        );
-
                         try {
-                            // CHAT_TODO: Insert into db
-                            await fetch("https://ed-realtime.dev2.clowdr.org/push/register", {
-                                method: "post",
-                                headers: {
-                                    "Content-type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    subscription: this.pushSubscription,
-                                }),
+                            this.pushSubscription = await swRegistration.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey: urlB64ToUint8Array(keyResponse.data.vapidPublicKey.key),
                             });
+                            assert(this.pushSubscription, "Push subscription was not defined.");
+                            console.info("Push notifications: Subscribed. Saving to server...");
+
+                            try {
+                                const subJSON = this.pushSubscription.toJSON();
+                                assert(subJSON.endpoint, "Subscription JSON did not have an endpoint");
+                                assert(subJSON.keys, "Subscription JSON did not have any keys");
+                                assert(subJSON.keys.auth, "Subscription JSON keys did not have auth information");
+                                assert(subJSON.keys.p256dh, "Subscription JSON keys did not have p256dh information");
+
+                                await apolloClient.mutate<
+                                    UpsertPushNotificationSubscriptionMutation,
+                                    UpsertPushNotificationSubscriptionMutationVariables
+                                >({
+                                    mutation: UpsertPushNotificationSubscriptionDocument,
+                                    variables: {
+                                        object: {
+                                            auth: subJSON.keys.auth,
+                                            endpoint: subJSON.endpoint,
+                                            p256dh: subJSON.keys.p256dh,
+                                        },
+                                    },
+                                });
+                            } catch (e) {
+                                console.error("Error saving subscription information to the server", e);
+                                this.pushSubscription = `Could not save subscription to the server!\n${e.toString()}`;
+                            }
                         } catch (e) {
-                            console.error("Error saving subscription information to the server", e);
-                            this.pushSubscription = `Could not save subscription to the server!\n${e.toString()}`;
+                            console.error("Browser denied the push subscription", e);
+                            this.pushSubscription = `Browser denied the push subscription!\n${e.toString()}`;
                         }
                     } else {
                         console.warn("Push notifications: Server responded with blank key.");
@@ -188,7 +219,7 @@ class PushNotificationsState {
         }
     }
 
-    async unsubscribe(): Promise<void> {
+    async unsubscribe(apolloClient: ApolloClient<unknown>): Promise<void> {
         try {
             this.pushSubscription = undefined;
 
@@ -207,18 +238,17 @@ class PushNotificationsState {
                 this.pushSubscription = null;
                 if (sub) {
                     await sub.unsubscribe();
-                    console.info("Push notifications: Subscribed");
+                    console.info("Push notifications: Unsubscribed. Deleting from server...");
 
-                    // CHAT_TODO: Delete from db
                     try {
-                        await fetch("https://ed-realtime.dev2.clowdr.org/push/unregister", {
-                            method: "post",
-                            headers: {
-                                "Content-type": "application/json",
+                        await apolloClient.mutate<
+                            DeletePushNotificationSubscriptionMutation,
+                            DeletePushNotificationSubscriptionMutationVariables
+                        >({
+                            mutation: DeletePushNotificationSubscriptionDocument,
+                            variables: {
+                                endpoint: sub.endpoint,
                             },
-                            body: JSON.stringify({
-                                subscription: sub,
-                            }),
                         });
                     } catch (e) {
                         console.error("Error deleting subscription information from the server", e);

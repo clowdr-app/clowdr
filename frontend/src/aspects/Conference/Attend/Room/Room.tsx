@@ -425,7 +425,10 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 )}
                 {nextRoomEvent ? (
                     <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <HStack justifyContent="space-between">
+                        <Heading as="h3" textAlign="left" size="lg" mb={1}>
+                            {nextRoomEvent.name}
+                        </Heading>
+                        <HStack justifyContent="space-between" mb={2}>
                             <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
                             {nextEventRole ? (
                                 <Tag colorScheme="gray" my={2}>
@@ -433,9 +436,6 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                                 </Tag>
                             ) : undefined}
                         </HStack>
-                        <Heading as="h3" textAlign="left" size="lg" mb={2}>
-                            {nextRoomEvent.name}
-                        </Heading>
                         {nextRoomEvent?.contentGroupId ? (
                             <ContentGroupSummaryWrapper
                                 contentGroupId={nextRoomEvent.contentGroupId}

@@ -79,7 +79,9 @@ async function Main(continueExecuting = false) {
 }
 
 if (!process.env.CRON_TO_GO_ACTIVE) {
-    setInterval(() => Main(true), 3 * 60 * 1000);
+    if (!process.env.CRONTOGO_API_KEY) {
+        setInterval(() => Main(true), 3 * 60 * 1000);
+    }
 } else {
     Main();
 }

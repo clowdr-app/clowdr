@@ -1,5 +1,5 @@
 // Set this up as a CronToGo task
-// CRON_TO_GO_ACTIVE=true && heroku run node build/workers/chat/unreadCountWriteback.js
+// CRON_TO_GO_ACTIVE=true heroku run node build/workers/chat/unreadCountWriteback.js
 
 import { gql } from "@apollo/client/core";
 import assert from "assert";
@@ -29,7 +29,7 @@ gql`
     }
 `;
 
-async function Main() {
+async function Main(continueExecuting = false) {
     try {
         assert(apolloClient, "Apollo client needed for read up to index writeback");
 
@@ -65,13 +65,21 @@ async function Main() {
                     .filter((x) => !!x) as Chat_ReadUpToIndex_Insert_Input[],
             },
         });
+
+        if (!continueExecuting) {
+            process.exit(0);
+        }
     } catch (e) {
         console.error("SEVERE ERROR: Cannot write back read up to indices!", e);
+
+        if (!continueExecuting) {
+            process.exit(-1);
+        }
     }
 }
 
 if (!process.env.CRON_TO_GO_ACTIVE) {
-    setInterval(Main, 3 * 60 * 1000);
+    setInterval(() => Main(true), 3 * 60 * 1000);
 } else {
     Main();
 }

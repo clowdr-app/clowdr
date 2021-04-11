@@ -1,9 +1,24 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Box, Button, Menu, MenuButton, MenuItem, MenuList, useToast, Wrap, WrapItem } from "@chakra-ui/react";
+import { CheckCircleIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import {
+    Box,
+    Button,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Tag,
+    TagLabel,
+    TagLeftIcon,
+    useToast,
+    Wrap,
+    WrapItem,
+} from "@chakra-ui/react";
 import {
     MeetingStatus,
     useAudioInputs,
     useAudioVideo,
+    useContentShareControls,
+    useContentShareState,
     useLocalVideo,
     useMeetingManager,
     useMeetingStatus,
@@ -12,7 +27,8 @@ import {
     useToggleLocalMute,
     useVideoInputs,
 } from "@clowdr-app/amazon-chime-sdk-component-library-react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
+import { FAIcon } from "../../../../Icons/FAIcon";
 
 export function ChimeRoomControlBar(): JSX.Element {
     const toast = useToast();
@@ -24,8 +40,9 @@ export function ChimeRoomControlBar(): JSX.Element {
     const selectVideoInput = useSelectVideoInputDevice();
     const audioVideo = useAudioVideo();
     const { isVideoEnabled, toggleVideo } = useLocalVideo();
-    const [isOpening, setIsOpening] = useState<boolean>(false);
+    const { isLocalUserSharing, isLocalShareLoading, sharingAttendeeId } = useContentShareState();
     const { muted, toggleMute } = useToggleLocalMute();
+    const { toggleContentShare } = useContentShareControls();
 
     const onLeaveRoom = useCallback(async () => {
         await meetingManager.leave();
@@ -77,21 +94,35 @@ export function ChimeRoomControlBar(): JSX.Element {
                             <Button colorScheme="green" onClick={onLeaveRoom}>
                                 Leave Room
                             </Button>
-                        ) : (
-                            <></>
-                        )}
+                        ) : undefined}
                     </Box>
                 </WrapItem>
                 {audioVideo ? (
                     <WrapItem>
                         {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button onClick={toggleMute}>{muted ? "Unmute" : "Mute"}</Button>
+                            <Button onClick={toggleMute}>
+                                {muted ? (
+                                    <>
+                                        <FAIcon icon="microphone-slash" iconStyle="s" />
+                                        <span style={{ marginLeft: "1rem" }}>Unmute</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FAIcon icon="microphone" iconStyle="s" />
+                                        <span style={{ marginLeft: "1rem" }}>Mute</span>
+                                    </>
+                                )}
+                            </Button>
                         ) : undefined}
 
                         <Menu onOpen={() => meetingManager.updateDeviceLists()}>
-                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                                Choose microphone
-                            </MenuButton>
+                            <MenuButton
+                                as={Button}
+                                rightIcon={<ChevronDownIcon />}
+                                pl={0}
+                                pr={3}
+                                aria-label="Choose microphone"
+                            />
                             <MenuList>
                                 {audioInputs.devices.map((device) => (
                                     <MenuItem
@@ -113,13 +144,29 @@ export function ChimeRoomControlBar(): JSX.Element {
                 {audioVideo ? (
                     <WrapItem>
                         {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button onClick={toggleVideo}>{isVideoEnabled ? "Disable camera" : "Enable camera"}</Button>
+                            <Button onClick={toggleVideo}>
+                                {isVideoEnabled ? (
+                                    <>
+                                        <FAIcon icon="video-slash" iconStyle="s" />
+                                        <span style={{ marginLeft: "1rem" }}>Disable camera</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FAIcon icon="video" iconStyle="s" />
+                                        <span style={{ marginLeft: "1rem" }}>Start camera</span>
+                                    </>
+                                )}
+                            </Button>
                         ) : undefined}
 
                         <Menu onOpen={() => meetingManager.updateDeviceLists()}>
-                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                                Choose camera
-                            </MenuButton>
+                            <MenuButton
+                                as={Button}
+                                rightIcon={<ChevronDownIcon />}
+                                pl={0}
+                                pr={3}
+                                aria-label="Choose camera"
+                            />
                             <MenuList>
                                 {videoInputs.devices.map((device) => (
                                     <MenuItem
@@ -136,6 +183,50 @@ export function ChimeRoomControlBar(): JSX.Element {
                                 ))}
                             </MenuList>
                         </Menu>
+                    </WrapItem>
+                ) : undefined}
+                {audioVideo ? (
+                    <WrapItem>
+                        {meetingStatus === MeetingStatus.Succeeded ? (
+                            isLocalUserSharing ? (
+                                <Button onClick={toggleContentShare}>
+                                    <>
+                                        <FAIcon icon="desktop" iconStyle="s" />
+                                        <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
+                                    </>
+                                </Button>
+                            ) : isLocalShareLoading ? (
+                                <Button onClick={toggleContentShare} isLoading={true}>
+                                    <>
+                                        <FAIcon icon="desktop" iconStyle="s" />
+                                        <span style={{ marginLeft: "1rem" }}>Share screen</span>
+                                    </>
+                                </Button>
+                            ) : sharingAttendeeId ? (
+                                <Tag
+                                    size="sm"
+                                    variant="outline"
+                                    colorScheme="blue"
+                                    px={2}
+                                    py="4px"
+                                    ml={1}
+                                    mr="auto"
+                                    maxW="190px"
+                                >
+                                    <TagLeftIcon as={CheckCircleIcon} />
+                                    <TagLabel whiteSpace="normal">
+                                        Someone else is sharing their screen at the moment
+                                    </TagLabel>
+                                </Tag>
+                            ) : (
+                                <Button onClick={toggleContentShare}>
+                                    <>
+                                        <FAIcon icon="desktop" iconStyle="s" />
+                                        <span style={{ marginLeft: "1rem" }}>Share screen</span>
+                                    </>
+                                </Button>
+                            )
+                        ) : undefined}
                     </WrapItem>
                 ) : undefined}
                 {/* <WrapItem>

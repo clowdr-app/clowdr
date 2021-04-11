@@ -2,7 +2,7 @@ import { useRemoteVideoTileState, useRosterState } from "@clowdr-app/amazon-chim
 import React from "react";
 import { RemoteVideo } from "./RemoteVideo";
 
-export function RemoteVideos(): JSX.Element {
+export function RemoteVideos({ participantWidth }: { participantWidth: number }): JSX.Element {
     const { roster } = useRosterState();
     const { tiles, tileIdToAttendeeId } = useRemoteVideoTileState();
 
@@ -11,7 +11,7 @@ export function RemoteVideos(): JSX.Element {
             {tiles.map((tileId) => {
                 const attendee = roster[tileIdToAttendeeId[tileId]] || {};
                 const { name }: any = attendee;
-                return <RemoteVideo key={tileId} tileId={tileId} name={name} />;
+                return <RemoteVideo key={tileId} tileId={tileId} participantWidth={participantWidth} />;
             })}
         </>
     );

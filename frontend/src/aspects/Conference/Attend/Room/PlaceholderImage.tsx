@@ -14,6 +14,7 @@ export default function PlaceholderImage(): JSX.Element {
             bgSize="auto 76%"
             bgPos="center bottom"
             opacity="0.25"
+            top="0"
         />
     );
 }

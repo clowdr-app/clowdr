@@ -1,11 +1,20 @@
 import { Box } from "@chakra-ui/react";
-import { useApplyVideoObjectFit, useAudioVideo } from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import {
+    useApplyVideoObjectFit,
+    useAudioVideo,
+    useRemoteVideoTileState,
+    useRosterState,
+} from "@clowdr-app/amazon-chime-sdk-component-library-react";
 import React, { useEffect, useRef } from "react";
+import PlaceholderImage from "../PlaceholderImage";
+import { VonageOverlay } from "../Vonage/VonageOverlay";
 
-export function RemoteVideo({ name, tileId }: { tileId: number; name?: string }): JSX.Element {
+export function RemoteVideo({ participantWidth, tileId }: { tileId: number; participantWidth: number }): JSX.Element {
     const audioVideo = useAudioVideo();
     const videoEl = useRef<HTMLVideoElement>(null);
     useApplyVideoObjectFit(videoEl);
+    const { tileIdToAttendeeId } = useRemoteVideoTileState();
+    const { roster } = useRosterState();
 
     useEffect(() => {
         if (!audioVideo || !videoEl.current) {
@@ -23,13 +32,20 @@ export function RemoteVideo({ name, tileId }: { tileId: number; name?: string })
     }, [audioVideo, tileId]);
 
     return (
-        <Box data-testid="video-tile">
-            <video ref={videoEl} />
-            {name && (
-                <header>
-                    <p>{name}</p>
-                </header>
-            )}
+        <Box
+            data-testid="video-tile"
+            position="relative"
+            flex={`0 0 ${participantWidth}px`}
+            w={participantWidth}
+            h={participantWidth}
+        >
+            <video ref={videoEl} style={{ zIndex: 200, position: "relative", height: "100%" }} />
+            <Box position="absolute" left="1" bottom="1" zIndex="200" w="100%">
+                <VonageOverlay
+                    connectionData={JSON.stringify({ attendeeId: roster[tileIdToAttendeeId[tileId]]?.externalUserId })}
+                />
+            </Box>
+            <PlaceholderImage />
         </Box>
     );
 }

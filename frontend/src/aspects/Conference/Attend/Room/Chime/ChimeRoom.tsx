@@ -7,7 +7,9 @@ import {
     useMeetingStatus,
 } from "@clowdr-app/amazon-chime-sdk-component-library-react";
 import React, { useCallback } from "react";
+import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { ChimeRoomControlBar } from "./ChimeRoomControlBar";
+import { ContentShare } from "./ContentShare";
 import { DeviceSetup } from "./DeviceSetup";
 import { PermissionsExplanationModal } from "./PermissionsExplanationModal";
 import { VideoTiles } from "./VideoTiles";
@@ -74,49 +76,43 @@ export function ChimeRoom({
 
     return (
         <>
-            <PermissionsExplanationModal />
-            <Box>
-                {/* <ChimeRoomControlBar
-                onJoinRoom={() => {
-                    console.log("onJoinRoom");
-                }}
-                onLeaveRoom={() => {
-                    console.log("onLeaveRoom");
-                }}
-                joining={false}
-            /> */}
-                <Box position="relative" width="100%">
-                    {meetingManager.meetingSession && meetingStatus === MeetingStatus.Loading ? (
-                        <DeviceSetup />
-                    ) : undefined}
+            <ChatProfileModalProvider>
+                <PermissionsExplanationModal />
+                <Box>
+                    <Box position="relative" width="100%">
+                        {meetingManager.meetingSession && meetingStatus === MeetingStatus.Loading ? (
+                            <DeviceSetup />
+                        ) : undefined}
 
-                    {!meetingManager.meetingSession ? (
-                        <Box textAlign="center">
-                            <Button
-                                colorScheme="green"
-                                w="10em"
-                                h="6ex"
-                                fontSize="xl"
-                                my={8}
-                                onClick={joinRoom}
-                                isLoading={false}
-                            >
-                                Join Room
-                            </Button>
-                        </Box>
-                    ) : undefined}
+                        {!meetingManager.meetingSession ? (
+                            <Box textAlign="center">
+                                <Button
+                                    colorScheme="green"
+                                    w="10em"
+                                    h="6ex"
+                                    fontSize="xl"
+                                    my={8}
+                                    onClick={joinRoom}
+                                    isLoading={false}
+                                >
+                                    Join Room
+                                </Button>
+                            </Box>
+                        ) : undefined}
 
-                    {meetingStatus === MeetingStatus.Succeeded ? (
-                        <>
-                            <ChimeRoomControlBar />
-                            <VideoTiles />
-                        </>
-                    ) : undefined}
+                        {meetingStatus === MeetingStatus.Succeeded ? (
+                            <>
+                                <ChimeRoomControlBar />
+                                <ContentShare />
+                                <VideoTiles />
+                            </>
+                        ) : undefined}
 
-                    {meetingStatus === MeetingStatus.Ended ? <Text>Ended</Text> : undefined}
-                    {meetingStatus === MeetingStatus.Failed ? <Text>Failed</Text> : undefined}
+                        {meetingStatus === MeetingStatus.Ended ? <Text>Ended</Text> : undefined}
+                        {meetingStatus === MeetingStatus.Failed ? <Text>Failed</Text> : undefined}
+                    </Box>
                 </Box>
-            </Box>
+            </ChatProfileModalProvider>
         </>
     );
 }

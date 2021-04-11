@@ -122,3 +122,4 @@ pktriot.json
 certs
 
 frontend/.env.production.x
+.DS_Store

@@ -1,8 +1,12 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
+
 module.exports = {
     mount: {
         public: "/",
         src: "/_dist_",
+    },
+    packageOptions: {
+        polyfillNode: true,
     },
     plugins: [
         "@snowpack/plugin-react-refresh",

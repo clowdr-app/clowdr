@@ -1,15 +1,16 @@
-import { Button, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, chakra, Text, useToast } from "@chakra-ui/react";
 import {
     LocalVideo,
     MeetingStatus,
-    PreviewVideo,
     useLocalVideo,
     useMeetingManager,
     useMeetingStatus,
-    VideoTileGrid,
-} from "amazon-chime-sdk-component-library-react";
+} from "@clowdr-app/amazon-chime-sdk-component-library-react";
 import React, { useCallback } from "react";
-import styled from "styled-components";
+import { ChimeRoomControlBar } from "./ChimeRoomControlBar";
+import { DeviceSetup } from "./DeviceSetup";
+import { PermissionsExplanationModal } from "./PermissionsExplanationModal";
+import { VideoTiles } from "./VideoTiles";
 
 export interface Meeting {
     MeetingId?: string;
@@ -34,9 +35,12 @@ export interface Attendee {
     JoinToken?: string;
 }
 
-const MyLocalVideo = styled<any>(LocalVideo)`
-    ${(props) => "position: static"}
-`;
+const MyLocalVideo = chakra(LocalVideo, {
+    baseStyle: {
+        pos: "relative",
+        maxH: "200px",
+    },
+});
 
 export function ChimeRoom({
     roomId,
@@ -61,8 +65,7 @@ export function ChimeRoom({
             }
 
             await meetingManager.join(meetingData);
-
-            await meetingManager.start();
+            console.log("Initialized meeting");
         } catch (e) {
             console.error("Failed to join Chime room", { err: e });
             toast({ title: "Failed to get join room", status: "error", description: e.message });
@@ -71,26 +74,49 @@ export function ChimeRoom({
 
     return (
         <>
-            {meetingStatus === MeetingStatus.Loading ? (
-                <PreviewVideo />
-            ) : (
-                <>
-                    <VideoTileGrid
-                        noRemoteVideoView={
-                            <Text>
-                                {meetingManager.meetingStatus}, {meetingStatus}
-                            </Text>
-                        }
-                        className="videos"
-                    ></VideoTileGrid>
-                    <MyLocalVideo />
-                </>
-            )}
+            <PermissionsExplanationModal />
+            <Box>
+                {/* <ChimeRoomControlBar
+                onJoinRoom={() => {
+                    console.log("onJoinRoom");
+                }}
+                onLeaveRoom={() => {
+                    console.log("onLeaveRoom");
+                }}
+                joining={false}
+            /> */}
+                <Box position="relative" width="100%">
+                    {meetingManager.meetingSession && meetingStatus === MeetingStatus.Loading ? (
+                        <DeviceSetup />
+                    ) : undefined}
 
-            <Button onClick={toggleVideo}>Toggle video</Button>
-            <Button isDisabled={!roomId || !getMeetingData} onClick={() => joinRoom()}>
-                Join
-            </Button>
+                    {!meetingManager.meetingSession ? (
+                        <Box textAlign="center">
+                            <Button
+                                colorScheme="green"
+                                w="10em"
+                                h="6ex"
+                                fontSize="xl"
+                                my={8}
+                                onClick={joinRoom}
+                                isLoading={false}
+                            >
+                                Join Room
+                            </Button>
+                        </Box>
+                    ) : undefined}
+
+                    {meetingStatus === MeetingStatus.Succeeded ? (
+                        <>
+                            <ChimeRoomControlBar />
+                            <VideoTiles />
+                        </>
+                    ) : undefined}
+
+                    {meetingStatus === MeetingStatus.Ended ? <Text>Ended</Text> : undefined}
+                    {meetingStatus === MeetingStatus.Failed ? <Text>Failed</Text> : undefined}
+                </Box>
+            </Box>
         </>
     );
 }

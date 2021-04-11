@@ -4,6 +4,10 @@ export function generateChatRoomName(chatId: string): string {
     return `chat:chat.${chatId}`;
 }
 
+export function generateChatRecentMessagesSetKey(chatId: string): string {
+    return `chat:chat.${chatId}.recentMessages`;
+}
+
 export function generateChatSubscriptionsChangedRoomName(attendeeId: string): string {
     return `chat:chat.subscriptions.${attendeeId}`;
 }

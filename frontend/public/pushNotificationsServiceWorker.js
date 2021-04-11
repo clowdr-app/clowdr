@@ -2,7 +2,6 @@
 // https://stackoverflow.com/questions/29874068/navigator-serviceworker-is-never-ready
 
 console.info("Service worker loaded");
-// CHAT_TODO
 
 self.addEventListener("install", function () {
     self.skipWaiting();

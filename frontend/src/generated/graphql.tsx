@@ -18863,7 +18863,6 @@ export type Chat_ReadUpToIndex = {
   readonly chat: Chat_Chat;
   readonly chatId: Scalars['uuid'];
   readonly messageId: Scalars['Int'];
-  readonly notifiedUpToMessageId: Scalars['Int'];
   /** A computed field, executes function "chat.unnotifiedCount" */
   readonly unnotifiedCount?: Maybe<Scalars['Int']>;
   /** A computed field, executes function "chat.unreadCount" */
@@ -18926,13 +18925,11 @@ export type Chat_ReadUpToIndex_Arr_Rel_Insert_Input = {
 export type Chat_ReadUpToIndex_Avg_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_avg_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Avg_Order_By = {
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "chat.ReadUpToIndex". All fields are combined with a logical 'AND'. */
@@ -18945,7 +18942,6 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly messageId?: Maybe<Int_Comparison_Exp>;
-  readonly notifiedUpToMessageId?: Maybe<Int_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -18958,7 +18954,6 @@ export enum Chat_ReadUpToIndex_Constraint {
 /** input type for incrementing integer column in table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Inc_Input = {
   readonly messageId?: Maybe<Scalars['Int']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
 };
 
 /** input type for inserting data into table "chat.ReadUpToIndex" */
@@ -18968,7 +18963,6 @@ export type Chat_ReadUpToIndex_Insert_Input = {
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly messageId?: Maybe<Scalars['Int']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -18978,7 +18972,6 @@ export type Chat_ReadUpToIndex_Max_Fields = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly messageId?: Maybe<Scalars['Int']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -18987,7 +18980,6 @@ export type Chat_ReadUpToIndex_Max_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -18997,7 +18989,6 @@ export type Chat_ReadUpToIndex_Min_Fields = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly messageId?: Maybe<Scalars['Int']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -19006,7 +18997,6 @@ export type Chat_ReadUpToIndex_Min_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -19039,7 +19029,6 @@ export type Chat_ReadUpToIndex_Order_By = {
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -19058,8 +19047,6 @@ export enum Chat_ReadUpToIndex_Select_Column {
   /** column name */
   MessageId = 'messageId',
   /** column name */
-  NotifiedUpToMessageId = 'notifiedUpToMessageId',
-  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -19068,7 +19055,6 @@ export type Chat_ReadUpToIndex_Set_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly messageId?: Maybe<Scalars['Int']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -19076,52 +19062,44 @@ export type Chat_ReadUpToIndex_Set_Input = {
 export type Chat_ReadUpToIndex_Stddev_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_stddev_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Stddev_Order_By = {
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Chat_ReadUpToIndex_Stddev_Pop_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_stddev_pop_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Stddev_Pop_Order_By = {
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Chat_ReadUpToIndex_Stddev_Samp_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_stddev_samp_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Stddev_Samp_Order_By = {
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate sum on columns */
 export type Chat_ReadUpToIndex_Sum_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_sum_fields';
   readonly messageId?: Maybe<Scalars['Int']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Int']>;
 };
 
 /** order by sum() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Sum_Order_By = {
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** update columns of table "chat.ReadUpToIndex" */
@@ -19133,8 +19111,6 @@ export enum Chat_ReadUpToIndex_Update_Column {
   /** column name */
   MessageId = 'messageId',
   /** column name */
-  NotifiedUpToMessageId = 'notifiedUpToMessageId',
-  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -19142,39 +19118,33 @@ export enum Chat_ReadUpToIndex_Update_Column {
 export type Chat_ReadUpToIndex_Var_Pop_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_var_pop_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Var_Pop_Order_By = {
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Chat_ReadUpToIndex_Var_Samp_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_var_samp_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Var_Samp_Order_By = {
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Chat_ReadUpToIndex_Variance_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_variance_fields';
   readonly messageId?: Maybe<Scalars['Float']>;
-  readonly notifiedUpToMessageId?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Variance_Order_By = {
   readonly messageId?: Maybe<Order_By>;
-  readonly notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /**
@@ -33005,14 +32975,9 @@ export type Uuid_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
 
-export type InitialChatState_ReadUpToIndexFragment = { readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number, readonly notifiedUpToMessageId: number, readonly unreadCount?: Maybe<number> };
-
 export type ChatState_SubdMessageFragment = { readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any> };
 
-export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly readUpToIndices: ReadonlyArray<(
-    { readonly __typename?: 'chat_ReadUpToIndex' }
-    & InitialChatState_ReadUpToIndexFragment
-  )>, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> };
+export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly contentGroup: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly priority: number, readonly roomPrivacyName: RoomPrivacy_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'RoomPerson', readonly id: any, readonly attendee: { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string } }> }>, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly attendeeId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly attendeeId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> };
 
 export type InitialChatStateQueryVariables = Exact<{
   attendeeId: Scalars['uuid'];
@@ -33100,37 +33065,6 @@ export type SelectMessagesPageQuery = { readonly __typename?: 'query_root', read
 export type ShortChatMessageDataFragment = { readonly __typename?: 'chat_Message', readonly created_at: any, readonly data: any, readonly duplicatedMessageSId?: Maybe<any>, readonly message: string, readonly senderId?: Maybe<any>, readonly type: Chat_MessageType_Enum, readonly chatId: any, readonly sId: any };
 
 export type ShortChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageSId: any, readonly sId: any, readonly duplicateSId?: Maybe<any> };
-
-export type SelectReadUpToIndicesQueryVariables = Exact<{
-  chatIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-}>;
-
-
-export type SelectReadUpToIndicesQuery = { readonly __typename?: 'query_root', readonly chat_ReadUpToIndex: ReadonlyArray<(
-    { readonly __typename?: 'chat_ReadUpToIndex' }
-    & InitialChatState_ReadUpToIndexFragment
-  )> };
-
-export type InsertReadUpToIndexMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-  messageId: Scalars['Int'];
-  notifiedUpToMessageId: Scalars['Int'];
-}>;
-
-
-export type InsertReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_ReadUpToIndex_one?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex', readonly attendeeId: any, readonly chatId: any, readonly messageId: number }> };
-
-export type UpdateReadUpToIndexMutationVariables = Exact<{
-  chatId: Scalars['uuid'];
-  attendeeId: Scalars['uuid'];
-  messageId: Scalars['Int'];
-  notifiedUpToMessageId: Scalars['Int'];
-}>;
-
-
-export type UpdateReadUpToIndexMutation = { readonly __typename?: 'mutation_root', readonly update_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
 
 export type GetChatPathQueryVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -35189,15 +35123,6 @@ export const ChatState_SubdMessageFragmentDoc = gql`
   senderId
 }
     `;
-export const InitialChatState_ReadUpToIndexFragmentDoc = gql`
-    fragment InitialChatState_ReadUpToIndex on chat_ReadUpToIndex {
-  attendeeId
-  chatId
-  messageId
-  notifiedUpToMessageId
-  unreadCount
-}
-    `;
 export const InitialChatState_ChatFragmentDoc = gql`
     fragment InitialChatState_Chat on chat_Chat {
   id
@@ -35227,9 +35152,6 @@ export const InitialChatState_ChatFragmentDoc = gql`
   enableAutoSubscribe
   enableMandatoryPin
   enableMandatorySubscribe
-  readUpToIndices(where: {attendeeId: {_eq: $attendeeId}}) {
-    ...InitialChatState_ReadUpToIndex
-  }
   pins(where: {attendeeId: {_eq: $attendeeId}}) {
     attendeeId
     chatId
@@ -35241,7 +35163,7 @@ export const InitialChatState_ChatFragmentDoc = gql`
     wasManuallySubscribed
   }
 }
-    ${InitialChatState_ReadUpToIndexFragmentDoc}`;
+    `;
 export const ChatReactionDataFragmentDoc = gql`
     fragment ChatReactionData on chat_Reaction {
   sId
@@ -36689,124 +36611,6 @@ export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
 export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
 export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
-export const SelectReadUpToIndicesDocument = gql`
-    query SelectReadUpToIndices($chatIds: [uuid!]!, $attendeeId: uuid!) {
-  chat_ReadUpToIndex(
-    where: {chatId: {_in: $chatIds}, attendeeId: {_eq: $attendeeId}}
-  ) {
-    ...InitialChatState_ReadUpToIndex
-  }
-}
-    ${InitialChatState_ReadUpToIndexFragmentDoc}`;
-
-/**
- * __useSelectReadUpToIndicesQuery__
- *
- * To run a query within a React component, call `useSelectReadUpToIndicesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectReadUpToIndicesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectReadUpToIndicesQuery({
- *   variables: {
- *      chatIds: // value for 'chatIds'
- *      attendeeId: // value for 'attendeeId'
- *   },
- * });
- */
-export function useSelectReadUpToIndicesQuery(baseOptions: Apollo.QueryHookOptions<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>(SelectReadUpToIndicesDocument, options);
-      }
-export function useSelectReadUpToIndicesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>(SelectReadUpToIndicesDocument, options);
-        }
-export type SelectReadUpToIndicesQueryHookResult = ReturnType<typeof useSelectReadUpToIndicesQuery>;
-export type SelectReadUpToIndicesLazyQueryHookResult = ReturnType<typeof useSelectReadUpToIndicesLazyQuery>;
-export type SelectReadUpToIndicesQueryResult = Apollo.QueryResult<SelectReadUpToIndicesQuery, SelectReadUpToIndicesQueryVariables>;
-export const InsertReadUpToIndexDocument = gql`
-    mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
-  insert_chat_ReadUpToIndex_one(
-    object: {attendeeId: $attendeeId, chatId: $chatId, messageId: $messageId, notifiedUpToMessageId: $notifiedUpToMessageId}
-    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: [messageId, notifiedUpToMessageId]}
-  ) {
-    attendeeId
-    chatId
-    messageId
-  }
-}
-    `;
-export type InsertReadUpToIndexMutationFn = Apollo.MutationFunction<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
-
-/**
- * __useInsertReadUpToIndexMutation__
- *
- * To run a mutation, you first call `useInsertReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertReadUpToIndexMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertReadUpToIndexMutation, { data, loading, error }] = useInsertReadUpToIndexMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *      messageId: // value for 'messageId'
- *      notifiedUpToMessageId: // value for 'notifiedUpToMessageId'
- *   },
- * });
- */
-export function useInsertReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>(InsertReadUpToIndexDocument, options);
-      }
-export type InsertReadUpToIndexMutationHookResult = ReturnType<typeof useInsertReadUpToIndexMutation>;
-export type InsertReadUpToIndexMutationResult = Apollo.MutationResult<InsertReadUpToIndexMutation>;
-export type InsertReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
-export const UpdateReadUpToIndexDocument = gql`
-    mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
-  update_chat_ReadUpToIndex(
-    where: {attendeeId: {_eq: $attendeeId}, chatId: {_eq: $chatId}, messageId: {_lte: $messageId}, notifiedUpToMessageId: {_lte: $notifiedUpToMessageId}}
-    _set: {messageId: $messageId, notifiedUpToMessageId: $notifiedUpToMessageId}
-  ) {
-    affected_rows
-  }
-}
-    `;
-export type UpdateReadUpToIndexMutationFn = Apollo.MutationFunction<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
-
-/**
- * __useUpdateReadUpToIndexMutation__
- *
- * To run a mutation, you first call `useUpdateReadUpToIndexMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateReadUpToIndexMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateReadUpToIndexMutation, { data, loading, error }] = useUpdateReadUpToIndexMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      attendeeId: // value for 'attendeeId'
- *      messageId: // value for 'messageId'
- *      notifiedUpToMessageId: // value for 'notifiedUpToMessageId'
- *   },
- * });
- */
-export function useUpdateReadUpToIndexMutation(baseOptions?: Apollo.MutationHookOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>(UpdateReadUpToIndexDocument, options);
-      }
-export type UpdateReadUpToIndexMutationHookResult = ReturnType<typeof useUpdateReadUpToIndexMutation>;
-export type UpdateReadUpToIndexMutationResult = Apollo.MutationResult<UpdateReadUpToIndexMutation>;
-export type UpdateReadUpToIndexMutationOptions = Apollo.BaseMutationOptions<UpdateReadUpToIndexMutation, UpdateReadUpToIndexMutationVariables>;
 export const GetChatPathDocument = gql`
     query GetChatPath($chatId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {

@@ -52,10 +52,10 @@ export async function getAttendeeInfo(
     attendeeId: string,
     testMode_ExpectedInfo: AttendeeInfo,
     refetchNow = false
-): Promise<AttendeeInfo | undefined> {
+): Promise<(AttendeeInfo & { id: string }) | undefined> {
     const info = await AttendeeInfoCache.get(attendeeId, testMode_ExpectedInfo, refetchNow);
     if (!info && !refetchNow) {
         return getAttendeeInfo(attendeeId, testMode_ExpectedInfo, true);
     }
-    return info;
+    return info ? { ...info, id: attendeeId } : undefined;
 }

@@ -604,61 +604,14 @@
   - name: chat
     using:
       foreign_key_constraint_on: chatId
-  computed_fields:
-  - name: unnotifiedCount
-    definition:
-      function:
-        schema: chat
-        name: unnotifiedCount
-    comment: ""
-  - name: unreadCount
-    definition:
-      function:
-        schema: chat
-        name: unreadCount
-    comment: ""
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        attendee:
-          userId:
-            _eq: X-Hasura-User-Id
-      columns:
-      - attendeeId
-      - chatId
-      - messageId
-      - notifiedUpToMessageId
-      backend_only: false
   select_permissions:
   - role: user
     permission:
       columns:
       - attendeeId
       - chatId
-      - messageId
-      - notifiedUpToMessageId
+      - messageSId
       - updated_at
-      computed_fields:
-      - unreadCount
-      filter:
-        attendee:
-          userId:
-            _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - messageId
-      - notifiedUpToMessageId
-      filter:
-        attendee:
-          userId:
-            _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
       filter:
         attendee:
           userId:

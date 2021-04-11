@@ -60,7 +60,7 @@ import { ToggleChatsButton } from "./ToggleChatsButton";
 
 function ChatListItem({ chat, onClick }: { chat: ChatState; onClick: () => void }): JSX.Element {
     const chatName = chat.Name;
-    const [unreadCount, setUnreadCount] = useState<number>(0);
+    const [unreadCount, setUnreadCount] = useState<string>("");
     useEffect(() => {
         return chat.UnreadCount.subscribe(setUnreadCount);
     }, [chat.UnreadCount]);
@@ -248,12 +248,12 @@ function ChatsPanel({
     switchToPageChat: () => void;
     openChat: React.MutableRefObject<((chatId: string) => void) | null>;
     closeChat: React.MutableRefObject<(() => void) | null>;
-    setUnread: (v: number) => void;
+    setUnread: (v: string) => void;
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
     const [pinnedChatsMap, setPinnedChatsMap] = useState<Map<string, ChatState> | null>(null);
-    const unreadCountsRef = React.useRef<Map<string, number>>(new Map());
+    const unreadCountsRef = React.useRef<Map<string, string>>(new Map());
     const [createDmMutation, createDMMutationResponse] = useCreateDmMutation();
 
     useEffect(() => {
@@ -264,8 +264,11 @@ function ChatsPanel({
                 chat.UnreadCount.subscribe((count) => {
                     unreadCountsRef.current.set(chat.Id, count);
 
-                    const total = [...unreadCountsRef.current.values()].reduce((acc, x) => acc + x);
-                    setUnread(total);
+                    const total = [...unreadCountsRef.current.values()].reduce(
+                        (acc, x) => (x.includes("+") ? Number.POSITIVE_INFINITY : acc + parseInt(x, 10)),
+                        0
+                    );
+                    setUnread(total === Number.POSITIVE_INFINITY ? "10+" : total > 0 ? total.toString() : "");
                 })
             );
         }
@@ -603,7 +606,7 @@ function RoomChatPanel({
 }: {
     roomId: string;
     onChatIdLoaded: (chatId: string) => void;
-    setUnread: (v: number) => void;
+    setUnread: (v: string) => void;
 }): JSX.Element {
     const { loading, error, data } = useGetRoomChatIdQuery({
         variables: {
@@ -696,7 +699,7 @@ function ItemChatPanel({
     itemId: string;
     confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
-    setUnread: (v: number) => void;
+    setUnread: (v: string) => void;
 }): JSX.Element {
     const { loading, error, data } = useGetContentGroupChatIdQuery({
         variables: {
@@ -989,8 +992,8 @@ function RightSidebarConferenceSections_Inner({
     );
     const closeChatCb = useRef<(() => void) | null>(null);
 
-    const [pageChatUnread, setPageChatUnread] = useState<number>(0);
-    const [chatsUnread, setChatsUnread] = useState<number>(0);
+    const [pageChatUnread, setPageChatUnread] = useState<string>("");
+    const [chatsUnread, setChatsUnread] = useState<string>("");
 
     const roomPanel = useMemo(
         () => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} setUnread={setPageChatUnread} />,
@@ -1075,11 +1078,11 @@ function RightSidebarConferenceSections_Inner({
         >
             <TabList py={2}>
                 <ToggleChatsButton ml={2} mr="auto" size="xs" />
-                {roomId && <Tab ml={2}>Room{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>}
+                {roomId && <Tab ml={2}>Room{pageChatUnread !== "" ? ` (${pageChatUnread})` : ""}</Tab>}
                 {itemId && (
-                    <Tab ml={roomId ? undefined : 2}>Item{pageChatUnread > 0 ? ` (${pageChatUnread})` : ""}</Tab>
+                    <Tab ml={roomId ? undefined : 2}>Item{pageChatUnread !== "" ? ` (${pageChatUnread})` : ""}</Tab>
                 )}
-                <Tab ml={roomId || itemId ? undefined : 2}>Chats{chatsUnread > 0 ? ` (${chatsUnread})` : ""}</Tab>
+                <Tab ml={roomId || itemId ? undefined : 2}>Chats{chatsUnread !== "" ? ` (${chatsUnread})` : ""}</Tab>
                 <Tab mr="auto">Who&apos;s here</Tab>
             </TabList>
 

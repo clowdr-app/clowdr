@@ -18860,12 +18860,7 @@ export type Chat_ReadUpToIndex = {
   /** An object relationship */
   chat: Chat_Chat;
   chatId: Scalars['uuid'];
-  messageId: Scalars['Int'];
-  notifiedUpToMessageId: Scalars['Int'];
-  /** A computed field, executes function "chat.unnotifiedCount" */
-  unnotifiedCount?: Maybe<Scalars['Int']>;
-  /** A computed field, executes function "chat.unreadCount" */
-  unreadCount?: Maybe<Scalars['Int']>;
+  messageSId?: Maybe<Scalars['uuid']>;
   updated_at: Scalars['timestamptz'];
 };
 
@@ -18879,17 +18874,9 @@ export type Chat_ReadUpToIndex_Aggregate = {
 /** aggregate fields of "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Aggregate_Fields = {
   __typename?: 'chat_ReadUpToIndex_aggregate_fields';
-  avg?: Maybe<Chat_ReadUpToIndex_Avg_Fields>;
   count?: Maybe<Scalars['Int']>;
   max?: Maybe<Chat_ReadUpToIndex_Max_Fields>;
   min?: Maybe<Chat_ReadUpToIndex_Min_Fields>;
-  stddev?: Maybe<Chat_ReadUpToIndex_Stddev_Fields>;
-  stddev_pop?: Maybe<Chat_ReadUpToIndex_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Chat_ReadUpToIndex_Stddev_Samp_Fields>;
-  sum?: Maybe<Chat_ReadUpToIndex_Sum_Fields>;
-  var_pop?: Maybe<Chat_ReadUpToIndex_Var_Pop_Fields>;
-  var_samp?: Maybe<Chat_ReadUpToIndex_Var_Samp_Fields>;
-  variance?: Maybe<Chat_ReadUpToIndex_Variance_Fields>;
 };
 
 
@@ -18901,36 +18888,15 @@ export type Chat_ReadUpToIndex_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Aggregate_Order_By = {
-  avg?: Maybe<Chat_ReadUpToIndex_Avg_Order_By>;
   count?: Maybe<Order_By>;
   max?: Maybe<Chat_ReadUpToIndex_Max_Order_By>;
   min?: Maybe<Chat_ReadUpToIndex_Min_Order_By>;
-  stddev?: Maybe<Chat_ReadUpToIndex_Stddev_Order_By>;
-  stddev_pop?: Maybe<Chat_ReadUpToIndex_Stddev_Pop_Order_By>;
-  stddev_samp?: Maybe<Chat_ReadUpToIndex_Stddev_Samp_Order_By>;
-  sum?: Maybe<Chat_ReadUpToIndex_Sum_Order_By>;
-  var_pop?: Maybe<Chat_ReadUpToIndex_Var_Pop_Order_By>;
-  var_samp?: Maybe<Chat_ReadUpToIndex_Var_Samp_Order_By>;
-  variance?: Maybe<Chat_ReadUpToIndex_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Arr_Rel_Insert_Input = {
   data: Array<Chat_ReadUpToIndex_Insert_Input>;
   on_conflict?: Maybe<Chat_ReadUpToIndex_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type Chat_ReadUpToIndex_Avg_Fields = {
-  __typename?: 'chat_ReadUpToIndex_avg_fields';
-  messageId?: Maybe<Scalars['Float']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Avg_Order_By = {
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "chat.ReadUpToIndex". All fields are combined with a logical 'AND'. */
@@ -18942,8 +18908,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
   attendeeId?: Maybe<Uuid_Comparison_Exp>;
   chat?: Maybe<Chat_Chat_Bool_Exp>;
   chatId?: Maybe<Uuid_Comparison_Exp>;
-  messageId?: Maybe<Int_Comparison_Exp>;
-  notifiedUpToMessageId?: Maybe<Int_Comparison_Exp>;
+  messageSId?: Maybe<Uuid_Comparison_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -18953,20 +18918,13 @@ export enum Chat_ReadUpToIndex_Constraint {
   ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
 }
 
-/** input type for incrementing integer column in table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Inc_Input = {
-  messageId?: Maybe<Scalars['Int']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Int']>;
-};
-
 /** input type for inserting data into table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Insert_Input = {
   attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   attendeeId?: Maybe<Scalars['uuid']>;
   chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   chatId?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['Int']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Int']>;
+  messageSId?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -18975,8 +18933,7 @@ export type Chat_ReadUpToIndex_Max_Fields = {
   __typename?: 'chat_ReadUpToIndex_max_fields';
   attendeeId?: Maybe<Scalars['uuid']>;
   chatId?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['Int']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Int']>;
+  messageSId?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -18984,8 +18941,7 @@ export type Chat_ReadUpToIndex_Max_Fields = {
 export type Chat_ReadUpToIndex_Max_Order_By = {
   attendeeId?: Maybe<Order_By>;
   chatId?: Maybe<Order_By>;
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
+  messageSId?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
 };
 
@@ -18994,8 +18950,7 @@ export type Chat_ReadUpToIndex_Min_Fields = {
   __typename?: 'chat_ReadUpToIndex_min_fields';
   attendeeId?: Maybe<Scalars['uuid']>;
   chatId?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['Int']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Int']>;
+  messageSId?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -19003,8 +18958,7 @@ export type Chat_ReadUpToIndex_Min_Fields = {
 export type Chat_ReadUpToIndex_Min_Order_By = {
   attendeeId?: Maybe<Order_By>;
   chatId?: Maybe<Order_By>;
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
+  messageSId?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
 };
 
@@ -19036,8 +18990,7 @@ export type Chat_ReadUpToIndex_Order_By = {
   attendeeId?: Maybe<Order_By>;
   chat?: Maybe<Chat_Chat_Order_By>;
   chatId?: Maybe<Order_By>;
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
+  messageSId?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
 };
 
@@ -19054,9 +19007,7 @@ export enum Chat_ReadUpToIndex_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
-  MessageId = 'messageId',
-  /** column name */
-  NotifiedUpToMessageId = 'notifiedUpToMessageId',
+  MessageSId = 'messageSId',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -19065,61 +19016,8 @@ export enum Chat_ReadUpToIndex_Select_Column {
 export type Chat_ReadUpToIndex_Set_Input = {
   attendeeId?: Maybe<Scalars['uuid']>;
   chatId?: Maybe<Scalars['uuid']>;
-  messageId?: Maybe<Scalars['Int']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Int']>;
+  messageSId?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate stddev on columns */
-export type Chat_ReadUpToIndex_Stddev_Fields = {
-  __typename?: 'chat_ReadUpToIndex_stddev_fields';
-  messageId?: Maybe<Scalars['Float']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Stddev_Order_By = {
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Chat_ReadUpToIndex_Stddev_Pop_Fields = {
-  __typename?: 'chat_ReadUpToIndex_stddev_pop_fields';
-  messageId?: Maybe<Scalars['Float']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Stddev_Pop_Order_By = {
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Chat_ReadUpToIndex_Stddev_Samp_Fields = {
-  __typename?: 'chat_ReadUpToIndex_stddev_samp_fields';
-  messageId?: Maybe<Scalars['Float']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Stddev_Samp_Order_By = {
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Chat_ReadUpToIndex_Sum_Fields = {
-  __typename?: 'chat_ReadUpToIndex_sum_fields';
-  messageId?: Maybe<Scalars['Int']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Sum_Order_By = {
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
 };
 
 /** update columns of table "chat.ReadUpToIndex" */
@@ -19129,51 +19027,10 @@ export enum Chat_ReadUpToIndex_Update_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
-  MessageId = 'messageId',
-  /** column name */
-  NotifiedUpToMessageId = 'notifiedUpToMessageId',
+  MessageSId = 'messageSId',
   /** column name */
   UpdatedAt = 'updated_at'
 }
-
-/** aggregate var_pop on columns */
-export type Chat_ReadUpToIndex_Var_Pop_Fields = {
-  __typename?: 'chat_ReadUpToIndex_var_pop_fields';
-  messageId?: Maybe<Scalars['Float']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Var_Pop_Order_By = {
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Chat_ReadUpToIndex_Var_Samp_Fields = {
-  __typename?: 'chat_ReadUpToIndex_var_samp_fields';
-  messageId?: Maybe<Scalars['Float']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Var_Samp_Order_By = {
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Chat_ReadUpToIndex_Variance_Fields = {
-  __typename?: 'chat_ReadUpToIndex_variance_fields';
-  messageId?: Maybe<Scalars['Float']>;
-  notifiedUpToMessageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Variance_Order_By = {
-  messageId?: Maybe<Order_By>;
-  notifiedUpToMessageId?: Maybe<Order_By>;
-};
 
 /**
  * Subscribe to chat notifications.
@@ -25673,7 +25530,6 @@ export type Mutation_RootUpdate_Chat_Reaction_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Chat_ReadUpToIndexArgs = {
-  _inc?: Maybe<Chat_ReadUpToIndex_Inc_Input>;
   _set?: Maybe<Chat_ReadUpToIndex_Set_Input>;
   where: Chat_ReadUpToIndex_Bool_Exp;
 };
@@ -25681,7 +25537,6 @@ export type Mutation_RootUpdate_Chat_ReadUpToIndexArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Chat_ReadUpToIndex_By_PkArgs = {
-  _inc?: Maybe<Chat_ReadUpToIndex_Inc_Input>;
   _set?: Maybe<Chat_ReadUpToIndex_Set_Input>;
   pk_columns: Chat_ReadUpToIndex_Pk_Columns_Input;
 };
@@ -33084,6 +32939,20 @@ export type PushNotificationSubscriptionsQuery = (
   )> }
 );
 
+export type ReadUpToIndexQueryVariables = Exact<{
+  chatId: Scalars['uuid'];
+  userId: Scalars['String'];
+}>;
+
+
+export type ReadUpToIndexQuery = (
+  { __typename?: 'query_root' }
+  & { chat_ReadUpToIndex: Array<(
+    { __typename?: 'chat_ReadUpToIndex' }
+    & Pick<Chat_ReadUpToIndex, 'chatId' | 'attendeeId' | 'messageSId'>
+  )> }
+);
+
 export type SubscriptionsQueryVariables = Exact<{
   chatId: Scalars['uuid'];
 }>;
@@ -33249,12 +33118,40 @@ export type DeleteChatReactionsMutation = (
   )> }
 );
 
+export type AttendeeIdsFromChatsAndUsersQueryVariables = Exact<{
+  chatIds: Array<Scalars['uuid']> | Scalars['uuid'];
+  userIds: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type AttendeeIdsFromChatsAndUsersQuery = (
+  { __typename?: 'query_root' }
+  & { Attendee: Array<(
+    { __typename?: 'Attendee' }
+    & Pick<Attendee, 'id' | 'userId'>
+  )> }
+);
+
+export type InsertReadUpToIndexMutationVariables = Exact<{
+  objects: Array<Chat_ReadUpToIndex_Insert_Input> | Chat_ReadUpToIndex_Insert_Input;
+}>;
+
+
+export type InsertReadUpToIndexMutation = (
+  { __typename?: 'mutation_root' }
+  & { insert_chat_ReadUpToIndex?: Maybe<(
+    { __typename?: 'chat_ReadUpToIndex_mutation_response' }
+    & Pick<Chat_ReadUpToIndex_Mutation_Response, 'affected_rows'>
+  )> }
+);
+
 
 export const EmptyQueryDocument: DocumentNode<EmptyQueryQuery, EmptyQueryQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EmptyQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]};
 export const AttendeeInfoDocument: DocumentNode<AttendeeInfoQuery, AttendeeInfoQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AttendeeInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attendeeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Attendee_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attendeeId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}}]}}]}}]};
 export const ChatInfoDocument: DocumentNode<ChatInfoQuery, ChatInfoQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ChatInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"restrictToAdmins"}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"contentGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortTitle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"roomPrivacyName"}},{"kind":"Field","name":{"kind":"Name","value":"roomPeople"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attendee"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]}}]}}]}}]};
 export const PinsDocument: DocumentNode<PinsQuery, PinsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Pins"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat_Pin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"chatId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chatId"}},{"kind":"Field","name":{"kind":"Name","value":"attendeeId"}}]}}]}}]};
 export const PushNotificationSubscriptionsDocument: DocumentNode<PushNotificationSubscriptionsQuery, PushNotificationSubscriptionsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PushNotificationSubscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"PushNotificationSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"p256dh"}},{"kind":"Field","name":{"kind":"Name","value":"auth"}}]}}]}}]};
+export const ReadUpToIndexDocument: DocumentNode<ReadUpToIndexQuery, ReadUpToIndexQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ReadUpToIndex"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat_ReadUpToIndex"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"chatId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"attendee"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chatId"}},{"kind":"Field","name":{"kind":"Name","value":"attendeeId"}},{"kind":"Field","name":{"kind":"Name","value":"messageSId"}}]}}]}}]};
 export const SubscriptionsDocument: DocumentNode<SubscriptionsQuery, SubscriptionsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Subscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat_Subscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"chatId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chatId"}},{"kind":"Field","name":{"kind":"Name","value":"attendeeId"}}]}}]}}]};
 export const UserPermissionsDocument: DocumentNode<UserPermissionsQuery, UserPermissionsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserPermissions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"FlatUserPermission"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"permission_name"}},{"kind":"Field","name":{"kind":"Name","value":"user_id"}}]}}]}}]};
 export const DeletePushNotificationSubscriptionDocument: DocumentNode<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeletePushNotificationSubscription"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endpoint"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_PushNotificationSubscription_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"endpoint"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endpoint"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endpoint"}}]}}]}}]};
@@ -33266,3 +33163,5 @@ export const DeleteChatMessagesDocument: DocumentNode<DeleteChatMessagesMutation
 export const InsertChatReactionsDocument: DocumentNode<InsertChatReactionsMutation, InsertChatReactionsMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertChatReactions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"chat_Reaction_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_chat_Reaction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"Reaction_sId_key"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"ListValue","values":[]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sId"}}]}}]}}]}}]};
 export const UpdateChatReactionDocument: DocumentNode<UpdateChatReactionMutation, UpdateChatReactionMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateChatReaction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"reactionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"chat_Reaction_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_chat_Reaction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"reactionId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"object"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sId"}}]}}]}}]}}]};
 export const DeleteChatReactionsDocument: DocumentNode<DeleteChatReactionsMutation, DeleteChatReactionsMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteChatReactions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"reactionIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_chat_Reaction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"reactionIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sId"}}]}}]}}]}}]};
+export const AttendeeIdsFromChatsAndUsersDocument: DocumentNode<AttendeeIdsFromChatsAndUsersQuery, AttendeeIdsFromChatsAndUsersQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AttendeeIdsFromChatsAndUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Attendee"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userIds"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"conference"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"chats"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatIds"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]};
+export const InsertReadUpToIndexDocument: DocumentNode<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertReadUpToIndex"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"chat_ReadUpToIndex_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_chat_ReadUpToIndex"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"ReadUpToIndex_pkey"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"messageSId"}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]};

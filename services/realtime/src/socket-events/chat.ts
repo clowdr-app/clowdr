@@ -7,6 +7,7 @@ import * as chat_messages from "../socket-handlers/chat/messages";
 import * as chat_pins from "../socket-handlers/chat/pins";
 import * as chat_reactions from "../socket-handlers/chat/reactions";
 import * as chat_subscriptions from "../socket-handlers/chat/subscriptions";
+import { onRequestUnreadCount, onSetReadUpToIndex } from "../socket-handlers/chat/unreadCount";
 
 export function onConnect(socket: Socket, userId: string, conferenceSlugs: string[]): void {
     const socketId = socket.id;
@@ -28,6 +29,9 @@ export function onConnect(socket: Socket, userId: string, conferenceSlugs: strin
 
     socket.on("chat.pins.changed.on", chat_pins.onListenForPinsChanged(conferenceSlugs, userId, socketId, socket));
     socket.on("chat.pins.changed.off", chat_pins.onUnlistenForPinsChanged(conferenceSlugs, userId, socketId, socket));
+
+    socket.on("chat.unreadCount.request", onRequestUnreadCount(conferenceSlugs, userId, socketId, socket));
+    socket.on("chat.unreadCount.setReadUpTo", onSetReadUpToIndex(conferenceSlugs, userId, socketId, socket));
 }
 
 export async function onDisconnect(socketId: string, userId: string): Promise<void> {

@@ -29,4 +29,14 @@ export const redisClientP = {
     scan: promisify((cursor: string, pattern: string, cb?: Callback<[string, string[]]>) =>
         redisClient.scan(cursor, "match", pattern, cb)
     ),
+    zadd: promisify((key: string, score: number, member: string, cb?: Callback<number>) =>
+        redisClient.zadd(key, score, member, cb)
+    ),
+    zremrangebyrank: promisify((key: string, start: number, stop: number, cb?: Callback<number>) =>
+        redisClient.zremrangebyrank(key, start, stop, cb)
+    ),
+    zcard: promisify((key: string, cb?: Callback<number>) => redisClient.zcard(key, cb)),
+    zrevrank: promisify((key: string, member: string, cb?: Callback<number | null>) =>
+        redisClient.zrevrank(key, member, cb)
+    ),
 };

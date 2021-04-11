@@ -81,14 +81,6 @@ export class Observable<V> {
 }
 
 gql`
-    fragment InitialChatState_ReadUpToIndex on chat_ReadUpToIndex {
-        attendeeId
-        chatId
-        messageId
-        notifiedUpToMessageId
-        unreadCount
-    }
-
     fragment ChatState_SubdMessage on chat_Message {
         id
         chatId
@@ -125,9 +117,6 @@ gql`
         enableAutoSubscribe
         enableMandatoryPin
         enableMandatorySubscribe
-        readUpToIndices(where: { attendeeId: { _eq: $attendeeId } }) {
-            ...InitialChatState_ReadUpToIndex
-        }
         pins(where: { attendeeId: { _eq: $attendeeId } }) {
             attendeeId
             chatId
@@ -161,26 +150,6 @@ gql`
             ...InitialChatState_Chat
         }
     }
-
-    # query SelectPinnedOrSubscribed($attendeeId: uuid!) {
-    #     chat_PinnedOrSubscribed(where: { attendeeId: { _eq: $attendeeId } }) {
-    #         chatId
-    #         attendeeId
-    #         chat {
-    #             id
-    #             pins(where: { attendeeId: { _eq: $attendeeId } }) {
-    #                 attendeeId
-    #                 chatId
-    #                 wasManuallyPinned
-    #             }
-    #             subscriptions(where: { attendeeId: { _eq: $attendeeId } }) {
-    #                 attendeeId
-    #                 chatId
-    #                 wasManuallySubscribed
-    #             }
-    #         }
-    #     }
-    # }
 `;
 
 gql`
@@ -300,45 +269,7 @@ gql`
     }
 `;
 
-gql`
-    query SelectReadUpToIndices($chatIds: [uuid!]!, $attendeeId: uuid!) {
-        chat_ReadUpToIndex(where: { chatId: { _in: $chatIds }, attendeeId: { _eq: $attendeeId } }) {
-            ...InitialChatState_ReadUpToIndex
-        }
-    }
-
-    mutation InsertReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
-        insert_chat_ReadUpToIndex_one(
-            object: {
-                attendeeId: $attendeeId
-                chatId: $chatId
-                messageId: $messageId
-                notifiedUpToMessageId: $notifiedUpToMessageId
-            }
-            on_conflict: { constraint: ReadUpToIndex_pkey, update_columns: [messageId, notifiedUpToMessageId] }
-        ) {
-            attendeeId
-            chatId
-            messageId
-        }
-    }
-
-    mutation UpdateReadUpToIndex($chatId: uuid!, $attendeeId: uuid!, $messageId: Int!, $notifiedUpToMessageId: Int!) {
-        update_chat_ReadUpToIndex(
-            where: {
-                attendeeId: { _eq: $attendeeId }
-                chatId: { _eq: $chatId }
-                messageId: { _lte: $messageId }
-                notifiedUpToMessageId: { _lte: $notifiedUpToMessageId }
-            }
-            _set: { messageId: $messageId, notifiedUpToMessageId: $notifiedUpToMessageId }
-        ) {
-            affected_rows
-        }
-    }
-`;
-
-// CHAT_TODO
+// CHAT_TODO: Message and reaction flagging / moderation
 // gql`
 //     fragment ChatFlagData on chat_Flag {
 //         discussionChatId
@@ -555,12 +486,7 @@ export class ChatState {
 
         this.isPinned = initialState.pins.length > 0;
         this.isSubscribed = initialState.subscriptions.length > 0;
-        this.unreadCount = 0;
-
-        // CHAT_TODO
-        // this.readUpToMsgId = -1;
-        // this.readUpTo_ExistsInDb = false;
-        // this.latestNotifiedIndex = -1;
+        this.unreadCount = "";
     }
 
     public async teardown(): Promise<void> {
@@ -614,7 +540,7 @@ export class ChatState {
         return this.DMRoomId ?? this.NonDMRoomId;
     }
 
-    private isPinned: boolean;
+    public isPinned: boolean;
     private isPinnedObs = new Observable<boolean>((observer) => {
         observer(this.isPinned);
     });
@@ -738,18 +664,12 @@ export class ChatState {
                     });
                     this.isSubscribed =
                         !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
-
-                    // CHAT_TODO
-                    // this.readUpTo_ExistsInDb = true;
                 } catch (e) {
                     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
                         this.isSubscribed = isSubd;
                         throw e;
                     } else {
                         this.isSubscribed = true;
-
-                        // CHAT_TODO
-                        // this.readUpTo_ExistsInDb = true;
                     }
                 }
             }
@@ -768,11 +688,11 @@ export class ChatState {
         }
     }
 
-    private unreadCount: number;
-    private unreadCountObs = new Observable<number>((observer) => {
+    private unreadCount: string;
+    private unreadCountObs = new Observable<string>((observer) => {
         observer(this.unreadCount);
     });
-    public get UnreadCount(): Observable<number> {
+    public get UnreadCount(): Observable<string> {
         return this.unreadCountObs;
     }
 
@@ -911,11 +831,14 @@ export class ChatState {
             } else {
                 this.globalState.onChatChannelUnsubscribe();
             }
-            if (!force && this.subCount < 0) {
-                console.warn(
-                    "Chat sub count went negative..hmmm...suggests the ref count is going out of sync somehow.",
-                    this.subCount
-                );
+            if (this.subCount < 0) {
+                if (!force) {
+                    console.warn(
+                        "Chat sub count went negative..hmmm...suggests the ref count is going out of sync somehow.",
+                        this.subCount
+                    );
+                }
+                this.subCount = 0;
             }
         } catch (e) {
             console.error(`Error unsubscribing from chat: ${this.Id}`, e);
@@ -927,6 +850,15 @@ export class ChatState {
         if (this.subCount === 0 || force) {
             const socket = this.globalState.socket;
             socket?.emit("chat.unsubscribe", this.Id);
+
+            const release = await this.messagesMutex.acquire();
+            try {
+                this.messages.clear();
+                this.lastHistoricallyFetchedMessageId = Math.pow(2, 31) - 1;
+                this.fetchMoreAttempts = 0;
+            } finally {
+                release();
+            }
         }
     }
 
@@ -1029,9 +961,8 @@ export class ChatState {
     ): Promise<void> {
         const release = await this.sendMutex.acquire();
 
-        // CHAT_TODO
-        // this.unreadCount = 0;
-        // this.unreadCountObs.publish(0);
+        this.unreadCount = "";
+        this.unreadCountObs.publish(this.unreadCount);
 
         this.isSending = true;
         this.isSendingObs.publish(this.isSending);
@@ -1150,32 +1081,19 @@ export class ChatState {
         }
     }
 
-    // CHAT_TODO
-    // private readUpToMsgId: number;
-    // private readUpTo_ExistsInDb: boolean;
-    // private readUpTo_Timeout: { id: number; firstTimestampMs: number } | undefined;
-    // public get ReadUpToMsgId(): number {
-    //     return this.readUpToMsgId;
-    // }
-    public setAllMessagesRead(_messageSId: string): void {
-        // CHAT_TODO
-        //     this.readUpToMsgId = Math.max(this.readUpToMsgId, messageId);
-        //     this.latestNotifiedIndex = Math.max(messageId, this.latestNotifiedIndex);
-        //     this.unreadCount = 0;
-        //     this.unreadCountObs.publish(0);
-        //     (async () => {
-        //         const remoteChat = await this.remoteChat;
-        //         await remoteChat?.setAllMessagesConsumed();
-        //     })();
+    public setAllMessagesRead(messageSId: string): void {
+        this.unreadCount = "";
+        this.unreadCountObs.publish(this.unreadCount);
+        this.globalState.socket?.emit("chat.unreadCount.setReadUpTo", this.Id, messageSId);
     }
-    public async fetchReadUpToIdx(): Promise<void> {
-        // CHAT_TODO
-        //     const remoteChat = await this.remoteChat;
-        //     const newCount = (await remoteChat?.getUnconsumedMessagesCount()) ?? 0;
-        //     if (this.unreadCount !== newCount) {
-        //         this.unreadCount = newCount;
-        //         this.unreadCountObs.publish(this.unreadCount);
-        //     }
+    public async requestUnreadCount(): Promise<void> {
+        this.globalState.socket?.emit("chat.unreadCount.request", this.Id);
+    }
+    public setUnreadCount(value: string): void {
+        if (this.unreadCount !== value) {
+            this.unreadCount = value;
+            this.unreadCountObs.publish(this.unreadCount);
+        }
     }
 
     static compare(x: ChatState, y: ChatState): number {
@@ -1271,105 +1189,91 @@ export class GlobalChatState {
                             const openChatInSidebar = this.openChatInSidebar;
                             const showSidebar = this.showSidebar;
 
-                            setTimeout(
-                                () => {
-                                    const notificationId = this.toast({
-                                        position: "top-right",
-                                        isClosable: true,
-                                        duration: 7000,
-                                        render: function ChatNotification(props: RenderProps) {
-                                            return (
-                                                <VStack
-                                                    alignItems="flex-start"
-                                                    background="purple.700"
-                                                    color="gray.50"
-                                                    w="auto"
-                                                    h="auto"
-                                                    p={5}
-                                                    opacity={0.95}
-                                                    borderRadius={10}
-                                                    position="relative"
-                                                    pt={2}
+                            const notificationId = this.toast({
+                                position: "top-right",
+                                isClosable: true,
+                                duration: 7000,
+                                render: function ChatNotification(props: RenderProps) {
+                                    return (
+                                        <VStack
+                                            alignItems="flex-start"
+                                            background="purple.700"
+                                            color="gray.50"
+                                            w="auto"
+                                            h="auto"
+                                            p={5}
+                                            opacity={0.95}
+                                            borderRadius={10}
+                                            position="relative"
+                                            pt={2}
+                                        >
+                                            <CloseButton
+                                                position="absolute"
+                                                top={2}
+                                                right={2}
+                                                onClick={props.onClose}
+                                            />
+                                            <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
+                                                {notification.title}
+                                            </Heading>
+                                            {notification.subtitle ? (
+                                                <Heading
+                                                    textAlign="left"
+                                                    as="h3"
+                                                    fontSize="0.9rem"
+                                                    fontStyle="italic"
+                                                    maxW="250px"
+                                                    noOfLines={1}
                                                 >
-                                                    <CloseButton
-                                                        position="absolute"
-                                                        top={2}
-                                                        right={2}
-                                                        onClick={props.onClose}
-                                                    />
-                                                    <Heading textAlign="left" as="h2" fontSize="1rem" my={0} py={0}>
-                                                        {notification.title}
-                                                    </Heading>
-                                                    {notification.subtitle ? (
-                                                        <Heading
-                                                            textAlign="left"
-                                                            as="h3"
-                                                            fontSize="0.9rem"
-                                                            fontStyle="italic"
-                                                            maxW="250px"
-                                                            noOfLines={1}
-                                                        >
-                                                            {notification.subtitle}
-                                                        </Heading>
-                                                    ) : undefined}
-                                                    <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
-                                                        <Markdown restrictHeadingSize>
-                                                            {notification.description}
-                                                        </Markdown>
-                                                    </Box>
-                                                    <ButtonGroup isAttached>
-                                                        {openChatInSidebar && notification.chatId ? (
-                                                            <Button
-                                                                colorScheme="green"
-                                                                onClick={() => {
-                                                                    props.onClose();
-                                                                    if (notification.chatId) {
-                                                                        openChatInSidebar?.(notification.chatId);
-                                                                        showSidebar?.();
-                                                                    }
-                                                                }}
-                                                            >
-                                                                Go to chat
-                                                            </Button>
-                                                        ) : undefined}
-                                                        {notification.linkURL ? (
-                                                            <Button
-                                                                colorScheme="blue"
-                                                                onClick={() => {
-                                                                    props.onClose();
-                                                                    if (notification.linkURL) {
-                                                                        window.open(notification.linkURL, "_blank");
-                                                                    }
-                                                                }}
-                                                            >
-                                                                <ExternalLinkIcon />
-                                                            </Button>
-                                                        ) : undefined}
-                                                    </ButtonGroup>
-                                                </VStack>
-                                            );
-                                        },
-                                    });
-                                    if (notificationId) {
-                                        let numPopped = 0;
-                                        while (this.ongoingNotifications.length - numPopped >= 3) {
-                                            this.toast.close(this.ongoingNotifications[numPopped]);
-
-                                            numPopped++;
-                                        }
-                                        this.ongoingNotifications = this.ongoingNotifications.slice(numPopped);
-                                        this.ongoingNotifications.push(notificationId);
-                                    }
+                                                    {notification.subtitle}
+                                                </Heading>
+                                            ) : undefined}
+                                            <Box maxW="250px" maxH="200px" overflow="hidden" noOfLines={10}>
+                                                <Markdown restrictHeadingSize>{notification.description}</Markdown>
+                                            </Box>
+                                            <ButtonGroup isAttached>
+                                                {openChatInSidebar && notification.chatId ? (
+                                                    <Button
+                                                        colorScheme="green"
+                                                        onClick={() => {
+                                                            props.onClose();
+                                                            if (notification.chatId) {
+                                                                openChatInSidebar?.(notification.chatId);
+                                                                showSidebar?.();
+                                                            }
+                                                        }}
+                                                    >
+                                                        Go to chat
+                                                    </Button>
+                                                ) : undefined}
+                                                {notification.linkURL ? (
+                                                    <Button
+                                                        colorScheme="blue"
+                                                        onClick={() => {
+                                                            props.onClose();
+                                                            if (notification.linkURL) {
+                                                                window.open(notification.linkURL, "_blank");
+                                                            }
+                                                        }}
+                                                    >
+                                                        <ExternalLinkIcon />
+                                                    </Button>
+                                                ) : undefined}
+                                            </ButtonGroup>
+                                        </VStack>
+                                    );
                                 },
-                                // We delay the notification slightly to give a chance for the message to be written
-                                // into the db, so that if the chat state is not already loaded, the message is fetched
-                                // from the db.
-                                // This is not ideal but I don't see a way around it right now.
-                                // See: MESSAGE_WRITEBACK_INTERVAL
-                                notification.chatId && (!this.chatStates || !this.chatStates.has(notification.chatId))
-                                    ? 1100
-                                    : 1
-                            );
+                            });
+                            if (notificationId) {
+                                let numPopped = 0;
+                                while (this.ongoingNotifications.length - numPopped >= 3) {
+                                    this.toast.close(this.ongoingNotifications[numPopped]);
+
+                                    numPopped++;
+                                }
+                                this.ongoingNotifications = this.ongoingNotifications.slice(numPopped);
+                                this.ongoingNotifications.push(notificationId);
+                            }
                         });
 
                         socket.on("chat.subscribed", (chatId: string) => {
@@ -1407,7 +1311,7 @@ export class GlobalChatState {
                                         this.chatStates = this.chatStates ?? new Map();
                                         for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
                                             const newState = new ChatState(this, pinSubChat);
-                                            await newState.fetchReadUpToIdx();
+                                            await newState.requestUnreadCount();
                                             this.chatStates.set(pinSubChat.id, newState);
                                         }
                                         this.chatStatesObs.publish(this.chatStates);
@@ -1474,11 +1378,13 @@ export class GlobalChatState {
                             existing?.onReactionRemoved(msg);
                         });
 
+                        socket.on("chat.unreadCount.update", (chatId: string, count: string) => {
+                            const chat = this.chatStates?.get(chatId);
+                            chat?.setUnreadCount(count);
+                        });
+
                         socket.emit("chat.subscriptions.changed.on", this.attendee.id);
                         socket.emit("chat.pins.changed.on", this.attendee.id);
-
-                        // TODO: Actions
-                        //    - Unread counts: update
 
                         if (this.chatStates) {
                             for (const chatState of this.chatStates) {
@@ -1509,7 +1415,7 @@ export class GlobalChatState {
                         initialData.data.chat_Pin.map(async (item) => {
                             if (item.chat) {
                                 const newState = new ChatState(this, item.chat);
-                                await newState.fetchReadUpToIdx();
+                                await newState.requestUnreadCount();
                                 this.chatStates?.set(item.chat.id, newState);
                             }
                         })
@@ -1602,7 +1508,7 @@ export class GlobalChatState {
                             this.chatStates = new Map<string, ChatState>();
                         }
                         const newState = new ChatState(this, result.data.chat_Chat_by_pk);
-                        await newState.fetchReadUpToIdx();
+                        await newState.requestUnreadCount();
                         this.chatStates.set(chatId, newState);
                         this.chatStatesObs.publish(this.chatStates);
                     } else {
@@ -1651,12 +1557,14 @@ export class GlobalChatState {
             try {
                 await Promise.all(
                     allDeadChats.map(async (chat) => {
-                        await chat.teardown();
+                        await chat.unsubscribe(true);
                     })
                 );
                 const states = this.chatStates;
                 allDeadChats.forEach((chat) => {
-                    states.delete(chat.Id);
+                    if (!chat.isPinned) {
+                        states.delete(chat.Id);
+                    }
                 });
                 this.chatStatesObs.publish(states);
             } catch (e) {
@@ -1666,57 +1574,4 @@ export class GlobalChatState {
             }
         }
     }
-
-    // CHAT_TODO
-    // private unreadCountMutex = new Mutex();
-    // private async pollUnreadCount() {
-    //     const release = await this.unreadCountMutex.acquire();
-
-    //     const newDatas = new Map<
-    //         string,
-    //         { count: number | undefined; latestNotifiedIndex: number; readUpToMsgId: number }
-    //     >();
-    //     try {
-    //         if (this.chatStates) {
-    //             const chatIds = [...this.chatStates.values()]
-    //                 .filter((x) => x.isPinned_InternalUseOnly)
-    //                 .map((x) => x.Id);
-    //             if (chatIds.length > 0) {
-    //                 const result = await this.apolloClient.query<
-    //                     SelectReadUpToIndicesQuery,
-    //                     SelectReadUpToIndicesQueryVariables
-    //                 >({
-    //                     query: SelectReadUpToIndicesDocument,
-    //                     variables: {
-    //                         attendeeId: this.attendee.id,
-    //                         chatIds,
-    //                     },
-    //                 });
-    //                 if (result.data.chat_ReadUpToIndex) {
-    //                     for (const index of result.data.chat_ReadUpToIndex) {
-    //                         const chatState = this.chatStates.get(index.chatId);
-    //                         if (chatState) {
-    //                             newDatas.set(index.chatId, {
-    //                                 count: index.unreadCount ?? undefined,
-    //                                 latestNotifiedIndex: index.notifiedUpToMessageId,
-    //                                 readUpToMsgId: index.messageId,
-    //                             });
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     } catch (e) {
-    //         console.error("Failed to fetch unread counts", e);
-    //     } finally {
-    //         release();
-
-    //         for (const [chatId, newData] of newDatas) {
-    //             const chatState = this.chatStates?.get(chatId);
-    //             if (chatState) {
-    //                 await chatState.updateReadUpToIdx(newData);
-    //             }
-    //         }
-    //     }
-    // }
 }

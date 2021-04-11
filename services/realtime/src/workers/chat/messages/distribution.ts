@@ -25,6 +25,11 @@ async function onMessage(action: Action<Message>) {
             : "unknown";
 
     const chatId = action.data.chatId;
+
+    const redisSetKey = generateChatRecentMessagesSetKey(chatId);
+    await redisClientP.zadd(redisSetKey, Date.parse(action.data.created_at), action.data.sId);
+    await redisClientP.zremrangebyrank(redisSetKey, 0, -(1 + maxUnreadMessages));
+
     emitter.to(generateChatRoomName(chatId)).emit(`chat.messages.${eventName}`, action.data);
 
     if (action.op === "INSERT") {
@@ -45,10 +50,6 @@ async function onMessage(action: Action<Message>) {
 
 async function updateRecentMessagesAndUnreadCounts(action: Action<Message>) {
     const chatId = action.data.chatId;
-
-    const redisSetKey = generateChatRecentMessagesSetKey(chatId);
-    await redisClientP.zadd(redisSetKey, Date.parse(action.data.created_at), action.data.sId);
-    await redisClientP.zremrangebyrank(redisSetKey, 0, -(1 + maxUnreadMessages));
 
     const pins = await getPins(chatId, {
         chatId,

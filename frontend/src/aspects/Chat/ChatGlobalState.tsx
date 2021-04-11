@@ -1081,10 +1081,29 @@ export class ChatState {
         }
     }
 
+    private setReadUpToTimeoutId: number | undefined;
+    private latestReadUpToMessageSId: string | undefined;
     public setAllMessagesRead(messageSId: string): void {
         this.unreadCount = "";
         this.unreadCountObs.publish(this.unreadCount);
-        this.globalState.socket?.emit("chat.unreadCount.setReadUpTo", this.Id, messageSId);
+        if (messageSId !== this.latestReadUpToMessageSId) {
+            this.latestReadUpToMessageSId = messageSId;
+            if (this.setReadUpToTimeoutId === undefined) {
+                this.setReadUpToTimeoutId = setTimeout(
+                    (() => {
+                        this.setReadUpToTimeoutId = undefined;
+                        if (this.latestReadUpToMessageSId) {
+                            this.globalState.socket?.emit(
+                                "chat.unreadCount.setReadUpTo",
+                                this.Id,
+                                this.latestReadUpToMessageSId
+                            );
+                        }
+                    }) as TimerHandler,
+                    Math.round(5000 * Math.random()) + 5000
+                );
+            }
+        }
     }
     public async requestUnreadCount(): Promise<void> {
         this.globalState.socket?.emit("chat.unreadCount.request", this.Id);

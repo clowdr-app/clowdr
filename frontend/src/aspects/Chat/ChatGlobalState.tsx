@@ -163,12 +163,6 @@ gql`
                 attendeeId
             }
         }
-        insert_chat_ReadUpToIndex(
-            objects: { chatId: $chatId, attendeeId: $attendeeId, messageId: -1 }
-            on_conflict: { constraint: ReadUpToIndex_pkey, update_columns: [] }
-        ) {
-            affected_rows
-        }
     }
 
     mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {

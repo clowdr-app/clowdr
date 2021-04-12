@@ -17,7 +17,7 @@ import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/bui
 import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Redirect, useHistory } from "react-router-dom";
 import {
@@ -25,7 +25,6 @@ import {
     RoomMode_Enum,
     RoomPage_RoomDetailsFragment,
     RoomPrivacy_Enum,
-    Room_CurrentEventSummaryFragment,
     Room_EventSummaryFragment,
     useRoom_GetCurrentEventsQuery,
     useRoom_GetEventBreakoutRoomQuery,
@@ -169,40 +168,26 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
 
-    const [currentEventsData, setCurrentEventsData] = useState<readonly Room_CurrentEventSummaryFragment[]>([]);
-    const { refetch: refetchCurrentEventsData } = useRoom_GetCurrentEventsQuery({
-        skip: true,
+    const currentEventIds = useMemo(
+        () => [currentRoomEvent?.id, nextRoomEvent?.id, nextNextRoomEvent?.id].filter(notEmpty),
+        [currentRoomEvent?.id, nextNextRoomEvent?.id, nextRoomEvent?.id]
+    );
+    const { data: currentEventsData } = useRoom_GetCurrentEventsQuery({
         fetchPolicy: "network-only",
+        variables: {
+            currentEventIds,
+        },
     });
 
-    useEffect(() => {
-        async function fn() {
-            const eventIds = [currentRoomEvent?.id, nextRoomEvent?.id, nextNextRoomEvent?.id].filter(notEmpty);
-            try {
-                const { data } = await refetchCurrentEventsData({
-                    currentEventIds: eventIds,
-                });
-
-                if (data) {
-                    setCurrentEventsData(data.Event ?? []);
-                }
-            } catch (e) {
-                console.error("Could not fetch current events data");
-            }
-        }
-        fn();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentRoomEvent?.id, nextRoomEvent?.id, nextNextRoomEvent?.id]);
-
-    const [zoomNow, setZoomNow] = useState<number>(Date.now());
-    const computeZoomNow = useCallback(() => setZoomNow(Date.now()), [setZoomNow]);
-    usePolling(computeZoomNow, 30000, true);
+    const zoomNow = useRealTime(30000);
     const maybeZoomUrl = useMemo(() => {
         try {
             const currentEventData = currentRoomEvent
-                ? currentEventsData.find((e) => e.id === currentRoomEvent?.id)
+                ? currentEventsData?.Event.find((e) => e.id === currentRoomEvent?.id)
                 : undefined;
-            const nextEventData = nextRoomEvent ? currentEventsData.find((e) => e.id === nextRoomEvent?.id) : undefined;
+            const nextEventData = nextRoomEvent
+                ? currentEventsData?.Event.find((e) => e.id === nextRoomEvent?.id)
+                : undefined;
 
             const currentZoomItems = currentEventData?.contentGroup?.contentItems;
             if (currentZoomItems && currentZoomItems.length > 0 && currentEventData) {

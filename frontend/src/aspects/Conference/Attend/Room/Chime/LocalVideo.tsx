@@ -4,6 +4,7 @@ import {
     useAudioVideo,
     useContentShareState,
     useLocalVideo,
+    useToggleLocalMute,
 } from "@clowdr-app/amazon-chime-sdk-component-library-react";
 import React, { useEffect, useRef } from "react";
 import useCurrentAttendee from "../../../useCurrentAttendee";
@@ -18,6 +19,7 @@ export function LocalVideo({ participantWidth }: { participantWidth: number }): 
     const videoEl = useRef<HTMLVideoElement>(null);
     useApplyVideoObjectFit(videoEl);
     const attendee = useCurrentAttendee();
+    const { muted } = useToggleLocalMute();
 
     useEffect(() => {
         if (!audioVideo || !tileId || !videoEl.current || !isVideoEnabled) {
@@ -44,7 +46,10 @@ export function LocalVideo({ participantWidth }: { participantWidth: number }): 
         >
             <video ref={videoEl} style={{ zIndex: 100, position: "relative", height: "100%" }} />
             <Box position="absolute" left="1" bottom="1" zIndex="200" w="100%">
-                <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee?.id })} />
+                <VonageOverlay
+                    connectionData={JSON.stringify({ attendeeId: attendee?.id })}
+                    microphoneEnabled={!muted}
+                />
             </Box>
             <PlaceholderImage />
         </Box>

@@ -10,7 +10,7 @@ import React, { useCallback } from "react";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { ChimeRoomControlBar } from "./ChimeRoomControlBar";
 import { ContentShare } from "./ContentShare";
-import { DeviceSetup } from "./DeviceSetup";
+import { DeviceSetup } from "./DeviceSetup/DeviceSetup";
 import { PermissionsExplanationModal } from "./PermissionsExplanationModal";
 import { VideoTiles } from "./VideoTiles";
 

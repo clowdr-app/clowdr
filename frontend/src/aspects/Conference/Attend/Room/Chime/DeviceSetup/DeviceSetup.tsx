@@ -26,18 +26,22 @@ export function DeviceSetup(): JSX.Element {
                 title: "Failed to join room",
             });
         }
-    }, [meetingManager, toast]);
+    }, [isVideoEnabled, meetingManager, toast, toggleVideo]);
 
     return (
         <Box mt={4}>
             <HStack alignItems="flex-start">
                 <Box flex={1} px={4}>
-                    <Heading as="h2">Microphone</Heading>
+                    <Heading as="h2" mb={4}>
+                        Microphone
+                    </Heading>
                     <MicrophoneDevices />
                 </Box>
 
                 <Box flex={1} px={4}>
-                    <Heading as="h2">Camera</Heading>
+                    <Heading as="h2" mb={4}>
+                        Camera
+                    </Heading>
                     <CameraDevices />
                 </Box>
             </HStack>

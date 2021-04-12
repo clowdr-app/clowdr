@@ -1,11 +1,12 @@
 import { Box } from "@chakra-ui/react";
 import {
     useApplyVideoObjectFit,
+    useAttendeeStatus,
     useAudioVideo,
     useRemoteVideoTileState,
     useRosterState,
 } from "@clowdr-app/amazon-chime-sdk-component-library-react";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import PlaceholderImage from "../PlaceholderImage";
 import { VonageOverlay } from "../Vonage/VonageOverlay";
 
@@ -31,6 +32,9 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
         };
     }, [audioVideo, tileId]);
 
+    const attendeeId = useMemo(() => tileIdToAttendeeId[tileId], [tileIdToAttendeeId, tileId]);
+    const { muted } = useAttendeeStatus(attendeeId);
+
     return (
         <Box
             data-testid="video-tile"
@@ -42,7 +46,8 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
             <video ref={videoEl} style={{ zIndex: 200, position: "relative", height: "100%" }} />
             <Box position="absolute" left="1" bottom="1" zIndex="200" w="100%">
                 <VonageOverlay
-                    connectionData={JSON.stringify({ attendeeId: roster[tileIdToAttendeeId[tileId]]?.externalUserId })}
+                    connectionData={JSON.stringify({ attendeeId: roster[attendeeId]?.externalUserId })}
+                    microphoneEnabled={!muted}
                 />
             </Box>
             <PlaceholderImage />

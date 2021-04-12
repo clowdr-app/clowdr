@@ -18862,11 +18862,7 @@ export type Chat_ReadUpToIndex = {
   /** An object relationship */
   readonly chat: Chat_Chat;
   readonly chatId: Scalars['uuid'];
-  readonly messageId: Scalars['Int'];
-  /** A computed field, executes function "chat.unnotifiedCount" */
-  readonly unnotifiedCount?: Maybe<Scalars['Int']>;
-  /** A computed field, executes function "chat.unreadCount" */
-  readonly unreadCount?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly updated_at: Scalars['timestamptz'];
 };
 
@@ -18880,17 +18876,9 @@ export type Chat_ReadUpToIndex_Aggregate = {
 /** aggregate fields of "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Aggregate_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_aggregate_fields';
-  readonly avg?: Maybe<Chat_ReadUpToIndex_Avg_Fields>;
   readonly count?: Maybe<Scalars['Int']>;
   readonly max?: Maybe<Chat_ReadUpToIndex_Max_Fields>;
   readonly min?: Maybe<Chat_ReadUpToIndex_Min_Fields>;
-  readonly stddev?: Maybe<Chat_ReadUpToIndex_Stddev_Fields>;
-  readonly stddev_pop?: Maybe<Chat_ReadUpToIndex_Stddev_Pop_Fields>;
-  readonly stddev_samp?: Maybe<Chat_ReadUpToIndex_Stddev_Samp_Fields>;
-  readonly sum?: Maybe<Chat_ReadUpToIndex_Sum_Fields>;
-  readonly var_pop?: Maybe<Chat_ReadUpToIndex_Var_Pop_Fields>;
-  readonly var_samp?: Maybe<Chat_ReadUpToIndex_Var_Samp_Fields>;
-  readonly variance?: Maybe<Chat_ReadUpToIndex_Variance_Fields>;
 };
 
 
@@ -18902,34 +18890,15 @@ export type Chat_ReadUpToIndex_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Aggregate_Order_By = {
-  readonly avg?: Maybe<Chat_ReadUpToIndex_Avg_Order_By>;
   readonly count?: Maybe<Order_By>;
   readonly max?: Maybe<Chat_ReadUpToIndex_Max_Order_By>;
   readonly min?: Maybe<Chat_ReadUpToIndex_Min_Order_By>;
-  readonly stddev?: Maybe<Chat_ReadUpToIndex_Stddev_Order_By>;
-  readonly stddev_pop?: Maybe<Chat_ReadUpToIndex_Stddev_Pop_Order_By>;
-  readonly stddev_samp?: Maybe<Chat_ReadUpToIndex_Stddev_Samp_Order_By>;
-  readonly sum?: Maybe<Chat_ReadUpToIndex_Sum_Order_By>;
-  readonly var_pop?: Maybe<Chat_ReadUpToIndex_Var_Pop_Order_By>;
-  readonly var_samp?: Maybe<Chat_ReadUpToIndex_Var_Samp_Order_By>;
-  readonly variance?: Maybe<Chat_ReadUpToIndex_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Arr_Rel_Insert_Input = {
   readonly data: ReadonlyArray<Chat_ReadUpToIndex_Insert_Input>;
   readonly on_conflict?: Maybe<Chat_ReadUpToIndex_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type Chat_ReadUpToIndex_Avg_Fields = {
-  readonly __typename?: 'chat_ReadUpToIndex_avg_fields';
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Avg_Order_By = {
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "chat.ReadUpToIndex". All fields are combined with a logical 'AND'. */
@@ -18941,7 +18910,7 @@ export type Chat_ReadUpToIndex_Bool_Exp = {
   readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
-  readonly messageId?: Maybe<Int_Comparison_Exp>;
+  readonly messageSId?: Maybe<Uuid_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -18951,18 +18920,13 @@ export enum Chat_ReadUpToIndex_Constraint {
   ReadUpToIndexPkey = 'ReadUpToIndex_pkey'
 }
 
-/** input type for incrementing integer column in table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Inc_Input = {
-  readonly messageId?: Maybe<Scalars['Int']>;
-};
-
 /** input type for inserting data into table "chat.ReadUpToIndex" */
 export type Chat_ReadUpToIndex_Insert_Input = {
   readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -18971,7 +18935,7 @@ export type Chat_ReadUpToIndex_Max_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_max_fields';
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -18979,7 +18943,7 @@ export type Chat_ReadUpToIndex_Max_Fields = {
 export type Chat_ReadUpToIndex_Max_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -18988,7 +18952,7 @@ export type Chat_ReadUpToIndex_Min_Fields = {
   readonly __typename?: 'chat_ReadUpToIndex_min_fields';
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -18996,7 +18960,7 @@ export type Chat_ReadUpToIndex_Min_Fields = {
 export type Chat_ReadUpToIndex_Min_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -19028,7 +18992,7 @@ export type Chat_ReadUpToIndex_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
-  readonly messageId?: Maybe<Order_By>;
+  readonly messageSId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -19045,7 +19009,7 @@ export enum Chat_ReadUpToIndex_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
-  MessageId = 'messageId',
+  MessageSId = 'messageSId',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -19054,52 +19018,8 @@ export enum Chat_ReadUpToIndex_Select_Column {
 export type Chat_ReadUpToIndex_Set_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
-  readonly messageId?: Maybe<Scalars['Int']>;
+  readonly messageSId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate stddev on columns */
-export type Chat_ReadUpToIndex_Stddev_Fields = {
-  readonly __typename?: 'chat_ReadUpToIndex_stddev_fields';
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Stddev_Order_By = {
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Chat_ReadUpToIndex_Stddev_Pop_Fields = {
-  readonly __typename?: 'chat_ReadUpToIndex_stddev_pop_fields';
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Stddev_Pop_Order_By = {
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Chat_ReadUpToIndex_Stddev_Samp_Fields = {
-  readonly __typename?: 'chat_ReadUpToIndex_stddev_samp_fields';
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Stddev_Samp_Order_By = {
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Chat_ReadUpToIndex_Sum_Fields = {
-  readonly __typename?: 'chat_ReadUpToIndex_sum_fields';
-  readonly messageId?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Sum_Order_By = {
-  readonly messageId?: Maybe<Order_By>;
 };
 
 /** update columns of table "chat.ReadUpToIndex" */
@@ -19109,43 +19029,10 @@ export enum Chat_ReadUpToIndex_Update_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
-  MessageId = 'messageId',
+  MessageSId = 'messageSId',
   /** column name */
   UpdatedAt = 'updated_at'
 }
-
-/** aggregate var_pop on columns */
-export type Chat_ReadUpToIndex_Var_Pop_Fields = {
-  readonly __typename?: 'chat_ReadUpToIndex_var_pop_fields';
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Var_Pop_Order_By = {
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Chat_ReadUpToIndex_Var_Samp_Fields = {
-  readonly __typename?: 'chat_ReadUpToIndex_var_samp_fields';
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Var_Samp_Order_By = {
-  readonly messageId?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Chat_ReadUpToIndex_Variance_Fields = {
-  readonly __typename?: 'chat_ReadUpToIndex_variance_fields';
-  readonly messageId?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "chat.ReadUpToIndex" */
-export type Chat_ReadUpToIndex_Variance_Order_By = {
-  readonly messageId?: Maybe<Order_By>;
-};
 
 /**
  * Subscribe to chat notifications.
@@ -25645,7 +25532,6 @@ export type Mutation_RootUpdate_Chat_Reaction_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Chat_ReadUpToIndexArgs = {
-  _inc?: Maybe<Chat_ReadUpToIndex_Inc_Input>;
   _set?: Maybe<Chat_ReadUpToIndex_Set_Input>;
   where: Chat_ReadUpToIndex_Bool_Exp;
 };
@@ -25653,7 +25539,6 @@ export type Mutation_RootUpdate_Chat_ReadUpToIndexArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Chat_ReadUpToIndex_By_PkArgs = {
-  _inc?: Maybe<Chat_ReadUpToIndex_Inc_Input>;
   _set?: Maybe<Chat_ReadUpToIndex_Set_Input>;
   pk_columns: Chat_ReadUpToIndex_Pk_Columns_Input;
 };
@@ -33017,7 +32902,7 @@ export type SubscribeChatMutationVariables = Exact<{
 }>;
 
 
-export type SubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Subscription?: Maybe<{ readonly __typename?: 'chat_Subscription_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any }> }>, readonly insert_chat_ReadUpToIndex?: Maybe<{ readonly __typename?: 'chat_ReadUpToIndex_mutation_response', readonly affected_rows: number }> };
+export type SubscribeChatMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Subscription?: Maybe<{ readonly __typename?: 'chat_Subscription_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly chatId: any, readonly attendeeId: any }> }> };
 
 export type UnsubscribeChatMutationVariables = Exact<{
   chatId: Scalars['uuid'];
@@ -36424,12 +36309,6 @@ export const SubscribeChatDocument = gql`
       chatId
       attendeeId
     }
-  }
-  insert_chat_ReadUpToIndex(
-    objects: {chatId: $chatId, attendeeId: $attendeeId, messageId: -1}
-    on_conflict: {constraint: ReadUpToIndex_pkey, update_columns: []}
-  ) {
-    affected_rows
   }
 }
     `;

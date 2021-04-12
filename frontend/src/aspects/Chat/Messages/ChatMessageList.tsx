@@ -27,12 +27,13 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
     const pageSize = config.messageBatchSize ?? 30;
 
     useEffect(() => {
-        config.state.subscribe();
+        config.state.connect();
 
         return () => {
-            config.state.unsubscribe();
+            config.state.disconnect();
         };
-    }, [config.state]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chatId]);
 
     const fetchMore = useCallback(() => {
         config.state.loadMoreMessages(pageSize);

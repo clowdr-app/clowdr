@@ -484,7 +484,7 @@ export class ChatState {
     }
 
     public async teardown(): Promise<void> {
-        await this.unsubscribe(true);
+        await this.applyDisconnect();
     }
 
     public get Id(): string {
@@ -791,16 +791,25 @@ export class ChatState {
     }
 
     private subMutex = new Mutex();
-    public subCount = 0;
-    public lastUnsubscribe: number | null = null;
-    public async subscribe(): Promise<void> {
+    private _connectionCount = 0;
+    public get connectionCount(): number {
+        return this._connectionCount;
+    }
+    public set connectionCount(value: number) {
+        if (value < 0) {
+            console.error(`Chat connection count < 0! ${this.Id} @ ${value}`);
+        }
+        this._connectionCount = value;
+    }
+    public lastDisconnect: number | null = null;
+    public async connect(): Promise<void> {
         const release = await this.subMutex.acquire();
 
         try {
-            this.subCount++;
-            this.lastUnsubscribe = null;
-            if (this.subCount === 1) {
-                this.reestablishSubscription();
+            this.connectionCount++;
+            this.lastDisconnect = null;
+            if (this.connectionCount === 1) {
+                await this.applyConnect(false);
             }
         } catch (e) {
             console.error(`Error subscribing to chat: ${this.Id}`, e);
@@ -808,51 +817,58 @@ export class ChatState {
             release();
         }
     }
-    public reestablishSubscription(): void {
-        if (this.subCount > 0) {
-            const socket = this.globalState.socket;
-            socket?.emit("chat.subscribe", this.Id);
-        }
-    }
-    public async unsubscribe(force = false): Promise<void> {
+    public async disconnect(): Promise<void> {
         const release = await this.subMutex.acquire();
 
         try {
-            this.lastUnsubscribe = Date.now();
-            this.subCount--;
-            if (force) {
-                this.doUnsubscribe(true);
-            } else {
-                this.globalState.onChatChannelUnsubscribe();
-            }
-            if (this.subCount < 0) {
-                if (!force) {
-                    console.warn(
-                        "Chat sub count went negative..hmmm...suggests the ref count is going out of sync somehow.",
-                        this.subCount
-                    );
-                }
-                this.subCount = 0;
-            }
+            this.lastDisconnect = Date.now();
+            this.connectionCount--;
         } catch (e) {
             console.error(`Error unsubscribing from chat: ${this.Id}`, e);
         } finally {
             release();
         }
+
+        this.globalState.onChatChannelDisconnect();
     }
-    public async doUnsubscribe(force = false): Promise<void> {
-        if (this.subCount === 0 || force) {
+    public async applyConnect(takeLock = true): Promise<void> {
+        const release = takeLock ? await this.subMutex.acquire() : undefined;
+
+        try {
+            if (this.connectionCount <= 0) {
+                console.warn(`Applying chat connect when connection count <= 0! ${this.Id} @ ${this.connectionCount}`);
+            }
+
+            const socket = this.globalState.socket;
+            socket?.emit("chat.subscribe", this.Id);
+        } finally {
+            release?.();
+        }
+    }
+    public async applyDisconnect(): Promise<boolean> {
+        const release = await this.subMutex.acquire();
+
+        try {
+            if (this.connectionCount > 0) {
+                return false;
+            }
+
             const socket = this.globalState.socket;
             socket?.emit("chat.unsubscribe", this.Id);
 
-            const release = await this.messagesMutex.acquire();
+            const releaseInner = await this.messagesMutex.acquire();
             try {
                 this.messages.clear();
+                this.messagesObs.publish({ op: "initial", messages: [] });
                 this.lastHistoricallyFetchedMessageId = Math.pow(2, 31) - 1;
                 this.fetchMoreAttempts = 0;
             } finally {
-                release();
+                releaseInner();
             }
+
+            return true;
+        } finally {
+            release();
         }
     }
 
@@ -1401,7 +1417,7 @@ export class GlobalChatState {
 
                         if (this.chatStates) {
                             for (const chatState of this.chatStates) {
-                                chatState[1].reestablishSubscription();
+                                chatState[1].applyConnect();
                             }
                         }
                     });
@@ -1538,47 +1554,46 @@ export class GlobalChatState {
 
     private readonly oldChatTimeoutPeriodMs = 15 * 1000; // 15 seconds
     private readonly maxNotSubscribedListeningChats = 5;
-    public async onChatChannelUnsubscribe(): Promise<void> {
-        await this.unsubscribeOldOrExcess();
+    public async onChatChannelDisconnect(): Promise<void> {
+        await this.disconnectOldOrExcess();
 
         setTimeout(() => {
-            this.unsubscribeOldOrExcess();
+            this.disconnectOldOrExcess();
         }, this.oldChatTimeoutPeriodMs);
     }
-    private async unsubscribeOldOrExcess(): Promise<void> {
+    private async disconnectOldOrExcess(): Promise<void> {
         if (this.chatStates) {
             const cutoff = Date.now() - this.oldChatTimeoutPeriodMs;
             const possiblyDeadChats = [...this.chatStates.values()]
-                .filter((x) => x.subCount === 0)
+                .filter((x) => x.connectionCount <= 0)
                 .sort((x, y) =>
-                    !x.lastUnsubscribe && !y.lastUnsubscribe
+                    !x.lastDisconnect && !y.lastDisconnect
                         ? 0
-                        : !x.lastUnsubscribe
+                        : !x.lastDisconnect
                         ? 1
-                        : !y.lastUnsubscribe
+                        : !y.lastDisconnect
                         ? -1
-                        : y.lastUnsubscribe - x.lastUnsubscribe
+                        : y.lastDisconnect - x.lastDisconnect
                 );
             const excessDeadChats = possiblyDeadChats.slice(this.maxNotSubscribedListeningChats);
             const oldDeadChats = possiblyDeadChats
                 .slice(0, this.maxNotSubscribedListeningChats)
-                .filter((x) => x.lastUnsubscribe && x.lastUnsubscribe < cutoff);
+                .filter((x) => x.lastDisconnect && x.lastDisconnect < cutoff);
             const allDeadChats = [...excessDeadChats, ...oldDeadChats];
 
             const release = await this.mutex.acquire();
 
             try {
+                const states = this.chatStates;
                 await Promise.all(
                     allDeadChats.map(async (chat) => {
-                        await chat.unsubscribe(true);
+                        if (await chat.applyDisconnect()) {
+                            if (!chat.isPinned) {
+                                states.delete(chat.Id);
+                            }
+                        }
                     })
                 );
-                const states = this.chatStates;
-                allDeadChats.forEach((chat) => {
-                    if (!chat.isPinned) {
-                        states.delete(chat.Id);
-                    }
-                });
                 this.chatStatesObs.publish(states);
             } catch (e) {
                 console.error("One or more errors tearing down old chats", e);

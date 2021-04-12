@@ -9,7 +9,7 @@ export default function AttendeeExtraInfo({ attendee, ...rest }: { attendee: Att
         attendee.profile.website ||
         attendee.profile.twitter ||
         attendee.profile.github ? (
-        <Grid gridTemplateColumns="auto auto" gap={4} alignSelf="flex-start" pl={4} {...rest}>
+        <Grid gridTemplateColumns="auto auto" gap={4} alignSelf="flex-start" {...rest}>
             {attendee.profile.timezoneUTCOffset !== undefined && attendee.profile.timezoneUTCOffset !== null ? (
                 <>
                     <GridItem fontWeight="600">Timezone</GridItem>
@@ -25,14 +25,14 @@ export default function AttendeeExtraInfo({ attendee, ...rest }: { attendee: Att
             {attendee.profile.country ? (
                 <>
                     <GridItem fontWeight="600">Country</GridItem>
-                    <GridItem>{attendee.profile.country}</GridItem>
+                    <GridItem overflowWrap="break-word">{attendee.profile.country}</GridItem>
                 </>
             ) : undefined}
             {attendee.profile.website ? (
                 <>
                     <GridItem fontWeight="600">Website</GridItem>
-                    <GridItem>
-                        <Link isExternal href={`https://${attendee.profile.website}`}>
+                    <GridItem overflowWrap="anywhere">
+                        <Link isExternal href={`https://${attendee.profile.website}`} overflowWrap="anywhere">
                             {attendee.profile.website}
                             &nbsp;
                             <chakra.sup>
@@ -45,8 +45,12 @@ export default function AttendeeExtraInfo({ attendee, ...rest }: { attendee: Att
             {attendee.profile.twitter ? (
                 <>
                     <GridItem fontWeight="600">Twitter</GridItem>
-                    <GridItem>
-                        <Link isExternal href={`https://twitter.com/${attendee.profile.twitter}`}>
+                    <GridItem overflowWrap="anywhere">
+                        <Link
+                            isExternal
+                            href={`https://twitter.com/${attendee.profile.twitter}`}
+                            overflowWrap="anywhere"
+                        >
                             @{attendee.profile.twitter}
                             &nbsp;
                             <chakra.sup>
@@ -59,8 +63,8 @@ export default function AttendeeExtraInfo({ attendee, ...rest }: { attendee: Att
             {attendee.profile.github ? (
                 <>
                     <GridItem fontWeight="600">GitHub</GridItem>
-                    <GridItem>
-                        <Link isExternal href={`https://github.com/${attendee.profile.github}`}>
+                    <GridItem overflowWrap="anywhere">
+                        <Link isExternal href={`https://github.com/${attendee.profile.github}`} overflowWrap="anywhere">
                             {attendee.profile.github}
                             &nbsp;
                             <chakra.sup>

@@ -87,7 +87,7 @@ export default function ProfileModal({
         <Portal>
             <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="inside">
                 <ModalOverlay />
-                <ModalContent maxW={350}>
+                <ModalContent maxW={350} pb={4}>
                     <ModalHeader>
                         {attendee ? (
                             <>
@@ -172,7 +172,7 @@ export default function ProfileModal({
                                         <Markdown restrictHeadingSize>{attendee.profile.bio}</Markdown>
                                     </Box>
                                 ) : undefined}
-                                <AttendeeExtraInfo attendee={attendee} mb={4} />
+                                <AttendeeExtraInfo attendee={attendee} mb={4} px={2} maxW="100%" />
                             </VStack>
                         ) : (
                             <Spinner label="Loading attendee profile, please wait" />

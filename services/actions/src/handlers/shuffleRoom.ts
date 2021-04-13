@@ -70,7 +70,7 @@ gql`
     }
 
     query SelectActiveShufflePeriods($from: timestamptz!, $until: timestamptz!) {
-        room_ShufflePeriod(where: { startAt: { _lte: $from }, endAt: { _gte: $until } }) {
+        room_ShufflePeriod(where: { startAt: { _lte: $until }, endAt: { _gte: $from } }) {
             ...ActiveShufflePeriod
         }
     }

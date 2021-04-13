@@ -332,6 +332,8 @@ type JoinRoomChimeSessionOutput {
   meeting : jsonb
   attendee : jsonb
   message : String
+}
+
 type VAPIDPublicKeyOutput {
   key : String!
 }

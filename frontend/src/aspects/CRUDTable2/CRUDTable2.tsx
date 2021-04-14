@@ -1460,15 +1460,14 @@ export default function CRUDTable<T>({
                     <chakra.span flexBasis="auto" flexShrink={0}>
                         | Go to page:{" "}
                     </chakra.span>
-                    <NumberInput>
-                        <NumberInputField
-                            defaultValue={pageIndex ? pageIndex + 1 : 0}
-                            onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                goToPage(page);
-                            }}
-                            style={{ width: "100px" }}
-                        />
+                    <NumberInput
+                        defaultValue={pageIndex ? pageIndex + 1 : 0}
+                        onChange={(value) => {
+                            const page = value ? Number(value) - 1 : 0;
+                            goToPage(page);
+                        }}
+                    >
+                        <NumberInputField style={{ width: "100px" }} />
                     </NumberInput>
                 </HStack>
                 <Select

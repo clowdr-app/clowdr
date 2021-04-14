@@ -36,8 +36,8 @@ import { TextBodyMiddleware } from "./text-body.middleware";
             useFactory: async (configService: ConfigService) => {
                 const accessKeyId = configService.get<string>("AWS_ACCESS_KEY_ID");
                 assert(accessKeyId, "Missing AWS_ACCESS_KEY_ID");
-                const secretAccessKey = configService.get<string>("AWS_SECRET_ACCESS_KEY");
-                assert(secretAccessKey, "Missing AWS_SECRET_ACCESS_KEY");
+                const secretAccessKey = configService.get<string>("AWS_ACTIONS_USER_ACCESS_KEY");
+                assert(secretAccessKey, "Missing AWS_ACTIONS_USER_ACCESS_KEY");
                 const region = configService.get<string>("AWS_REGION");
                 assert(region, "Missing AWS_REGION");
 

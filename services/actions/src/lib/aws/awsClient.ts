@@ -9,15 +9,26 @@ import { S3 } from "@aws-sdk/client-s3";
 import { SNS } from "@aws-sdk/client-sns";
 import { AssumeRoleCommand, STS } from "@aws-sdk/client-sts";
 import { Transcribe } from "@aws-sdk/client-transcribe";
-import { fromEnv } from "@aws-sdk/credential-provider-env";
 import { Credentials } from "@aws-sdk/types/types/credentials";
 import assert from "assert";
 import { customAlphabet } from "nanoid";
 import { getHostUrl } from "../../utils";
+import { fromEnv } from "./credentialProviders";
 
 assert(process.env.AWS_PREFIX, "Missing AWS_PREFIX environment variable");
-assert(process.env.AWS_ACCESS_KEY_ID, "Missing AWS_ACCESS_KEY_ID environment variable");
-assert(process.env.AWS_SECRET_ACCESS_KEY, "Missing AWS_SECRET_ACCESS_KEY environment variable");
+assert(process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID, "Missing AWS_ACTIONS_USER_ACCESS_KEY_ID environment variable");
+assert(
+    process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
+    "Missing AWS_ACTIONS_USER_SECRET_ACCESS_KEY environment variable"
+);
+assert(
+    process.env.AWS_CHIME_ACTIONS_USER_ACCESS_KEY_ID,
+    "Missing AWS_CHIME_ACTIONS_USER_ACCESS_KEY_ID environment variable"
+);
+assert(
+    process.env.AWS_CHIME_ACTIONS_USER_SECRET_ACCESS_KEY,
+    "Missing AWS_CHIME_ACTIONS_USER_SECRET_ACCESS_KEY environment variable"
+);
 
 assert(process.env.AWS_REGION, "Missing AWS_REGION environment variable");
 assert(process.env.AWS_MEDIALIVE_SERVICE_ROLE_ARN, "Missing AWS_MEDIALIVE_SERVICE_ROLE_ARN environment variable");
@@ -53,7 +64,14 @@ assert(
     "Missing AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN environment variable"
 );
 
-const credentials = fromEnv();
+const credentials = fromEnv({
+    envKey: "AWS_ACTIONS_USER_ACCESS_KEY_ID",
+    envSecret: "AWS_ACTIONS_USER_SECRET_ACCESS_KEY",
+});
+const chimeUserCredentials = fromEnv({
+    envKey: "AWS_CHIME_ACTIONS_USER_ACCESS_KEY_ID",
+    envSecret: "AWS_CHIME_ACTIONS_USER_SECRET_ACCESS_KEY",
+});
 const region = process.env.AWS_REGION;
 
 const iam = new IAM({
@@ -70,6 +88,11 @@ const s3 = new S3({
 const sns = new SNS({
     credentials,
     region,
+});
+
+const snsChime = new SNS({
+    credentials: chimeUserCredentials,
+    region: "us-east-1",
 });
 
 const transcribe = new Transcribe({
@@ -248,6 +271,26 @@ async function initialiseAwsClient(): Promise<void> {
 
     if (!mediaPackageHarvestSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to MediaPackage harvest notifications");
+    }
+
+    // Subscribe to Chime SNS topic
+    const chimeNotificationUrl = new URL(getHostUrl());
+    chimeNotificationUrl.pathname = "/chime/notify";
+
+    if (process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN) {
+        console.log("Subscribing to SNS topic: Chime notifications");
+        const chimeSubscribeResult = await snsChime.subscribe({
+            Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
+            TopicArn: process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN,
+            Endpoint: chimeNotificationUrl.toString(),
+        });
+        console.log("Subscribed to SNS topic: Chime notifications");
+
+        if (!chimeSubscribeResult.SubscriptionArn) {
+            throw new Error("Could not subscribe to Chime notifications");
+        }
+    } else {
+        console.warn("Not subscribing to SNS topic: Chime notifications (AWS_CHIME_NOTIFICATIONS_TOPIC_ARN not set)");
     }
 }
 

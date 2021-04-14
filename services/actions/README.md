@@ -151,7 +151,7 @@ You will not have the information required for all environment variables yet. Se
 | HOST_DOMAIN                                      | The public domain of the actions service (e.g. your actions Packetriot/ngrok URL)                                             |          | Yes            |
 | AWS_PREFIX                                       | The deployment prefix you are using for your AWS deployment. Same as `clowdr/stackPrefix` in the `cdk.context.json`           |          |
 | AWS_ACCESS_KEY_ID                                | The access key ID for your AWS user                                                                                           | Yes      |
-| AWS_SECRET_ACCESS_KEY                            | The secret access key for your AWS user                                                                                       | Yes      |
+| AWS_ACTIONS_USER_ACCESS_KEY_ID                   | The secret access key for your AWS user                                                                                       | Yes      |
 | AWS_REGION                                       | The AWS region to operate in                                                                                                  | Yes      |
 | AWS_CONTENT_BUCKET_ID                            | The S3 bucket ID for content storage                                                                                          | Yes      |
 | AWS_CHIME_MANAGER_ROLE_ARN                       | The IAM role providing management access to Amazon Chime                                                                      | Yes      |                |

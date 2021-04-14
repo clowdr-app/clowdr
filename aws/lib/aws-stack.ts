@@ -297,7 +297,7 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
-        events.EventBus.grantPutEvents(new iam.ServicePrincipal("mediaconvert.amazonaws.com"));
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("mediaconvert.amazonaws.com"));
         const mediaConvertEventRule = new events.Rule(this, "TranscodeEventRule", {
             enabled: true,
         });
@@ -463,11 +463,11 @@ export class AwsStack extends cdk.Stack {
         });
 
         // Actions service access key
-        new cdk.CfnOutput(this, "AccessKeyId", {
+        new cdk.CfnOutput(this, "ActionsUserAccessKeyId", {
             value: accessKey.ref,
         });
 
-        new cdk.CfnOutput(this, "SecretAccessKey", {
+        new cdk.CfnOutput(this, "ActionsUserSecretAccessKey", {
             value: accessKey.attrSecretAccessKey,
         });
 

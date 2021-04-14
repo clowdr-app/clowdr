@@ -1,11 +1,100 @@
-import { json } from "body-parser";
+import { json, text } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleJoinRoom } from "../handlers/chime";
+import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
+import { ChimeAttendeeJoinedDetail, ChimeAttendeeLeftDetail, ChimeEventBase } from "../types/chime";
 import { ActionPayload } from "../types/hasura/action";
 
 export const router = express.Router();
+
+// Unprotected routes
+router.post("/notify", text(), async (req: Request, res: Response) => {
+    console.log(req.originalUrl);
+
+    try {
+        const message = await validateSNSNotification(req.body);
+        if (!message) {
+            res.status(403).json("Access denied");
+            return;
+        }
+
+        if (message.TopicArn !== process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN) {
+            console.log("Received SNS notification for the wrong topic", {
+                originalUrl: req.originalUrl,
+                topicArn: message.TopicArn,
+            });
+            res.status(403).json("Access denied");
+            return;
+        }
+
+        const subscribed = await tryConfirmSubscription(message);
+        if (subscribed) {
+            res.status(200).json("OK");
+            return;
+        }
+
+        if (message.Type === "Notification") {
+            console.log("Received SNS notification", {
+                originalUrl: req.originalUrl,
+                messageId: message.MessageId,
+                message: message.Message,
+            });
+
+            let event: ChimeEventBase;
+            try {
+                event = JSON.parse(message.Message);
+                assertType<ChimeEventBase>(event);
+            } catch (err) {
+                console.error("Unrecognised notification message", { originalUrl: req.originalUrl, err });
+                res.status(500).json("Unrecognised notification message");
+                return;
+            }
+
+            if (event.detail.eventType === "chime:AttendeeLeft") {
+                const detail: ChimeAttendeeLeftDetail = event.detail;
+                try {
+                    assertType<ChimeAttendeeLeftDetail>(event.detail);
+                } catch (err) {
+                    console.error("Invalid SNS event detail", {
+                        eventType: "chime:AttendeeLeft",
+                        eventDetail: event.detail,
+                    });
+                    res.status(500).json("Invalid event detail");
+                    return;
+                }
+
+                console.log("Attendee left", { eventDetail: detail });
+                res.status(200).json("OK");
+                return;
+            }
+
+            if (event.detail.eventType === "chime:AttendeeJoined") {
+                const detail: ChimeAttendeeJoinedDetail = event.detail;
+                try {
+                    assertType<ChimeAttendeeJoinedDetail>(event.detail);
+                } catch (err) {
+                    console.error("Invalid SNS event detail", {
+                        eventType: "chime:AttendeeJoined",
+                        eventDetail: event.detail,
+                    });
+                    res.status(500).json("Invalid event detail");
+                    return;
+                }
+
+                console.log("Attendee joined", { eventDetail: detail });
+                res.status(200).json("OK");
+                return;
+            }
+
+            res.status(200).json("OK");
+        }
+    } catch (err) {
+        console.error("Failed to handle request", { originalUrl: req.originalUrl, err });
+        res.status(500).json("Failure");
+    }
+});
 
 // Protected routes
 router.use(checkEventSecret);

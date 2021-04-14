@@ -1,5 +1,5 @@
 import { MediaConvertEvent, TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
-import bodyParser from "body-parser";
+import { text } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { completeCombineVideosJob, failCombineVideosJob } from "../handlers/combineVideosJob";
@@ -9,7 +9,7 @@ import { completePreviewTranscode, failPreviewTranscode } from "../lib/transcode
 export const router = express.Router();
 
 // Unprotected routes
-router.post("/notify", bodyParser.text(), async (req: Request, res: Response) => {
+router.post("/notify", text(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
 
     try {

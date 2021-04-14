@@ -1,9 +1,20 @@
-import { chakra, HStack, Input, NumberInput, NumberInputField, Select } from "@chakra-ui/react";
+import {
+    Button,
+    Center,
+    chakra,
+    Checkbox,
+    HStack,
+    Input,
+    NumberInput,
+    NumberInputField,
+    Select,
+} from "@chakra-ui/react";
 import React from "react";
 import { DateTimePicker } from "../CRUDTable/DateTimePicker";
+import { FAIcon } from "../Icons/FAIcon";
 import type { FilterFunction, FilterProps } from "./CRUDTable2";
 
-// // Define a default UI for filtering
+// Define a default UI for filtering
 export function TextColumnFilter({ value, onChange, onBlur }: FilterProps<string>): JSX.Element {
     return (
         <Input
@@ -15,6 +26,36 @@ export function TextColumnFilter({ value, onChange, onBlur }: FilterProps<string
             onBlur={onBlur}
             placeholder="Search..."
         />
+    );
+}
+
+export function CheckBoxColumnFilter({ value, onChange, onBlur }: FilterProps<boolean>): JSX.Element {
+    return (
+        <Center justifyContent="center" alignItems="center" minH="5ex">
+            <Checkbox
+                size="sm"
+                isChecked={value === true}
+                isIndeterminate={value === null}
+                onChange={(e) => {
+                    onChange(e.target.indeterminate ? null : e.target.checked);
+                }}
+                onBlur={onBlur}
+            />
+            <Button
+                aria-label="Clear filter"
+                onClick={() => {
+                    onChange(null);
+                }}
+                variant="ghost"
+                size="xs"
+                rounded="full"
+                ml={1}
+                p={0}
+                isDisabled={value === null}
+            >
+                <FAIcon iconStyle="s" icon="ban" />
+            </Button>
+        </Center>
     );
 }
 
@@ -92,15 +133,16 @@ export function NumberRangeColumnFilter(min: number, max: number) {
     }>): JSX.Element {
         return (
             <HStack justifyContent="center">
-                <NumberInput size="sm">
+                <NumberInput
+                    size="sm"
+                    value={value?.min ?? ""}
+                    onChange={(val) => {
+                        onChange({ min: val !== "" ? parseInt(val, 10) : undefined, max: value?.max });
+                    }}
+                    placeholder={`Min (${min})`}
+                >
                     <NumberInputField
-                        value={value?.min ?? ""}
-                        onChange={(e) => {
-                            const val = e.target.value;
-                            onChange({ min: val !== "" ? parseInt(val, 10) : undefined, max: value?.max });
-                        }}
                         onBlur={onBlur}
-                        placeholder={`Min (${min})`}
                         style={{
                             width: "70px",
                             marginRight: "0.5rem",
@@ -108,15 +150,16 @@ export function NumberRangeColumnFilter(min: number, max: number) {
                     />
                 </NumberInput>
                 <chakra.span>to</chakra.span>
-                <NumberInput size="sm">
+                <NumberInput
+                    size="sm"
+                    value={value?.max ?? ""}
+                    onChange={(val) => {
+                        onChange({ max: val !== "" ? parseInt(val, 10) : undefined, min: value?.min });
+                    }}
+                    placeholder={`Max (${max})`}
+                >
                     <NumberInputField
-                        value={value?.max ?? ""}
-                        onChange={(e) => {
-                            const val = e.target.value;
-                            onChange({ max: val !== "" ? parseInt(val, 10) : undefined, min: value?.min });
-                        }}
                         onBlur={onBlur}
-                        placeholder={`Max (${max})`}
                         style={{
                             width: "70px",
                             marginLeft: "0.5rem",

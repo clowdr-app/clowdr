@@ -346,7 +346,7 @@ function CRUDRow<T>({
     }
     const selectEl = useMemo(() => {
         const canSelect = row.canSelect?.(record) ?? true;
-        return onSelectChange || getIsSelectedRef || setIsSelectedRef ? (
+        return onSelectChange && (getIsSelectedRef || setIsSelectedRef) ? (
             <Td size="sm" padding={1}>
                 <Tooltip label={canSelect !== true ? canSelect : undefined}>
                     <Center w="100%" h="100%" padding={0}>
@@ -1272,12 +1272,14 @@ export default function CRUDTable<T>({
     const startDelete = deleteProps?.start;
     const keysToDelete = useRef<string[]>([]);
     const { isOpen: isDeleteConfirmOpen, onOpen: onDeleteConfirmOpen, onClose: onDeleteConfirmClose } = useDisclosure();
-    const beginDeleteRecords = useCallback(
-        (keys: string[]) => {
-            keysToDelete.current = keys;
-            onDeleteConfirmOpen();
-        },
-        [onDeleteConfirmOpen]
+    const beginDeleteRecords = useMemo(
+        () =>
+            startDelete &&
+            ((keys: string[]) => {
+                keysToDelete.current = keys;
+                onDeleteConfirmOpen();
+            }),
+        [onDeleteConfirmOpen, startDelete]
     );
     const deleteRecords = useCallback(() => {
         const keys = keysToDelete.current;

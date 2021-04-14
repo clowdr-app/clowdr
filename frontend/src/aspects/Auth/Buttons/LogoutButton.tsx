@@ -8,7 +8,7 @@ export default function LogoutButton({ asMenuItem }: { asMenuItem?: boolean }): 
     const returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-out";
 
     return asMenuItem ? (
-        <MenuItem size="sm" onClick={() => logout({ returnTo })} colorScheme="red">
+        <MenuItem size="sm" onClick={() => logout({ returnTo })}>
             <FAIcon iconStyle="s" icon="sign-out-alt" mr={2} aria-hidden={true} /> Log Out
         </MenuItem>
     ) : (

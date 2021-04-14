@@ -873,10 +873,10 @@ function computeFilteredData<T>(
 function computePaginatedData<T>(
     row: RowSpecification<T>,
     pageIndex: PageIndex,
-    pageSize: number,
+    pageSize: number | "all",
     inputData: T[] | null | false
 ) {
-    if (inputData && row.pages) {
+    if (inputData && row.pages && pageSize !== "all") {
         if (pageIndex === null) {
             // Default page
             if (row.pages.defaultToLast) {
@@ -898,9 +898,13 @@ function computePaginatedData<T>(
     }
 }
 
-function clampPageIndex<T>(data: T[] | null | false, pageSize: number, index: PageIndex) {
-    const pageCount = data ? Math.ceil(data.length / pageSize) : 1;
-    return index !== null ? Math.max(0, Math.min(pageCount - 1, index)) : null;
+function clampPageIndex<T>(data: T[] | null | false, pageSize: number | "all", index: PageIndex) {
+    if (pageSize === "all") {
+        return index !== null ? 1 : null;
+    } else {
+        const pageCount = data ? Math.ceil(data.length / pageSize) : 1;
+        return index !== null ? Math.max(0, Math.min(pageCount - 1, index)) : null;
+    }
 }
 
 function mergeData<T>(
@@ -1036,6 +1040,8 @@ export default function CRUDTable<T>({
     edit: editProps,
     update: updateProps,
     delete: deleteProps,
+
+    pageSizes = [10, 20, 30, 40, 50, "all"],
 }: {
     data: false | T[] | null;
     alert?: {
@@ -1069,6 +1075,8 @@ export default function CRUDTable<T>({
         ongoing: boolean;
     };
 
+    pageSizes?: (number | "all")[];
+
     // TODO: Undo callback
     // TODO: Ongoing state of Undo
 
@@ -1086,11 +1094,11 @@ export default function CRUDTable<T>({
     );
     const [filterColumns, setFilterColumns] = useState<Filters>({});
     const [pageIndex, setPageIndex] = useState<PageIndex>(null);
-    const [pageSize, setPageSize] = useRestorableState<number>(
+    const [pageSize, setPageSize] = useRestorableState<number | "all">(
         `CRUDTable_PageSize_${tableUniqueName}`,
         10,
-        (x) => x.toString(),
-        (x) => parseInt(x, 10)
+        (x) => (x === "all" ? "all" : x.toString()),
+        (x) => (x === "all" ? pageSizes[0] : parseInt(x, 10))
     );
 
     const [sortedData, setSortedData] = useState<T[] | null | false>(false);
@@ -1336,7 +1344,7 @@ export default function CRUDTable<T>({
         ]
     );
 
-    const pageCount = data && row.pages ? Math.ceil(data.length / pageSize) : 1;
+    const pageCount = filteredData && row.pages && pageSize !== "all" ? Math.ceil(filteredData.length / pageSize) : 1;
     const pageNumber = pageIndex !== null ? pageIndex + 1 : row.pages?.defaultToLast ? pageCount : 1;
     const canPreviousPage = pageNumber > 1;
     const canNextPage = pageNumber < pageCount;
@@ -1464,11 +1472,11 @@ export default function CRUDTable<T>({
                 <Select
                     value={pageSize}
                     onChange={(e) => {
-                        setPageSize(Number(e.target.value));
+                        setPageSize(e.target.value === "all" ? "all" : Number(e.target.value));
                     }}
                     maxW={125}
                 >
-                    {[10, 20, 30, 40, 50].map((pageSize) => (
+                    {pageSizes.map((pageSize) => (
                         <option key={pageSize} value={pageSize}>
                             Show {pageSize}
                         </option>

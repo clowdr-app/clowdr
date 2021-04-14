@@ -22,7 +22,7 @@ import ManageConferenceExportPage from "./Manage/ManageConferenceExportPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
 import ManageConferenceImportPage from "./Manage/ManageConferenceImportPage";
 import ManageConferenceNamePage from "./Manage/ManageConferenceNamePage";
-import ManageConferencePeoplePage from "./Manage/ManageConferencePeoplePage";
+import ManageConferenceRegistrantsPage from "./Manage/ManageConferenceRegistrantsPage";
 import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
 import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
 import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";
@@ -86,8 +86,8 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             <Route path={`${rootUrl}/manage/groups`}>
                 <ManageConferenceGroupsPage />
             </Route>
-            <Route path={`${rootUrl}/manage/people`}>
-                <ManageConferencePeoplePage />
+            <Route path={`${rootUrl}/manage/registrants`}>
+                <ManageConferenceRegistrantsPage />
             </Route>
             <Route path={`${rootUrl}/manage/content`}>
                 <ManageConferenceContentPage />

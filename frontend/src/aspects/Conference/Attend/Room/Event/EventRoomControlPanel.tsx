@@ -14,14 +14,9 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import {
-    Permission_Enum,
-    RoomEventDetailsFragment,
-    useGetEventParticipantStreamsSubscription,
-} from "../../../../../generated/graphql";
+import { RoomEventDetailsFragment, useGetEventParticipantStreamsSubscription } from "../../../../../generated/graphql";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
 import { BroadcastControlPanel } from "./BroadcastControlPanel";
 import { LiveIndicator } from "./LiveIndicator";
 import { useEventLiveStatus } from "./useEventLiveStatus";
@@ -78,43 +73,37 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
         <Box height="100%" p={2}>
             <LiveIndicator event={event} />
 
-            <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceManageSchedule]}>
-                <Popover placement="auto-end">
-                    <PopoverTrigger>
-                        <VStack>
-                            <Button
-                                aria-label="Advanced broadcast controls"
-                                title="Advanced broadcast controls"
-                                textAlign="center"
-                                mt={4}
-                            >
-                                <FAIcon icon="toolbox" iconStyle="s" />
-                            </Button>
-                        </VStack>
-                    </PopoverTrigger>
-                    <Portal>
-                        <Box zIndex="500" position="relative">
-                            <PopoverContent>
-                                <PopoverArrow />
-                                <PopoverCloseButton />
-                                <PopoverHeader>Broadcast controls</PopoverHeader>
-                                <PopoverBody>
-                                    {streamsError ? (
-                                        <>Error loading streams.</>
-                                    ) : streamsLoading ? (
-                                        <Spinner />
-                                    ) : undefined}
-                                    <BroadcastControlPanel
-                                        live={live}
-                                        streams={streamsData?.EventParticipantStream ?? null}
-                                        eventVonageSessionId={event.eventVonageSession?.id ?? null}
-                                    />
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Box>
-                    </Portal>
-                </Popover>
-            </RequireAtLeastOnePermissionWrapper>
+            <Popover placement="auto-end">
+                <PopoverTrigger>
+                    <VStack>
+                        <Button
+                            aria-label="Advanced broadcast controls"
+                            title="Advanced broadcast controls"
+                            textAlign="center"
+                            mt={4}
+                        >
+                            <FAIcon icon="toolbox" iconStyle="s" />
+                        </Button>
+                    </VStack>
+                </PopoverTrigger>
+                <Portal>
+                    <Box zIndex="500" position="relative">
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverCloseButton />
+                            <PopoverHeader>Broadcast controls</PopoverHeader>
+                            <PopoverBody>
+                                {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
+                                <BroadcastControlPanel
+                                    live={live}
+                                    streams={streamsData?.EventParticipantStream ?? null}
+                                    eventVonageSessionId={event.eventVonageSession?.id ?? null}
+                                />
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Box>
+                </Portal>
+            </Popover>
         </Box>
     );
 }

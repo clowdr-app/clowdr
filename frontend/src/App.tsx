@@ -100,13 +100,14 @@ function AppPage({ rootUrl }: AppProps) {
 
     const bgColour = useColorModeValue("gray.50", "gray.900");
 
+    const isAdminPage = !!useRouteMatch("/conference/:confSlug/manage/");
     const leftDefaultVisible = useBreakpointValue({
         base: false,
-        lg: true,
+        lg: !isAdminPage,
     });
     const rightDefaultVisible = useBreakpointValue({
         base: false,
-        xl: true,
+        xl: !isAdminPage,
     });
     const centerAlwaysVisible = useBreakpointValue({
         base: false,

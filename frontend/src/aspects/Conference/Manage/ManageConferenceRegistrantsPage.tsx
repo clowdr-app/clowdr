@@ -20,6 +20,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import assert from "assert";
+import Papa from "papaparse";
 import React, { LegacyRef, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -644,13 +645,105 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
             },
             {
+                render: (selectedData) => {
+                    function doExport(dataToExport: AttendeeDescriptor[]) {
+                        const csvText = Papa.unparse(
+                            dataToExport.map((attendee) => ({
+                                name: attendee.displayName,
+                                email: attendee.invitation?.invitedEmailAddress ?? "",
+                                groups: attendee.groupAttendees.map(
+                                    (x) => allGroups?.Group.find((g) => g.id === x.groupId)?.name ?? "<Unrecognised>"
+                                ),
+                            }))
+                        );
+
+                        const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+                        let csvURL: string | null = null;
+                        const now = new Date();
+                        const fileName = `${now.getFullYear()}-${now
+                            .getMonth()
+                            .toString()
+                            .padStart(2, "0")}-${now
+                            .getDate()
+                            .toString()
+                            .padStart(2, "0")}T${now
+                            .getHours()
+                            .toString()
+                            .padStart(2, "0")}-${now
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")} - Clowdr Registrants.csv`;
+                        if (navigator.msSaveBlob) {
+                            navigator.msSaveBlob(csvData, fileName);
+                        } else {
+                            csvURL = window.URL.createObjectURL(csvData);
+                        }
+
+                        const tempLink = document.createElement("a");
+                        tempLink.href = csvURL ?? "";
+                        tempLink.setAttribute("download", fileName);
+                        tempLink.click();
+                    }
+
+                    const tooltip = (filler: string) => `Exports the name, email and groups of ${filler}.`;
+                    if (selectedData.length === 0) {
+                        return (
+                            <Menu>
+                                <Tooltip label={tooltip("all registrants (from a chosen group)")}>
+                                    <MenuButton as={Button} colorScheme="green" rightIcon={<ChevronDownIcon />}>
+                                        Export
+                                    </MenuButton>
+                                </Tooltip>
+                                <MenuList>
+                                    {enabledGroups?.length ? (
+                                        <MenuGroup title="Enabled groups">
+                                            <MenuOptionGroup></MenuOptionGroup>
+                                            {enabledGroups.map((group) => (
+                                                <MenuItem
+                                                    key={group.id}
+                                                    onClick={() => {
+                                                        doExport(
+                                                            data.filter((a) =>
+                                                                a.groupAttendees.some((ga) => ga.groupId === group.id)
+                                                            )
+                                                        );
+                                                    }}
+                                                >
+                                                    {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : (
+                                        <Text px={2}>No groups enabled.</Text>
+                                    )}
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip label={tooltip("selected attendees")}>
+                                <Box>
+                                    <Button
+                                        colorScheme="green"
+                                        isDisabled={selectedData.length === 0}
+                                        onClick={() => doExport(selectedData)}
+                                    >
+                                        Export
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+                        );
+                    }
+                },
+            },
+            {
                 render: function SendInitialInvitesButton(selectedData) {
                     const tooltip = (filler: string, filler2: string) =>
                         `Sends invitations to ${filler} who have not already been sent an invite${filler2}.`;
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                <Tooltip label={tooltip("all attendees (from a group)", "")}>
+                                <Tooltip label={tooltip("all registrants (from a group)", "")}>
                                     <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                         Send initial invitations
                                     </MenuButton>
@@ -754,7 +847,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                <Tooltip label={tooltip("all attendees (from a group)")}>
+                                <Tooltip label={tooltip("all registrants (from a group)")}>
                                     <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                         Send repeat invitations
                                     </MenuButton>
@@ -858,7 +951,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                {/*<Tooltip label={tooltip("all attendees (from a group)")}>*/}
+                                {/*<Tooltip label={tooltip("all registrants (from a group)")}>*/}
                                 <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                     Send custom email
                                 </MenuButton>
@@ -917,7 +1010,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                     <Button
                                         colorScheme="purple"
                                         isDisabled={selectedData.length === 0}
-                                        isLoading={insertInvitationEmailJobsLoading}
                                         onClick={async () => {
                                             setSendCustomEmailAttendees(selectedData);
                                             sendCustomEmailModal.onOpen();
@@ -933,6 +1025,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
         ],
         [
+            allGroups?.Group,
             conference.id,
             conference.slug,
             data,

@@ -102,7 +102,7 @@ export interface ColumnSpecification<T, V = any, FV = V> {
 
     sort?: (valueA: V, valueB: V) => number;
 
-    cell: (props: CellProps<Partial<T>, V>) => JSX.Element;
+    cell: (props: CellProps<Partial<T>, V>) => JSX.Element | undefined;
 }
 
 export interface RowSpecification<T> {
@@ -127,6 +127,27 @@ export interface RowSpecification<T> {
     pages?: {
         defaultToLast?: boolean;
     };
+}
+
+export interface ExtraButton<T> {
+    render: (selectedData: T[]) => JSX.Element;
+}
+
+export interface Insert<T> {
+    generateDefaults: () => Partial<T>;
+    makeWhole: (partialRecord: Partial<T>) => undefined | T;
+    start: (record: T) => void;
+    ongoing: boolean;
+}
+
+export interface Update<T> {
+    start: (record: T) => void;
+    ongoing: boolean;
+}
+
+export interface Delete<_T> {
+    start: (keys: string[]) => void;
+    ongoing: boolean;
 }
 
 const CRUDCell = React.forwardRef(function CRUDCell(
@@ -215,17 +236,21 @@ const CRUDCell = React.forwardRef(function CRUDCell(
         staleRecord: record as Partial<unknown>,
     });
 
-    return isInCreate ? (
-        contents
+    return contents ? (
+        isInCreate ? (
+            contents
+        ) : (
+            <Td
+                size="sm"
+                padding={1}
+                minW="max-content"
+                style={{ backgroundColor: backgroundColor ? backgroundColorToken : undefined }}
+            >
+                {contents}
+            </Td>
+        )
     ) : (
-        <Td
-            size="sm"
-            padding={1}
-            minW="max-content"
-            style={{ backgroundColor: backgroundColor ? backgroundColorToken : undefined }}
-        >
-            {contents}
-        </Td>
+        <></>
     );
 });
 
@@ -245,6 +270,7 @@ interface CRUDRowProps<T> {
     setIsSelected?: MutableRefObject<((selected: boolean | ((x: boolean) => boolean)) => void) | null>;
 
     dependentData: Map<string, Record<string, any>>;
+    isSaved: boolean;
 }
 
 function CRUDRow<T>({
@@ -260,6 +286,7 @@ function CRUDRow<T>({
     getIsSelected: getIsSelectedRef,
     setIsSelected: setIsSelectedRef,
     dependentData,
+    isSaved,
 }: CRUDRowProps<T>): JSX.Element {
     const refs = useMemo(() => columns.map((_column) => React.createRef<HTMLElement>()), [columns]);
     const doFocusOnColumn = useCallback(
@@ -278,6 +305,13 @@ function CRUDRow<T>({
     }, [record]);
     const rowRef = useRef<HTMLTableRowElement>(null);
 
+    const [modified, setIsModified] = useState<boolean>(false);
+    useEffect(() => {
+        if (isSaved) {
+            setIsModified(false);
+        }
+    }, [isSaved]);
+
     const [invalidReason, setInvalidReason] = useState<{ reason: string; columnId: string } | null>(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const onBlur = useCallback(
@@ -291,7 +325,9 @@ function CRUDRow<T>({
             ) {
                 if (record !== newRecord) {
                     const invld = row.invalid?.(newRecord, false, dependentData);
+                    setIsModified(true);
                     if (!invld) {
+                        setInvalidReason(null);
                         setLocalRecord(newRecord);
                         onUpdate?.(newRecord);
                     } else {
@@ -305,6 +341,7 @@ function CRUDRow<T>({
     );
 
     const green = useColorModeValue("green.100", "green.700");
+    const red = useColorModeValue("red.100", "red.700");
 
     const cellEls = useMemo(
         () =>
@@ -329,11 +366,11 @@ function CRUDRow<T>({
                         }
                         dependentData={dependentData}
                         record={localRecord}
-                        backgroundColor={record !== localRecord ? green : row.colour?.(localRecord)}
+                        backgroundColor={modified ? (!invalidReason ? green : red) : row.colour?.(localRecord)}
                     />
                 );
             }),
-        [columns, dependentData, green, localRecord, onBlur, onUpdate, record, refs, row]
+        [columns, dependentData, green, invalidReason, localRecord, modified, onBlur, onUpdate, red, refs, row]
     );
 
     const [isSelected, setIsSelected] = useState<boolean>(false);
@@ -424,6 +461,8 @@ function CRUDRow<T>({
             onClose();
 
             if (reset) {
+                setInvalidReason(null);
+                setIsModified(false);
                 setLocalRecord(record);
             } else {
                 setTimeout(() => doFocusOnColumn(invalidReason?.columnId ?? ""), 100);
@@ -495,27 +534,31 @@ function CRUDColumnHeading<T, V = any, FV = V>({
     // TODO: In future: Resizing
     // TODO: In future: Grouping
 
-    return (
+    const header =
+        typeof column.header === "function"
+            ? column.header({
+                  visibleData,
+                  onClick: () => {
+                      if (sortDir === SortDirection.Asc) {
+                          setSortDir(SortDirection.Dsc);
+                          applySorting(column.id, SortDirection.Dsc);
+                      } else if (sortDir === SortDirection.Dsc) {
+                          setSortDir(null);
+                          applySorting(column.id, null);
+                      } else {
+                          setSortDir(SortDirection.Asc);
+                          applySorting(column.id, SortDirection.Asc);
+                      }
+                  },
+                  sortDir,
+                  isInCreate: false,
+              })
+            : column.header;
+    return !header ? (
+        <></>
+    ) : (
         <VStack justifyContent="flex-start" alignItems="stretch" h="100%">
-            {typeof column.header === "function"
-                ? column.header({
-                      visibleData,
-                      onClick: () => {
-                          if (sortDir === SortDirection.Asc) {
-                              setSortDir(SortDirection.Dsc);
-                              applySorting(column.id, SortDirection.Dsc);
-                          } else if (sortDir === SortDirection.Dsc) {
-                              setSortDir(null);
-                              applySorting(column.id, null);
-                          } else {
-                              setSortDir(SortDirection.Asc);
-                              applySorting(column.id, SortDirection.Asc);
-                          }
-                      },
-                      sortDir,
-                      isInCreate: false,
-                  })
-                : column.header}
+            {header}
             {column.filterEl ? (
                 <Box>
                     {column.filterEl({
@@ -568,6 +611,9 @@ function RenderedCRUDTable<T>({
     focusOnRow,
 
     dependentData,
+
+    isSaving,
+    buttons,
 }: {
     data: false | T[] | null;
     columns: ColumnSpecification<T>[];
@@ -584,13 +630,16 @@ function RenderedCRUDTable<T>({
     focusOnRow: MutableRefObject<((key: string, columnId: string) => void) | null>;
 
     dependentData: Map<string, Record<string, any>>;
+
+    isSaving: boolean;
+    buttons: ExtraButton<T>[];
 }): JSX.Element {
     // Aggressively memoize everything to decouple rendering of subelements
     //
     // This helps to ensure that a change to the whole data set doesn't
     // require a re-render of all (potentially expensive) elements.
 
-    const enableSelection = !!onDelete;
+    const enableSelection = !!onDelete || buttons;
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
 
     useEffect(() => {
@@ -726,6 +775,7 @@ function RenderedCRUDTable<T>({
                       <CRUDRow
                           key={row.getKey(record)}
                           record={record}
+                          isSaved={!isSaving}
                           row={row}
                           columns={columns}
                           beginInsert={beginInsert}
@@ -767,6 +817,7 @@ function RenderedCRUDTable<T>({
             dependentData,
             enableSelection,
             getIsSelectedRefs,
+            isSaving,
             onDelete,
             onEdit,
             onUpdate,
@@ -804,8 +855,16 @@ function RenderedCRUDTable<T>({
         [data]
     );
 
+    const buttonEls = useMemo(() => {
+        const selectedData: T[] = data ? data.filter((x) => selectedKeys.has(row.getKey(x))) : [];
+        return buttons.map((button) => button.render(selectedData));
+    }, [buttons, data, row, selectedKeys]);
+
     return (
         <>
+            <HStack flexWrap="wrap" justifyContent="center" w="100%">
+                {buttonEls}
+            </HStack>
             <Table display="block" maxWidth="100%" width="auto" size="sm" variant="striped" overflow="auto">
                 <Thead>
                     <Tr>
@@ -952,37 +1011,39 @@ function CRUDInsertModal<T>({
         () =>
             columns.map((column, index) => {
                 const colSet = column.set;
+                const header =
+                    typeof column.header === "function"
+                        ? column.header({
+                              onClick: () => {
+                                  /* EMPTY */
+                              },
+                              sortDir: null,
+                              visibleData: [],
+                              isInCreate: true,
+                          })
+                        : column.header;
                 return (
-                    <FormControl key={row.getKey(newData as T) + "_" + index}>
-                        <FormLabel>
-                            {typeof column.header === "function"
-                                ? column.header({
-                                      onClick: () => {
-                                          /* EMPTY */
-                                      },
-                                      sortDir: null,
-                                      visibleData: [],
-                                      isInCreate: true,
-                                  })
-                                : column.header}
-                        </FormLabel>
-                        <CRUDCell
-                            isInCreate={true}
-                            initialValue={column.get(newData as T)}
-                            column={column as ColumnSpecification<unknown>}
-                            onUpdate={
-                                colSet &&
-                                ((newValue) => {
-                                    const modified = { ...newData };
-                                    colSet(modified as T, newValue);
-                                    setNewData(modified);
-                                })
-                            }
-                            dependentData={dependentData}
-                            record={newData}
-                            backgroundColor={row.colour?.(newData as T)}
-                        />
-                    </FormControl>
+                    header && (
+                        <FormControl key={row.getKey(newData as T) + "_" + index}>
+                            <FormLabel>{header}</FormLabel>
+                            <CRUDCell
+                                isInCreate={true}
+                                initialValue={column.get(newData as T)}
+                                column={column as ColumnSpecification<unknown>}
+                                onUpdate={
+                                    colSet &&
+                                    ((newValue) => {
+                                        const modified = { ...newData };
+                                        colSet(modified as T, newValue);
+                                        setNewData(modified);
+                                    })
+                                }
+                                dependentData={dependentData}
+                                record={newData}
+                                backgroundColor={row.colour?.(newData as T)}
+                            />
+                        </FormControl>
+                    )
                 );
             }),
         [columns, dependentData, newData, row]
@@ -1003,7 +1064,7 @@ function CRUDInsertModal<T>({
                 <ModalFooter>
                     <ButtonGroup>
                         <Button onClick={onClose}>Cancel</Button>
-                        <Tooltip label={invld}>
+                        <Tooltip label={invld ? invld.reason : undefined}>
                             <Box>
                                 <Button
                                     colorScheme="green"
@@ -1042,6 +1103,8 @@ export default function CRUDTable<T>({
     delete: deleteProps,
 
     pageSizes = [10, 20, 30, 40, 50, "all"],
+
+    buttons,
 }: {
     data: false | T[] | null;
     alert?: {
@@ -1054,33 +1117,22 @@ export default function CRUDTable<T>({
     tableUniqueName: string;
     forceReload?: React.MutableRefObject<() => void>;
 
-    insert?: {
-        generateDefaults: () => Partial<T>;
-        makeWhole: (partialRecord: Partial<T>) => undefined | T;
-        start: (record: T) => void;
-        ongoing: boolean;
-    };
+    insert?: Insert<T>;
 
     edit?: {
         open: (key: string) => void;
     };
 
-    update?: {
-        start: (record: T) => void;
-        ongoing: boolean;
-    };
+    update?: Update<T>;
 
-    delete?: {
-        start: (keys: string[]) => void;
-        ongoing: boolean;
-    };
+    delete?: Delete<T>;
 
     pageSizes?: (number | "all")[];
 
     // TODO: Undo callback
     // TODO: Ongoing state of Undo
 
-    // TODO: Extra buttons
+    buttons?: ExtraButton<T>[];
 }): JSX.Element {
     // We decouple the input data from the rendering so that changes don't immediately
     // result in UI updates
@@ -1329,20 +1381,24 @@ export default function CRUDTable<T>({
                 onDelete={beginDeleteRecords}
                 focusOnRow={focusOnRow}
                 dependentData={dependentData}
+                isSaving={(insertProps?.ongoing || updateProps?.ongoing) ?? false}
+                buttons={buttons ?? []}
             />
         ),
         [
+            applyFilter,
+            applySorting,
+            beginDeleteRecords,
+            beginInsert,
+            buttons,
+            columns,
+            dependentData,
+            editProps?.open,
+            insertProps,
             paginatedData,
             row,
-            columns,
-            applySorting,
-            applyFilter,
-            insertProps,
-            beginInsert,
-            editProps?.open,
+            updateProps?.ongoing,
             updateRecord,
-            beginDeleteRecords,
-            dependentData,
         ]
     );
 
@@ -1460,15 +1516,14 @@ export default function CRUDTable<T>({
                     <chakra.span flexBasis="auto" flexShrink={0}>
                         | Go to page:{" "}
                     </chakra.span>
-                    <NumberInput>
-                        <NumberInputField
-                            defaultValue={pageIndex ? pageIndex + 1 : 0}
-                            onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                goToPage(page);
-                            }}
-                            style={{ width: "100px" }}
-                        />
+                    <NumberInput
+                        defaultValue={pageIndex ? pageIndex + 1 : 0}
+                        onChange={(value) => {
+                            const page = value ? Number(value) - 1 : 0;
+                            goToPage(page);
+                        }}
+                    >
+                        <NumberInputField style={{ width: "100px" }} />
                     </NumberInput>
                 </HStack>
                 <Select

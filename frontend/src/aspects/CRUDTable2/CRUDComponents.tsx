@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Center,
     chakra,
@@ -10,6 +11,7 @@ import {
     Select,
 } from "@chakra-ui/react";
 import React from "react";
+import MultiSelect from "../Chakra/MultiSelect";
 import { DateTimePicker } from "../CRUDTable/DateTimePicker";
 import { FAIcon } from "../Icons/FAIcon";
 import type { FilterFunction, FilterProps } from "./CRUDTable2";
@@ -61,7 +63,7 @@ export function CheckBoxColumnFilter({ value, onChange, onBlur }: FilterProps<bo
 
 // This is a custom filter UI for selecting
 // a unique option from a list
-export function SelectColumnFilter(options: string[]) {
+export function SelectColumnFilter(options: (string | { label: string; value: string })[]) {
     return function SelectColumnFilterInner({ value, onChange, onBlur }: FilterProps<string>): JSX.Element {
         // Render a multi-select box
         return (
@@ -75,11 +77,33 @@ export function SelectColumnFilter(options: string[]) {
             >
                 <option value="">All</option>
                 {options.map((option, i) => (
-                    <option key={i} value={option}>
-                        {option}
+                    <option key={i} value={typeof option === "string" ? option : option.value}>
+                        {typeof option === "string" ? option : option.label}
                     </option>
                 ))}
             </Select>
+        );
+    };
+}
+
+export function MultiSelectColumnFilter(options: { label: string; value: string }[]) {
+    return function SelectColumnFilterInner({
+        value,
+        onChange,
+        onBlur,
+    }: FilterProps<ReadonlyArray<{ label: string; value: string }>>): JSX.Element {
+        // Render a multi-select box
+        return (
+            <Box fontSize="sm" textTransform="none" maxW={400}>
+                <MultiSelect
+                    options={options}
+                    value={value ?? []}
+                    onChange={(e) => {
+                        onChange(e);
+                    }}
+                    onBlur={onBlur}
+                />
+            </Box>
         );
     };
 }

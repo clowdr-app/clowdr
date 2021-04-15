@@ -1,4 +1,5 @@
 import { useApolloClient } from "@apollo/client";
+import { WarningTwoIcon } from "@chakra-ui/icons";
 import {
     Alert,
     AlertDescription,
@@ -7,6 +8,7 @@ import {
     Box,
     Button,
     Center,
+    Link,
     Spinner,
     Text,
     VStack,
@@ -66,6 +68,34 @@ export default function PushNotificationSettings(): JSX.Element {
                 </>
             )}
             <Alert variant="subtle" status="warning" alignItems="flex-start">
+                <AlertIcon as={WarningTwoIcon} mt={1} />
+                <Box flex="1">
+                    <AlertTitle mb={2}>
+                        <em>Mac users:</em> Remember to allow &ldquo;Alerts&rdquo; in your System Preferences
+                    </AlertTitle>
+                    <AlertDescription as={VStack}>
+                        <Text>
+                            Instructions for enabling alerts:{" "}
+                            <Link isExternal href="https://support.apple.com/en-us/HT204079">
+                                https://support.apple.com/en-us/HT204079
+                            </Link>
+                        </Text>
+                        <Text>
+                            Mac users will need to{" "}
+                            <Link isExternal href="https://support.apple.com/en-us/HT204079">
+                                allow their browser to show notifications via the operating system&apos;s Control Center
+                                settings.
+                            </Link>
+                        </Text>
+                        <Text>
+                            Please also remember that if you have Do Not Disturb mode on (which is often automatically
+                            enabled when you have a second screen plugged in), notifications will be suppressed by the
+                            operating system.
+                        </Text>
+                    </AlertDescription>
+                </Box>
+            </Alert>
+            <Alert variant="subtle" status="info" alignItems="flex-start">
                 <AlertIcon mt={1} />
                 <Box flex="1">
                     <AlertTitle mb={2}>
@@ -74,8 +104,8 @@ export default function PushNotificationSettings(): JSX.Element {
                     </AlertTitle>
                     <AlertDescription as={VStack}>
                         <Text>
-                            Due to Apple&apos;s decision to obstruct open web standards, by refusing to implement the
-                            Push API, Clowdr cannot support push notifications in Safari nor any browser on iOS.
+                            Apple&apos;s decision to obstruct open web standards, by refusing to implement the Push API,
+                            prevents Clowdr from supporting push notifications in Safari and all browsers on iOS.
                         </Text>
                         <Text fontStyle="italic">
                             (Don&apos;t be fooled: all iOS browser apps have to use Apple&apos;s web engine, including

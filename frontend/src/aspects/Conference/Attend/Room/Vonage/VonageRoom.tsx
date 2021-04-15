@@ -525,7 +525,7 @@ function VonageRoomInner({
     );
 
     return (
-        <Box>
+        <Box width="100%">
             {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
             <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} joining={joining} />
             <Box position="relative" mb={8} width="100%">

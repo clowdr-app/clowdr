@@ -7,7 +7,8 @@ export function roundDownToNearest(value: number, divisor: number): number {
 }
 
 export function roundUpToNearest(value: number, divisor: number): number {
-    return value + (divisor - (value % divisor));
+    const x = value % divisor;
+    return x !== 0 ? value + (divisor - x) : value;
 }
 
 export function distanceToBoundary(value: number, divisor: number): number {

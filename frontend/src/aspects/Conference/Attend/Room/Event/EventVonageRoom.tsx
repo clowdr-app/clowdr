@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, HStack } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
 import {
@@ -66,8 +66,9 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
     return (
         <ApolloQueryWrapper queryResult={result} getter={(data) => data.Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
-                <HStack alignItems="stretch" flexWrap="wrap">
-                    <Box flexGrow={1}>
+                <VStack justifyContent="stretch" w="100%">
+                    <EventRoomControlPanel event={event} />
+                    <Box w="100%">
                         {event.eventVonageSession && sharedRoomContext ? (
                             <portals.OutPortal
                                 node={sharedRoomContext.portalNode}
@@ -80,10 +81,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
                             <>No room session available.</>
                         )}
                     </Box>
-                    <Box>
-                        <EventRoomControlPanel event={event} />
-                    </Box>
-                </HStack>
+                </VStack>
             )}
         </ApolloQueryWrapper>
     );

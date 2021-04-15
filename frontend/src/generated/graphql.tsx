@@ -33986,12 +33986,17 @@ export type ImportAttendeesMutationVariables = Exact<{
 
 export type ImportAttendeesMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Invitation?: Maybe<{ readonly __typename?: 'Invitation_mutation_response', readonly affected_rows: number }>, readonly insert_GroupAttendee?: Maybe<{ readonly __typename?: 'GroupAttendee_mutation_response', readonly affected_rows: number }> };
 
+export type ManageGroups_GroupFragment = { readonly __typename?: 'Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> };
+
 export type SelectAllGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type SelectAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<{ readonly __typename?: 'Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> }> };
+export type SelectAllGroupsQuery = { readonly __typename?: 'query_root', readonly Group: ReadonlyArray<(
+    { readonly __typename?: 'Group' }
+    & ManageGroups_GroupFragment
+  )> };
 
 export type CreateDeleteGroupsMutationVariables = Exact<{
   deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
@@ -34023,7 +34028,12 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 export type UpdateConferenceMutation = { readonly __typename?: 'mutation_root', readonly update_Conference?: Maybe<{ readonly __typename?: 'Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> }> };
 
-export type AttendeePartsFragment = { readonly __typename?: 'Attendee', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly attendeeId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly attendeeId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
+export type InvitationPartsFragment = { readonly __typename?: 'Invitation', readonly attendeeId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> };
+
+export type AttendeePartsFragment = { readonly __typename?: 'Attendee', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupAttendees: ReadonlyArray<{ readonly __typename?: 'GroupAttendee', readonly attendeeId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<(
+    { readonly __typename?: 'Invitation' }
+    & InvitationPartsFragment
+  )> };
 
 export type SelectAllAttendeesQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -34035,23 +34045,42 @@ export type SelectAllAttendeesQuery = { readonly __typename?: 'query_root', read
     & AttendeePartsFragment
   )> };
 
-export type CreateDeleteAttendeesMutationVariables = Exact<{
-  deleteAttendeeIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
-  insertAttendees: ReadonlyArray<Attendee_Insert_Input> | Attendee_Insert_Input;
-  insertInvitations: ReadonlyArray<Invitation_Insert_Input> | Invitation_Insert_Input;
+export type InsertAttendeeMutationVariables = Exact<{
+  attendee: Attendee_Insert_Input;
+  invitation: Invitation_Insert_Input;
 }>;
 
 
-export type CreateDeleteAttendeesMutation = { readonly __typename?: 'mutation_root', readonly delete_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any }> }>, readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'Attendee' }
-      & AttendeePartsFragment
-    )> }>, readonly insert_Invitation?: Maybe<{ readonly __typename?: 'Invitation_mutation_response', readonly affected_rows: number }> };
+export type InsertAttendeeMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee_one?: Maybe<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeePartsFragment
+  )>, readonly insert_Invitation_one?: Maybe<(
+    { readonly __typename?: 'Invitation' }
+    & InvitationPartsFragment
+  )> };
+
+export type InsertAttendeeWithoutInviteMutationVariables = Exact<{
+  attendee: Attendee_Insert_Input;
+}>;
+
+
+export type InsertAttendeeWithoutInviteMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee_one?: Maybe<(
+    { readonly __typename?: 'Attendee' }
+    & AttendeePartsFragment
+  )> };
+
+export type DeleteAttendeesMutationVariables = Exact<{
+  deleteAttendeeIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+}>;
+
+
+export type DeleteAttendeesMutation = { readonly __typename?: 'mutation_root', readonly delete_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Attendee', readonly id: any }> }> };
 
 export type UpdateAttendeeMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   attendeeName: Scalars['String'];
-  insertGroups: ReadonlyArray<GroupAttendee_Insert_Input> | GroupAttendee_Insert_Input;
-  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+  upsertGroups: ReadonlyArray<GroupAttendee_Insert_Input> | GroupAttendee_Insert_Input;
+  remainingGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
 }>;
 
 
@@ -35687,6 +35716,32 @@ export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
   }
 }
     `;
+export const ManageGroups_GroupFragmentDoc = gql`
+    fragment ManageGroups_Group on Group {
+  conferenceId
+  enabled
+  id
+  includeUnauthenticated
+  name
+  groupRoles {
+    id
+    roleId
+    groupId
+  }
+}
+    `;
+export const InvitationPartsFragmentDoc = gql`
+    fragment InvitationParts on Invitation {
+  attendeeId
+  id
+  inviteCode
+  invitedEmailAddress
+  linkToUserId
+  createdAt
+  updatedAt
+  hash
+}
+    `;
 export const AttendeePartsFragmentDoc = gql`
     fragment AttendeeParts on Attendee {
   conferenceId
@@ -35697,14 +35752,7 @@ export const AttendeePartsFragmentDoc = gql`
     groupId
   }
   invitation {
-    attendeeId
-    id
-    inviteCode
-    invitedEmailAddress
-    linkToUserId
-    createdAt
-    updatedAt
-    hash
+    ...InvitationParts
   }
   userId
   updatedAt
@@ -35712,7 +35760,7 @@ export const AttendeePartsFragmentDoc = gql`
   displayName
   inviteSent
 }
-    `;
+    ${InvitationPartsFragmentDoc}`;
 export const RoomParticipantWithAttendeeInfoFragmentDoc = gql`
     fragment RoomParticipantWithAttendeeInfo on RoomParticipant {
   id
@@ -39840,19 +39888,10 @@ export type ImportAttendeesMutationOptions = Apollo.BaseMutationOptions<ImportAt
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {
-    conferenceId
-    enabled
-    id
-    includeUnauthenticated
-    name
-    groupRoles {
-      id
-      roleId
-      groupId
-    }
+    ...ManageGroups_Group
   }
 }
-    `;
+    ${ManageGroups_GroupFragmentDoc}`;
 
 /**
  * __useSelectAllGroupsQuery__
@@ -40072,60 +40111,124 @@ export function useSelectAllAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SelectAllAttendeesQueryHookResult = ReturnType<typeof useSelectAllAttendeesQuery>;
 export type SelectAllAttendeesLazyQueryHookResult = ReturnType<typeof useSelectAllAttendeesLazyQuery>;
 export type SelectAllAttendeesQueryResult = Apollo.QueryResult<SelectAllAttendeesQuery, SelectAllAttendeesQueryVariables>;
-export const CreateDeleteAttendeesDocument = gql`
-    mutation CreateDeleteAttendees($deleteAttendeeIds: [uuid!] = [], $insertAttendees: [Attendee_insert_input!]!, $insertInvitations: [Invitation_insert_input!]!) {
-  delete_Attendee(where: {id: {_in: $deleteAttendeeIds}}) {
-    returning {
-      id
-    }
+export const InsertAttendeeDocument = gql`
+    mutation InsertAttendee($attendee: Attendee_insert_input!, $invitation: Invitation_insert_input!) {
+  insert_Attendee_one(object: $attendee) {
+    ...AttendeeParts
   }
-  insert_Attendee(objects: $insertAttendees) {
-    returning {
-      ...AttendeeParts
-    }
-  }
-  insert_Invitation(objects: $insertInvitations) {
-    affected_rows
+  insert_Invitation_one(object: $invitation) {
+    ...InvitationParts
   }
 }
-    ${AttendeePartsFragmentDoc}`;
-export type CreateDeleteAttendeesMutationFn = Apollo.MutationFunction<CreateDeleteAttendeesMutation, CreateDeleteAttendeesMutationVariables>;
+    ${AttendeePartsFragmentDoc}
+${InvitationPartsFragmentDoc}`;
+export type InsertAttendeeMutationFn = Apollo.MutationFunction<InsertAttendeeMutation, InsertAttendeeMutationVariables>;
 
 /**
- * __useCreateDeleteAttendeesMutation__
+ * __useInsertAttendeeMutation__
  *
- * To run a mutation, you first call `useCreateDeleteAttendeesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDeleteAttendeesMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useInsertAttendeeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertAttendeeMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createDeleteAttendeesMutation, { data, loading, error }] = useCreateDeleteAttendeesMutation({
+ * const [insertAttendeeMutation, { data, loading, error }] = useInsertAttendeeMutation({
  *   variables: {
- *      deleteAttendeeIds: // value for 'deleteAttendeeIds'
- *      insertAttendees: // value for 'insertAttendees'
- *      insertInvitations: // value for 'insertInvitations'
+ *      attendee: // value for 'attendee'
+ *      invitation: // value for 'invitation'
  *   },
  * });
  */
-export function useCreateDeleteAttendeesMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeleteAttendeesMutation, CreateDeleteAttendeesMutationVariables>) {
+export function useInsertAttendeeMutation(baseOptions?: Apollo.MutationHookOptions<InsertAttendeeMutation, InsertAttendeeMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateDeleteAttendeesMutation, CreateDeleteAttendeesMutationVariables>(CreateDeleteAttendeesDocument, options);
+        return Apollo.useMutation<InsertAttendeeMutation, InsertAttendeeMutationVariables>(InsertAttendeeDocument, options);
       }
-export type CreateDeleteAttendeesMutationHookResult = ReturnType<typeof useCreateDeleteAttendeesMutation>;
-export type CreateDeleteAttendeesMutationResult = Apollo.MutationResult<CreateDeleteAttendeesMutation>;
-export type CreateDeleteAttendeesMutationOptions = Apollo.BaseMutationOptions<CreateDeleteAttendeesMutation, CreateDeleteAttendeesMutationVariables>;
+export type InsertAttendeeMutationHookResult = ReturnType<typeof useInsertAttendeeMutation>;
+export type InsertAttendeeMutationResult = Apollo.MutationResult<InsertAttendeeMutation>;
+export type InsertAttendeeMutationOptions = Apollo.BaseMutationOptions<InsertAttendeeMutation, InsertAttendeeMutationVariables>;
+export const InsertAttendeeWithoutInviteDocument = gql`
+    mutation InsertAttendeeWithoutInvite($attendee: Attendee_insert_input!) {
+  insert_Attendee_one(object: $attendee) {
+    ...AttendeeParts
+  }
+}
+    ${AttendeePartsFragmentDoc}`;
+export type InsertAttendeeWithoutInviteMutationFn = Apollo.MutationFunction<InsertAttendeeWithoutInviteMutation, InsertAttendeeWithoutInviteMutationVariables>;
+
+/**
+ * __useInsertAttendeeWithoutInviteMutation__
+ *
+ * To run a mutation, you first call `useInsertAttendeeWithoutInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertAttendeeWithoutInviteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertAttendeeWithoutInviteMutation, { data, loading, error }] = useInsertAttendeeWithoutInviteMutation({
+ *   variables: {
+ *      attendee: // value for 'attendee'
+ *   },
+ * });
+ */
+export function useInsertAttendeeWithoutInviteMutation(baseOptions?: Apollo.MutationHookOptions<InsertAttendeeWithoutInviteMutation, InsertAttendeeWithoutInviteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertAttendeeWithoutInviteMutation, InsertAttendeeWithoutInviteMutationVariables>(InsertAttendeeWithoutInviteDocument, options);
+      }
+export type InsertAttendeeWithoutInviteMutationHookResult = ReturnType<typeof useInsertAttendeeWithoutInviteMutation>;
+export type InsertAttendeeWithoutInviteMutationResult = Apollo.MutationResult<InsertAttendeeWithoutInviteMutation>;
+export type InsertAttendeeWithoutInviteMutationOptions = Apollo.BaseMutationOptions<InsertAttendeeWithoutInviteMutation, InsertAttendeeWithoutInviteMutationVariables>;
+export const DeleteAttendeesDocument = gql`
+    mutation DeleteAttendees($deleteAttendeeIds: [uuid!] = []) {
+  delete_Attendee(where: {id: {_in: $deleteAttendeeIds}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type DeleteAttendeesMutationFn = Apollo.MutationFunction<DeleteAttendeesMutation, DeleteAttendeesMutationVariables>;
+
+/**
+ * __useDeleteAttendeesMutation__
+ *
+ * To run a mutation, you first call `useDeleteAttendeesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAttendeesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAttendeesMutation, { data, loading, error }] = useDeleteAttendeesMutation({
+ *   variables: {
+ *      deleteAttendeeIds: // value for 'deleteAttendeeIds'
+ *   },
+ * });
+ */
+export function useDeleteAttendeesMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAttendeesMutation, DeleteAttendeesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAttendeesMutation, DeleteAttendeesMutationVariables>(DeleteAttendeesDocument, options);
+      }
+export type DeleteAttendeesMutationHookResult = ReturnType<typeof useDeleteAttendeesMutation>;
+export type DeleteAttendeesMutationResult = Apollo.MutationResult<DeleteAttendeesMutation>;
+export type DeleteAttendeesMutationOptions = Apollo.BaseMutationOptions<DeleteAttendeesMutation, DeleteAttendeesMutationVariables>;
 export const UpdateAttendeeDocument = gql`
-    mutation UpdateAttendee($attendeeId: uuid!, $attendeeName: String!, $insertGroups: [GroupAttendee_insert_input!]!, $deleteGroupIds: [uuid!] = []) {
+    mutation UpdateAttendee($attendeeId: uuid!, $attendeeName: String!, $upsertGroups: [GroupAttendee_insert_input!]!, $remainingGroupIds: [uuid!]) {
   update_Attendee_by_pk(
     pk_columns: {id: $attendeeId}
     _set: {displayName: $attendeeName}
   ) {
     ...AttendeeParts
   }
-  insert_GroupAttendee(objects: $insertGroups) {
+  insert_GroupAttendee(
+    objects: $upsertGroups
+    on_conflict: {constraint: GroupAttendee_groupId_attendeeId_key, update_columns: []}
+  ) {
     returning {
       id
       attendeeId
@@ -40133,7 +40236,7 @@ export const UpdateAttendeeDocument = gql`
     }
   }
   delete_GroupAttendee(
-    where: {attendeeId: {_eq: $attendeeId}, groupId: {_in: $deleteGroupIds}}
+    where: {attendeeId: {_eq: $attendeeId}, groupId: {_nin: $remainingGroupIds}}
   ) {
     returning {
       id
@@ -40158,8 +40261,8 @@ export type UpdateAttendeeMutationFn = Apollo.MutationFunction<UpdateAttendeeMut
  *   variables: {
  *      attendeeId: // value for 'attendeeId'
  *      attendeeName: // value for 'attendeeName'
- *      insertGroups: // value for 'insertGroups'
- *      deleteGroupIds: // value for 'deleteGroupIds'
+ *      upsertGroups: // value for 'upsertGroups'
+ *      remainingGroupIds: // value for 'remainingGroupIds'
  *   },
  * });
  */

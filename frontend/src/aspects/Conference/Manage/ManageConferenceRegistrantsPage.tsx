@@ -1,4 +1,5 @@
 import { gql, Reference } from "@apollo/client";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
@@ -6,6 +7,12 @@ import {
     FormLabel,
     Heading,
     Input,
+    Menu,
+    MenuButton,
+    MenuGroup,
+    MenuItem,
+    MenuList,
+    MenuOptionGroup,
     Spinner,
     Text,
     Tooltip,
@@ -622,6 +629,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         [deleteAttendees, deleteAttendeesResponse.loading]
     );
 
+    const enabledGroups = useMemo(() => allGroups?.Group.filter((x) => x.enabled), [allGroups?.Group]);
+    const disabledGroups = useMemo(() => allGroups?.Group.filter((x) => !x.enabled), [allGroups?.Group]);
+
     const buttons: ExtraButton<AttendeeDescriptor>[] = useMemo(
         () => [
             {
@@ -635,128 +645,299 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
             {
                 render: function SendInitialInvitesButton(selectedData) {
-                    return (
-                        <Tooltip
-                            label={
-                                "Sends invitations to selected attendees who have not already been sent an invite and are members of at least one enabled group."
-                            }
-                        >
-                            <Box>
-                                <Button
-                                    colorScheme="purple"
-                                    isDisabled={selectedData.length === 0}
-                                    isLoading={insertInvitationEmailJobsLoading}
-                                    onClick={async () => {
-                                        const result = await insertInvitationEmailJobsMutation({
-                                            variables: {
-                                                attendeeIds: selectedData.map((x) => x.id),
-                                                conferenceId: conference.id,
-                                                sendRepeat: false,
-                                            },
-                                        });
-                                        if (result.errors && result.errors.length > 0) {
-                                            toast({
-                                                title: "Failed to send invitiation emails",
-                                                description: result.errors[0].message,
-                                                isClosable: true,
-                                                status: "error",
-                                            });
-                                        } else {
-                                            toast({
-                                                title: "Invitiation emails sent",
-                                                duration: 8000,
-                                                status: "success",
-                                            });
-                                        }
+                    const tooltip = (filler: string, filler2: string) =>
+                        `Sends invitations to ${filler} who have not already been sent an invite${filler2}.`;
+                    if (selectedData.length === 0) {
+                        return (
+                            <Menu>
+                                <Tooltip label={tooltip("all attendees (from a group)", "")}>
+                                    <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
+                                        Send initial invitations
+                                    </MenuButton>
+                                </Tooltip>
+                                <MenuList>
+                                    {enabledGroups?.length ? (
+                                        <MenuGroup title="Enabled groups">
+                                            <MenuOptionGroup></MenuOptionGroup>
+                                            {enabledGroups.map((group) => (
+                                                <MenuItem
+                                                    key={group.id}
+                                                    onClick={async () => {
+                                                        const result = await insertInvitationEmailJobsMutation({
+                                                            variables: {
+                                                                attendeeIds: data
+                                                                    .filter((a) =>
+                                                                        a.groupAttendees.some(
+                                                                            (ga) => ga.groupId === group.id
+                                                                        )
+                                                                    )
+                                                                    .map((a) => a.id),
+                                                                conferenceId: conference.id,
+                                                                sendRepeat: false,
+                                                            },
+                                                        });
+                                                        if (result.errors && result.errors.length > 0) {
+                                                            toast({
+                                                                title: "Failed to send invitiation emails",
+                                                                description: result.errors[0].message,
+                                                                isClosable: true,
+                                                                status: "error",
+                                                            });
+                                                        } else {
+                                                            toast({
+                                                                title: "Invitiation emails sent",
+                                                                duration: 8000,
+                                                                status: "success",
+                                                            });
+                                                        }
 
-                                        await refetchAllAttendees();
-                                    }}
-                                >
-                                    Send initial invitations
-                                </Button>
-                            </Box>
-                        </Tooltip>
-                    );
+                                                        await refetchAllAttendees();
+                                                    }}
+                                                >
+                                                    {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : (
+                                        <Text px={2}>No groups enabled.</Text>
+                                    )}
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip
+                                label={tooltip("selected attendees", " and are members of at least one enabled group")}
+                            >
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        isLoading={insertInvitationEmailJobsLoading}
+                                        onClick={async () => {
+                                            const result = await insertInvitationEmailJobsMutation({
+                                                variables: {
+                                                    attendeeIds: selectedData.map((x) => x.id),
+                                                    conferenceId: conference.id,
+                                                    sendRepeat: false,
+                                                },
+                                            });
+                                            if (result.errors && result.errors.length > 0) {
+                                                toast({
+                                                    title: "Failed to send invitiation emails",
+                                                    description: result.errors[0].message,
+                                                    isClosable: true,
+                                                    status: "error",
+                                                });
+                                            } else {
+                                                toast({
+                                                    title: "Invitiation emails sent",
+                                                    duration: 8000,
+                                                    status: "success",
+                                                });
+                                            }
+
+                                            await refetchAllAttendees();
+                                        }}
+                                    >
+                                        Send initial invitations
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+                        );
+                    }
                 },
             },
             {
                 render: function SendRepeatInvitesButton(selectedData) {
-                    return (
-                        <Tooltip
-                            label={
-                                "Sends repeat invitations to selected attendees who are members of at least one enabled group."
-                            }
-                        >
-                            <Box>
-                                <Button
-                                    colorScheme="purple"
-                                    isDisabled={selectedData.length === 0}
-                                    isLoading={insertInvitationEmailJobsLoading}
-                                    onClick={async () => {
-                                        const result = await insertInvitationEmailJobsMutation({
-                                            variables: {
-                                                attendeeIds: selectedData.map((x) => x.id),
-                                                conferenceId: conference.id,
-                                                sendRepeat: true,
-                                            },
-                                        });
-                                        if (result.errors && result.errors.length > 0) {
-                                            toast({
-                                                title: "Failed to send invitiation emails",
-                                                description: result.errors[0].message,
-                                                isClosable: true,
-                                                status: "error",
-                                            });
-                                        } else {
-                                            toast({
-                                                title: "Invitiation emails sent",
-                                                duration: 8000,
-                                                status: "success",
-                                            });
-                                        }
+                    const tooltip = (filler: string) => `Sends repeat invitations to ${filler}.`;
+                    if (selectedData.length === 0) {
+                        return (
+                            <Menu>
+                                <Tooltip label={tooltip("all attendees (from a group)")}>
+                                    <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
+                                        Send repeat invitations
+                                    </MenuButton>
+                                </Tooltip>
+                                <MenuList>
+                                    {enabledGroups?.length ? (
+                                        <MenuGroup title="Enabled groups">
+                                            <MenuOptionGroup></MenuOptionGroup>
+                                            {enabledGroups.map((group) => (
+                                                <MenuItem
+                                                    key={group.id}
+                                                    onClick={async () => {
+                                                        const result = await insertInvitationEmailJobsMutation({
+                                                            variables: {
+                                                                attendeeIds: data
+                                                                    .filter((a) =>
+                                                                        a.groupAttendees.some(
+                                                                            (ga) => ga.groupId === group.id
+                                                                        )
+                                                                    )
+                                                                    .map((a) => a.id),
+                                                                conferenceId: conference.id,
+                                                                sendRepeat: true,
+                                                            },
+                                                        });
+                                                        if (result.errors && result.errors.length > 0) {
+                                                            toast({
+                                                                title: "Failed to send invitiation emails",
+                                                                description: result.errors[0].message,
+                                                                isClosable: true,
+                                                                status: "error",
+                                                            });
+                                                        } else {
+                                                            toast({
+                                                                title: "Invitiation emails sent",
+                                                                duration: 8000,
+                                                                status: "success",
+                                                            });
+                                                        }
 
-                                        await refetchAllAttendees();
-                                    }}
-                                >
-                                    Send repeat invitations
-                                </Button>
-                            </Box>
-                        </Tooltip>
-                    );
+                                                        await refetchAllAttendees();
+                                                    }}
+                                                >
+                                                    {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : (
+                                        <Text px={2}>No groups enabled.</Text>
+                                    )}
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip
+                                label={tooltip("selected attendees who are members of at least one enabled group")}
+                            >
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        isLoading={insertInvitationEmailJobsLoading}
+                                        onClick={async () => {
+                                            const result = await insertInvitationEmailJobsMutation({
+                                                variables: {
+                                                    attendeeIds: selectedData.map((x) => x.id),
+                                                    conferenceId: conference.id,
+                                                    sendRepeat: true,
+                                                },
+                                            });
+                                            if (result.errors && result.errors.length > 0) {
+                                                toast({
+                                                    title: "Failed to send invitiation emails",
+                                                    description: result.errors[0].message,
+                                                    isClosable: true,
+                                                    status: "error",
+                                                });
+                                            } else {
+                                                toast({
+                                                    title: "Invitiation emails sent",
+                                                    duration: 8000,
+                                                    status: "success",
+                                                });
+                                            }
+
+                                            await refetchAllAttendees();
+                                        }}
+                                    >
+                                        Send repeat invitations
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+                        );
+                    }
                 },
             },
             {
                 render: function SendCustomEmailButton(selectedData) {
-                    return (
-                        <Tooltip label={"Sends a custom email to all selected attendees."}>
-                            <Box>
-                                <Button
-                                    colorScheme="purple"
-                                    isDisabled={selectedData.length === 0}
-                                    isLoading={insertInvitationEmailJobsLoading}
-                                    onClick={async () => {
-                                        if (!allAttendees?.Attendee) {
-                                            return;
-                                        }
-                                        const attendees = Array.from(allAttendees.Attendee).filter((entry) =>
-                                            selectedData.some((x) => x.id === entry.id)
-                                        );
-                                        setSendCustomEmailAttendees(attendees);
-                                        sendCustomEmailModal.onOpen();
-                                    }}
-                                >
+                    const tooltip = (filler: string) => `Sends a custom email to ${filler}.`;
+                    if (selectedData.length === 0) {
+                        return (
+                            <Menu>
+                                {/*<Tooltip label={tooltip("all attendees (from a group)")}>*/}
+                                <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                     Send custom email
-                                </Button>
-                            </Box>
-                        </Tooltip>
-                    );
+                                </MenuButton>
+                                {/*</Tooltip>*/}
+                                <MenuList>
+                                    {enabledGroups?.length ? (
+                                        <MenuGroup title="Enabled groups">
+                                            <MenuOptionGroup></MenuOptionGroup>
+                                            {enabledGroups.map((group) => (
+                                                <MenuItem
+                                                    key={group.id}
+                                                    onClick={() => {
+                                                        setSendCustomEmailAttendees(
+                                                            data.filter((a) =>
+                                                                a.groupAttendees.some((ga) => ga.groupId === group.id)
+                                                            )
+                                                        );
+                                                        sendCustomEmailModal.onOpen();
+                                                    }}
+                                                >
+                                                    {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : (
+                                        <Text px={2}>No groups enabled.</Text>
+                                    )}
+                                    {disabledGroups?.length ? (
+                                        <MenuGroup title="Disabled groups">
+                                            {disabledGroups.map((group) => (
+                                                <MenuItem
+                                                    key={group.id}
+                                                    onClick={async () => {
+                                                        setSendCustomEmailAttendees(
+                                                            data.filter((a) =>
+                                                                a.groupAttendees.some((ga) => ga.groupId === group.id)
+                                                            )
+                                                        );
+                                                        sendCustomEmailModal.onOpen();
+                                                    }}
+                                                >
+                                                    {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip label={tooltip("selected attendees")}>
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        isLoading={insertInvitationEmailJobsLoading}
+                                        onClick={async () => {
+                                            setSendCustomEmailAttendees(selectedData);
+                                            sendCustomEmailModal.onOpen();
+                                        }}
+                                    >
+                                        Send custom email
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+                        );
+                    }
                 },
             },
         ],
         [
-            allAttendees?.Attendee,
             conference.id,
             conference.slug,
+            data,
+            disabledGroups,
+            enabledGroups,
             insertInvitationEmailJobsLoading,
             insertInvitationEmailJobsMutation,
             refetchAllAttendees,

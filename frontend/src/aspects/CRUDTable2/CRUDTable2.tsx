@@ -481,8 +481,8 @@ function CRUDRow<T>({
         >
             {selectEl}
             {editEl}
-            {deleteEl}
             {cellEls}
+            {deleteEl}
             <AlertDialog
                 isOpen={isOpen}
                 onClose={() => onCloseAlert(true)}
@@ -692,7 +692,7 @@ function RenderedCRUDTable<T>({
     const selectColumnEl = useMemo(
         () =>
             enableSelection ? (
-                <Th padding={1}>
+                <Th padding={1} verticalAlign="bottom">
                     <Center w="100%" h="100%" padding={0}>
                         <Checkbox
                             isIndeterminate={!!data && selectedKeys.size > 0 && selectedKeys.size < data.length}
@@ -720,7 +720,7 @@ function RenderedCRUDTable<T>({
     const editColumnEl = useMemo(
         () =>
             beginInsert || onEdit ? (
-                <Th padding={1}>
+                <Th padding={1} verticalAlign="top">
                     <Center w="100%" h="100%" padding={0}>
                         <Button
                             aria-label="Create row"
@@ -742,7 +742,7 @@ function RenderedCRUDTable<T>({
     const deleteColumnEl = useMemo(
         () =>
             onDelete ? (
-                <Th padding={1}>
+                <Th padding={1} verticalAlign="top">
                     <Center w="100%" h="100%" padding={0}>
                         <Tooltip label={"Delete selected"}>
                             <Button
@@ -881,8 +881,8 @@ function RenderedCRUDTable<T>({
                     <Tr>
                         {selectColumnEl}
                         {editColumnEl}
-                        {deleteColumnEl}
                         {columnEls}
+                        {deleteColumnEl}
                     </Tr>
                 </Thead>
                 <Tbody>

@@ -322,7 +322,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 get: (data) => !!data.userId,
                 sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
                 filterFn: (rows: Array<AttendeeDescriptor>, filterValue: boolean) => {
-                    return rows.filter((row) => row.inviteSent === filterValue);
+                    return rows.filter((row) => !!row.userId === filterValue);
                 },
                 filterEl: CheckBoxColumnFilter,
                 cell: function InviteSentCell(props: CellProps<Partial<AttendeeDescriptor>, boolean>) {

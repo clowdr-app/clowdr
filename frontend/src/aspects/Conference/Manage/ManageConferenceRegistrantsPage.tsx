@@ -31,8 +31,8 @@ import isValidUUID from "../../Utils/isValidUUID";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import { SendEmailModal } from "./People/SendEmailModal";
-import type { AttendeeDescriptor } from "./People/Types";
+import { SendEmailModal } from "./Registrants/SendEmailModal";
+import type { AttendeeDescriptor } from "./Registrants/Types";
 
 gql`
     fragment AttendeeParts on Attendee {
@@ -138,7 +138,7 @@ const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "
 // TODO: Email validation
 // TODO: Export
 
-export default function ManageConferencePeoplePage(): JSX.Element {
+export default function ManageConferenceRegistrantsPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 

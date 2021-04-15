@@ -22,7 +22,6 @@ import ManageConferenceExportPage from "./Manage/ManageConferenceExportPage";
 import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
 import ManageConferenceImportPage from "./Manage/ManageConferenceImportPage";
 import ManageConferenceNamePage from "./Manage/ManageConferenceNamePage";
-import ManageConferencePeoplePage from "./Manage/ManageConferencePeoplePage";
 import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
 import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
 import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";

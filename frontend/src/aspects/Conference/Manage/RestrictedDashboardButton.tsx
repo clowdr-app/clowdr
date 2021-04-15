@@ -1,4 +1,4 @@
-import { Heading, Text } from "@chakra-ui/react";
+import { ButtonProps, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import type { Permission_Enum } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
@@ -13,7 +13,8 @@ export default function RestrictedDashboardButton({
     description,
     permissions,
     colorScheme,
-}: {
+    ...rest
+}: ButtonProps & {
     to: string;
     name: string;
     icon: string;
@@ -27,7 +28,7 @@ export default function RestrictedDashboardButton({
         <RequireAtLeastOnePermissionWrapper permissions={permissions}>
             <LinkButton
                 to={`/conference/${conference.slug}/manage/${to}`}
-                padding={5}
+                padding={4}
                 overflow="hidden"
                 whiteSpace="normal"
                 linkProps={{
@@ -36,19 +37,20 @@ export default function RestrictedDashboardButton({
                 }}
                 colorScheme={colorScheme ?? "blue"}
                 flexDirection="column"
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
                 display="inline-flex"
                 width="100%"
                 height="100%"
                 margin={0}
+                {...rest}
             >
-                <Heading as="h2" fontSize="1.5rem" marginBottom="0.5rem">
+                <Heading as="h2" fontSize="2xl" marginBottom="0.5rem">
                     <FAIcon iconStyle="s" icon={icon} />
                     <br />
                     {name}
                 </Heading>
-                <Text>{description}</Text>
+                <Text fontSize="sm">{description}</Text>
             </LinkButton>
         </RequireAtLeastOnePermissionWrapper>
     );

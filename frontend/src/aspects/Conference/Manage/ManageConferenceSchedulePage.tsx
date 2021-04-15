@@ -931,6 +931,7 @@ function EditableScheduleTable(): JSX.Element {
                 insert={insert}
                 update={update}
                 delete={deleteProps}
+                pageSizes={[5, 10, 15, 20]}
                 alert={
                     insertEventResponse.error || updateEventResponse.error || deleteEventsResponse.error
                         ? {

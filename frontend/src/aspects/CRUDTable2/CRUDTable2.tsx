@@ -481,8 +481,8 @@ function CRUDRow<T>({
         >
             {selectEl}
             {editEl}
-            {deleteEl}
             {cellEls}
+            {deleteEl}
             <AlertDialog
                 isOpen={isOpen}
                 onClose={() => onCloseAlert(true)}
@@ -596,6 +596,9 @@ function CRUDColumnHeading<T, V = any, FV = V>({
  * The `data` is only the rendered subset of data
  */
 function RenderedCRUDTable<T>({
+    fullDataLength,
+    filteredDataLength,
+
     data,
     columns,
     row,
@@ -615,6 +618,8 @@ function RenderedCRUDTable<T>({
     isSaving,
     buttons,
 }: {
+    fullDataLength: number;
+    filteredDataLength: number;
     data: false | T[] | null;
     columns: ColumnSpecification<T>[];
     row: RowSpecification<T>;
@@ -641,10 +646,6 @@ function RenderedCRUDTable<T>({
 
     const enableSelection = !!onDelete || buttons;
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
-
-    useEffect(() => {
-        setSelectedKeys(new Set());
-    }, [data]);
 
     const columnEls = useMemo(
         () =>
@@ -681,10 +682,17 @@ function RenderedCRUDTable<T>({
         [data]
     );
 
+    useEffect(() => {
+        for (const ref of setIsSelectedRefs) {
+            ref.current?.(false);
+        }
+        setSelectedKeys(new Set());
+    }, [data, setIsSelectedRefs]);
+
     const selectColumnEl = useMemo(
         () =>
             enableSelection ? (
-                <Th padding={1}>
+                <Th padding={1} verticalAlign="bottom">
                     <Center w="100%" h="100%" padding={0}>
                         <Checkbox
                             isIndeterminate={!!data && selectedKeys.size > 0 && selectedKeys.size < data.length}
@@ -712,7 +720,7 @@ function RenderedCRUDTable<T>({
     const editColumnEl = useMemo(
         () =>
             beginInsert || onEdit ? (
-                <Th padding={1}>
+                <Th padding={1} verticalAlign="top">
                     <Center w="100%" h="100%" padding={0}>
                         <Button
                             aria-label="Create row"
@@ -734,7 +742,7 @@ function RenderedCRUDTable<T>({
     const deleteColumnEl = useMemo(
         () =>
             onDelete ? (
-                <Th padding={1}>
+                <Th padding={1} verticalAlign="top">
                     <Center w="100%" h="100%" padding={0}>
                         <Tooltip label={"Delete selected"}>
                             <Button
@@ -865,13 +873,16 @@ function RenderedCRUDTable<T>({
             <HStack flexWrap="wrap" justifyContent="center" w="100%">
                 {buttonEls}
             </HStack>
+            <Center flexDir="column">
+                Filtered to {filteredDataLength} out of {fullDataLength} ({selectedKeys.size} selected)
+            </Center>
             <Table display="block" maxWidth="100%" width="auto" size="sm" variant="striped" overflow="auto">
                 <Thead>
                     <Tr>
                         {selectColumnEl}
                         {editColumnEl}
-                        {deleteColumnEl}
                         {columnEls}
+                        {deleteColumnEl}
                     </Tr>
                 </Thead>
                 <Tbody>
@@ -1370,6 +1381,8 @@ export default function CRUDTable<T>({
     const renderedTable = useMemo(
         () => (
             <RenderedCRUDTable
+                fullDataLength={currentData ? currentData.length : 0}
+                filteredDataLength={filteredData ? filteredData.length : 0}
                 data={paginatedData}
                 row={row}
                 columns={columns}
@@ -1392,8 +1405,10 @@ export default function CRUDTable<T>({
             beginInsert,
             buttons,
             columns,
+            currentData,
             dependentData,
             editProps?.open,
+            filteredData,
             insertProps,
             paginatedData,
             row,

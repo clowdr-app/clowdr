@@ -23,8 +23,8 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo } from "react";
+import type { AttendeePartsFragment } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
-import type { AttendeeDescriptor } from "./Types";
 
 gql`
     query SendEmail_GetAllGroups($conferenceId: uuid!) {
@@ -44,7 +44,7 @@ export function SendEmailModal({
 }: {
     isOpen: boolean;
     onClose: () => void;
-    attendees: AttendeeDescriptor[];
+    attendees: AttendeePartsFragment[];
     send: (_attendeeIds: string[], htmlBody: string, subject: string) => Promise<void>;
 }): JSX.Element {
     const conference = useConference();

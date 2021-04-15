@@ -30,18 +30,22 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 
 gql`
+    fragment ManageGroups_Group on Group {
+        conferenceId
+        enabled
+        id
+        includeUnauthenticated
+        name
+        groupRoles {
+            id
+            roleId
+            groupId
+        }
+    }
+
     query SelectAllGroups($conferenceId: uuid!) {
         Group(where: { conferenceId: { _eq: $conferenceId } }) {
-            conferenceId
-            enabled
-            id
-            includeUnauthenticated
-            name
-            groupRoles {
-                id
-                roleId
-                groupId
-            }
+            ...ManageGroups_Group
         }
     }
 

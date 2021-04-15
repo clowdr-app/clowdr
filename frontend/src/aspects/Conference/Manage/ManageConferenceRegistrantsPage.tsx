@@ -1,40 +1,69 @@
-import { FetchResult, gql } from "@apollo/client";
-import { Heading, Spinner, useDisclosure, useToast } from "@chakra-ui/react";
+import { gql, Reference } from "@apollo/client";
+import {
+    Box,
+    Button,
+    Center,
+    FormLabel,
+    Heading,
+    Input,
+    Spinner,
+    Text,
+    Tooltip,
+    useDisclosure,
+    useToast,
+} from "@chakra-ui/react";
 import assert from "assert";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { LegacyRef, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    CreateDeleteAttendeesMutation,
+    AttendeePartsFragment,
+    AttendeePartsFragmentDoc,
+    InvitationPartsFragmentDoc,
     Permission_Enum,
-    UpdateAttendeeMutation,
-    useCreateDeleteAttendeesMutation,
+    useDeleteAttendeesMutation,
+    useInsertAttendeeMutation,
+    useInsertAttendeeWithoutInviteMutation,
     useInsertInvitationEmailJobsMutation,
     useManageConferencePeoplePage_InsertCustomEmailJobMutation,
     useSelectAllAttendeesQuery,
     useSelectAllGroupsQuery,
     useUpdateAttendeeMutation,
 } from "../../../generated/graphql";
+import { LinkButton } from "../../Chakra/LinkButton";
+import MultiSelect from "../../Chakra/MultiSelect";
+import { CheckBoxColumnFilter, MultiSelectColumnFilter, TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
-    BooleanFieldFormat,
-    CRUDTableProps,
-    defaultBooleanFilter,
-    defaultSelectFilter,
-    defaultStringFilter,
-    FieldType,
-    PrimaryField,
-    SelectOption,
-    UpdateResult,
-} from "../../CRUDTable/CRUDTable";
+    CellProps,
+    ColumnHeaderProps,
+    ColumnSpecification,
+    DeepWriteable,
+    Delete,
+    ExtraButton,
+    Insert,
+    RowSpecification,
+    SortDirection,
+    Update,
+} from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import isValidUUID from "../../Utils/isValidUUID";
+import { FAIcon } from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { SendEmailModal } from "./Registrants/SendEmailModal";
-import type { AttendeeDescriptor } from "./Registrants/Types";
 
 gql`
+    fragment InvitationParts on Invitation {
+        attendeeId
+        id
+        inviteCode
+        invitedEmailAddress
+        linkToUserId
+        createdAt
+        updatedAt
+        hash
+    }
+
     fragment AttendeeParts on Attendee {
         conferenceId
         id
@@ -44,14 +73,7 @@ gql`
             groupId
         }
         invitation {
-            attendeeId
-            id
-            inviteCode
-            invitedEmailAddress
-            linkToUserId
-            createdAt
-            updatedAt
-            hash
+            ...InvitationParts
         }
         userId
         updatedAt
@@ -66,43 +88,49 @@ gql`
         }
     }
 
-    mutation CreateDeleteAttendees(
-        $deleteAttendeeIds: [uuid!] = []
-        $insertAttendees: [Attendee_insert_input!]!
-        $insertInvitations: [Invitation_insert_input!]!
-    ) {
+    mutation InsertAttendee($attendee: Attendee_insert_input!, $invitation: Invitation_insert_input!) {
+        insert_Attendee_one(object: $attendee) {
+            ...AttendeeParts
+        }
+        insert_Invitation_one(object: $invitation) {
+            ...InvitationParts
+        }
+    }
+
+    mutation InsertAttendeeWithoutInvite($attendee: Attendee_insert_input!) {
+        insert_Attendee_one(object: $attendee) {
+            ...AttendeeParts
+        }
+    }
+
+    mutation DeleteAttendees($deleteAttendeeIds: [uuid!] = []) {
         delete_Attendee(where: { id: { _in: $deleteAttendeeIds } }) {
             returning {
                 id
             }
-        }
-        insert_Attendee(objects: $insertAttendees) {
-            returning {
-                ...AttendeeParts
-            }
-        }
-        insert_Invitation(objects: $insertInvitations) {
-            affected_rows
         }
     }
 
     mutation UpdateAttendee(
         $attendeeId: uuid!
         $attendeeName: String!
-        $insertGroups: [GroupAttendee_insert_input!]!
-        $deleteGroupIds: [uuid!] = []
+        $upsertGroups: [GroupAttendee_insert_input!]!
+        $remainingGroupIds: [uuid!]
     ) {
         update_Attendee_by_pk(pk_columns: { id: $attendeeId }, _set: { displayName: $attendeeName }) {
             ...AttendeeParts
         }
-        insert_GroupAttendee(objects: $insertGroups) {
+        insert_GroupAttendee(
+            objects: $upsertGroups
+            on_conflict: { constraint: GroupAttendee_groupId_attendeeId_key, update_columns: [] }
+        ) {
             returning {
                 id
                 attendeeId
                 groupId
             }
         }
-        delete_GroupAttendee(where: { attendeeId: { _eq: $attendeeId }, groupId: { _in: $deleteGroupIds } }) {
+        delete_GroupAttendee(where: { attendeeId: { _eq: $attendeeId }, groupId: { _nin: $remainingGroupIds } }) {
             returning {
                 id
             }
@@ -131,12 +159,21 @@ gql`
     }
 `;
 
-type GroupOption = SelectOption;
+// type GroupOption = SelectOption;
 
-const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "id">>) => CRUDTable(props);
+// const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "id">>) => CRUDTable(props);
 
 // TODO: Email validation
 // TODO: Export
+
+type AttendeeDescriptor = AttendeePartsFragment & {
+    id?: string;
+    groupAttendees?: ReadonlyArray<
+        AttendeePartsFragment["groupAttendees"][0] & {
+            id?: string;
+        }
+    >;
+};
 
 export default function ManageConferenceRegistrantsPage(): JSX.Element {
     const conference = useConference();
@@ -162,181 +199,272 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         },
     });
     useQueryErrorToast(errorAllAttendees, false);
+    const data = useMemo(() => [...(allAttendees?.Attendee ?? [])], [allAttendees?.Attendee]);
 
-    const [createDeleteAttendeesMutation] = useCreateDeleteAttendeesMutation();
-    const [updateAttendeeMutation] = useUpdateAttendeeMutation();
+    const [insertAttendee, insertAttendeeResponse] = useInsertAttendeeMutation();
+    const [insertAttendeeWithoutInvite, insertAttendeeWithoutInviteResponse] = useInsertAttendeeWithoutInviteMutation();
+    const [deleteAttendees, deleteAttendeesResponse] = useDeleteAttendeesMutation();
+    const [updateAttendee, updateAttendeeResponse] = useUpdateAttendeeMutation();
 
-    const [allAttendeesMap, setAllAttendeesMap] = useState<Map<string, AttendeeDescriptor>>();
+    const row: RowSpecification<AttendeeDescriptor> = useMemo(
+        () => ({
+            getKey: (record) => record.id,
+            canSelect: (_record) => true,
+            pages: {
+                defaultToLast: false,
+            },
+            invalid: (record) =>
+                !record.displayName
+                    ? {
+                          columnId: "name",
+                          reason: "Display name required",
+                      }
+                    : false,
+        }),
+        []
+    );
 
-    const parsedDBAttendees = useMemo(() => {
-        if (!allAttendees || !allGroups) {
-            return undefined;
-        }
-
-        const result = new Map<string, AttendeeDescriptor>();
-
-        for (const attendee of allAttendees.Attendee) {
-            const groupIds: Set<string> = new Set();
-            for (const attendeeRole of attendee.groupAttendees) {
-                groupIds.add(attendeeRole.groupId);
-            }
-            result.set(attendee.id, {
-                isNew: false,
-                id: attendee.id,
-                userId: attendee.userId,
-                displayName: attendee.displayName,
-                invitedEmailAddress: attendee.invitation?.invitedEmailAddress,
-                inviteSent: attendee.inviteSent ?? true,
-                inviteCode: attendee.invitation?.inviteCode,
-                groupIds,
-            });
-        }
-
-        return result;
-    }, [allAttendees, allGroups]);
-
-    useEffect(() => {
-        if (parsedDBAttendees) {
-            setAllAttendeesMap(parsedDBAttendees);
-        }
-    }, [parsedDBAttendees]);
-
-    const fields = useMemo(() => {
-        const groupOptions: GroupOption[] =
+    const columns: ColumnSpecification<AttendeeDescriptor>[] = useMemo(() => {
+        const groupOptions: { value: string; label: string }[] =
             allGroups?.Group.map((group) => ({
                 value: group.id,
                 label: group.name,
             })) ?? [];
-        const result: {
-            [K: string]: Readonly<PrimaryField<AttendeeDescriptor, any>>;
-        } = {
-            name: {
-                heading: "Name",
-                ariaLabel: "Name",
-                description: "Attendee name",
-                isHidden: false,
-                isEditable: true,
-                defaultValue: "New attendee name",
-                insert: (item, v) => {
-                    return {
-                        ...item,
-                        displayName: v,
-                    };
-                },
-                extract: (v) => v.displayName,
-                spec: {
-                    fieldType: FieldType.string,
-                    convertFromUI: (x) => x,
-                    convertToUI: (x) => x,
-                    filter: defaultStringFilter,
-                },
-                validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
-            },
-            inviteSent: {
-                heading: "Invite sent?",
-                ariaLabel: "Invite sent",
-                description: "Has at least one invitation email been sent to this user.",
-                isHidden: false,
-                isEditable: false,
-                defaultValue: false,
-                extract: (v) => v.inviteSent,
-                spec: {
-                    fieldType: FieldType.boolean,
-                    convertToUI: (x: boolean) => x,
-                    format: BooleanFieldFormat.checkbox,
-                    filter: defaultBooleanFilter,
-                },
-            },
-            inviteAccepted: {
-                heading: "Invite accepted?",
-                ariaLabel: "Invite accepted",
-                description: "Has this attendee accepted their invitation.",
-                isHidden: false,
-                isEditable: false,
-                defaultValue: false,
-                extract: (v) => !!v.userId,
-                spec: {
-                    fieldType: FieldType.boolean,
-                    convertToUI: (x: boolean) => x,
-                    format: BooleanFieldFormat.checkbox,
-                    filter: defaultBooleanFilter,
-                },
-            },
-            invitedEmailAddress: {
-                heading: "Invitation email address",
-                ariaLabel: "Invitation email address",
-                description: "The email address this attendee's invitation should be sent to.",
-                isHidden: false,
-                isEditableAtCreate: true,
-                isEditable: false,
-                defaultValue: "",
-                insert: (item, v) => {
-                    if ("isNew" in item && !item.isNew && !item.invitedEmailAddress) {
-                        return item;
-                    }
 
-                    return {
-                        ...item,
-                        invitedEmailAddress: v,
-                    };
+        const result: ColumnSpecification<AttendeeDescriptor>[] = [
+            {
+                id: "name",
+                defaultSortDirection: SortDirection.Asc,
+                header: function NameHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Name</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Name{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
                 },
-                extract: (v) => v.invitedEmailAddress ?? "N/A",
-                spec: {
-                    fieldType: FieldType.string,
-                    convertFromUI: (x) => x,
-                    convertToUI: (x) => x,
-                    filter: defaultStringFilter,
+                get: (data) => data.displayName,
+                set: (record, value: string) => {
+                    record.displayName = value;
                 },
-                validate: (_v) => true, // TODO: Validation
-            },
-            inviteCode: {
-                heading: "Invitation code",
-                ariaLabel: "Invitation code",
-                description: "The code for this attendee's invitation. May change after certain operations.",
-                isHidden: false,
-                isEditable: false,
-                defaultValue: "",
-                extract: (v) => v.inviteCode ?? "N/A",
-                spec: {
-                    fieldType: FieldType.string,
-                    convertFromUI: (x) => x,
-                    convertToUI: (x) => x,
-                    filter: defaultStringFilter,
+                sort: (x: string, y: string) => x.localeCompare(y),
+                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: string) => {
+                    return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
                 },
-                validate: (_v) => true, // TODO: Validation
-            },
-            groups: {
-                heading: "Groups",
-                ariaLabel: "Groups",
-                description: "The groups for this attendee.",
-                isHidden: false,
-                isEditable: true,
-                defaultValue: [],
-                insert: (item, v) => {
-                    return {
-                        ...item,
-                        groupIds: v,
-                    };
-                },
-                extract: (item) => item.groupIds,
-                spec: {
-                    fieldType: FieldType.select,
-                    multiSelect: true,
-                    convertToUI: (ids) =>
-                        Array.from(ids.values()).map((id) => {
-                            const opt = groupOptions.find((x) => x.value === id);
-                            assert(opt);
-                            return opt;
-                        }),
-                    convertFromUI: (opts) => {
-                        opts ??= [];
-                        return opts instanceof Array ? new Set(opts.map((x) => x.value)) : new Set([opts.value]);
-                    },
-                    filter: defaultSelectFilter,
-                    options: () => groupOptions,
+                filterEl: TextColumnFilter,
+                cell: function NameCell(props: CellProps<Partial<AttendeeDescriptor>>) {
+                    return (
+                        <Input
+                            type="text"
+                            value={props.value ?? ""}
+                            onChange={(ev) => props.onChange?.(ev.target.value)}
+                            onBlur={props.onBlur}
+                            border="1px solid"
+                            borderColor="rgba(255, 255, 255, 0.16)"
+                            ref={props.ref as LegacyRef<HTMLInputElement>}
+                        />
+                    );
                 },
             },
-        };
+            {
+                id: "inviteSent",
+                header: function NameHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Button size="xs" onClick={props.onClick}>
+                                Invite sent?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            </Button>
+                        );
+                    }
+                },
+                get: (data) => data.inviteSent,
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: boolean) => {
+                    return rows.filter((row) => row.inviteSent === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function InviteSentCell(props: CellProps<Partial<AttendeeDescriptor>, boolean>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Center>
+                                <FAIcon iconStyle="s" icon={props.value ? "check" : "times"} />
+                            </Center>
+                        );
+                    }
+                },
+            },
+            {
+                id: "inviteAccepted",
+                header: function NameHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Button size="xs" onClick={props.onClick}>
+                                Invite accepted?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            </Button>
+                        );
+                    }
+                },
+                get: (data) => !!data.userId,
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: boolean) => {
+                    return rows.filter((row) => row.inviteSent === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function InviteSentCell(props: CellProps<Partial<AttendeeDescriptor>, boolean>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Center>
+                                <FAIcon iconStyle="s" icon={props.value ? "check" : "times"} />
+                            </Center>
+                        );
+                    }
+                },
+            },
+            {
+                id: "invitedEmailAddress",
+                header: function NameHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Invitation address</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Invitation address{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.invitation?.invitedEmailAddress ?? "",
+                set: (record, value: string) => {
+                    if (!record.invitation) {
+                        assert(record.id);
+                        record.invitation = {
+                            attendeeId: record.id as DeepWriteable<any>,
+                            createdAt: (new Date().toISOString() as any) as DeepWriteable<any>,
+                            updatedAt: (new Date().toISOString() as any) as DeepWriteable<any>,
+                            invitedEmailAddress: value,
+                            inviteCode: ("" as any) as DeepWriteable<any>,
+                            id: ("" as any) as DeepWriteable<any>,
+                        };
+                    } else {
+                        record.invitation.invitedEmailAddress = value;
+                    }
+                },
+                sort: (x: string, y: string) => x.localeCompare(y),
+                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: string) => {
+                    return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
+                },
+                filterEl: TextColumnFilter,
+                cell: function InvitedEmailAddressCell(props: CellProps<Partial<AttendeeDescriptor>>) {
+                    if (props.isInCreate) {
+                        return (
+                            <Input
+                                type="text"
+                                value={props.value ?? ""}
+                                onChange={(ev) => props.onChange?.(ev.target.value)}
+                                onBlur={props.onBlur}
+                                border="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.16)"
+                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                            />
+                        );
+                    } else {
+                        return <Text px={2}>{props.value}</Text>;
+                    }
+                },
+            },
+            {
+                id: "inviteCode",
+                header: function NameHeader(props) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                                Invite code
+                            </Text>
+                        );
+                    }
+                },
+                get: (data) => data.invitation?.inviteCode ?? "",
+                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: string) => {
+                    return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
+                },
+                filterEl: TextColumnFilter,
+                cell: function InviteCodeCell(props: CellProps<Partial<AttendeeDescriptor>>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Text fontFamily="monospace" px={2}>
+                                {props.value}
+                            </Text>
+                        );
+                    }
+                },
+            },
+            {
+                id: "groups",
+                header: function ContentHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Groups</FormLabel>
+                    ) : (
+                        <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                            Groups
+                        </Text>
+                    );
+                },
+                get: (data) =>
+                    data.groupAttendees?.map(
+                        (ga) =>
+                            groupOptions.find((group) => group.value === ga.groupId) ?? {
+                                label: "<Unknown>",
+                                value: ga.groupId,
+                            }
+                    ) ?? [],
+                set: (record, value: { label: string; value: string }[]) => {
+                    record.groupAttendees = value.map((x) => ({
+                        attendeeId: (record.id as any) as DeepWriteable<any>,
+                        groupId: (x.value as any) as DeepWriteable<any>,
+                        id: (undefined as any) as DeepWriteable<any>,
+                    }));
+                },
+                filterFn: (
+                    rows: Array<AttendeeDescriptor>,
+                    filterValue: ReadonlyArray<{ label: string; value: string }>
+                ) => {
+                    return filterValue.length === 0
+                        ? rows
+                        : rows.filter((row) => {
+                              return row.groupAttendees.some((x) => filterValue.some((y) => y.value === x.groupId));
+                          });
+                },
+                filterEl: MultiSelectColumnFilter(groupOptions),
+                cell: function ContentCell(
+                    props: CellProps<
+                        Partial<AttendeeDescriptor>,
+                        ReadonlyArray<{ label: string; value: string }> | undefined
+                    >
+                ) {
+                    return (
+                        <MultiSelect
+                            name="groups"
+                            options={groupOptions}
+                            value={props.value ?? []}
+                            placeholder="Select one or more groups"
+                            onChange={(ev) => props.onChange?.(ev)}
+                            onBlur={props.onBlur}
+                        />
+                    );
+                },
+            },
+        ];
         return result;
     }, [allGroups?.Group]);
 
@@ -344,14 +472,298 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         insertInvitationEmailJobsMutation,
         { loading: insertInvitationEmailJobsLoading },
     ] = useInsertInvitationEmailJobsMutation();
-    const [
-        insertCustomEmailJobMutation,
-        insertCustomEmailJobResult,
-    ] = useManageConferencePeoplePage_InsertCustomEmailJobMutation();
+    const [insertCustomEmailJobMutation] = useManageConferencePeoplePage_InsertCustomEmailJobMutation();
     const [sendCustomEmailAttendees, setSendCustomEmailAttendees] = useState<AttendeeDescriptor[]>([]);
     const sendCustomEmailModal = useDisclosure();
 
     const toast = useToast();
+
+    const insert: Insert<AttendeeDescriptor> = useMemo(
+        () => ({
+            ongoing: insertAttendeeResponse.loading,
+            generateDefaults: () => {
+                const attendeeId = uuidv4();
+                return {
+                    id: attendeeId,
+                    conferenceId: conference.id,
+                    groupAttendees: [],
+                };
+            },
+            makeWhole: (d) => (d.displayName !== undefined ? (d as AttendeeDescriptor) : undefined),
+            start: (record) => {
+                if (record.invitation?.invitedEmailAddress) {
+                    insertAttendee({
+                        variables: {
+                            attendee: {
+                                id: record.id,
+                                conferenceId: conference.id,
+                                displayName: record.displayName,
+                                groupAttendees: {
+                                    data: record.groupAttendees.map((x) => ({ groupId: x.groupId })),
+                                },
+                            },
+                            invitation: {
+                                attendeeId: record.id,
+                                invitedEmailAddress: record.invitation?.invitedEmailAddress,
+                            },
+                        },
+                        update: (cache, { data: _data }) => {
+                            if (_data?.insert_Attendee_one) {
+                                const data = _data.insert_Attendee_one;
+                                cache.writeFragment({
+                                    data,
+                                    fragment: AttendeePartsFragmentDoc,
+                                    fragmentName: "AttendeeParts",
+                                });
+                            }
+                            if (_data?.insert_Invitation_one) {
+                                const data = _data.insert_Invitation_one;
+                                cache.writeFragment({
+                                    data,
+                                    fragment: InvitationPartsFragmentDoc,
+                                    fragmentName: "InvitationParts",
+                                });
+                            }
+                        },
+                    });
+                } else {
+                    insertAttendeeWithoutInvite({
+                        variables: {
+                            attendee: {
+                                id: record.id,
+                                conferenceId: conference.id,
+                                displayName: record.displayName,
+                                groupAttendees: {
+                                    data: record.groupAttendees.map((x) => ({ groupId: x.groupId })),
+                                },
+                            },
+                        },
+                        update: (cache, { data: _data }) => {
+                            if (_data?.insert_Attendee_one) {
+                                const data = _data.insert_Attendee_one;
+                                cache.writeFragment({
+                                    data,
+                                    fragment: AttendeePartsFragmentDoc,
+                                    fragmentName: "AttendeeParts",
+                                });
+                            }
+                        },
+                    });
+                }
+            },
+        }),
+        [conference.id, insertAttendee, insertAttendeeResponse.loading, insertAttendeeWithoutInvite]
+    );
+
+    const update: Update<AttendeeDescriptor> = useMemo(
+        () => ({
+            ongoing: updateAttendeeResponse.loading,
+            start: (record) => {
+                updateAttendee({
+                    variables: {
+                        attendeeId: record.id,
+                        attendeeName: record.displayName,
+                        upsertGroups: record.groupAttendees.map((x) => ({
+                            groupId: x.groupId,
+                            attendeeId: x.attendeeId,
+                        })),
+                        remainingGroupIds: record.groupAttendees.map((x) => x.groupId),
+                    },
+                    optimisticResponse: {
+                        update_Attendee_by_pk: record,
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.update_Attendee_by_pk) {
+                            const data = _data.update_Attendee_by_pk;
+                            cache.writeFragment({
+                                data,
+                                fragment: AttendeePartsFragmentDoc,
+                                fragmentName: "AttendeeParts",
+                            });
+                        }
+                    },
+                });
+            },
+        }),
+        [updateAttendee, updateAttendeeResponse.loading]
+    );
+
+    const deleteP: Delete<AttendeeDescriptor> = useMemo(
+        () => ({
+            ongoing: deleteAttendeesResponse.loading,
+            start: (keys) => {
+                deleteAttendees({
+                    variables: {
+                        deleteAttendeeIds: keys,
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.delete_Attendee) {
+                            const data = _data.delete_Attendee;
+                            const deletedIds = data.returning.map((x) => x.id);
+                            cache.modify({
+                                fields: {
+                                    Attendee(existingRefs: Reference[] = [], { readField }) {
+                                        deletedIds.forEach((x) => {
+                                            cache.evict({
+                                                id: x.id,
+                                                fieldName: "AttendeeParts",
+                                                broadcast: true,
+                                            });
+                                        });
+                                        return existingRefs.filter((ref) => !deletedIds.includes(readField("id", ref)));
+                                    },
+                                },
+                            });
+                        }
+                    },
+                });
+            },
+        }),
+        [deleteAttendees, deleteAttendeesResponse.loading]
+    );
+
+    const buttons: ExtraButton<AttendeeDescriptor>[] = useMemo(
+        () => [
+            {
+                render: function ImportButton(_selectedData) {
+                    return (
+                        <LinkButton colorScheme="green" to={`/conference/${conference.slug}/manage/import/people`}>
+                            Import
+                        </LinkButton>
+                    );
+                },
+            },
+            {
+                render: function SendInitialInvitesButton(selectedData) {
+                    return (
+                        <Tooltip
+                            label={
+                                "Sends invitations to selected attendees who have not already been sent an invite and are members of at least one enabled group."
+                            }
+                        >
+                            <Box>
+                                <Button
+                                    colorScheme="purple"
+                                    isDisabled={selectedData.length === 0}
+                                    isLoading={insertInvitationEmailJobsLoading}
+                                    onClick={async () => {
+                                        const result = await insertInvitationEmailJobsMutation({
+                                            variables: {
+                                                attendeeIds: selectedData.map((x) => x.id),
+                                                conferenceId: conference.id,
+                                                sendRepeat: false,
+                                            },
+                                        });
+                                        if (result.errors && result.errors.length > 0) {
+                                            toast({
+                                                title: "Failed to send invitiation emails",
+                                                description: result.errors[0].message,
+                                                isClosable: true,
+                                                status: "error",
+                                            });
+                                        } else {
+                                            toast({
+                                                title: "Invitiation emails sent",
+                                                duration: 8000,
+                                                status: "success",
+                                            });
+                                        }
+
+                                        await refetchAllAttendees();
+                                    }}
+                                >
+                                    Send initial invitations
+                                </Button>
+                            </Box>
+                        </Tooltip>
+                    );
+                },
+            },
+            {
+                render: function SendRepeatInvitesButton(selectedData) {
+                    return (
+                        <Tooltip
+                            label={
+                                "Sends repeat invitations to selected attendees who are members of at least one enabled group."
+                            }
+                        >
+                            <Box>
+                                <Button
+                                    colorScheme="purple"
+                                    isDisabled={selectedData.length === 0}
+                                    isLoading={insertInvitationEmailJobsLoading}
+                                    onClick={async () => {
+                                        const result = await insertInvitationEmailJobsMutation({
+                                            variables: {
+                                                attendeeIds: selectedData.map((x) => x.id),
+                                                conferenceId: conference.id,
+                                                sendRepeat: true,
+                                            },
+                                        });
+                                        if (result.errors && result.errors.length > 0) {
+                                            toast({
+                                                title: "Failed to send invitiation emails",
+                                                description: result.errors[0].message,
+                                                isClosable: true,
+                                                status: "error",
+                                            });
+                                        } else {
+                                            toast({
+                                                title: "Invitiation emails sent",
+                                                duration: 8000,
+                                                status: "success",
+                                            });
+                                        }
+
+                                        await refetchAllAttendees();
+                                    }}
+                                >
+                                    Send repeat invitations
+                                </Button>
+                            </Box>
+                        </Tooltip>
+                    );
+                },
+            },
+            {
+                render: function SendCustomEmailButton(selectedData) {
+                    return (
+                        <Tooltip label={"Sends a custom email to all selected attendees."}>
+                            <Box>
+                                <Button
+                                    colorScheme="purple"
+                                    isDisabled={selectedData.length === 0}
+                                    isLoading={insertInvitationEmailJobsLoading}
+                                    onClick={async () => {
+                                        if (!allAttendees?.Attendee) {
+                                            return;
+                                        }
+                                        const attendees = Array.from(allAttendees.Attendee).filter((entry) =>
+                                            selectedData.some((x) => x.id === entry.id)
+                                        );
+                                        setSendCustomEmailAttendees(attendees);
+                                        sendCustomEmailModal.onOpen();
+                                    }}
+                                >
+                                    Send custom email
+                                </Button>
+                            </Box>
+                        </Tooltip>
+                    );
+                },
+            },
+        ],
+        [
+            allAttendees?.Attendee,
+            conference.id,
+            conference.slug,
+            insertInvitationEmailJobsLoading,
+            insertInvitationEmailJobsMutation,
+            refetchAllAttendees,
+            sendCustomEmailModal,
+            toast,
+        ]
+    );
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -369,384 +781,43 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Registrants
             </Heading>
-            {(loadingAllGroups && !allGroups) || (loadingAllAttendees && !allAttendeesMap) ? (
+            {(loadingAllGroups && !allGroups) || (loadingAllAttendees && !allAttendees?.Attendee) ? (
                 <Spinner />
             ) : errorAllAttendees || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
-            <AttendeesCRUDTable
-                key="crud-table"
-                data={allAttendeesMap ?? new Map()}
-                csud={{
-                    cudCallbacks: {
-                        generateTemporaryKey: () => uuidv4(),
-                        create: (tempKey, item) => {
-                            assert(allAttendeesMap);
-                            if (
-                                [...allAttendeesMap.values()].some(
-                                    (x) => x.invitedEmailAddress === item.invitedEmailAddress?.toLowerCase().trim()
-                                )
-                            ) {
-                                return false;
-                            }
-
-                            const newItem = {
-                                ...item,
-                                isNew: true,
-                                id: tempKey,
-                            } as AttendeeDescriptor;
-                            setAllAttendeesMap((oldData) => {
-                                const newData = new Map(oldData ? oldData.entries() : []);
-                                newData.set(tempKey, newItem);
-                                return newData;
-                            });
-                            return true;
-                        },
-                        update: (items) => {
-                            const results: Map<string, UpdateResult> = new Map();
-                            items.forEach((item, key) => {
-                                results.set(key, true);
-                            });
-
-                            // Duplicate email addresses cannot be set because
-                            // a) The database prevents it and
-                            // b) The UI doesn't allow editing email addresses after insertion
-                            setAllAttendeesMap((oldData) => {
-                                if (oldData) {
-                                    const newData = new Map(oldData.entries());
-                                    items.forEach((item, key) => {
-                                        newData.set(key, item);
-                                    });
-                                    return newData;
-                                }
-                                return undefined;
-                            });
-
-                            return results;
-                        },
-                        delete: (keys) => {
-                            const results: Map<string, boolean> = new Map();
-                            keys.forEach((key) => {
-                                results.set(key, true);
-                            });
-
-                            setAllAttendeesMap((oldData) => {
-                                const newData = new Map(oldData ? oldData.entries() : []);
-                                keys.forEach((key) => {
-                                    newData.delete(key);
-                                });
-                                return newData;
-                            });
-
-                            return results;
-                        },
-                        save: async (keys) => {
-                            assert(allAttendeesMap);
-                            assert(allGroups);
-
-                            const newKeys = new Set<string>();
-                            const updatedKeys = new Map<
-                                string,
-                                {
-                                    added: Set<string>;
-                                    deleted: Set<string>;
-                                }
-                            >();
-                            const deletedKeys = new Set<string>();
-
-                            const results: Map<string, boolean> = new Map();
-
-                            keys.forEach((key) => {
-                                results.set(key, false);
-                            });
-
-                            keys.forEach((key) => {
-                                const item = allAttendeesMap.get(key);
-                                if (!item) {
-                                    deletedKeys.add(key);
-                                } else {
-                                    if (item.isNew) {
-                                        newKeys.add(key);
-                                    } else {
-                                        const existing = parsedDBAttendees?.get(key);
-                                        if (!existing) {
-                                            console.error("Not-new value was not found in the existing DB dataset.");
-                                            results.set(key, false);
-                                            return;
-                                        }
-
-                                        let changed = item.displayName !== existing.displayName;
-                                        const groupIdsAdded = new Set<string>();
-                                        const groupIdsDeleted = new Set<string>();
-                                        for (const group of allGroups.Group) {
-                                            if (item.groupIds.has(group.id) && !existing.groupIds.has(group.id)) {
-                                                changed = true;
-                                                groupIdsAdded.add(group.id);
-                                            } else if (
-                                                !item.groupIds.has(group.id) &&
-                                                existing.groupIds.has(group.id)
-                                            ) {
-                                                changed = true;
-                                                groupIdsDeleted.add(group.id);
-                                            }
-                                        }
-                                        if (changed) {
-                                            updatedKeys.set(key, {
-                                                added: groupIdsAdded,
-                                                deleted: groupIdsDeleted,
-                                            });
-                                        }
-                                    }
-                                }
-                            });
-
-                            let createDeleteAttendeesResult: FetchResult<
-                                CreateDeleteAttendeesMutation,
-                                Record<string, any>,
-                                Record<string, any>
-                            >;
-                            try {
-                                const keysToInsert = Array.from(newKeys.values());
-                                createDeleteAttendeesResult = await createDeleteAttendeesMutation({
-                                    variables: {
-                                        deleteAttendeeIds: Array.from(deletedKeys.values()),
-                                        insertAttendees: keysToInsert.map((key) => {
-                                            const item = allAttendeesMap.get(key);
-                                            assert(item);
-                                            return {
-                                                id: item.id,
-                                                conferenceId: conference.id,
-                                                displayName: item.displayName,
-                                                groupAttendees: {
-                                                    data: Array.from(item.groupIds.values()).map((groupId) => ({
-                                                        groupId,
-                                                    })),
-                                                },
-                                            };
-                                        }),
-                                        insertInvitations: keysToInsert.map((key) => {
-                                            const item = allAttendeesMap.get(key);
-                                            assert(item);
-                                            return {
-                                                attendeeId: item.id,
-                                                invitedEmailAddress: item.invitedEmailAddress,
-                                            };
-                                        }),
-                                    },
-                                });
-                            } catch (e) {
-                                createDeleteAttendeesResult = {
-                                    errors: [e],
-                                };
-                            }
-                            if (createDeleteAttendeesResult.errors) {
-                                newKeys.forEach((key) => {
-                                    results.set(key, false);
-                                });
-                                deletedKeys.forEach((key) => {
-                                    results.set(key, false);
-                                });
-                            } else {
-                                newKeys.forEach((key) => {
-                                    results.set(key, true);
-                                });
-                                deletedKeys.forEach((key) => {
-                                    results.set(key, true);
-                                });
-                            }
-
-                            let updatedResults: {
-                                key: string;
-                                result: FetchResult<UpdateAttendeeMutation, Record<string, any>, Record<string, any>>;
-                            }[];
-                            try {
-                                updatedResults = await Promise.all(
-                                    Array.from(updatedKeys.entries()).map(async ([key, { added, deleted }]) => {
-                                        const item = allAttendeesMap.get(key);
-                                        assert(item);
-                                        let result: FetchResult<
-                                            UpdateAttendeeMutation,
-                                            Record<string, any>,
-                                            Record<string, any>
-                                        >;
-                                        try {
-                                            result = await updateAttendeeMutation({
-                                                variables: {
-                                                    attendeeId: item.id,
-                                                    attendeeName: item.displayName,
-                                                    deleteGroupIds: Array.from(deleted.values()),
-                                                    insertGroups: Array.from(added.values()).map((groupId) => {
-                                                        return {
-                                                            attendeeId: item.id,
-                                                            groupId,
-                                                        };
-                                                    }),
-                                                },
-                                            });
-                                        } catch (e) {
-                                            result = {
-                                                errors: [e],
-                                            };
-                                        }
-                                        return {
-                                            key,
-                                            result,
-                                        };
-                                    })
-                                );
-                            } catch (e) {
-                                updatedResults = [];
-                                updatedKeys.forEach((_item, key) => {
-                                    updatedResults.push({
-                                        key,
-                                        result: { errors: [e] },
-                                    });
-                                });
-                            }
-
-                            updatedResults.forEach((result) => {
-                                if (result.result.errors) {
-                                    results.set(result.key, false);
-                                } else {
-                                    results.set(result.key, true);
-                                }
-                            });
-
-                            await refetchAllAttendees();
-
-                            return results;
-                        },
-                    },
-                }}
-                primaryFields={{
-                    keyField: {
-                        heading: "Id",
-                        ariaLabel: "Unique identifier",
-                        description: "Unique identifier",
-                        isHidden: true,
-                        insert: (item, v) => {
-                            return {
-                                ...item,
-                                id: v,
-                            };
-                        },
-                        extract: (v) => v.id,
-                        spec: {
-                            fieldType: FieldType.string,
-                            convertToUI: (x) => x,
-                            disallowSpaces: true,
-                        },
-                        validate: (v) => isValidUUID(v) || ["Invalid UUID"],
-                        getRowTitle: (v) => v.displayName,
-                    },
-                    otherFields: fields,
-                }}
-                customButtons={[
-                    {
-                        text: "Import",
-                        label: "Import",
-                        colorScheme: "green",
-                        action: `/conference/${conference.slug}/manage/import/people`,
-                        enabledWhenDirty: false,
-                        enabledWhenNothingSelected: true,
-                        isRunning: false,
-                        tooltipWhenDisabled: "",
-                        tooltipWhenEnabled: "",
-                    },
-                    {
-                        text: "Send initial invitations",
-                        label: "Send initial invitations",
-                        colorScheme: "purple",
-                        enabledWhenNothingSelected: false,
-                        enabledWhenDirty: false,
-                        tooltipWhenDisabled: "Save changes to enable sending invitations",
-                        tooltipWhenEnabled:
-                            "Sends invitations to selected attendees who have not already been sent an invite.",
-                        action: async (keys) => {
-                            const result = await insertInvitationEmailJobsMutation({
-                                variables: {
-                                    attendeeIds: Array.from(keys.values()),
-                                    conferenceId: conference.id,
-                                    sendRepeat: false,
-                                },
-                            });
-                            if (result.errors && result.errors.length > 0) {
-                                toast({
-                                    title: "Failed to send invitiation emails",
-                                    description: result.errors[0].message,
-                                    isClosable: true,
-                                    status: "error",
-                                });
-                            } else {
-                                toast({
-                                    title: "Invitiation emails sent",
-                                    duration: 8000,
-                                    status: "success",
-                                });
-                            }
-
-                            await refetchAllAttendees();
-                        },
-                        isRunning: insertInvitationEmailJobsLoading,
-                    },
-                    {
-                        text: "Send repeat invitations",
-                        label: "Send repeat invitations",
-                        colorScheme: "purple",
-                        enabledWhenNothingSelected: false,
-                        enabledWhenDirty: false,
-                        tooltipWhenDisabled: "Save changes to enable sending invitations",
-                        tooltipWhenEnabled: "Sends repeat invitations to all selected attendees.",
-                        action: async (keys) => {
-                            const result = await insertInvitationEmailJobsMutation({
-                                variables: {
-                                    attendeeIds: Array.from(keys.values()),
-                                    conferenceId: conference.id,
-                                    sendRepeat: true,
-                                },
-                            });
-                            if (result.errors && result.errors.length > 0) {
-                                toast({
-                                    title: "Failed to send invitiation emails",
-                                    description: result.errors[0].message,
-                                    isClosable: true,
-                                    status: "error",
-                                });
-                            } else {
-                                toast({
-                                    title: "Invitiation emails sent",
-                                    duration: 8000,
-                                    status: "success",
-                                });
-                            }
-
-                            await refetchAllAttendees();
-                        },
-                        isRunning: insertInvitationEmailJobsLoading,
-                    },
-                    {
-                        text: "Send custom email",
-                        label: "Send custom email",
-                        colorScheme: "purple",
-                        enabledWhenNothingSelected: false,
-                        enabledWhenDirty: false,
-                        tooltipWhenDisabled: "Save changes to enable sending a custom email",
-                        tooltipWhenEnabled: "Sends a custom email to all selected attendees.",
-                        action: async (keys) => {
-                            if (!allAttendeesMap) {
-                                return;
-                            }
-                            const attendees = Array.from(allAttendeesMap.entries())
-                                .filter((entry) => keys.has(entry[0]))
-                                .map((entry) => entry[1]);
-                            setSendCustomEmailAttendees(attendees);
-                            sendCustomEmailModal.onOpen();
-                        },
-                        isRunning: insertCustomEmailJobResult.loading,
-                    },
-                ]}
+            <CRUDTable<AttendeeDescriptor>
+                columns={columns}
+                row={row}
+                data={
+                    !loadingAllGroups &&
+                    !loadingAllAttendees &&
+                    (allGroups?.Group && allAttendees?.Attendee ? data : null)
+                }
+                tableUniqueName="ManageConferenceRegistrants"
+                alert={
+                    insertAttendeeResponse.error ||
+                    insertAttendeeWithoutInviteResponse.error ||
+                    updateAttendeeResponse.error ||
+                    deleteAttendeesResponse.error
+                        ? {
+                              status: "error",
+                              title: "Error saving changes",
+                              description:
+                                  insertAttendeeResponse.error?.message ??
+                                  insertAttendeeWithoutInviteResponse.error?.message ??
+                                  updateAttendeeResponse.error?.message ??
+                                  deleteAttendeesResponse.error?.message ??
+                                  "Unknown error",
+                          }
+                        : undefined
+                }
+                insert={insert}
+                update={update}
+                delete={deleteP}
+                buttons={buttons}
             />
             <SendEmailModal
                 isOpen={sendCustomEmailModal.isOpen}

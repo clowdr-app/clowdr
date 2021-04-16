@@ -1,5 +1,5 @@
 import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakra-ui/react";
-import { darkTheme, lightTheme, MeetingProvider } from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Route, RouteComponentProps, Switch, useLocation, useRouteMatch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";

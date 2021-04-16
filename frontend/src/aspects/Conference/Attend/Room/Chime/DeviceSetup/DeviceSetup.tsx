@@ -1,6 +1,6 @@
 import { Box, Button, Heading, HStack } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/toast";
-import { useLocalVideo, useMeetingManager } from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import { useLocalVideo, useMeetingManager } from "amazon-chime-sdk-component-library-react";
 import React, { useCallback, useState } from "react";
 import { CameraDevices } from "./CameraDevices";
 import { MicrophoneDevices } from "./MicrophoneDevices";

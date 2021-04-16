@@ -1,5 +1,5 @@
 import { chakra } from "@chakra-ui/react";
-import { useAudioInputs, useSelectAudioInputDevice } from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import { useAudioInputs, useSelectAudioInputDevice } from "amazon-chime-sdk-component-library-react";
 import React from "react";
 import { DeviceInput } from "./DeviceInput";
 

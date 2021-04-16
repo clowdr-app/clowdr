@@ -7,10 +7,7 @@ import {
     ModalOverlay,
     useDisclosure,
 } from "@chakra-ui/react";
-import {
-    DevicePermissionStatus,
-    useDevicePermissionStatus,
-} from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import { DevicePermissionStatus, useDevicePermissionStatus } from "amazon-chime-sdk-component-library-react";
 import * as R from "ramda";
 import React, { useEffect } from "react";
 

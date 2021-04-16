@@ -5,7 +5,7 @@ import {
     useContentShareState,
     useLocalVideo,
     useToggleLocalMute,
-} from "@clowdr-app/amazon-chime-sdk-component-library-react";
+} from "amazon-chime-sdk-component-library-react";
 import React, { useEffect, useRef } from "react";
 import useCurrentAttendee from "../../../useCurrentAttendee";
 import PlaceholderImage from "../PlaceholderImage";

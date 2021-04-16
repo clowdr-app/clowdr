@@ -4,7 +4,7 @@ import {
     useFeaturedTileState,
     useLocalVideo,
     useRemoteVideoTileState,
-} from "@clowdr-app/amazon-chime-sdk-component-library-react";
+} from "amazon-chime-sdk-component-library-react";
 import React from "react";
 import useCurrentAttendee from "../../../useCurrentAttendee";
 import { LocalVideo } from "./LocalVideo";

@@ -1,4 +1,4 @@
-import { useRemoteVideoTileState, useRosterState } from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import { useRemoteVideoTileState, useRosterState } from "amazon-chime-sdk-component-library-react";
 import React from "react";
 import { RemoteVideo } from "./RemoteVideo";
 

@@ -5,7 +5,7 @@ import {
     useLocalVideo,
     useMeetingManager,
     useMeetingStatus,
-} from "@clowdr-app/amazon-chime-sdk-component-library-react";
+} from "amazon-chime-sdk-component-library-react";
 import React, { useCallback } from "react";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { ChimeRoomControlBar } from "./ChimeRoomControlBar";

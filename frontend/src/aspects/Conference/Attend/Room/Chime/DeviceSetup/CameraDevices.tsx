@@ -1,5 +1,5 @@
 import { Box, chakra } from "@chakra-ui/react";
-import { PreviewVideo } from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import { PreviewVideo } from "amazon-chime-sdk-component-library-react";
 import React from "react";
 import { CameraSelection } from "./CameraSelection";
 

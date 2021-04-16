@@ -1,5 +1,5 @@
 import { chakra, FormControl, FormLabel, Progress, useId } from "@chakra-ui/react";
-import { useLocalAudioInputActivity } from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import { useLocalAudioInputActivity } from "amazon-chime-sdk-component-library-react";
 import React, { useState } from "react";
 
 export function MicrophoneActivityPreviewInner({ className }: { className?: string }): JSX.Element {

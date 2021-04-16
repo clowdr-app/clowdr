@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { chakra, FormControl, FormLabel, Select } from "@chakra-ui/react";
-import type { DeviceType, SelectedDeviceId } from "@clowdr-app/amazon-chime-sdk-component-library-react/lib/types";
+import type { DeviceType, SelectedDeviceId } from "amazon-chime-sdk-component-library-react/lib/types";
 import React, { ChangeEvent } from "react";
 
 interface Props {

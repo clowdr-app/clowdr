@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { useAudioVideo, useContentShareState } from "@clowdr-app/amazon-chime-sdk-component-library-react";
+import { useAudioVideo, useContentShareState } from "amazon-chime-sdk-component-library-react";
 import React, { useEffect, useRef } from "react";
 
 export function ContentShare(): JSX.Element {

@@ -5,7 +5,7 @@ import {
     useAudioVideo,
     useRemoteVideoTileState,
     useRosterState,
-} from "@clowdr-app/amazon-chime-sdk-component-library-react";
+} from "amazon-chime-sdk-component-library-react";
 import React, { useEffect, useMemo, useRef } from "react";
 import PlaceholderImage from "../PlaceholderImage";
 import { VonageOverlay } from "../Vonage/VonageOverlay";

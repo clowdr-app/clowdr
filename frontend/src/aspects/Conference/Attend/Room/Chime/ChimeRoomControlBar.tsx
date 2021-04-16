@@ -14,11 +14,13 @@ import {
     WrapItem,
 } from "@chakra-ui/react";
 import {
+    DevicePermissionStatus,
     MeetingStatus,
     useAudioInputs,
     useAudioVideo,
     useContentShareControls,
     useContentShareState,
+    useDevicePermissionStatus,
     useLocalVideo,
     useMeetingManager,
     useMeetingStatus,
@@ -29,6 +31,7 @@ import {
 } from "amazon-chime-sdk-component-library-react";
 import React, { useCallback } from "react";
 import { FAIcon } from "../../../../Icons/FAIcon";
+import { PermissionInstructions } from "./PermissionInstructions";
 
 export function ChimeRoomControlBar(): JSX.Element {
     const toast = useToast();
@@ -43,10 +46,35 @@ export function ChimeRoomControlBar(): JSX.Element {
     const { isLocalUserSharing, isLocalShareLoading, sharingAttendeeId } = useContentShareState();
     const { muted, toggleMute } = useToggleLocalMute();
     const { toggleContentShare } = useContentShareControls();
+    const devicePermissionStatus = useDevicePermissionStatus();
 
     const onLeaveRoom = useCallback(async () => {
         await meetingManager.leave();
     }, [meetingManager]);
+
+    const toggleVideoWrapper = useCallback(async () => {
+        if (devicePermissionStatus === DevicePermissionStatus.DENIED) {
+            toast({
+                title: "Could not enable camera",
+                description: <PermissionInstructions />,
+                isClosable: true,
+                duration: null,
+                status: "error",
+            });
+        } else {
+            try {
+                await toggleVideo();
+            } catch (e) {
+                toast({
+                    title: "Could not enable camera",
+                    description: <PermissionInstructions />,
+                    isClosable: true,
+                    duration: null,
+                    status: "error",
+                });
+            }
+        }
+    }, [devicePermissionStatus, toast, toggleVideo]);
 
     return (
         <>
@@ -107,7 +135,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                 {audioVideo ? (
                     <WrapItem>
                         {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button onClick={toggleVideo}>
+                            <Button onClick={toggleVideoWrapper}>
                                 {isVideoEnabled ? (
                                     <>
                                         <FAIcon icon="video-slash" iconStyle="s" />
@@ -192,40 +220,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                         ) : undefined}
                     </WrapItem>
                 ) : undefined}
-                {/* <WrapItem>
-                    <AudioInputControl />
-                </WrapItem> */}
-                {/* {audioInputs.selectedDevice ? (
-                    <WrapItem>
-                        <Button onClick={stopMicrophone} colorScheme="purple">
-                            <FAIcon icon="microphone" iconStyle="s" />
-                            <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
-                        </Button>
-                    </WrapItem>
-                ) : (
-                    <WrapItem>
-                        <Button isLoading={isOpening} onClick={startMicrophone}>
-                            <FAIcon icon="microphone-slash" iconStyle="s" />
-                            <span style={{ marginLeft: "1rem" }}>Start microphone</span>
-                        </Button>
-                    </WrapItem>
-                )} */}
             </Wrap>
-            {/* <DeviceChooserModal
-                cameraId={
-                    state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? state.preferredCameraId ?? null
-                }
-                microphoneId={
-                    state.microphoneStream?.getAudioTracks()[0].getSettings().deviceId ??
-                    state.preferredMicrophoneId ??
-                    null
-                }
-                isOpen={deviceModalState.isOpen}
-                showCamera={deviceModalState.showCamera}
-                showMicrophone={deviceModalState.showMicrophone}
-                onClose={onClose}
-                onOpen={() => onOpen(true, true)}
-            /> */}
         </>
     );
 }

@@ -711,6 +711,27 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                     ) : (
                                         <Text px={2}>No groups enabled.</Text>
                                     )}
+                                    {disabledGroups?.length ? (
+                                        <MenuGroup title="Disabled groups">
+                                            <MenuOptionGroup></MenuOptionGroup>
+                                            {disabledGroups.map((group) => (
+                                                <MenuItem
+                                                    key={group.id}
+                                                    onClick={() => {
+                                                        doExport(
+                                                            data.filter((a) =>
+                                                                a.groupAttendees.some((ga) => ga.groupId === group.id)
+                                                            )
+                                                        );
+                                                    }}
+                                                >
+                                                    {group.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuGroup>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </MenuList>
                             </Menu>
                         );

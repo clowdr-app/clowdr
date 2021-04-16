@@ -156,42 +156,58 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
                 conferencePrepareJobId
             );
 
-            let broadcastContentItemId;
-            try {
-                broadcastContentItemId = await callWithRetry(
-                    async () =>
-                        await upsertPendingMP4BroadcastContentItem(
-                            conferencePrepareJobId,
-                            conferenceId,
-                            videoBroadcastItem.id
-                        )
+            if (
+                !latestVersion.data ||
+                !latestVersion.data.s3Url ||
+                latestVersion.data.s3Url === "" ||
+                !latestVersion.data.subtitles ||
+                !latestVersion.data.subtitles["en_US"] ||
+                !latestVersion.data.subtitles["en_US"].s3Url
+            ) {
+                console.log(
+                    "Conference prepare: Skipping item because it is missing one or more pieces of information needed to prepare it",
+                    videoBroadcastItem.id,
+                    conferencePrepareJobId
                 );
-            } catch (e) {
-                console.error(
-                    "Failed to upsert pending MP4 broadcast content item",
-                    conferencePrepareJobId,
-                    videoBroadcastItem.id
-                );
-                continue;
+                createdJob = false;
+            } else {
+                let broadcastContentItemId;
+                try {
+                    broadcastContentItemId = await callWithRetry(
+                        async () =>
+                            await upsertPendingMP4BroadcastContentItem(
+                                conferencePrepareJobId,
+                                conferenceId,
+                                videoBroadcastItem.id
+                            )
+                    );
+                } catch (e) {
+                    console.error(
+                        "Failed to upsert pending MP4 broadcast content item",
+                        conferencePrepareJobId,
+                        videoBroadcastItem.id
+                    );
+                    continue;
+                }
+
+                const broadcastRenderJobData: BroadcastRenderJobDataBlob = {
+                    type: "BroadcastRenderJob",
+                    subtitlesS3Url: latestVersion.data.subtitles["en_US"].s3Url,
+                    videoS3Url: latestVersion.data.s3Url,
+                };
+
+                // Create a video render job to populate the broadcast content item
+                await apolloClient.mutate({
+                    mutation: CreateVideoRenderJobDocument,
+                    variables: {
+                        conferenceId,
+                        conferencePrepareJobId,
+                        data: broadcastRenderJobData,
+                        broadcastContentItemId,
+                    },
+                });
+                createdJob = true;
             }
-
-            const broadcastRenderJobData: BroadcastRenderJobDataBlob = {
-                type: "BroadcastRenderJob",
-                subtitlesS3Url: latestVersion.data.subtitles["en_US"].s3Url,
-                videoS3Url: latestVersion.data.s3Url,
-            };
-
-            // Create a video render job to populate the broadcast content item
-            await apolloClient.mutate({
-                mutation: CreateVideoRenderJobDocument,
-                variables: {
-                    conferenceId,
-                    conferencePrepareJobId,
-                    data: broadcastRenderJobData,
-                    broadcastContentItemId,
-                },
-            });
-            createdJob = true;
         }
     }
 

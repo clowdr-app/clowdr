@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import {
     CreateRoomParticipantDocument,
+    DeleteRoomParticipantsCreatedBeforeDocument,
     GetRoomParticipantDetailsDocument,
     RemoveRoomParticipantDocument,
     RoomParticipantFragment,
@@ -152,4 +153,23 @@ export async function getRoomParticipantDetails(
     });
 
     return result.data.RoomParticipant;
+}
+
+export async function deleteRoomParticipantsCreatedBefore(date: Date): Promise<number> {
+    gql`
+        mutation DeleteRoomParticipantsCreatedBefore($before: timestamptz!) {
+            delete_RoomParticipant(where: { createdAt: { _lte: $before } }) {
+                affected_rows
+            }
+        }
+    `;
+
+    const result = await apolloClient.mutate({
+        mutation: DeleteRoomParticipantsCreatedBeforeDocument,
+        variables: {
+            before: date.toISOString(),
+        },
+    });
+
+    return result.data?.delete_RoomParticipant?.affected_rows ?? 0;
 }

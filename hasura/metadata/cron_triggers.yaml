@@ -97,6 +97,14 @@
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
+- name: RemoveOldRoomParticipants
+  webhook: '{{ACTION_BASE_URL}}/room/removeOldParticipants'
+  schedule: 0 */1 * * *
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
 - name: SyncChannelStacks
   webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
   schedule: '*/5 * * * *'

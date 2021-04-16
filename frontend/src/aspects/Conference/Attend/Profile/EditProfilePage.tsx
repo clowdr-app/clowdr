@@ -476,15 +476,6 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 ) : undefined}
                 <EditProfilePitureForm attendee={attendee} />
                 {bioField}
-                <PronounInput
-                    pronouns={editingAttendee.profile.pronouns ?? []}
-                    onChange={(newPronouns) => {
-                        setEditingAttendee({
-                            ...editingAttendee,
-                            profile: { ...editingAttendee.profile, pronouns: newPronouns },
-                        });
-                    }}
-                />
                 <BadgeInput
                     badges={editingAttendee.profile.badges ?? []}
                     onChange={(newBadges) => {
@@ -494,9 +485,18 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                         });
                     }}
                 />
-                {timezoneField}
                 {affiliationField}
                 {affiliationURLField}
+                {timezoneField}
+                <PronounInput
+                    pronouns={editingAttendee.profile.pronouns ?? []}
+                    onChange={(newPronouns) => {
+                        setEditingAttendee({
+                            ...editingAttendee,
+                            profile: { ...editingAttendee.profile, pronouns: newPronouns },
+                        });
+                    }}
+                />
                 {countryField}
                 {webPageField}
                 {twitterField}

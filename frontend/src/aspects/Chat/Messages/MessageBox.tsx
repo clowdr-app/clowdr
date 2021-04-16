@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Button, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
@@ -7,6 +7,7 @@ import {
     Chat_MessageType_Enum,
     Chat_ReactionType_Enum,
 } from "../../../generated/graphql";
+import ProfileBadge from "../../Badges/ProfileBadge";
 import { useAttendee } from "../../Conference/AttendeesContext";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import { Markdown } from "../../Text/Markdown";
@@ -155,20 +156,7 @@ function MessageBody({
                     {attendee?.displayName ?? " "}
                 </Text>
                 {attendee?.profile?.badges && attendee.profile.badges.length > 0 ? (
-                    <Box
-                        fontSize={smallFontSize}
-                        color={attendee.profile.badges[0].colour}
-                        border="1px solid"
-                        borderRadius="3px"
-                        borderColor={attendee.profile.badges[0].colour}
-                        lineHeight="3.5ex"
-                        py={0}
-                        px={1}
-                        m={0}
-                        ml={2}
-                    >
-                        {attendee.profile.badges[0].name}
-                    </Box>
+                    <ProfileBadge badge={attendee.profile.badges[0]} fontSize="0.8em" lineHeight="1.2em" py={0} />
                 ) : undefined}
             </HStack>
         ),

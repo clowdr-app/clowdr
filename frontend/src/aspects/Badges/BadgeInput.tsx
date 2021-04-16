@@ -255,14 +255,16 @@ export default function BadgeInput({
         <BadgeInputInner
             examples={
                 examples ?? [
-                    "Volunteer",
-                    "Organiser",
                     "Author",
+                    "Volunteer",
+                    "Mentor",
+                    "Mentee",
                     "Sponsor",
                     "Hiring",
                     "Hire me",
                     "Let's chat!",
                     "Coffee?",
+                    "Organiser",
                 ]
             }
             badges={badges ?? internalBadges}

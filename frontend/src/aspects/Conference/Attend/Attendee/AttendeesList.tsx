@@ -1,5 +1,7 @@
-import { Button, Center, Image, SimpleGrid, Spinner, Text, useDisclosure } from "@chakra-ui/react";
+import { Button, Center, Flex, Image, SimpleGrid, Spinner, Text, useDisclosure } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
+import BadgeList from "../../../Badges/BadgeList";
 import FAIcon from "../../../Icons/FAIcon";
 import type { Attendee } from "../../useCurrentAttendee";
 import ProfileModal from "./ProfileModal";
@@ -19,26 +21,46 @@ export function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClic
         >
             {attendee.profile.photoURL_50x50 ? (
                 <Image
-                    flex="0 0 50px"
+                    flex="0 0 60px"
                     aria-describedby={`attendee-trigger-${attendee.id}`}
                     src={attendee.profile.photoURL_50x50}
+                    w="60px"
+                    h="60px"
                 />
             ) : (
-                <Center w="50px" h="50px" flex="0 0 50px">
+                <Center w="60px" h="60px" flex="0 0 60px">
                     <FAIcon iconStyle="s" icon="cat" />
                 </Center>
             )}
-            <Center maxH="100%" flex="0 1 auto" py={2} mx={4} overflow="hidden">
+            <Flex
+                h="100%"
+                flex="0 1 auto"
+                mx={4}
+                overflow="hidden"
+                flexDir="column"
+                justifyContent="center"
+                alignItems="flex-start"
+            >
                 <Text
                     as="span"
                     id={`attendee-trigger-${attendee.id}`}
                     maxW="100%"
                     whiteSpace="normal"
                     overflowWrap="anywhere"
+                    fontSize="sm"
                 >
                     {attendee.displayName}
                 </Text>
-            </Center>
+                {attendee.profile.badges ? (
+                    <BadgeList
+                        badges={R.slice(0, 3, attendee.profile.badges)}
+                        mt={2}
+                        whiteSpace="normal"
+                        textAlign="left"
+                        noBottomMargin
+                    />
+                ) : undefined}
+            </Flex>
         </Button>
     );
 }
@@ -65,7 +87,13 @@ export default function AttendeesList({
             allAttendees?.map((attendee, idx) => (
                 <AttendeeTile
                     key={attendee.id + "-all-" + idx}
-                    attendee={attendee}
+                    attendee={{
+                        ...attendee,
+                        profile: {
+                            ...attendee.profile,
+                            badges: attendee.profile.badges && R.slice(0, 3, attendee.profile.badges),
+                        },
+                    }}
                     onClick={() => {
                         openProfileModal(attendee);
                     }}
@@ -95,6 +123,7 @@ export default function AttendeesList({
                 columns={[1, Math.min(2, attendeesEls.length), Math.min(3, attendeesEls.length)]}
                 autoRows="min-content"
                 spacing={[2, 2, 4]}
+                maxW="5xl"
             >
                 {attendeesEls}
             </SimpleGrid>

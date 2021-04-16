@@ -22,6 +22,10 @@ export type Scalars = {
 /** columns and relationships of "Attendee" */
 export type Attendee = {
   readonly __typename?: 'Attendee';
+  /** An array relationship */
+  readonly badges: ReadonlyArray<AttendeeProfileBadges>;
+  /** An aggregated array relationship */
+  readonly badges_aggregate: AttendeeProfileBadges_Aggregate;
   /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -50,6 +54,26 @@ export type Attendee = {
   /** An object relationship */
   readonly user?: Maybe<User>;
   readonly userId?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "Attendee" */
+export type AttendeeBadgesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfileBadges_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfileBadges_Order_By>>;
+  where?: Maybe<AttendeeProfileBadges_Bool_Exp>;
+};
+
+
+/** columns and relationships of "Attendee" */
+export type AttendeeBadges_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfileBadges_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfileBadges_Order_By>>;
+  where?: Maybe<AttendeeProfileBadges_Bool_Exp>;
 };
 
 
@@ -418,6 +442,104 @@ export type AttendeeProfileBadgesArgs = {
 export type AttendeeProfilePronounsArgs = {
   path?: Maybe<Scalars['String']>;
 };
+
+/** columns and relationships of "AttendeeProfileBadges" */
+export type AttendeeProfileBadges = {
+  readonly __typename?: 'AttendeeProfileBadges';
+  /** An object relationship */
+  readonly attendee?: Maybe<Attendee>;
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "AttendeeProfileBadges" */
+export type AttendeeProfileBadges_Aggregate = {
+  readonly __typename?: 'AttendeeProfileBadges_aggregate';
+  readonly aggregate?: Maybe<AttendeeProfileBadges_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<AttendeeProfileBadges>;
+};
+
+/** aggregate fields of "AttendeeProfileBadges" */
+export type AttendeeProfileBadges_Aggregate_Fields = {
+  readonly __typename?: 'AttendeeProfileBadges_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<AttendeeProfileBadges_Max_Fields>;
+  readonly min?: Maybe<AttendeeProfileBadges_Min_Fields>;
+};
+
+
+/** aggregate fields of "AttendeeProfileBadges" */
+export type AttendeeProfileBadges_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<AttendeeProfileBadges_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "AttendeeProfileBadges" */
+export type AttendeeProfileBadges_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<AttendeeProfileBadges_Max_Order_By>;
+  readonly min?: Maybe<AttendeeProfileBadges_Min_Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "AttendeeProfileBadges". All fields are combined with a logical 'AND'. */
+export type AttendeeProfileBadges_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<AttendeeProfileBadges_Bool_Exp>>>;
+  readonly _not?: Maybe<AttendeeProfileBadges_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<AttendeeProfileBadges_Bool_Exp>>>;
+  readonly attendee?: Maybe<Attendee_Bool_Exp>;
+  readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly colour?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type AttendeeProfileBadges_Max_Fields = {
+  readonly __typename?: 'AttendeeProfileBadges_max_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "AttendeeProfileBadges" */
+export type AttendeeProfileBadges_Max_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type AttendeeProfileBadges_Min_Fields = {
+  readonly __typename?: 'AttendeeProfileBadges_min_fields';
+  readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "AttendeeProfileBadges" */
+export type AttendeeProfileBadges_Min_Order_By = {
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** ordering options when selecting data from "AttendeeProfileBadges" */
+export type AttendeeProfileBadges_Order_By = {
+  readonly attendee?: Maybe<Attendee_Order_By>;
+  readonly attendeeId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** select columns of table "AttendeeProfileBadges" */
+export enum AttendeeProfileBadges_Select_Column {
+  /** column name */
+  AttendeeId = 'attendeeId',
+  /** column name */
+  Colour = 'colour',
+  /** column name */
+  Name = 'name'
+}
 
 /** aggregated selection of "AttendeeProfile" */
 export type AttendeeProfile_Aggregate = {
@@ -944,6 +1066,7 @@ export type Attendee_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Attendee_Bool_Exp>>>;
   readonly _not?: Maybe<Attendee_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Attendee_Bool_Exp>>>;
+  readonly badges?: Maybe<AttendeeProfileBadges_Bool_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly contentPeople?: Maybe<ContentPerson_Bool_Exp>;
@@ -1050,6 +1173,7 @@ export type Attendee_On_Conflict = {
 
 /** ordering options when selecting data from "Attendee" */
 export type Attendee_Order_By = {
+  readonly badges_aggregate?: Maybe<AttendeeProfileBadges_Aggregate_Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly contentPeople_aggregate?: Maybe<ContentPerson_Aggregate_Order_By>;
@@ -25840,6 +25964,10 @@ export type Query_Root = {
   readonly AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** fetch data from the table: "AttendeeProfile" */
   readonly AttendeeProfile: ReadonlyArray<AttendeeProfile>;
+  /** fetch data from the table: "AttendeeProfileBadges" */
+  readonly AttendeeProfileBadges: ReadonlyArray<AttendeeProfileBadges>;
+  /** fetch aggregated fields from the table: "AttendeeProfileBadges" */
+  readonly AttendeeProfileBadges_aggregate: AttendeeProfileBadges_Aggregate;
   /** fetch aggregated fields from the table: "AttendeeProfile" */
   readonly AttendeeProfile_aggregate: AttendeeProfile_Aggregate;
   /** fetch data from the table: "AttendeeProfile" using primary key columns */
@@ -26370,6 +26498,26 @@ export type Query_RootAttendeeProfileArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<AttendeeProfile_Order_By>>;
   where?: Maybe<AttendeeProfile_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeProfileBadgesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfileBadges_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfileBadges_Order_By>>;
+  where?: Maybe<AttendeeProfileBadges_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAttendeeProfileBadges_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfileBadges_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfileBadges_Order_By>>;
+  where?: Maybe<AttendeeProfileBadges_Bool_Exp>;
 };
 
 
@@ -29218,7 +29366,6 @@ export enum Room_ShuffleQueueEntry_Constraint {
   /** unique or primary key constraint */
   ShuffleQueueEntryPkey = 'ShuffleQueueEntry_pkey',
   /** unique or primary key constraint */
-  IndexIswaiting = 'index_iswaiting'
 }
 
 /** input type for incrementing integer column in table "room.ShuffleQueueEntry" */
@@ -29858,6 +30005,10 @@ export type Subscription_Root = {
   readonly AttendeeGoogleAccount_by_pk?: Maybe<AttendeeGoogleAccount>;
   /** fetch data from the table: "AttendeeProfile" */
   readonly AttendeeProfile: ReadonlyArray<AttendeeProfile>;
+  /** fetch data from the table: "AttendeeProfileBadges" */
+  readonly AttendeeProfileBadges: ReadonlyArray<AttendeeProfileBadges>;
+  /** fetch aggregated fields from the table: "AttendeeProfileBadges" */
+  readonly AttendeeProfileBadges_aggregate: AttendeeProfileBadges_Aggregate;
   /** fetch aggregated fields from the table: "AttendeeProfile" */
   readonly AttendeeProfile_aggregate: AttendeeProfile_Aggregate;
   /** fetch data from the table: "AttendeeProfile" using primary key columns */
@@ -30388,6 +30539,26 @@ export type Subscription_RootAttendeeProfileArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<AttendeeProfile_Order_By>>;
   where?: Maybe<AttendeeProfile_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeProfileBadgesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfileBadges_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfileBadges_Order_By>>;
+  where?: Maybe<AttendeeProfileBadges_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAttendeeProfileBadges_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<AttendeeProfileBadges_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<AttendeeProfileBadges_Order_By>>;
+  where?: Maybe<AttendeeProfileBadges_Bool_Exp>;
 };
 
 
@@ -36674,7 +36845,7 @@ export type SelectAttendeesQueryResult = Apollo.QueryResult<SelectAttendeesQuery
 export const SearchAttendeesDocument = gql`
     query SearchAttendees($conferenceId: uuid!, $search: String!) {
   Attendee(
-    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {_or: [{displayName: {_ilike: $search}}, {profile: {_or: [{affiliation: {_ilike: $search}}, {bio: {_ilike: $search}}]}}]}]}
+    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {_or: [{displayName: {_ilike: $search}}, {profile: {_or: [{affiliation: {_ilike: $search}}, {bio: {_ilike: $search}}]}}, {badges: {name: {_ilike: $search}}}]}]}
     order_by: {displayName: asc}
   ) {
     ...AttendeeData

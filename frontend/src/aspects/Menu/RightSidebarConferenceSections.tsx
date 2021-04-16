@@ -29,7 +29,7 @@ import {
     Tabs,
     Text,
     Tooltip,
-    UnorderedList,
+    useDisclosure,
     useToast,
     VStack,
 } from "@chakra-ui/react";
@@ -46,6 +46,7 @@ import {
 import { Chat } from "../Chat/Chat";
 import { ChatState } from "../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
+import ProfileModal from "../Conference/Attend/Attendee/ProfileModal";
 import { AttendeeIdSpec, useAttendee, useAttendees } from "../Conference/AttendeesContext";
 import { useConference, useMaybeConference } from "../Conference/useConference";
 import { Attendee, useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
@@ -125,10 +126,10 @@ function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () =
 
 function AttendeesList({
     searchedAttendees,
-    createDM,
+    action,
 }: {
     searchedAttendees?: Attendee[];
-    createDM: (attendeeId: string, attendeeName: string) => void;
+    action?: (attendeeId: string, attendeeName: string) => void;
 }): JSX.Element {
     return (
         <List>
@@ -137,7 +138,7 @@ function AttendeesList({
                     <AttendeeTile
                         attendee={attendee}
                         onClick={() => {
-                            createDM(attendee.id, attendee.displayName);
+                            action?.(attendee.id, attendee.displayName);
                         }}
                     />
                 </ListItem>
@@ -223,10 +224,10 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }):
                         {loadingSearch ? <Spinner /> : <FAIcon iconStyle="s" icon="search" />}
                     </InputRightElement>
                 </InputGroup>
-                <FormHelperText>Search names, affiliations and bios. (Min length 3)</FormHelperText>
+                <FormHelperText>Search badges, names, affiliations and bios. (Min length 3)</FormHelperText>
             </FormControl>
             <AttendeesList
-                createDM={createDM}
+                action={createDM}
                 searchedAttendees={
                     searched && search.length > 0 ? searched.filter((x) => x.id !== attendee?.id) : undefined
                 }
@@ -809,6 +810,16 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
     const mConference = useMaybeConference();
     const location = useLocation();
 
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(null);
+    const openProfileModal = useCallback(
+        (attendee: Attendee) => {
+            setSelectedAttendee(attendee);
+            onOpen();
+        },
+        [onOpen]
+    );
+
     useEffect(() => {
         return presence.observePage(location.pathname, mConference?.slug, (ids) => {
             setUserIds([...ids.values()].map((x) => ({ user: x })));
@@ -819,12 +830,26 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
     const sortedAttendees = useMemo(() => R.sortBy((x) => x.displayName, attendees), [attendees]);
 
     return (
-        <UnorderedList fontSize="sm">
-            {sortedAttendees.map((attendee) => (
-                <ListItem key={attendee.id}>{attendee.displayName}</ListItem>
-            ))}
-        </UnorderedList>
+        <>
+            <AttendeesList
+                searchedAttendees={sortedAttendees as Attendee[]}
+                action={(attendeeId) => {
+                    const a = attendees.find((x) => x.id === attendeeId);
+                    if (a) {
+                        openProfileModal(a as Attendee);
+                    }
+                }}
+            />
+            <ProfileModal isOpen={isOpen} onClose={onClose} attendee={selectedAttendee} />
+        </>
     );
+    // return (
+    //     <UnorderedList fontSize="sm">
+    //         {sortedAttendees.map((attendee) => (
+    //             <ListItem key={attendee.id}>{attendee.displayName}</ListItem>
+    //         ))}
+    //     </UnorderedList>
+    // );
 }
 
 function ParticipantListItem({ attendeeId }: { attendeeId: string }): JSX.Element {
@@ -1100,7 +1125,7 @@ function RightSidebarConferenceSections_Inner({
                 <TabPanel p={0} pt="4px" overflowY="auto" w="100%" h="100%">
                     {chatsPanel}
                 </TabPanel>
-                <TabPanel overflowY="auto" w="100%" h="100%">
+                <TabPanel p={"3px"} overflowY="auto" w="100%" h="100%">
                     {presencePanel}
                 </TabPanel>
             </TabPanels>

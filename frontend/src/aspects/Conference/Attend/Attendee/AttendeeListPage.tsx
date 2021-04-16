@@ -36,6 +36,7 @@ gql`
                         _or: [
                             { displayName: { _ilike: $search } }
                             { profile: { _or: [{ affiliation: { _ilike: $search } }, { bio: { _ilike: $search } }] } }
+                            { badges: { name: { _ilike: $search } } }
                         ]
                     }
                 ]
@@ -152,7 +153,7 @@ export default function AttendeeListPage(): JSX.Element {
                         {loadingSearch ? <Spinner /> : <FAIcon iconStyle="s" icon="search" />}
                     </InputRightElement>
                 </InputGroup>
-                <FormHelperText>Search names, affiliations and bios. (Min length 3)</FormHelperText>
+                <FormHelperText>Search badges, names, affiliations and bios. (Min length 3)</FormHelperText>
             </FormControl>
             <AttendeesList
                 allAttendees={attendees ?? undefined}

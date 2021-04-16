@@ -1140,6 +1140,14 @@
     using:
       foreign_key_constraint_on: userId
   array_relationships:
+  - name: badges
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: AttendeeProfileBadges
+        column_mapping:
+          id: attendeeId
   - name: contentPeople
     using:
       foreign_key_constraint_on:
@@ -1519,6 +1527,65 @@
             _and:
             - slug:
                 _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_ROLES
+                      - CONFERENCE_MANAGE_GROUPS
+                      - CONFERENCE_MANAGE_ATTENDEES
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+- table:
+    schema: public
+    name: AttendeeProfileBadges
+  object_relationships:
+  - name: attendee
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: Attendee
+        column_mapping:
+          attendeeId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - attendeeId
+      - colour
+      - name
+      filter:
+        attendee:
+          _or:
+          - _and:
+            - userId:
+                _is_null: false
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW_ATTENDEES
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+          - _and:
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
             - _exists:
                 _where:
                   _and:

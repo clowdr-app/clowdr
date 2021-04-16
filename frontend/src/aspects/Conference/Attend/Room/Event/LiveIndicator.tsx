@@ -41,7 +41,7 @@ export function LiveIndicator({ event }: { event: RoomEventDetailsFragment }): J
                     </Badge>
                     {secondsUntilLive < 1000 ? (
                         <Stat fontSize="md" ml="auto" flexGrow={1} textAlign="center">
-                            <StatLabel>Seconds remaining</StatLabel>
+                            <StatLabel>Time remaining</StatLabel>
                             <StatNumber>{formatRemainingTime(secondsUntilLive)}</StatNumber>
                         </Stat>
                     ) : (

@@ -286,6 +286,6 @@ custom_types:
   - name: GenerateChatRemoteUserIdsOutput
   - name: PresenceSummaryOutput
   - name: PresenceFlushOutput
-  - name: VAPIDPublicKeyOutput
   - name: JoinRoomChimeSessionOutput
+  - name: VAPIDPublicKeyOutput
   scalars: []

@@ -1,11 +1,14 @@
 import { gql } from "@apollo/client/core";
 import { Meeting } from "@aws-sdk/client-chime";
+import assert from "assert";
 import { is } from "typescript-is";
 import {
     ContentGroup_CreateRoomDocument,
     CreateContentGroupRoom_GetContentGroupDocument,
     CreateRoomChimeMeetingDocument,
     DeleteRoomChimeMeetingDocument,
+    GetRoomByChimeMeetingIdDocument,
+    GetRoomBySessionIdDocument,
     GetRoomChimeMeetingDocument,
     GetRoomConferenceIdDocument,
     GetRoomThatAttendeeCanJoinDocument,
@@ -155,9 +158,19 @@ export async function createRoomChimeMeeting(roomId: string, conferenceId: strin
     const chimeMeetingData = await createChimeMeeting(roomId);
 
     gql`
-        mutation CreateRoomChimeMeeting($conferenceId: uuid!, $chimeMeetingData: jsonb!, $roomId: uuid!) {
+        mutation CreateRoomChimeMeeting(
+            $conferenceId: uuid!
+            $chimeMeetingData: jsonb!
+            $chimeMeetingId: String!
+            $roomId: uuid!
+        ) {
             insert_room_RoomChimeMeeting_one(
-                object: { conferenceId: $conferenceId, chimeMeetingData: $chimeMeetingData, roomId: $roomId }
+                object: {
+                    conferenceId: $conferenceId
+                    chimeMeetingData: $chimeMeetingData
+                    chimeMeetingId: $chimeMeetingId
+                    roomId: $roomId
+                }
             ) {
                 id
             }
@@ -165,12 +178,14 @@ export async function createRoomChimeMeeting(roomId: string, conferenceId: strin
     `;
 
     try {
+        assert(chimeMeetingData.MeetingId);
         await apolloClient.mutate({
             mutation: CreateRoomChimeMeetingDocument,
             variables: {
                 conferenceId,
                 roomId,
                 chimeMeetingData,
+                chimeMeetingId: chimeMeetingData.MeetingId,
             },
         });
     } catch (e) {
@@ -303,4 +318,52 @@ export async function getRoomVonageMeeting(roomId: string): Promise<string | nul
     // todo: create session if appropriate
 
     return null;
+}
+
+export async function getRoomByVonageSessionId(
+    sessionId: string
+): Promise<{ roomId: string; conferenceId: string } | null> {
+    gql`
+        query GetRoomBySessionId($sessionId: String!) {
+            Room(where: { publicVonageSessionId: { _eq: $sessionId } }) {
+                id
+                conferenceId
+            }
+        }
+    `;
+
+    const roomResult = await apolloClient.query({
+        query: GetRoomBySessionIdDocument,
+        variables: {
+            sessionId,
+        },
+    });
+
+    return roomResult.data.Room.length === 1
+        ? { roomId: roomResult.data.Room[0].id, conferenceId: roomResult.data.Room[0].conferenceId }
+        : null;
+}
+
+export async function getRoomByChimeMeetingId(
+    meetingId: string
+): Promise<{ roomId: string; conferenceId: string } | null> {
+    gql`
+        query GetRoomByChimeMeetingId($meetingId: String!) {
+            Room(where: { roomChimeMeeting: { chimeMeetingId: { _eq: $meetingId } } }) {
+                id
+                conferenceId
+            }
+        }
+    `;
+
+    const roomResult = await apolloClient.query({
+        query: GetRoomByChimeMeetingIdDocument,
+        variables: {
+            meetingId,
+        },
+    });
+
+    return roomResult.data.Room.length === 1
+        ? { roomId: roomResult.data.Room[0].id, conferenceId: roomResult.data.Room[0].conferenceId }
+        : null;
 }

@@ -1,7 +1,11 @@
 import { json, text } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleJoinRoom } from "../handlers/chime";
+import {
+    handleChimeAttendeeJoinedNotification,
+    handleChimeAttendeeLeftNotification,
+    handleJoinRoom,
+} from "../handlers/chime";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ChimeAttendeeJoinedDetail, ChimeAttendeeLeftDetail, ChimeEventBase } from "../types/chime";
@@ -65,7 +69,12 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                     return;
                 }
 
-                console.log("Attendee left", { eventDetail: detail });
+                try {
+                    console.log("Received chime:AttendeeLeft notification", detail);
+                    await handleChimeAttendeeLeftNotification(detail);
+                } catch (err) {
+                    console.error("Failure while handling chime:AttendeeLeft event", { err });
+                }
                 res.status(200).json("OK");
                 return;
             }
@@ -83,7 +92,12 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                     return;
                 }
 
-                console.log("Attendee joined", { eventDetail: detail });
+                try {
+                    console.log("Received chime:AttendeeJoined notification", detail);
+                    await handleChimeAttendeeJoinedNotification(detail);
+                } catch (err) {
+                    console.error("Failure while handling chime:AttendeeJoined event", { err });
+                }
                 res.status(200).json("OK");
                 return;
             }

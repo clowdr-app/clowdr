@@ -3,13 +3,9 @@ import { OngoingBroadcastableVideoRoomEventsDocument } from "../../generated/gra
 import { apolloClient } from "../../graphqlClient";
 import { CustomConnectionData, WebhookReqBody } from "../../types/vonage";
 import { callWithRetry } from "../../utils";
-import {
-    addEventParticipantStream,
-    addRoomParticipant,
-    removeEventParticipantStream,
-    removeRoomParticipant,
-    startEventBroadcast,
-} from "./vonageTools";
+import { getRoomByVonageSessionId } from "../room";
+import { addRoomParticipant, removeRoomParticipant } from "../roomParticipant";
+import { addEventParticipantStream, removeEventParticipantStream, startEventBroadcast } from "./vonageTools";
 
 export async function startBroadcastIfOngoingEvent(payload: WebhookReqBody): Promise<boolean> {
     const ongoingMatchingEvents = await apolloClient.query({
@@ -63,9 +59,26 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
             );
             const data = JSON.parse(payload.connection.data);
             const { attendeeId } = assertType<CustomConnectionData>(data);
-            await callWithRetry(
-                async () => await addRoomParticipant(payload.sessionId, payload.connection.id, attendeeId)
-            );
+
+            const room = await getRoomByVonageSessionId(payload.sessionId);
+
+            if (!room) {
+                console.log("No room matching this Vonage session, skipping participant addition.", {
+                    sessionId: payload.sessionId,
+                    attendeeId,
+                });
+                success = false;
+            } else {
+                await callWithRetry(
+                    async () =>
+                        await addRoomParticipant(
+                            room.roomId,
+                            room.conferenceId,
+                            { vonageConnectionId: payload.connection.id },
+                            attendeeId
+                        )
+                );
+            }
         } catch (e) {
             console.error(
                 "Failed to handle Vonage connectionCreated event",
@@ -86,9 +99,19 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
             );
             const data = JSON.parse(payload.connection.data);
             const { attendeeId } = assertType<CustomConnectionData>(data);
-            await callWithRetry(
-                async () => await removeRoomParticipant(payload.sessionId, attendeeId, payload.connection.id)
-            );
+            const room = await getRoomByVonageSessionId(payload.sessionId);
+
+            if (!room) {
+                console.log("No room matching this Vonage session, skipping participant removal.", {
+                    sessionId: payload.sessionId,
+                    attendeeId,
+                });
+                success = false;
+            } else {
+                await callWithRetry(
+                    async () => await removeRoomParticipant(room.roomId, room.conferenceId, attendeeId)
+                );
+            }
         } catch (e) {
             console.error(
                 "Failed to handle Vonage connectionDestroyed event",

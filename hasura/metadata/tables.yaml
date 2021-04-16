@@ -5989,6 +5989,15 @@
   - name: originatingEvent
     using:
       foreign_key_constraint_on: originatingEventId
+  - name: roomChimeMeeting
+    using:
+      manual_configuration:
+        remote_table:
+          schema: room
+          name: RoomChimeMeeting
+        insertion_order: null
+        column_mapping:
+          id: roomId
   - name: roomPrivacy
     using:
       foreign_key_constraint_on: roomPrivacyName

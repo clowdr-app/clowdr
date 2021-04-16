@@ -20,7 +20,7 @@ export function EditContentItem({
         latestVersion?.data.baseType === ContentBaseType.Video ? latestVersion?.data.transcode?.s3Url : null;
     return (
         <>
-            {latestTranscodeURL && latestSubtitles ? (
+            {latestTranscodeURL && latestSubtitles?.s3Url?.length ? (
                 <EditSubtitles
                     videoS3URL={latestTranscodeURL}
                     data={latestSubtitles}

@@ -122,7 +122,7 @@ export function ContentGroupVideo({
     }, [videoContentItemData.s3Url, videoContentItemData.transcode?.s3Url]);
 
     const { result: subtitlesUrl, loading, error } = useAsync(async () => {
-        if (!videoContentItemData.subtitles["en_US"] || !videoContentItemData.subtitles["en_US"].s3Url) {
+        if (!videoContentItemData.subtitles["en_US"] || !videoContentItemData.subtitles["en_US"].s3Url?.length) {
             return undefined;
         } else {
             try {

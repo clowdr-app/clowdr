@@ -128,7 +128,11 @@ export default function UploadFileForm_Subtitles({
             return null;
         }
         // Make sure subtitles are already generated so uploaded ones don't get overwritten later
-        if (!latest.data.subtitles["en_US"] || latest.data.subtitles["en_US"].status !== AWSJobStatus.Completed) {
+        if (
+            !latest.data.subtitles["en_US"] ||
+            !latest.data.subtitles["en_US"]?.s3Url?.length ||
+            latest.data.subtitles["en_US"].status !== AWSJobStatus.Completed
+        ) {
             return null;
         }
         return latest.data;

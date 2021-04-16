@@ -63,7 +63,8 @@ export default function UploadedContentItem({
                                 {!item?.data ||
                                 item?.data.length === 0 ||
                                 item?.data[item.data.length - 1]?.data.baseType !== "video" ||
-                                !item?.data[item.data.length - 1]?.data.subtitles["en_US"] ? (
+                                !item?.data[item.data.length - 1]?.data.subtitles["en_US"] ||
+                                !item?.data[item.data.length - 1]?.data.subtitles["en_US"]?.s3Url?.length ? (
                                     <RenderContentItem data={item.data} />
                                 ) : undefined}
                                 <EditContentItem data={item.data} contentItemId={item.id} magicToken={magicToken} />

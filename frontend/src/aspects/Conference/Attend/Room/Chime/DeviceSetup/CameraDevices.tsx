@@ -1,7 +1,7 @@
 import { Box, chakra } from "@chakra-ui/react";
-import { PreviewVideo } from "amazon-chime-sdk-component-library-react";
 import React from "react";
 import { CameraSelection } from "./CameraSelection";
+import PreviewVideo from "./PreviewVideo";
 
 export const CameraDevices = chakra(CameraDevicesInner);
 

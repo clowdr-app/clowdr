@@ -48,43 +48,6 @@ export function ChimeRoomControlBar(): JSX.Element {
         await meetingManager.leave();
     }, [meetingManager]);
 
-    // useEffect(() => {
-    //     async function fn() {
-    //         await meetingManager.start();
-    //     }
-
-    //     fn();
-
-    //     return () => {
-    //         meetingManager.leave();
-    //     };
-    // }, [meetingManager]);
-
-    // useEffect(() => {
-    //     async function fn() {
-    //         if (audioVideo) {
-    //             console.log("Listing audio input devices");
-    //             // await audioVideo?.listAudioInputDevices();
-    //             const devices = await audioVideo.listAudioInputDevices();
-    //             console.log("Audio input devices", devices);
-    //         }
-    //         // const devices = meetingManager.audioInputDevices;
-    //         // const devices2 = await audioVideo?.listAudioInputDevices();
-    //     }
-    //     fn();
-    // }, [audioVideo]);
-
-    // const stopMicrophone = useCallback(async () => {
-    //     try {
-    //         await audioVideo?.chooseAudioInputDevice(null);
-    //     } catch (e) {
-    //         console.error("Failed to stop microphone", e);
-    //         toast({
-    //             title: "Failed to stop microphone",
-    //         });
-    //     }
-    // }, [audioVideo, toast]);
-
     return (
         <>
             <Wrap p={2}>

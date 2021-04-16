@@ -15,7 +15,8 @@ export function DeviceSetup(): JSX.Element {
         setIsLoading(true);
         try {
             if (!isVideoEnabled) {
-                await toggleVideo();
+                // A very-bad-no-good hack to mitigate https://github.com/aws/amazon-chime-sdk-component-library-react/issues/314 and https://github.com/aws/amazon-chime-sdk-js/issues/502
+                setTimeout(() => toggleVideo().catch((e) => console.error("Failed to start video", e)), 1000);
             }
             await meetingManager.start();
             setIsLoading(false);

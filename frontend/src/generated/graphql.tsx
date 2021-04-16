@@ -33503,18 +33503,6 @@ export type ContentGroup_CreateRoomMutationVariables = Exact<{
 
 export type ContentGroup_CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly createContentGroupRoom?: Maybe<{ readonly __typename?: 'CreateContentGroupRoomOutput', readonly roomId?: Maybe<string>, readonly message?: Maybe<string> }> };
 
-export type ManageContentPeople_AttendeeFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly id: any, readonly invitedEmailAddress: string }>, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }> };
-
-export type ManageContentPeople_SelectAllAttendeesQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type ManageContentPeople_SelectAllAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
-    { readonly __typename?: 'Attendee' }
-    & ManageContentPeople_AttendeeFragment
-  )> };
-
 export type SubmissionRequestsModal_GetConferenceConfigurationsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -34027,6 +34015,61 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 
 export type UpdateConferenceMutation = { readonly __typename?: 'mutation_root', readonly update_Conference?: Maybe<{ readonly __typename?: 'Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> }> };
+
+export type ManageContentPeople_AttendeeFragment = { readonly __typename?: 'Attendee', readonly id: any, readonly displayName: string, readonly invitation?: Maybe<{ readonly __typename?: 'Invitation', readonly id: any, readonly invitedEmailAddress: string }>, readonly profile?: Maybe<{ readonly __typename?: 'AttendeeProfile', readonly attendeeId: any, readonly affiliation?: Maybe<string> }> };
+
+export type ManageContentPeople_ContentPersonFragment = { readonly __typename?: 'ContentPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly attendeeId?: Maybe<any> };
+
+export type ManageContentPeople_SelectAllPeopleQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContentPeople_SelectAllPeopleQuery = { readonly __typename?: 'query_root', readonly ContentPerson: ReadonlyArray<(
+    { readonly __typename?: 'ContentPerson' }
+    & ManageContentPeople_ContentPersonFragment
+  )> };
+
+export type ManageContentPeople_SelectAllAttendeesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContentPeople_SelectAllAttendeesQuery = { readonly __typename?: 'query_root', readonly Attendee: ReadonlyArray<(
+    { readonly __typename?: 'Attendee' }
+    & ManageContentPeople_AttendeeFragment
+  )> };
+
+export type ManageContentPeople_InsertContentPersonMutationVariables = Exact<{
+  person: ContentPerson_Insert_Input;
+}>;
+
+
+export type ManageContentPeople_InsertContentPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentPerson_one?: Maybe<(
+    { readonly __typename?: 'ContentPerson' }
+    & ManageContentPeople_ContentPersonFragment
+  )> };
+
+export type ManageContentPeople_DeleteContentPersonsMutationVariables = Exact<{
+  ids?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+}>;
+
+
+export type ManageContentPeople_DeleteContentPersonsMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentPerson?: Maybe<{ readonly __typename?: 'ContentPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentPerson', readonly id: any }> }> };
+
+export type ManageContentPeople_UpdateContentPersonMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  name: Scalars['String'];
+  affiliation?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  attendeeId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type ManageContentPeople_UpdateContentPersonMutation = { readonly __typename?: 'mutation_root', readonly update_ContentPerson_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentPerson' }
+    & ManageContentPeople_ContentPersonFragment
+  )> };
 
 export type InvitationPartsFragment = { readonly __typename?: 'Invitation', readonly attendeeId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> };
 
@@ -35511,20 +35554,6 @@ export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
   value
 }
     `;
-export const ManageContentPeople_AttendeeFragmentDoc = gql`
-    fragment ManageContentPeople_Attendee on Attendee {
-  id
-  displayName
-  invitation {
-    id
-    invitedEmailAddress
-  }
-  profile {
-    attendeeId
-    affiliation
-  }
-}
-    `;
 export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
     fragment SubmissionRequestsModal_ConferenceConfiguration on ConferenceConfiguration {
   id
@@ -35728,6 +35757,31 @@ export const ManageGroups_GroupFragmentDoc = gql`
     roleId
     groupId
   }
+}
+    `;
+export const ManageContentPeople_AttendeeFragmentDoc = gql`
+    fragment ManageContentPeople_Attendee on Attendee {
+  id
+  displayName
+  invitation {
+    id
+    invitedEmailAddress
+  }
+  profile {
+    attendeeId
+    affiliation
+  }
+}
+    `;
+export const ManageContentPeople_ContentPersonFragmentDoc = gql`
+    fragment ManageContentPeople_ContentPerson on ContentPerson {
+  id
+  conferenceId
+  name
+  affiliation
+  email
+  originatingDataId
+  attendeeId
 }
     `;
 export const InvitationPartsFragmentDoc = gql`
@@ -38308,41 +38362,6 @@ export function useContentGroup_CreateRoomMutation(baseOptions?: Apollo.Mutation
 export type ContentGroup_CreateRoomMutationHookResult = ReturnType<typeof useContentGroup_CreateRoomMutation>;
 export type ContentGroup_CreateRoomMutationResult = Apollo.MutationResult<ContentGroup_CreateRoomMutation>;
 export type ContentGroup_CreateRoomMutationOptions = Apollo.BaseMutationOptions<ContentGroup_CreateRoomMutation, ContentGroup_CreateRoomMutationVariables>;
-export const ManageContentPeople_SelectAllAttendeesDocument = gql`
-    query ManageContentPeople_SelectAllAttendees($conferenceId: uuid!) {
-  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...ManageContentPeople_Attendee
-  }
-}
-    ${ManageContentPeople_AttendeeFragmentDoc}`;
-
-/**
- * __useManageContentPeople_SelectAllAttendeesQuery__
- *
- * To run a query within a React component, call `useManageContentPeople_SelectAllAttendeesQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContentPeople_SelectAllAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContentPeople_SelectAllAttendeesQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContentPeople_SelectAllAttendeesQuery(baseOptions: Apollo.QueryHookOptions<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>(ManageContentPeople_SelectAllAttendeesDocument, options);
-      }
-export function useManageContentPeople_SelectAllAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>(ManageContentPeople_SelectAllAttendeesDocument, options);
-        }
-export type ManageContentPeople_SelectAllAttendeesQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllAttendeesQuery>;
-export type ManageContentPeople_SelectAllAttendeesLazyQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllAttendeesLazyQuery>;
-export type ManageContentPeople_SelectAllAttendeesQueryResult = Apollo.QueryResult<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>;
 export const SubmissionRequestsModal_GetConferenceConfigurationsDocument = gql`
     query SubmissionRequestsModal_GetConferenceConfigurations($conferenceId: uuid!) {
   ConferenceConfiguration(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -40076,6 +40095,184 @@ export function useUpdateConferenceMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateConferenceMutationHookResult = ReturnType<typeof useUpdateConferenceMutation>;
 export type UpdateConferenceMutationResult = Apollo.MutationResult<UpdateConferenceMutation>;
 export type UpdateConferenceMutationOptions = Apollo.BaseMutationOptions<UpdateConferenceMutation, UpdateConferenceMutationVariables>;
+export const ManageContentPeople_SelectAllPeopleDocument = gql`
+    query ManageContentPeople_SelectAllPeople($conferenceId: uuid!) {
+  ContentPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContentPeople_ContentPerson
+  }
+}
+    ${ManageContentPeople_ContentPersonFragmentDoc}`;
+
+/**
+ * __useManageContentPeople_SelectAllPeopleQuery__
+ *
+ * To run a query within a React component, call `useManageContentPeople_SelectAllPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContentPeople_SelectAllPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContentPeople_SelectAllPeopleQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContentPeople_SelectAllPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageContentPeople_SelectAllPeopleQuery, ManageContentPeople_SelectAllPeopleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContentPeople_SelectAllPeopleQuery, ManageContentPeople_SelectAllPeopleQueryVariables>(ManageContentPeople_SelectAllPeopleDocument, options);
+      }
+export function useManageContentPeople_SelectAllPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContentPeople_SelectAllPeopleQuery, ManageContentPeople_SelectAllPeopleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContentPeople_SelectAllPeopleQuery, ManageContentPeople_SelectAllPeopleQueryVariables>(ManageContentPeople_SelectAllPeopleDocument, options);
+        }
+export type ManageContentPeople_SelectAllPeopleQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllPeopleQuery>;
+export type ManageContentPeople_SelectAllPeopleLazyQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllPeopleLazyQuery>;
+export type ManageContentPeople_SelectAllPeopleQueryResult = Apollo.QueryResult<ManageContentPeople_SelectAllPeopleQuery, ManageContentPeople_SelectAllPeopleQueryVariables>;
+export const ManageContentPeople_SelectAllAttendeesDocument = gql`
+    query ManageContentPeople_SelectAllAttendees($conferenceId: uuid!) {
+  Attendee(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContentPeople_Attendee
+  }
+}
+    ${ManageContentPeople_AttendeeFragmentDoc}`;
+
+/**
+ * __useManageContentPeople_SelectAllAttendeesQuery__
+ *
+ * To run a query within a React component, call `useManageContentPeople_SelectAllAttendeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContentPeople_SelectAllAttendeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContentPeople_SelectAllAttendeesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContentPeople_SelectAllAttendeesQuery(baseOptions: Apollo.QueryHookOptions<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>(ManageContentPeople_SelectAllAttendeesDocument, options);
+      }
+export function useManageContentPeople_SelectAllAttendeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>(ManageContentPeople_SelectAllAttendeesDocument, options);
+        }
+export type ManageContentPeople_SelectAllAttendeesQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllAttendeesQuery>;
+export type ManageContentPeople_SelectAllAttendeesLazyQueryHookResult = ReturnType<typeof useManageContentPeople_SelectAllAttendeesLazyQuery>;
+export type ManageContentPeople_SelectAllAttendeesQueryResult = Apollo.QueryResult<ManageContentPeople_SelectAllAttendeesQuery, ManageContentPeople_SelectAllAttendeesQueryVariables>;
+export const ManageContentPeople_InsertContentPersonDocument = gql`
+    mutation ManageContentPeople_InsertContentPerson($person: ContentPerson_insert_input!) {
+  insert_ContentPerson_one(object: $person) {
+    ...ManageContentPeople_ContentPerson
+  }
+}
+    ${ManageContentPeople_ContentPersonFragmentDoc}`;
+export type ManageContentPeople_InsertContentPersonMutationFn = Apollo.MutationFunction<ManageContentPeople_InsertContentPersonMutation, ManageContentPeople_InsertContentPersonMutationVariables>;
+
+/**
+ * __useManageContentPeople_InsertContentPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContentPeople_InsertContentPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContentPeople_InsertContentPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentPeopleInsertContentPersonMutation, { data, loading, error }] = useManageContentPeople_InsertContentPersonMutation({
+ *   variables: {
+ *      person: // value for 'person'
+ *   },
+ * });
+ */
+export function useManageContentPeople_InsertContentPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContentPeople_InsertContentPersonMutation, ManageContentPeople_InsertContentPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContentPeople_InsertContentPersonMutation, ManageContentPeople_InsertContentPersonMutationVariables>(ManageContentPeople_InsertContentPersonDocument, options);
+      }
+export type ManageContentPeople_InsertContentPersonMutationHookResult = ReturnType<typeof useManageContentPeople_InsertContentPersonMutation>;
+export type ManageContentPeople_InsertContentPersonMutationResult = Apollo.MutationResult<ManageContentPeople_InsertContentPersonMutation>;
+export type ManageContentPeople_InsertContentPersonMutationOptions = Apollo.BaseMutationOptions<ManageContentPeople_InsertContentPersonMutation, ManageContentPeople_InsertContentPersonMutationVariables>;
+export const ManageContentPeople_DeleteContentPersonsDocument = gql`
+    mutation ManageContentPeople_DeleteContentPersons($ids: [uuid!] = []) {
+  delete_ContentPerson(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ManageContentPeople_DeleteContentPersonsMutationFn = Apollo.MutationFunction<ManageContentPeople_DeleteContentPersonsMutation, ManageContentPeople_DeleteContentPersonsMutationVariables>;
+
+/**
+ * __useManageContentPeople_DeleteContentPersonsMutation__
+ *
+ * To run a mutation, you first call `useManageContentPeople_DeleteContentPersonsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContentPeople_DeleteContentPersonsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentPeopleDeleteContentPersonsMutation, { data, loading, error }] = useManageContentPeople_DeleteContentPersonsMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useManageContentPeople_DeleteContentPersonsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContentPeople_DeleteContentPersonsMutation, ManageContentPeople_DeleteContentPersonsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContentPeople_DeleteContentPersonsMutation, ManageContentPeople_DeleteContentPersonsMutationVariables>(ManageContentPeople_DeleteContentPersonsDocument, options);
+      }
+export type ManageContentPeople_DeleteContentPersonsMutationHookResult = ReturnType<typeof useManageContentPeople_DeleteContentPersonsMutation>;
+export type ManageContentPeople_DeleteContentPersonsMutationResult = Apollo.MutationResult<ManageContentPeople_DeleteContentPersonsMutation>;
+export type ManageContentPeople_DeleteContentPersonsMutationOptions = Apollo.BaseMutationOptions<ManageContentPeople_DeleteContentPersonsMutation, ManageContentPeople_DeleteContentPersonsMutationVariables>;
+export const ManageContentPeople_UpdateContentPersonDocument = gql`
+    mutation ManageContentPeople_UpdateContentPerson($id: uuid!, $name: String!, $affiliation: String, $email: String, $attendeeId: uuid) {
+  update_ContentPerson_by_pk(
+    pk_columns: {id: $id}
+    _set: {name: $name, affiliation: $affiliation, email: $email, attendeeId: $attendeeId}
+  ) {
+    ...ManageContentPeople_ContentPerson
+  }
+}
+    ${ManageContentPeople_ContentPersonFragmentDoc}`;
+export type ManageContentPeople_UpdateContentPersonMutationFn = Apollo.MutationFunction<ManageContentPeople_UpdateContentPersonMutation, ManageContentPeople_UpdateContentPersonMutationVariables>;
+
+/**
+ * __useManageContentPeople_UpdateContentPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContentPeople_UpdateContentPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContentPeople_UpdateContentPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentPeopleUpdateContentPersonMutation, { data, loading, error }] = useManageContentPeople_UpdateContentPersonMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      affiliation: // value for 'affiliation'
+ *      email: // value for 'email'
+ *      attendeeId: // value for 'attendeeId'
+ *   },
+ * });
+ */
+export function useManageContentPeople_UpdateContentPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContentPeople_UpdateContentPersonMutation, ManageContentPeople_UpdateContentPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContentPeople_UpdateContentPersonMutation, ManageContentPeople_UpdateContentPersonMutationVariables>(ManageContentPeople_UpdateContentPersonDocument, options);
+      }
+export type ManageContentPeople_UpdateContentPersonMutationHookResult = ReturnType<typeof useManageContentPeople_UpdateContentPersonMutation>;
+export type ManageContentPeople_UpdateContentPersonMutationResult = Apollo.MutationResult<ManageContentPeople_UpdateContentPersonMutation>;
+export type ManageContentPeople_UpdateContentPersonMutationOptions = Apollo.BaseMutationOptions<ManageContentPeople_UpdateContentPersonMutation, ManageContentPeople_UpdateContentPersonMutationVariables>;
 export const SelectAllAttendeesDocument = gql`
     query SelectAllAttendees($conferenceId: uuid!) {
   Attendee(where: {conferenceId: {_eq: $conferenceId}}) {

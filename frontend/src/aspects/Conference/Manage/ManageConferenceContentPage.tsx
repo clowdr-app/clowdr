@@ -28,7 +28,6 @@ import ContentGroupPersonsModal from "./Content/ContentGroupPersonsModal";
 import { ContentGroupSecondaryEditor } from "./Content/ContentGroupSecondaryEditor";
 import { deepCloneContentGroupDescriptor } from "./Content/Functions";
 import ManageHallwaysModal from "./Content/ManageHallwaysModal";
-import ManagePeopleModal from "./Content/ManagePeopleModal";
 import ManageTagsModal from "./Content/ManageTagsModal";
 import { SendSubmissionRequestsModal } from "./Content/SubmissionRequestsModal";
 // import PublishVideosModal from "./Content/PublishVideosModal";
@@ -299,9 +298,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const { isOpen: tagsModalOpen, onOpen: onTagsModalOpen, onClose: onTagsModalClose } = useDisclosure();
     const [dirtyTagIds, setDirtyTagIds] = useState<Set<string>>(new Set());
 
-    const { isOpen: peopleModalOpen, onOpen: onPeopleModalOpen, onClose: onPeopleModalClose } = useDisclosure();
-    const [editedPeopleIds, setEditedPeopleIds] = useState<Set<string>>(new Set());
-
     const { isOpen: hallwaysModalOpen, onOpen: onHallwaysModalOpen, onClose: onHallwaysModalClose } = useDisclosure();
     const [editedHallwaysIds, setEditedHallwaysIds] = useState<Set<string>>(new Set());
 
@@ -340,7 +336,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             <ContentGroupCRUDTable
                 key="crud-table"
                 data={allGroupsMap ?? new Map()}
-                externalUnsavedChanges={dirtyTagIds.size > 0 || editedPeopleIds.size > 0 || editedHallwaysIds.size > 0}
+                externalUnsavedChanges={dirtyTagIds.size > 0 || editedHallwaysIds.size > 0}
                 csud={{
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),
@@ -412,7 +408,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 {
                                     groupKeys: keys,
                                     originatingDataKeys: new Set(),
-                                    peopleKeys: editedPeopleIds,
+                                    peopleKeys: new Set(),
                                     tagKeys: dirtyTagIds,
                                     hallwayKeys: editedHallwaysIds,
                                 },
@@ -431,16 +427,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                     }
                                 }
                                 return newTagIds;
-                            });
-
-                            setEditedPeopleIds((oldPersonIds) => {
-                                const newPersonIds = new Set(oldPersonIds);
-                                for (const [personId, result] of results.people) {
-                                    if (result) {
-                                        newPersonIds.delete(personId);
-                                    }
-                                }
-                                return newPersonIds;
                             });
 
                             setEditedHallwaysIds((oldHallwayIds) => {
@@ -514,20 +500,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         isRunning: false,
                         label: "Manage tags",
                         text: "Manage tags",
-                    },
-                    {
-                        action: async (_groupKeys) => {
-                            onPeopleModalOpen();
-                        },
-                        enabledWhenNothingSelected: true,
-                        enabledWhenDirty: true,
-                        tooltipWhenDisabled: "",
-                        tooltipWhenEnabled:
-                            "People can be listed as presenters, authors, chairs and other such roles for content and events.",
-                        colorScheme: "purple",
-                        isRunning: false,
-                        label: "Manage people",
-                        text: "Manage people",
                     },
                     {
                         action: async (_groupKeys) => {
@@ -644,67 +616,6 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             const newTags: Map<string, TagDescriptor> = oldTags ? new Map(oldTags) : new Map();
                             newTags.delete(tagId);
                             return newTags;
-                        });
-                    }
-                }}
-            />
-            <ManagePeopleModal
-                persons={allPeopleMap ?? new Map()}
-                isOpen={peopleModalOpen}
-                onOpen={onPeopleModalOpen}
-                onClose={onPeopleModalClose}
-                insertPerson={(person) => {
-                    setEditedPeopleIds((oldPersonIds) => {
-                        const newPersonIds = new Set(oldPersonIds);
-                        newPersonIds.add(person.id);
-                        return newPersonIds;
-                    });
-                    setAllPeopleMap((oldPeople) => {
-                        const newPeople: Map<string, ContentPersonDescriptor> = oldPeople
-                            ? new Map(oldPeople)
-                            : new Map();
-                        newPeople.set(person.id, person);
-                        return newPeople;
-                    });
-                }}
-                updatePerson={(person) => {
-                    setEditedPeopleIds((oldPersonIds) => {
-                        const newPersonIds = new Set(oldPersonIds);
-                        newPersonIds.add(person.id);
-                        return newPersonIds;
-                    });
-                    setAllPeopleMap((oldPeople) => {
-                        const newPeople: Map<string, ContentPersonDescriptor> = oldPeople
-                            ? new Map(oldPeople)
-                            : new Map();
-                        newPeople.set(person.id, person);
-                        return newPeople;
-                    });
-                }}
-                deletePerson={(personId) => {
-                    const isInUse = Array.from(allGroupsMap?.values() ?? []).some((group) =>
-                        group.people.some((x) => x.personId === personId)
-                    );
-                    if (isInUse) {
-                        toast({
-                            description:
-                                "Cannot delete a person while they are associated with some content. Please dissociate the person from all content then try again.",
-                            isClosable: true,
-                            status: "error",
-                            title: "Cannot delete person",
-                        });
-                    } else {
-                        setEditedPeopleIds((oldPersonIds) => {
-                            const newPersonIds = new Set(oldPersonIds);
-                            newPersonIds.add(personId);
-                            return newPersonIds;
-                        });
-                        setAllPeopleMap((oldPeople) => {
-                            const newPeople: Map<string, ContentPersonDescriptor> = oldPeople
-                                ? new Map(oldPeople)
-                                : new Map();
-                            newPeople.delete(personId);
-                            return newPeople;
                         });
                     }
                 }}

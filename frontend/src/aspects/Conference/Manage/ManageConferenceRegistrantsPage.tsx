@@ -13,7 +13,6 @@ import {
     MenuItem,
     MenuList,
     MenuOptionGroup,
-    Spinner,
     Text,
     Tooltip,
     useDisclosure,
@@ -167,12 +166,7 @@ gql`
     }
 `;
 
-// type GroupOption = SelectOption;
-
-// const AttendeesCRUDTable = (props: Readonly<CRUDTableProps<AttendeeDescriptor, "id">>) => CRUDTable(props);
-
 // TODO: Email validation
-// TODO: Export
 
 type AttendeeDescriptor = AttendeePartsFragment & {
     id?: string;
@@ -222,7 +216,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 defaultToLast: false,
             },
             invalid: (record) =>
-                !record.displayName
+                !record.displayName?.length
                     ? {
                           columnId: "name",
                           reason: "Display name required",
@@ -373,7 +367,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     if (props.isInCreate) {
                         return (
                             <Input
-                                type="text"
+                                type="email"
                                 value={props.value ?? ""}
                                 onChange={(ev) => props.onChange?.(ev.target.value)}
                                 onBlur={props.onBlur}
@@ -468,6 +462,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                             placeholder="Select one or more groups"
                             onChange={(ev) => props.onChange?.(ev)}
                             onBlur={props.onBlur}
+                            styles={{ container: (base) => ({ ...base, maxWidth: 450 }) }}
                         />
                     );
                 },
@@ -497,7 +492,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     groupAttendees: [],
                 };
             },
-            makeWhole: (d) => (d.displayName !== undefined ? (d as AttendeeDescriptor) : undefined),
+            makeWhole: (d) => (d.displayName?.length ? (d as AttendeeDescriptor) : undefined),
             start: (record) => {
                 if (record.invitation?.invitedEmailAddress) {
                     insertAttendee({
@@ -1056,7 +1051,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 Registrants
             </Heading>
             {(loadingAllGroups && !allGroups) || (loadingAllAttendees && !allAttendees?.Attendee) ? (
-                <Spinner />
+                <></>
             ) : errorAllAttendees || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (

@@ -898,6 +898,8 @@ function EditableScheduleTable(): JSX.Element {
 
     const batchAddPeopleDisclosure = useDisclosure();
 
+    const pageSizes = useMemo(() => [5, 10, 15, 20], []);
+
     return (
         <>
             <HStack>
@@ -931,7 +933,7 @@ function EditableScheduleTable(): JSX.Element {
                 insert={insert}
                 update={update}
                 delete={deleteProps}
-                pageSizes={[5, 10, 15, 20]}
+                pageSizes={pageSizes}
                 alert={
                     insertEventResponse.error || updateEventResponse.error || deleteEventsResponse.error
                         ? {

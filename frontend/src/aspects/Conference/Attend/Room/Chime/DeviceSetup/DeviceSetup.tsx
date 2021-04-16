@@ -8,15 +8,15 @@ import { MicrophoneDevices } from "./MicrophoneDevices";
 export function DeviceSetup(): JSX.Element {
     const toast = useToast();
     const meetingManager = useMeetingManager();
+    const { isVideoEnabled, toggleVideo } = useLocalVideo();
     const [isLoading, setIsLoading] = useState(false);
-    const { toggleVideo, isVideoEnabled } = useLocalVideo();
 
     const handleJoinMeeting = useCallback(async () => {
         setIsLoading(true);
         try {
             if (!isVideoEnabled) {
                 // A very-bad-no-good hack to mitigate https://github.com/aws/amazon-chime-sdk-component-library-react/issues/314 and https://github.com/aws/amazon-chime-sdk-js/issues/502
-                setTimeout(() => toggleVideo().catch((_e) => console.warn("Failed to start video")), 1000);
+                setTimeout(() => toggleVideo().catch((_e) => console.warn("Failed to start video")), 3000);
             }
             await meetingManager.start();
             setIsLoading(false);

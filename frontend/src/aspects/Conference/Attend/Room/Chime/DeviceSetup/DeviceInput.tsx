@@ -41,9 +41,9 @@ function DeviceInputInner({ onChange, label, devices, selectedDeviceId, notFound
     return (
         <FormControl className={className}>
             <FormLabel>{label}</FormLabel>
-            <Select onChange={selectDevice}>
+            <Select onChange={selectDevice} value={selectedDeviceId ?? undefined}>
                 {options.map((option) => (
-                    <option value={option.value} key={option.value} selected={selectedDeviceId === option.value}>
+                    <option value={option.value} key={option.value}>
                         {option.label}
                     </option>
                 ))}

@@ -14,7 +14,6 @@ import {
     WrapItem,
 } from "@chakra-ui/react";
 import {
-    DevicePermissionStatus,
     MeetingStatus,
     useAudioInputs,
     useAudioVideo,
@@ -29,7 +28,8 @@ import {
     useToggleLocalMute,
     useVideoInputs,
 } from "amazon-chime-sdk-component-library-react";
-import React, { useCallback } from "react";
+import type { AudioVideoObserver, DeviceChangeObserver } from "amazon-chime-sdk-js";
+import React, { useCallback, useEffect } from "react";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { PermissionInstructions } from "./PermissionInstructions";
 
@@ -52,8 +52,40 @@ export function ChimeRoomControlBar(): JSX.Element {
         await meetingManager.leave();
     }, [meetingManager]);
 
+    useEffect(() => {
+        const observer: AudioVideoObserver = {
+            videoAvailabilityDidChange: (x) => console.log("Video availability changed", x),
+        };
+
+        audioVideo?.addObserver(observer);
+
+        const deviceChangeObserver: DeviceChangeObserver = {
+            videoInputStreamEnded: async () => {
+                console.log("Video input stream ended", { isVideoEnabled });
+                await selectVideoInput("none");
+                if (isVideoEnabled) {
+                    await toggleVideo();
+                }
+            },
+            audioInputStreamEnded: async () => {
+                console.log("Audio input stream ended");
+                await selectAudioInput("none");
+            },
+        };
+
+        audioVideo?.addDeviceChangeObserver(deviceChangeObserver);
+
+        return () => {
+            audioVideo?.removeObserver(observer);
+            audioVideo?.removeDeviceChangeObserver(deviceChangeObserver);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [audioVideo]);
+
     const toggleVideoWrapper = useCallback(async () => {
-        if (devicePermissionStatus === DevicePermissionStatus.DENIED) {
+        try {
+            await toggleVideo();
+        } catch (e) {
             toast({
                 title: "Could not enable camera",
                 description: <PermissionInstructions />,
@@ -61,20 +93,56 @@ export function ChimeRoomControlBar(): JSX.Element {
                 duration: null,
                 status: "error",
             });
-        } else {
+        }
+    }, [toast, toggleVideo]);
+
+    const changeAudioInputDevice = useCallback(
+        async (deviceId: string) => {
             try {
-                await toggleVideo();
+                await audioVideo?.chooseAudioInputDevice(deviceId);
+                await selectAudioInput(deviceId);
             } catch (e) {
                 toast({
-                    title: "Could not enable camera",
+                    title: "Could not change audio input device",
                     description: <PermissionInstructions />,
                     isClosable: true,
                     duration: null,
                     status: "error",
                 });
+                try {
+                    await selectAudioInput("none");
+                } catch (e) {
+                    console.error("Failed to unselect audio device", e);
+                }
             }
-        }
-    }, [devicePermissionStatus, toast, toggleVideo]);
+        },
+        [audioVideo, selectAudioInput, toast]
+    );
+
+    const changeVideoInputDevice = useCallback(
+        async (deviceId: string) => {
+            try {
+                if (deviceId !== "smpte") {
+                    await audioVideo?.chooseVideoInputDevice(deviceId);
+                }
+                await selectVideoInput(deviceId);
+            } catch (e) {
+                toast({
+                    title: "Could not change camera device",
+                    description: <PermissionInstructions />,
+                    isClosable: true,
+                    duration: null,
+                    status: "error",
+                });
+                try {
+                    await selectVideoInput("none");
+                } catch (e) {
+                    console.error("Failed to unselect camera device", e);
+                }
+            }
+        },
+        [audioVideo, selectVideoInput, toast]
+    );
 
     return (
         <>
@@ -91,8 +159,8 @@ export function ChimeRoomControlBar(): JSX.Element {
                 {audioVideo ? (
                     <WrapItem>
                         {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button onClick={toggleMute}>
-                                {muted ? (
+                            <Button onClick={toggleMute} isDisabled={!audioInputs.selectedDevice}>
+                                {muted || !audioInputs.selectedDevice ? (
                                     <>
                                         <FAIcon icon="microphone-slash" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Unmute</span>
@@ -114,11 +182,11 @@ export function ChimeRoomControlBar(): JSX.Element {
                                 pr={3}
                                 aria-label="Choose microphone"
                             />
-                            <MenuList>
+                            <MenuList zIndex="300">
                                 {audioInputs.devices.map((device) => (
                                     <MenuItem
                                         key={device.deviceId}
-                                        onClick={() => selectAudioInput(device.deviceId)}
+                                        onClick={() => changeAudioInputDevice(device.deviceId)}
                                         fontWeight={
                                             meetingManager.selectedAudioInputDevice === device.deviceId
                                                 ? "bold"
@@ -135,8 +203,8 @@ export function ChimeRoomControlBar(): JSX.Element {
                 {audioVideo ? (
                     <WrapItem>
                         {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button onClick={toggleVideoWrapper}>
-                                {isVideoEnabled ? (
+                            <Button onClick={toggleVideoWrapper} isDisabled={!videoInputs.selectedDevice}>
+                                {isVideoEnabled && videoInputs.selectedDevice ? (
                                     <>
                                         <FAIcon icon="video-slash" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Disable camera</span>
@@ -158,11 +226,11 @@ export function ChimeRoomControlBar(): JSX.Element {
                                 pr={3}
                                 aria-label="Choose camera"
                             />
-                            <MenuList>
+                            <MenuList zIndex="300">
                                 {videoInputs.devices.map((device) => (
                                     <MenuItem
                                         key={device.deviceId}
-                                        onClick={() => selectVideoInput(device.deviceId)}
+                                        onClick={() => changeVideoInputDevice(device.deviceId)}
                                         fontWeight={
                                             meetingManager.selectedVideoInputDevice === device.deviceId
                                                 ? "bold"
@@ -172,6 +240,17 @@ export function ChimeRoomControlBar(): JSX.Element {
                                         {device.label}
                                     </MenuItem>
                                 ))}
+                                {import.meta.env.MODE === "development" ? (
+                                    <MenuItem
+                                        key="smpte"
+                                        onClick={() => changeVideoInputDevice("smpte")}
+                                        fontWeight={
+                                            meetingManager.selectedVideoInputDevice === "smpte" ? "bold" : "normal"
+                                        }
+                                    >
+                                        Test video
+                                    </MenuItem>
+                                ) : undefined}
                             </MenuList>
                         </Menu>
                     </WrapItem>

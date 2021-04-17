@@ -1,6 +1,6 @@
 import { Box, Button, Heading, HStack } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/toast";
-import { useLocalVideo, useMeetingManager } from "amazon-chime-sdk-component-library-react";
+import { useMeetingManager } from "amazon-chime-sdk-component-library-react";
 import React, { useCallback, useState } from "react";
 import { CameraDevices } from "./CameraDevices";
 import { MicrophoneDevices } from "./MicrophoneDevices";
@@ -8,15 +8,11 @@ import { MicrophoneDevices } from "./MicrophoneDevices";
 export function DeviceSetup(): JSX.Element {
     const toast = useToast();
     const meetingManager = useMeetingManager();
-    const { isVideoEnabled, toggleVideo } = useLocalVideo();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleJoinMeeting = useCallback(async () => {
         setIsLoading(true);
         try {
-            // if (isVideoEnabled) {
-            //     await toggleVideo();
-            // }
             await meetingManager.start();
             setIsLoading(false);
         } catch (e) {
@@ -26,7 +22,7 @@ export function DeviceSetup(): JSX.Element {
                 title: "Failed to join room",
             });
         }
-    }, [isVideoEnabled, meetingManager, toast, toggleVideo]);
+    }, [meetingManager, toast]);
 
     return (
         <Box mt={4}>

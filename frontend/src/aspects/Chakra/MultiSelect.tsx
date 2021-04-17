@@ -188,7 +188,7 @@ const chakraComponents = {
     Menu: function Menu({ children, ...props }: ChakraProps & React.PropsWithChildren<MenuProps<any, any, any>>) {
         const menuStyles = useMultiStyleConfig("Menu", props);
         return (
-            <selectComponents.Menu {...props}>
+            <selectComponents.Menu {...(props as any)}>
                 <StylesProvider value={menuStyles}>{children}</StylesProvider>
             </selectComponents.Menu>
         );

@@ -97,7 +97,7 @@ export default function ImportSchedulePage(): JSX.Element {
                     onChange={setIntermediaryData}
                     JSONataFunction={JSONataToIntermediarySchedule}
                     presetJSONataCSVQuery={(name) => {
-                        if (name === "Schedule.csv") {
+                        if (name.endsWith("Schedule.csv")) {
                             return presetJSONata_ScheduleCSVQuery;
                         }
                         return presetJSONata_UnknownQuery;

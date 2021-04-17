@@ -268,9 +268,9 @@ export default function ImportContentPage(): JSX.Element {
                     presetJSONataCSVQuery={(name) => {
                         if (name.endsWith("People.csv")) {
                             return presetJSONata_CSVQuery_ContentPeople;
-                        } else if (name === "Content.csv") {
+                        } else if (name.endsWith("Content.csv")) {
                             return presetJSONata_CSVQuery_Content;
-                        } else if (name === "Tags.csv") {
+                        } else if (name.endsWith("Tags.csv")) {
                             return presetJSONata_CSVQuery_Tags;
                         }
                         return presetJSONata_UnknownQuery;

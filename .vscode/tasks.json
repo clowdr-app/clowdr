@@ -8,7 +8,7 @@
             "label": "Start Docker Services -- Local Development",
             "type": "shell",
             "isBackground": true,
-            "command": "docker-compose",
+            "command": "docker",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -19,7 +19,7 @@
             // Use `"-p", "Hasura 3",` as the first arguments to use a different
             // Docker project name
             // Keywords: project_name, project-name, container name, container-name
-            "args": ["--env-file", "./hasura/.env.local", "up", "-d"]
+            "args": ["compose", "--env-file", "./hasura/.env.local", "up", "-d"]
         },
         // Hasura Console -- Local Development
         {

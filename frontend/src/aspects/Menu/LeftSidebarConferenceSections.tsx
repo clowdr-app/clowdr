@@ -51,7 +51,7 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
             <AccordionPanel pb={4} px={"3px"}>
                 <Flex mb={2} ml={1} mr={1}>
                     <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
-                        Social rooms
+                        Social &amp; discussion rooms
                     </Heading>
                     <ButtonGroup ml="auto">
                         <Button onClick={onCreateRoomOpen} colorScheme="green" size="xs">
@@ -62,19 +62,19 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                         </LinkButton>
                     </ButtonGroup>
                 </Flex>
-                <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
+                <ApolloQueryWrapper getter={(data) => data.socialOrDiscussionRooms} queryResult={result}>
                     {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                         <RoomList
                             rooms={rooms}
-                            layout="list"
+                            layout={{ type: "list" }}
                             limit={5}
-                            noRoomsMessage="No social rooms at the moment."
+                            noRoomsMessage="No social or discussion rooms at the moment."
                         />
                     )}
                 </ApolloQueryWrapper>
                 <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                     {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                        <RoomList rooms={rooms} layout="list">
+                        <RoomList rooms={rooms} layout={{ type: "list" }}>
                             <Flex mb={2} mt={4} ml={1} mr={1}>
                                 <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
                                     Today&apos;s Program rooms
@@ -92,9 +92,10 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
             <CreateRoomModal
                 isOpen={isCreateRoomOpen}
                 onClose={onCreateRoomClose}
-                onCreated={async (id: string) => {
+                onCreated={async (id, cb) => {
                     // Wait, because Vonage session creation is not instantaneous
                     setTimeout(() => {
+                        cb();
                         history.push(`/conference/${confSlug}/room/${id}`);
                     }, 2000);
                 }}

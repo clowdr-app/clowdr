@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
-import { Button, Heading, HStack, useDisclosure, VStack } from "@chakra-ui/react";
+import { Button, HStack, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import { Permission_Enum, RoomListRoomDetailsFragment, useGetAllRoomsQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
@@ -18,6 +19,19 @@ gql`
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
+                originatingContentGroupId: { _is_null: true }
+                originatingEventId: { _is_null: true }
+                roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
+            }
+            order_by: { name: asc }
+        ) {
+            ...RoomListRoomDetails
+        }
+        discussionRooms: Room(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
+                _or: [{ originatingContentGroupId: { _is_null: false } }, { originatingEventId: { _is_null: false } }]
                 roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
@@ -33,7 +47,7 @@ gql`
     }
 
     query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
-        socialRooms: Room(
+        socialOrDiscussionRooms: Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
@@ -78,9 +92,17 @@ export default function RoomListPage(): JSX.Element {
 
     const { isOpen, onClose, onOpen } = useDisclosure();
 
-    const refetch = useCallback(async () => {
-        await result.refetch();
-    }, [result]);
+    const history = useHistory();
+    const refetch = useCallback(
+        async (id, cb) => {
+            // Wait, because Vonage session creation is not instantaneous
+            setTimeout(() => {
+                cb();
+                history.push(`/conference/${conference.slug}/room/${id}`);
+            }, 2000);
+        },
+        [conference.slug, history]
+    );
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -92,35 +114,29 @@ export default function RoomListPage(): JSX.Element {
             ]}
         >
             {title}
+            <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
+            <HStack flexWrap="wrap" justifyContent="center" mt={2}>
+                <Button onClick={onOpen} colorScheme="green">
+                    Create new room
+                </Button>
+                <LinkButton to={`/conference/${conference.slug}/shuffle`} colorScheme="blue">
+                    <FAIcon icon="random" iconStyle="s" mr={3} />
+                    Shuffle queues
+                </LinkButton>
+            </HStack>
             <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                    <VStack>
-                        <Heading as="h2" mb={5} mt={5}>
-                            Program Rooms
-                        </Heading>
-                        <RoomList rooms={rooms} layout="grid" />
-                        <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
-                    </VStack>
+                    <RoomList rooms={rooms} layout={{ type: "grid", title: "Program Rooms" }} />
                 )}
             </ApolloQueryWrapper>
             <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                    <VStack>
-                        <Heading as="h2" my={5}>
-                            Social Rooms
-                        </Heading>
-                        <HStack flexWrap="wrap" justifyContent="center">
-                            <Button onClick={onOpen} colorScheme="green" mb={2}>
-                                Create new room
-                            </Button>
-                            <LinkButton to={`/conference/${conference.slug}/shuffle`} colorScheme="blue" mb={2}>
-                                <FAIcon icon="random" iconStyle="s" mr={3} />
-                                Shuffle queues
-                            </LinkButton>
-                        </HStack>
-                        <RoomList rooms={rooms} layout="grid" />
-                        <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
-                    </VStack>
+                    <RoomList rooms={rooms} layout={{ type: "grid", title: "Social Rooms" }} />
+                )}
+            </ApolloQueryWrapper>
+            <ApolloQueryWrapper getter={(data) => data.discussionRooms} queryResult={result}>
+                {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                    <RoomList rooms={rooms} layout={{ type: "grid", title: "Discussion Rooms" }} limit={25} />
                 )}
             </ApolloQueryWrapper>
         </RequireAtLeastOnePermissionWrapper>

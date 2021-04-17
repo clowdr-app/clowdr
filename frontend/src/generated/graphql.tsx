@@ -29273,6 +29273,7 @@ export type Room_ShuffleQueueEntry = {
   readonly attendeeId: Scalars['uuid'];
   readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['bigint'];
+  readonly isExpired: Scalars['Boolean'];
   /** An object relationship */
   readonly shufflePeriod: Room_ShufflePeriod;
   readonly shufflePeriodId: Scalars['uuid'];
@@ -29355,6 +29356,7 @@ export type Room_ShuffleQueueEntry_Bool_Exp = {
   readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Bigint_Comparison_Exp>;
+  readonly isExpired?: Maybe<Boolean_Comparison_Exp>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
   readonly shufflePeriodId?: Maybe<Uuid_Comparison_Exp>;
   readonly shuffleRoom?: Maybe<Room_ShuffleRoom_Bool_Exp>;
@@ -29366,6 +29368,7 @@ export enum Room_ShuffleQueueEntry_Constraint {
   /** unique or primary key constraint */
   ShuffleQueueEntryPkey = 'ShuffleQueueEntry_pkey',
   /** unique or primary key constraint */
+  IndexRoomShufflequeueentryIswaiting = 'index_room_shufflequeueentry_iswaiting'
 }
 
 /** input type for incrementing integer column in table "room.ShuffleQueueEntry" */
@@ -29381,6 +29384,7 @@ export type Room_ShuffleQueueEntry_Insert_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['bigint']>;
+  readonly isExpired?: Maybe<Scalars['Boolean']>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly shuffleRoom?: Maybe<Room_ShuffleRoom_Obj_Rel_Insert_Input>;
@@ -29458,6 +29462,7 @@ export type Room_ShuffleQueueEntry_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly isExpired?: Maybe<Order_By>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
   readonly shufflePeriodId?: Maybe<Order_By>;
   readonly shuffleRoom?: Maybe<Room_ShuffleRoom_Order_By>;
@@ -29480,6 +29485,8 @@ export enum Room_ShuffleQueueEntry_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  IsExpired = 'isExpired',
+  /** column name */
   ShufflePeriodId = 'shufflePeriodId',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -29491,6 +29498,7 @@ export type Room_ShuffleQueueEntry_Set_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['bigint']>;
+  readonly isExpired?: Maybe<Scalars['Boolean']>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -29557,6 +29565,8 @@ export enum Room_ShuffleQueueEntry_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
+  /** column name */
+  IsExpired = 'isExpired',
   /** column name */
   ShufflePeriodId = 'shufflePeriodId',
   /** column name */
@@ -33310,7 +33320,10 @@ export type AttendeeCreateRoomMutationVariables = Exact<{
 }>;
 
 
-export type AttendeeCreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_Room_one?: Maybe<{ readonly __typename?: 'Room', readonly id: any }> };
+export type AttendeeCreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_Room_one?: Maybe<(
+    { readonly __typename?: 'Room' }
+    & RoomListRoomDetailsFragment
+  )> };
 
 export type UpdateEventVonageSessionLayoutMutationVariables = Exact<{
   eventVonageSessionId: Scalars['uuid'];
@@ -33450,6 +33463,9 @@ export type GetAllRoomsQueryVariables = Exact<{
 export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<(
     { readonly __typename?: 'Room' }
     & RoomListRoomDetailsFragment
+  )>, readonly discussionRooms: ReadonlyArray<(
+    { readonly __typename?: 'Room' }
+    & RoomListRoomDetailsFragment
   )>, readonly programRooms: ReadonlyArray<(
     { readonly __typename?: 'Room' }
     & RoomListRoomDetailsFragment
@@ -33462,7 +33478,7 @@ export type GetAllTodaysRoomsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllTodaysRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<(
+export type GetAllTodaysRoomsQuery = { readonly __typename?: 'query_root', readonly socialOrDiscussionRooms: ReadonlyArray<(
     { readonly __typename?: 'Room' }
     & RoomListRoomDetailsFragment
   )>, readonly programRooms: ReadonlyArray<(
@@ -37280,10 +37296,10 @@ export const AttendeeCreateRoomDocument = gql`
   insert_Room_one(
     object: {capacity: 50, conferenceId: $conferenceId, currentModeName: BREAKOUT, name: $name, roomPrivacyName: $roomPrivacyName}
   ) {
-    id
+    ...RoomListRoomDetails
   }
 }
-    `;
+    ${RoomListRoomDetailsFragmentDoc}`;
 export type AttendeeCreateRoomMutationFn = Apollo.MutationFunction<AttendeeCreateRoomMutation, AttendeeCreateRoomMutationVariables>;
 
 /**
@@ -37804,7 +37820,13 @@ export type AddParticipantToRoomMutationOptions = Apollo.BaseMutationOptions<Add
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!) {
   socialRooms: Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingContentGroupId: {_is_null: true}, originatingEventId: {_is_null: true}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
+    order_by: {name: asc}
+  ) {
+    ...RoomListRoomDetails
+  }
+  discussionRooms: Room(
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, _or: [{originatingContentGroupId: {_is_null: false}}, {originatingEventId: {_is_null: false}}], roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
@@ -37847,7 +37869,7 @@ export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLaz
 export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
 export const GetAllTodaysRoomsDocument = gql`
     query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
-  socialRooms: Room(
+  socialOrDiscussionRooms: Room(
     where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, roomPrivacyName: {_in: [PUBLIC, PRIVATE]}}
     order_by: {name: asc}
   ) {

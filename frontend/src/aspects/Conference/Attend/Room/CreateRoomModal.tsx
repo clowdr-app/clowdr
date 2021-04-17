@@ -18,7 +18,11 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
-import { RoomPrivacy_Enum, useAttendeeCreateRoomMutation } from "../../../../generated/graphql";
+import {
+    RoomListRoomDetailsFragmentDoc,
+    RoomPrivacy_Enum,
+    useAttendeeCreateRoomMutation,
+} from "../../../../generated/graphql";
 import { normaliseName, validateShortName } from "../../NewConferenceForm";
 import { useConference } from "../../useConference";
 
@@ -33,7 +37,7 @@ gql`
                 roomPrivacyName: $roomPrivacyName
             }
         ) {
-            id
+            ...RoomListRoomDetails
         }
     }
 `;
@@ -45,7 +49,7 @@ export function CreateRoomModal({
 }: {
     isOpen: boolean;
     onClose: () => void;
-    onCreated: (id: string) => Promise<void>;
+    onCreated: (id: string, cb: () => void) => Promise<void>;
 }): JSX.Element {
     const [createAttendeeRoomMutation] = useAttendeeCreateRoomMutation();
     const conference = useConference();
@@ -73,6 +77,16 @@ export function CreateRoomModal({
                                         ? RoomPrivacy_Enum.Private
                                         : RoomPrivacy_Enum.Public,
                                 },
+                                update: (cache, { data: _data }) => {
+                                    if (_data?.insert_Room_one) {
+                                        const data = _data.insert_Room_one;
+                                        cache.writeFragment({
+                                            data,
+                                            fragment: RoomListRoomDetailsFragmentDoc,
+                                            fragmentName: "RoomListRoomDetails",
+                                        });
+                                    }
+                                },
                             });
 
                             if (!result.data?.insert_Room_one?.id) {
@@ -83,8 +97,13 @@ export function CreateRoomModal({
                                 title: `Created new room '${name}'`,
                                 status: "success",
                             });
-                            onCreated(result.data.insert_Room_one.id);
-                            onClose();
+                            const roomId = result.data.insert_Room_one.id;
+                            await new Promise<void>((resolve) => {
+                                onCreated(roomId, () => {
+                                    onClose();
+                                    resolve();
+                                });
+                            });
                         } catch (e) {
                             if ("message" in e && (e.message as string).includes("duplicate")) {
                                 toast({

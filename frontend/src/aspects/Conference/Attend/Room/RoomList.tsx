@@ -1,8 +1,7 @@
 import {
     Center,
-    FormControl,
-    FormHelperText,
-    FormLabel,
+    Flex,
+    Heading,
     HStack,
     Input,
     InputGroup,
@@ -25,7 +24,7 @@ import { RoomParticipants } from "./RoomParticipants";
 
 interface Props {
     rooms: readonly RoomListRoomDetailsFragment[];
-    layout: "grid" | "list";
+    layout: { type: "grid"; title: string } | { type: "list" };
     limit?: number;
     onClick?: () => void;
     noRoomsMessage?: string;
@@ -42,8 +41,8 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
         () =>
             R.sortWith(
                 [
-                    R.ascend((room) => room.priority),
                     R.descend((room) => !roomParticipants || !!roomParticipants?.find((p) => p.roomId === room.id)),
+                    R.ascend((room) => room.priority),
                     R.ascend((room) => room.name),
                 ],
                 rooms
@@ -53,7 +52,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
 
     const toButtonContents = useCallback(
         (room: RoomListRoomDetailsFragment) => {
-            if (layout === "grid") {
+            if (layout.type === "grid") {
                 return (
                     <>
                         <Center flexWrap="wrap" mt={1} mb={2} mx={2}>
@@ -62,15 +61,15 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                             ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
                                 <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
                             ) : (
-                                <FAIcon icon="mug-hot" iconStyle="s" textAlign="center" />
+                                <></>
                             )}
                             <Text
                                 px={5}
                                 textAlign="left"
-                                textOverflow="ellipsis"
                                 whiteSpace="normal"
                                 overflow="hidden"
                                 title={room.name}
+                                noOfLines={2}
                             >
                                 {room.name}
                             </Text>
@@ -107,22 +106,19 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                 );
             }
         },
-        [conference.slug, layout]
+        [conference.slug, layout.type]
     );
 
     const roomElements = useMemo(
         () =>
             sortedRooms.map((room) => ({
                 name: room.name.toLowerCase(),
-                showByDefault:
-                    !room.originatingEventId &&
-                    !room.originatingContentGroupId &&
-                    room.roomPrivacyName !== RoomPrivacy_Enum.Dm,
+                showByDefault: room.roomPrivacyName !== RoomPrivacy_Enum.Dm,
                 el: (
                     <LinkButton
                         key={room.id}
                         to={`/conference/${conference.slug}/room/${room.id}`}
-                        p={layout === "grid" ? 2 : 1}
+                        p={1}
                         alignItems="center"
                         justifyContent="center"
                         flexDir="column"
@@ -130,12 +126,13 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                         height="100%"
                         linkProps={{ m: "3px" }}
                         onClick={onClick}
+                        maxW="22em"
                     >
                         {toButtonContents(room)}
                     </LinkButton>
                 ),
             })),
-        [conference.slug, layout, onClick, sortedRooms, toButtonContents]
+        [conference.slug, onClick, sortedRooms, toButtonContents]
     );
 
     const s = search.toLowerCase();
@@ -166,12 +163,18 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
             {roomElements.length > 0 ? (
                 <>
                     {children}
-                    {layout === "grid" ? (
-                        <FormControl mb={4} maxW={400}>
-                            <FormLabel mt={4} textAlign="center">
-                                {resultCountStr}
-                            </FormLabel>
-                            <InputGroup>
+                    {layout.type === "grid" ? (
+                        <Flex pt={4} alignItems="center" justifyContent="center" w="100%" maxW="42em" flexWrap="wrap">
+                            <Heading
+                                as="h1"
+                                fontSize="2xl"
+                                minW={["0em", "0em", "8em"]}
+                                textAlign={["center", "center", "left"]}
+                                mx={2}
+                            >
+                                {layout.title}
+                            </Heading>
+                            <InputGroup maxW="25em" mt={2} mx="auto">
                                 <InputLeftAddon aria-hidden>Search</InputLeftAddon>
                                 <Input
                                     aria-label={"Search found " + ariaSearchResultStr}
@@ -186,15 +189,12 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                                     <FAIcon iconStyle="s" icon="search" />
                                 </InputRightElement>
                             </InputGroup>
-                            <FormHelperText>
-                                Only key rooms are shown by default. Enter a search term to search all rooms.
-                            </FormHelperText>
-                        </FormControl>
+                        </Flex>
                     ) : undefined}
                     <SimpleGrid
-                        columns={layout === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}
+                        columns={layout.type === "grid" ? [1, Math.min(2, rooms.length), Math.min(3, rooms.length)] : 1}
                         autoRows="min-content"
-                        spacing={layout === "grid" ? [1, 1, 3] : 1}
+                        spacing={layout.type === "grid" ? [1, 1, 3] : 1}
                         maxW="100%"
                     >
                         {limitedElements.map((e) => e.el)}

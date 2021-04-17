@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Grid, GridItem, Image, List, ListItem, Text, useToken } from "@chakra-ui/react";
+import { AccordionPanel, Grid, GridItem, Image, List, ListItem, Text, useToken } from "@chakra-ui/react";
 import { ContentItemDataBlob, ContentType_Enum, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -88,7 +88,7 @@ export function MainMenuSponsors(): JSX.Element {
     return (
         <ApolloQueryWrapper getter={(data) => data.ContentGroup} queryResult={sponsorsResult}>
             {(sponsorContentGroups: readonly MainMenuSponsors_ContentGroupDataFragment[]) => (
-                <>
+                <AccordionPanel pb={4} px={"3px"}>
                     <List>
                         {sponsorContentGroups.map((sponsorContentGroup) => {
                             const url = sponsorContentGroup.rooms.length
@@ -143,7 +143,7 @@ export function MainMenuSponsors(): JSX.Element {
                             );
                         })}
                     </List>
-                </>
+                </AccordionPanel>
             )}
         </ApolloQueryWrapper>
     );

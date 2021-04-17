@@ -120,16 +120,8 @@ function LazySchedulePanel({ isExpanded }: { isExpanded: boolean }): JSX.Element
     return useLazyRenderAndRetain(() => <SchedulePanel />, isExpanded);
 }
 
-function SponsorsPanel(): JSX.Element {
-    return (
-        <AccordionPanel pb={4} px={"3px"}>
-            <MainMenuSponsors />
-        </AccordionPanel>
-    );
-}
-
 function LazySponsorsPanel({ isExpanded }: { isExpanded: boolean }): JSX.Element {
-    return useLazyRenderAndRetain(() => <SponsorsPanel />, isExpanded);
+    return useLazyRenderAndRetain(() => <MainMenuSponsors />, isExpanded);
 }
 
 export function LeftSidebarConferenceSections_Inner({
@@ -183,7 +175,7 @@ export function LeftSidebarConferenceSections_Inner({
                 </Flex>
                 <ToggleNavButton m={0} size="xs" />
             </HStack>
-            <Accordion defaultIndex={[0, 3]} allowMultiple allowToggle>
+            <Accordion defaultIndex={[0, 2]} allowMultiple allowToggle>
                 <AccordionItem>
                     {({ isExpanded }) => (
                         <>

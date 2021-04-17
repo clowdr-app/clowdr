@@ -1,8 +1,9 @@
 import { getAttendee } from "../lib/authorisation";
 import { addAttendeeToChimeMeeting } from "../lib/aws/chime";
 import { canUserJoinRoom, getRoomByChimeMeetingId, getRoomChimeMeeting, getRoomConferenceId } from "../lib/room";
+import { deleteRoomChimeMeetingForRoom } from "../lib/roomChimeMeeting";
 import { addRoomParticipant, removeRoomParticipant } from "../lib/roomParticipant";
-import { ChimeAttendeeJoinedDetail, ChimeAttendeeLeftDetail } from "../types/chime";
+import { ChimeAttendeeJoinedDetail, ChimeAttendeeLeftDetail, ChimeMeetingEndedDetail } from "../types/chime";
 import { callWithRetry } from "../utils";
 
 export async function handleJoinRoom(
@@ -66,4 +67,16 @@ export async function handleChimeAttendeeLeftNotification(payload: ChimeAttendee
     }
 
     await callWithRetry(async () => removeRoomParticipant(room.roomId, room.conferenceId, payload.externalUserId));
+}
+
+export async function handleChimeMeetingEndedNotification(payload: ChimeMeetingEndedDetail): Promise<void> {
+    console.log("Handling notification that Chime meeting ended", {
+        chimeMeetingId: payload.meetingId,
+        roomId: payload.externalMeetingId,
+    });
+    const count = await deleteRoomChimeMeetingForRoom(payload.externalMeetingId, payload.meetingId);
+    console.log(`Deleted records for ${count} ended Chime meeting(s)`, {
+        chimeMeetingId: payload.meetingId,
+        roomId: payload.externalMeetingId,
+    });
 }

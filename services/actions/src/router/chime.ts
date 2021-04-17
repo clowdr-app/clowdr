@@ -4,11 +4,17 @@ import { assertType } from "typescript-is";
 import {
     handleChimeAttendeeJoinedNotification,
     handleChimeAttendeeLeftNotification,
+    handleChimeMeetingEndedNotification,
     handleJoinRoom,
 } from "../handlers/chime";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ChimeAttendeeJoinedDetail, ChimeAttendeeLeftDetail, ChimeEventBase } from "../types/chime";
+import {
+    ChimeAttendeeJoinedDetail,
+    ChimeAttendeeLeftDetail,
+    ChimeEventBase,
+    ChimeMeetingEndedDetail,
+} from "../types/chime";
 import { ActionPayload } from "../types/hasura/action";
 
 export const router = express.Router();
@@ -97,6 +103,29 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                     await handleChimeAttendeeJoinedNotification(detail);
                 } catch (err) {
                     console.error("Failure while handling chime:AttendeeJoined event", { err });
+                }
+                res.status(200).json("OK");
+                return;
+            }
+
+            if (event.detail.eventType === "chime:MeetingEnded") {
+                const detail: ChimeMeetingEndedDetail = event.detail;
+                try {
+                    assertType<ChimeMeetingEndedDetail>(event.detail);
+                } catch (err) {
+                    console.error("Invalid SNS event detail", {
+                        eventType: "chime:MeetingEnded",
+                        eventDetail: event.detail,
+                    });
+                    res.status(500).json("Invalid event detail");
+                    return;
+                }
+
+                try {
+                    console.log("Received chime:MeetingEnded notification", detail);
+                    await handleChimeMeetingEndedNotification(detail);
+                } catch (err) {
+                    console.error("Failure while handling chime:MeetingEnded event", { err });
                 }
                 res.status(200).json("OK");
                 return;

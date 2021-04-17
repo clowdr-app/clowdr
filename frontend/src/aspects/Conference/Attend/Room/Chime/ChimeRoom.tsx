@@ -81,7 +81,10 @@ export function ChimeRoom({
                 <Box>
                     <Box position="relative" width="100%">
                         {meetingManager.meetingSession && meetingStatus === MeetingStatus.Loading ? (
-                            <DeviceSetup />
+                            <>
+                                <ChimeRoomControlBar />
+                                <DeviceSetup />
+                            </>
                         ) : undefined}
 
                         {!meetingManager.meetingSession ? (

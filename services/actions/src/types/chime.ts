@@ -18,6 +18,14 @@ export interface ChimeAttendeeLeftDetail {
     networkType: string;
 }
 
+export interface ChimeMeetingEndedDetail {
+    version: string;
+    eventType: "chime:MeetingEnded";
+    timestamp: number;
+    meetingId: string;
+    externalMeetingId: string;
+}
+
 export interface ChimeEventBase {
     version: string;
     source: string;

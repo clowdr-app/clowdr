@@ -6,7 +6,6 @@ import {
     ContentGroup_CreateRoomDocument,
     CreateContentGroupRoom_GetContentGroupDocument,
     CreateRoomChimeMeetingDocument,
-    DeleteRoomChimeMeetingDocument,
     GetRoomByChimeMeetingIdDocument,
     GetRoomBySessionIdDocument,
     GetRoomChimeMeetingDocument,
@@ -17,6 +16,7 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { callWithRetry } from "../utils";
 import { createChimeMeeting, doesChimeMeetingExist } from "./aws/chime";
+import { deleteRoomChimeMeeting } from "./roomChimeMeeting";
 
 export async function createContentGroupBreakoutRoom(contentGroupId: string, conferenceId: string): Promise<string> {
     gql`
@@ -269,22 +269,6 @@ export async function getExistingRoomVonageMeeting(roomId: string): Promise<stri
     });
 
     return result.data.Room_by_pk?.publicVonageSessionId ?? null;
-}
-
-export async function deleteRoomChimeMeeting(roomChimeMeetingId: string): Promise<void> {
-    gql`
-        mutation DeleteRoomChimeMeeting($roomChimeMeetingId: uuid!) {
-            delete_room_RoomChimeMeeting_by_pk(id: $roomChimeMeetingId) {
-                id
-            }
-        }
-    `;
-    await apolloClient.mutate({
-        mutation: DeleteRoomChimeMeetingDocument,
-        variables: {
-            roomChimeMeetingId: roomChimeMeetingId,
-        },
-    });
 }
 
 export async function getRoomChimeMeeting(roomId: string, conferenceId: string): Promise<Meeting> {

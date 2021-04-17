@@ -19,7 +19,6 @@ import {
     useAudioVideo,
     useContentShareControls,
     useContentShareState,
-    useDevicePermissionStatus,
     useLocalVideo,
     useMeetingManager,
     useMeetingStatus,
@@ -28,8 +27,8 @@ import {
     useToggleLocalMute,
     useVideoInputs,
 } from "amazon-chime-sdk-component-library-react";
-import type { AudioVideoObserver, DeviceChangeObserver } from "amazon-chime-sdk-js";
-import React, { useCallback, useEffect } from "react";
+import type { DeviceChangeObserver } from "amazon-chime-sdk-js";
+import React, { useCallback, useEffect, useRef } from "react";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { PermissionInstructions } from "./PermissionInstructions";
 
@@ -46,19 +45,58 @@ export function ChimeRoomControlBar(): JSX.Element {
     const { isLocalUserSharing, isLocalShareLoading, sharingAttendeeId } = useContentShareState();
     const { muted, toggleMute } = useToggleLocalMute();
     const { toggleContentShare } = useContentShareControls();
-    const devicePermissionStatus = useDevicePermissionStatus();
+    const videoNeedsRestartRef = useRef<boolean>(false);
 
     const onLeaveRoom = useCallback(async () => {
         await meetingManager.leave();
     }, [meetingManager]);
 
     useEffect(() => {
-        const observer: AudioVideoObserver = {
-            videoAvailabilityDidChange: (x) => console.log("Video availability changed", x),
-        };
+        async function toggle() {
+            try {
+                videoNeedsRestartRef.current = true;
+                await toggleVideo();
+            } catch (e) {
+                toast({
+                    title: "Could not enable camera",
+                    description: <PermissionInstructions />,
+                    isClosable: true,
+                    duration: null,
+                    status: "error",
+                });
+            }
+        }
 
-        audioVideo?.addObserver(observer);
+        if (meetingStatus === MeetingStatus.Succeeded) {
+            if (isVideoEnabled) {
+                toggle();
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [meetingStatus]);
 
+    useEffect(() => {
+        async function toggle() {
+            try {
+                videoNeedsRestartRef.current = false;
+                await toggleVideo();
+            } catch (e) {
+                toast({
+                    title: "Could not enable camera",
+                    description: <PermissionInstructions />,
+                    isClosable: true,
+                    duration: null,
+                    status: "error",
+                });
+            }
+        }
+        if (videoNeedsRestartRef.current && !isVideoEnabled) {
+            toggle();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isVideoEnabled]);
+
+    useEffect(() => {
         const deviceChangeObserver: DeviceChangeObserver = {
             videoInputStreamEnded: async () => {
                 console.log("Video input stream ended", { isVideoEnabled });
@@ -76,7 +114,6 @@ export function ChimeRoomControlBar(): JSX.Element {
         audioVideo?.addDeviceChangeObserver(deviceChangeObserver);
 
         return () => {
-            audioVideo?.removeObserver(observer);
             audioVideo?.removeDeviceChangeObserver(deviceChangeObserver);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -158,21 +195,19 @@ export function ChimeRoomControlBar(): JSX.Element {
                 </WrapItem>
                 {audioVideo ? (
                     <WrapItem>
-                        {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button onClick={toggleMute} isDisabled={!audioInputs.selectedDevice}>
-                                {muted || !audioInputs.selectedDevice ? (
-                                    <>
-                                        <FAIcon icon="microphone-slash" iconStyle="s" />
-                                        <span style={{ marginLeft: "1rem" }}>Unmute</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <FAIcon icon="microphone" iconStyle="s" />
-                                        <span style={{ marginLeft: "1rem" }}>Mute</span>
-                                    </>
-                                )}
-                            </Button>
-                        ) : undefined}
+                        <Button onClick={toggleMute} isDisabled={!audioInputs.selectedDevice}>
+                            {muted || !audioInputs.selectedDevice ? (
+                                <>
+                                    <FAIcon icon="microphone-slash" iconStyle="s" />
+                                    <span style={{ marginLeft: "1rem" }}>Unmute</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FAIcon icon="microphone" iconStyle="s" />
+                                    <span style={{ marginLeft: "1rem" }}>Mute</span>
+                                </>
+                            )}
+                        </Button>
 
                         <Menu onOpen={() => meetingManager.updateDeviceLists()}>
                             <MenuButton
@@ -202,21 +237,19 @@ export function ChimeRoomControlBar(): JSX.Element {
                 ) : undefined}
                 {audioVideo ? (
                     <WrapItem>
-                        {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button onClick={toggleVideoWrapper} isDisabled={!videoInputs.selectedDevice}>
-                                {isVideoEnabled && videoInputs.selectedDevice ? (
-                                    <>
-                                        <FAIcon icon="video-slash" iconStyle="s" />
-                                        <span style={{ marginLeft: "1rem" }}>Disable camera</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <FAIcon icon="video" iconStyle="s" />
-                                        <span style={{ marginLeft: "1rem" }}>Start camera</span>
-                                    </>
-                                )}
-                            </Button>
-                        ) : undefined}
+                        <Button onClick={toggleVideoWrapper} isDisabled={!videoInputs.selectedDevice}>
+                            {isVideoEnabled && videoInputs.selectedDevice ? (
+                                <>
+                                    <FAIcon icon="video-slash" iconStyle="s" />
+                                    <span style={{ marginLeft: "1rem" }}>Disable camera</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FAIcon icon="video" iconStyle="s" />
+                                    <span style={{ marginLeft: "1rem" }}>Start camera</span>
+                                </>
+                            )}
+                        </Button>
 
                         <Menu onOpen={() => meetingManager.updateDeviceLists()}>
                             <MenuButton

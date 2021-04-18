@@ -11787,6 +11787,7 @@ export type Room = {
   /** An aggregate relationship */
   readonly transitions_aggregate: Transitions_Aggregate;
   readonly updated_at: Scalars['timestamptz'];
+  readonly videoRoomBackendName?: Maybe<Scalars['String']>;
 };
 
 
@@ -12947,6 +12948,7 @@ export type Room_Bool_Exp = {
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly videoRoomBackendName?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "Room" */
@@ -12997,6 +12999,7 @@ export type Room_Insert_Input = {
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly videoRoomBackendName?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -13014,6 +13017,7 @@ export type Room_Max_Fields = {
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly videoRoomBackendName?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "Room" */
@@ -13030,6 +13034,7 @@ export type Room_Max_Order_By = {
   readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
+  readonly videoRoomBackendName?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -13047,6 +13052,7 @@ export type Room_Min_Fields = {
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly videoRoomBackendName?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "Room" */
@@ -13063,6 +13069,7 @@ export type Room_Min_Order_By = {
   readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
+  readonly videoRoomBackendName?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "Room" */
@@ -13120,6 +13127,7 @@ export type Room_Order_By = {
   readonly shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
+  readonly videoRoomBackendName?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: Room */
@@ -13156,7 +13164,9 @@ export enum Room_Select_Column {
   /** column name */
   RoomPrivacyName = 'roomPrivacyName',
   /** column name */
-  UpdatedAt = 'updated_at'
+  UpdatedAt = 'updated_at',
+  /** column name */
+  VideoRoomBackendName = 'videoRoomBackendName'
 }
 
 /** input type for updating data in table "Room" */
@@ -13175,6 +13185,7 @@ export type Room_Set_Input = {
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly videoRoomBackendName?: Maybe<Scalars['String']>;
 };
 
 /** aggregate stddev on columns */
@@ -13258,7 +13269,9 @@ export enum Room_Update_Column {
   /** column name */
   RoomPrivacyName = 'roomPrivacyName',
   /** column name */
-  UpdatedAt = 'updated_at'
+  UpdatedAt = 'updated_at',
+  /** column name */
+  VideoRoomBackendName = 'videoRoomBackendName'
 }
 
 /** aggregate var_pop on columns */
@@ -20533,6 +20546,10 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** delete data from the table: "room.VideoRoomBackend" */
+  readonly delete_room_VideoRoomBackend?: Maybe<Room_VideoRoomBackend_Mutation_Response>;
+  /** delete single row from the table: "room.VideoRoomBackend" */
+  readonly delete_room_VideoRoomBackend_by_pk?: Maybe<Room_VideoRoomBackend>;
   /** delete data from the table: "system.Configuration" */
   readonly delete_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** delete data from the table: "system.ConfigurationKey" */
@@ -20854,6 +20871,10 @@ export type Mutation_Root = {
   readonly insert_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** insert a single row into the table: "room.ShuffleRoom" */
   readonly insert_room_ShuffleRoom_one?: Maybe<Room_ShuffleRoom>;
+  /** insert data into the table: "room.VideoRoomBackend" */
+  readonly insert_room_VideoRoomBackend?: Maybe<Room_VideoRoomBackend_Mutation_Response>;
+  /** insert a single row into the table: "room.VideoRoomBackend" */
+  readonly insert_room_VideoRoomBackend_one?: Maybe<Room_VideoRoomBackend>;
   /** insert data into the table: "system.Configuration" */
   readonly insert_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** insert data into the table: "system.ConfigurationKey" */
@@ -21188,6 +21209,10 @@ export type Mutation_Root = {
   readonly update_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** update single row of the table: "room.ShuffleRoom" */
   readonly update_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** update data of the table: "room.VideoRoomBackend" */
+  readonly update_room_VideoRoomBackend?: Maybe<Room_VideoRoomBackend_Mutation_Response>;
+  /** update single row of the table: "room.VideoRoomBackend" */
+  readonly update_room_VideoRoomBackend_by_pk?: Maybe<Room_VideoRoomBackend>;
   /** update data of the table: "system.Configuration" */
   readonly update_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** update data of the table: "system.ConfigurationKey" */
@@ -22149,6 +22174,18 @@ export type Mutation_RootDelete_Room_ShuffleRoomArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_VideoRoomBackendArgs = {
+  where: Room_VideoRoomBackend_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_VideoRoomBackend_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -23272,6 +23309,20 @@ export type Mutation_RootInsert_Room_ShuffleRoomArgs = {
 export type Mutation_RootInsert_Room_ShuffleRoom_OneArgs = {
   object: Room_ShuffleRoom_Insert_Input;
   on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_VideoRoomBackendArgs = {
+  objects: ReadonlyArray<Room_VideoRoomBackend_Insert_Input>;
+  on_conflict?: Maybe<Room_VideoRoomBackend_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_VideoRoomBackend_OneArgs = {
+  object: Room_VideoRoomBackend_Insert_Input;
+  on_conflict?: Maybe<Room_VideoRoomBackend_On_Conflict>;
 };
 
 
@@ -24696,6 +24747,20 @@ export type Mutation_RootUpdate_Room_ShuffleRoom_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Room_VideoRoomBackendArgs = {
+  _set?: Maybe<Room_VideoRoomBackend_Set_Input>;
+  where: Room_VideoRoomBackend_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_VideoRoomBackend_By_PkArgs = {
+  _set?: Maybe<Room_VideoRoomBackend_Set_Input>;
+  pk_columns: Room_VideoRoomBackend_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_System_ConfigurationArgs = {
   _append?: Maybe<System_Configuration_Append_Input>;
   _delete_at_path?: Maybe<System_Configuration_Delete_At_Path_Input>;
@@ -25235,6 +25300,12 @@ export type Query_Root = {
   readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
   /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
   readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** fetch data from the table: "room.VideoRoomBackend" */
+  readonly room_VideoRoomBackend: ReadonlyArray<Room_VideoRoomBackend>;
+  /** fetch aggregated fields from the table: "room.VideoRoomBackend" */
+  readonly room_VideoRoomBackend_aggregate: Room_VideoRoomBackend_Aggregate;
+  /** fetch data from the table: "room.VideoRoomBackend" using primary key columns */
+  readonly room_VideoRoomBackend_by_pk?: Maybe<Room_VideoRoomBackend>;
   /** fetch data from the table: "system.Configuration" */
   readonly system_Configuration: ReadonlyArray<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -27122,6 +27193,29 @@ export type Query_RootRoom_ShuffleRoom_By_PkArgs = {
 };
 
 
+export type Query_RootRoom_VideoRoomBackendArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Order_By>>;
+  where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+
+export type Query_RootRoom_VideoRoomBackend_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Order_By>>;
+  where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+
+export type Query_RootRoom_VideoRoomBackend_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
 export type Query_RootSystem_ConfigurationArgs = {
   distinct_on?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -28749,6 +28843,119 @@ export type Room_ShuffleRoom_Variance_Order_By = {
   readonly id?: Maybe<Order_By>;
 };
 
+/** columns and relationships of "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend = {
+  readonly __typename?: 'room_VideoRoomBackend';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Aggregate = {
+  readonly __typename?: 'room_VideoRoomBackend_aggregate';
+  readonly aggregate?: Maybe<Room_VideoRoomBackend_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_VideoRoomBackend>;
+};
+
+/** aggregate fields of "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Aggregate_Fields = {
+  readonly __typename?: 'room_VideoRoomBackend_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Room_VideoRoomBackend_Max_Fields>;
+  readonly min?: Maybe<Room_VideoRoomBackend_Min_Fields>;
+};
+
+
+/** aggregate fields of "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "room.VideoRoomBackend". All fields are combined with a logical 'AND'. */
+export type Room_VideoRoomBackend_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Bool_Exp>>;
+  readonly _not?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Bool_Exp>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.VideoRoomBackend" */
+export enum Room_VideoRoomBackend_Constraint {
+  /** unique or primary key constraint */
+  VideoRoomBackendPkey = 'VideoRoomBackend_pkey'
+}
+
+/** input type for inserting data into table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Room_VideoRoomBackend_Max_Fields = {
+  readonly __typename?: 'room_VideoRoomBackend_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Room_VideoRoomBackend_Min_Fields = {
+  readonly __typename?: 'room_VideoRoomBackend_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Mutation_Response = {
+  readonly __typename?: 'room_VideoRoomBackend_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Room_VideoRoomBackend>;
+};
+
+/** on conflict condition type for table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_On_Conflict = {
+  readonly constraint: Room_VideoRoomBackend_Constraint;
+  readonly update_columns: ReadonlyArray<Room_VideoRoomBackend_Update_Column>;
+  readonly where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "room.VideoRoomBackend". */
+export type Room_VideoRoomBackend_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: room_VideoRoomBackend */
+export type Room_VideoRoomBackend_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "room.VideoRoomBackend" */
+export enum Room_VideoRoomBackend_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "room.VideoRoomBackend" */
+export enum Room_VideoRoomBackend_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 export type Subscription_Root = {
   readonly __typename?: 'subscription_root';
   /** fetch data from the table: "Attendee" */
@@ -29231,6 +29438,12 @@ export type Subscription_Root = {
   readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
   /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
   readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** fetch data from the table: "room.VideoRoomBackend" */
+  readonly room_VideoRoomBackend: ReadonlyArray<Room_VideoRoomBackend>;
+  /** fetch aggregated fields from the table: "room.VideoRoomBackend" */
+  readonly room_VideoRoomBackend_aggregate: Room_VideoRoomBackend_Aggregate;
+  /** fetch data from the table: "room.VideoRoomBackend" using primary key columns */
+  readonly room_VideoRoomBackend_by_pk?: Maybe<Room_VideoRoomBackend>;
   /** fetch data from the table: "system.Configuration" */
   readonly system_Configuration: ReadonlyArray<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -31097,6 +31310,29 @@ export type Subscription_RootRoom_ShuffleRoom_By_PkArgs = {
 };
 
 
+export type Subscription_RootRoom_VideoRoomBackendArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Order_By>>;
+  where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+
+export type Subscription_RootRoom_VideoRoomBackend_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Order_By>>;
+  where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+
+export type Subscription_RootRoom_VideoRoomBackend_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
 export type Subscription_RootSystem_ConfigurationArgs = {
   distinct_on?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -31206,6 +31442,8 @@ export enum System_ConfigurationKey_Enum {
   CookiePolicyLatestRevisionTimestamp = 'COOKIE_POLICY_LATEST_REVISION_TIMESTAMP',
   /** The URL to the host cookie policy. Note: If self hosting Clowdr, this must be your organisation's cookie policy - you cannot legally reuse, rely on or copy Clowdr's cookie policy. */
   CookiePolicyUrl = 'COOKIE_POLICY_URL',
+  /** Default backend platform for video rooms */
+  DefaultVideoRoomBackend = 'DEFAULT_VIDEO_ROOM_BACKEND',
   /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
   HostOrganisationName = 'HOST_ORGANISATION_NAME',
   /** The time of the latest revision of the host Privacy Policy. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -31888,6 +32126,11 @@ export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
 
 export type Room_GetEventBreakoutRoomQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
+export type Room_GetDefaultVideoRoomBackendQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type Room_GetDefaultVideoRoomBackendQuery = { readonly __typename?: 'query_root', readonly system_Configuration_by_pk?: Maybe<{ readonly __typename?: 'system_Configuration', readonly value: any }> };
+
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   roomId: Scalars['uuid'];
@@ -31940,7 +32183,7 @@ export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root',
   )> };
 
 export type RoomPage_RoomDetailsFragment = (
-  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean }> }
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly videoRoomBackendName?: Maybe<string>, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean }> }
   & RoomPage_RoomPeopleFragment
 );
 
@@ -34069,6 +34312,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     durationMinutes
     reshuffleUponEnd
   }
+  videoRoomBackendName
 }
     ${RoomPage_RoomPeopleFragmentDoc}`;
 export const RoomSponsorContent_ContentItemDataFragmentDoc = gql`
@@ -36257,6 +36501,40 @@ export function useRoom_GetEventBreakoutRoomLazyQuery(baseOptions?: Apollo.LazyQ
 export type Room_GetEventBreakoutRoomQueryHookResult = ReturnType<typeof useRoom_GetEventBreakoutRoomQuery>;
 export type Room_GetEventBreakoutRoomLazyQueryHookResult = ReturnType<typeof useRoom_GetEventBreakoutRoomLazyQuery>;
 export type Room_GetEventBreakoutRoomQueryResult = Apollo.QueryResult<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>;
+export const Room_GetDefaultVideoRoomBackendDocument = gql`
+    query Room_GetDefaultVideoRoomBackend {
+  system_Configuration_by_pk(key: DEFAULT_VIDEO_ROOM_BACKEND) {
+    value
+  }
+}
+    `;
+
+/**
+ * __useRoom_GetDefaultVideoRoomBackendQuery__
+ *
+ * To run a query within a React component, call `useRoom_GetDefaultVideoRoomBackendQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoom_GetDefaultVideoRoomBackendQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoom_GetDefaultVideoRoomBackendQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRoom_GetDefaultVideoRoomBackendQuery(baseOptions?: Apollo.QueryHookOptions<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>(Room_GetDefaultVideoRoomBackendDocument, options);
+      }
+export function useRoom_GetDefaultVideoRoomBackendLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>(Room_GetDefaultVideoRoomBackendDocument, options);
+        }
+export type Room_GetDefaultVideoRoomBackendQueryHookResult = ReturnType<typeof useRoom_GetDefaultVideoRoomBackendQuery>;
+export type Room_GetDefaultVideoRoomBackendLazyQueryHookResult = ReturnType<typeof useRoom_GetDefaultVideoRoomBackendLazyQuery>;
+export type Room_GetDefaultVideoRoomBackendQueryResult = Apollo.QueryResult<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(

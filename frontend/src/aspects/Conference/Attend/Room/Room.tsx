@@ -4,6 +4,7 @@ import {
     AlertIcon,
     Box,
     Button,
+    Center,
     Heading,
     HStack,
     Spinner,
@@ -27,6 +28,7 @@ import {
     RoomPrivacy_Enum,
     Room_EventSummaryFragment,
     useRoom_GetCurrentEventsQuery,
+    useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
@@ -109,6 +111,12 @@ gql`
             id
         }
     }
+
+    query Room_GetDefaultVideoRoomBackend {
+        system_Configuration_by_pk(key: DEFAULT_VIDEO_ROOM_BACKEND) {
+            value
+        }
+    }
 `;
 
 function hasShuffleRoomEnded({ startedAt, durationMinutes }: { startedAt: string; durationMinutes: number }): boolean {
@@ -134,6 +142,18 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             roomId: roomDetails.id,
         },
     });
+
+    const {
+        data: defaultVideoRoomBackendData,
+        refetch: refetchDefaultVideoRoomBackend,
+        loading: defaultvideoRoomBackendLoading,
+    } = useRoom_GetDefaultVideoRoomBackendQuery({
+        fetchPolicy: "network-only",
+    });
+
+    useEffect(() => {
+        refetchDefaultVideoRoomBackend().catch((e) => console.error("Could not refetch default video room backend", e));
+    }, [refetchDefaultVideoRoomBackend, roomDetails.id]);
 
     useEffect(() => {
         if (data?.Event) {
@@ -370,8 +390,24 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         [hlsUri, withinThreeMinutesOfBroadcastEvent, showBackstage, currentRoomEvent, intendPlayStream, muteStream]
     );
 
-    const breakoutVonageRoomEl = useMemo(() => <BreakoutVonageRoom room={roomDetails} />, [roomDetails]);
-    const breakoutChimeRoomEl = useMemo(() => <BreakoutChimeRoom room={roomDetails} />, [roomDetails]);
+    const defaultVideoBackend: "CHIME" | "VONAGE" =
+        defaultVideoRoomBackendData?.system_Configuration_by_pk?.value ?? "VONAGE";
+    const breakoutRoomEl = useMemo(() => {
+        console.log("default video backend", defaultVideoBackend, roomDetails.videoRoomBackendName);
+        switch (roomDetails.videoRoomBackendName) {
+            case "CHIME":
+                return <BreakoutChimeRoom room={roomDetails} />;
+            case "VONAGE":
+                return <BreakoutVonageRoom room={roomDetails} />;
+        }
+        switch (defaultVideoBackend) {
+            case "CHIME":
+                return <BreakoutChimeRoom room={roomDetails} />;
+            case "VONAGE":
+            default:
+                return <BreakoutVonageRoom room={roomDetails} />;
+        }
+    }, [defaultVideoBackend, roomDetails]);
 
     const currentEventRole = currentRoomEvent?.eventPeople.find(
         (p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id
@@ -662,8 +698,13 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
                 {showDefaultBreakoutRoom ? (
                     <Box display={showBackstage ? "none" : "block"} bgColor={bgColour} m={-2}>
-                        {/* {breakoutVonageRoomEl} */}
-                        {breakoutChimeRoomEl}
+                        {defaultvideoRoomBackendLoading ? (
+                            <Center>
+                                <Spinner mt={2} mx="auto" />
+                            </Center>
+                        ) : (
+                            breakoutRoomEl
+                        )}
                     </Box>
                 ) : (
                     <></>

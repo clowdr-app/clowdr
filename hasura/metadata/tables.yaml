@@ -1149,6 +1149,7 @@
         remote_table:
           schema: public
           name: AttendeeProfileBadges
+        insertion_order: null
         column_mapping:
           id: attendeeId
   - name: contentPeople
@@ -1555,6 +1556,7 @@
         remote_table:
           schema: public
           name: Attendee
+        insertion_order: null
         column_mapping:
           attendeeId: id
   select_permissions:
@@ -6135,6 +6137,7 @@
       - publicVonageSessionId
       - roomPrivacyName
       - updated_at
+      - videoRoomBackendName
       filter:
         _and:
         - conference:
@@ -7616,6 +7619,10 @@
               schema: public
               name: FlatUserPermission
 - table:
+    schema: room
+    name: VideoRoomBackend
+  is_enum: true
+- table:
     schema: system
     name: Configuration
   select_permissions:
@@ -7635,6 +7642,7 @@
           - PRIVACY_POLICY_URL
           - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
           - COOKIE_POLICY_URL
+          - DEFAULT_VIDEO_ROOM_BACKEND
   - role: user
     permission:
       columns:
@@ -7651,6 +7659,7 @@
           - PRIVACY_POLICY_URL
           - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
           - COOKIE_POLICY_URL
+          - DEFAULT_VIDEO_ROOM_BACKEND
 - table:
     schema: system
     name: ConfigurationKey

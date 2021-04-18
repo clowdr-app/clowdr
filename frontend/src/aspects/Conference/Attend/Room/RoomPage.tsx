@@ -54,6 +54,7 @@ gql`
             durationMinutes
             reshuffleUponEnd
         }
+        videoRoomBackendName
     }
 
     fragment RoomPage_RoomPeople on Room {

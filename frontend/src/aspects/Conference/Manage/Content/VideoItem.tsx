@@ -120,7 +120,11 @@ export const VideoItemTemplate: ItemBaseTemplate = {
             }
             return (
                 <>
-                    <ContentGroupVideo title={data.item.name} videoContentItemData={latestVersion.data} />
+                    <ContentGroupVideo
+                        contentItemId={data.item.isNew ? "" : data.item.id}
+                        title={data.item.name}
+                        videoContentItemData={latestVersion.data}
+                    />
                     <Heading as="h3" fontSize="lg" mb={4}>
                         Upload new video
                     </Heading>

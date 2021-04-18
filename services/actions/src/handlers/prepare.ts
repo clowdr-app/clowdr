@@ -169,7 +169,6 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
                     videoBroadcastItem.id,
                     conferencePrepareJobId
                 );
-                createdJob = false;
             } else {
                 let broadcastContentItemId;
                 try {

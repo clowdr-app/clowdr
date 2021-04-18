@@ -1,0 +1,1 @@
+CREATE TABLE "analytics"."ContentItemStats"("contentItemId" uuid NOT NULL, "viewCount" integer NOT NULL DEFAULT 0, PRIMARY KEY ("contentItemId") , FOREIGN KEY ("contentItemId") REFERENCES "public"."ContentItem"("id") ON UPDATE cascade ON DELETE cascade);

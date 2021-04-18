@@ -1,0 +1,1 @@
+CREATE TABLE "analytics"."ContentGroupStats"("contentGroupId" uuid NOT NULL, "viewCount" integer NOT NULL DEFAULT 0, PRIMARY KEY ("contentGroupId") , FOREIGN KEY ("contentGroupId") REFERENCES "public"."ContentGroup"("id") ON UPDATE cascade ON DELETE cascade);

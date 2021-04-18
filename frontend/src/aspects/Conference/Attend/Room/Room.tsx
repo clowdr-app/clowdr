@@ -33,6 +33,7 @@ import {
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
 import { useRealTime } from "../../../Generic/useRealTime";
+import useTrackView from "../../../Realtime/Analytics/useTrackView";
 import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
@@ -333,6 +334,9 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         [currentRoomEvent?.id, nextRoomEvent, roomDetails.name, roomEventsForCurrentAttendee, showBackstage]
     );
 
+    const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    useTrackView(isPlaying, roomDetails.id, "Room.HLSStream");
+
     const muteStream = showBackstage;
     const playerRef = useRef<ReactPlayer | null>(null);
     const playerEl = useMemo(
@@ -359,8 +363,20 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                         }
                         muted={muteStream}
                         controls={true}
-                        onPause={() => setIntendPlayStream(false)}
-                        onPlay={() => setIntendPlayStream(true)}
+                        onEnded={() => {
+                            setIsPlaying(false);
+                        }}
+                        onError={() => {
+                            setIsPlaying(false);
+                        }}
+                        onPause={() => {
+                            setIsPlaying(false);
+                            setIntendPlayStream(false);
+                        }}
+                        onPlay={() => {
+                            setIsPlaying(true);
+                            setIntendPlayStream(true);
+                        }}
                     />
                 </Box>
             ) : (

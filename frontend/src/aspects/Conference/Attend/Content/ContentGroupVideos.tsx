@@ -10,6 +10,7 @@ import ReactPlayer, { Config } from "react-player";
 import type { TrackProps } from "react-player/file";
 import { ContentGroupDataFragment, ContentType_Enum } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
+import useTrackView from "../../../Realtime/Analytics/useTrackView";
 
 export function ContentGroupVideos({ contentGroupData }: { contentGroupData: ContentGroupDataFragment }): JSX.Element {
     const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
@@ -61,6 +62,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                                 overflow={["visible", "visible", "hidden"]}
                             >
                                 <ContentGroupVideo
+                                    contentItemId={contentItem.id}
                                     title={contentItem.name}
                                     videoContentItemData={latestVersion.data}
                                     onPlay={() => setSelectedVideoId(contentItem.id)}
@@ -93,11 +95,13 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
 }
 
 export function ContentGroupVideo({
+    contentItemId,
     videoContentItemData,
     title,
     onPlay,
     onPause,
 }: {
+    contentItemId: string;
     videoContentItemData: VideoContentBlob;
     title: string;
     onPlay?: () => void;
@@ -171,6 +175,9 @@ export function ContentGroupVideo({
         };
     }, [error, loading, subtitlesUrl]);
 
+    const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    useTrackView(isPlaying, contentItemId, "ContentItem");
+
     const playerRef = useRef<ReactPlayer | null>(null);
     const player = useMemo(() => {
         // Only render the player once both the video URL and the subtitles config are available
@@ -182,17 +189,25 @@ export function ContentGroupVideo({
                 width="100%"
                 height="auto"
                 maxHeight="100%"
+                onEnded={() => {
+                    setIsPlaying(false);
+                }}
+                onError={() => {
+                    setIsPlaying(false);
+                }}
+                onPause={() => {
+                    setIsPlaying(false);
+                    onPause?.();
+                }}
                 onPlay={() => {
-                    if (onPlay) {
-                        onPlay();
-                    }
+                    setIsPlaying(true);
+                    onPlay?.();
                     const hlsPlayer = playerRef.current?.getInternalPlayer("hls") as Hls;
                     if (hlsPlayer) {
                         hlsPlayer.config.maxBufferLength = 30;
                         hlsPlayer.config.maxBufferSize = 60 * 1000 * 1000;
                     }
                 }}
-                onPause={onPause}
                 config={{ ...config }}
                 ref={playerRef}
                 style={{ borderRadius: "10px", overflow: "hidden" }}

@@ -39,4 +39,6 @@ export const redisClientP = {
     zrevrank: promisify((key: string, member: string, cb?: Callback<number | null>) =>
         redisClient.zrevrank(key, member, cb)
     ),
+    incr: promisify((key: string, cb?: Callback<number>) => redisClient.incr(key, cb)),
+    getset: promisify((key: string, value: string, cb?: Callback<string>) => redisClient.getset(key, value, cb)),
 };

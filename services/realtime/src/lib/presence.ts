@@ -121,7 +121,7 @@ export function enterPresence(
     sessionId: string,
     cb: (err: Error | null) => void
 ): void {
-    console.info(`${userId} / ${sessionId} entering ${listId}`);
+    // console.info(`${userId} / ${sessionId} entering ${listId}`);
 
     addUserSession(listId, userId, sessionId, (err) => {
         if (err) {
@@ -135,12 +135,13 @@ export function enterPresence(
             }
 
             if (v > 0) {
-                console.info(`${userId} / ${sessionId} entered ${listId}`);
+                // console.info(`${userId} / ${sessionId} entered ${listId}`);
                 const chan = presenceChannelName(listId);
                 socketServer.in(chan).emit("entered", { listId, userId });
-            } else {
-                console.info(`${userId} / ${sessionId} re-entered ${listId}`);
             }
+            // else {
+            //     console.info(`${userId} / ${sessionId} re-entered ${listId}`);
+            // }
 
             cb(null);
         });
@@ -148,7 +149,7 @@ export function enterPresence(
 }
 
 export function exitPresence(listId: string, userId: string, sessionId: string, cb: (err: Error | null) => void): void {
-    console.info(`${userId} / ${sessionId} exiting ${listId}`);
+    // console.info(`${userId} / ${sessionId} exiting ${listId}`);
 
     const listKey = presenceListKey(listId);
     const userKey = userSessionsKey(listId, userId);
@@ -186,7 +187,7 @@ export function exitPresence(listId: string, userId: string, sessionId: string, 
                                     const [numRemoved] = results;
 
                                     if (numRemoved > 0) {
-                                        console.info(`${userId} / ${sessionId} left ${listId}`);
+                                        // console.info(`${userId} / ${sessionId} left ${listId}`);
                                         const chan = presenceChannelName(listId);
                                         socketServer.in(chan).emit("left", { listId, userId });
                                     }

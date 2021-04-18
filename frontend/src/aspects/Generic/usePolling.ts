@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function usePolling(
     f: () => unknown,
@@ -32,10 +32,15 @@ export default function usePolling(
         };
     }, [f, isPolling, pollInterval]);
 
-    return {
-        isPolling,
-        start,
-        stop,
-        toggle,
-    };
+    const pollingObj = useMemo(
+        () => ({
+            isPolling,
+            start,
+            stop,
+            toggle,
+        }),
+        [isPolling, start, stop, toggle]
+    );
+
+    return pollingObj;
 }

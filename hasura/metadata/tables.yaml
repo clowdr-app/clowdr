@@ -2,6 +2,161 @@
     schema: analytics
     name: AppStats
 - table:
+    schema: analytics
+    name: ContentGroupStats
+  object_relationships:
+  - name: contentGroup
+    using:
+      foreign_key_constraint_on: contentGroupId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - contentGroupId
+      - viewCount
+      filter:
+        contentGroup:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _or:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_VIEW
+                      - CONFERENCE_MANAGE_CONTENT
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - _exists:
+                _where:
+                  _and:
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW
+                _table:
+                  schema: public
+                  name: FlatUnauthPermission
+- table:
+    schema: analytics
+    name: ContentItemStats
+  object_relationships:
+  - name: contentItem
+    using:
+      foreign_key_constraint_on: contentItemId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - contentItemId
+      - viewCount
+      filter:
+        contentItem:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _or:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_VIEW
+                      - CONFERENCE_MANAGE_CONTENT
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - _exists:
+                _where:
+                  _and:
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW
+                _table:
+                  schema: public
+                  name: FlatUnauthPermission
+- table:
+    schema: analytics
+    name: RoomStats
+  object_relationships:
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - hlsViewCount
+      - roomId
+      filter:
+        room:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _or:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_SCHEDULE
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - _and:
+              - _or:
+                - _exists:
+                    _where:
+                      _and:
+                      - slug:
+                          _eq: X-Hasura-Conference-Slug
+                      - permission_name:
+                          _eq: CONFERENCE_VIEW
+                    _table:
+                      schema: public
+                      name: FlatUnauthPermission
+                - _exists:
+                    _where:
+                      _and:
+                      - user_id:
+                          _eq: X-Hasura-User-Id
+                      - slug:
+                          _eq: X-Hasura-Conference-Slug
+                      - permission_name:
+                          _in:
+                          - CONFERENCE_VIEW
+                          - CONFERENCE_VIEW_ATTENDEES
+                          - CONFERENCE_MANAGE_SCHEDULE
+                    _table:
+                      schema: public
+                      name: FlatUserPermission
+              - _or:
+                - roomPrivacyName:
+                    _eq: PUBLIC
+                - roomPeople:
+                    attendee:
+                      userId:
+                        _eq: X-Hasura-User-Id
+- table:
     schema: chat
     name: Chat
   object_relationships:
@@ -2153,6 +2308,14 @@
           name: Room
         column_mapping:
           id: originatingContentGroupId
+  - name: stats
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: ContentGroupStats
+        column_mapping:
+          id: contentGroupId
   array_relationships:
   - name: contentGroupTags
     using:
@@ -2822,6 +2985,14 @@
   - name: requiredContentItem
     using:
       foreign_key_constraint_on: requiredContentId
+  - name: stats
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: ContentItemStats
+        column_mapping:
+          id: contentItemId
   array_relationships:
   - name: youTubeUploads
     using:
@@ -5977,6 +6148,14 @@
   - name: roomPrivacy
     using:
       foreign_key_constraint_on: roomPrivacyName
+  - name: stats
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: RoomStats
+        column_mapping:
+          id: roomId
   array_relationships:
   - name: channelStackCreateJobs
     using:

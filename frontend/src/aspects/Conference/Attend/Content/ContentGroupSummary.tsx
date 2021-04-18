@@ -26,6 +26,7 @@ import {
 } from "../../../../generated/graphql";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import useTrackView from "../../../Realtime/Analytics/useTrackView";
 import { Markdown } from "../../../Text/Markdown";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -93,6 +94,8 @@ export function ContentGroupSummary({
     linkToItem?: boolean;
     children?: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
+    useTrackView(true, contentGroupData.id, "ContentGroup", 3000);
+
     const abstractContentItem = useMemo(() => {
         const abstractItem = contentGroupData.contentItems.find(
             (contentItem) => contentItem.contentTypeName === ContentType_Enum.Abstract

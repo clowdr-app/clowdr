@@ -4,8 +4,10 @@ import { createAdapter } from "socket.io-redis";
 import { testJWKs } from "../jwks";
 import { notificationsRoomName } from "../lib/chat";
 import { redisClient } from "../redis";
+import { onConnect as onConnectAnalytics } from "../socket-events/analytics";
 import { onConnect as onConnectChat, onDisconnect as onDisconnectChat } from "../socket-events/chat";
 import { onConnect as onConnectPresence } from "../socket-events/presence";
+import { onDisconnect as onDisconnectAnalytics } from "../socket-handlers/analytics";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
 import { authorize } from "./authorize";
 import { httpServer } from "./http-server";
@@ -78,10 +80,12 @@ socketServer.on("connection", function (socket: Socket) {
 
             onDisconnectPresence(socketId, userId);
             onDisconnectChat(socketId, userId);
+            onDisconnectAnalytics(socketId, userId);
         });
 
         onConnectPresence(socket, userId, conferenceSlugs);
         onConnectChat(socket, userId, conferenceSlugs);
+        onConnectAnalytics(socket, userId, conferenceSlugs);
 
         socket.join(notificationsRoomName(userId));
     }

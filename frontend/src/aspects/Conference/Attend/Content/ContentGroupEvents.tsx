@@ -168,7 +168,7 @@ query ContentGroupEvent_RoomNearbyEvents {
     const query = useQuery(queryDocument, {});
     useQueryErrorToast(query.error, false, "ContentGroupEvents:ContentGroupEvents_RoomLocalisedSchedule");
 
-    console.log(query.data);
+    // console.log(query.data);
     const fullEventsList: (ContentGroupEventFragment | ContentGroupRoomEventFragment)[] = useMemo(
         () =>
             query.loading || !query.data

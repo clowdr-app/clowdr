@@ -2,10 +2,11 @@ import { Link, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { LinkButton } from "../Chakra/LinkButton";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useTitle } from "../Utils/useTitle";
 import GenericErrorPage from "./GenericErrorPage";
 
-export default function PageNotFound({ loggedIn }: { loggedIn?: boolean }): JSX.Element {
+export default function PageNotFound(): JSX.Element {
     const title = useTitle("Page not found");
     const location = useLocation();
     const conferenceSlug = useMemo(() => {
@@ -15,6 +16,8 @@ export default function PageNotFound({ loggedIn }: { loggedIn?: boolean }): JSX.
         }
         return undefined;
     }, [location.pathname]);
+    const currentUser = useMaybeCurrentUser();
+    const loggedIn = !!currentUser?.user;
     // conferenceSlug ? `/conference/${conferenceSlug}` :
 
     return (
@@ -32,13 +35,13 @@ export default function PageNotFound({ loggedIn }: { loggedIn?: boolean }): JSX.
                             email by your conference to access its private pages.
                         </Text>
                     </>
-                ) : loggedIn ? (
+                ) : !loggedIn ? (
                     <>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" fontStyle="italic" maxW={600}>
                             You are not logged in
                         </Text>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                            Please try going to the home page and logging in, then return to this page.
+                            Please try going to the home page and logging in before returning to this URL.
                         </Text>
                     </>
                 ) : (

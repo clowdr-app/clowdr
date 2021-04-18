@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client/core";
-import { GetRoomThatUserCanJoinDocument, Vonage_GetEventDetailsDocument } from "../generated/graphql";
+import { Vonage_GetEventDetailsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getAttendee } from "../lib/authorisation";
+import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
     addAndRemoveEventParticipantStreams,
     addAndRemoveRoomParticipants,
@@ -124,20 +125,9 @@ export async function handleJoinEvent(
 
 gql`
     query GetRoomThatUserCanJoin($roomId: uuid, $userId: String) {
-        Room(
-            where: {
-                id: { _eq: $roomId }
-                conference: { attendees: { userId: { _eq: $userId } } }
-                _or: [{ roomPeople: { attendee: { userId: { _eq: $userId } } } }, { roomPrivacyName: { _eq: PUBLIC } }]
-            }
-        ) {
+        Room_by_pk(id: { _eq: $roomId }) {
             id
             publicVonageSessionId
-            conference {
-                attendees(where: { userId: { _eq: $userId } }) {
-                    id
-                }
-            }
         }
     }
 `;
@@ -146,46 +136,36 @@ export async function handleJoinRoom(
     payload: joinRoomVonageSessionArgs,
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
-    // TODO: check the user's roles explicitly, rather than just conference attendee-ship
-    const roomResult = await apolloClient.query({
-        query: GetRoomThatUserCanJoinDocument,
-        variables: {
-            roomId: payload.roomId,
-            userId,
-        },
-    });
+    const roomConferenceId = await getRoomConferenceId(payload.roomId);
+    const attendee = await getAttendee(userId, roomConferenceId);
+    const canJoinRoom = await canUserJoinRoom(attendee.id, payload.roomId, roomConferenceId);
 
-    if (roomResult.data.Room.length === 0) {
-        console.warn("Could not find room to generate Vonage access token", payload.roomId);
-        return {};
+    if (!canJoinRoom) {
+        console.warn("User tried to join a Vonage room, but was not permitted", { payload, userId });
+        throw new Error("User is not permitted to join this room");
     }
 
-    const room = roomResult.data.Room[0];
+    const maybeVonageMeetingId = await getRoomVonageSession(payload.roomId);
 
-    if (!room.publicVonageSessionId) {
-        console.warn("Could not find Vonage session for room", payload.roomId, userId);
-        throw new Error("No Vonage session exists for room");
+    if (!maybeVonageMeetingId) {
+        console.error("Could not get Vonage meeting id", { payload, userId, attendeeId: attendee.id });
+        return {
+            message: "Could not find meeting",
+        };
     }
-
-    if (roomResult.data.Room[0].conference.attendees.length === 0) {
-        console.warn("Could not find attendee for the user", payload.roomId, userId);
-        throw new Error("Could not find attendee for the user");
-    }
-
-    const attendeeId = roomResult.data.Room[0].conference.attendees[0].id;
 
     const connectionData: CustomConnectionData = {
-        attendeeId,
+        attendeeId: attendee.id,
         userId,
     };
 
-    const accessToken = Vonage.vonage.generateToken(room.publicVonageSessionId, {
+    const accessToken = Vonage.vonage.generateToken(maybeVonageMeetingId, {
         data: JSON.stringify(connectionData),
         role: "publisher",
     });
 
     return {
         accessToken,
-        sessionId: room.publicVonageSessionId,
+        sessionId: maybeVonageMeetingId,
     };
 }

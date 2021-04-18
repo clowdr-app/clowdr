@@ -1,7 +1,12 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleCreateDmRoom, handleCreateForContentGroup, handleRoomCreated } from "../handlers/room";
+import {
+    handleCreateDmRoom,
+    handleCreateForContentGroup,
+    handleRemoveOldRoomParticipants,
+    handleRoomCreated,
+} from "../handlers/room";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { checkJwt } from "../middlewares/checkJwt";
 import { checkUserScopes } from "../middlewares/checkScopes";
@@ -12,7 +17,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/created", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/created", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<RoomData>>(req.body);
     } catch (e) {
@@ -30,7 +35,18 @@ router.post("/created", bodyParser.json(), async (req: Request, res: Response) =
     res.status(200).json("OK");
 });
 
-router.use(bodyParser.json());
+router.post("/removeOldParticipants", json(), async (_req: Request, res: Response) => {
+    try {
+        await handleRemoveOldRoomParticipants();
+    } catch (err) {
+        console.error("Failure while handling remove old room participants", err);
+        res.status(500).json("Failure while handling event");
+        return;
+    }
+    res.status(200).json("OK");
+});
+
+router.use(json());
 router.use(checkJwt);
 router.use(checkUserScopes);
 

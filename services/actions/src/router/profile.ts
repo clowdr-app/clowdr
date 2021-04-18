@@ -12,8 +12,11 @@ import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { checkJwt } from "../middlewares/checkJwt";
 import { checkUserScopes } from "../middlewares/checkScopes";
 
-assert(process.env.AWS_ACCESS_KEY_ID, "AWS_ACCESS_KEY_ID environment variable not provided.");
-assert(process.env.AWS_SECRET_ACCESS_KEY, "AWS_SECRET_ACCESS_KEY environment variable not provided.");
+assert(process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID, "AWS_ACTIONS_USER_ACCESS_KEY_ID environment variable not provided.");
+assert(
+    process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
+    "AWS_ACTIONS_USER_SECRET_ACCESS_KEY environment variable not provided."
+);
 assert(process.env.AWS_REGION, "AWS_REGION environment variable not provided.");
 
 assert(process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME, "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided.");

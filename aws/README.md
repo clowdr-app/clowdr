@@ -21,13 +21,18 @@ AWS infrastructure-as-code for the Clowdr app.
 1. Install npm modules: `npm i`
 1. Configure `cdk.context.json` according to [AWS Configuration](#aws-configuration) below
 
-### Deploying the main AWS stack
+### Deploying the main AWS stacks
 
 The stack `<prefix>-main` deploys the main infrastructure for the Clowdr app (e.g. S3 buckets, permissions for transcode/transcribe etc.)
 
-1. Run `cdk deploy <prefix>-main` to deploy the Clowdr infrastructure to your account
+The stack `<prefix>-chime` deploys AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
+
+1. Run `cdk deploy --all` to deploy the Clowdr infrastructure to your account
    - `<prefix>` is the value you have chosen for `clowdr/stackPrefix`
 1. Make a note of the various output values. These are required as environment variables when setting up the actions service.
+
+<!--
+Note: OpenShot support is currently disabled
 
 ### Deploying the OpenShot AWS stack
 
@@ -116,7 +121,7 @@ Host clowdr_openshot
 	User ubuntu
 ```
 
-If you are using Windows, you currently need to [patch SSH](https://github.com/microsoft/vscode-remote-release/issues/18#issuecomment-507258777) for this to work.
+If you are using Windows, you currently need to [patch SSH](https://github.com/microsoft/vscode-remote-release/issues/18#issuecomment-507258777) for this to work. -->
 
 ## Useful commands
 

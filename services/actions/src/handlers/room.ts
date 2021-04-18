@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
+import { sub } from "date-fns";
 import * as R from "ramda";
 import {
     AddAttendeeToRoomPeopleDocument,
@@ -13,6 +14,7 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { getAttendee } from "../lib/authorisation";
 import { createContentGroupBreakoutRoom } from "../lib/room";
+import { deleteRoomParticipantsCreatedBefore } from "../lib/roomParticipant";
 import Vonage from "../lib/vonage/vonageClient";
 import { Payload, RoomData } from "../types/hasura/event";
 
@@ -281,4 +283,10 @@ export async function handleCreateForContentGroup(
             message: "Could not create room",
         };
     }
+}
+
+export async function handleRemoveOldRoomParticipants(): Promise<void> {
+    console.log("Removing room participants created more than 24 hours ago");
+    const deleted = await deleteRoomParticipantsCreatedBefore(sub(new Date(), { hours: 24 }));
+    console.log(`Removed ${deleted} room participants created more than 24 hours ago`);
 }

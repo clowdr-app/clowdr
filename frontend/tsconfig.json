@@ -19,5 +19,5 @@
         "allowSyntheticDefaultImports": true,
         "importsNotUsedAsValues": "error",
         "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
-    }
+    },
 }

@@ -149,7 +149,7 @@ function VonageRoomInner({
 
     useEffect(() => {
         if (stop) {
-            leaveRoom().catch((e) => console.error("Failed to leave room", e));
+            leaveRoom().catch((e) => console.error("Failed to leave Vonage room", e));
         }
     }, [leaveRoom, stop]);
 

@@ -7,8 +7,11 @@ import { extname } from "path";
 import { v4 as uuidv4 } from "uuid";
 import { getHostUrl } from "../utils";
 
-assert(process.env.AWS_ACCESS_KEY_ID, "AWS_ACCESS_KEY_ID environment variable not provided.");
-assert(process.env.AWS_SECRET_ACCESS_KEY, "AWS_SECRET_ACCESS_KEY environment variable not provided.");
+assert(process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID, "AWS_ACTIONS_USER_ACCESS_KEY_ID environment variable not provided.");
+assert(
+    process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
+    "AWS_ACTIONS_USER_SECRET_ACCESS_KEY environment variable not provided."
+);
 assert(process.env.AWS_REGION, "AWS_REGION environment variable not provided.");
 assert(process.env.AWS_CONTENT_BUCKET_ID, "AWS_CONTENT_BUCKET_ID environment variable not provided.");
 
@@ -25,8 +28,8 @@ router.use(
         providerOptions: {
             s3: {
                 bucket: process.env.AWS_CONTENT_BUCKET_ID,
-                key: process.env.AWS_ACCESS_KEY_ID,
-                secret: process.env.AWS_SECRET_ACCESS_KEY,
+                key: process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID,
+                secret: process.env.AWS_ACTIONS_USER_SECRET_ACCESS_KEY,
                 region: process.env.AWS_REGION,
                 getKey(_req, filename, _metadata) {
                     const extension = extname(filename);

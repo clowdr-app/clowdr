@@ -1,5 +1,5 @@
 import assert from "assert";
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleJoinEvent, handleJoinRoom, handleVonageSessionMonitoringWebhook } from "../handlers/vonage";
@@ -12,7 +12,7 @@ assert(process.env.VONAGE_WEBHOOK_SECRET, "VONAGE_WEBHOOK_SECRET environment var
 export const router = express.Router();
 
 // Unprotected routes
-router.post("/sessionMonitoring/:token", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
 
     // Validate token
@@ -48,7 +48,7 @@ router.post("/sessionMonitoring/:token", bodyParser.json(), async (req: Request,
 
 router.use(checkEventSecret);
 
-router.post("/joinEvent", bodyParser.json(), async (req: Request, res: Response<JoinEventVonageSessionOutput>) => {
+router.post("/joinEvent", json(), async (req: Request, res: Response<JoinEventVonageSessionOutput>) => {
     let body: ActionPayload<joinEventVonageSessionArgs>;
     try {
         body = req.body;
@@ -67,21 +67,25 @@ router.post("/joinEvent", bodyParser.json(), async (req: Request, res: Response<
     }
 });
 
-router.post("/joinRoom", bodyParser.json(), async (req: Request, res: Response<JoinRoomVonageSessionOutput>) => {
+router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomVonageSessionOutput>) => {
     let body: ActionPayload<joinRoomVonageSessionArgs>;
     try {
         body = req.body;
         assertType<ActionPayload<joinRoomVonageSessionArgs>>(body);
     } catch (e) {
-        console.error(`${req.originalUrl}: invalid request`, req.body.input, e);
-        return res.status(200).json({});
+        console.error("Invalid request", { url: req.originalUrl, input: req.body.input, err: e });
+        return res.status(200).json({
+            message: "Invalid request",
+        });
     }
 
     try {
         const result = await handleJoinRoom(body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e) {
-        console.error(`${req.originalUrl}: failure while handling request`, req.body.input, e);
-        return res.status(200).json({});
+        console.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
+        return res.status(200).json({
+            message: "Failure while handling request",
+        });
     }
 });

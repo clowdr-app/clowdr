@@ -30,14 +30,15 @@ export function BreakoutVonageRoom({ room }: { room: RoomPage_RoomDetailsFragmen
         return result.data?.joinRoomVonageSession.accessToken;
     }, [getRoomVonageToken]);
 
+    //todo: when chime/vonage chooser is available, use it here
     return room.publicVonageSessionId && sharedRoomContext ? (
         <portals.OutPortal
-            node={sharedRoomContext.portalNode}
+            node={sharedRoomContext.vonagePortalNode}
             vonageSessionId={room.publicVonageSessionId}
             getAccessToken={getAccessToken}
             isBackstageRoom={false}
         />
     ) : (
-        <>No breakout session exists </>
+        <>No breakout session exists</>
     );
 }

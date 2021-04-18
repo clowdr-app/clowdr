@@ -1,6 +1,8 @@
 import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakra-ui/react";
+import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Route, RouteComponentProps, Switch, useLocation, useRouteMatch } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
 import "./App.css";
 import Routing from "./AppRouting";
 import { GlobalChatStateContext, GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
@@ -39,20 +41,26 @@ export default function App(): JSX.Element {
     //     return <DownForMaintenancePage />;
     // }
 
+    const chimeTheme = useColorModeValue(lightTheme, darkTheme);
+
     return (
-        <Switch>
-            <Route
-                path="/conference/:confSlug"
-                component={(
-                    props: RouteComponentProps<{
-                        confSlug: string;
-                    }>
-                ) => <AppInner rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
-            />
-            <Route path="/">
-                <AppInner rootUrl={undefined} confSlug={undefined} />
-            </Route>
-        </Switch>
+        <ThemeProvider theme={chimeTheme}>
+            <MeetingProvider>
+                <Switch>
+                    <Route
+                        path="/conference/:confSlug"
+                        component={(
+                            props: RouteComponentProps<{
+                                confSlug: string;
+                            }>
+                        ) => <AppInner rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
+                    />
+                    <Route path="/">
+                        <AppInner rootUrl={undefined} confSlug={undefined} />
+                    </Route>
+                </Switch>
+            </MeetingProvider>
+        </ThemeProvider>
     );
 }
 

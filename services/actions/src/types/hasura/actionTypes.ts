@@ -4,6 +4,34 @@ type jsonb = any;
 
 type uuid = string;
 
+type SampleInput = {
+    username: string;
+    password: string;
+};
+
+type EchoInput = {
+    message: string;
+};
+
+type SubmitContentItemInput = {
+    contentItemData: jsonb;
+};
+
+type ConfirmInvitationInput = {
+    inviteCode: uuid;
+    confirmationCode: string;
+};
+
+type InvitationConfirmationEmailInput = {
+    inviteCode: uuid;
+};
+
+type SubmitUpdatedSubtitlesInput = {
+    contentItemId: string;
+    subtitleText: string;
+    accessToken: string;
+};
+
 type SampleOutput = {
     accessToken: string;
 };
@@ -70,6 +98,7 @@ type JoinEventVonageSessionOutput = {
 type JoinRoomVonageSessionOutput = {
     sessionId?: Maybe<string>;
     accessToken?: Maybe<string>;
+    message?: Maybe<string>;
 };
 
 type ProfilePhotoURLResponse = {
@@ -78,8 +107,8 @@ type ProfilePhotoURLResponse = {
 
 type UpdateProfilePhotoResponse = {
     ok: boolean;
-    photoURL_350x350: string | undefined | null;
-    photoURL_50x50: string | undefined | null;
+    photoURL_350x350?: Maybe<string>;
+    photoURL_50x50?: Maybe<string>;
 };
 
 type CreateRoomDmOutput = {
@@ -116,51 +145,58 @@ type RefreshYouTubeDataOutput = {
     message?: Maybe<string>;
 };
 
-type SampleInput = {
-    username: string;
-    password: string;
+type ChatRemoteToken = {
+    jwt: string;
+    expiry: number;
 };
 
-type EchoInput = {
-    message: string;
+type GenerateChatRemoteServiceIdsOutput = {
+    error?: Maybe<string>;
 };
 
-type SubmitContentItemInput = {
-    contentItemData: jsonb;
+type GenerateChatRemoteUserIdsOutput = {
+    error?: Maybe<string>;
 };
 
-type ConfirmInvitationInput = {
-    inviteCode: uuid;
-    confirmationCode: string;
+type PresenceSummaryOutput = {
+    total_unique_tabs: number;
+    total_unique_user_ids: number;
+    pages?: Maybe<jsonb>;
 };
 
-type InvitationConfirmationEmailInput = {
-    inviteCode: uuid;
+type PresenceFlushOutput = {
+    ok?: Maybe<string>;
 };
 
-type SubmitUpdatedSubtitlesInput = {
-    contentItemId: string;
-    subtitleText: string;
-    accessToken: string;
+type JoinRoomChimeSessionOutput = {
+    meeting?: Maybe<jsonb>;
+    attendee?: Maybe<jsonb>;
+    message?: Maybe<string>;
 };
 
 type Query = {
     echo?: Maybe<EchoOutput>;
     getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
+    presence_Summary?: Maybe<PresenceSummaryOutput>;
     protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
 
 type Mutation = {
     createContentGroupRoom?: Maybe<CreateContentGroupRoomOutput>;
     createRoomDm?: Maybe<CreateRoomDmOutput>;
+    generateChatRemoteServiceIds?: Maybe<GenerateChatRemoteServiceIdsOutput>;
+    generateChatRemoteToken?: Maybe<ChatRemoteToken>;
+    generateChatRemoteUserIds?: Maybe<GenerateChatRemoteUserIdsOutput>;
     getGoogleOAuthUrl?: Maybe<GetGoogleOAuthUrlOutput>;
     invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
     invitationConfirmSendInitialEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
     invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
     joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
+    joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+    presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
     submitContentItem?: Maybe<SubmitContentItemOutput>;
@@ -181,6 +217,8 @@ type getUploadAgreementArgs = {
     magicToken: string;
 };
 
+type presence_SummaryArgs = {};
+
 type protectedEchoArgs = {
     message: string;
 };
@@ -195,8 +233,16 @@ type createRoomDmArgs = {
     attendeeIds: Array<uuid>;
 };
 
+type generateChatRemoteServiceIdsArgs = {};
+
+type generateChatRemoteTokenArgs = {
+    attendeeId: uuid;
+};
+
+type generateChatRemoteUserIdsArgs = {};
+
 type getGoogleOAuthUrlArgs = {
-    attendeeId: string;
+    attendeeId: uuid;
     scopes: Array<string>;
 };
 
@@ -220,12 +266,18 @@ type joinEventVonageSessionArgs = {
     eventId: uuid;
 };
 
+type joinRoomChimeSessionArgs = {
+    roomId: uuid;
+};
+
 type joinRoomVonageSessionArgs = {
     roomId: uuid;
 };
 
+type presence_FlushArgs = {};
+
 type refreshYouTubeDataArgs = {
-    attendeeId: string;
+    attendeeId: uuid;
     attendeeGoogleAccountId: uuid;
 };
 

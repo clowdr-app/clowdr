@@ -109,7 +109,7 @@ export function EventEndButtons({
     return (
         <VStack>
             <Text>Event ends in {timeUntilEnd}</Text>
-            <HStack {...group}>
+            <HStack {...(group as any)}>
                 <RadioCard key="continue" {...getRadioProps({ value: "continue" })}>
                     Continue to next event
                 </RadioCard>
@@ -131,7 +131,7 @@ function RadioCard(props: UseRadioProps & { children?: React.ReactNode | React.R
         <Box as="label">
             <input {...input} />
             <Box
-                {...checkbox}
+                {...(checkbox as any)}
                 cursor="pointer"
                 borderWidth="1px"
                 borderRadius="md"

@@ -3184,6 +3184,8 @@ export type ContentGroup = {
   /** An aggregated array relationship */
   readonly rooms_aggregate: Room_Aggregate;
   readonly shortTitle?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  readonly stats?: Maybe<Analytics_ContentGroupStats>;
   readonly title: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
 };
@@ -4434,6 +4436,7 @@ export type ContentGroup_Bool_Exp = {
   readonly room?: Maybe<Room_Bool_Exp>;
   readonly rooms?: Maybe<Room_Bool_Exp>;
   readonly shortTitle?: Maybe<String_Comparison_Exp>;
+  readonly stats?: Maybe<Analytics_ContentGroupStats_Bool_Exp>;
   readonly title?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -4465,6 +4468,7 @@ export type ContentGroup_Insert_Input = {
   readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
   readonly rooms?: Maybe<Room_Arr_Rel_Insert_Input>;
   readonly shortTitle?: Maybe<Scalars['String']>;
+  readonly stats?: Maybe<Analytics_ContentGroupStats_Obj_Rel_Insert_Input>;
   readonly title?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -4562,6 +4566,7 @@ export type ContentGroup_Order_By = {
   readonly room?: Maybe<Room_Order_By>;
   readonly rooms_aggregate?: Maybe<Room_Aggregate_Order_By>;
   readonly shortTitle?: Maybe<Order_By>;
+  readonly stats?: Maybe<Analytics_ContentGroupStats_Order_By>;
   readonly title?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -4654,6 +4659,8 @@ export type ContentItem = {
   readonly requiredContentId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly requiredContentItem?: Maybe<RequiredContentItem>;
+  /** An object relationship */
+  readonly stats?: Maybe<Analytics_ContentItemStats>;
   readonly updatedAt: Scalars['timestamptz'];
   /** An array relationship */
   readonly youTubeUploads: ReadonlyArray<YouTubeUpload>;
@@ -4756,6 +4763,7 @@ export type ContentItem_Bool_Exp = {
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly requiredContentId?: Maybe<Uuid_Comparison_Exp>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Bool_Exp>;
+  readonly stats?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly youTubeUploads?: Maybe<YouTubeUpload_Bool_Exp>;
 };
@@ -4805,6 +4813,7 @@ export type ContentItem_Insert_Input = {
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly requiredContentId?: Maybe<Scalars['uuid']>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Obj_Rel_Insert_Input>;
+  readonly stats?: Maybe<Analytics_ContentItemStats_Obj_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly youTubeUploads?: Maybe<YouTubeUpload_Arr_Rel_Insert_Input>;
 };
@@ -4900,6 +4909,7 @@ export type ContentItem_Order_By = {
   readonly originatingDataId?: Maybe<Order_By>;
   readonly requiredContentId?: Maybe<Order_By>;
   readonly requiredContentItem?: Maybe<RequiredContentItem_Order_By>;
+  readonly stats?: Maybe<Analytics_ContentItemStats_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly youTubeUploads_aggregate?: Maybe<YouTubeUpload_Aggregate_Order_By>;
 };
@@ -9981,9 +9991,17 @@ export type JoinEventVonageSessionOutput = {
   readonly accessToken?: Maybe<Scalars['String']>;
 };
 
+export type JoinRoomChimeSessionOutput = {
+  readonly __typename?: 'JoinRoomChimeSessionOutput';
+  readonly attendee?: Maybe<Scalars['jsonb']>;
+  readonly meeting?: Maybe<Scalars['jsonb']>;
+  readonly message?: Maybe<Scalars['String']>;
+};
+
 export type JoinRoomVonageSessionOutput = {
   readonly __typename?: 'JoinRoomVonageSessionOutput';
   readonly accessToken?: Maybe<Scalars['String']>;
+  readonly message?: Maybe<Scalars['String']>;
   readonly sessionId?: Maybe<Scalars['String']>;
 };
 
@@ -12302,6 +12320,8 @@ export type Room = {
   readonly participants_aggregate: RoomParticipant_Aggregate;
   readonly priority: Scalars['Int'];
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  readonly roomChimeMeeting?: Maybe<Room_RoomChimeMeeting>;
   /** An array relationship */
   readonly roomPeople: ReadonlyArray<RoomPerson>;
   /** An aggregated array relationship */
@@ -12313,11 +12333,14 @@ export type Room = {
   readonly shuffleRooms: ReadonlyArray<Room_ShuffleRoom>;
   /** An aggregated array relationship */
   readonly shuffleRooms_aggregate: Room_ShuffleRoom_Aggregate;
+  /** An object relationship */
+  readonly stats?: Maybe<Analytics_RoomStats>;
   /** An array relationship */
   readonly transitions: ReadonlyArray<Transitions>;
   /** An aggregated array relationship */
   readonly transitions_aggregate: Transitions_Aggregate;
   readonly updated_at: Scalars['timestamptz'];
+  readonly videoRoomBackendName?: Maybe<Room_VideoRoomBackend_Enum>;
 };
 
 
@@ -12694,6 +12717,7 @@ export type RoomParticipant = {
   /** An object relationship */
   readonly attendee: Attendee;
   readonly attendeeId: Scalars['uuid'];
+  readonly chimeAttendeeId?: Maybe<Scalars['String']>;
   /** An object relationship */
   readonly conference: Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -12703,7 +12727,7 @@ export type RoomParticipant = {
   readonly room: Room;
   readonly roomId: Scalars['uuid'];
   readonly updatedAt: Scalars['timestamptz'];
-  readonly vonageConnectionId: Scalars['String'];
+  readonly vonageConnectionId?: Maybe<Scalars['String']>;
 };
 
 /** aggregated selection of "RoomParticipant" */
@@ -12748,6 +12772,7 @@ export type RoomParticipant_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Maybe<RoomParticipant_Bool_Exp>>>;
   readonly attendee?: Maybe<Attendee_Bool_Exp>;
   readonly attendeeId?: Maybe<Uuid_Comparison_Exp>;
+  readonly chimeAttendeeId?: Maybe<String_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -12770,6 +12795,7 @@ export enum RoomParticipant_Constraint {
 export type RoomParticipant_Insert_Input = {
   readonly attendee?: Maybe<Attendee_Obj_Rel_Insert_Input>;
   readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chimeAttendeeId?: Maybe<Scalars['String']>;
   readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
@@ -12784,6 +12810,7 @@ export type RoomParticipant_Insert_Input = {
 export type RoomParticipant_Max_Fields = {
   readonly __typename?: 'RoomParticipant_max_fields';
   readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chimeAttendeeId?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -12795,6 +12822,7 @@ export type RoomParticipant_Max_Fields = {
 /** order by max() on columns of table "RoomParticipant" */
 export type RoomParticipant_Max_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
+  readonly chimeAttendeeId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -12807,6 +12835,7 @@ export type RoomParticipant_Max_Order_By = {
 export type RoomParticipant_Min_Fields = {
   readonly __typename?: 'RoomParticipant_min_fields';
   readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chimeAttendeeId?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -12818,6 +12847,7 @@ export type RoomParticipant_Min_Fields = {
 /** order by min() on columns of table "RoomParticipant" */
 export type RoomParticipant_Min_Order_By = {
   readonly attendeeId?: Maybe<Order_By>;
+  readonly chimeAttendeeId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -12852,6 +12882,7 @@ export type RoomParticipant_On_Conflict = {
 export type RoomParticipant_Order_By = {
   readonly attendee?: Maybe<Attendee_Order_By>;
   readonly attendeeId?: Maybe<Order_By>;
+  readonly chimeAttendeeId?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
@@ -12872,6 +12903,8 @@ export enum RoomParticipant_Select_Column {
   /** column name */
   AttendeeId = 'attendeeId',
   /** column name */
+  ChimeAttendeeId = 'chimeAttendeeId',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
@@ -12888,6 +12921,7 @@ export enum RoomParticipant_Select_Column {
 /** input type for updating data in table "RoomParticipant" */
 export type RoomParticipant_Set_Input = {
   readonly attendeeId?: Maybe<Scalars['uuid']>;
+  readonly chimeAttendeeId?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -12900,6 +12934,8 @@ export type RoomParticipant_Set_Input = {
 export enum RoomParticipant_Update_Column {
   /** column name */
   AttendeeId = 'attendeeId',
+  /** column name */
+  ChimeAttendeeId = 'chimeAttendeeId',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -13539,12 +13575,15 @@ export type Room_Bool_Exp = {
   readonly participants?: Maybe<RoomParticipant_Bool_Exp>;
   readonly priority?: Maybe<Int_Comparison_Exp>;
   readonly publicVonageSessionId?: Maybe<String_Comparison_Exp>;
+  readonly roomChimeMeeting?: Maybe<Room_RoomChimeMeeting_Bool_Exp>;
   readonly roomPeople?: Maybe<RoomPerson_Bool_Exp>;
   readonly roomPrivacy?: Maybe<RoomPrivacy_Bool_Exp>;
   readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum_Comparison_Exp>;
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
+  readonly stats?: Maybe<Analytics_RoomStats_Bool_Exp>;
   readonly transitions?: Maybe<Transitions_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly videoRoomBackendName?: Maybe<Room_VideoRoomBackend_Enum_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "Room" */
@@ -13588,12 +13627,15 @@ export type Room_Insert_Input = {
   readonly participants?: Maybe<RoomParticipant_Arr_Rel_Insert_Input>;
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
+  readonly roomChimeMeeting?: Maybe<Room_RoomChimeMeeting_Obj_Rel_Insert_Input>;
   readonly roomPeople?: Maybe<RoomPerson_Arr_Rel_Insert_Input>;
   readonly roomPrivacy?: Maybe<RoomPrivacy_Obj_Rel_Insert_Input>;
   readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum>;
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
+  readonly stats?: Maybe<Analytics_RoomStats_Obj_Rel_Insert_Input>;
   readonly transitions?: Maybe<Transitions_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly videoRoomBackendName?: Maybe<Room_VideoRoomBackend_Enum>;
 };
 
 /** aggregate max on columns */
@@ -13709,12 +13751,15 @@ export type Room_Order_By = {
   readonly participants_aggregate?: Maybe<RoomParticipant_Aggregate_Order_By>;
   readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
+  readonly roomChimeMeeting?: Maybe<Room_RoomChimeMeeting_Order_By>;
   readonly roomPeople_aggregate?: Maybe<RoomPerson_Aggregate_Order_By>;
   readonly roomPrivacy?: Maybe<RoomPrivacy_Order_By>;
   readonly roomPrivacyName?: Maybe<Order_By>;
   readonly shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
+  readonly stats?: Maybe<Analytics_RoomStats_Order_By>;
   readonly transitions_aggregate?: Maybe<Transitions_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
+  readonly videoRoomBackendName?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "Room" */
@@ -13751,7 +13796,9 @@ export enum Room_Select_Column {
   /** column name */
   RoomPrivacyName = 'roomPrivacyName',
   /** column name */
-  UpdatedAt = 'updated_at'
+  UpdatedAt = 'updated_at',
+  /** column name */
+  VideoRoomBackendName = 'videoRoomBackendName'
 }
 
 /** input type for updating data in table "Room" */
@@ -13770,6 +13817,7 @@ export type Room_Set_Input = {
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly roomPrivacyName?: Maybe<RoomPrivacy_Enum>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly videoRoomBackendName?: Maybe<Room_VideoRoomBackend_Enum>;
 };
 
 /** aggregate stddev on columns */
@@ -13853,7 +13901,9 @@ export enum Room_Update_Column {
   /** column name */
   RoomPrivacyName = 'roomPrivacyName',
   /** column name */
-  UpdatedAt = 'updated_at'
+  UpdatedAt = 'updated_at',
+  /** column name */
+  VideoRoomBackendName = 'videoRoomBackendName'
 }
 
 /** aggregate var_pop on columns */
@@ -16631,6 +16681,780 @@ export type Analytics_AppStats_Variance_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly total_unique_tabs?: Maybe<Order_By>;
   readonly total_unique_user_ids?: Maybe<Order_By>;
+};
+
+/** columns and relationships of "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats = {
+  readonly __typename?: 'analytics_ContentGroupStats';
+  /** An object relationship */
+  readonly contentGroup: ContentGroup;
+  readonly contentGroupId: Scalars['uuid'];
+  readonly viewCount: Scalars['Int'];
+};
+
+/** aggregated selection of "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Aggregate = {
+  readonly __typename?: 'analytics_ContentGroupStats_aggregate';
+  readonly aggregate?: Maybe<Analytics_ContentGroupStats_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Analytics_ContentGroupStats>;
+};
+
+/** aggregate fields of "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Aggregate_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_aggregate_fields';
+  readonly avg?: Maybe<Analytics_ContentGroupStats_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Analytics_ContentGroupStats_Max_Fields>;
+  readonly min?: Maybe<Analytics_ContentGroupStats_Min_Fields>;
+  readonly stddev?: Maybe<Analytics_ContentGroupStats_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Analytics_ContentGroupStats_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Analytics_ContentGroupStats_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Analytics_ContentGroupStats_Sum_Fields>;
+  readonly var_pop?: Maybe<Analytics_ContentGroupStats_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Analytics_ContentGroupStats_Var_Samp_Fields>;
+  readonly variance?: Maybe<Analytics_ContentGroupStats_Variance_Fields>;
+};
+
+
+/** aggregate fields of "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Aggregate_Order_By = {
+  readonly avg?: Maybe<Analytics_ContentGroupStats_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Analytics_ContentGroupStats_Max_Order_By>;
+  readonly min?: Maybe<Analytics_ContentGroupStats_Min_Order_By>;
+  readonly stddev?: Maybe<Analytics_ContentGroupStats_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Analytics_ContentGroupStats_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Analytics_ContentGroupStats_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Analytics_ContentGroupStats_Sum_Order_By>;
+  readonly var_pop?: Maybe<Analytics_ContentGroupStats_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Analytics_ContentGroupStats_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Analytics_ContentGroupStats_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Analytics_ContentGroupStats_Insert_Input>;
+  readonly on_conflict?: Maybe<Analytics_ContentGroupStats_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_ContentGroupStats_Avg_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_avg_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Avg_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "analytics.ContentGroupStats". All fields are combined with a logical 'AND'. */
+export type Analytics_ContentGroupStats_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Analytics_ContentGroupStats_Bool_Exp>>>;
+  readonly _not?: Maybe<Analytics_ContentGroupStats_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Analytics_ContentGroupStats_Bool_Exp>>>;
+  readonly contentGroup?: Maybe<ContentGroup_Bool_Exp>;
+  readonly contentGroupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly viewCount?: Maybe<Int_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.ContentGroupStats" */
+export enum Analytics_ContentGroupStats_Constraint {
+  /** unique or primary key constraint */
+  ContentGroupStatsPkey = 'ContentGroupStats_pkey'
+}
+
+/** input type for incrementing integer column in table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Inc_Input = {
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Insert_Input = {
+  readonly contentGroup?: Maybe<ContentGroup_Obj_Rel_Insert_Input>;
+  readonly contentGroupId?: Maybe<Scalars['uuid']>;
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate max on columns */
+export type Analytics_ContentGroupStats_Max_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_max_fields';
+  readonly contentGroupId?: Maybe<Scalars['uuid']>;
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by max() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Max_Order_By = {
+  readonly contentGroupId?: Maybe<Order_By>;
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Analytics_ContentGroupStats_Min_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_min_fields';
+  readonly contentGroupId?: Maybe<Scalars['uuid']>;
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by min() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Min_Order_By = {
+  readonly contentGroupId?: Maybe<Order_By>;
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Mutation_Response = {
+  readonly __typename?: 'analytics_ContentGroupStats_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Analytics_ContentGroupStats>;
+};
+
+/** input type for inserting object relation for remote table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Obj_Rel_Insert_Input = {
+  readonly data: Analytics_ContentGroupStats_Insert_Input;
+  readonly on_conflict?: Maybe<Analytics_ContentGroupStats_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_On_Conflict = {
+  readonly constraint: Analytics_ContentGroupStats_Constraint;
+  readonly update_columns: ReadonlyArray<Analytics_ContentGroupStats_Update_Column>;
+  readonly where?: Maybe<Analytics_ContentGroupStats_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Order_By = {
+  readonly contentGroup?: Maybe<ContentGroup_Order_By>;
+  readonly contentGroupId?: Maybe<Order_By>;
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Pk_Columns_Input = {
+  readonly contentGroupId: Scalars['uuid'];
+};
+
+/** select columns of table "analytics.ContentGroupStats" */
+export enum Analytics_ContentGroupStats_Select_Column {
+  /** column name */
+  ContentGroupId = 'contentGroupId',
+  /** column name */
+  ViewCount = 'viewCount'
+}
+
+/** input type for updating data in table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Set_Input = {
+  readonly contentGroupId?: Maybe<Scalars['uuid']>;
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_ContentGroupStats_Stddev_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_stddev_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Stddev_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_ContentGroupStats_Stddev_Pop_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_stddev_pop_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Stddev_Pop_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_ContentGroupStats_Stddev_Samp_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_stddev_samp_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Stddev_Samp_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_ContentGroupStats_Sum_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_sum_fields';
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Sum_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.ContentGroupStats" */
+export enum Analytics_ContentGroupStats_Update_Column {
+  /** column name */
+  ContentGroupId = 'contentGroupId',
+  /** column name */
+  ViewCount = 'viewCount'
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_ContentGroupStats_Var_Pop_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_var_pop_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Var_Pop_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_ContentGroupStats_Var_Samp_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_var_samp_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Var_Samp_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_ContentGroupStats_Variance_Fields = {
+  readonly __typename?: 'analytics_ContentGroupStats_variance_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "analytics.ContentGroupStats" */
+export type Analytics_ContentGroupStats_Variance_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** columns and relationships of "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats = {
+  readonly __typename?: 'analytics_ContentItemStats';
+  /** An object relationship */
+  readonly contentItem: ContentItem;
+  readonly contentItemId: Scalars['uuid'];
+  readonly viewCount: Scalars['Int'];
+};
+
+/** aggregated selection of "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Aggregate = {
+  readonly __typename?: 'analytics_ContentItemStats_aggregate';
+  readonly aggregate?: Maybe<Analytics_ContentItemStats_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Analytics_ContentItemStats>;
+};
+
+/** aggregate fields of "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Aggregate_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_aggregate_fields';
+  readonly avg?: Maybe<Analytics_ContentItemStats_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Analytics_ContentItemStats_Max_Fields>;
+  readonly min?: Maybe<Analytics_ContentItemStats_Min_Fields>;
+  readonly stddev?: Maybe<Analytics_ContentItemStats_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Analytics_ContentItemStats_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Analytics_ContentItemStats_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Analytics_ContentItemStats_Sum_Fields>;
+  readonly var_pop?: Maybe<Analytics_ContentItemStats_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Analytics_ContentItemStats_Var_Samp_Fields>;
+  readonly variance?: Maybe<Analytics_ContentItemStats_Variance_Fields>;
+};
+
+
+/** aggregate fields of "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Aggregate_Order_By = {
+  readonly avg?: Maybe<Analytics_ContentItemStats_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Analytics_ContentItemStats_Max_Order_By>;
+  readonly min?: Maybe<Analytics_ContentItemStats_Min_Order_By>;
+  readonly stddev?: Maybe<Analytics_ContentItemStats_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Analytics_ContentItemStats_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Analytics_ContentItemStats_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Analytics_ContentItemStats_Sum_Order_By>;
+  readonly var_pop?: Maybe<Analytics_ContentItemStats_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Analytics_ContentItemStats_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Analytics_ContentItemStats_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Analytics_ContentItemStats_Insert_Input>;
+  readonly on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_ContentItemStats_Avg_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_avg_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Avg_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "analytics.ContentItemStats". All fields are combined with a logical 'AND'. */
+export type Analytics_ContentItemStats_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Analytics_ContentItemStats_Bool_Exp>>>;
+  readonly _not?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Analytics_ContentItemStats_Bool_Exp>>>;
+  readonly contentItem?: Maybe<ContentItem_Bool_Exp>;
+  readonly contentItemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly viewCount?: Maybe<Int_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.ContentItemStats" */
+export enum Analytics_ContentItemStats_Constraint {
+  /** unique or primary key constraint */
+  ContentItemStatsPkey = 'ContentItemStats_pkey'
+}
+
+/** input type for incrementing integer column in table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Inc_Input = {
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Insert_Input = {
+  readonly contentItem?: Maybe<ContentItem_Obj_Rel_Insert_Input>;
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate max on columns */
+export type Analytics_ContentItemStats_Max_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_max_fields';
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by max() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Max_Order_By = {
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Analytics_ContentItemStats_Min_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_min_fields';
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by min() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Min_Order_By = {
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Mutation_Response = {
+  readonly __typename?: 'analytics_ContentItemStats_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Analytics_ContentItemStats>;
+};
+
+/** input type for inserting object relation for remote table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Obj_Rel_Insert_Input = {
+  readonly data: Analytics_ContentItemStats_Insert_Input;
+  readonly on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_On_Conflict = {
+  readonly constraint: Analytics_ContentItemStats_Constraint;
+  readonly update_columns: ReadonlyArray<Analytics_ContentItemStats_Update_Column>;
+  readonly where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Order_By = {
+  readonly contentItem?: Maybe<ContentItem_Order_By>;
+  readonly contentItemId?: Maybe<Order_By>;
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Pk_Columns_Input = {
+  readonly contentItemId: Scalars['uuid'];
+};
+
+/** select columns of table "analytics.ContentItemStats" */
+export enum Analytics_ContentItemStats_Select_Column {
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  ViewCount = 'viewCount'
+}
+
+/** input type for updating data in table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Set_Input = {
+  readonly contentItemId?: Maybe<Scalars['uuid']>;
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_ContentItemStats_Stddev_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_stddev_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Stddev_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_ContentItemStats_Stddev_Pop_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_stddev_pop_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Stddev_Pop_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_ContentItemStats_Stddev_Samp_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_stddev_samp_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Stddev_Samp_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_ContentItemStats_Sum_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_sum_fields';
+  readonly viewCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Sum_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.ContentItemStats" */
+export enum Analytics_ContentItemStats_Update_Column {
+  /** column name */
+  ContentItemId = 'contentItemId',
+  /** column name */
+  ViewCount = 'viewCount'
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_ContentItemStats_Var_Pop_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_var_pop_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Var_Pop_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_ContentItemStats_Var_Samp_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_var_samp_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Var_Samp_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_ContentItemStats_Variance_Fields = {
+  readonly __typename?: 'analytics_ContentItemStats_variance_fields';
+  readonly viewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Variance_Order_By = {
+  readonly viewCount?: Maybe<Order_By>;
+};
+
+/** columns and relationships of "analytics.RoomStats" */
+export type Analytics_RoomStats = {
+  readonly __typename?: 'analytics_RoomStats';
+  readonly hlsViewCount: Scalars['Int'];
+  /** An object relationship */
+  readonly room: Room;
+  readonly roomId: Scalars['uuid'];
+};
+
+/** aggregated selection of "analytics.RoomStats" */
+export type Analytics_RoomStats_Aggregate = {
+  readonly __typename?: 'analytics_RoomStats_aggregate';
+  readonly aggregate?: Maybe<Analytics_RoomStats_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Analytics_RoomStats>;
+};
+
+/** aggregate fields of "analytics.RoomStats" */
+export type Analytics_RoomStats_Aggregate_Fields = {
+  readonly __typename?: 'analytics_RoomStats_aggregate_fields';
+  readonly avg?: Maybe<Analytics_RoomStats_Avg_Fields>;
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Analytics_RoomStats_Max_Fields>;
+  readonly min?: Maybe<Analytics_RoomStats_Min_Fields>;
+  readonly stddev?: Maybe<Analytics_RoomStats_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Analytics_RoomStats_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Analytics_RoomStats_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Analytics_RoomStats_Sum_Fields>;
+  readonly var_pop?: Maybe<Analytics_RoomStats_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Analytics_RoomStats_Var_Samp_Fields>;
+  readonly variance?: Maybe<Analytics_RoomStats_Variance_Fields>;
+};
+
+
+/** aggregate fields of "analytics.RoomStats" */
+export type Analytics_RoomStats_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Analytics_RoomStats_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Aggregate_Order_By = {
+  readonly avg?: Maybe<Analytics_RoomStats_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Analytics_RoomStats_Max_Order_By>;
+  readonly min?: Maybe<Analytics_RoomStats_Min_Order_By>;
+  readonly stddev?: Maybe<Analytics_RoomStats_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Analytics_RoomStats_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Analytics_RoomStats_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Analytics_RoomStats_Sum_Order_By>;
+  readonly var_pop?: Maybe<Analytics_RoomStats_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Analytics_RoomStats_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Analytics_RoomStats_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "analytics.RoomStats" */
+export type Analytics_RoomStats_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Analytics_RoomStats_Insert_Input>;
+  readonly on_conflict?: Maybe<Analytics_RoomStats_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Analytics_RoomStats_Avg_Fields = {
+  readonly __typename?: 'analytics_RoomStats_avg_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Avg_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "analytics.RoomStats". All fields are combined with a logical 'AND'. */
+export type Analytics_RoomStats_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Analytics_RoomStats_Bool_Exp>>>;
+  readonly _not?: Maybe<Analytics_RoomStats_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Analytics_RoomStats_Bool_Exp>>>;
+  readonly hlsViewCount?: Maybe<Int_Comparison_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "analytics.RoomStats" */
+export enum Analytics_RoomStats_Constraint {
+  /** unique or primary key constraint */
+  RoomStatsPkey = 'RoomStats_pkey'
+}
+
+/** input type for incrementing integer column in table "analytics.RoomStats" */
+export type Analytics_RoomStats_Inc_Input = {
+  readonly hlsViewCount?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "analytics.RoomStats" */
+export type Analytics_RoomStats_Insert_Input = {
+  readonly hlsViewCount?: Maybe<Scalars['Int']>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type Analytics_RoomStats_Max_Fields = {
+  readonly __typename?: 'analytics_RoomStats_max_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Int']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Max_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Analytics_RoomStats_Min_Fields = {
+  readonly __typename?: 'analytics_RoomStats_min_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Int']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Min_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "analytics.RoomStats" */
+export type Analytics_RoomStats_Mutation_Response = {
+  readonly __typename?: 'analytics_RoomStats_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Analytics_RoomStats>;
+};
+
+/** input type for inserting object relation for remote table "analytics.RoomStats" */
+export type Analytics_RoomStats_Obj_Rel_Insert_Input = {
+  readonly data: Analytics_RoomStats_Insert_Input;
+  readonly on_conflict?: Maybe<Analytics_RoomStats_On_Conflict>;
+};
+
+/** on conflict condition type for table "analytics.RoomStats" */
+export type Analytics_RoomStats_On_Conflict = {
+  readonly constraint: Analytics_RoomStats_Constraint;
+  readonly update_columns: ReadonlyArray<Analytics_RoomStats_Update_Column>;
+  readonly where?: Maybe<Analytics_RoomStats_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "analytics.RoomStats" */
+export type Analytics_RoomStats_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "analytics.RoomStats" */
+export type Analytics_RoomStats_Pk_Columns_Input = {
+  readonly roomId: Scalars['uuid'];
+};
+
+/** select columns of table "analytics.RoomStats" */
+export enum Analytics_RoomStats_Select_Column {
+  /** column name */
+  HlsViewCount = 'hlsViewCount',
+  /** column name */
+  RoomId = 'roomId'
+}
+
+/** input type for updating data in table "analytics.RoomStats" */
+export type Analytics_RoomStats_Set_Input = {
+  readonly hlsViewCount?: Maybe<Scalars['Int']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate stddev on columns */
+export type Analytics_RoomStats_Stddev_Fields = {
+  readonly __typename?: 'analytics_RoomStats_stddev_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Stddev_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Analytics_RoomStats_Stddev_Pop_Fields = {
+  readonly __typename?: 'analytics_RoomStats_stddev_pop_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Stddev_Pop_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Analytics_RoomStats_Stddev_Samp_Fields = {
+  readonly __typename?: 'analytics_RoomStats_stddev_samp_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Stddev_Samp_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Analytics_RoomStats_Sum_Fields = {
+  readonly __typename?: 'analytics_RoomStats_sum_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Sum_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+};
+
+/** update columns of table "analytics.RoomStats" */
+export enum Analytics_RoomStats_Update_Column {
+  /** column name */
+  HlsViewCount = 'hlsViewCount',
+  /** column name */
+  RoomId = 'roomId'
+}
+
+/** aggregate var_pop on columns */
+export type Analytics_RoomStats_Var_Pop_Fields = {
+  readonly __typename?: 'analytics_RoomStats_var_pop_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Var_Pop_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Analytics_RoomStats_Var_Samp_Fields = {
+  readonly __typename?: 'analytics_RoomStats_var_samp_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Var_Samp_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Analytics_RoomStats_Variance_Fields = {
+  readonly __typename?: 'analytics_RoomStats_variance_fields';
+  readonly hlsViewCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "analytics.RoomStats" */
+export type Analytics_RoomStats_Variance_Order_By = {
+  readonly hlsViewCount?: Maybe<Order_By>;
 };
 
 
@@ -21699,6 +22523,18 @@ export type Mutation_Root = {
   readonly delete_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
   /** delete single row from the table: "analytics.AppStats" */
   readonly delete_analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
+  /** delete data from the table: "analytics.ContentGroupStats" */
+  readonly delete_analytics_ContentGroupStats?: Maybe<Analytics_ContentGroupStats_Mutation_Response>;
+  /** delete single row from the table: "analytics.ContentGroupStats" */
+  readonly delete_analytics_ContentGroupStats_by_pk?: Maybe<Analytics_ContentGroupStats>;
+  /** delete data from the table: "analytics.ContentItemStats" */
+  readonly delete_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
+  /** delete single row from the table: "analytics.ContentItemStats" */
+  readonly delete_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+  /** delete data from the table: "analytics.RoomStats" */
+  readonly delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
+  /** delete single row from the table: "analytics.RoomStats" */
+  readonly delete_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
   /** delete data from the table: "chat.Chat" */
   readonly delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -21771,6 +22607,10 @@ export type Mutation_Root = {
   readonly delete_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.UploadYouTubeVideoJob" */
   readonly delete_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** delete data from the table: "room.RoomChimeMeeting" */
+  readonly delete_room_RoomChimeMeeting?: Maybe<Room_RoomChimeMeeting_Mutation_Response>;
+  /** delete single row from the table: "room.RoomChimeMeeting" */
+  readonly delete_room_RoomChimeMeeting_by_pk?: Maybe<Room_RoomChimeMeeting>;
   /** delete data from the table: "room.ShuffleAlgorithm" */
   readonly delete_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleAlgorithm" */
@@ -21787,6 +22627,10 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** delete data from the table: "room.VideoRoomBackend" */
+  readonly delete_room_VideoRoomBackend?: Maybe<Room_VideoRoomBackend_Mutation_Response>;
+  /** delete single row from the table: "room.VideoRoomBackend" */
+  readonly delete_room_VideoRoomBackend_by_pk?: Maybe<Room_VideoRoomBackend>;
   /** delete data from the table: "system.Configuration" */
   readonly delete_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** delete data from the table: "system.ConfigurationKey" */
@@ -22017,6 +22861,18 @@ export type Mutation_Root = {
   readonly insert_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
   /** insert a single row into the table: "analytics.AppStats" */
   readonly insert_analytics_AppStats_one?: Maybe<Analytics_AppStats>;
+  /** insert data into the table: "analytics.ContentGroupStats" */
+  readonly insert_analytics_ContentGroupStats?: Maybe<Analytics_ContentGroupStats_Mutation_Response>;
+  /** insert a single row into the table: "analytics.ContentGroupStats" */
+  readonly insert_analytics_ContentGroupStats_one?: Maybe<Analytics_ContentGroupStats>;
+  /** insert data into the table: "analytics.ContentItemStats" */
+  readonly insert_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
+  /** insert a single row into the table: "analytics.ContentItemStats" */
+  readonly insert_analytics_ContentItemStats_one?: Maybe<Analytics_ContentItemStats>;
+  /** insert data into the table: "analytics.RoomStats" */
+  readonly insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
+  /** insert a single row into the table: "analytics.RoomStats" */
+  readonly insert_analytics_RoomStats_one?: Maybe<Analytics_RoomStats>;
   /** insert data into the table: "chat.Chat" */
   readonly insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -22089,6 +22945,10 @@ export type Mutation_Root = {
   readonly insert_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.UploadYouTubeVideoJob" */
   readonly insert_job_queues_UploadYouTubeVideoJob_one?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** insert data into the table: "room.RoomChimeMeeting" */
+  readonly insert_room_RoomChimeMeeting?: Maybe<Room_RoomChimeMeeting_Mutation_Response>;
+  /** insert a single row into the table: "room.RoomChimeMeeting" */
+  readonly insert_room_RoomChimeMeeting_one?: Maybe<Room_RoomChimeMeeting>;
   /** insert data into the table: "room.ShuffleAlgorithm" */
   readonly insert_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
   /** insert a single row into the table: "room.ShuffleAlgorithm" */
@@ -22105,6 +22965,10 @@ export type Mutation_Root = {
   readonly insert_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** insert a single row into the table: "room.ShuffleRoom" */
   readonly insert_room_ShuffleRoom_one?: Maybe<Room_ShuffleRoom>;
+  /** insert data into the table: "room.VideoRoomBackend" */
+  readonly insert_room_VideoRoomBackend?: Maybe<Room_VideoRoomBackend_Mutation_Response>;
+  /** insert a single row into the table: "room.VideoRoomBackend" */
+  readonly insert_room_VideoRoomBackend_one?: Maybe<Room_VideoRoomBackend>;
   /** insert data into the table: "system.Configuration" */
   readonly insert_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** insert data into the table: "system.ConfigurationKey" */
@@ -22123,6 +22987,8 @@ export type Mutation_Root = {
   readonly invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
   /** perform the action: "joinEventVonageSession" */
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
+  /** perform the action: "joinRoomChimeSession" */
+  readonly joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
   /** perform the action: "joinRoomVonageSession" */
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
   /** perform the action: "presence_Flush" */
@@ -22359,6 +23225,18 @@ export type Mutation_Root = {
   readonly update_analytics_AppStats?: Maybe<Analytics_AppStats_Mutation_Response>;
   /** update single row of the table: "analytics.AppStats" */
   readonly update_analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
+  /** update data of the table: "analytics.ContentGroupStats" */
+  readonly update_analytics_ContentGroupStats?: Maybe<Analytics_ContentGroupStats_Mutation_Response>;
+  /** update single row of the table: "analytics.ContentGroupStats" */
+  readonly update_analytics_ContentGroupStats_by_pk?: Maybe<Analytics_ContentGroupStats>;
+  /** update data of the table: "analytics.ContentItemStats" */
+  readonly update_analytics_ContentItemStats?: Maybe<Analytics_ContentItemStats_Mutation_Response>;
+  /** update single row of the table: "analytics.ContentItemStats" */
+  readonly update_analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+  /** update data of the table: "analytics.RoomStats" */
+  readonly update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
+  /** update single row of the table: "analytics.RoomStats" */
+  readonly update_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
   /** update data of the table: "chat.Chat" */
   readonly update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -22431,6 +23309,10 @@ export type Mutation_Root = {
   readonly update_job_queues_UploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>;
   /** update single row of the table: "job_queues.UploadYouTubeVideoJob" */
   readonly update_job_queues_UploadYouTubeVideoJob_by_pk?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
+  /** update data of the table: "room.RoomChimeMeeting" */
+  readonly update_room_RoomChimeMeeting?: Maybe<Room_RoomChimeMeeting_Mutation_Response>;
+  /** update single row of the table: "room.RoomChimeMeeting" */
+  readonly update_room_RoomChimeMeeting_by_pk?: Maybe<Room_RoomChimeMeeting>;
   /** update data of the table: "room.ShuffleAlgorithm" */
   readonly update_room_ShuffleAlgorithm?: Maybe<Room_ShuffleAlgorithm_Mutation_Response>;
   /** update single row of the table: "room.ShuffleAlgorithm" */
@@ -22447,6 +23329,10 @@ export type Mutation_Root = {
   readonly update_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** update single row of the table: "room.ShuffleRoom" */
   readonly update_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** update data of the table: "room.VideoRoomBackend" */
+  readonly update_room_VideoRoomBackend?: Maybe<Room_VideoRoomBackend_Mutation_Response>;
+  /** update single row of the table: "room.VideoRoomBackend" */
+  readonly update_room_VideoRoomBackend_by_pk?: Maybe<Room_VideoRoomBackend>;
   /** update data of the table: "system.Configuration" */
   readonly update_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** update data of the table: "system.ConfigurationKey" */
@@ -23133,6 +24019,42 @@ export type Mutation_RootDelete_Analytics_AppStats_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Analytics_ContentGroupStatsArgs = {
+  where: Analytics_ContentGroupStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ContentGroupStats_By_PkArgs = {
+  contentGroupId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ContentItemStatsArgs = {
+  where: Analytics_ContentItemStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_ContentItemStats_By_PkArgs = {
+  contentItemId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomStatsArgs = {
+  where: Analytics_RoomStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Analytics_RoomStats_By_PkArgs = {
+  roomId: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Chat_ChatArgs = {
   where: Chat_Chat_Bool_Exp;
 };
@@ -23352,6 +24274,18 @@ export type Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Room_RoomChimeMeetingArgs = {
+  where: Room_RoomChimeMeeting_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_RoomChimeMeeting_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Room_ShuffleAlgorithmArgs = {
   where: Room_ShuffleAlgorithm_Bool_Exp;
 };
@@ -23396,6 +24330,18 @@ export type Mutation_RootDelete_Room_ShuffleRoomArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_VideoRoomBackendArgs = {
+  where: Room_VideoRoomBackend_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_VideoRoomBackend_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -24201,6 +25147,48 @@ export type Mutation_RootInsert_Analytics_AppStats_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Analytics_ContentGroupStatsArgs = {
+  objects: ReadonlyArray<Analytics_ContentGroupStats_Insert_Input>;
+  on_conflict?: Maybe<Analytics_ContentGroupStats_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ContentGroupStats_OneArgs = {
+  object: Analytics_ContentGroupStats_Insert_Input;
+  on_conflict?: Maybe<Analytics_ContentGroupStats_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ContentItemStatsArgs = {
+  objects: ReadonlyArray<Analytics_ContentItemStats_Insert_Input>;
+  on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_ContentItemStats_OneArgs = {
+  object: Analytics_ContentItemStats_Insert_Input;
+  on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomStatsArgs = {
+  objects: ReadonlyArray<Analytics_RoomStats_Insert_Input>;
+  on_conflict?: Maybe<Analytics_RoomStats_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Analytics_RoomStats_OneArgs = {
+  object: Analytics_RoomStats_Insert_Input;
+  on_conflict?: Maybe<Analytics_RoomStats_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Chat_ChatArgs = {
   objects: ReadonlyArray<Chat_Chat_Insert_Input>;
   on_conflict?: Maybe<Chat_Chat_On_Conflict>;
@@ -24453,6 +25441,20 @@ export type Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJob_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Room_RoomChimeMeetingArgs = {
+  objects: ReadonlyArray<Room_RoomChimeMeeting_Insert_Input>;
+  on_conflict?: Maybe<Room_RoomChimeMeeting_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_RoomChimeMeeting_OneArgs = {
+  object: Room_RoomChimeMeeting_Insert_Input;
+  on_conflict?: Maybe<Room_RoomChimeMeeting_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Room_ShuffleAlgorithmArgs = {
   objects: ReadonlyArray<Room_ShuffleAlgorithm_Insert_Input>;
   on_conflict?: Maybe<Room_ShuffleAlgorithm_On_Conflict>;
@@ -24505,6 +25507,20 @@ export type Mutation_RootInsert_Room_ShuffleRoomArgs = {
 export type Mutation_RootInsert_Room_ShuffleRoom_OneArgs = {
   object: Room_ShuffleRoom_Insert_Input;
   on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_VideoRoomBackendArgs = {
+  objects: ReadonlyArray<Room_VideoRoomBackend_Insert_Input>;
+  on_conflict?: Maybe<Room_VideoRoomBackend_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_VideoRoomBackend_OneArgs = {
+  object: Room_VideoRoomBackend_Insert_Input;
+  on_conflict?: Maybe<Room_VideoRoomBackend_On_Conflict>;
 };
 
 
@@ -24563,6 +25579,12 @@ export type Mutation_RootInvitationConfirmWithCodeArgs = {
 /** mutation root */
 export type Mutation_RootJoinEventVonageSessionArgs = {
   eventId: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootJoinRoomChimeSessionArgs = {
+  roomId: Scalars['uuid'];
 };
 
 
@@ -25519,6 +26541,54 @@ export type Mutation_RootUpdate_Analytics_AppStats_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Analytics_ContentGroupStatsArgs = {
+  _inc?: Maybe<Analytics_ContentGroupStats_Inc_Input>;
+  _set?: Maybe<Analytics_ContentGroupStats_Set_Input>;
+  where: Analytics_ContentGroupStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ContentGroupStats_By_PkArgs = {
+  _inc?: Maybe<Analytics_ContentGroupStats_Inc_Input>;
+  _set?: Maybe<Analytics_ContentGroupStats_Set_Input>;
+  pk_columns: Analytics_ContentGroupStats_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ContentItemStatsArgs = {
+  _inc?: Maybe<Analytics_ContentItemStats_Inc_Input>;
+  _set?: Maybe<Analytics_ContentItemStats_Set_Input>;
+  where: Analytics_ContentItemStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_ContentItemStats_By_PkArgs = {
+  _inc?: Maybe<Analytics_ContentItemStats_Inc_Input>;
+  _set?: Maybe<Analytics_ContentItemStats_Set_Input>;
+  pk_columns: Analytics_ContentItemStats_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomStatsArgs = {
+  _inc?: Maybe<Analytics_RoomStats_Inc_Input>;
+  _set?: Maybe<Analytics_RoomStats_Set_Input>;
+  where: Analytics_RoomStats_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Analytics_RoomStats_By_PkArgs = {
+  _inc?: Maybe<Analytics_RoomStats_Inc_Input>;
+  _set?: Maybe<Analytics_RoomStats_Set_Input>;
+  pk_columns: Analytics_RoomStats_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Chat_ChatArgs = {
   _set?: Maybe<Chat_Chat_Set_Input>;
   where: Chat_Chat_Bool_Exp;
@@ -25837,6 +26907,30 @@ export type Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Room_RoomChimeMeetingArgs = {
+  _append?: Maybe<Room_RoomChimeMeeting_Append_Input>;
+  _delete_at_path?: Maybe<Room_RoomChimeMeeting_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Room_RoomChimeMeeting_Delete_Elem_Input>;
+  _delete_key?: Maybe<Room_RoomChimeMeeting_Delete_Key_Input>;
+  _prepend?: Maybe<Room_RoomChimeMeeting_Prepend_Input>;
+  _set?: Maybe<Room_RoomChimeMeeting_Set_Input>;
+  where: Room_RoomChimeMeeting_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_RoomChimeMeeting_By_PkArgs = {
+  _append?: Maybe<Room_RoomChimeMeeting_Append_Input>;
+  _delete_at_path?: Maybe<Room_RoomChimeMeeting_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Room_RoomChimeMeeting_Delete_Elem_Input>;
+  _delete_key?: Maybe<Room_RoomChimeMeeting_Delete_Key_Input>;
+  _prepend?: Maybe<Room_RoomChimeMeeting_Prepend_Input>;
+  _set?: Maybe<Room_RoomChimeMeeting_Set_Input>;
+  pk_columns: Room_RoomChimeMeeting_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Room_ShuffleAlgorithmArgs = {
   _set?: Maybe<Room_ShuffleAlgorithm_Set_Input>;
   where: Room_ShuffleAlgorithm_Bool_Exp;
@@ -25895,6 +26989,20 @@ export type Mutation_RootUpdate_Room_ShuffleRoom_By_PkArgs = {
   _inc?: Maybe<Room_ShuffleRoom_Inc_Input>;
   _set?: Maybe<Room_ShuffleRoom_Set_Input>;
   pk_columns: Room_ShuffleRoom_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_VideoRoomBackendArgs = {
+  _set?: Maybe<Room_VideoRoomBackend_Set_Input>;
+  where: Room_VideoRoomBackend_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_VideoRoomBackend_By_PkArgs = {
+  _set?: Maybe<Room_VideoRoomBackend_Set_Input>;
+  pk_columns: Room_VideoRoomBackend_Pk_Columns_Input;
 };
 
 
@@ -26296,6 +27404,24 @@ export type Query_Root = {
   readonly analytics_AppStats_aggregate: Analytics_AppStats_Aggregate;
   /** fetch data from the table: "analytics.AppStats" using primary key columns */
   readonly analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
+  /** fetch data from the table: "analytics.ContentGroupStats" */
+  readonly analytics_ContentGroupStats: ReadonlyArray<Analytics_ContentGroupStats>;
+  /** fetch aggregated fields from the table: "analytics.ContentGroupStats" */
+  readonly analytics_ContentGroupStats_aggregate: Analytics_ContentGroupStats_Aggregate;
+  /** fetch data from the table: "analytics.ContentGroupStats" using primary key columns */
+  readonly analytics_ContentGroupStats_by_pk?: Maybe<Analytics_ContentGroupStats>;
+  /** fetch data from the table: "analytics.ContentItemStats" */
+  readonly analytics_ContentItemStats: ReadonlyArray<Analytics_ContentItemStats>;
+  /** fetch aggregated fields from the table: "analytics.ContentItemStats" */
+  readonly analytics_ContentItemStats_aggregate: Analytics_ContentItemStats_Aggregate;
+  /** fetch data from the table: "analytics.ContentItemStats" using primary key columns */
+  readonly analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+  /** fetch data from the table: "analytics.RoomStats" */
+  readonly analytics_RoomStats: ReadonlyArray<Analytics_RoomStats>;
+  /** fetch aggregated fields from the table: "analytics.RoomStats" */
+  readonly analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
+  /** fetch data from the table: "analytics.RoomStats" using primary key columns */
+  readonly analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -26414,6 +27540,12 @@ export type Query_Root = {
   readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
+  /** fetch data from the table: "room.RoomChimeMeeting" */
+  readonly room_RoomChimeMeeting: ReadonlyArray<Room_RoomChimeMeeting>;
+  /** fetch aggregated fields from the table: "room.RoomChimeMeeting" */
+  readonly room_RoomChimeMeeting_aggregate: Room_RoomChimeMeeting_Aggregate;
+  /** fetch data from the table: "room.RoomChimeMeeting" using primary key columns */
+  readonly room_RoomChimeMeeting_by_pk?: Maybe<Room_RoomChimeMeeting>;
   /** fetch data from the table: "room.ShuffleAlgorithm" */
   readonly room_ShuffleAlgorithm: ReadonlyArray<Room_ShuffleAlgorithm>;
   /** fetch aggregated fields from the table: "room.ShuffleAlgorithm" */
@@ -26438,6 +27570,12 @@ export type Query_Root = {
   readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
   /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
   readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** fetch data from the table: "room.VideoRoomBackend" */
+  readonly room_VideoRoomBackend: ReadonlyArray<Room_VideoRoomBackend>;
+  /** fetch aggregated fields from the table: "room.VideoRoomBackend" */
+  readonly room_VideoRoomBackend_aggregate: Room_VideoRoomBackend_Aggregate;
+  /** fetch data from the table: "room.VideoRoomBackend" using primary key columns */
+  readonly room_VideoRoomBackend_by_pk?: Maybe<Room_VideoRoomBackend>;
   /** fetch data from the table: "system.Configuration" */
   readonly system_Configuration: ReadonlyArray<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -27946,6 +29084,84 @@ export type Query_RootAnalytics_AppStats_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootAnalytics_ContentGroupStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Order_By>>;
+  where?: Maybe<Analytics_ContentGroupStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_ContentGroupStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Order_By>>;
+  where?: Maybe<Analytics_ContentGroupStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_ContentGroupStats_By_PkArgs = {
+  contentGroupId: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootAnalytics_ContentItemStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Order_By>>;
+  where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_ContentItemStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Order_By>>;
+  where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_ContentItemStats_By_PkArgs = {
+  contentItemId: Scalars['uuid'];
+};
+
+
+/** query root */
+export type Query_RootAnalytics_RoomStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_RoomStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_RoomStats_Order_By>>;
+  where?: Maybe<Analytics_RoomStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_RoomStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_RoomStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_RoomStats_Order_By>>;
+  where?: Maybe<Analytics_RoomStats_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootAnalytics_RoomStats_By_PkArgs = {
+  roomId: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootChat_ChatArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -28441,6 +29657,32 @@ export type Query_RootProtectedEchoArgs = {
 
 
 /** query root */
+export type Query_RootRoom_RoomChimeMeetingArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Order_By>>;
+  where?: Maybe<Room_RoomChimeMeeting_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_RoomChimeMeeting_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Order_By>>;
+  where?: Maybe<Room_RoomChimeMeeting_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_RoomChimeMeeting_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootRoom_ShuffleAlgorithmArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -28545,6 +29787,32 @@ export type Query_RootRoom_ShuffleRoom_By_PkArgs = {
 
 
 /** query root */
+export type Query_RootRoom_VideoRoomBackendArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Order_By>>;
+  where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_VideoRoomBackend_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Order_By>>;
+  where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootRoom_VideoRoomBackend_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** query root */
 export type Query_RootSystem_ConfigurationArgs = {
   distinct_on?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -28594,6 +29862,254 @@ export type Query_RootSystem_Configuration_AggregateArgs = {
 export type Query_RootSystem_Configuration_By_PkArgs = {
   key: System_ConfigurationKey_Enum;
 };
+
+/** columns and relationships of "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting = {
+  readonly __typename?: 'room_RoomChimeMeeting';
+  readonly chimeMeetingData: Scalars['jsonb'];
+  readonly chimeMeetingId: Scalars['String'];
+  /** An object relationship */
+  readonly conference?: Maybe<Conference>;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly room?: Maybe<Room>;
+  readonly roomId: Scalars['uuid'];
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeetingChimeMeetingDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Aggregate = {
+  readonly __typename?: 'room_RoomChimeMeeting_aggregate';
+  readonly aggregate?: Maybe<Room_RoomChimeMeeting_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_RoomChimeMeeting>;
+};
+
+/** aggregate fields of "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Aggregate_Fields = {
+  readonly __typename?: 'room_RoomChimeMeeting_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Room_RoomChimeMeeting_Max_Fields>;
+  readonly min?: Maybe<Room_RoomChimeMeeting_Min_Fields>;
+};
+
+
+/** aggregate fields of "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Room_RoomChimeMeeting_Max_Order_By>;
+  readonly min?: Maybe<Room_RoomChimeMeeting_Min_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Room_RoomChimeMeeting_Append_Input = {
+  readonly chimeMeetingData?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Room_RoomChimeMeeting_Insert_Input>;
+  readonly on_conflict?: Maybe<Room_RoomChimeMeeting_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "room.RoomChimeMeeting". All fields are combined with a logical 'AND'. */
+export type Room_RoomChimeMeeting_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Room_RoomChimeMeeting_Bool_Exp>>>;
+  readonly _not?: Maybe<Room_RoomChimeMeeting_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Room_RoomChimeMeeting_Bool_Exp>>>;
+  readonly chimeMeetingData?: Maybe<Jsonb_Comparison_Exp>;
+  readonly chimeMeetingId?: Maybe<String_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly room?: Maybe<Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.RoomChimeMeeting" */
+export enum Room_RoomChimeMeeting_Constraint {
+  /** unique or primary key constraint */
+  RoomChimeMeetingPkey = 'RoomChimeMeeting_pkey',
+  /** unique or primary key constraint */
+  RoomChimeMeetingRoomIdKey = 'RoomChimeMeeting_roomId_key'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Room_RoomChimeMeeting_Delete_At_Path_Input = {
+  readonly chimeMeetingData?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Room_RoomChimeMeeting_Delete_Elem_Input = {
+  readonly chimeMeetingData?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Room_RoomChimeMeeting_Delete_Key_Input = {
+  readonly chimeMeetingData?: Maybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Insert_Input = {
+  readonly chimeMeetingData?: Maybe<Scalars['jsonb']>;
+  readonly chimeMeetingId?: Maybe<Scalars['String']>;
+  readonly conference?: Maybe<Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly room?: Maybe<Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Room_RoomChimeMeeting_Max_Fields = {
+  readonly __typename?: 'room_RoomChimeMeeting_max_fields';
+  readonly chimeMeetingId?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Max_Order_By = {
+  readonly chimeMeetingId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Room_RoomChimeMeeting_Min_Fields = {
+  readonly __typename?: 'room_RoomChimeMeeting_min_fields';
+  readonly chimeMeetingId?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Min_Order_By = {
+  readonly chimeMeetingId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Mutation_Response = {
+  readonly __typename?: 'room_RoomChimeMeeting_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Room_RoomChimeMeeting>;
+};
+
+/** input type for inserting object relation for remote table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Obj_Rel_Insert_Input = {
+  readonly data: Room_RoomChimeMeeting_Insert_Input;
+  readonly on_conflict?: Maybe<Room_RoomChimeMeeting_On_Conflict>;
+};
+
+/** on conflict condition type for table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_On_Conflict = {
+  readonly constraint: Room_RoomChimeMeeting_Constraint;
+  readonly update_columns: ReadonlyArray<Room_RoomChimeMeeting_Update_Column>;
+  readonly where?: Maybe<Room_RoomChimeMeeting_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Order_By = {
+  readonly chimeMeetingData?: Maybe<Order_By>;
+  readonly chimeMeetingId?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Room_RoomChimeMeeting_Prepend_Input = {
+  readonly chimeMeetingData?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "room.RoomChimeMeeting" */
+export enum Room_RoomChimeMeeting_Select_Column {
+  /** column name */
+  ChimeMeetingData = 'chimeMeetingData',
+  /** column name */
+  ChimeMeetingId = 'chimeMeetingId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "room.RoomChimeMeeting" */
+export type Room_RoomChimeMeeting_Set_Input = {
+  readonly chimeMeetingData?: Maybe<Scalars['jsonb']>;
+  readonly chimeMeetingId?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "room.RoomChimeMeeting" */
+export enum Room_RoomChimeMeeting_Update_Column {
+  /** column name */
+  ChimeMeetingData = 'chimeMeetingData',
+  /** column name */
+  ChimeMeetingId = 'chimeMeetingId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
 
 /** columns and relationships of "room.ShuffleAlgorithm" */
 export type Room_ShuffleAlgorithm = {
@@ -30002,6 +31518,166 @@ export type Room_ShuffleRoom_Variance_Order_By = {
   readonly id?: Maybe<Order_By>;
 };
 
+/** columns and relationships of "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend = {
+  readonly __typename?: 'room_VideoRoomBackend';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Aggregate = {
+  readonly __typename?: 'room_VideoRoomBackend_aggregate';
+  readonly aggregate?: Maybe<Room_VideoRoomBackend_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_VideoRoomBackend>;
+};
+
+/** aggregate fields of "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Aggregate_Fields = {
+  readonly __typename?: 'room_VideoRoomBackend_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Room_VideoRoomBackend_Max_Fields>;
+  readonly min?: Maybe<Room_VideoRoomBackend_Min_Fields>;
+};
+
+
+/** aggregate fields of "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Room_VideoRoomBackend_Max_Order_By>;
+  readonly min?: Maybe<Room_VideoRoomBackend_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Room_VideoRoomBackend_Insert_Input>;
+  readonly on_conflict?: Maybe<Room_VideoRoomBackend_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "room.VideoRoomBackend". All fields are combined with a logical 'AND'. */
+export type Room_VideoRoomBackend_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Room_VideoRoomBackend_Bool_Exp>>>;
+  readonly _not?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Room_VideoRoomBackend_Bool_Exp>>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.VideoRoomBackend" */
+export enum Room_VideoRoomBackend_Constraint {
+  /** unique or primary key constraint */
+  VideoRoomBackendPkey = 'VideoRoomBackend_pkey'
+}
+
+export enum Room_VideoRoomBackend_Enum {
+  /** AWS Chime SDK */
+  Chime = 'CHIME',
+  /** Vonage Video API */
+  Vonage = 'VONAGE'
+}
+
+/** expression to compare columns of type room_VideoRoomBackend_enum. All fields are combined with logical 'AND'. */
+export type Room_VideoRoomBackend_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<Room_VideoRoomBackend_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Room_VideoRoomBackend_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Enum>>;
+};
+
+/** input type for inserting data into table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Room_VideoRoomBackend_Max_Fields = {
+  readonly __typename?: 'room_VideoRoomBackend_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Max_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Room_VideoRoomBackend_Min_Fields = {
+  readonly __typename?: 'room_VideoRoomBackend_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Min_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Mutation_Response = {
+  readonly __typename?: 'room_VideoRoomBackend_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Room_VideoRoomBackend>;
+};
+
+/** input type for inserting object relation for remote table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Obj_Rel_Insert_Input = {
+  readonly data: Room_VideoRoomBackend_Insert_Input;
+  readonly on_conflict?: Maybe<Room_VideoRoomBackend_On_Conflict>;
+};
+
+/** on conflict condition type for table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_On_Conflict = {
+  readonly constraint: Room_VideoRoomBackend_Constraint;
+  readonly update_columns: ReadonlyArray<Room_VideoRoomBackend_Update_Column>;
+  readonly where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "room.VideoRoomBackend" */
+export enum Room_VideoRoomBackend_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "room.VideoRoomBackend" */
+export type Room_VideoRoomBackend_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "room.VideoRoomBackend" */
+export enum Room_VideoRoomBackend_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 /** subscription root */
 export type Subscription_Root = {
   readonly __typename?: 'subscription_root';
@@ -30347,6 +32023,24 @@ export type Subscription_Root = {
   readonly analytics_AppStats_aggregate: Analytics_AppStats_Aggregate;
   /** fetch data from the table: "analytics.AppStats" using primary key columns */
   readonly analytics_AppStats_by_pk?: Maybe<Analytics_AppStats>;
+  /** fetch data from the table: "analytics.ContentGroupStats" */
+  readonly analytics_ContentGroupStats: ReadonlyArray<Analytics_ContentGroupStats>;
+  /** fetch aggregated fields from the table: "analytics.ContentGroupStats" */
+  readonly analytics_ContentGroupStats_aggregate: Analytics_ContentGroupStats_Aggregate;
+  /** fetch data from the table: "analytics.ContentGroupStats" using primary key columns */
+  readonly analytics_ContentGroupStats_by_pk?: Maybe<Analytics_ContentGroupStats>;
+  /** fetch data from the table: "analytics.ContentItemStats" */
+  readonly analytics_ContentItemStats: ReadonlyArray<Analytics_ContentItemStats>;
+  /** fetch aggregated fields from the table: "analytics.ContentItemStats" */
+  readonly analytics_ContentItemStats_aggregate: Analytics_ContentItemStats_Aggregate;
+  /** fetch data from the table: "analytics.ContentItemStats" using primary key columns */
+  readonly analytics_ContentItemStats_by_pk?: Maybe<Analytics_ContentItemStats>;
+  /** fetch data from the table: "analytics.RoomStats" */
+  readonly analytics_RoomStats: ReadonlyArray<Analytics_RoomStats>;
+  /** fetch aggregated fields from the table: "analytics.RoomStats" */
+  readonly analytics_RoomStats_aggregate: Analytics_RoomStats_Aggregate;
+  /** fetch data from the table: "analytics.RoomStats" using primary key columns */
+  readonly analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
   /** fetch data from the table: "chat.Chat" */
   readonly chat_Chat: ReadonlyArray<Chat_Chat>;
   /** fetch aggregated fields from the table: "chat.Chat" */
@@ -30465,6 +32159,12 @@ export type Subscription_Root = {
   readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
   /** perform the action: "protectedEcho" */
   readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
+  /** fetch data from the table: "room.RoomChimeMeeting" */
+  readonly room_RoomChimeMeeting: ReadonlyArray<Room_RoomChimeMeeting>;
+  /** fetch aggregated fields from the table: "room.RoomChimeMeeting" */
+  readonly room_RoomChimeMeeting_aggregate: Room_RoomChimeMeeting_Aggregate;
+  /** fetch data from the table: "room.RoomChimeMeeting" using primary key columns */
+  readonly room_RoomChimeMeeting_by_pk?: Maybe<Room_RoomChimeMeeting>;
   /** fetch data from the table: "room.ShuffleAlgorithm" */
   readonly room_ShuffleAlgorithm: ReadonlyArray<Room_ShuffleAlgorithm>;
   /** fetch aggregated fields from the table: "room.ShuffleAlgorithm" */
@@ -30489,6 +32189,12 @@ export type Subscription_Root = {
   readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
   /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
   readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** fetch data from the table: "room.VideoRoomBackend" */
+  readonly room_VideoRoomBackend: ReadonlyArray<Room_VideoRoomBackend>;
+  /** fetch aggregated fields from the table: "room.VideoRoomBackend" */
+  readonly room_VideoRoomBackend_aggregate: Room_VideoRoomBackend_Aggregate;
+  /** fetch data from the table: "room.VideoRoomBackend" using primary key columns */
+  readonly room_VideoRoomBackend_by_pk?: Maybe<Room_VideoRoomBackend>;
   /** fetch data from the table: "system.Configuration" */
   readonly system_Configuration: ReadonlyArray<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -31997,6 +33703,84 @@ export type Subscription_RootAnalytics_AppStats_By_PkArgs = {
 
 
 /** subscription root */
+export type Subscription_RootAnalytics_ContentGroupStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Order_By>>;
+  where?: Maybe<Analytics_ContentGroupStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_ContentGroupStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentGroupStats_Order_By>>;
+  where?: Maybe<Analytics_ContentGroupStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_ContentGroupStats_By_PkArgs = {
+  contentGroupId: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_ContentItemStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Order_By>>;
+  where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_ContentItemStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Order_By>>;
+  where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_ContentItemStats_By_PkArgs = {
+  contentItemId: Scalars['uuid'];
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_RoomStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_RoomStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_RoomStats_Order_By>>;
+  where?: Maybe<Analytics_RoomStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_RoomStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_RoomStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_RoomStats_Order_By>>;
+  where?: Maybe<Analytics_RoomStats_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootAnalytics_RoomStats_By_PkArgs = {
+  roomId: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootChat_ChatArgs = {
   distinct_on?: Maybe<ReadonlyArray<Chat_Chat_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -32492,6 +34276,32 @@ export type Subscription_RootProtectedEchoArgs = {
 
 
 /** subscription root */
+export type Subscription_RootRoom_RoomChimeMeetingArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Order_By>>;
+  where?: Maybe<Room_RoomChimeMeeting_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_RoomChimeMeeting_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_RoomChimeMeeting_Order_By>>;
+  where?: Maybe<Room_RoomChimeMeeting_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_RoomChimeMeeting_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootRoom_ShuffleAlgorithmArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_ShuffleAlgorithm_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -32592,6 +34402,32 @@ export type Subscription_RootRoom_ShuffleRoom_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootRoom_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_VideoRoomBackendArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Order_By>>;
+  where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_VideoRoomBackend_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_VideoRoomBackend_Order_By>>;
+  where?: Maybe<Room_VideoRoomBackend_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootRoom_VideoRoomBackend_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -32723,6 +34559,8 @@ export enum System_ConfigurationKey_Enum {
   CookiePolicyLatestRevisionTimestamp = 'COOKIE_POLICY_LATEST_REVISION_TIMESTAMP',
   /** The URL to the host cookie policy. Note: If self hosting Clowdr, this must be your organisation's cookie policy - you cannot legally reuse, rely on or copy Clowdr's cookie policy. */
   CookiePolicyUrl = 'COOKIE_POLICY_URL',
+  /** Default backend platform for video rooms */
+  DefaultVideoRoomBackend = 'DEFAULT_VIDEO_ROOM_BACKEND',
   /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
   HostOrganisationName = 'HOST_ORGANISATION_NAME',
   /** The time of the latest revision of the host Privacy Policy. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -33298,6 +35136,13 @@ export type SubmitProfilePhotoMutationVariables = Exact<{
 
 export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean, readonly photoURL_350x350?: Maybe<string>, readonly photoURL_50x50?: Maybe<string> }> };
 
+export type GetRoomChimeDataMutationVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomChimeDataMutation = { readonly __typename?: 'mutation_root', readonly joinRoomChimeSession?: Maybe<{ readonly __typename?: 'JoinRoomChimeSessionOutput', readonly attendee?: Maybe<any>, readonly meeting?: Maybe<any>, readonly message?: Maybe<string> }> };
+
 export type GetRoomVonageTokenMutationVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
@@ -33447,6 +35292,11 @@ export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
 
 export type Room_GetEventBreakoutRoomQuery = { readonly __typename?: 'query_root', readonly Room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
 
+export type Room_GetDefaultVideoRoomBackendQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type Room_GetDefaultVideoRoomBackendQuery = { readonly __typename?: 'query_root', readonly system_Configuration_by_pk?: Maybe<{ readonly __typename?: 'system_Configuration', readonly value: any }> };
+
 export type AddParticipantToRoomMutationVariables = Exact<{
   attendeeId: Scalars['uuid'];
   roomId: Scalars['uuid'];
@@ -33499,7 +35349,7 @@ export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root',
   )> };
 
 export type RoomPage_RoomDetailsFragment = (
-  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean }> }
+  { readonly __typename?: 'Room', readonly id: any, readonly name: string, readonly currentModeName: RoomMode_Enum, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly roomPrivacyName: RoomPrivacy_Enum, readonly videoRoomBackendName?: Maybe<Room_VideoRoomBackend_Enum>, readonly mediaLiveChannel?: Maybe<{ readonly __typename?: 'MediaLiveChannel', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }>, readonly originatingContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly contentGroupTypeName: ContentGroupType_Enum, readonly title: string, readonly contentItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean }> }
   & RoomPage_RoomPeopleFragment
 );
 
@@ -35628,6 +37478,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     durationMinutes
     reshuffleUponEnd
   }
+  videoRoomBackendName
 }
     ${RoomPage_RoomPeopleFragmentDoc}`;
 export const RoomSponsorContent_ContentItemDataFragmentDoc = gql`
@@ -37221,6 +39072,41 @@ export function useSubmitProfilePhotoMutation(baseOptions?: Apollo.MutationHookO
 export type SubmitProfilePhotoMutationHookResult = ReturnType<typeof useSubmitProfilePhotoMutation>;
 export type SubmitProfilePhotoMutationResult = Apollo.MutationResult<SubmitProfilePhotoMutation>;
 export type SubmitProfilePhotoMutationOptions = Apollo.BaseMutationOptions<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>;
+export const GetRoomChimeDataDocument = gql`
+    mutation GetRoomChimeData($roomId: uuid!) {
+  joinRoomChimeSession(roomId: $roomId) {
+    attendee
+    meeting
+    message
+  }
+}
+    `;
+export type GetRoomChimeDataMutationFn = Apollo.MutationFunction<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
+
+/**
+ * __useGetRoomChimeDataMutation__
+ *
+ * To run a mutation, you first call `useGetRoomChimeDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomChimeDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getRoomChimeDataMutation, { data, loading, error }] = useGetRoomChimeDataMutation({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomChimeDataMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>(GetRoomChimeDataDocument, options);
+      }
+export type GetRoomChimeDataMutationHookResult = ReturnType<typeof useGetRoomChimeDataMutation>;
+export type GetRoomChimeDataMutationResult = Apollo.MutationResult<GetRoomChimeDataMutation>;
+export type GetRoomChimeDataMutationOptions = Apollo.BaseMutationOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
 export const GetRoomVonageTokenDocument = gql`
     mutation GetRoomVonageToken($roomId: uuid!) {
   joinRoomVonageSession(roomId: $roomId) {
@@ -37781,6 +39667,40 @@ export function useRoom_GetEventBreakoutRoomLazyQuery(baseOptions?: Apollo.LazyQ
 export type Room_GetEventBreakoutRoomQueryHookResult = ReturnType<typeof useRoom_GetEventBreakoutRoomQuery>;
 export type Room_GetEventBreakoutRoomLazyQueryHookResult = ReturnType<typeof useRoom_GetEventBreakoutRoomLazyQuery>;
 export type Room_GetEventBreakoutRoomQueryResult = Apollo.QueryResult<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>;
+export const Room_GetDefaultVideoRoomBackendDocument = gql`
+    query Room_GetDefaultVideoRoomBackend {
+  system_Configuration_by_pk(key: DEFAULT_VIDEO_ROOM_BACKEND) {
+    value
+  }
+}
+    `;
+
+/**
+ * __useRoom_GetDefaultVideoRoomBackendQuery__
+ *
+ * To run a query within a React component, call `useRoom_GetDefaultVideoRoomBackendQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoom_GetDefaultVideoRoomBackendQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoom_GetDefaultVideoRoomBackendQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRoom_GetDefaultVideoRoomBackendQuery(baseOptions?: Apollo.QueryHookOptions<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>(Room_GetDefaultVideoRoomBackendDocument, options);
+      }
+export function useRoom_GetDefaultVideoRoomBackendLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>(Room_GetDefaultVideoRoomBackendDocument, options);
+        }
+export type Room_GetDefaultVideoRoomBackendQueryHookResult = ReturnType<typeof useRoom_GetDefaultVideoRoomBackendQuery>;
+export type Room_GetDefaultVideoRoomBackendLazyQueryHookResult = ReturnType<typeof useRoom_GetDefaultVideoRoomBackendLazyQuery>;
+export type Room_GetDefaultVideoRoomBackendQueryResult = Apollo.QueryResult<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>;
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
   insert_RoomPerson_one(

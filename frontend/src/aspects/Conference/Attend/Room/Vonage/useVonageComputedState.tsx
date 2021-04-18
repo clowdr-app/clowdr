@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { StateType, VonageGlobalState } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
@@ -113,5 +113,12 @@ export function useVonageComputedState(
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vonageSessionId]);
 
-    return { vonage, connected, streams, connections, screen, camera };
+    return useMemo(() => ({ vonage, connected, streams, connections, screen, camera }), [
+        camera,
+        connected,
+        connections,
+        screen,
+        streams,
+        vonage,
+    ]);
 }

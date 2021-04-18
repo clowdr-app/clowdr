@@ -1,5 +1,5 @@
 import Papa from "papaparse";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Xml2JS from "xml-js";
 import type { ImportOptions } from "./useCSVJSONXMLImportOptions";
 
@@ -128,7 +128,10 @@ export default function useCSVJSONXMLParse<T>(
         })();
     }, [options, parser]);
 
-    return {
-        data,
-    };
+    return useMemo(
+        () => ({
+            data,
+        }),
+        [data]
+    );
 }

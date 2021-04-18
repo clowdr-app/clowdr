@@ -139,8 +139,8 @@ export default function useCSVJSONXMLFileSelector(): {
         }
     }, [acceptedFiles, rawAcceptedFiles]);
 
-    const acceptedFileItems =
-        acceptedFiles === null ? (
+    const acceptedFileItems = useMemo(() => {
+        return acceptedFiles === null ? (
             <Spinner />
         ) : acceptedFiles.length > 0 ? (
             <UnorderedList>
@@ -174,6 +174,7 @@ export default function useCSVJSONXMLFileSelector(): {
         ) : (
             <Text key="none">No files selected.</Text>
         );
+    }, [acceptedFiles]);
 
     const fileRejectionItems = fileRejections.map(({ file, errors }) => (
         <ListItem key={file.name}>
@@ -209,43 +210,55 @@ export default function useCSVJSONXMLFileSelector(): {
         [acceptedFiles]
     );
 
-    return {
-        acceptedFiles: outputAcceptedFiles,
-        component: (
-            <Box maxW={600} borderWidth={2} borderStyle="dashed" borderColor={borderColour} borderRadius={5}>
-                <Box
-                    {...getRootProps({ className: "dropzone" })}
-                    cursor={acceptedFiles === null ? "not-allowed" : "pointer"}
-                    bg={bgColour}
-                    p={5}
-                >
-                    <Input {...inputProps} size={inputProps.size?.toString()} isDisabled={acceptedFiles === null} />
-                    <HStack>
-                        <FAIcon iconStyle="s" icon="file-alt" fontSize="190%" />
-                        <Box pl={2}>
-                            <Text as="p">Drag and drop some files here, or click to select files</Text>
-                            <Text as="em">
-                                (Please select one or more CSV, JSON or XML files or ZIP files containing CSV/JSON/XML
-                                files.)
-                            </Text>
-                        </Box>
-                    </HStack>
+    return useMemo(
+        () => ({
+            acceptedFiles: outputAcceptedFiles,
+            component: (
+                <Box maxW={600} borderWidth={2} borderStyle="dashed" borderColor={borderColour} borderRadius={5}>
+                    <Box
+                        {...getRootProps({ className: "dropzone" })}
+                        cursor={acceptedFiles === null ? "not-allowed" : "pointer"}
+                        bg={bgColour}
+                        p={5}
+                    >
+                        <Input {...inputProps} size={inputProps.size?.toString()} isDisabled={acceptedFiles === null} />
+                        <HStack>
+                            <FAIcon iconStyle="s" icon="file-alt" fontSize="190%" />
+                            <Box pl={2}>
+                                <Text as="p">Drag and drop some files here, or click to select files</Text>
+                                <Text as="em">
+                                    (Please select one or more CSV, JSON or XML files or ZIP files containing
+                                    CSV/JSON/XML files.)
+                                </Text>
+                            </Box>
+                        </HStack>
+                    </Box>
+                    <Text as="aside" p={5}>
+                        <Heading as="h4" fontSize="normal" textAlign="left" mb={2}>
+                            Accepted files
+                        </Heading>
+                        {acceptedFileItems}
+                        {fileRejectionItems.length > 0 ? (
+                            <>
+                                <Heading as="h4" fontSize="normal" textAlign="left" mt={5} mb={2}>
+                                    Rejected files
+                                </Heading>
+                                <UnorderedList>{fileRejectionItems}</UnorderedList>
+                            </>
+                        ) : undefined}
+                    </Text>
                 </Box>
-                <Text as="aside" p={5}>
-                    <Heading as="h4" fontSize="normal" textAlign="left" mb={2}>
-                        Accepted files
-                    </Heading>
-                    {acceptedFileItems}
-                    {fileRejectionItems.length > 0 ? (
-                        <>
-                            <Heading as="h4" fontSize="normal" textAlign="left" mt={5} mb={2}>
-                                Rejected files
-                            </Heading>
-                            <UnorderedList>{fileRejectionItems}</UnorderedList>
-                        </>
-                    ) : undefined}
-                </Text>
-            </Box>
-        ),
-    };
+            ),
+        }),
+        [
+            acceptedFileItems,
+            acceptedFiles,
+            bgColour,
+            borderColour,
+            fileRejectionItems,
+            getRootProps,
+            inputProps,
+            outputAcceptedFiles,
+        ]
+    );
 }

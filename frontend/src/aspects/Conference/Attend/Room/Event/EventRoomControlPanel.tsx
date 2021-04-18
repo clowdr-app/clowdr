@@ -16,13 +16,13 @@ import {
     useBreakpointValue,
     VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { RoomEventDetailsFragment, useGetEventParticipantStreamsSubscription } from "../../../../../generated/graphql";
+import { useRealTime } from "../../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { BroadcastControlPanel } from "./BroadcastControlPanel";
 import { LiveIndicator } from "./LiveIndicator";
-import { useEventLiveStatus } from "./useEventLiveStatus";
 
 export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
     gql`
@@ -59,6 +59,13 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
         }
     `;
 
+    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
+    const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
+    const now = useRealTime(1000);
+    const live = now >= startTime && now <= endTime;
+    const secondsUntilLive = (startTime - now) / 1000;
+    const secondsUntilOffAir = (endTime - now) / 1000;
+
     const {
         data: streamsData,
         loading: streamsLoading,
@@ -70,14 +77,8 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
     });
     useQueryErrorToast(streamsError, true, "EventRoomControlBar:GetEventParticipantStreams");
 
-    const { live } = useEventLiveStatus(event);
-
-    const insertSpacer = useBreakpointValue([false, false, true]);
-    return (
-        <Flex w="100%" p={2} flexWrap="wrap" alignItems="center" justifyContent="center">
-            {/* Add a spacer of equal width to the Broadcast Controls button, so that the time info is centered */}
-            {insertSpacer ? <Box w={"10em"}>&nbsp;</Box> : <></>}
-            <LiveIndicator event={event} />
+    const broadcastPopover = useMemo(
+        () => (
             <Popover placement="auto-end">
                 <PopoverTrigger>
                     <VStack>
@@ -110,6 +111,17 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                     </Box>
                 </Portal>
             </Popover>
+        ),
+        [event.eventVonageSession?.id, live, streamsData?.EventParticipantStream, streamsError, streamsLoading]
+    );
+
+    const insertSpacer = useBreakpointValue([false, false, true]);
+    return (
+        <Flex w="100%" p={2} flexWrap="wrap" alignItems="center" justifyContent="center">
+            {/* Add a spacer of equal width to the Broadcast Controls button, so that the time info is centered */}
+            {insertSpacer ? <Box w={"10em"}>&nbsp;</Box> : <></>}
+            <LiveIndicator live={live} secondsUntilLive={secondsUntilLive} secondsUntilOffAir={secondsUntilOffAir} />
+            {broadcastPopover}
         </Flex>
     );
 }

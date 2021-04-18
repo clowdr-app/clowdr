@@ -21,7 +21,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { FileInfo } from "./useCSVJSONXMLFileSelector";
 
 export type ImportOptions = {
@@ -267,59 +267,62 @@ export default function useCSVJSONXMLImportOptions(
         }
     }, [importOptions, isOpen]);
 
-    return {
-        importOptions: cachedOptions,
-        replaceImportOptions: setImportOptions,
-        openOptionsButton: (
-            <Button disabled={importOptions.length === 0} onClick={onOpen}>
-                Importer options
-            </Button>
-        ),
-        optionsComponent: (
-            <>
-                <Modal scrollBehavior="inside" isCentered isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent>
-                        <ModalHeader>Importer Options</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <Select
-                                placeholder="Select a file"
-                                variant="flushed"
-                                value={selectedFileIndex}
-                                onChange={(ev) => setSelectedFileIndex(ev.target.selectedIndex - 1)}
-                            >
-                                {importOptions.map((options, idx) => (
-                                    <option key={options.file.name} value={idx}>
-                                        {options.file.name}
-                                    </option>
-                                ))}
-                            </Select>
-                            <Box pt={4}>{selectedOptions && <Text as="i">{selectedOptions.type}</Text>}</Box>
-                            <Box pt={4}>
-                                {selectedOptions && (
-                                    <ImportOptionsPanel
-                                        options={selectedOptions}
-                                        setOptions={(opts) => {
-                                            setImportOptions((oldOptions) => {
-                                                const newOptions = [...oldOptions];
-                                                newOptions[selectedFileIndex] = opts;
-                                                return newOptions;
-                                            });
-                                        }}
-                                    />
-                                )}
-                            </Box>
-                        </ModalBody>
+    return useMemo(
+        () => ({
+            importOptions: cachedOptions,
+            replaceImportOptions: setImportOptions,
+            openOptionsButton: (
+                <Button disabled={importOptions.length === 0} onClick={onOpen}>
+                    Importer options
+                </Button>
+            ),
+            optionsComponent: (
+                <>
+                    <Modal scrollBehavior="inside" isCentered isOpen={isOpen} onClose={onClose}>
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Importer Options</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                <Select
+                                    placeholder="Select a file"
+                                    variant="flushed"
+                                    value={selectedFileIndex}
+                                    onChange={(ev) => setSelectedFileIndex(ev.target.selectedIndex - 1)}
+                                >
+                                    {importOptions.map((options, idx) => (
+                                        <option key={options.file.name} value={idx}>
+                                            {options.file.name}
+                                        </option>
+                                    ))}
+                                </Select>
+                                <Box pt={4}>{selectedOptions && <Text as="i">{selectedOptions.type}</Text>}</Box>
+                                <Box pt={4}>
+                                    {selectedOptions && (
+                                        <ImportOptionsPanel
+                                            options={selectedOptions}
+                                            setOptions={(opts) => {
+                                                setImportOptions((oldOptions) => {
+                                                    const newOptions = [...oldOptions];
+                                                    newOptions[selectedFileIndex] = opts;
+                                                    return newOptions;
+                                                });
+                                            }}
+                                        />
+                                    )}
+                                </Box>
+                            </ModalBody>
 
-                        <ModalFooter>
-                            <Button colorScheme="blue" mr={3} onClick={onClose}>
-                                Done
-                            </Button>
-                        </ModalFooter>
-                    </ModalContent>
-                </Modal>
-            </>
-        ),
-    };
+                            <ModalFooter>
+                                <Button colorScheme="blue" mr={3} onClick={onClose}>
+                                    Done
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal>
+                </>
+            ),
+        }),
+        [cachedOptions, importOptions, isOpen, onClose, onOpen, selectedFileIndex, selectedOptions]
+    );
 }

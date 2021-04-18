@@ -1,9 +1,7 @@
 import { Badge, HStack, Stat, StatLabel, StatNumber, Text } from "@chakra-ui/react";
 import React from "react";
-import type { RoomEventDetailsFragment } from "../../../../../generated/graphql";
 import { roundDownToNearest } from "../../../../Generic/MathUtils";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { useEventLiveStatus } from "./useEventLiveStatus";
 
 function formatRemainingTime(seconds: number): string {
     const NearestHoursInS = roundDownToNearest(seconds, 60 * 60);
@@ -16,9 +14,15 @@ function formatRemainingTime(seconds: number): string {
     return `${Hours}:${Minutes}:${Seconds}`;
 }
 
-export function LiveIndicator({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
-    const { live, secondsUntilLive, secondsUntilOffAir } = useEventLiveStatus(event);
-
+export function LiveIndicator({
+    live,
+    secondsUntilLive,
+    secondsUntilOffAir,
+}: {
+    live: boolean;
+    secondsUntilLive: number;
+    secondsUntilOffAir: number;
+}): JSX.Element {
     return live ? (
         <HStack alignItems="flex-start" justifyContent="flex-start" mx="auto">
             <Badge fontSize="lg" colorScheme="red" fontWeight="bold" p={4}>

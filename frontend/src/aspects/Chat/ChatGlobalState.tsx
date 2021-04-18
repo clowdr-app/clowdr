@@ -555,7 +555,7 @@ export class ChatState {
 
         try {
             if (isPind) {
-                if (!this.EnableMandatorySubscribe) {
+                if (!this.EnableMandatoryPin) {
                     try {
                         await this.globalState.apolloClient.mutate<UnpinChatMutation, UnpinChatMutationVariables>({
                             mutation: UnpinChatDocument,
@@ -582,6 +582,13 @@ export class ChatState {
                         },
                     });
                     this.isPinned = !!result.data?.insert_chat_Pin && !!result.data.insert_chat_Pin.returning;
+                    if (this.latestReadUpToMessageSId) {
+                        this.globalState.socket?.emit(
+                            "chat.unreadCount.setReadUpTo",
+                            this.Id,
+                            this.latestReadUpToMessageSId
+                        );
+                    }
                 } catch (e) {
                     if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
                         this.isPinned = isPind;
@@ -1098,7 +1105,7 @@ export class ChatState {
         this.unreadCountObs.publish(this.unreadCount);
         if (messageSId !== this.latestReadUpToMessageSId) {
             this.latestReadUpToMessageSId = messageSId;
-            if (this.setReadUpToTimeoutId === undefined) {
+            if (this.isPinned && this.setReadUpToTimeoutId === undefined) {
                 this.setReadUpToTimeoutId = setTimeout(
                     (() => {
                         this.setReadUpToTimeoutId = undefined;
@@ -1116,7 +1123,9 @@ export class ChatState {
         }
     }
     public async requestUnreadCount(): Promise<void> {
-        this.globalState.socket?.emit("chat.unreadCount.request", this.Id);
+        if (this.isPinned) {
+            this.globalState.socket?.emit("chat.unreadCount.request", this.Id);
+        }
     }
     public setUnreadCount(value: string): void {
         if (this.unreadCount !== value) {
@@ -1340,7 +1349,7 @@ export class GlobalChatState {
                                         this.chatStates = this.chatStates ?? new Map();
                                         for (const pinSubChat of newlyPinSubChats.data.chat_Chat) {
                                             const newState = new ChatState(this, pinSubChat);
-                                            await newState.requestUnreadCount();
+                                            setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
                                             this.chatStates.set(pinSubChat.id, newState);
                                         }
                                         this.chatStatesObs.publish(this.chatStates);
@@ -1444,7 +1453,7 @@ export class GlobalChatState {
                         initialData.data.chat_Pin.map(async (item) => {
                             if (item.chat) {
                                 const newState = new ChatState(this, item.chat);
-                                await newState.requestUnreadCount();
+                                setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
                                 this.chatStates?.set(item.chat.id, newState);
                             }
                         })
@@ -1537,7 +1546,7 @@ export class GlobalChatState {
                             this.chatStates = new Map<string, ChatState>();
                         }
                         const newState = new ChatState(this, result.data.chat_Chat_by_pk);
-                        await newState.requestUnreadCount();
+                        setTimeout(() => newState.requestUnreadCount(), Math.random() * 2000);
                         this.chatStates.set(chatId, newState);
                         this.chatStatesObs.publish(this.chatStates);
                     } else {

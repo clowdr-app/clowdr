@@ -42,38 +42,63 @@ async function Main(continueExecuting = false) {
                 userIds: indicesToWriteBack.map((x) => x.userId),
             },
         });
-        await apolloClient.mutate({
-            mutation: InsertReadUpToIndexDocument,
-            variables: {
-                objects: indicesToWriteBack
-                    .map((x) => {
-                        const attendeeId = attendeeIds.data.Attendee.find((y) => y.userId === x.userId)?.id;
-                        if (attendeeId) {
-                            const r: Chat_ReadUpToIndex_Insert_Input = {
-                                attendeeId,
-                                chatId: x.chatId,
-                                messageSId: x.messageSId,
-                            };
-                            return r;
-                        } else {
-                            console.warn(
-                                `Unable to find attendee id for user: ${x.userId}. Cannot write back their unread index for ${x.chatId} (Read up to message sId: ${x.messageSId})`
-                            );
-                        }
-                        return undefined;
-                    })
-                    .filter((x) => !!x) as Chat_ReadUpToIndex_Insert_Input[],
-            },
-        });
+
+        // Delay the writeback by 30s so that all the message writeback workers
+        // (hopefully) have sufficient time to save their messages into Postgres
+        // so we don't get an accidental foreign key violation.
+        await new Promise<void>((resolve) =>
+            setTimeout(async () => {
+                assert(apolloClient, "Apollo client needed for read up to index writeback");
+                await apolloClient.mutate({
+                    mutation: InsertReadUpToIndexDocument,
+                    variables: {
+                        objects: indicesToWriteBack
+                            .map((x) => {
+                                const attendeeId = attendeeIds.data.Attendee.find((y) => y.userId === x.userId)?.id;
+                                if (attendeeId) {
+                                    const r: Chat_ReadUpToIndex_Insert_Input = {
+                                        attendeeId,
+                                        chatId: x.chatId,
+                                        messageSId: x.messageSId,
+                                    };
+                                    return r;
+                                } else {
+                                    console.warn(
+                                        `Unable to find attendee id for user: ${x.userId}. Cannot write back their unread index for ${x.chatId} (Read up to message sId: ${x.messageSId})`
+                                    );
+                                }
+                                return undefined;
+                            })
+                            .filter((x) => !!x) as Chat_ReadUpToIndex_Insert_Input[],
+                    },
+                });
+                resolve();
+            }, 30000)
+        );
 
         if (!continueExecuting) {
             process.exit(0);
         }
     } catch (e) {
-        console.error("SEVERE ERROR: Cannot write back read up to indices!", e);
+        if (
+            !e
+                .toString()
+                .includes(
+                    'Foreign key violation. insert or update on table "ReadUpToIndex" violates foreign key constraint "ReadUpToIndex_messageSId_fkey"'
+                )
+        ) {
+            console.error("SEVERE ERROR: Cannot write back read up to indices!", e);
 
-        if (!continueExecuting) {
-            process.exit(-1);
+            if (!continueExecuting) {
+                process.exit(-1);
+            }
+        } else {
+            console.warn(
+                "Warning: Ignoring read up to indices write back error (foreign key violation suggests the system attempted to store the read up to index before message has been written back.)"
+            );
+            if (!continueExecuting) {
+                process.exit(1);
+            }
         }
     }
 }

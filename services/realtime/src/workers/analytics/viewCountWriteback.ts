@@ -1,5 +1,5 @@
 // Set this up as a CronToGo task
-// CRON_TO_GO_ACTIVE=true heroku run node build/workers/analytics/viewCountWriteback.js
+// CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/analytics/viewCountWriteback.js
 
 import { gql } from "@apollo/client/core";
 import assert from "assert";

@@ -1,5 +1,5 @@
 // Set this up as a CronToGo task
-// CRON_TO_GO_ACTIVE=true heroku run node build/workers/chat/unreadCountWriteback.js
+// CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/chat/unreadCountWriteback.js
 
 import { gql } from "@apollo/client/core";
 import assert from "assert";

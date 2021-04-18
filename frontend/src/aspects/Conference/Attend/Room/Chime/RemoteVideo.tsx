@@ -16,6 +16,7 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
     useApplyVideoObjectFit(videoEl);
     const { tileIdToAttendeeId } = useRemoteVideoTileState();
     const { roster } = useRosterState();
+    const borderEl = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!audioVideo || !videoEl.current) {
@@ -35,6 +36,38 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
     const attendeeId = useMemo(() => tileIdToAttendeeId[tileId], [tileIdToAttendeeId, tileId]);
     const { muted } = useAttendeeStatus(attendeeId);
 
+    useEffect(() => {
+        if (!audioVideo || !attendeeId || !borderEl.current) {
+            return;
+        }
+
+        let smoothedVolume = 0;
+
+        const callback = (_: string, volume: number | null, __: boolean | null, ___: number | null) => {
+            if (borderEl.current) {
+                smoothedVolume -= smoothedVolume / 3;
+                smoothedVolume += (volume ?? 0) / 3;
+            }
+        };
+
+        const decay = setInterval(() => {
+            if (borderEl.current) {
+                borderEl.current.style.border = `${smoothedVolume > 0.2 ? 3 : 0}px solid green`;
+            }
+            smoothedVolume *= 0.5;
+            if (smoothedVolume < 0.1) {
+                smoothedVolume = 0;
+            }
+        }, 1000);
+
+        audioVideo.realtimeSubscribeToVolumeIndicator(attendeeId, callback);
+
+        return () => {
+            audioVideo.realtimeUnsubscribeFromVolumeIndicator(attendeeId, callback);
+            clearTimeout(decay);
+        };
+    }, [attendeeId, audioVideo]);
+
     return (
         <Box
             data-testid="video-tile"
@@ -50,6 +83,16 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
                     microphoneEnabled={!muted}
                 />
             </Box>
+            <Box
+                position="absolute"
+                zIndex="200"
+                left="0"
+                top="0"
+                height="100%"
+                width="100%"
+                pointerEvents="none"
+                ref={borderEl}
+            />
             <PlaceholderImage />
         </Box>
     );

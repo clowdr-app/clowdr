@@ -240,12 +240,12 @@ export function ChimeRoomControlBar(): JSX.Element {
                         <Button onClick={toggleVideoWrapper} isDisabled={!videoInputs.selectedDevice}>
                             {isVideoEnabled && videoInputs.selectedDevice ? (
                                 <>
-                                    <FAIcon icon="video-slash" iconStyle="s" />
+                                    <FAIcon icon="video" iconStyle="s" />
                                     <span style={{ marginLeft: "1rem" }}>Disable camera</span>
                                 </>
                             ) : (
                                 <>
-                                    <FAIcon icon="video" iconStyle="s" />
+                                    <FAIcon icon="video-slash" iconStyle="s" />
                                     <span style={{ marginLeft: "1rem" }}>Start camera</span>
                                 </>
                             )}

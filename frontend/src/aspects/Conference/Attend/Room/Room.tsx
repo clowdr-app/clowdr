@@ -201,7 +201,7 @@ function RoomInner({
     const {
         currentRoomEvent,
         nextRoomEvent,
-        nonCurrentEventsInNext20Mins,
+        nonCurrentLiveEventsInNext20Mins,
         withinThreeMinutesOfBroadcastEvent,
         secondsUntilBroadcastEvent,
         secondsUntilZoomEvent,
@@ -219,14 +219,16 @@ function RoomInner({
     const presentingCurrentOrUpcomingSoonEvent = useMemo(() => {
         const isPresenterOfCurrentEvent =
             currentRoomEvent !== null &&
+            (currentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
+                currentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
             currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
         const isPresenterOfUpcomingSoonEvent =
-            nonCurrentEventsInNext20Mins !== null &&
-            nonCurrentEventsInNext20Mins.some((event) =>
+            nonCurrentLiveEventsInNext20Mins !== null &&
+            nonCurrentLiveEventsInNext20Mins.some((event) =>
                 event?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
             );
         return isPresenterOfCurrentEvent || isPresenterOfUpcomingSoonEvent;
-    }, [currentAttendee.id, currentRoomEvent, nonCurrentEventsInNext20Mins]);
+    }, [currentAttendee.id, currentRoomEvent, nonCurrentLiveEventsInNext20Mins]);
 
     const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
     const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);

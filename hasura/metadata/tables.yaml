@@ -522,7 +522,6 @@
         remote_table:
           schema: chat
           name: Message
-        insertion_order: null
         column_mapping:
           sId: duplicatedMessageSId
   - name: duplicateOutgoing
@@ -1282,7 +1281,6 @@
         remote_table:
           schema: public
           name: Invitation
-        insertion_order: null
         column_mapping:
           id: attendeeId
   - name: profile
@@ -1291,7 +1289,6 @@
         remote_table:
           schema: public
           name: AttendeeProfile
-        insertion_order: null
         column_mapping:
           id: attendeeId
   - name: user
@@ -1304,7 +1301,6 @@
         remote_table:
           schema: public
           name: AttendeeProfileBadges
-        insertion_order: null
         column_mapping:
           id: attendeeId
   - name: contentPeople
@@ -1711,7 +1707,6 @@
         remote_table:
           schema: public
           name: Attendee
-        insertion_order: null
         column_mapping:
           attendeeId: id
   select_permissions:
@@ -1917,7 +1912,6 @@
         remote_table:
           schema: public
           name: FlatUnauthPermission
-        insertion_order: null
         column_mapping:
           slug: slug
   - name: roles
@@ -1954,7 +1948,6 @@
         remote_table:
           schema: public
           name: FlatUserPermission
-        insertion_order: null
         column_mapping:
           slug: slug
   insert_permissions:
@@ -2173,7 +2166,6 @@
         remote_table:
           schema: public
           name: Conference
-        insertion_order: null
         column_mapping:
           id: demoCodeId
   - name: usedBy
@@ -2314,7 +2306,6 @@
         remote_table:
           schema: public
           name: Room
-        insertion_order: null
         column_mapping:
           id: originatingContentGroupId
   - name: stats
@@ -2977,7 +2968,6 @@
         remote_table:
           schema: public
           name: BroadcastContentItem
-        insertion_order: null
         column_mapping:
           id: contentItemId
   - name: conference
@@ -3467,7 +3457,6 @@
         remote_table:
           schema: public
           name: BroadcastContentItem
-        insertion_order: null
         column_mapping:
           id: eventId
   - name: conference
@@ -3482,7 +3471,6 @@
         remote_table:
           schema: public
           name: EventVonageSession
-        insertion_order: null
         column_mapping:
           id: eventId
   - name: originatingData
@@ -4530,7 +4518,6 @@
         remote_table:
           schema: public
           name: Conference
-        insertion_order: null
         column_mapping:
           slug: slug
   - name: permission
@@ -4539,7 +4526,6 @@
         remote_table:
           schema: public
           name: Permission
-        insertion_order: null
         column_mapping:
           permission_name: name
   - name: user
@@ -4548,7 +4534,6 @@
         remote_table:
           schema: public
           name: User
-        insertion_order: null
         column_mapping:
           user_id: id
   select_permissions:
@@ -5685,7 +5670,6 @@
         remote_table:
           schema: public
           name: ContentItem
-        insertion_order: null
         column_mapping:
           id: requiredContentId
   - name: contentType
@@ -6150,7 +6134,6 @@
         remote_table:
           schema: public
           name: MediaLiveChannel
-        insertion_order: null
         column_mapping:
           id: roomId
   - name: originatingContentGroup
@@ -6168,7 +6151,6 @@
         remote_table:
           schema: room
           name: RoomChimeMeeting
-        insertion_order: null
         column_mapping:
           id: roomId
   - name: roomPrivacy
@@ -6232,6 +6214,13 @@
         table:
           schema: public
           name: Transitions
+  computed_fields:
+  - name: isProgramRoom
+    definition:
+      function:
+        schema: public
+        name: IsProgramRoom
+    comment: ""
   insert_permissions:
   - role: user
     permission:
@@ -6281,6 +6270,8 @@
       - priority
       - roomPrivacyName
       - updated_at
+      computed_fields:
+      - isProgramRoom
       filter:
         _and:
         - conference:
@@ -6317,6 +6308,8 @@
       - roomPrivacyName
       - updated_at
       - videoRoomBackendName
+      computed_fields:
+      - isProgramRoom
       filter:
         _and:
         - conference:
@@ -7185,7 +7178,6 @@
         remote_table:
           schema: public
           name: OnlineStatus
-        insertion_order: null
         column_mapping:
           id: userId
   array_relationships:
@@ -7401,7 +7393,6 @@
         remote_table:
           schema: public
           name: Conference
-        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: room
@@ -7410,7 +7401,6 @@
         remote_table:
           schema: public
           name: Room
-        insertion_order: null
         column_mapping:
           roomId: id
   select_permissions:

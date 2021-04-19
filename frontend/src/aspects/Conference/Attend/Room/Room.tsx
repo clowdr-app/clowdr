@@ -15,7 +15,6 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
-import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -27,13 +26,11 @@ import {
     RoomPage_RoomDetailsFragment,
     RoomPrivacy_Enum,
     Room_EventSummaryFragment,
-    useRoom_GetCurrentEventsQuery,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
-import usePolling from "../../../Generic/usePolling";
 import { useRealTime } from "../../../Generic/useRealTime";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
 import { useConference } from "../../useConference";
@@ -48,30 +45,8 @@ import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 
 gql`
-    query Room_GetCurrentEvents($currentEventIds: [uuid!]!) {
-        Event(where: { id: { _in: $currentEventIds } }) {
-            ...Room_CurrentEventSummary
-        }
-    }
-
-    fragment Room_CurrentEventSummary on Event {
-        id
-        name
-        startTime
-        contentGroup {
-            id
-            title
-            contentGroupTypeName
-            contentItems(where: { contentTypeName: { _eq: ZOOM } }, limit: 1) {
-                id
-                data
-            }
-            chatId
-        }
-    }
-
-    query Room_GetEvents($roomId: uuid!) {
-        Event(where: { roomId: { _eq: $roomId } }) {
+    query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
+        Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }) {
             ...Room_EventSummary
         }
     }
@@ -87,6 +62,12 @@ gql`
         contentGroup {
             id
             title
+            contentGroupTypeName
+            zoomItems: contentItems(where: { contentTypeName: { _eq: ZOOM } }, limit: 1) {
+                id
+                data
+            }
+            chatId
         }
         eventPeople {
             id
@@ -136,14 +117,7 @@ function isShuffleRoomEndingSoon(
     return startedAtMs + durationMs < now + 30000;
 }
 
-export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
-    const [roomEvents, setRoomEvents] = useState<readonly Room_EventSummaryFragment[]>([]);
-    const { loading: loadingEvents, data, refetch } = useRoom_GetEventsQuery({
-        variables: {
-            roomId: roomDetails.id,
-        },
-    });
-
+export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
     const {
         data: defaultVideoRoomBackendData,
         refetch: refetchDefaultVideoRoomBackend,
@@ -156,26 +130,69 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         refetchDefaultVideoRoomBackend().catch((e) => console.error("Could not refetch default video room backend", e));
     }, [refetchDefaultVideoRoomBackend, roomDetails.id]);
 
+    const defaultVideoBackend: "CHIME" | "VONAGE" | undefined = defaultvideoRoomBackendLoading
+        ? undefined
+        : defaultVideoRoomBackendData?.system_Configuration_by_pk?.value ?? "NO_DEFAULT";
+
+    return <Room roomDetails={roomDetails} defaultVideoBackend={defaultVideoBackend} />;
+}
+
+function Room({
+    roomDetails,
+    defaultVideoBackend,
+}: {
+    roomDetails: RoomPage_RoomDetailsFragment;
+    defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
+}): JSX.Element {
+    const now2m = useRealTime(120000);
+    const now2mStr = useMemo(() => new Date(now2m).toISOString(), [now2m]);
+    const now2mCutoffStr = useMemo(() => new Date(now2m + 40 * 60 * 1000).toISOString(), [now2m]);
+
+    const { loading: loadingEvents, data } = useRoom_GetEventsQuery({
+        fetchPolicy: "cache-and-network",
+        variables: {
+            roomId: roomDetails.id,
+            now: now2mStr,
+            cutoff: now2mCutoffStr,
+        },
+    });
+
+    const [cachedRoomEvents, setCachedRoomEvents] = useState<readonly Room_EventSummaryFragment[]>([]);
     useEffect(() => {
         if (data?.Event) {
-            setRoomEvents(data.Event);
+            setCachedRoomEvents(data?.Event);
         }
     }, [data?.Event]);
-    usePolling(refetch, 120000, true);
+
+    return loadingEvents && !data ? (
+        <Spinner label="Loading events" />
+    ) : (
+        <RoomInner roomDetails={roomDetails} roomEvents={cachedRoomEvents} defaultVideoBackend={defaultVideoBackend} />
+    );
+}
+
+function RoomInner({
+    roomDetails,
+    roomEvents,
+    defaultVideoBackend,
+}: {
+    roomDetails: RoomPage_RoomDetailsFragment;
+    roomEvents: readonly Room_EventSummaryFragment[];
+    defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
+}): JSX.Element {
+    const currentAttendee = useCurrentAttendee();
+
+    const now5s = useRealTime(5000);
+    const now30s = useRealTime(30000);
 
     const {
         currentRoomEvent,
         nextRoomEvent,
-        nextNextRoomEvent,
+        nonCurrentEventsInNext20Mins,
         withinThreeMinutesOfBroadcastEvent,
         secondsUntilBroadcastEvent,
         secondsUntilZoomEvent,
     } = useCurrentRoomEvent(roomEvents);
-
-    const now = useRealTime(5000);
-
-    const nextBgColour = useColorModeValue("green.300", "green.600");
-    const bgColour = useColorModeValue("gray.200", "gray.700");
 
     const hlsUri = useMemo(() => {
         if (!roomDetails.mediaLiveChannel) {
@@ -186,80 +203,25 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         return finalUri.toString();
     }, [roomDetails.mediaLiveChannel]);
 
-    const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
-
-    const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
-
-    const currentEventIds = useMemo(
-        () => [currentRoomEvent?.id, nextRoomEvent?.id, nextNextRoomEvent?.id].filter(notEmpty),
-        [currentRoomEvent?.id, nextNextRoomEvent?.id, nextRoomEvent?.id]
-    );
-    const { data: currentEventsData } = useRoom_GetCurrentEventsQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            currentEventIds,
-        },
-    });
-
-    const zoomNow = useRealTime(30000);
-    const maybeZoomUrl = useMemo(() => {
-        try {
-            const currentEventData = currentRoomEvent
-                ? currentEventsData?.Event.find((e) => e.id === currentRoomEvent?.id)
-                : undefined;
-            const nextEventData = nextRoomEvent
-                ? currentEventsData?.Event.find((e) => e.id === nextRoomEvent?.id)
-                : undefined;
-
-            const currentZoomItems = currentEventData?.contentGroup?.contentItems;
-            if (currentZoomItems && currentZoomItems.length > 0 && currentEventData) {
-                const versions = currentZoomItems[0].data as ContentItemDataBlob;
-                const latest = R.last(versions)?.data as ZoomBlob;
-                return latest.url;
-            }
-
-            const nextZoomItems = nextEventData?.contentGroup?.contentItems;
-            if (
-                nextZoomItems &&
-                nextZoomItems.length > 0 &&
-                nextEventData &&
-                zoomNow > Date.parse(nextEventData.startTime) - 20 * 60 * 1000
-            ) {
-                const versions = nextZoomItems[0].data as ContentItemDataBlob;
-                const latest = R.last(versions)?.data as ZoomBlob;
-                return latest.url;
-            }
-
-            return undefined;
-        } catch (e) {
-            console.error("Error finding current event Zoom details", e);
-            return undefined;
-        }
-    }, [currentEventsData, currentRoomEvent, nextRoomEvent, zoomNow]);
-
-    const currentAttendee = useCurrentAttendee();
-
-    const presentingCurrentOrNextOrNextNextEvent = useMemo(() => {
+    const presentingCurrentOrUpcomingSoonEvent = useMemo(() => {
         const isPresenterOfCurrentEvent =
             currentRoomEvent !== null &&
             currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
-        const isPresenterOfNextEvent =
-            nextRoomEvent !== null &&
-            nextRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
-        const isPresenterOfNextNextEvent =
-            nextNextRoomEvent !== null &&
-            nextNextRoomEvent?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
-        return isPresenterOfCurrentEvent || isPresenterOfNextEvent || isPresenterOfNextNextEvent;
-    }, [currentAttendee.id, currentRoomEvent, nextRoomEvent, nextNextRoomEvent]);
-
-    const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);
+        const isPresenterOfUpcomingSoonEvent =
+            nonCurrentEventsInNext20Mins !== null &&
+            nonCurrentEventsInNext20Mins.some((event) =>
+                event?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
+            );
+        return isPresenterOfCurrentEvent || isPresenterOfUpcomingSoonEvent;
+    }, [currentAttendee.id, currentRoomEvent, nonCurrentEventsInNext20Mins]);
 
     const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
-    const showDefaultBreakoutRoom =
-        roomEvents.length === 0 || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
-    const hasBackstage = !!hlsUri;
-
+    const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);
     const alreadyBackstage = useRef<boolean>(false);
+
+    const hasBackstage = !!roomEvents.some((event) =>
+        [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
+    );
 
     const notExplictlyWatchingCurrentOrNextEvent =
         !watchStreamForEventId ||
@@ -268,14 +230,45 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
     const showBackstage =
         hasBackstage &&
         notExplictlyWatchingCurrentOrNextEvent &&
-        (backStageRoomJoined || presentingCurrentOrNextOrNextNextEvent || alreadyBackstage.current);
+        (backStageRoomJoined || presentingCurrentOrUpcomingSoonEvent || alreadyBackstage.current);
+
     alreadyBackstage.current = showBackstage;
+
+    const showDefaultBreakoutRoom =
+        !roomDetails.isProgramRoom || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
+
+    const maybeZoomUrl = useMemo(() => {
+        try {
+            if (currentRoomEvent) {
+                const currentZoomItems = currentRoomEvent.contentGroup?.zoomItems;
+                if (currentZoomItems?.length) {
+                    const versions = currentZoomItems[0].data as ContentItemDataBlob;
+                    const latest = R.last(versions)?.data as ZoomBlob;
+                    return latest.url;
+                }
+            }
+
+            if (nextRoomEvent) {
+                const nextZoomItems = nextRoomEvent.contentGroup?.zoomItems;
+                if (nextZoomItems?.length && now30s > Date.parse(nextRoomEvent.startTime) - 20 * 60 * 1000) {
+                    const versions = nextZoomItems[0].data as ContentItemDataBlob;
+                    const latest = R.last(versions)?.data as ZoomBlob;
+                    return latest.url;
+                }
+            }
+
+            return undefined;
+        } catch (e) {
+            console.error("Error finding current event Zoom details", e);
+            return undefined;
+        }
+    }, [currentRoomEvent, nextRoomEvent, now30s]);
 
     useEffect(() => {
         if (showBackstage) {
             toast({
                 status: "info",
-                position: "bottom-right",
+                position: "top",
                 isClosable: true,
                 title: "You have been taken to the speakers' area",
                 description: "You are a presenter of a current or upcoming event",
@@ -292,8 +285,8 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             !showBackstage
         ) {
             toast({
-                status: "info",
-                position: "bottom-right",
+                status: "warning",
+                position: "top",
                 duration: 15000,
                 isClosable: true,
                 title: "You are a presenter of an event starting now",
@@ -309,8 +302,8 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
             !showBackstage
         ) {
             toast({
-                status: "info",
-                position: "bottom-right",
+                status: "warning",
+                position: "top",
                 isClosable: true,
                 title: "You are a presenter of the next event",
                 description: (
@@ -325,10 +318,10 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const controlBarEl = useMemo(
         () =>
-            !showBackstage && roomDetails.roomPrivacyName !== RoomPrivacy_Enum.Public ? (
+            roomDetails.roomPrivacyName !== RoomPrivacy_Enum.Public ? (
                 <RoomControlBar roomDetails={roomDetails} />
             ) : undefined,
-        [roomDetails, showBackstage]
+        [roomDetails]
     );
 
     const roomEventsForCurrentAttendee = useMemo(
@@ -360,6 +353,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
     const muteStream = showBackstage;
     const playerRef = useRef<ReactPlayer | null>(null);
+    const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
     const playerEl = useMemo(
         () =>
             hlsUri && withinThreeMinutesOfBroadcastEvent ? (
@@ -406,132 +400,44 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         [hlsUri, withinThreeMinutesOfBroadcastEvent, showBackstage, currentRoomEvent, intendPlayStream, muteStream]
     );
 
-    const defaultVideoBackend: "CHIME" | "VONAGE" =
-        defaultVideoRoomBackendData?.system_Configuration_by_pk?.value ?? "VONAGE";
     const breakoutRoomEl = useMemo(() => {
-        console.log("default video backend", defaultVideoBackend, roomDetails.videoRoomBackendName);
+        // console.log("default video backend", defaultVideoBackend, roomDetails.videoRoomBackendName);
+
         switch (roomDetails.videoRoomBackendName) {
             case "CHIME":
                 return <BreakoutChimeRoom room={roomDetails} />;
             case "VONAGE":
                 return <BreakoutVonageRoom room={roomDetails} />;
         }
+
         switch (defaultVideoBackend) {
             case "CHIME":
                 return <BreakoutChimeRoom room={roomDetails} />;
             case "VONAGE":
-            default:
+            case "NO_DEFAULT":
                 return <BreakoutVonageRoom room={roomDetails} />;
         }
-    }, [defaultVideoBackend, roomDetails]);
 
-    const currentEventRole = currentRoomEvent?.eventPeople.find(
-        (p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id
-    )?.roleName;
-    const nextEventRole = nextRoomEvent?.eventPeople.find(
-        (p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id
-    )?.roleName;
+        return (
+            <Center>
+                <Spinner mt={2} mx="auto" />
+            </Center>
+        );
+    }, [defaultVideoBackend, roomDetails]);
 
     const contentEl = useMemo(
         () => (
-            <Box flexGrow={1}>
-                <RoomTitle roomDetails={roomDetails} />
-
-                {currentRoomEvent ? (
-                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <HStack justifyContent="space-between">
-                            <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now)}</Text>
-                            {currentEventRole ? (
-                                <Tag colorScheme="green" my={2}>
-                                    {currentEventRole}
-                                </Tag>
-                            ) : undefined}
-                        </HStack>
-                        <Heading as="h3" textAlign="left" size="lg" mb={2}>
-                            {currentRoomEvent.name}
-                        </Heading>
-                        {currentRoomEvent?.contentGroupId ? (
-                            <ContentGroupSummaryWrapper
-                                contentGroupId={currentRoomEvent.contentGroupId}
-                                linkToItem={true}
-                            />
-                        ) : (
-                            <></>
-                        )}
-                    </Box>
-                ) : (
-                    <></>
-                )}
-                {nextRoomEvent ? (
-                    <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <Heading as="h3" textAlign="left" size="lg" mb={1}>
-                            {nextRoomEvent.name}
-                        </Heading>
-                        <HStack justifyContent="space-between" mb={2}>
-                            <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now)}</Text>
-                            {nextEventRole ? (
-                                <Tag colorScheme="gray" my={2}>
-                                    {nextEventRole}
-                                </Tag>
-                            ) : undefined}
-                        </HStack>
-                        {nextRoomEvent?.contentGroupId ? (
-                            <ContentGroupSummaryWrapper
-                                contentGroupId={nextRoomEvent.contentGroupId}
-                                linkToItem={true}
-                            />
-                        ) : (
-                            <></>
-                        )}
-                    </Box>
-                ) : (
-                    <></>
-                )}
-
-                {!currentRoomEvent && !nextRoomEvent && roomEvents.length > 0 ? (
-                    <Text p={5}>No current event in this room.</Text>
-                ) : (
-                    <></>
-                )}
-
-                {roomDetails.originatingContentGroup?.id &&
-                roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
-                    <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                        <ContentGroupSummaryWrapper
-                            contentGroupId={roomDetails.originatingContentGroup.id}
-                            linkToItem={true}
-                        />
-                    </Box>
-                ) : (
-                    <></>
-                )}
-
-                {roomDetails.originatingContentGroup ? (
-                    <RoomSponsorContent contentGroupId={roomDetails.originatingContentGroup.id} />
-                ) : (
-                    <></>
-                )}
-            </Box>
+            <RoomContent currentRoomEvent={currentRoomEvent} nextRoomEvent={nextRoomEvent} roomDetails={roomDetails} />
         ),
-        [
-            bgColour,
-            currentEventRole,
-            currentRoomEvent,
-            nextBgColour,
-            nextEventRole,
-            nextRoomEvent,
-            now,
-            roomDetails,
-            roomEvents.length,
-        ]
+        [currentRoomEvent, nextRoomEvent, roomDetails]
     );
 
     const [sendShuffleRoomNotification, setSendShuffleRoomNotification] = useState<boolean>(false);
     useEffect(() => {
-        if (roomDetails.shuffleRooms.length > 0 && isShuffleRoomEndingSoon(roomDetails.shuffleRooms[0], now)) {
+        if (roomDetails.shuffleRooms.length > 0 && isShuffleRoomEndingSoon(roomDetails.shuffleRooms[0], now5s)) {
             setSendShuffleRoomNotification(true);
         }
-    }, [roomDetails.shuffleRooms, now]);
+    }, [roomDetails.shuffleRooms, now5s]);
 
     const toast = useToast();
     useEffect(() => {
@@ -540,9 +446,9 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 title: "30 seconds left...",
                 description: "...then you'll be moved back to the shuffle home page",
                 status: "warning",
-                duration: 27000,
+                duration: 29000,
                 isClosable: true,
-                position: "top-right",
+                position: "top",
             });
         }
     }, [sendShuffleRoomNotification, toast]);
@@ -604,7 +510,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                         } else {
                             toast({
                                 status: "info",
-                                duration: 15000,
+                                duration: 30000,
                                 isClosable: true,
                                 position: "bottom-right",
                                 title: "Discussion room available",
@@ -644,18 +550,9 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent]);
 
-    const eventStartingAlert = useMemo(
-        () =>
-            secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
-                <Alert status="info">
-                    <AlertIcon />
-                    Event starting in {Math.round(secondsUntilZoomEvent)} seconds
-                </Alert>
-            ) : (
-                <></>
-            ),
-        [secondsUntilZoomEvent, currentRoomEvent]
-    );
+    const bgColour = useColorModeValue("gray.200", "gray.700");
+
+    const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
 
     return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (
         <Redirect
@@ -663,8 +560,6 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 !roomDetails.shuffleRooms[0].reshuffleUponEnd ? "/ended" : ""
             }`}
         />
-    ) : loadingEvents && !data ? (
-        <Spinner label="Loading events" />
     ) : (
         <HStack width="100%" flexWrap="wrap" alignItems="stretch">
             <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
@@ -693,7 +588,14 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                     <></>
                 )}
 
-                {eventStartingAlert}
+                {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
+                    <Alert status="info">
+                        <AlertIcon />
+                        Event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                    </Alert>
+                ) : (
+                    <></>
+                )}
 
                 {maybeZoomUrl ? (
                     <ExternalLinkButton
@@ -714,13 +616,7 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
 
                 {showDefaultBreakoutRoom ? (
                     <Box display={showBackstage ? "none" : "block"} bgColor={bgColour} m={-2}>
-                        {defaultvideoRoomBackendLoading ? (
-                            <Center>
-                                <Spinner mt={2} mx="auto" />
-                            </Center>
-                        ) : (
-                            breakoutRoomEl
-                        )}
+                        {breakoutRoomEl}
                     </Box>
                 ) : (
                     <></>
@@ -729,5 +625,113 @@ export function Room({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragmen
                 {!showBackstage ? contentEl : <></>}
             </VStack>
         </HStack>
+    );
+}
+
+function RoomContent({
+    currentRoomEvent,
+    nextRoomEvent,
+    roomDetails,
+}: {
+    currentRoomEvent: Room_EventSummaryFragment | null;
+    nextRoomEvent: Room_EventSummaryFragment | null;
+    roomDetails: RoomPage_RoomDetailsFragment;
+}): JSX.Element {
+    const nextBgColour = useColorModeValue("green.300", "green.600");
+    const bgColour = useColorModeValue("gray.200", "gray.700");
+
+    const currentAttendee = useCurrentAttendee();
+
+    const currentEventRole = useMemo(
+        () =>
+            currentRoomEvent?.eventPeople.find((p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id)
+                ?.roleName,
+        [currentAttendee, currentRoomEvent?.eventPeople]
+    );
+    const nextEventRole = useMemo(
+        () =>
+            nextRoomEvent?.eventPeople.find((p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id)
+                ?.roleName,
+        [currentAttendee, nextRoomEvent?.eventPeople]
+    );
+
+    const now5s = useRealTime(5000);
+
+    return (
+        <Box flexGrow={1}>
+            <RoomTitle roomDetails={roomDetails} />
+
+            {currentRoomEvent ? (
+                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                    <HStack justifyContent="space-between">
+                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now5s)}</Text>
+                        {currentEventRole ? (
+                            <Tag colorScheme="green" my={2}>
+                                {currentEventRole}
+                            </Tag>
+                        ) : undefined}
+                    </HStack>
+                    <Heading as="h3" textAlign="left" size="lg" mb={2}>
+                        {currentRoomEvent.name}
+                    </Heading>
+                    {currentRoomEvent?.contentGroupId ? (
+                        <ContentGroupSummaryWrapper
+                            contentGroupId={currentRoomEvent.contentGroupId}
+                            linkToItem={true}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                </Box>
+            ) : (
+                <></>
+            )}
+            {nextRoomEvent ? (
+                <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
+                    <Heading as="h3" textAlign="left" size="lg" mb={1}>
+                        {nextRoomEvent.name}
+                    </Heading>
+                    <HStack justifyContent="space-between" mb={2}>
+                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}</Text>
+                        {nextEventRole ? (
+                            <Tag colorScheme="gray" my={2} textTransform="none">
+                                You are {nextEventRole}
+                            </Tag>
+                        ) : undefined}
+                    </HStack>
+                    {nextRoomEvent?.contentGroupId ? (
+                        <ContentGroupSummaryWrapper contentGroupId={nextRoomEvent.contentGroupId} linkToItem={true} />
+                    ) : (
+                        <></>
+                    )}
+                </Box>
+            ) : (
+                <></>
+            )}
+
+            {!currentRoomEvent && !nextRoomEvent && roomDetails.isProgramRoom ? (
+                <Text p={5}>No events in this room in the near future.</Text>
+            ) : (
+                <></>
+            )}
+
+            {roomDetails.originatingContentGroup?.id &&
+            roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
+                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
+                    <ContentGroupSummaryWrapper
+                        contentGroupId={roomDetails.originatingContentGroup.id}
+                        linkToItem={true}
+                    />
+                </Box>
+            ) : (
+                <></>
+            )}
+
+            {roomDetails.originatingContentGroup ? (
+                <RoomSponsorContent contentGroupId={roomDetails.originatingContentGroup.id} />
+            ) : (
+                <></>
+            )}
+        </Box>
     );
 }

@@ -10,7 +10,7 @@ import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { Room } from "./Room";
+import Room from "./Room";
 
 gql`
     query RoomPage_GetRoomDetails($roomId: uuid!) {
@@ -23,6 +23,7 @@ gql`
         id
         name
         currentModeName
+        isProgramRoom
         mediaLiveChannel {
             cloudFrontDomain
             endpointUri

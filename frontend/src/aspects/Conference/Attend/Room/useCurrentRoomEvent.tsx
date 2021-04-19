@@ -6,7 +6,7 @@ import usePolling from "../../../Generic/usePolling";
 interface Result {
     currentRoomEvent: Room_EventSummaryFragment | null;
     nextRoomEvent: Room_EventSummaryFragment | null;
-    nextNextRoomEvent: Room_EventSummaryFragment | null;
+    nonCurrentEventsInNext20Mins: Room_EventSummaryFragment[] | null;
     withinThreeMinutesOfBroadcastEvent: boolean;
     secondsUntilBroadcastEvent: number;
     secondsUntilZoomEvent: number;
@@ -29,11 +29,11 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
 
     const [currentRoomEvent, setCurrentRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
     const getCurrentEvent = useCallback(() => {
-        const now = new Date().getTime();
+        const now = Date.now();
         const eventsNow = roomEvents.filter((event) => {
             const startTime = Date.parse(event.startTime);
             const endTime = Date.parse(event.endTime);
-            return startTime < now && now < endTime;
+            return startTime <= now && now < endTime;
         });
         if (eventsNow.length > 0) {
             setCurrentRoomEvent(eventsNow[0]);
@@ -44,7 +44,7 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
 
     const [withinThreeMinutesOfBroadcastEvent, setWithinThreeMinutesOfBroadcastEvent] = useState<boolean>(false);
     const getWithinThreeMinutesOfEvent = useCallback(() => {
-        const now = new Date().getTime();
+        const now = Date.now();
         const eventsSoon = broadcastEvents.filter((event) => {
             const startTime = Date.parse(event.startTime);
             const endTime = Date.parse(event.endTime);
@@ -117,47 +117,52 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
 
     const [nextRoomEvent, setNextRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
     const getNextEvent = useCallback(() => {
-        const now = new Date().getTime();
-        const sortedEvents = R.sortBy((event) => event.startTime, roomEvents);
+        const now = Date.now();
+        const sortedEvents = R.sortBy((event) => Date.parse(event.startTime), roomEvents);
         const futureEvents = sortedEvents.filter((event) => Date.parse(event.startTime) > now);
         setNextRoomEvent(futureEvents.length > 0 ? futureEvents[0] : null);
     }, [roomEvents]);
 
-    const [nextNextRoomEvent, setNextNextRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
-    const getNextNextEvent = useCallback(() => {
-        const now = new Date().getTime();
-        const sortedEvents = R.sortBy((event) => event.startTime, roomEvents);
-        const futureEvents = sortedEvents.filter((event) => Date.parse(event.startTime) > now);
-        setNextNextRoomEvent(futureEvents.length > 1 ? futureEvents[1] : null);
+    const [nonCurrentEventsInNext20Mins, setNonCurrentEventsInNext20Mins] = useState<
+        Room_EventSummaryFragment[] | null
+    >(null);
+    const getNonCurrentEventsInNext20Mins = useCallback(() => {
+        const now = Date.now();
+        const cutoff = now + 20 * 60 * 1000;
+        const filteredEvents = roomEvents.filter((event) => {
+            const start = Date.parse(event.startTime);
+            const end = Date.parse(event.endTime);
+            return start > now && now < end && start <= cutoff;
+        });
+        const sortedEvents = R.sortBy((event) => Date.parse(event.startTime), filteredEvents);
+        setNonCurrentEventsInNext20Mins(sortedEvents);
     }, [roomEvents]);
 
     const infrequentUpdate = useCallback(() => {
         getWithinThreeMinutesOfEvent();
         getCurrentEvent();
         getNextEvent();
-        getNextNextEvent();
-    }, [getCurrentEvent, getNextEvent, getNextNextEvent, getWithinThreeMinutesOfEvent]);
+        getNonCurrentEventsInNext20Mins();
+    }, [getCurrentEvent, getNextEvent, getNonCurrentEventsInNext20Mins, getWithinThreeMinutesOfEvent]);
     usePolling(infrequentUpdate, 10000, true);
 
     useEffect(() => {
-        getWithinThreeMinutesOfEvent();
-        getCurrentEvent();
-        getNextEvent();
-    }, [getCurrentEvent, getNextEvent, getWithinThreeMinutesOfEvent]);
+        infrequentUpdate();
+    }, [infrequentUpdate]);
 
     const result = useMemo(
         () => ({
             currentRoomEvent,
             withinThreeMinutesOfBroadcastEvent,
             nextRoomEvent,
-            nextNextRoomEvent,
+            nonCurrentEventsInNext20Mins,
             secondsUntilBroadcastEvent,
             secondsUntilZoomEvent,
         }),
         [
             currentRoomEvent,
             nextRoomEvent,
-            nextNextRoomEvent,
+            nonCurrentEventsInNext20Mins,
             secondsUntilBroadcastEvent,
             secondsUntilZoomEvent,
             withinThreeMinutesOfBroadcastEvent,

@@ -1426,7 +1426,9 @@ export class GlobalChatState {
 
                         if (this.chatStates) {
                             for (const chatState of this.chatStates) {
-                                chatState[1].applyConnect();
+                                if (chatState[1].connectionCount > 0) {
+                                    chatState[1].applyConnect();
+                                }
                             }
                         }
                     });

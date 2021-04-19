@@ -24,7 +24,7 @@ export async function sendNotifications(userIds: Set<string>, notification: Noti
             // CHAT_TODO: Choose web-push, web-socket, email or no notification channel
 
             const pushNotifSub = pushNotifSubs.get(userId);
-            if (pushNotifSub) {
+            if (pushNotifSub?.subscriptions.length) {
                 await Promise.all(pushNotifSub.subscriptions.map((sub) => sendNotification(sub, notification)));
             } else {
                 emitter.in(notificationsRoomName(userId)).emit("notification", notification);

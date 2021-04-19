@@ -1,5 +1,5 @@
 import { ApolloQueryResult, gql } from "@apollo/client/core";
-import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
+import { ScheduleAction } from "@aws-sdk/client-medialive";
 import AmazonS3URI from "amazon-s3-uri";
 import { addMinutes } from "date-fns";
 import R from "ramda";
@@ -544,21 +544,21 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
                 });
 
                 if (fillerVideoKey) {
-                    newScheduleActions.push({
-                        ActionName: `${transition.id}-follow`,
-                        ScheduleActionSettings: {
-                            InputSwitchSettings: {
-                                InputAttachmentNameReference: channel.loopingMp4InputAttachmentName,
-                                UrlPath: [fillerVideoKey],
-                            },
-                        },
-                        ScheduleActionStartSettings: {
-                            FollowModeScheduleActionStartSettings: {
-                                FollowPoint: FollowPoint.END,
-                                ReferenceActionName: `${transition.id}`,
-                            },
-                        },
-                    });
+                    // newScheduleActions.push({
+                    //     ActionName: `${transition.id}-follow`,
+                    //     ScheduleActionSettings: {
+                    //         InputSwitchSettings: {
+                    //             InputAttachmentNameReference: channel.loopingMp4InputAttachmentName,
+                    //             UrlPath: [fillerVideoKey],
+                    //         },
+                    //     },
+                    //     ScheduleActionStartSettings: {
+                    //         FollowModeScheduleActionStartSettings: {
+                    //             FollowPoint: FollowPoint.END,
+                    //             ReferenceActionName: `${transition.id}`,
+                    //         },
+                    //     },
+                    // });
                 }
             }
         } else if (

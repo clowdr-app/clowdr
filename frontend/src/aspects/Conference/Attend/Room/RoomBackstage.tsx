@@ -51,13 +51,14 @@ function EventBackstage({
     setSelectedEventId: (value: string | null) => void;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
-    const borderColour = useColorModeValue(gray900, gray100);
+    const greyBorderColour = useColorModeValue(gray900, gray100);
 
     const now = useRealTime(5000);
     const isNow = isEventNow(now, event);
     const isSoon = isEventSoon(now, event);
     const isActive = isNow || isSoon;
     const category = isNow ? "Happening now" : isSoon ? "Starting soon" : "Ended";
+    const borderColour = isNow ? "red" : greyBorderColour;
     const title = event?.contentGroup ? `${event.contentGroup.title} (${event.name})` : event.name;
     const isSelected = event.id === selectedEventId;
     const summaryInfo = useMemo(
@@ -105,7 +106,7 @@ function EventBackstage({
     const area = useMemo(
         () =>
             selectedEventId === event.id ? (
-                <Box mt={2}>
+                <Box mt={2} p={2} border={isNow ? "solid red" : undefined} borderWidth={4}>
                     {vonageRoom}
                     <Alert status="info" mb={8}>
                         <AlertIcon />
@@ -119,7 +120,7 @@ function EventBackstage({
                     This event has now finished. Once you close this room, you will not be able to rejoin it.
                 </Alert>
             ) : undefined,
-        [event.id, isActive, selectedEventId, vonageRoom]
+        [event.id, isActive, isNow, selectedEventId, vonageRoom]
     );
 
     return (

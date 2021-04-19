@@ -22,13 +22,113 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
 import { RoomMode_Enum, Room_EventSummaryFragment } from "../../../../generated/graphql";
-import usePolling from "../../../Generic/usePolling";
+import { useRealTime } from "../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
+
+function isEventNow(now: number, event: Room_EventSummaryFragment): boolean {
+    const startTime = Date.parse(event.startTime);
+    const endTime = Date.parse(event.endTime);
+    return now >= startTime && now <= endTime;
+}
+
+function isEventSoon(now: number, event: Room_EventSummaryFragment): boolean {
+    const startTime = Date.parse(event.startTime);
+    return now >= startTime - 25 * 60 * 1000 && now <= startTime;
+}
+
+function EventBackstage({
+    event,
+    selectedEventId,
+    setSelectedEventId,
+}: {
+    event: Room_EventSummaryFragment;
+    selectedEventId: string | null;
+    setSelectedEventId: (value: string | null) => void;
+}): JSX.Element {
+    const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
+    const borderColour = useColorModeValue(gray900, gray100);
+
+    const now = useRealTime(5000);
+    const isNow = isEventNow(now, event);
+    const isSoon = isEventSoon(now, event);
+    const isActive = isNow || isSoon;
+    const category = isNow ? "Happening now" : isSoon ? "Starting soon" : "Ended";
+    const title = event?.contentGroup ? `${event.contentGroup.title} (${event.name})` : event.name;
+    const isSelected = event.id === selectedEventId;
+    const summaryInfo = useMemo(
+        () => (
+            <HStack
+                key={event.id}
+                border={`1px ${borderColour} solid`}
+                width="max-content"
+                maxW="100%"
+                w="100%"
+                justifyContent="space-between"
+                p={4}
+                alignItems="center"
+                borderRadius="md"
+            >
+                <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8} whiteSpace="normal">
+                    {category}
+                </Heading>
+                <VStack px={8} alignItems="left" flexGrow={1}>
+                    <Heading as="h4" size="md" textAlign="left" mt={2} mb={1} whiteSpace="normal">
+                        <Twemoji className="twemoji" text={title} />
+                    </Heading>
+
+                    <Text my={2} fontStyle="italic" whiteSpace="normal">
+                        {formatRelative(Date.parse(event.startTime), Date.now())}
+                    </Text>
+                </VStack>
+                <Button
+                    colorScheme={isSelected ? "red" : "green"}
+                    onClick={() => (isSelected ? setSelectedEventId(null) : setSelectedEventId(event.id))}
+                    height="min-content"
+                    py={4}
+                    whiteSpace="normal"
+                >
+                    <Text fontSize="lg" whiteSpace="normal">
+                        {isSelected ? "Close this area" : "Open this area"}
+                    </Text>
+                </Button>
+            </HStack>
+        ),
+        [borderColour, category, event.id, event.startTime, isSelected, setSelectedEventId, title]
+    );
+
+    const vonageRoom = useMemo(() => <EventVonageRoom eventId={event.id} />, [event.id]);
+    const area = useMemo(
+        () =>
+            selectedEventId === event.id ? (
+                <Box mt={2}>
+                    {vonageRoom}
+                    <Alert status="info" mb={8}>
+                        <AlertIcon />
+                        Once this event ends, you will be automatically taken to a breakout room to continue the
+                        conversation.
+                    </Alert>
+                </Box>
+            ) : !isActive ? (
+                <Alert status="warning" mb={8}>
+                    <AlertIcon />
+                    This event has now finished. Once you close this room, you will not be able to rejoin it.
+                </Alert>
+            ) : undefined,
+        [event.id, isActive, selectedEventId, vonageRoom]
+    );
+
+    return (
+        <>
+            {summaryInfo}
+            {area}
+        </>
+    );
+}
 
 export function RoomBackstage({
     showBackstage,
@@ -51,7 +151,6 @@ export function RoomBackstage({
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
-    const borderColour = useColorModeValue(gray900, gray100);
 
     const sortedEvents = useMemo(
         () =>
@@ -64,138 +163,64 @@ export function RoomBackstage({
         [roomEvents]
     );
 
-    const [now, setNow] = useState<number>(Date.now());
-    const updateNow = useCallback(() => {
-        setNow(Date.now());
-    }, []);
-    usePolling(updateNow, 5000, true);
-
-    const isEventNow = useCallback(
-        (event: Room_EventSummaryFragment): boolean => {
-            const startTime = Date.parse(event.startTime);
-            const endTime = Date.parse(event.endTime);
-            return now >= startTime && now <= endTime;
-        },
-        [now]
-    );
-
-    const isEventSoon = useCallback(
-        (event: Room_EventSummaryFragment): boolean => {
-            const startTime = Date.parse(event.startTime);
-            return now >= startTime - 25 * 60 * 1000 && now <= startTime;
-        },
-        [now]
-    );
+    const now = useRealTime(5000);
 
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
     useEffect(() => {
         onEventSelected(selectedEventId);
     }, [onEventSelected, selectedEventId]);
 
-    const makeEventEl = useCallback(
-        (event: Room_EventSummaryFragment, category: string) => {
-            const eventData = roomEvents.find((x) => x.id === event.id);
-            const title = eventData?.contentGroup ? `${eventData.contentGroup.title} (${event.name})` : event.name;
-            const isSelected = event.id === selectedEventId;
-            return (
-                <>
-                    <HStack
-                        key={event.id}
-                        border={`1px ${borderColour} solid`}
-                        width="max-content"
-                        maxW="100%"
-                        w="100%"
-                        justifyContent="space-between"
-                        p={4}
-                        alignItems="center"
-                        borderRadius="md"
-                    >
-                        <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8} whiteSpace="normal">
-                            {category}
-                        </Heading>
-                        <VStack px={8} alignItems="left" flexGrow={1}>
-                            <Heading as="h4" size="md" textAlign="left" mt={2} mb={1} whiteSpace="normal">
-                                <Twemoji className="twemoji" text={title} />
-                            </Heading>
+    const [activeEvents, setActiveEvents] = useState<Room_EventSummaryFragment[] | null>(null);
+    useEffect(() => {
+        const newActiveEvents = sortedEvents.filter(
+            (x) => isEventNow(now, x) || isEventSoon(now, x) || selectedEventId === x.id
+        );
+        setActiveEvents((oldActiveEvents) =>
+            !oldActiveEvents ||
+            newActiveEvents.some((x, idx) => idx >= oldActiveEvents.length || oldActiveEvents[idx].id !== x.id)
+                ? newActiveEvents
+                : oldActiveEvents
+        );
+    }, [now, selectedEventId, sortedEvents]);
 
-                            <Text my={2} fontStyle="italic" whiteSpace="normal">
-                                {formatRelative(Date.parse(event.startTime), now)}
-                            </Text>
-                        </VStack>
-                        <Button
-                            colorScheme={isSelected ? "red" : "green"}
-                            onClick={() => (isSelected ? setSelectedEventId(null) : setSelectedEventId(event.id))}
-                            height="min-content"
-                            py={4}
-                            whiteSpace="normal"
-                        >
-                            <Text fontSize="lg" whiteSpace="normal">
-                                {isSelected ? "Close this area" : "Open this area"}
-                            </Text>
-                        </Button>
-                    </HStack>
-
-                    {selectedEventId === event.id ? (
-                        <Box mt={2}>
-                            <EventVonageRoom eventId={event.id} />
-                            <Alert status="info" mb={8}>
-                                <AlertIcon />
-                                Once this event ends, you will be automatically taken to a breakout room to continue the
-                                conversation.
-                            </Alert>
-                        </Box>
-                    ) : undefined}
-                </>
-            );
-        },
-        [borderColour, now, roomEvents, selectedEventId]
-    );
-
-    const eventRooms = useMemo(
-        () => (
+    const eventRooms = useMemo(() => {
+        return (
             <Box mt={4} w="100%">
-                {sortedEvents.map((x) =>
-                    isEventNow(x) ? (
-                        <Box key={x.id} mt={2} w="100%">
-                            {makeEventEl(x, "Happening now")}
-                        </Box>
-                    ) : isEventSoon(x) ? (
-                        <Box key={x.id} mt={2} w="100%">
-                            {makeEventEl(x, "Starting soon")}
-                        </Box>
-                    ) : x.id === selectedEventId ? (
-                        <Box key={x.id} mt={2} w="100%">
-                            {makeEventEl(x, "Ended")}
-                            <Alert status="warning" mb={8}>
-                                <AlertIcon />
-                                This event has now finished. Once you close this room, you will not be able to rejoin
-                                it.
-                            </Alert>
-                        </Box>
-                    ) : undefined
-                )}
+                {activeEvents?.map((x) => (
+                    <Box key={x.id} mt={2} w="100%">
+                        <EventBackstage
+                            event={x}
+                            selectedEventId={selectedEventId}
+                            setSelectedEventId={setSelectedEventId}
+                        />
+                    </Box>
+                ))}
 
-                {sortedEvents.filter((x) => isEventNow(x) || isEventSoon(x) || selectedEventId === x.id).length ===
-                0 ? (
+                {activeEvents?.length === 0 ? (
                     <Text textAlign="center" my={8} fontSize="lg">
                         No current or upcoming events in the speakers&apos; area.
                     </Text>
                 ) : undefined}
             </Box>
-        ),
-        [isEventNow, isEventSoon, makeEventEl, selectedEventId, sortedEvents]
-    );
+        );
+    }, [activeEvents, selectedEventId]);
 
     const sharedRoomContext = useSharedRoomContext();
 
     const [isWatchStreamConfirmOpen, setIsWatchStreamConfirmOpen] = useState<boolean>(false);
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    return showBackstage ? (
-        <Box display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
+    const heading = useMemo(
+        () => (
             <Heading as="h3" size="lg">
                 {roomName}: Speakers&apos; Areas
             </Heading>
+        ),
+        [roomName]
+    );
+
+    const welcomeAlert = useMemo(
+        () => (
             <Alert status="info" my={4}>
                 <AlertIcon />
                 <Box flex="1">
@@ -212,8 +237,13 @@ export function RoomBackstage({
                     </AlertDescription>
                 </Box>
             </Alert>
-            {eventRooms}
-            {!selectedEventId && sharedRoomContext ? (
+        ),
+        [roomName]
+    );
+
+    const blankRoom = useMemo(
+        () =>
+            !selectedEventId && sharedRoomContext ? (
                 <Box display="none">
                     <portals.OutPortal
                         node={sharedRoomContext.vonagePortalNode}
@@ -224,8 +254,13 @@ export function RoomBackstage({
                         onRoomJoined={onRoomJoined}
                     />
                 </Box>
-            ) : undefined}
-            {!selectedEventId ? (
+            ) : undefined,
+        [onRoomJoined, selectedEventId, sharedRoomContext]
+    );
+
+    const streamAccess = useMemo(
+        () =>
+            !selectedEventId ? (
                 currentRoomEventId || nextRoomEventId ? (
                     <>
                         <Button
@@ -280,9 +315,23 @@ export function RoomBackstage({
                         Live stream ended
                     </Button>
                 )
-            ) : undefined}
-        </Box>
-    ) : (
-        <></>
+            ) : undefined,
+        [currentRoomEventId, isWatchStreamConfirmOpen, nextRoomEventId, selectedEventId, setWatchStreamForEventId]
+    );
+
+    return useMemo(
+        () =>
+            showBackstage ? (
+                <Box display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
+                    {heading}
+                    {welcomeAlert}
+                    {eventRooms}
+                    {blankRoom}
+                    {streamAccess}
+                </Box>
+            ) : (
+                <></>
+            ),
+        [backgroundColour, blankRoom, eventRooms, heading, showBackstage, streamAccess, welcomeAlert]
     );
 }

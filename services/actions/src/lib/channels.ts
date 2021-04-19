@@ -589,9 +589,6 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
     );
 
     console.log("Updating channel schedule", { roomId, mediaLiveChannelId: channel.mediaLiveChannelId });
-    newScheduleActions.forEach((value, index) => {
-        console.log(`Action ${index}: ${JSON.stringify(value)}`);
-    });
     await MediaLive.batchUpdateSchedule({
         // todo
         ChannelId: channel.mediaLiveChannelId,

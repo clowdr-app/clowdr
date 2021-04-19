@@ -177,6 +177,7 @@ export function RoomBackstage({
         );
         setActiveEvents((oldActiveEvents) =>
             !oldActiveEvents ||
+            oldActiveEvents.length !== newActiveEvents.length ||
             newActiveEvents.some((x, idx) => idx >= oldActiveEvents.length || oldActiveEvents[idx].id !== x.id)
                 ? newActiveEvents
                 : oldActiveEvents

@@ -157,17 +157,30 @@ function Room({
         },
     });
 
-    const [cachedRoomEvents, setCachedRoomEvents] = useState<readonly Room_EventSummaryFragment[]>([]);
+    const [cachedRoomEvents, setCachedRoomEvents] = useState<readonly Room_EventSummaryFragment[] | null>(null);
     useEffect(() => {
         if (data?.Event) {
-            setCachedRoomEvents(data?.Event);
+            setCachedRoomEvents(data.Event);
         }
     }, [data?.Event]);
 
-    return loadingEvents && !data ? (
-        <Spinner label="Loading events" />
-    ) : (
-        <RoomInner roomDetails={roomDetails} roomEvents={cachedRoomEvents} defaultVideoBackend={defaultVideoBackend} />
+    const roomInner = useMemo(
+        () =>
+            cachedRoomEvents !== null ? (
+                <RoomInner
+                    roomDetails={roomDetails}
+                    roomEvents={cachedRoomEvents}
+                    defaultVideoBackend={defaultVideoBackend}
+                />
+            ) : undefined,
+        [cachedRoomEvents, defaultVideoBackend, roomDetails]
+    );
+
+    return (
+        <>
+            {roomInner}
+            {loadingEvents && cachedRoomEvents === null ? <Spinner label="Loading events" /> : undefined}
+        </>
     );
 }
 

@@ -234,15 +234,15 @@ async function attemptToMatchEntry_FCFS(
     activeRooms: ShuffleRoomAllocationInfo[],
     allocateNewRooms: boolean
 ): Promise<boolean> {
+    const now = Date.now();
+
     // 1. Attempt to find an existing room to allocate them to
     for (const room of activeRooms) {
         const duration = room.durationMinutes * 60 * 1000;
         const startedAt = Date.parse(room.startedAt);
         const endsAt = startedAt + duration;
-        const now = Date.now();
         const timeRemaining = endsAt - now;
         if (timeRemaining > 0.5 * duration) {
-            // Add one because we allow space for the organiser to be in every room
             if (
                 room.peopleAttendeeIds.length < activePeriod.targetAttendeesPerRoom &&
                 !room.peopleAttendeeIds.some((x) => x === entry.attendeeId)
@@ -254,7 +254,7 @@ async function attemptToMatchEntry_FCFS(
     }
 
     // 2. Attempt to find other unallocated entries to match with
-    if (allocateNewRooms && unallocatedQueueEntries.size > 1) {
+    if (allocateNewRooms) {
         // Take as many as possible to group them all together right away
         // (minus one to allow space for the entry we are processing!)
         //    * Sorted by id so oldest entries come first
@@ -262,36 +262,35 @@ async function attemptToMatchEntry_FCFS(
             .sort((x, y) => x.id - y.id)
             .filter((x) => x.id !== entry.id)
             .splice(0, activePeriod.targetAttendeesPerRoom - 1);
-        const now = Date.now();
-        const roomDuration = activePeriod.roomDurationMinutes * 60 * 1000;
-        const periodEndsAt = Date.parse(activePeriod.endAt);
-        const timeRemaining = periodEndsAt - (now + roomDuration);
-        const reshuffleUponEnd = timeRemaining > 60 * 1000;
-        activeRooms.push(
-            await allocateToNewRoom(
-                activePeriod.id,
-                activePeriod.maxAttendeesPerRoom + 1,
-                activePeriod.name + " room " + new Date().toISOString(),
-                activePeriod.conferenceId,
-                activePeriod.roomDurationMinutes,
-                reshuffleUponEnd,
-                [...entriesToAllocate, entry],
-                unallocatedQueueEntries
-            )
-        );
-        return true;
+        if (entriesToAllocate.length > 0) {
+            const roomDuration = activePeriod.roomDurationMinutes * 60 * 1000;
+            const periodEndsAt = Date.parse(activePeriod.endAt);
+            const timeRemaining = periodEndsAt - (now + roomDuration);
+            const reshuffleUponEnd = timeRemaining > 60 * 1000;
+            activeRooms.push(
+                await allocateToNewRoom(
+                    activePeriod.id,
+                    activePeriod.maxAttendeesPerRoom + 1,
+                    activePeriod.name + " room " + new Date().toISOString(),
+                    activePeriod.conferenceId,
+                    activePeriod.roomDurationMinutes,
+                    reshuffleUponEnd,
+                    [...entriesToAllocate, entry],
+                    unallocatedQueueEntries
+                )
+            );
+            return true;
+        }
     }
 
     // 3. If waiting longer than max period, attempt to find overflow space
     const enteredAt = Date.parse(entry.created_at);
     const expiresAt = enteredAt + activePeriod.waitRoomMaxDurationSeconds * 1000;
-    const now = Date.now();
     if (expiresAt < now) {
         for (const room of activeRooms) {
             const duration = room.durationMinutes * 60 * 1000;
             const startedAt = Date.parse(room.startedAt);
             const endsAt = startedAt + duration;
-            const now = Date.now();
             const timeRemaining = endsAt - now;
             if (timeRemaining > 0.3 * duration) {
                 if (

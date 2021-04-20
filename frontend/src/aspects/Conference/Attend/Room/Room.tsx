@@ -16,6 +16,8 @@ import {
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import { formatRelative } from "date-fns";
+import type Hls from "hls.js";
+import type { HlsConfig } from "hls.js";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
@@ -127,7 +129,9 @@ export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomD
     });
 
     useEffect(() => {
-        refetchDefaultVideoRoomBackend().catch((e) => console.error("Could not refetch default video room backend", e));
+        refetchDefaultVideoRoomBackend()?.catch((e) =>
+            console.error("Could not refetch default video room backend", e)
+        );
     }, [refetchDefaultVideoRoomBackend, roomDetails.id]);
 
     const defaultVideoBackend: "CHIME" | "VONAGE" | undefined = defaultvideoRoomBackendLoading
@@ -369,51 +373,57 @@ function RoomInner({
     const muteStream = showBackstage;
     const playerRef = useRef<ReactPlayer | null>(null);
     const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
-    const playerEl = useMemo(
-        () =>
-            hlsUri && withinThreeMinutesOfBroadcastEvent ? (
-                <Box display={showBackstage ? "none" : "block"}>
-                    <ReactPlayer
-                        width="100%"
-                        height="auto"
-                        url={hlsUri}
-                        config={{
-                            file: {
-                                hlsVersion: "1.0.0",
-                                hlsOptions: {
-                                    subtitleDisplay: false,
-                                },
-                            },
-                        }}
-                        ref={playerRef}
-                        playing={
-                            (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) &&
-                            !showBackstage &&
-                            intendPlayStream
-                        }
-                        muted={muteStream}
-                        controls={true}
-                        onEnded={() => {
-                            setIsPlaying(false);
-                        }}
-                        onError={() => {
-                            setIsPlaying(false);
-                        }}
-                        onPause={() => {
-                            setIsPlaying(false);
-                            setIntendPlayStream(false);
-                        }}
-                        onPlay={() => {
-                            setIsPlaying(true);
-                            setIntendPlayStream(true);
-                        }}
-                    />
-                </Box>
-            ) : (
-                <></>
-            ),
-        [hlsUri, withinThreeMinutesOfBroadcastEvent, showBackstage, currentRoomEvent, intendPlayStream, muteStream]
-    );
+    const playerEl = useMemo(() => {
+        const hlsOptions: Partial<HlsConfig> = {
+            liveSyncDurationCount: 5,
+            enableCEA708Captions: false,
+            enableWebVTT: true,
+        };
+        return hlsUri && withinThreeMinutesOfBroadcastEvent ? (
+            <Box display={showBackstage ? "none" : "block"}>
+                <ReactPlayer
+                    width="100%"
+                    height="auto"
+                    url={hlsUri}
+                    config={{
+                        file: {
+                            hlsVersion: "1.0.1",
+                            hlsOptions,
+                        },
+                    }}
+                    ref={playerRef}
+                    playing={
+                        (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) && !showBackstage && intendPlayStream
+                    }
+                    muted={muteStream}
+                    controls={true}
+                    onEnded={() => {
+                        setIsPlaying(false);
+                    }}
+                    onError={() => {
+                        setIsPlaying(false);
+                    }}
+                    onPause={() => {
+                        setIsPlaying(false);
+                        setIntendPlayStream(false);
+                    }}
+                    onPlay={() => {
+                        setIsPlaying(true);
+                        setIntendPlayStream(true);
+                    }}
+                />
+            </Box>
+        ) : (
+            <></>
+        );
+    }, [hlsUri, withinThreeMinutesOfBroadcastEvent, showBackstage, currentRoomEvent, intendPlayStream, muteStream]);
+
+    useEffect(() => {
+        if (playerRef.current) {
+            const hls: Hls = playerRef.current.getInternalPlayer("hls") as Hls;
+            hls.subtitleDisplay = false;
+        }
+    }, []);
 
     const breakoutRoomEl = useMemo(() => {
         // console.log("default video backend", defaultVideoBackend, roomDetails.videoRoomBackendName);

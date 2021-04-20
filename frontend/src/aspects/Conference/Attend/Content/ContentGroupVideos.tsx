@@ -3,8 +3,9 @@ import { assertIsContentItemDataBlob, VideoContentBlob } from "@clowdr-app/share
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
 import AmazonS3URI from "amazon-s3-uri";
 import type Hls from "hls.js";
+import type { HlsConfig } from "hls.js";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAsync } from "react-async-hook";
 import ReactPlayer, { Config } from "react-player";
 import type { TrackProps } from "react-player/file";
@@ -162,15 +163,15 @@ export function ContentGroupVideo({
             default: false,
             label: "English",
         };
+        const hlsOptions: Partial<HlsConfig> = {
+            maxBufferLength: 0.05,
+            maxBufferSize: 500,
+        };
         return {
             file: {
                 tracks: [track],
-                hlsVersion: "1.0.0",
-                hlsOptions: {
-                    subtitleDisplay: false,
-                    maxBufferLength: 0.05,
-                    maxBufferSize: 500,
-                },
+                hlsVersion: "1.0.1",
+                hlsOptions,
             },
         };
     }, [error, loading, subtitlesUrl]);
@@ -214,6 +215,13 @@ export function ContentGroupVideo({
             />
         );
     }, [onPause, onPlay, previewTranscodeUrl, config]);
+
+    useEffect(() => {
+        if (playerRef.current) {
+            const hls: Hls = playerRef.current.getInternalPlayer("hls") as Hls;
+            hls.subtitleDisplay = false;
+        }
+    }, []);
 
     return (
         <>

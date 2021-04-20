@@ -1,6 +1,8 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AttendeeDataFragment, useAttendeesByIdQuery, useAttendeesByUserIdQuery } from "../../generated/graphql";
+import usePolling from "../Generic/usePolling";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useConference } from "./useConference";
 
 gql`
@@ -64,36 +66,57 @@ export function useAttendee(id: AttendeeIdSpec | null | undefined): AttendeeData
 }
 
 export function useAttendees(ids: AttendeeIdSpec[]): AttendeeDataFragment[] {
-    const [attendees, setAttendees] = useState<AttendeeDataFragment[]>([]);
     const attendeesCtx = useAttendeesContext();
 
+    const _attendees = useRef<{
+        updatedAt: number;
+        data: AttendeeDataFragment[];
+    }>({
+        updatedAt: 0,
+        data: [],
+    });
+
     useEffect(() => {
-        const subs: { id: number; attendee?: AttendeeDataFragment | undefined }[] = [];
+        const subs: number[] = [];
         const result: AttendeeDataFragment[] = [];
         for (const id of ids) {
             const sub = attendeesCtx.subscribe(id, (attendee, subId) => {
-                setAttendees((old) => {
-                    if (old?.some((x) => x.id === attendee.id)) {
-                        return old.map((x) => (x.id === attendee.id ? attendee : x));
-                    } else if (old) {
-                        return [...old, attendee];
-                    }
-                    return [attendee];
-                });
                 attendeesCtx.unsubscribe(subId);
+
+                _attendees.current.updatedAt = Date.now();
+                const old = _attendees.current.data;
+                if (old?.some((x) => x.id === attendee.id)) {
+                    _attendees.current.data = old.map((x) => (x.id === attendee.id ? attendee : x));
+                } else if (old) {
+                    _attendees.current.data = [...old, attendee];
+                } else {
+                    _attendees.current.data = [attendee];
+                }
             });
-            subs.push(sub);
+            subs.push(sub.id);
             if (sub.attendee) {
                 result.push(sub.attendee);
             }
         }
-        setAttendees(result);
+
+        _attendees.current.updatedAt = Date.now();
+        _attendees.current.data = result;
+
         return () => {
             for (const sub of subs) {
-                attendeesCtx.unsubscribe(sub.id);
+                attendeesCtx.unsubscribe(sub);
             }
         };
     }, [attendeesCtx, ids]);
+
+    const [attendees, setAttendees] = useState<AttendeeDataFragment[]>([]);
+    const lastAppliedUpdate = useRef<number>(0);
+    const refresh = useCallback(() => {
+        if (_attendees.current.updatedAt !== lastAppliedUpdate.current) {
+            setAttendees(_attendees.current.data);
+        }
+    }, []);
+    usePolling(refresh, 2000, true);
 
     return attendees;
 }
@@ -117,6 +140,7 @@ export default function AttendeesContextProvider({
     const fullRefetchInterval = 60 * 60 * 1000; // 1 hour
     const [checkInterval, setCheckInterval] = useState<number>(1000);
     const conference = useConference();
+    const currentUser = useMaybeCurrentUser();
     const attendeesByIdQ = useAttendeesByIdQuery({
         skip: true,
     });
@@ -153,6 +177,14 @@ export default function AttendeesContextProvider({
     }, []);
 
     useEffect(() => {
+        usersToAttendeeIds.current = new Map();
+    }, [conference.id]);
+
+    useEffect(() => {
+        if (!currentUser.user) {
+            return;
+        }
+
         const tId = setInterval(async () => {
             const requiredAttendee_Ids = new Set<string>();
             const requiredAttendee_SubIds = new Set<number>();
@@ -238,11 +270,14 @@ export default function AttendeesContextProvider({
                     }
                 }
             } catch (e) {
-                console.error("Could not fetch attendees for chat!", e);
+                console.error("Could not fetch attendees!", e);
+                setCheckInterval(60000);
             }
 
             subscriptions.current.forEach((sub, key) => {
                 if (sub.lastNotifiedAt < now - fullRefetchInterval) {
+                    sub.lastNotifiedAt = now;
+
                     if ("attendee" in sub.id) {
                         const attendee = attendees.current.get(sub.id.attendee);
                         if (attendee) {
@@ -261,12 +296,14 @@ export default function AttendeesContextProvider({
             const limit = 3000;
             if (checkInterval < limit) {
                 setCheckInterval((old) => Math.min(old * 1.5, limit));
+            } else if (checkInterval > limit * 1.5) {
+                setCheckInterval(limit);
             }
         }, checkInterval);
         return () => {
             clearInterval(tId);
         };
-    }, [attendeesByIdQ, attendeesByUserIdQ, checkInterval, conference.id, fullRefetchInterval]);
+    }, [attendeesByIdQ, attendeesByUserIdQ, checkInterval, conference.id, fullRefetchInterval, currentUser]);
 
     const ctx = useMemo(
         () => ({

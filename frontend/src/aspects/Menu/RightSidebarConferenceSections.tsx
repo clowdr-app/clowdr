@@ -831,6 +831,9 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
 
     return (
         <>
+            <Text fontStyle="italic" fontSize="sm" mb={2}>
+                {sortedAttendees.length} users with at least one tab open on this page.
+            </Text>
             <AttendeesList
                 searchedAttendees={sortedAttendees as Attendee[]}
                 action={(attendeeId) => {
@@ -840,16 +843,10 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
                     }
                 }}
             />
+            {sortedAttendees.length !== userIds.length ? <Spinner size="xs" label="Loading users" /> : undefined}
             <ProfileModal isOpen={isOpen} onClose={onClose} attendee={selectedAttendee} />
         </>
     );
-    // return (
-    //     <UnorderedList fontSize="sm">
-    //         {sortedAttendees.map((attendee) => (
-    //             <ListItem key={attendee.id}>{attendee.displayName}</ListItem>
-    //         ))}
-    //     </UnorderedList>
-    // );
 }
 
 function ParticipantListItem({ attendeeId }: { attendeeId: string }): JSX.Element {
@@ -917,9 +914,6 @@ function PresencePanel_WithConnectedParticipants({ roomId }: { roomId: string })
             <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
                 Here with you
             </Heading>
-            <Text fontStyle="italic" fontSize="sm" mb={2}>
-                Users with at least one tab open on this page.
-            </Text>
             <PresencePanel_WithoutConnectedParticipants />
         </>
     );

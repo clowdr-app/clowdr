@@ -41,7 +41,11 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
         () =>
             R.sortWith(
                 [
-                    R.descend((room) => !roomParticipants || !!roomParticipants?.find((p) => p.roomId === room.id)),
+                    R.descend((room) =>
+                        !roomParticipants
+                            ? Number.NEGATIVE_INFINITY
+                            : roomParticipants.filter((p) => p.roomId === room.id).length
+                    ),
                     R.ascend((room) => room.priority),
                     R.ascend((room) => room.name),
                 ],

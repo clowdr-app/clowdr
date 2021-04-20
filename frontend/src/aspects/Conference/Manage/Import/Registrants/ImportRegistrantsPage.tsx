@@ -37,7 +37,7 @@ $.{
  } 
 `;
 
-export default function ImportPeoplePage(): JSX.Element {
+export default function ImportRegistrantsPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Import registrants to ${conference.shortName}`);
 
@@ -78,7 +78,7 @@ export default function ImportPeoplePage(): JSX.Element {
                 <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                     Import Registrants
                 </Heading>
-                <LinkButton to={`/conference/${conference.slug}/manage/people`} colorScheme="red">
+                <LinkButton to={`/conference/${conference.slug}/manage/registrants`} colorScheme="red">
                     Go to Manage Registrants
                 </LinkButton>
                 <Tabs defaultIndex={0} w="100%" mt={4}>

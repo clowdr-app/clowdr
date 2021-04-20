@@ -106,7 +106,7 @@ export function LiveIndicator({
                             >
                                 <Text>You are off-air</Text>
                             </Badge>
-                            {secondsUntilLive < 1000 ? (
+                            {secondsUntilLive < 1200 ? (
                                 <Stat
                                     fontSize="md"
                                     ml="auto"

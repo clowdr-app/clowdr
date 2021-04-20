@@ -44,8 +44,6 @@ export default function EmojiPickerProvider({
             {children}
             <Portal>
                 <Modal
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore -- Manually set this to a value that will stop Chakra animating it
                     motionPreset="none"
                     blockScrollOnMount={true}
                     isCentered
@@ -55,7 +53,7 @@ export default function EmojiPickerProvider({
                     size="sm"
                 >
                     <ModalOverlay animate="none" />
-                    <ModalContent aria-label="Pick an emoji" w="auto" maxW="auto" maxWidth="auto">
+                    <ModalContent animation="none" aria-label="Pick an emoji" w="auto" maxW="auto" maxWidth="auto">
                         <ModalBody p={0}>
                             <OutPortal node={emojiMart.portalNode} />
                         </ModalBody>

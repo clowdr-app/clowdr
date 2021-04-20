@@ -6369,6 +6369,7 @@
       columns:
       - capacity
       - name
+      - originatingContentGroupId
       - originatingDataId
       - priority
       - roomPrivacyName

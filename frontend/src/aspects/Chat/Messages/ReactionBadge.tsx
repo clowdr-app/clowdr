@@ -7,9 +7,15 @@ import { useAttendees } from "../../Conference/AttendeesContext";
 export default function ReactionBadge({
     reaction,
     senderIds,
+    currentAttendeeId,
     onClick,
     ...rest
-}: { reaction: string; senderIds: string[]; onClick?: () => void } & BadgeProps): JSX.Element {
+}: {
+    reaction: string;
+    senderIds: string[];
+    onClick?: () => void;
+    currentAttendeeId?: string;
+} & BadgeProps): JSX.Element {
     const color = useColorModeValue("gray.900", "gray.50");
     const borderColor = useColorModeValue("gray.400", "gray.500");
     const senderIdObjs = useMemo(() => senderIds.map((x) => ({ attendee: x })), [senderIds]);
@@ -19,11 +25,12 @@ export default function ReactionBadge({
             .reduce((acc, attendee) => acc + ", " + attendee.displayName, "")
             .slice(2);
     }, [attendees]);
+    const grey = useColorModeValue("gray.300", "gray.500");
     return (
         <Tooltip label={names} fontSize="xs" whiteSpace="normal" overflow="auto">
             <Badge
                 color={color}
-                backgroundColor="none"
+                backgroundColor={currentAttendeeId && senderIds.includes(currentAttendeeId) ? grey : "none"}
                 border="1px solid"
                 borderColor={borderColor}
                 variant="subtle"
@@ -44,7 +51,8 @@ export default function ReactionBadge({
                 tabIndex={onClick ? 0 : undefined}
                 userSelect="none"
                 _hover={{
-                    backgroundColor: "gray.400",
+                    backgroundColor:
+                        currentAttendeeId && senderIds.includes(currentAttendeeId) ? "red.400" : "green.400",
                 }}
                 _focus={
                     onClick
@@ -53,7 +61,8 @@ export default function ReactionBadge({
                               outlineStyle: "solid",
                               outlineOffset: "0 0 0",
                               outlineColor: "focus.400",
-                              backgroundColor: "gray.400",
+                              backgroundColor:
+                                  currentAttendeeId && senderIds.includes(currentAttendeeId) ? "red.400" : "green.400",
                           } as any)
                         : undefined
                 }

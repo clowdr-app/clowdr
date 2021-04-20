@@ -242,7 +242,7 @@ export default function ImportPanel({
                     Import
                 </Button>
                 <LinkButton
-                    to={`/conference/${conference.slug}/manage/people`}
+                    to={`/conference/${conference.slug}/manage/registrants`}
                     colorScheme="red"
                     isDisabled={!!finalData?.length && (!hasImported || importLoading)}
                 >

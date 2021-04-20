@@ -633,7 +633,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton colorScheme="green" to={`/conference/${conference.slug}/manage/import/people`}>
+                        <LinkButton colorScheme="green" to={`/conference/${conference.slug}/manage/import/registrants`}>
                             Import
                         </LinkButton>
                     );

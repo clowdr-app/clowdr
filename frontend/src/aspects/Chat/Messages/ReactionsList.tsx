@@ -50,10 +50,9 @@ function ReactionsListInner({
     message: MessageState;
     reactions: readonly ChatReactionDataFragment[];
 } & BoxProps): JSX.Element {
-    const reactionsGrouped: Array<[
-        string,
-        { senderIds: string[]; attendeeSentThisReactionSId: string | false }
-    ]> = useMemo(() => {
+    const reactionsGrouped: Array<
+        [string, { senderIds: string[]; attendeeSentThisReactionSId: string | false }]
+    > = useMemo(() => {
         return R.sortWith(
             [(x, y) => y[1].senderIds.length - x[1].senderIds.length, (x, y) => x[0].localeCompare(y[0])],
             [
@@ -90,6 +89,7 @@ function ReactionsListInner({
                     key={`reaction-${reaction}`}
                     reaction={reaction}
                     senderIds={info.senderIds}
+                    currentAttendeeId={currentAttendeeId}
                     onClick={async () => {
                         if (info.attendeeSentThisReactionSId) {
                             await message.deleteReaction(info.attendeeSentThisReactionSId);

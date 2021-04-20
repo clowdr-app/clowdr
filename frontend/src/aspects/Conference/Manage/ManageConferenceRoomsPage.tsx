@@ -8,6 +8,7 @@ import {
     Box,
     Button,
     ButtonGroup,
+    Center,
     Code,
     Drawer,
     DrawerBody,
@@ -45,6 +46,7 @@ import {
     useCreateRoomMutation,
     useDeleteRoomsMutation,
     useInsertRoomPeopleMutation,
+    useManageRooms_SelectContentGroupsQuery,
     useManageRooms_SelectGroupAttendeesQuery,
     useManageRooms_SelectGroupsQuery,
     useManageRooms_SelectRoomPeopleQuery,
@@ -52,11 +54,17 @@ import {
     useUpdateRoomsWithParticipantsMutation,
 } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
-import { NumberRangeColumnFilter, SelectColumnFilter, TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
+import {
+    CheckBoxColumnFilter,
+    NumberRangeColumnFilter,
+    SelectColumnFilter,
+    TextColumnFilter,
+} from "../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
+    DeepWriteable,
     RowSpecification,
     SortDirection,
 } from "../../CRUDTable2/CRUDTable2";
@@ -90,6 +98,7 @@ gql`
         originatingEventId
         originatingContentGroupId
         roomPrivacyName
+        isProgramRoom
         participants {
             ...RoomParticipantWithAttendeeInfo
         }
@@ -108,6 +117,13 @@ gql`
         Group(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+        }
+    }
+
+    query ManageRooms_SelectContentGroups($conferenceId: uuid!) {
+        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
+            id
+            title
         }
     }
 
@@ -146,10 +162,17 @@ gql`
         $capacity: Int
         $priority: Int!
         $roomPrivacyName: RoomPrivacy_enum!
+        $originatingContentGroupId: uuid
     ) {
         update_Room_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, capacity: $capacity, priority: $priority, roomPrivacyName: $roomPrivacyName }
+            _set: {
+                name: $name
+                capacity: $capacity
+                priority: $priority
+                roomPrivacyName: $roomPrivacyName
+                originatingContentGroupId: $originatingContentGroupId
+            }
         ) {
             ...RoomWithParticipantInfo
         }
@@ -381,6 +404,12 @@ function EditableRoomsCRUDTable() {
     const [deleteRooms, deleteRoomsResponse] = useDeleteRoomsMutation();
     const [updateRoom, updateRoomResponse] = useUpdateRoomsWithParticipantsMutation();
 
+    const contentGroups = useManageRooms_SelectContentGroupsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+
     const selectAllRoomsResult = useSelectAllRoomsWithParticipantsQuery({
         variables: {
             conferenceId: conference.id,
@@ -394,6 +423,22 @@ function EditableRoomsCRUDTable() {
         onClose: onSecondaryPanelClose,
     } = useDisclosure();
     const [editingRoom, setEditingRoom] = useState<RoomWithParticipantInfoFragment | null>(null);
+
+    const contentGroupOptions = useMemo(
+        () =>
+            contentGroups.data?.ContentGroup
+                ? [...contentGroups.data.ContentGroup]
+                      .sort((x, y) => x.title.localeCompare(y.title))
+                      .map((content) => {
+                          return (
+                              <option key={content.id} value={content.id}>
+                                  {content.title}
+                              </option>
+                          );
+                      })
+                : undefined,
+        [contentGroups.data?.ContentGroup]
+    );
 
     const row: RowSpecification<RoomWithParticipantInfoFragment> = useMemo(
         () => ({
@@ -441,6 +486,37 @@ function EditableRoomsCRUDTable() {
                             ref={props.ref as LegacyRef<HTMLInputElement>}
                         />
                     );
+                },
+            },
+            {
+                id: "isProgramRoom",
+                header: function IsProgramRoomHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Button size="xs" onClick={props.onClick}>
+                                Is program room?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            </Button>
+                        );
+                    }
+                },
+                get: (data) => data.isProgramRoom,
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => row.isProgramRoom === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function InviteSentCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>, boolean>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Center>
+                                <FAIcon iconStyle="s" icon={props.value ? "check" : "times"} />
+                            </Center>
+                        );
+                    }
                 },
             },
             {
@@ -600,8 +676,66 @@ function EditableRoomsCRUDTable() {
                     }
                 },
             },
+            {
+                id: "originatingContentGroupid",
+                header: function ContentHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Associated item to discuss (optional)</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Discussion Item{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) =>
+                    contentGroups.data?.ContentGroup.find((group) => group.id === data.originatingContentGroupId),
+                set: (record, value: { id: string; title: string } | undefined) => {
+                    record.originatingContentGroupId = (value?.id as any) as DeepWriteable<any> | undefined;
+                },
+                sortType: (rowA: { id: string; title: string }, rowB: { id: string; title: string }) => {
+                    const compared = rowA && rowB ? rowA.title.localeCompare(rowB.title) : rowA ? 1 : rowB ? -1 : 0;
+                    return compared;
+                },
+                filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: string) => {
+                    return rows.filter((row) => {
+                        return (
+                            (row.originatingContentGroupId &&
+                                contentGroups.data?.ContentGroup.find(
+                                    (group) => group.id === row.originatingContentGroupId
+                                )
+                                    ?.title.toLowerCase()
+                                    .includes(filterValue.toLowerCase())) ??
+                            false
+                        );
+                    });
+                },
+                filterEl: TextColumnFilter,
+                cell: function ContentCell(
+                    props: CellProps<
+                        Partial<RoomWithParticipantInfoFragment>,
+                        { id: string; title: string } | undefined
+                    >
+                ) {
+                    return (
+                        <Select
+                            value={props.value?.id ?? ""}
+                            onChange={(ev) =>
+                                props.onChange?.(
+                                    contentGroups.data?.ContentGroup.find((group) => group.id === ev.target.value)
+                                )
+                            }
+                            onBlur={props.onBlur}
+                            ref={props.ref as LegacyRef<HTMLSelectElement>}
+                            maxW={400}
+                        >
+                            <option value={""}>{"<None selected>"}</option>
+                            {contentGroupOptions}
+                        </Select>
+                    );
+                },
+            },
         ],
-        []
+        [contentGroups, contentGroupOptions]
     );
 
     const forceReloadRef = useRef<() => void>(() => {
@@ -651,6 +785,7 @@ function EditableRoomsCRUDTable() {
                                     currentModeName: record.currentModeName,
                                     name: record.name,
                                     roomPrivacyName: record.roomPrivacyName,
+                                    originatingContentGroupId: record.originatingContentGroupId,
                                 },
                             },
                             update: (cache, { data: _data }) => {
@@ -676,6 +811,7 @@ function EditableRoomsCRUDTable() {
                                 priority: record.priority,
                                 capacity: record.capacity,
                                 roomPrivacyName: record.roomPrivacyName,
+                                originatingContentGroupId: record.originatingContentGroupId,
                             },
                             optimisticResponse: {
                                 update_Room_by_pk: record,
@@ -733,12 +869,13 @@ function EditableRoomsCRUDTable() {
                               description:
                                   insertRoomResponse.error?.message ??
                                   updateRoomResponse.error?.message ??
-                                  deleteRoomsResponse.error?.message.includes(
+                                  (deleteRoomsResponse.error?.message.includes(
                                       // eslint-disable-next-line quotes
                                       'Foreign key violation. update or delete on table "Room" violates foreign key constraint "Event_roomId_fkey" on table "Event"'
                                   )
                                       ? "Events are scheduled in this room. Please delete them before deleting this room."
-                                      : deleteRoomsResponse.error?.message ?? "Unknown error",
+                                      : deleteRoomsResponse.error?.message) ??
+                                  "Unknown error",
                           }
                         : undefined
                 }

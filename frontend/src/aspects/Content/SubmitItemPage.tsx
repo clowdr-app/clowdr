@@ -278,7 +278,10 @@ export default function SubmitItemPage({
                                                         This video will be made publicly available around the 11th of
                                                         January.
                                                     </ListItem>
-                                                    <ListItem>Maximum 30 minute video duration</ListItem>
+                                                    <ListItem>
+                                                        Your conference organisers should have sent instructions
+                                                        regarding the maximum duration of your video.
+                                                    </ListItem>
                                                     <ListItem>Maximum 1080p video quality</ListItem>
                                                 </UnorderedList>
                                             </Box>

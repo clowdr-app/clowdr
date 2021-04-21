@@ -299,7 +299,7 @@ function RoomInner({
         if (
             currentRoomEvent &&
             (currentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
-                currentRoomEvent.intendedRoomModeName === RoomMode_Enum.Q_AND_A) &&
+                currentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
             currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
             watchStreamForEventId === currentRoomEvent.id &&
             !showBackstage
@@ -319,7 +319,7 @@ function RoomInner({
         } else if (
             nextRoomEvent &&
             (nextRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
-                nextRoomEvent.intendedRoomModeName === RoomMode_Enum.Q_AND_A) &&
+                nextRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
             nextRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
             !showBackstage
         ) {
@@ -778,9 +778,9 @@ function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }
             <AlertTitle>{formatRemainingTime(timeRemaining)}</AlertTitle>
             <AlertDescription>
                 Your speaker&apos;s area for {event.name}
-                {event.contentGroup ? ": " + event.contentGroup.title : " "} will become available on this page. Please
-                wait here and you will automatically be shown the speaker&apos;area 20 minutes in advance of the live
-                period of your event.
+                {event.contentGroup ? ": " + event.contentGroup.title : " "} will become available on this page. You
+                will automatically be shown the speaker&apos;area 20 minutes in advance of the live period of your
+                event.
             </AlertDescription>
         </Alert>
     ) : (

@@ -772,15 +772,25 @@ function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }
     const now = useRealTime(1000);
     const timeRemaining = (startTime - now - 20 * 60 * 1000) / 1000;
 
+    const title = useMemo(() => {
+        if (event.contentGroup) {
+            if (event.contentGroup.title.toLowerCase().includes(event.name.toLowerCase())) {
+                return event.contentGroup.title;
+            } else {
+                return event.name + ": " + event.contentGroup.title;
+            }
+        } else {
+            return event.name;
+        }
+    }, [event.contentGroup, event.name]);
+
     return timeRemaining > 0 ? (
         <Alert status="info" alignItems="flex-start">
             <AlertIcon />
             <AlertTitle>{formatRemainingTime(timeRemaining)}</AlertTitle>
             <AlertDescription>
-                Your speaker&apos;s area for {event.name}
-                {event.contentGroup ? ": " + event.contentGroup.title : " "} will become available on this page. You
-                will automatically be shown the speaker&apos;area 20 minutes in advance of the live period of your
-                event.
+                Your speakers&apos; area for {title} will become available on this page. You will automatically be shown
+                the speakers&apos; area 20 minutes in advance of the live period of your event.
             </AlertDescription>
         </Alert>
     ) : (

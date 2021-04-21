@@ -321,6 +321,7 @@ function RoomInner({
             (nextRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
                 nextRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
             nextRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
+            Date.parse(nextRoomEvent.startTime) - Date.now() < 20 * 60 * 1000 &&
             !showBackstage
         ) {
             toast({
@@ -787,11 +788,13 @@ function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }
     return timeRemaining > 0 ? (
         <Alert status="info" alignItems="flex-start">
             <AlertIcon />
-            <AlertTitle>{formatRemainingTime(timeRemaining)}</AlertTitle>
-            <AlertDescription>
-                Your speakers&apos; area for {title} will become available on this page. You will automatically be shown
-                the speakers&apos; area 20 minutes in advance of the live period of your event.
-            </AlertDescription>
+            <VStack alignItems="start">
+                <AlertTitle>{formatRemainingTime(timeRemaining)} until your backstage is available</AlertTitle>
+                <AlertDescription>
+                    Your speakers&apos; area for {title} will become available on this page. You will automatically be
+                    shown the speakers&apos; area 20 minutes in advance of the live period of your event.
+                </AlertDescription>
+            </VStack>
         </Alert>
     ) : (
         <></>

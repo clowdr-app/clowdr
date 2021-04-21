@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { ContentBaseType, ContentItemDataBlob, ContentType_Enum } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
+import { formatRFC7231 } from "date-fns";
 import {
     CreateMediaPackageHarvestJobDocument,
     FailMediaPackageHarvestJobDocument,
@@ -200,6 +201,7 @@ export async function completeMediaPackageHarvestJob(
     ];
 
     console.log("Completing MediaPackage harvest job", job.event.id, job.id);
+    const startTime = formatRFC7231(Date.parse(job.event.startTime));
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -210,7 +212,7 @@ export async function completeMediaPackageHarvestJob(
                     conferenceId: job.conferenceId,
                     contentGroupId: job.event.contentGroup?.id,
                     data,
-                    name: `Recording: ${job.event.contentGroup?.title} (${job.event.name} ${job.event.startTime})`,
+                    name: `Recording of ${job.event.name} from ${startTime}`,
                 },
             })
     );

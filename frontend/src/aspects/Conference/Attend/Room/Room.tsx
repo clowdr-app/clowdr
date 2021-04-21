@@ -1,7 +1,9 @@
 import { gql } from "@apollo/client";
 import {
     Alert,
+    AlertDescription,
     AlertIcon,
+    AlertTitle,
     Box,
     Button,
     Center,
@@ -40,6 +42,7 @@ import useCurrentAttendee from "../../useCurrentAttendee";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutChimeRoom } from "./BreakoutChimeRoom";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
+import { formatRemainingTime } from "./Event/LiveIndicator";
 import { RoomBackstage } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
 import { RoomTitle } from "./RoomTitle";
@@ -150,7 +153,7 @@ function Room({
 }): JSX.Element {
     const now2m = useRealTime(120000);
     const now2mStr = useMemo(() => new Date(now2m).toISOString(), [now2m]);
-    const now2mCutoffStr = useMemo(() => new Date(now2m + 40 * 60 * 1000).toISOString(), [now2m]);
+    const now2mCutoffStr = useMemo(() => new Date(now2m + 60 * 60 * 1000).toISOString(), [now2m]);
 
     const { loading: loadingEvents, data } = useRoom_GetEventsQuery({
         fetchPolicy: "cache-and-network",
@@ -205,6 +208,7 @@ function RoomInner({
     const {
         currentRoomEvent,
         nextRoomEvent,
+        nonCurrentLiveEvents,
         nonCurrentLiveEventsInNext20Mins,
         withinThreeMinutesOfBroadcastEvent,
         secondsUntilBroadcastEvent,
@@ -220,18 +224,26 @@ function RoomInner({
         return finalUri.toString();
     }, [roomDetails.mediaLiveChannel]);
 
+    const isPresenterOfUpcomingEvent = useMemo(
+        () =>
+            nonCurrentLiveEvents?.find((event) =>
+                event?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
+            ) ?? false,
+        [currentAttendee.id, nonCurrentLiveEvents]
+    );
+
     const presentingCurrentOrUpcomingSoonEvent = useMemo(() => {
         const isPresenterOfCurrentEvent =
             currentRoomEvent !== null &&
             (currentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
                 currentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
             currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
-        const isPresenterOfUpcomingSoonEvent =
-            nonCurrentLiveEventsInNext20Mins !== null &&
-            nonCurrentLiveEventsInNext20Mins.some((event) =>
-                event?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
-            );
-        return isPresenterOfCurrentEvent || isPresenterOfUpcomingSoonEvent;
+
+        const isPresenterOfUpcomingSoonEvent = !!nonCurrentLiveEventsInNext20Mins?.some((event) =>
+            event?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
+        );
+
+        return isPresenterOfCurrentEvent || !!isPresenterOfUpcomingSoonEvent;
     }, [currentAttendee.id, currentRoomEvent, nonCurrentLiveEventsInNext20Mins]);
 
     const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
@@ -284,21 +296,10 @@ function RoomInner({
     }, [currentRoomEvent, nextRoomEvent, now30s]);
 
     useEffect(() => {
-        if (showBackstage) {
-            toast({
-                status: "info",
-                position: "top",
-                isClosable: true,
-                title: "You have been taken to the speakers' area",
-                description: "You are a presenter of a current or upcoming event",
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [showBackstage]);
-
-    useEffect(() => {
         if (
             currentRoomEvent &&
+            (currentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
+                currentRoomEvent.intendedRoomModeName === RoomMode_Enum.Q_AND_A) &&
             currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
             watchStreamForEventId === currentRoomEvent.id &&
             !showBackstage
@@ -317,6 +318,8 @@ function RoomInner({
             });
         } else if (
             nextRoomEvent &&
+            (nextRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
+                nextRoomEvent.intendedRoomModeName === RoomMode_Enum.Q_AND_A) &&
             nextRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
             !showBackstage
         ) {
@@ -637,6 +640,9 @@ function RoomInner({
                     <></>
                 )}
 
+                {isPresenterOfUpcomingEvent ? (
+                    <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
+                ) : undefined}
                 {showBackstage ? backStageEl : playerEl}
 
                 {showDefaultBreakoutRoom ? (
@@ -758,5 +764,26 @@ function RoomContent({
                 <></>
             )}
         </Box>
+    );
+}
+
+function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }): JSX.Element {
+    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
+    const now = useRealTime(1000);
+    const timeRemaining = (startTime - now - 20 * 60 * 1000) / 1000;
+
+    return timeRemaining > 0 ? (
+        <Alert status="info" alignItems="flex-start">
+            <AlertIcon />
+            <AlertTitle>{formatRemainingTime(timeRemaining)}</AlertTitle>
+            <AlertDescription>
+                Your speaker&apos;s area for {event.name}
+                {event.contentGroup ? ": " + event.contentGroup.title : " "} will become available on this page. Please
+                wait here and you will automatically be shown the speaker&apos;area 20 minutes in advance of the live
+                period of your event.
+            </AlertDescription>
+        </Alert>
+    ) : (
+        <></>
     );
 }

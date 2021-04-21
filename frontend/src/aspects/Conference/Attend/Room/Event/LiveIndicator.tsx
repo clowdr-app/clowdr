@@ -18,7 +18,7 @@ import React from "react";
 import { roundDownToNearest } from "../../../../Generic/MathUtils";
 import { FAIcon } from "../../../../Icons/FAIcon";
 
-function formatRemainingTime(seconds: number): string {
+export function formatRemainingTime(seconds: number): string {
     const NearestHoursInS = roundDownToNearest(seconds, 60 * 60);
     const IntermediateSeconds = seconds - NearestHoursInS;
     const NearestMinutesInS = roundDownToNearest(IntermediateSeconds, 60);

@@ -12,7 +12,7 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Route, Switch, useHistory } from "react-router-dom";
+import { Link as ReactLink, Route, Switch } from "react-router-dom";
 import { Permission_Enum } from "../../generated/graphql";
 import AuthenticationButton from "../Auth/Buttons/AuthenticationButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
@@ -40,8 +40,6 @@ export function MenuBar(): JSX.Element {
     const permissions = useConferenceCurrentUserActivePermissions();
     const isPermittedAccess = attendee && permissions.has(Permission_Enum.ConferenceViewAttendees);
     const mainMenu = useMainMenu();
-
-    const history = useHistory();
 
     const navButton = useMemo(() => (isPermittedAccess && !mainMenu.isLeftBarOpen ? <ToggleNavButton /> : undefined), [
         isPermittedAccess,
@@ -115,11 +113,7 @@ export function MenuBar(): JSX.Element {
                             </Route>
                             <Route exact path="/user">
                                 {user ? (
-                                    <MenuItem
-                                        onClick={() => {
-                                            history.push("/user/pushNotifications");
-                                        }}
-                                    >
+                                    <MenuItem as={ReactLink} to="/user/pushNotifications">
                                         <FAIcon
                                             display="inline"
                                             verticalAlign="middle"
@@ -139,9 +133,8 @@ export function MenuBar(): JSX.Element {
                             <Route path="/">
                                 {conference && attendee ? (
                                     <MenuItem
-                                        onClick={() => {
-                                            history.push(`/conference/${conference.slug}/profile`);
-                                        }}
+                                        as={ReactLink}
+                                        to={`/conference/${conference.slug}/profile`}
                                         display="block"
                                     >
                                         {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
@@ -188,11 +181,7 @@ export function MenuBar(): JSX.Element {
                                             Permission_Enum.ConferenceModerateAttendees,
                                         ]}
                                     >
-                                        <MenuItem
-                                            onClick={() => {
-                                                history.push(`/conference/${conference.slug}/manage`);
-                                            }}
-                                        >
+                                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage`}>
                                             <FAIcon
                                                 display="inline"
                                                 verticalAlign="middle"
@@ -206,11 +195,7 @@ export function MenuBar(): JSX.Element {
                                     </RequireAtLeastOnePermissionWrapper>
                                 ) : undefined}
                                 {user ? (
-                                    <MenuItem
-                                        onClick={() => {
-                                            history.push("/user/pushNotifications");
-                                        }}
-                                    >
+                                    <MenuItem as={ReactLink} to="/user/pushNotifications">
                                         <FAIcon
                                             display="inline"
                                             verticalAlign="middle"
@@ -225,11 +210,7 @@ export function MenuBar(): JSX.Element {
                                     </MenuItem>
                                 ) : undefined}
                                 {user && user.attendees.length > 0 ? (
-                                    <MenuItem
-                                        onClick={() => {
-                                            history.push("/user");
-                                        }}
-                                    >
+                                    <MenuItem as={ReactLink} to="/user">
                                         <FAIcon
                                             display="inline"
                                             verticalAlign="middle"
@@ -251,7 +232,7 @@ export function MenuBar(): JSX.Element {
                 </Menu>
             </>
         ),
-        [attendee, conference, history, user]
+        [attendee, conference, user]
     );
 
     const borderColour = useColorModeValue("gray.200", "gray.600");

@@ -93,6 +93,7 @@ function EventBackstage({
                     height="min-content"
                     py={4}
                     whiteSpace="normal"
+                    variant={isSelected ? "outline" : "solid"}
                 >
                     <Text fontSize="lg" whiteSpace="normal">
                         {isSelected ? "Close this area" : "Open this area"}
@@ -185,6 +186,9 @@ export function RoomBackstage({
                 : oldActiveEvents
         );
     }, [now, selectedEventId, sortedEvents]);
+    useEffect(() => {
+        setSelectedEventId((oldId) => (activeEvents?.length === 1 ? activeEvents[0].id : oldId));
+    }, [activeEvents]);
 
     const eventRooms = useMemo(() => {
         return (

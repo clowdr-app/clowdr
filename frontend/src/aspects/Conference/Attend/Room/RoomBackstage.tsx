@@ -29,16 +29,17 @@ import { RoomMode_Enum, Room_EventSummaryFragment } from "../../../../generated/
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
+import { formatRemainingTime } from "./Event/LiveIndicator";
 
 function isEventNow(now: number, event: Room_EventSummaryFragment): boolean {
-    const startTime = Date.parse(event.startTime);
+    const startTime = Date.parse(event.startTime) - 5000;
     const endTime = Date.parse(event.endTime);
     return now >= startTime && now <= endTime;
 }
 
 function isEventSoon(now: number, event: Room_EventSummaryFragment): boolean {
     const startTime = Date.parse(event.startTime);
-    return now >= startTime - 25 * 60 * 1000 && now <= startTime;
+    return now >= startTime - 20 * 60 * 1000 - 5000 && now <= startTime;
 }
 
 function EventBackstage({
@@ -335,5 +336,38 @@ export function RoomBackstage({
                 <></>
             ),
         [backgroundColour, blankRoom, eventRooms, heading, showBackstage, streamAccess, welcomeAlert]
+    );
+}
+
+export function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }): JSX.Element {
+    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
+    const now = useRealTime(1000);
+    const timeRemaining = (startTime + 5000 - now - 20 * 60 * 1000) / 1000;
+
+    const title = useMemo(() => {
+        if (event.contentGroup) {
+            if (event.contentGroup.title.toLowerCase().includes(event.name.toLowerCase())) {
+                return event.contentGroup.title;
+            } else {
+                return event.name + ": " + event.contentGroup.title;
+            }
+        } else {
+            return event.name;
+        }
+    }, [event.contentGroup, event.name]);
+
+    return timeRemaining > 0 ? (
+        <Alert status="info" alignItems="flex-start">
+            <AlertIcon />
+            <VStack alignItems="start">
+                <AlertTitle>{formatRemainingTime(timeRemaining)} until your backstage is available</AlertTitle>
+                <AlertDescription>
+                    Your speakers&apos; area for {title} will become available on this page. You will automatically be
+                    shown the speakers&apos; area 20 minutes in advance of the live period of your event.
+                </AlertDescription>
+            </VStack>
+        </Alert>
+    ) : (
+        <></>
     );
 }

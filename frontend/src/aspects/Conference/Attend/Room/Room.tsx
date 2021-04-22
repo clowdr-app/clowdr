@@ -1,9 +1,7 @@
 import { gql } from "@apollo/client";
 import {
     Alert,
-    AlertDescription,
     AlertIcon,
-    AlertTitle,
     Box,
     Button,
     Center,
@@ -42,8 +40,7 @@ import useCurrentAttendee from "../../useCurrentAttendee";
 import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
 import { BreakoutChimeRoom } from "./BreakoutChimeRoom";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
-import { formatRemainingTime } from "./Event/LiveIndicator";
-import { RoomBackstage } from "./RoomBackstage";
+import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
 import { RoomControlBar } from "./RoomControlBar";
 import { RoomTitle } from "./RoomTitle";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
@@ -641,7 +638,7 @@ function RoomInner({
                     <></>
                 )}
 
-                {isPresenterOfUpcomingEvent ? (
+                {isPresenterOfUpcomingEvent && !showBackstage ? (
                     <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
                 ) : undefined}
                 {showBackstage ? backStageEl : playerEl}
@@ -765,38 +762,5 @@ function RoomContent({
                 <></>
             )}
         </Box>
-    );
-}
-
-function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }): JSX.Element {
-    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
-    const now = useRealTime(1000);
-    const timeRemaining = (startTime - now - 20 * 60 * 1000) / 1000;
-
-    const title = useMemo(() => {
-        if (event.contentGroup) {
-            if (event.contentGroup.title.toLowerCase().includes(event.name.toLowerCase())) {
-                return event.contentGroup.title;
-            } else {
-                return event.name + ": " + event.contentGroup.title;
-            }
-        } else {
-            return event.name;
-        }
-    }, [event.contentGroup, event.name]);
-
-    return timeRemaining > 0 ? (
-        <Alert status="info" alignItems="flex-start">
-            <AlertIcon />
-            <VStack alignItems="start">
-                <AlertTitle>{formatRemainingTime(timeRemaining)} until your backstage is available</AlertTitle>
-                <AlertDescription>
-                    Your speakers&apos; area for {title} will become available on this page. You will automatically be
-                    shown the speakers&apos; area 20 minutes in advance of the live period of your event.
-                </AlertDescription>
-            </VStack>
-        </Alert>
-    ) : (
-        <></>
     );
 }

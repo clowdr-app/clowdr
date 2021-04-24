@@ -10,6 +10,8 @@ import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
 import ContentGroupPage from "./Attend/Content/ContentGroupPage";
+import HallwayPage from "./Attend/Hallway/HallwayPage";
+import HallwaysPage from "./Attend/Hallway/HallwaysPage";
 import EditProfilePage from "./Attend/Profile/EditProfilePage";
 import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RoomListPage from "./Attend/Room/RoomListPage";
@@ -138,6 +140,15 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 path={`${rootUrl}/item/:contentGroupId`}
                 component={(props: RouteComponentProps<{ contentGroupId: string }>) => (
                     <ContentGroupPage contentGroupId={props.match.params.contentGroupId} />
+                )}
+            />
+            <Route path={`${rootUrl}/hallways`}>
+                <HallwaysPage />
+            </Route>
+            <Route
+                path={`${rootUrl}/hallway/:hallwayId`}
+                component={(props: RouteComponentProps<{ hallwayId: string }>) => (
+                    <HallwayPage hallwayId={props.match.params.hallwayId} />
                 )}
             />
 

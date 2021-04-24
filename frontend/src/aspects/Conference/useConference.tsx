@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Center, Spinner, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
 import {
@@ -8,6 +8,7 @@ import {
     useConferenceBySlug_WithoutUserQuery,
     useConferenceBySlug_WithUserQuery,
 } from "../../generated/graphql";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
 import PageNotFound from "../Errors/PageNotFound";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
@@ -133,13 +134,7 @@ function ConferenceProvider_WithoutUser({
     });
 
     if (loading && !data) {
-        return (
-            <Center w="100%" h="100%">
-                <div>
-                    <Spinner />
-                </div>
-            </Center>
-        );
+        return <CenteredSpinner />;
     }
 
     if (error) {
@@ -178,13 +173,7 @@ function ConferenceProvider_WithUser({
     });
 
     if (loading && !data) {
-        return (
-            <Center w="100%" h="100%">
-                <div>
-                    <Spinner />
-                </div>
-            </Center>
-        );
+        return <CenteredSpinner />;
     }
 
     if (error) {
@@ -216,13 +205,7 @@ export default function ConferenceProvider({
     const user = useMaybeCurrentUser();
 
     if (user.loading) {
-        return (
-            <Center w="100%" h="100%">
-                <div>
-                    <Spinner />
-                </div>
-            </Center>
-        );
+        return <CenteredSpinner />;
     }
 
     if (user.user) {

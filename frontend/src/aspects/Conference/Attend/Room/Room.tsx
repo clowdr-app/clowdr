@@ -4,7 +4,6 @@ import {
     AlertIcon,
     Box,
     Button,
-    Center,
     Heading,
     HStack,
     Spinner,
@@ -32,12 +31,14 @@ import {
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
+import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
 import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
 import { ContentGroupItemsWrapper } from "../Content/ContentGroupItems";
+import { HallwayLayoutWrapper } from "../Hallway/HallwayLayout";
 import { BreakoutChimeRoom } from "./BreakoutChimeRoom";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
@@ -61,6 +62,7 @@ gql`
         endTime
         intendedRoomModeName
         contentGroupId
+        hallwayId
         contentGroup {
             id
             title
@@ -444,11 +446,7 @@ function RoomInner({
                 return <BreakoutVonageRoom room={roomDetails} />;
         }
 
-        return (
-            <Center>
-                <Spinner mt={2} mx="auto" />
-            </Center>
-        );
+        return <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} />;
     }, [defaultVideoBackend, roomDetails]);
 
     const contentEl = useMemo(
@@ -666,8 +664,8 @@ function RoomContent({
     nextRoomEvent: Room_EventSummaryFragment | null;
     roomDetails: RoomPage_RoomDetailsFragment;
 }): JSX.Element {
-    const nextBgColour = useColorModeValue("green.300", "green.600");
-    const bgColour = useColorModeValue("gray.200", "gray.700");
+    const bgColour = useColorModeValue("green.200", "green.700");
+    const nextBgColour = useColorModeValue("gray.200", "gray.700");
 
     const currentAttendee = useCurrentAttendee();
 
@@ -686,6 +684,8 @@ function RoomContent({
 
     const now5s = useRealTime(5000);
 
+    // TODO: Hallway layout if in exhibition mode, else content layout
+
     return (
         <Box flexGrow={1}>
             <RoomTitle roomDetails={roomDetails} />
@@ -703,8 +703,14 @@ function RoomContent({
                     <Heading as="h3" textAlign="left" size="lg" mb={2}>
                         {currentRoomEvent.name}
                     </Heading>
-                    {currentRoomEvent?.contentGroupId ? (
+                    {currentRoomEvent.intendedRoomModeName !== RoomMode_Enum.Exhibition &&
+                    currentRoomEvent.contentGroupId ? (
                         <ContentGroupItemsWrapper contentGroupId={currentRoomEvent.contentGroupId} linkToItem={true} />
+                    ) : (
+                        <></>
+                    )}
+                    {currentRoomEvent.hallwayId ? (
+                        <HallwayLayoutWrapper hallwayId={currentRoomEvent.hallwayId} hideLiveViewButton={true} />
                     ) : (
                         <></>
                     )}

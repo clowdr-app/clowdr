@@ -1,6 +1,7 @@
-import { Box, BoxProps, Button, Center, Flex, Heading, Spinner, useColorModeValue } from "@chakra-ui/react";
+import { Box, BoxProps, Button, Center, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import type { MessageState } from "../ChatGlobalState";
 import { Observable } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
@@ -199,9 +200,7 @@ function MessageList({
 
     const topEl = useMemo(() => {
         return isLoading ? (
-            <Center py={5} mb={1}>
-                <Spinner message="Loading messages" />
-            </Center>
+            <CenteredSpinner centerProps={{ py: 5, mb: 1 }} spinnerProps={{ label: "Loading messages" }} />
         ) : hasReachedEnd ? (
             <Heading
                 py={5}
@@ -272,11 +271,7 @@ function MessageList({
     return (
         <Box {...rest}>
             {messageElements.current === null ? (
-                <Center h="100%">
-                    <Box>
-                        <Spinner aria-label="Loading messages" />
-                    </Box>
-                </Center>
+                <CenteredSpinner spinnerProps={{ label: "Loading messages" }} />
             ) : (
                 <Flex w="100%" h="100%" overflowX="hidden" overflowY="auto" flexDir="column" justifyContent="flex-end">
                     <Flex

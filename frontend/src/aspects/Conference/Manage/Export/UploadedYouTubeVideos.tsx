@@ -62,6 +62,7 @@ export function UploadedYouTubeVideos(): JSX.Element {
                                     <Td>{upload.videoTitle}</Td>
                                     <Td>{upload.videoPrivacyStatus}</Td>
                                     <Td>
+                                        {/* TODO: Chakra AspectRatio */}
                                         <ReactPlayer
                                             url={`https://youtube.com/watch?v=${upload.videoId}`}
                                             width="300px"

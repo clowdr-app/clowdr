@@ -7,6 +7,7 @@ import {
     AlertTitle,
     Button,
     Center,
+    chakra,
     Divider,
     FormControl,
     FormHelperText,
@@ -53,6 +54,7 @@ import { Attendee, useMaybeCurrentAttendee } from "../Conference/useCurrentAtten
 import { useRestorableState } from "../Generic/useRestorableState";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
+import PageCountText from "../Realtime/PageCountText";
 import { usePresenceState } from "../Realtime/PresenceStateProvider";
 import RoomParticipantsProvider from "../Room/RoomParticipantsProvider";
 import useRoomParticipants from "../Room/useRoomParticipants";
@@ -1081,6 +1083,8 @@ function RightSidebarConferenceSections_Inner({
         [itemId, roomId]
     );
 
+    const location = useLocation();
+
     return (
         <Tabs
             variant="solid-rounded"
@@ -1102,7 +1106,10 @@ function RightSidebarConferenceSections_Inner({
                     <Tab ml={roomId ? undefined : 2}>Item{pageChatUnread !== "" ? ` (${pageChatUnread})` : ""}</Tab>
                 )}
                 <Tab ml={roomId || itemId ? undefined : 2}>Chats{chatsUnread !== "" ? ` (${chatsUnread})` : ""}</Tab>
-                <Tab mr="auto">Who&apos;s here</Tab>
+                <Tab mr="auto">
+                    <chakra.span mr={1}>Who&apos;s here</chakra.span>
+                    <PageCountText fontSize="inherit" lineHeight="inherit" path={location.pathname} noIcon={true} />
+                </Tab>
             </TabList>
 
             <TabPanels textAlign="left" display="flex" flexDir="row" flex="1" overflow="hidden">

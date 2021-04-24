@@ -1,7 +1,7 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import { Center, Spinner } from "@chakra-ui/react";
 import React from "react";
 import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router-dom";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 export default function ProtectedRoute({
@@ -26,26 +26,14 @@ export default function ProtectedRoute({
     }
 
     if (isAuthenticated && !user) {
-        return (
-            <Center w="100%" h="100%">
-                <div>
-                    <Spinner />
-                </div>
-            </Center>
-        );
+        return <CenteredSpinner />;
     }
 
     return (
         <Route
             component={withAuthenticationRequired(component, {
                 onRedirecting: function waitRedirecting() {
-                    return (
-                        <Center w="100%" h="100%">
-                            <div>
-                                <Spinner />
-                            </div>
-                        </Center>
-                    );
+                    return <CenteredSpinner />;
                 },
                 returnTo: () => {
                     return redirectTo ?? window.location.href;

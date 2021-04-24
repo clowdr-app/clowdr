@@ -1,6 +1,7 @@
-import { Heading, Link, Spinner, Text } from "@chakra-ui/react";
+import { Heading, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -11,7 +12,7 @@ export default function LoggedOutPage(): JSX.Element {
     const mUser = useMaybeCurrentUser();
 
     if (mUser.loading) {
-        return <Spinner label="Loading user info" />;
+        return <CenteredSpinner spinnerProps={{ label: "Loading user info" }} />;
     }
 
     if (mUser.user) {

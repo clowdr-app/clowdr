@@ -35097,6 +35097,38 @@ export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonl
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
+export type HallwayContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly contentItems: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & ContentItemDataFragment
+  )>, readonly events: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }> };
+
+export type HallwayWithContentFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly contentGroups: ReadonlyArray<{ readonly __typename?: 'ContentGroupHallway', readonly id: any, readonly groupId: any, readonly hallwayId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly contentGroup: (
+      { readonly __typename?: 'ContentGroup' }
+      & HallwayContentGroupFragment
+    ) }> };
+
+export type SelectHallwayQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type SelectHallwayQuery = { readonly __typename?: 'query_root', readonly Hallway_by_pk?: Maybe<(
+    { readonly __typename?: 'Hallway' }
+    & HallwayWithContentFragment
+  )> };
+
+export type HallwaySummaryFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
+
+export type SelectAllHallwaysQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectAllHallwaysQuery = { readonly __typename?: 'query_root', readonly Hallway: ReadonlyArray<(
+    { readonly __typename?: 'Hallway' }
+    & HallwaySummaryFragment
+  )> };
+
 export type AttendeeByIdQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   attendeeId: Scalars['uuid'];
@@ -35275,7 +35307,7 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any> } }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroupId?: Maybe<any>, readonly hallwayId?: Maybe<any>, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'ContentItem', readonly id: any, readonly data: any }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'EventPerson', readonly id: any, readonly roleName: EventPersonRole_Enum, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly attendeeId?: Maybe<any> } }> };
 
 export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
   originatingContentGroupId: Scalars['uuid'];
@@ -37355,6 +37387,58 @@ export const ContentGroupEventsFragmentDoc = gql`
   }
 }
     ${ContentGroupEventFragmentDoc}`;
+export const HallwayContentGroupFragmentDoc = gql`
+    fragment HallwayContentGroup on ContentGroup {
+  id
+  title
+  contentGroupTypeName
+  contentItems(
+    where: {isHidden: {_eq: false}, contentTypeName: {_in: [ABSTRACT, IMAGE_FILE, IMAGE_URL, POSTER_FILE, POSTER_URL, TEXT, VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH, VIDEO_URL]}}
+  ) {
+    ...ContentItemData
+  }
+  events {
+    id
+    startTime
+    endTime
+    roomId
+  }
+  discussionRoom: rooms(
+    where: {originatingEventId: {_is_null: true}}
+    limit: 1
+    order_by: {created_at: asc}
+  ) {
+    id
+  }
+}
+    ${ContentItemDataFragmentDoc}`;
+export const HallwayWithContentFragmentDoc = gql`
+    fragment HallwayWithContent on Hallway {
+  id
+  name
+  colour
+  priority
+  conferenceId
+  contentGroups {
+    id
+    groupId
+    hallwayId
+    layout
+    priority
+    contentGroup {
+      ...HallwayContentGroup
+    }
+  }
+}
+    ${HallwayContentGroupFragmentDoc}`;
+export const HallwaySummaryFragmentDoc = gql`
+    fragment HallwaySummary on Hallway {
+  id
+  name
+  colour
+  priority
+}
+    `;
 export const EventParticipantStreamDetailsFragmentDoc = gql`
     fragment EventParticipantStreamDetails on EventParticipantStream {
   id
@@ -37399,6 +37483,7 @@ export const Room_EventSummaryFragmentDoc = gql`
   endTime
   intendedRoomModeName
   contentGroupId
+  hallwayId
   contentGroup {
     id
     title
@@ -38927,6 +39012,76 @@ export function useGetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGroupQuery>;
 export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
 export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
+export const SelectHallwayDocument = gql`
+    query SelectHallway($id: uuid!) {
+  Hallway_by_pk(id: $id) {
+    ...HallwayWithContent
+  }
+}
+    ${HallwayWithContentFragmentDoc}`;
+
+/**
+ * __useSelectHallwayQuery__
+ *
+ * To run a query within a React component, call `useSelectHallwayQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectHallwayQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectHallwayQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSelectHallwayQuery(baseOptions: Apollo.QueryHookOptions<SelectHallwayQuery, SelectHallwayQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectHallwayQuery, SelectHallwayQueryVariables>(SelectHallwayDocument, options);
+      }
+export function useSelectHallwayLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectHallwayQuery, SelectHallwayQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectHallwayQuery, SelectHallwayQueryVariables>(SelectHallwayDocument, options);
+        }
+export type SelectHallwayQueryHookResult = ReturnType<typeof useSelectHallwayQuery>;
+export type SelectHallwayLazyQueryHookResult = ReturnType<typeof useSelectHallwayLazyQuery>;
+export type SelectHallwayQueryResult = Apollo.QueryResult<SelectHallwayQuery, SelectHallwayQueryVariables>;
+export const SelectAllHallwaysDocument = gql`
+    query SelectAllHallways($conferenceId: uuid!) {
+  Hallway(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...HallwaySummary
+  }
+}
+    ${HallwaySummaryFragmentDoc}`;
+
+/**
+ * __useSelectAllHallwaysQuery__
+ *
+ * To run a query within a React component, call `useSelectAllHallwaysQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectAllHallwaysQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectAllHallwaysQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSelectAllHallwaysQuery(baseOptions: Apollo.QueryHookOptions<SelectAllHallwaysQuery, SelectAllHallwaysQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectAllHallwaysQuery, SelectAllHallwaysQueryVariables>(SelectAllHallwaysDocument, options);
+      }
+export function useSelectAllHallwaysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllHallwaysQuery, SelectAllHallwaysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectAllHallwaysQuery, SelectAllHallwaysQueryVariables>(SelectAllHallwaysDocument, options);
+        }
+export type SelectAllHallwaysQueryHookResult = ReturnType<typeof useSelectAllHallwaysQuery>;
+export type SelectAllHallwaysLazyQueryHookResult = ReturnType<typeof useSelectAllHallwaysLazyQuery>;
+export type SelectAllHallwaysQueryResult = Apollo.QueryResult<SelectAllHallwaysQuery, SelectAllHallwaysQueryVariables>;
 export const AttendeeByIdDocument = gql`
     query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
   Attendee(where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}) {

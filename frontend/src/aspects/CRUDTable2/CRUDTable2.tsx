@@ -53,6 +53,7 @@ import React, {
     useRef,
     useState,
 } from "react";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { useRestorableState } from "../Generic/useRestorableState";
 import FAIcon from "../Icons/FAIcon";
 
@@ -854,9 +855,10 @@ function RenderedCRUDTable<T>({
             data === false ? (
                 <Tr>
                     <Td colSpan={9} size="sm">
-                        <Center m={2}>
-                            <Spinner label="Loading schedule data" />
-                        </Center>
+                        <CenteredSpinner
+                            centerProps={{ m: 2, h: "auto" }}
+                            spinnerProps={{ label: "Loading schedule data" }}
+                        />
                     </Td>
                 </Tr>
             ) : undefined,
@@ -1443,7 +1445,9 @@ export default function CRUDTable<T>({
             <Center w="100%" h="100%" minH="1.4rem" flexWrap="wrap">
                 {insertProps?.ongoing || updateProps?.ongoing || deleteProps?.ongoing ? (
                     <HStack>
-                        <Spinner size="xs" label="Saving changes…" />
+                        <div>
+                            <Spinner size="xs" label="Saving changes…" />
+                        </div>
                         <Text fontSize="sm">Saving changes{"…"}</Text>
                     </HStack>
                 ) : undefined}

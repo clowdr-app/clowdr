@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
-import { Center, Spinner } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
 import { useGetChatPathQuery } from "../../generated/graphql";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { useConference } from "../Conference/useConference";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 
@@ -31,13 +31,7 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
     const conference = useConference();
 
     if (loading || (!data?.chat_Chat_by_pk?.room && !data?.chat_Chat_by_pk?.contentGroup)) {
-        return (
-            <Center w="100%" h="100%">
-                <div>
-                    <Spinner />
-                </div>
-            </Center>
-        );
+        return <CenteredSpinner />;
     }
 
     if (error) {

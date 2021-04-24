@@ -2,5 +2,5 @@
     "prettier.prettierPath": "./node_modules/prettier/",
     "typescript.preferences.importModuleSpecifier": "relative",
     "restructuredtext.languageServer.disabled": true,
-    "typescript.tsserver.log": "verbose"
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }

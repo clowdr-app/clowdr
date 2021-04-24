@@ -172,6 +172,15 @@ export function LeftSidebarConferenceSections_Inner({
                         <FAIcon icon="random" iconStyle="s" mr={3} />
                         Shuffle
                     </LinkButton>
+                    <LinkButton
+                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
+                        size="sm"
+                        to={`/conference/${confSlug}/hallways`}
+                        width="100%"
+                    >
+                        <FAIcon icon="images" iconStyle="r" mr={3} />
+                        Hallways
+                    </LinkButton>
                 </Flex>
                 <ToggleNavButton m={0} size="xs" />
             </HStack>

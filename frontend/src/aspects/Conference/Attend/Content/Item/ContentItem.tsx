@@ -55,6 +55,7 @@ function ContentItemInner({ blob, type }: { blob: ContentItemDataBlob; type: Con
                 );
             case ContentType_Enum.VideoUrl:
                 return (
+                    // TODO: Chakra AspectRatio
                     // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
                     <Box maxWidth="100%" width="100%" height="0" paddingTop="56.25%" position="relative">
                         <ReactPlayer
@@ -107,6 +108,7 @@ function ContentItemInner({ blob, type }: { blob: ContentItemDataBlob; type: Con
                         throw new Error("Missing S3 URI component");
                     }
                     return (
+                        // TODO: Chakra AspectRatio
                         // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
                         <Box maxWidth="100%" width="100%" height="0" paddingTop="56.25%" position="relative">
                             <ReactPlayer
@@ -121,7 +123,7 @@ function ContentItemInner({ blob, type }: { blob: ContentItemDataBlob; type: Con
                         </Box>
                     );
                 } catch (e) {
-                    return <>Invalid image URL.</>;
+                    return <>Invalid video URL.</>;
                 }
 
             case ContentType_Enum.PaperUrl:
@@ -170,7 +172,7 @@ function ContentItemInner({ blob, type }: { blob: ContentItemDataBlob; type: Con
         }
 
         return <Box>Cannot render this content.</Box>;
-    }, [blob]);
+    }, [blob, type]);
 
     return el;
 }

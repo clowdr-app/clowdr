@@ -4,7 +4,11 @@ import { useMaybeConference } from "../Conference/useConference";
 import FAIcon from "../Icons/FAIcon";
 import { usePresenceState } from "./PresenceStateProvider";
 
-export default function PageCountText({ path, ...props }: { path: string } & TextProps): JSX.Element {
+export default function PageCountText({
+    path,
+    noIcon,
+    ...props
+}: { noIcon?: boolean; path: string } & TextProps): JSX.Element {
     const presence = usePresenceState();
     const [pageCount, setPageCount] = useState<number | null>(null);
     const mConference = useMaybeConference();
@@ -22,9 +26,17 @@ export default function PageCountText({ path, ...props }: { path: string } & Tex
     return pageCountLabel ? (
         <Tooltip label={pageCountLabel}>
             <chakra.span fontSize="1rem" {...props}>
-                <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="eye" verticalAlign="middle" />
-                <chakra.span verticalAlign="middle" ml={2} fontWeight="bold">
+                {!noIcon ? (
+                    <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="eye" verticalAlign="middle" />
+                ) : undefined}
+                <chakra.span
+                    verticalAlign={!noIcon ? "middle" : undefined}
+                    ml={!noIcon ? 2 : undefined}
+                    fontWeight={!noIcon ? "bold" : undefined}
+                >
+                    {noIcon ? "(" : ""}
                     {pageCount}
+                    {noIcon ? ")" : ""}
                 </chakra.span>
             </chakra.span>
         </Tooltip>

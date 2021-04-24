@@ -1,18 +1,6 @@
 import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import {
-    Box,
-    Button,
-    Center,
-    Checkbox,
-    Container,
-    Heading,
-    Link,
-    Spinner,
-    Text,
-    Tooltip,
-    VStack,
-} from "@chakra-ui/react";
+import { Box, Button, Center, Checkbox, Container, Heading, Link, Text, Tooltip, VStack } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import {
     useAgreeToTermsMutation,
@@ -21,6 +9,7 @@ import {
     useTermsConfigsQuery,
 } from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
+import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import FAIcon from "../../Icons/FAIcon";
@@ -187,13 +176,7 @@ function CurrentUserProvider_IsAuthenticated({
     );
 
     if (termsLoading || loading) {
-        return (
-            <Center w="100%" h="100%">
-                <div>
-                    <Spinner label="Loading terms configuration" />
-                </div>
-            </Center>
-        );
+        return <CenteredSpinner spinnerProps={{ label: "Loading terms configuration" }} />;
     }
 
     if (termsData && termsData.hostOrganisationName) {

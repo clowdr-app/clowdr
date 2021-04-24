@@ -8,7 +8,7 @@ import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
 import {
     Permission_Enum,
-    Schedule_ContentGroupSummaryFragment,
+    Schedule_ContentGroupItemsFragment,
     Schedule_EventSummaryFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
@@ -51,7 +51,7 @@ gql`
         }
     }
 
-    fragment Schedule_ContentGroupSummary on ContentGroup {
+    fragment Schedule_ContentGroupItems on ContentGroup {
         id
         title
         shortTitle
@@ -59,7 +59,7 @@ gql`
     }
 
     fragment Schedule_ContentGroup on ContentGroup {
-        ...Schedule_ContentGroupSummary
+        ...Schedule_ContentGroupItems
         abstractContentItems: contentItems(where: { contentTypeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
             ...Schedule_ContentItem
         }
@@ -100,7 +100,7 @@ gql`
             ...Schedule_EventSummary
         }
         ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_ContentGroupSummary
+            ...Schedule_ContentGroupItems
         }
     }
 `;
@@ -280,7 +280,7 @@ function ScheduleFrame({
     alternateBgColor: string;
     borderColour: string;
     maxParallelRooms: number;
-    contentGroups: ReadonlyArray<Schedule_ContentGroupSummaryFragment>;
+    contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
     roomColWidth: number;
     timeBarWidth: number;
     scrollToEventCbs: Map<string, () => void>;
@@ -419,7 +419,7 @@ function ScheduleInner({
 }: {
     rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    contentGroups: ReadonlyArray<Schedule_ContentGroupSummaryFragment>;
+    contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
 }): JSX.Element {
     const eventsByRoom = useMemo(
         () =>
@@ -623,7 +623,7 @@ function ScheduleFetchWrapper(): JSX.Element {
             {
                 rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
                 events: ReadonlyArray<Schedule_EventSummaryFragment>;
-                contentGroups: ReadonlyArray<Schedule_ContentGroupSummaryFragment>;
+                contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
             }
         >
             queryResult={roomsResult}

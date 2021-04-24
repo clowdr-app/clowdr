@@ -1,12 +1,7 @@
 import { gql } from "@apollo/client";
 import { Box, Heading, Spinner } from "@chakra-ui/react";
-import {
-    assertIsContentItemDataBlob,
-    ContentBaseType,
-    ContentItemDataBlob,
-} from "@clowdr-app/shared-types/build/content";
+import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
-import ReactPlayer from "react-player";
 import {
     ContentGroupDataFragment,
     ContentType_Enum,
@@ -16,11 +11,10 @@ import {
 import ConferencePageNotFound from "../../Errors/ConferencePageNotFound";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { Markdown } from "../../Text/Markdown";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import ContentGroupList from "./Content/ContentGroupList";
+import { ContentItem } from "./Content/Item/ContentItem";
 
 gql`
     query ConferenceLandingPageContentGroup($conferenceId: uuid!) {
@@ -33,64 +27,38 @@ gql`
 `;
 
 function ConferenceLandingContent({ group }: { group: ContentGroupDataFragment }): JSX.Element {
-    let elements: { el: JSX.Element; type: ContentType_Enum }[] = [];
     const conferenceLandingContentSortOrder = [
         ContentType_Enum.Abstract,
         ContentType_Enum.VideoUrl,
+        ContentType_Enum.Text,
+        ContentType_Enum.PaperFile,
+        ContentType_Enum.PaperLink,
+        ContentType_Enum.PaperUrl,
+        ContentType_Enum.PosterFile,
+        ContentType_Enum.PosterUrl,
+        ContentType_Enum.ImageFile,
+        ContentType_Enum.ImageUrl,
+        ContentType_Enum.Link,
+        ContentType_Enum.LinkButton,
+        ContentType_Enum.VideoBroadcast,
+        ContentType_Enum.VideoCountdown,
+        ContentType_Enum.VideoFile,
+        ContentType_Enum.VideoFiller,
+        ContentType_Enum.VideoLink,
+        ContentType_Enum.VideoPrepublish,
+        ContentType_Enum.VideoSponsorsFiller,
+        ContentType_Enum.VideoTitles,
+        ContentType_Enum.Zoom,
         ContentType_Enum.ContentGroupList,
+        ContentType_Enum.WholeSchedule,
     ];
-    for (const item of group.contentItems) {
-        switch (item.contentTypeName) {
-            case ContentType_Enum.Abstract:
-                {
-                    assertIsContentItemDataBlob(item.data);
-                    const latestVersion = item.data[item.data.length - 1];
-                    elements.push({
-                        el: (
-                            <Box key={"item-" + item.id} mt={5} maxW={600} display="inline-block">
-                                <Markdown>
-                                    {latestVersion?.data.baseType === ContentBaseType.Text
-                                        ? latestVersion.data.text
-                                        : ""}
-                                </Markdown>
-                            </Box>
-                        ),
-                        type: item.contentTypeName,
-                    });
-                }
-                break;
-            case ContentType_Enum.VideoUrl:
-                {
-                    assertIsContentItemDataBlob(item.data);
-                    const latestVersion = item.data[item.data.length - 1];
-                    elements.push({
-                        el: (
-                            <Box maxW="100%">
-                                <ReactPlayer
-                                    style={{ maxWidth: "100%" }}
-                                    url={
-                                        latestVersion.data.baseType === ContentBaseType.URL
-                                            ? latestVersion.data.url
-                                            : ""
-                                    }
-                                    controls={true}
-                                />
-                            </Box>
-                        ),
-                        type: item.contentTypeName,
-                    });
-                }
-                break;
-            case ContentType_Enum.ContentGroupList:
-                {
-                    elements.push({ el: <ContentGroupList key={"item-" + item.id} />, type: item.contentTypeName });
-                }
-                break;
-        }
-    }
-    elements = elements.sort(
-        (x, y) => conferenceLandingContentSortOrder.indexOf(x.type) - conferenceLandingContentSortOrder.indexOf(y.type)
-    );
+
+    const elements = group.contentItems
+        .map((item) => ({ el: <ContentItem key={item.id} item={item} />, type: item.contentTypeName }))
+        .sort(
+            (x, y) =>
+                conferenceLandingContentSortOrder.indexOf(x.type) - conferenceLandingContentSortOrder.indexOf(y.type)
+        );
     return <>{elements.map((x) => x.el)}</>;
 }
 

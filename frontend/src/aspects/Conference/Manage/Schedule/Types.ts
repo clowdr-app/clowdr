@@ -23,6 +23,7 @@ export type EventDescriptor = {
     roomId: string;
     intendedRoomModeName: RoomMode_Enum;
     contentGroupId?: string | null;
+    hallwayId?: string | null;
     name: string;
     startTime: string;
     durationSeconds: number;

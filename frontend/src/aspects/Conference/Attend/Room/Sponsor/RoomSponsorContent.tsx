@@ -87,7 +87,7 @@ export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string 
                                 colSpan={contentItem.layoutBlob.wide ? [2] : [2, 2, 1]}
                                 p={4}
                             >
-                                <ContentItem blob={contentItem.blob} />
+                                <ContentItem item={contentItem.item} />
                             </GridItem>
                         )
                     )

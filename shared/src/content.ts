@@ -183,7 +183,7 @@ export interface VideoUrlBlob extends UrlContentBlob {
 }
 
 export interface WholeScheduleBlob extends ComponentBlob {
-    type: ContentType_Enum.ContentGroupList;
+    type: ContentType_Enum.WholeSchedule;
 }
 
 export interface ZoomBlob extends UrlContentBlob {

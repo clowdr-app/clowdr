@@ -71,6 +71,7 @@ gql`
         startTime
         endTime
         contentGroupId
+        hallwayId
     }
 
     fragment EventPersonInfo on EventPerson {
@@ -98,6 +99,9 @@ gql`
         }
         Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...TagInfo
+        }
+        Hallway(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...HallwayInfo
         }
         ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ContentGroupFullNestedInfo
@@ -161,6 +165,7 @@ gql`
         $startTime: timestamptz!
         $durationSeconds: Int!
         $contentGroupId: uuid = null
+        $hallwayId: uuid = null
         $newEventTags: [EventTag_insert_input!]!
         $deleteEventTagIds: [uuid!]!
     ) {
@@ -179,6 +184,7 @@ gql`
                 startTime: $startTime
                 durationSeconds: $durationSeconds
                 contentGroupId: $contentGroupId
+                hallwayId: $hallwayId
             }
         ) {
             ...EventInfo
@@ -550,6 +556,7 @@ export function useSaveScheduleDiff():
                                             roomId: event.roomId,
                                             intendedRoomModeName: event.intendedRoomModeName,
                                             contentGroupId: event.contentGroupId,
+                                            hallwayId: event.hallwayId,
                                             name: event.name,
                                             startTime: new Date(event.startTime).toISOString(),
                                             durationSeconds: event.durationSeconds,
@@ -610,6 +617,7 @@ export function useSaveScheduleDiff():
                                         roomId: event.roomId,
                                         intendedRoomModeName: event.intendedRoomModeName,
                                         contentGroupId: event.contentGroupId,
+                                        hallwayId: event.hallwayId,
                                         name: event.name,
                                         startTime: new Date(event.startTime).toISOString(),
                                         durationSeconds: event.durationSeconds,

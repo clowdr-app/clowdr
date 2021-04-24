@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type {
-    Schedule_ContentGroupSummaryFragment,
+    Schedule_ContentGroupItemsFragment,
     Schedule_EventSummaryFragment,
     Schedule_RoomSummaryFragment,
 } from "../../../../generated/graphql";
@@ -104,7 +104,7 @@ function RoomTimelineWrapper({
     backgroundColor?: string;
     scrollToEventCbs: Map<string, () => void>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    contentGroups: ReadonlyArray<Schedule_ContentGroupSummaryFragment>;
+    contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
 }): JSX.Element {
     const roomEvents = useMemo(() => {
         const result: TimelineEvent[] = [];
@@ -147,7 +147,7 @@ type Props = {
     width?: number;
     scrollToEventCbs: Map<string, () => void>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    contentGroups: ReadonlyArray<Schedule_ContentGroupSummaryFragment>;
+    contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
 };
 
 export default function RoomTimeline({ ...props }: Props): JSX.Element {

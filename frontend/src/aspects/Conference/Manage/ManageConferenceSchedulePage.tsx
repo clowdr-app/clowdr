@@ -37,6 +37,7 @@ import {
     ContentPersonInfoFragment,
     EventInfoFragment,
     EventInfoFragmentDoc,
+    HallwayInfoFragment,
     Permission_Enum,
     RoomInfoFragment,
     RoomMode_Enum,
@@ -82,6 +83,7 @@ gql`
         $startTime: timestamptz!
         $durationSeconds: Int!
         $contentGroupId: uuid = null
+        $hallwayId: uuid = null
     ) {
         insert_Event_one(
             object: {
@@ -94,6 +96,7 @@ gql`
                 startTime: $startTime
                 durationSeconds: $durationSeconds
                 contentGroupId: $contentGroupId
+                hallwayId: $hallwayId
             }
         ) {
             ...EventInfo
@@ -109,6 +112,7 @@ gql`
         $startTime: timestamptz!
         $durationSeconds: Int!
         $contentGroupId: uuid = null
+        $hallwayId: uuid = null
     ) {
         update_Event_by_pk(
             pk_columns: { id: $eventId }
@@ -120,6 +124,7 @@ gql`
                 startTime: $startTime
                 durationSeconds: $durationSeconds
                 contentGroupId: $contentGroupId
+                hallwayId: $hallwayId
             }
         ) {
             ...EventInfo
@@ -142,6 +147,7 @@ enum ColumnId {
     RoomMode = "roomMode",
     Name = "name",
     Content = "content",
+    Hallway = "hallway",
 }
 
 function rowWarning(row: EventInfoFragment) {
@@ -224,6 +230,22 @@ function EditableScheduleTable(): JSX.Element {
                       })
                 : undefined,
         [wholeSchedule.data?.ContentGroup]
+    );
+
+    const hallwayOptions = useMemo(
+        () =>
+            wholeSchedule.data?.Hallway
+                ? [...wholeSchedule.data.Hallway]
+                      .sort((x, y) => x.name.localeCompare(y.name))
+                      .map((hallway) => {
+                          return (
+                              <option key={hallway.id} value={hallway.id}>
+                                  {hallway.name}
+                              </option>
+                          );
+                      })
+                : undefined,
+        [wholeSchedule.data?.Hallway]
     );
 
     const {
@@ -418,6 +440,7 @@ function EditableScheduleTable(): JSX.Element {
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                maxW={400}
                             >
                                 {roomOptions}
                                 {props.value &&
@@ -479,6 +502,7 @@ function EditableScheduleTable(): JSX.Element {
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                maxW={400}
                             >
                                 {roomModeOptions.map((option) => {
                                     return (
@@ -610,9 +634,93 @@ function EditableScheduleTable(): JSX.Element {
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                maxW={400}
                             >
                                 <option value={""}>{"<None selected>"}</option>
                                 {contentGroupOptions}
+                            </Select>
+                        </HStack>
+                    );
+                },
+            },
+            {
+                id: ColumnId.Hallway,
+                header: function HallwayHeader(props: ColumnHeaderProps<EventInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Hallway (optional)</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Hallway{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => wholeSchedule.data?.Hallway.find((hallway) => hallway.id === data.hallwayId),
+                set: (record, value: HallwayInfoFragment | undefined) => {
+                    record.hallwayId = value?.id;
+                },
+                sortType: (rowA: HallwayInfoFragment, rowB: HallwayInfoFragment) => {
+                    const compared = rowA && rowB ? rowA.name.localeCompare(rowB.name) : rowA ? 1 : rowB ? -1 : 0;
+                    return compared;
+                },
+                filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
+                    return rows.filter((row) => {
+                        return (
+                            (row.hallwayId &&
+                                wholeSchedule.data?.Hallway.find((hallway) => hallway.id === row.hallwayId)
+                                    ?.name.toLowerCase()
+                                    .includes(filterValue.toLowerCase())) ??
+                            false
+                        );
+                    });
+                },
+                filterEl: TextColumnFilter,
+                cell: function HallwayCell(
+                    props: CellProps<Partial<EventInfoFragment>, HallwayInfoFragment | undefined>
+                ) {
+                    const now = useRealTime(10000);
+                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const startLeeway = 10 * 60 * 1000;
+                    const endLeeway = 1 * 60 * 1000;
+                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                    const past = end < now - endLeeway;
+                    const isLivestream = props.staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                        : false;
+
+                    return (
+                        <HStack>
+                            {props.value ? (
+                                <LinkButton
+                                    linkProps={{ target: "_blank" }}
+                                    to={`/conference/${conference.slug}/hallway/${props.value.id}`}
+                                    size="xs"
+                                    aria-label="Go to hallway in new tab"
+                                >
+                                    <Tooltip label="Go to hallway in new tab">
+                                        <FAIcon iconStyle="s" icon="link" />
+                                    </Tooltip>
+                                </LinkButton>
+                            ) : undefined}
+                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                                <Tooltip label="You cannot edit the hallway of an ongoing or past livestream event.">
+                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                </Tooltip>
+                            ) : undefined}
+                            <Select
+                                value={props.value?.id ?? ""}
+                                onChange={(ev) =>
+                                    props.onChange?.(
+                                        wholeSchedule.data?.Hallway.find((room) => room.id === ev.target.value)
+                                    )
+                                }
+                                onBlur={props.onBlur}
+                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
+                                ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                maxW={400}
+                            >
+                                <option value={""}>{"<None selected>"}</option>
+                                {hallwayOptions}
                             </Select>
                         </HStack>
                     );
@@ -622,10 +730,12 @@ function EditableScheduleTable(): JSX.Element {
         [
             conference.slug,
             contentGroupOptions,
+            hallwayOptions,
             roomModeOptions,
             roomOptions,
             wholeSchedule.data?.ContentGroup,
             wholeSchedule.data?.Room,
+            wholeSchedule.data?.Hallway,
         ]
     );
 
@@ -653,9 +763,9 @@ function EditableScheduleTable(): JSX.Element {
                     };
                 }
 
-                if (!record.name && !record.contentGroupId) {
+                if (!record.name && !record.contentGroupId && !record.hallwayId) {
                     return {
-                        reason: "Event must have a name or content.",
+                        reason: "Event must have a name, content or hallway.",
                         columnId: ColumnId.Name,
                     };
                 }
@@ -775,6 +885,7 @@ function EditableScheduleTable(): JSX.Element {
                               })
                               .toISO(),
                           contentGroupId: null,
+                          hallwayId: null,
                           originatingDataId: null,
                       }),
                       makeWhole: (d) => d as EventInfoFragment,

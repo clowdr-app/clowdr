@@ -2,7 +2,7 @@ import { Button, ButtonGroup, Text } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import React, { useMemo } from "react";
 import type {
-    Schedule_ContentGroupSummaryFragment,
+    Schedule_ContentGroupItemsFragment,
     Schedule_EventSummaryFragment,
     Schedule_RoomSummaryFragment,
 } from "../../../../generated/graphql";
@@ -15,7 +15,7 @@ type FirstEventInfo = {
 };
 
 export interface TimelineEvent extends Schedule_EventSummaryFragment {
-    contentGroup?: Schedule_ContentGroupSummaryFragment;
+    contentGroup?: Schedule_ContentGroupItemsFragment;
 }
 
 export interface TimelineRoom extends Schedule_RoomSummaryFragment {

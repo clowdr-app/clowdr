@@ -37,7 +37,7 @@ import { useRealTime } from "../../../Generic/useRealTime";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
 import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
-import { ContentGroupSummaryWrapper } from "../Content/ContentGroupSummary";
+import { ContentGroupItemsWrapper } from "../Content/ContentGroupItems";
 import { BreakoutChimeRoom } from "./BreakoutChimeRoom";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
@@ -704,10 +704,7 @@ function RoomContent({
                         {currentRoomEvent.name}
                     </Heading>
                     {currentRoomEvent?.contentGroupId ? (
-                        <ContentGroupSummaryWrapper
-                            contentGroupId={currentRoomEvent.contentGroupId}
-                            linkToItem={true}
-                        />
+                        <ContentGroupItemsWrapper contentGroupId={currentRoomEvent.contentGroupId} linkToItem={true} />
                     ) : (
                         <></>
                     )}
@@ -729,7 +726,7 @@ function RoomContent({
                         ) : undefined}
                     </HStack>
                     {nextRoomEvent?.contentGroupId ? (
-                        <ContentGroupSummaryWrapper contentGroupId={nextRoomEvent.contentGroupId} linkToItem={true} />
+                        <ContentGroupItemsWrapper contentGroupId={nextRoomEvent.contentGroupId} linkToItem={true} />
                     ) : (
                         <></>
                     )}
@@ -747,7 +744,7 @@ function RoomContent({
             {roomDetails.originatingContentGroup?.id &&
             roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
                 <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                    <ContentGroupSummaryWrapper
+                    <ContentGroupItemsWrapper
                         contentGroupId={roomDetails.originatingContentGroup.id}
                         linkToItem={true}
                     />

@@ -13,8 +13,8 @@ import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { ContentGroupEvents } from "./ContentGroupEvents";
+import { ContentGroupItems } from "./ContentGroupItems";
 import { ContentGroupLive } from "./ContentGroupLive";
-import { ContentGroupSummary } from "./ContentGroupSummary";
 import { ContentGroupVideos } from "./ContentGroupVideos";
 
 gql`
@@ -108,13 +108,13 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                             <ContentGroupVideos contentGroupData={contentGroupData} />
                                         </Box>
                                         <Box ml={5} maxW="100%">
-                                            <ContentGroupSummary contentGroupData={contentGroupData}>
+                                            <ContentGroupItems contentGroupData={contentGroupData}>
                                                 <RequireAtLeastOnePermissionWrapper
                                                     permissions={[Permission_Enum.ConferenceViewAttendees]}
                                                 >
                                                     <ContentGroupLive contentGroupData={contentGroupData} />
                                                 </RequireAtLeastOnePermissionWrapper>
-                                            </ContentGroupSummary>
+                                            </ContentGroupItems>
                                             <Heading as="h3" size="lg" textAlign="left">
                                                 Events
                                             </Heading>

@@ -22,6 +22,7 @@ export function convertScheduleToDescriptors(
                 {
                     id: event.id,
                     contentGroupId: event.contentGroupId,
+                    hallwayId: event.hallwayId,
                     durationSeconds: event.durationSeconds,
                     intendedRoomModeName: event.intendedRoomModeName,
                     name: event.name,
@@ -89,6 +90,7 @@ export function deepCloneEventDescriptor(event: EventDescriptor): EventDescripto
     return {
         id: event.id,
         contentGroupId: event.contentGroupId,
+        hallwayId: event.hallwayId,
         durationSeconds: event.durationSeconds,
         intendedRoomModeName: event.intendedRoomModeName,
         name: event.name,

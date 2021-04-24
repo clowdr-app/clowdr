@@ -35014,6 +35014,24 @@ export type ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPer
 
 export type ContentGroupRoomEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: RoomMode_Enum, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }> };
 
+export type ContentGroupItems_GetContentGroupQueryVariables = Exact<{
+  contentGroupId: Scalars['uuid'];
+}>;
+
+
+export type ContentGroupItems_GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<(
+    { readonly __typename?: 'ContentGroup' }
+    & ContentGroupItems_ContentGroupDataFragment
+  )> };
+
+export type ContentGroupItems_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
+    { readonly __typename?: 'ContentItem' }
+    & ContentItemDataFragment
+  )>, readonly people: ReadonlyArray<(
+    { readonly __typename?: 'ContentGroupPerson' }
+    & ContentPersonDataFragment
+  )> };
+
 export type ContentGroupList_ContentPersonDataFragment = { readonly __typename?: 'ContentGroupPerson', readonly id: any, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'ContentPerson', readonly id: any, readonly affiliation?: Maybe<string>, readonly name: string } };
 
 export type ContentGroupList_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly people: ReadonlyArray<(
@@ -35076,24 +35094,6 @@ export type ContentGroupEventsFragment = { readonly __typename?: 'ContentGroup',
   )> };
 
 export type ContentGroupEventFragment = { readonly __typename?: 'Event', readonly startTime: any, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: RoomMode_Enum, readonly room: { readonly __typename?: 'Room', readonly name: string, readonly id: any } };
-
-export type ContentGroupSummary_GetContentGroupQueryVariables = Exact<{
-  contentGroupId: Scalars['uuid'];
-}>;
-
-
-export type ContentGroupSummary_GetContentGroupQuery = { readonly __typename?: 'query_root', readonly ContentGroup_by_pk?: Maybe<(
-    { readonly __typename?: 'ContentGroup' }
-    & ContentGroupSummary_ContentGroupDataFragment
-  )> };
-
-export type ContentGroupSummary_ContentGroupDataFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly room: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any, readonly name: string }> }>, readonly contentItems: ReadonlyArray<(
-    { readonly __typename?: 'ContentItem' }
-    & ContentItemDataFragment
-  )>, readonly people: ReadonlyArray<(
-    { readonly __typename?: 'ContentGroupPerson' }
-    & ContentPersonDataFragment
-  )> };
 
 export type ContentItemDataFragment = { readonly __typename?: 'ContentItem', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly contentTypeName: ContentType_Enum };
 
@@ -35387,7 +35387,7 @@ export type Schedule_ContentGroupPersonFragment = { readonly __typename?: 'Conte
     & Schedule_ContentPersonFragment
   ) };
 
-export type Schedule_ContentGroupSummaryFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly contentGroupTypeName: ContentGroupType_Enum };
+export type Schedule_ContentGroupItemsFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly contentGroupTypeName: ContentGroupType_Enum };
 
 export type Schedule_ContentGroupFragment = (
   { readonly __typename?: 'ContentGroup', readonly abstractContentItems: ReadonlyArray<(
@@ -35397,7 +35397,7 @@ export type Schedule_ContentGroupFragment = (
     { readonly __typename?: 'ContentGroupPerson' }
     & Schedule_ContentGroupPersonFragment
   )> }
-  & Schedule_ContentGroupSummaryFragment
+  & Schedule_ContentGroupItemsFragment
 );
 
 export type Schedule_SelectContentGroupQueryVariables = Exact<{
@@ -35427,7 +35427,7 @@ export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root'
     & Schedule_EventSummaryFragment
   )>, readonly ContentGroup: ReadonlyArray<(
     { readonly __typename?: 'ContentGroup' }
-    & Schedule_ContentGroupSummaryFragment
+    & Schedule_ContentGroupItemsFragment
   )> };
 
 export type AttendeesByIdQueryVariables = Exact<{
@@ -36003,123 +36003,6 @@ export type ImportAttendeesMutationVariables = Exact<{
 
 export type ImportAttendeesMutation = { readonly __typename?: 'mutation_root', readonly insert_Attendee?: Maybe<{ readonly __typename?: 'Attendee_mutation_response', readonly affected_rows: number }>, readonly insert_Invitation?: Maybe<{ readonly __typename?: 'Invitation_mutation_response', readonly affected_rows: number }>, readonly insert_GroupAttendee?: Maybe<{ readonly __typename?: 'GroupAttendee_mutation_response', readonly affected_rows: number }> };
 
-export type ManageContent_ContentGroupFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly contentGroupTypeName: ContentGroupType_Enum, readonly chatId?: Maybe<any>, readonly contentGroupTags: ReadonlyArray<{ readonly __typename?: 'ContentGroupTag', readonly id: any, readonly contentGroupId: any, readonly tagId: any }>, readonly hallways: ReadonlyArray<{ readonly __typename?: 'ContentGroupHallway', readonly id: any, readonly conferenceId: any, readonly groupId: any, readonly hallwayId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'Room', readonly id: any }>, readonly originatingData?: Maybe<{ readonly __typename?: 'OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> };
-
-export type ManageContent_SelectAllContentGroupsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type ManageContent_SelectAllContentGroupsQuery = { readonly __typename?: 'query_root', readonly ContentGroup: ReadonlyArray<(
-    { readonly __typename?: 'ContentGroup' }
-    & ManageContent_ContentGroupFragment
-  )> };
-
-export type ManageContent_InsertContentGroupMutationVariables = Exact<{
-  group: ContentGroup_Insert_Input;
-}>;
-
-
-export type ManageContent_InsertContentGroupMutation = { readonly __typename?: 'mutation_root', readonly insert_ContentGroup_one?: Maybe<(
-    { readonly __typename?: 'ContentGroup' }
-    & ManageContent_ContentGroupFragment
-  )> };
-
-export type ManageContent_UpdateContentGroupMutationVariables = Exact<{
-  id: Scalars['uuid'];
-  update: ContentGroup_Set_Input;
-}>;
-
-
-export type ManageContent_UpdateContentGroupMutation = { readonly __typename?: 'mutation_root', readonly update_ContentGroup_by_pk?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any }> };
-
-export type ManageContent_DeleteContentGroupsMutationVariables = Exact<{
-  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-}>;
-
-
-export type ManageContent_DeleteContentGroupsMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
-
-export type ManageContent_TagFragment = { readonly __typename?: 'Tag', readonly id: any, readonly conferenceId: any, readonly name: string, readonly colour: string, readonly priority: number };
-
-export type ManageContent_SelectAllTagsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type ManageContent_SelectAllTagsQuery = { readonly __typename?: 'query_root', readonly Tag: ReadonlyArray<(
-    { readonly __typename?: 'Tag' }
-    & ManageContent_TagFragment
-  )> };
-
-export type ManageContent_InsertTagMutationVariables = Exact<{
-  tag: Tag_Insert_Input;
-}>;
-
-
-export type ManageContent_InsertTagMutation = { readonly __typename?: 'mutation_root', readonly insert_Tag_one?: Maybe<(
-    { readonly __typename?: 'Tag' }
-    & ManageContent_TagFragment
-  )> };
-
-export type ManageContent_UpdateTagMutationVariables = Exact<{
-  id: Scalars['uuid'];
-  update: Tag_Set_Input;
-}>;
-
-
-export type ManageContent_UpdateTagMutation = { readonly __typename?: 'mutation_root', readonly update_Tag_by_pk?: Maybe<(
-    { readonly __typename?: 'Tag' }
-    & ManageContent_TagFragment
-  )> };
-
-export type ManageContent_DeleteTagsMutationVariables = Exact<{
-  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-}>;
-
-
-export type ManageContent_DeleteTagsMutation = { readonly __typename?: 'mutation_root', readonly delete_Tag?: Maybe<{ readonly __typename?: 'Tag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Tag', readonly id: any }> }> };
-
-export type ManageContent_HallwayFragment = { readonly __typename?: 'Hallway', readonly id: any, readonly conferenceId: any, readonly name: string, readonly colour: string, readonly priority: number };
-
-export type ManageContent_SelectAllHallwaysQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type ManageContent_SelectAllHallwaysQuery = { readonly __typename?: 'query_root', readonly Hallway: ReadonlyArray<(
-    { readonly __typename?: 'Hallway' }
-    & ManageContent_HallwayFragment
-  )> };
-
-export type ManageContent_InsertHallwayMutationVariables = Exact<{
-  hallway: Hallway_Insert_Input;
-}>;
-
-
-export type ManageContent_InsertHallwayMutation = { readonly __typename?: 'mutation_root', readonly insert_Hallway_one?: Maybe<(
-    { readonly __typename?: 'Hallway' }
-    & ManageContent_HallwayFragment
-  )> };
-
-export type ManageContent_UpdateHallwayMutationVariables = Exact<{
-  id: Scalars['uuid'];
-  update: Hallway_Set_Input;
-}>;
-
-
-export type ManageContent_UpdateHallwayMutation = { readonly __typename?: 'mutation_root', readonly update_Hallway_by_pk?: Maybe<(
-    { readonly __typename?: 'Hallway' }
-    & ManageContent_HallwayFragment
-  )> };
-
-export type ManageContent_DeleteHallwaysMutationVariables = Exact<{
-  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-}>;
-
-
-export type ManageContent_DeleteHallwaysMutation = { readonly __typename?: 'mutation_root', readonly delete_Hallway?: Maybe<{ readonly __typename?: 'Hallway_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'Hallway', readonly id: any }> }> };
-
 export type ManageGroups_GroupFragment = { readonly __typename?: 'Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> };
 
 export type SelectAllGroupsQueryVariables = Exact<{
@@ -36425,6 +36308,7 @@ export type InsertEventInfoMutationVariables = Exact<{
   startTime: Scalars['timestamptz'];
   durationSeconds: Scalars['Int'];
   contentGroupId?: Maybe<Scalars['uuid']>;
+  hallwayId?: Maybe<Scalars['uuid']>;
 }>;
 
 
@@ -36442,6 +36326,7 @@ export type UpdateEventInfoMutationVariables = Exact<{
   startTime: Scalars['timestamptz'];
   durationSeconds: Scalars['Int'];
   contentGroupId?: Maybe<Scalars['uuid']>;
+  hallwayId?: Maybe<Scalars['uuid']>;
 }>;
 
 
@@ -36603,7 +36488,7 @@ export type RoomInfoFragment = { readonly __typename?: 'Room', readonly capacity
 
 export type RoomParticipantInfoFragment = { readonly __typename?: 'RoomParticipant', readonly attendeeId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
 
-export type EventInfoFragment = { readonly __typename?: 'Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly contentGroupId?: Maybe<any>, readonly eventPeople: ReadonlyArray<(
+export type EventInfoFragment = { readonly __typename?: 'Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly contentGroupId?: Maybe<any>, readonly hallwayId?: Maybe<any>, readonly eventPeople: ReadonlyArray<(
     { readonly __typename?: 'EventPerson' }
     & EventPersonInfoFragment
   )>, readonly eventTags: ReadonlyArray<(
@@ -36632,6 +36517,9 @@ export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', rea
   )>, readonly Tag: ReadonlyArray<(
     { readonly __typename?: 'Tag' }
     & TagInfoFragment
+  )>, readonly Hallway: ReadonlyArray<(
+    { readonly __typename?: 'Hallway' }
+    & HallwayInfoFragment
   )>, readonly ContentGroup: ReadonlyArray<(
     { readonly __typename?: 'ContentGroup' }
     & ContentGroupFullNestedInfoFragment
@@ -36697,6 +36585,7 @@ export type UpdateEventMutationVariables = Exact<{
   startTime: Scalars['timestamptz'];
   durationSeconds: Scalars['Int'];
   contentGroupId?: Maybe<Scalars['uuid']>;
+  hallwayId?: Maybe<Scalars['uuid']>;
   newEventTags: ReadonlyArray<EventTag_Insert_Input> | EventTag_Insert_Input;
   deleteEventTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
@@ -37342,6 +37231,49 @@ export const ContentGroupRoomEventFragmentDoc = gql`
   intendedRoomModeName
 }
     `;
+export const ContentItemDataFragmentDoc = gql`
+    fragment ContentItemData on ContentItem {
+  id
+  data
+  layoutData
+  name
+  contentTypeName
+}
+    `;
+export const ContentPersonDataFragmentDoc = gql`
+    fragment ContentPersonData on ContentGroupPerson {
+  id
+  person {
+    id
+    name
+    affiliation
+    attendeeId
+  }
+  roleName
+  priority
+}
+    `;
+export const ContentGroupItems_ContentGroupDataFragmentDoc = gql`
+    fragment ContentGroupItems_ContentGroupData on ContentGroup {
+  id
+  title
+  contentGroupTypeName
+  chatId
+  chat {
+    room {
+      id
+      name
+    }
+  }
+  contentItems(where: {isHidden: {_eq: false}}) {
+    ...ContentItemData
+  }
+  people(order_by: {priority: asc}) {
+    ...ContentPersonData
+  }
+}
+    ${ContentItemDataFragmentDoc}
+${ContentPersonDataFragmentDoc}`;
 export const ContentGroupList_ContentPersonDataFragmentDoc = gql`
     fragment ContentGroupList_ContentPersonData on ContentGroupPerson {
   id
@@ -37374,28 +37306,6 @@ export const ContentGroupList_TagInfoFragmentDoc = gql`
   id
   colour
   name
-  priority
-}
-    `;
-export const ContentItemDataFragmentDoc = gql`
-    fragment ContentItemData on ContentItem {
-  id
-  data
-  layoutData
-  name
-  contentTypeName
-}
-    `;
-export const ContentPersonDataFragmentDoc = gql`
-    fragment ContentPersonData on ContentGroupPerson {
-  id
-  person {
-    id
-    name
-    affiliation
-    attendeeId
-  }
-  roleName
   priority
 }
     `;
@@ -37445,27 +37355,6 @@ export const ContentGroupEventsFragmentDoc = gql`
   }
 }
     ${ContentGroupEventFragmentDoc}`;
-export const ContentGroupSummary_ContentGroupDataFragmentDoc = gql`
-    fragment ContentGroupSummary_ContentGroupData on ContentGroup {
-  id
-  title
-  contentGroupTypeName
-  chatId
-  chat {
-    room {
-      id
-      name
-    }
-  }
-  contentItems(where: {isHidden: {_eq: false}}) {
-    ...ContentItemData
-  }
-  people(order_by: {priority: asc}) {
-    ...ContentPersonData
-  }
-}
-    ${ContentItemDataFragmentDoc}
-${ContentPersonDataFragmentDoc}`;
 export const EventParticipantStreamDetailsFragmentDoc = gql`
     fragment EventParticipantStreamDetails on EventParticipantStream {
   id
@@ -37622,8 +37511,8 @@ export const Schedule_EventTagFragmentDoc = gql`
   }
 }
     ${Schedule_TagFragmentDoc}`;
-export const Schedule_ContentGroupSummaryFragmentDoc = gql`
-    fragment Schedule_ContentGroupSummary on ContentGroup {
+export const Schedule_ContentGroupItemsFragmentDoc = gql`
+    fragment Schedule_ContentGroupItems on ContentGroup {
   id
   title
   shortTitle
@@ -37659,7 +37548,7 @@ export const Schedule_ContentGroupPersonFragmentDoc = gql`
     ${Schedule_ContentPersonFragmentDoc}`;
 export const Schedule_ContentGroupFragmentDoc = gql`
     fragment Schedule_ContentGroup on ContentGroup {
-  ...Schedule_ContentGroupSummary
+  ...Schedule_ContentGroupItems
   abstractContentItems: contentItems(
     where: {contentTypeName: {_eq: ABSTRACT}, isHidden: {_eq: false}}
   ) {
@@ -37669,7 +37558,7 @@ export const Schedule_ContentGroupFragmentDoc = gql`
     ...Schedule_ContentGroupPerson
   }
 }
-    ${Schedule_ContentGroupSummaryFragmentDoc}
+    ${Schedule_ContentGroupItemsFragmentDoc}
 ${Schedule_ContentItemFragmentDoc}
 ${Schedule_ContentGroupPersonFragmentDoc}`;
 export const Schedule_EventSummaryFragmentDoc = gql`
@@ -37888,56 +37777,6 @@ export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
       title
     }
   }
-}
-    `;
-export const ManageContent_ContentGroupFragmentDoc = gql`
-    fragment ManageContent_ContentGroup on ContentGroup {
-  id
-  conferenceId
-  title
-  shortTitle
-  contentGroupTypeName
-  contentGroupTags {
-    id
-    contentGroupId
-    tagId
-  }
-  hallways {
-    id
-    conferenceId
-    groupId
-    hallwayId
-    priority
-    layout
-  }
-  rooms {
-    id
-  }
-  chatId
-  originatingData {
-    id
-    conferenceId
-    sourceId
-    data
-  }
-}
-    `;
-export const ManageContent_TagFragmentDoc = gql`
-    fragment ManageContent_Tag on Tag {
-  id
-  conferenceId
-  name
-  colour
-  priority
-}
-    `;
-export const ManageContent_HallwayFragmentDoc = gql`
-    fragment ManageContent_Hallway on Hallway {
-  id
-  conferenceId
-  name
-  colour
-  priority
 }
     `;
 export const ManageGroups_GroupFragmentDoc = gql`
@@ -38199,6 +38038,7 @@ export const EventInfoFragmentDoc = gql`
   startTime
   endTime
   contentGroupId
+  hallwayId
 }
     ${EventPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
@@ -38943,6 +38783,41 @@ export function useConferenceLandingPageContentGroupLazyQuery(baseOptions?: Apol
 export type ConferenceLandingPageContentGroupQueryHookResult = ReturnType<typeof useConferenceLandingPageContentGroupQuery>;
 export type ConferenceLandingPageContentGroupLazyQueryHookResult = ReturnType<typeof useConferenceLandingPageContentGroupLazyQuery>;
 export type ConferenceLandingPageContentGroupQueryResult = Apollo.QueryResult<ConferenceLandingPageContentGroupQuery, ConferenceLandingPageContentGroupQueryVariables>;
+export const ContentGroupItems_GetContentGroupDocument = gql`
+    query ContentGroupItems_GetContentGroup($contentGroupId: uuid!) {
+  ContentGroup_by_pk(id: $contentGroupId) {
+    ...ContentGroupItems_ContentGroupData
+  }
+}
+    ${ContentGroupItems_ContentGroupDataFragmentDoc}`;
+
+/**
+ * __useContentGroupItems_GetContentGroupQuery__
+ *
+ * To run a query within a React component, call `useContentGroupItems_GetContentGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContentGroupItems_GetContentGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContentGroupItems_GetContentGroupQuery({
+ *   variables: {
+ *      contentGroupId: // value for 'contentGroupId'
+ *   },
+ * });
+ */
+export function useContentGroupItems_GetContentGroupQuery(baseOptions: Apollo.QueryHookOptions<ContentGroupItems_GetContentGroupQuery, ContentGroupItems_GetContentGroupQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ContentGroupItems_GetContentGroupQuery, ContentGroupItems_GetContentGroupQueryVariables>(ContentGroupItems_GetContentGroupDocument, options);
+      }
+export function useContentGroupItems_GetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentGroupItems_GetContentGroupQuery, ContentGroupItems_GetContentGroupQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ContentGroupItems_GetContentGroupQuery, ContentGroupItems_GetContentGroupQueryVariables>(ContentGroupItems_GetContentGroupDocument, options);
+        }
+export type ContentGroupItems_GetContentGroupQueryHookResult = ReturnType<typeof useContentGroupItems_GetContentGroupQuery>;
+export type ContentGroupItems_GetContentGroupLazyQueryHookResult = ReturnType<typeof useContentGroupItems_GetContentGroupLazyQuery>;
+export type ContentGroupItems_GetContentGroupQueryResult = Apollo.QueryResult<ContentGroupItems_GetContentGroupQuery, ContentGroupItems_GetContentGroupQueryVariables>;
 export const ContentOfTagDocument = gql`
     query ContentOfTag($id: uuid!) {
   ContentGroupTag(where: {tagId: {_eq: $id}}) {
@@ -39052,41 +38927,6 @@ export function useGetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetContentGroupQueryHookResult = ReturnType<typeof useGetContentGroupQuery>;
 export type GetContentGroupLazyQueryHookResult = ReturnType<typeof useGetContentGroupLazyQuery>;
 export type GetContentGroupQueryResult = Apollo.QueryResult<GetContentGroupQuery, GetContentGroupQueryVariables>;
-export const ContentGroupSummary_GetContentGroupDocument = gql`
-    query ContentGroupSummary_GetContentGroup($contentGroupId: uuid!) {
-  ContentGroup_by_pk(id: $contentGroupId) {
-    ...ContentGroupSummary_ContentGroupData
-  }
-}
-    ${ContentGroupSummary_ContentGroupDataFragmentDoc}`;
-
-/**
- * __useContentGroupSummary_GetContentGroupQuery__
- *
- * To run a query within a React component, call `useContentGroupSummary_GetContentGroupQuery` and pass it any options that fit your needs.
- * When your component renders, `useContentGroupSummary_GetContentGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useContentGroupSummary_GetContentGroupQuery({
- *   variables: {
- *      contentGroupId: // value for 'contentGroupId'
- *   },
- * });
- */
-export function useContentGroupSummary_GetContentGroupQuery(baseOptions: Apollo.QueryHookOptions<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>(ContentGroupSummary_GetContentGroupDocument, options);
-      }
-export function useContentGroupSummary_GetContentGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>(ContentGroupSummary_GetContentGroupDocument, options);
-        }
-export type ContentGroupSummary_GetContentGroupQueryHookResult = ReturnType<typeof useContentGroupSummary_GetContentGroupQuery>;
-export type ContentGroupSummary_GetContentGroupLazyQueryHookResult = ReturnType<typeof useContentGroupSummary_GetContentGroupLazyQuery>;
-export type ContentGroupSummary_GetContentGroupQueryResult = Apollo.QueryResult<ContentGroupSummary_GetContentGroupQuery, ContentGroupSummary_GetContentGroupQueryVariables>;
 export const AttendeeByIdDocument = gql`
     query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
   Attendee(where: {id: {_eq: $attendeeId}, conferenceId: {_eq: $conferenceId}}) {
@@ -40117,12 +39957,12 @@ export const Schedule_SelectSummariesDocument = gql`
     ...Schedule_EventSummary
   }
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...Schedule_ContentGroupSummary
+    ...Schedule_ContentGroupItems
   }
 }
     ${Schedule_RoomSummaryFragmentDoc}
 ${Schedule_EventSummaryFragmentDoc}
-${Schedule_ContentGroupSummaryFragmentDoc}`;
+${Schedule_ContentGroupItemsFragmentDoc}`;
 
 /**
  * __useSchedule_SelectSummariesQuery__
@@ -42144,417 +41984,6 @@ export function useImportAttendeesMutation(baseOptions?: Apollo.MutationHookOpti
 export type ImportAttendeesMutationHookResult = ReturnType<typeof useImportAttendeesMutation>;
 export type ImportAttendeesMutationResult = Apollo.MutationResult<ImportAttendeesMutation>;
 export type ImportAttendeesMutationOptions = Apollo.BaseMutationOptions<ImportAttendeesMutation, ImportAttendeesMutationVariables>;
-export const ManageContent_SelectAllContentGroupsDocument = gql`
-    query ManageContent_SelectAllContentGroups($conferenceId: uuid!) {
-  ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...ManageContent_ContentGroup
-  }
-}
-    ${ManageContent_ContentGroupFragmentDoc}`;
-
-/**
- * __useManageContent_SelectAllContentGroupsQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectAllContentGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectAllContentGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectAllContentGroupsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContent_SelectAllContentGroupsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllContentGroupsQuery, ManageContent_SelectAllContentGroupsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectAllContentGroupsQuery, ManageContent_SelectAllContentGroupsQueryVariables>(ManageContent_SelectAllContentGroupsDocument, options);
-      }
-export function useManageContent_SelectAllContentGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllContentGroupsQuery, ManageContent_SelectAllContentGroupsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectAllContentGroupsQuery, ManageContent_SelectAllContentGroupsQueryVariables>(ManageContent_SelectAllContentGroupsDocument, options);
-        }
-export type ManageContent_SelectAllContentGroupsQueryHookResult = ReturnType<typeof useManageContent_SelectAllContentGroupsQuery>;
-export type ManageContent_SelectAllContentGroupsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllContentGroupsLazyQuery>;
-export type ManageContent_SelectAllContentGroupsQueryResult = Apollo.QueryResult<ManageContent_SelectAllContentGroupsQuery, ManageContent_SelectAllContentGroupsQueryVariables>;
-export const ManageContent_InsertContentGroupDocument = gql`
-    mutation ManageContent_InsertContentGroup($group: ContentGroup_insert_input!) {
-  insert_ContentGroup_one(object: $group) {
-    ...ManageContent_ContentGroup
-  }
-}
-    ${ManageContent_ContentGroupFragmentDoc}`;
-export type ManageContent_InsertContentGroupMutationFn = Apollo.MutationFunction<ManageContent_InsertContentGroupMutation, ManageContent_InsertContentGroupMutationVariables>;
-
-/**
- * __useManageContent_InsertContentGroupMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertContentGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertContentGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertContentGroupMutation, { data, loading, error }] = useManageContent_InsertContentGroupMutation({
- *   variables: {
- *      group: // value for 'group'
- *   },
- * });
- */
-export function useManageContent_InsertContentGroupMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertContentGroupMutation, ManageContent_InsertContentGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertContentGroupMutation, ManageContent_InsertContentGroupMutationVariables>(ManageContent_InsertContentGroupDocument, options);
-      }
-export type ManageContent_InsertContentGroupMutationHookResult = ReturnType<typeof useManageContent_InsertContentGroupMutation>;
-export type ManageContent_InsertContentGroupMutationResult = Apollo.MutationResult<ManageContent_InsertContentGroupMutation>;
-export type ManageContent_InsertContentGroupMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertContentGroupMutation, ManageContent_InsertContentGroupMutationVariables>;
-export const ManageContent_UpdateContentGroupDocument = gql`
-    mutation ManageContent_UpdateContentGroup($id: uuid!, $update: ContentGroup_set_input!) {
-  update_ContentGroup_by_pk(pk_columns: {id: $id}, _set: $update) {
-    id
-  }
-}
-    `;
-export type ManageContent_UpdateContentGroupMutationFn = Apollo.MutationFunction<ManageContent_UpdateContentGroupMutation, ManageContent_UpdateContentGroupMutationVariables>;
-
-/**
- * __useManageContent_UpdateContentGroupMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateContentGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateContentGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateContentGroupMutation, { data, loading, error }] = useManageContent_UpdateContentGroupMutation({
- *   variables: {
- *      id: // value for 'id'
- *      update: // value for 'update'
- *   },
- * });
- */
-export function useManageContent_UpdateContentGroupMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateContentGroupMutation, ManageContent_UpdateContentGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateContentGroupMutation, ManageContent_UpdateContentGroupMutationVariables>(ManageContent_UpdateContentGroupDocument, options);
-      }
-export type ManageContent_UpdateContentGroupMutationHookResult = ReturnType<typeof useManageContent_UpdateContentGroupMutation>;
-export type ManageContent_UpdateContentGroupMutationResult = Apollo.MutationResult<ManageContent_UpdateContentGroupMutation>;
-export type ManageContent_UpdateContentGroupMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateContentGroupMutation, ManageContent_UpdateContentGroupMutationVariables>;
-export const ManageContent_DeleteContentGroupsDocument = gql`
-    mutation ManageContent_DeleteContentGroups($ids: [uuid!]!) {
-  delete_ContentGroup(where: {id: {_in: $ids}}) {
-    returning {
-      id
-    }
-  }
-}
-    `;
-export type ManageContent_DeleteContentGroupsMutationFn = Apollo.MutationFunction<ManageContent_DeleteContentGroupsMutation, ManageContent_DeleteContentGroupsMutationVariables>;
-
-/**
- * __useManageContent_DeleteContentGroupsMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteContentGroupsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteContentGroupsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteContentGroupsMutation, { data, loading, error }] = useManageContent_DeleteContentGroupsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageContent_DeleteContentGroupsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteContentGroupsMutation, ManageContent_DeleteContentGroupsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteContentGroupsMutation, ManageContent_DeleteContentGroupsMutationVariables>(ManageContent_DeleteContentGroupsDocument, options);
-      }
-export type ManageContent_DeleteContentGroupsMutationHookResult = ReturnType<typeof useManageContent_DeleteContentGroupsMutation>;
-export type ManageContent_DeleteContentGroupsMutationResult = Apollo.MutationResult<ManageContent_DeleteContentGroupsMutation>;
-export type ManageContent_DeleteContentGroupsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteContentGroupsMutation, ManageContent_DeleteContentGroupsMutationVariables>;
-export const ManageContent_SelectAllTagsDocument = gql`
-    query ManageContent_SelectAllTags($conferenceId: uuid!) {
-  Tag(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...ManageContent_Tag
-  }
-}
-    ${ManageContent_TagFragmentDoc}`;
-
-/**
- * __useManageContent_SelectAllTagsQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectAllTagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectAllTagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContent_SelectAllTagsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>(ManageContent_SelectAllTagsDocument, options);
-      }
-export function useManageContent_SelectAllTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>(ManageContent_SelectAllTagsDocument, options);
-        }
-export type ManageContent_SelectAllTagsQueryHookResult = ReturnType<typeof useManageContent_SelectAllTagsQuery>;
-export type ManageContent_SelectAllTagsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllTagsLazyQuery>;
-export type ManageContent_SelectAllTagsQueryResult = Apollo.QueryResult<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>;
-export const ManageContent_InsertTagDocument = gql`
-    mutation ManageContent_InsertTag($tag: Tag_insert_input!) {
-  insert_Tag_one(object: $tag) {
-    ...ManageContent_Tag
-  }
-}
-    ${ManageContent_TagFragmentDoc}`;
-export type ManageContent_InsertTagMutationFn = Apollo.MutationFunction<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
-
-/**
- * __useManageContent_InsertTagMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertTagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertTagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertTagMutation, { data, loading, error }] = useManageContent_InsertTagMutation({
- *   variables: {
- *      tag: // value for 'tag'
- *   },
- * });
- */
-export function useManageContent_InsertTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>(ManageContent_InsertTagDocument, options);
-      }
-export type ManageContent_InsertTagMutationHookResult = ReturnType<typeof useManageContent_InsertTagMutation>;
-export type ManageContent_InsertTagMutationResult = Apollo.MutationResult<ManageContent_InsertTagMutation>;
-export type ManageContent_InsertTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
-export const ManageContent_UpdateTagDocument = gql`
-    mutation ManageContent_UpdateTag($id: uuid!, $update: Tag_set_input!) {
-  update_Tag_by_pk(pk_columns: {id: $id}, _set: $update) {
-    ...ManageContent_Tag
-  }
-}
-    ${ManageContent_TagFragmentDoc}`;
-export type ManageContent_UpdateTagMutationFn = Apollo.MutationFunction<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
-
-/**
- * __useManageContent_UpdateTagMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateTagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateTagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateTagMutation, { data, loading, error }] = useManageContent_UpdateTagMutation({
- *   variables: {
- *      id: // value for 'id'
- *      update: // value for 'update'
- *   },
- * });
- */
-export function useManageContent_UpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>(ManageContent_UpdateTagDocument, options);
-      }
-export type ManageContent_UpdateTagMutationHookResult = ReturnType<typeof useManageContent_UpdateTagMutation>;
-export type ManageContent_UpdateTagMutationResult = Apollo.MutationResult<ManageContent_UpdateTagMutation>;
-export type ManageContent_UpdateTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
-export const ManageContent_DeleteTagsDocument = gql`
-    mutation ManageContent_DeleteTags($ids: [uuid!]!) {
-  delete_Tag(where: {id: {_in: $ids}}) {
-    returning {
-      id
-    }
-  }
-}
-    `;
-export type ManageContent_DeleteTagsMutationFn = Apollo.MutationFunction<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
-
-/**
- * __useManageContent_DeleteTagsMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteTagsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteTagsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteTagsMutation, { data, loading, error }] = useManageContent_DeleteTagsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageContent_DeleteTagsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>(ManageContent_DeleteTagsDocument, options);
-      }
-export type ManageContent_DeleteTagsMutationHookResult = ReturnType<typeof useManageContent_DeleteTagsMutation>;
-export type ManageContent_DeleteTagsMutationResult = Apollo.MutationResult<ManageContent_DeleteTagsMutation>;
-export type ManageContent_DeleteTagsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
-export const ManageContent_SelectAllHallwaysDocument = gql`
-    query ManageContent_SelectAllHallways($conferenceId: uuid!) {
-  Hallway(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...ManageContent_Hallway
-  }
-}
-    ${ManageContent_HallwayFragmentDoc}`;
-
-/**
- * __useManageContent_SelectAllHallwaysQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectAllHallwaysQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectAllHallwaysQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectAllHallwaysQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContent_SelectAllHallwaysQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllHallwaysQuery, ManageContent_SelectAllHallwaysQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectAllHallwaysQuery, ManageContent_SelectAllHallwaysQueryVariables>(ManageContent_SelectAllHallwaysDocument, options);
-      }
-export function useManageContent_SelectAllHallwaysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllHallwaysQuery, ManageContent_SelectAllHallwaysQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectAllHallwaysQuery, ManageContent_SelectAllHallwaysQueryVariables>(ManageContent_SelectAllHallwaysDocument, options);
-        }
-export type ManageContent_SelectAllHallwaysQueryHookResult = ReturnType<typeof useManageContent_SelectAllHallwaysQuery>;
-export type ManageContent_SelectAllHallwaysLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllHallwaysLazyQuery>;
-export type ManageContent_SelectAllHallwaysQueryResult = Apollo.QueryResult<ManageContent_SelectAllHallwaysQuery, ManageContent_SelectAllHallwaysQueryVariables>;
-export const ManageContent_InsertHallwayDocument = gql`
-    mutation ManageContent_InsertHallway($hallway: Hallway_insert_input!) {
-  insert_Hallway_one(object: $hallway) {
-    ...ManageContent_Hallway
-  }
-}
-    ${ManageContent_HallwayFragmentDoc}`;
-export type ManageContent_InsertHallwayMutationFn = Apollo.MutationFunction<ManageContent_InsertHallwayMutation, ManageContent_InsertHallwayMutationVariables>;
-
-/**
- * __useManageContent_InsertHallwayMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertHallwayMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertHallwayMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertHallwayMutation, { data, loading, error }] = useManageContent_InsertHallwayMutation({
- *   variables: {
- *      hallway: // value for 'hallway'
- *   },
- * });
- */
-export function useManageContent_InsertHallwayMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertHallwayMutation, ManageContent_InsertHallwayMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertHallwayMutation, ManageContent_InsertHallwayMutationVariables>(ManageContent_InsertHallwayDocument, options);
-      }
-export type ManageContent_InsertHallwayMutationHookResult = ReturnType<typeof useManageContent_InsertHallwayMutation>;
-export type ManageContent_InsertHallwayMutationResult = Apollo.MutationResult<ManageContent_InsertHallwayMutation>;
-export type ManageContent_InsertHallwayMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertHallwayMutation, ManageContent_InsertHallwayMutationVariables>;
-export const ManageContent_UpdateHallwayDocument = gql`
-    mutation ManageContent_UpdateHallway($id: uuid!, $update: Hallway_set_input!) {
-  update_Hallway_by_pk(pk_columns: {id: $id}, _set: $update) {
-    ...ManageContent_Hallway
-  }
-}
-    ${ManageContent_HallwayFragmentDoc}`;
-export type ManageContent_UpdateHallwayMutationFn = Apollo.MutationFunction<ManageContent_UpdateHallwayMutation, ManageContent_UpdateHallwayMutationVariables>;
-
-/**
- * __useManageContent_UpdateHallwayMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateHallwayMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateHallwayMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateHallwayMutation, { data, loading, error }] = useManageContent_UpdateHallwayMutation({
- *   variables: {
- *      id: // value for 'id'
- *      update: // value for 'update'
- *   },
- * });
- */
-export function useManageContent_UpdateHallwayMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateHallwayMutation, ManageContent_UpdateHallwayMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateHallwayMutation, ManageContent_UpdateHallwayMutationVariables>(ManageContent_UpdateHallwayDocument, options);
-      }
-export type ManageContent_UpdateHallwayMutationHookResult = ReturnType<typeof useManageContent_UpdateHallwayMutation>;
-export type ManageContent_UpdateHallwayMutationResult = Apollo.MutationResult<ManageContent_UpdateHallwayMutation>;
-export type ManageContent_UpdateHallwayMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateHallwayMutation, ManageContent_UpdateHallwayMutationVariables>;
-export const ManageContent_DeleteHallwaysDocument = gql`
-    mutation ManageContent_DeleteHallways($ids: [uuid!]!) {
-  delete_Hallway(where: {id: {_in: $ids}}) {
-    returning {
-      id
-    }
-  }
-}
-    `;
-export type ManageContent_DeleteHallwaysMutationFn = Apollo.MutationFunction<ManageContent_DeleteHallwaysMutation, ManageContent_DeleteHallwaysMutationVariables>;
-
-/**
- * __useManageContent_DeleteHallwaysMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteHallwaysMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteHallwaysMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteHallwaysMutation, { data, loading, error }] = useManageContent_DeleteHallwaysMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageContent_DeleteHallwaysMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteHallwaysMutation, ManageContent_DeleteHallwaysMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteHallwaysMutation, ManageContent_DeleteHallwaysMutationVariables>(ManageContent_DeleteHallwaysDocument, options);
-      }
-export type ManageContent_DeleteHallwaysMutationHookResult = ReturnType<typeof useManageContent_DeleteHallwaysMutation>;
-export type ManageContent_DeleteHallwaysMutationResult = Apollo.MutationResult<ManageContent_DeleteHallwaysMutation>;
-export type ManageContent_DeleteHallwaysMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteHallwaysMutation, ManageContent_DeleteHallwaysMutationVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   Group(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -43672,9 +43101,9 @@ export type InsertRoomPeopleMutationHookResult = ReturnType<typeof useInsertRoom
 export type InsertRoomPeopleMutationResult = Apollo.MutationResult<InsertRoomPeopleMutation>;
 export type InsertRoomPeopleMutationOptions = Apollo.BaseMutationOptions<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
 export const InsertEventInfoDocument = gql`
-    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null) {
+    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $hallwayId: uuid = null) {
   insert_Event_one(
-    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, contentGroupId: $contentGroupId}
+    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, contentGroupId: $contentGroupId, hallwayId: $hallwayId}
   ) {
     ...EventInfo
   }
@@ -43704,6 +43133,7 @@ export type InsertEventInfoMutationFn = Apollo.MutationFunction<InsertEventInfoM
  *      startTime: // value for 'startTime'
  *      durationSeconds: // value for 'durationSeconds'
  *      contentGroupId: // value for 'contentGroupId'
+ *      hallwayId: // value for 'hallwayId'
  *   },
  * });
  */
@@ -43715,10 +43145,10 @@ export type InsertEventInfoMutationHookResult = ReturnType<typeof useInsertEvent
 export type InsertEventInfoMutationResult = Apollo.MutationResult<InsertEventInfoMutation>;
 export type InsertEventInfoMutationOptions = Apollo.BaseMutationOptions<InsertEventInfoMutation, InsertEventInfoMutationVariables>;
 export const UpdateEventInfoDocument = gql`
-    mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null) {
+    mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $hallwayId: uuid = null) {
   update_Event_by_pk(
     pk_columns: {id: $eventId}
-    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, contentGroupId: $contentGroupId}
+    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, contentGroupId: $contentGroupId, hallwayId: $hallwayId}
   ) {
     ...EventInfo
   }
@@ -43747,6 +43177,7 @@ export type UpdateEventInfoMutationFn = Apollo.MutationFunction<UpdateEventInfoM
  *      startTime: // value for 'startTime'
  *      durationSeconds: // value for 'durationSeconds'
  *      contentGroupId: // value for 'contentGroupId'
+ *      hallwayId: // value for 'hallwayId'
  *   },
  * });
  */
@@ -44267,6 +43698,9 @@ export const SelectWholeScheduleDocument = gql`
   Tag(where: {conferenceId: {_eq: $conferenceId}}) {
     ...TagInfo
   }
+  Hallway(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...HallwayInfo
+  }
   ContentGroup(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ContentGroupFullNestedInfo
   }
@@ -44278,6 +43712,7 @@ export const SelectWholeScheduleDocument = gql`
 ${EventInfoFragmentDoc}
 ${OriginatingDataInfoFragmentDoc}
 ${TagInfoFragmentDoc}
+${HallwayInfoFragmentDoc}
 ${ContentGroupFullNestedInfoFragmentDoc}
 ${ContentPersonInfoFragmentDoc}`;
 
@@ -44487,7 +43922,7 @@ export type InsertEventMutationHookResult = ReturnType<typeof useInsertEventMuta
 export type InsertEventMutationResult = Apollo.MutationResult<InsertEventMutation>;
 export type InsertEventMutationOptions = Apollo.BaseMutationOptions<InsertEventMutation, InsertEventMutationVariables>;
 export const UpdateEventDocument = gql`
-    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!) {
+    mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: RoomMode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $contentGroupId: uuid = null, $hallwayId: uuid = null, $newEventTags: [EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!) {
   insert_EventTag(objects: $newEventTags) {
     returning {
       ...EventTagInfo
@@ -44495,7 +43930,7 @@ export const UpdateEventDocument = gql`
   }
   update_Event_by_pk(
     pk_columns: {id: $eventId}
-    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, contentGroupId: $contentGroupId}
+    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, contentGroupId: $contentGroupId, hallwayId: $hallwayId}
   ) {
     ...EventInfo
   }
@@ -44530,6 +43965,7 @@ export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation,
  *      startTime: // value for 'startTime'
  *      durationSeconds: // value for 'durationSeconds'
  *      contentGroupId: // value for 'contentGroupId'
+ *      hallwayId: // value for 'hallwayId'
  *      newEventTags: // value for 'newEventTags'
  *      deleteEventTagIds: // value for 'deleteEventTagIds'
  *   },

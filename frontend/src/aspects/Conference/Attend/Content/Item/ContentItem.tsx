@@ -14,14 +14,21 @@ export function ContentItem({ item }: { item: ContentItemDataFragment }): JSX.El
     if (isContentItemDataBlob(item.data)) {
         const blob = item.data;
 
-        return <ContentItemInner blob={blob} />;
+        return <ContentItemInner blob={blob} type={item.contentTypeName} />;
     }
     return <></>;
 }
 
-function ContentItemInner({ blob }: { blob: ContentItemDataBlob }): JSX.Element {
+function ContentItemInner({ blob, type }: { blob: ContentItemDataBlob; type: ContentType_Enum }): JSX.Element {
     const el = useMemo(() => {
         const latestVersion = R.last(blob);
+
+        switch (type) {
+            case ContentType_Enum.ContentGroupList:
+                return <ContentGroupList />;
+            case ContentType_Enum.WholeSchedule:
+                return <Schedule />;
+        }
 
         if (!latestVersion) {
             return <></>;
@@ -160,11 +167,6 @@ function ContentItemInner({ blob }: { blob: ContentItemDataBlob }): JSX.Element 
                         {latestVersion.data.text}
                     </ExternalLinkButton>
                 );
-
-            case ContentType_Enum.ContentGroupList:
-                return <ContentGroupList />;
-            case ContentType_Enum.WholeSchedule:
-                return <Schedule />;
         }
 
         return <Box>Cannot render this content.</Box>;

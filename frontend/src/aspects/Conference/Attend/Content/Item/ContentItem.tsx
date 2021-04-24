@@ -24,7 +24,7 @@ function ContentItemInner({ blob }: { blob: ContentItemDataBlob }): JSX.Element 
         const latestVersion = R.last(blob);
 
         if (!latestVersion) {
-            return <>No data to display.</>;
+            return <></>;
         }
 
         switch (latestVersion.data.type) {

@@ -139,13 +139,22 @@ function ContentItemInner({ blob, type }: { blob: ContentItemDataBlob; type: Con
                     </ExternalLinkButton>
                 );
             case ContentType_Enum.PaperFile: {
-                const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                const url = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
-                return (
-                    <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
-                        Open the Paper File
-                    </ExternalLinkButton>
-                );
+                try {
+                    const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
+                    if (!bucket || !key) {
+                        throw new Error("Missing S3 URI component");
+                    }
+                    const url = `https://s3.${
+                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                    }.amazonaws.com/${bucket}/${key}`;
+                    return (
+                        <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
+                            Open the Paper File
+                        </ExternalLinkButton>
+                    );
+                } catch (e) {
+                    return <>Invalid file URL.</>;
+                }
             }
             case ContentType_Enum.PosterUrl:
                 return (
@@ -154,13 +163,22 @@ function ContentItemInner({ blob, type }: { blob: ContentItemDataBlob; type: Con
                     </ExternalLinkButton>
                 );
             case ContentType_Enum.PosterFile: {
-                const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                const url = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
-                return (
-                    <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
-                        Open the Poster File
-                    </ExternalLinkButton>
-                );
+                try {
+                    const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
+                    if (!bucket || !key) {
+                        throw new Error("Missing S3 URI component");
+                    }
+                    const url = `https://s3.${
+                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                    }.amazonaws.com/${bucket}/${key}`;
+                    return (
+                        <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
+                            Open the Poster File
+                        </ExternalLinkButton>
+                    );
+                } catch (e) {
+                    return <>Invalid file URL.</>;
+                }
             }
 
             case ContentType_Enum.VideoLink:

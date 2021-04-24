@@ -75,17 +75,17 @@ export default function ContentGroupHallwaysModal({
             <Box mt={4}>
                 <Center flexDir="column">
                     <Button onClick={onOpen} colorScheme="blue">
-                        Manage Content Hallways
+                        Manage Content Exhibitions
                     </Button>
                     <Text mt={2} as="p">
-                        (Hallways can exhibit items, rooms and events.)
+                        (Exhibitions can exhibit items, rooms and events.)
                     </Text>
                 </Center>
             </Box>
             <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader paddingBottom={0}>Manage Content Hallways</ModalHeader>
+                    <ModalHeader paddingBottom={0}>Manage Content Exhibitions</ModalHeader>
                     <ModalHeader paddingTop={"0.3rem"} fontSize="100%" fontStyle="italic" fontWeight="normal">
                         &ldquo;{group.title}&bdquo;
                     </ModalHeader>
@@ -122,9 +122,9 @@ export default function ContentGroupHallwaysModal({
                                     },
                                     otherFields: {
                                         hallway: {
-                                            heading: "Hallway",
-                                            ariaLabel: "Hallway",
-                                            description: "Hallway",
+                                            heading: "Exhibition",
+                                            ariaLabel: "Exhibition",
+                                            description: "Exhibition",
                                             isHidden: false,
                                             isEditable: false,
                                             isEditableAtCreate: true,

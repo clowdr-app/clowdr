@@ -49,7 +49,7 @@ export default function ManageHallwaysModal({
             <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader paddingBottom={0}>Manage Hallways</ModalHeader>
+                    <ModalHeader paddingBottom={0}>Manage Exhibitions</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>

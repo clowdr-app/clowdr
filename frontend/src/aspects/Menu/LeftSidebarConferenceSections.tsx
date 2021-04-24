@@ -179,7 +179,7 @@ export function LeftSidebarConferenceSections_Inner({
                         width="100%"
                     >
                         <FAIcon icon="images" iconStyle="r" mr={3} />
-                        Hallways
+                        Exhibitions
                     </LinkButton>
                 </Flex>
                 <ToggleNavButton m={0} size="xs" />

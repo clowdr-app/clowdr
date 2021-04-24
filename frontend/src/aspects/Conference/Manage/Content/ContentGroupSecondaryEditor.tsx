@@ -290,7 +290,7 @@ export function ContentGroupSecondaryEditor(
                 <AccordionItem key="hallways">
                     <AccordionButton>
                         <Box flex="1" textAlign="left">
-                            Hallways
+                            Exhibitions
                         </Box>
                         <AccordionIcon />
                     </AccordionButton>

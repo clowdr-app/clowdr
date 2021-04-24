@@ -119,17 +119,17 @@ export default function HallwaysPage(): JSX.Element {
     );
     const sortedHallways = useMemo(() => hallways?.sort((x, y) => x.priority - y.priority), [hallways]);
 
-    const title = useTitle("Hallways");
+    const title = useTitle("Exhibitions");
 
     return (
         <>
             {title}
             {sortedHallways === undefined ? (
-                <CenteredSpinner spinnerProps={{ label: "Loading hallways" }} />
+                <CenteredSpinner spinnerProps={{ label: "Loading exhibitions" }} />
             ) : (
                 <>
                     <Heading as="h1" py={6}>
-                        Hallways
+                        Exhibitions
                     </Heading>
                     <Grid templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={4}>
                         {sortedHallways.map((hallway) => (

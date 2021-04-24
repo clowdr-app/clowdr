@@ -647,10 +647,10 @@ function EditableScheduleTable(): JSX.Element {
                 id: ColumnId.Hallway,
                 header: function HallwayHeader(props: ColumnHeaderProps<EventInfoFragment>) {
                     return props.isInCreate ? (
-                        <FormLabel>Hallway (optional)</FormLabel>
+                        <FormLabel>Exhibition (optional)</FormLabel>
                     ) : (
                         <Button size="xs" onClick={props.onClick}>
-                            Hallway{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            Exhibition{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
                         </Button>
                     );
                 },

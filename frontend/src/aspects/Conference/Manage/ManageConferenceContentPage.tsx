@@ -508,11 +508,11 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         enabledWhenNothingSelected: true,
                         enabledWhenDirty: true,
                         tooltipWhenDisabled: "",
-                        tooltipWhenEnabled: "Hallways can exhibit items, rooms and events.",
+                        tooltipWhenEnabled: "Exhibitions can exhibit items, rooms and events.",
                         colorScheme: "purple",
                         isRunning: false,
-                        label: "Manage hallways",
-                        text: "Manage hallways",
+                        label: "Manage exhibitions",
+                        text: "Manage exhibitions",
                     },
                     {
                         action: async (groupKeys) => {

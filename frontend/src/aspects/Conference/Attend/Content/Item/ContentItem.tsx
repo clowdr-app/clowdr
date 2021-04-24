@@ -29,7 +29,11 @@ function ContentItemInner({ blob }: { blob: ContentItemDataBlob }): JSX.Element 
 
         switch (latestVersion.data.type) {
             case ContentType_Enum.Abstract:
-                return <Markdown>{latestVersion.data.text}</Markdown>;
+                return (
+                    <Box maxW={700}>
+                        <Markdown>{latestVersion.data.text}</Markdown>
+                    </Box>
+                );
             case ContentType_Enum.Zoom:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="green">
@@ -37,7 +41,11 @@ function ContentItemInner({ blob }: { blob: ContentItemDataBlob }): JSX.Element 
                     </ExternalLinkButton>
                 );
             case ContentType_Enum.Text:
-                return <Markdown>{latestVersion.data.text}</Markdown>;
+                return (
+                    <Box maxW={700}>
+                        <Markdown>{latestVersion.data.text}</Markdown>
+                    </Box>
+                );
             case ContentType_Enum.VideoUrl:
                 return (
                     // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width

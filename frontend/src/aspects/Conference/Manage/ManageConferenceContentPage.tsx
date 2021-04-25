@@ -262,7 +262,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 // Deep clone so that when we manipulate stuff later it doesn't
                 // accidentally screw up the query data
                 const newGroup: ContentGroupDescriptor = deepCloneContentGroupDescriptor(group);
-                fitGroupToTemplate(newGroup);
+                // fitGroupToTemplate(newGroup);
                 newGroupsMap.set(key, newGroup);
             }
             for (const [key, value] of saveContentDiff.originalPeople) {

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Button, Flex, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useMemo } from "react";
@@ -12,6 +12,7 @@ import {
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
+import { CreateRoomButton } from "../Content/CreateRoomButton";
 import { ItemBaseTemplates } from "../Content/Templates";
 
 gql`
@@ -24,9 +25,11 @@ gql`
 
 export function AddSponsorContentMenu({
     contentGroupId,
+    roomId,
     refetch,
 }: {
     contentGroupId: string;
+    roomId: string | null;
     refetch: () => void;
 }): JSX.Element {
     const toast = useToast();
@@ -106,7 +109,11 @@ export function AddSponsorContentMenu({
     return (
         <Flex flexWrap="wrap">
             <LinkButton
-                to={`/conference/${conference.slug}/item/${contentGroupId}`}
+                to={
+                    roomId
+                        ? `/conference/${conference.slug}/room/${roomId}`
+                        : `/conference/${conference.slug}/item/${contentGroupId}`
+                }
                 colorScheme="green"
                 mb={4}
                 isExternal={true}
@@ -115,8 +122,13 @@ export function AddSponsorContentMenu({
                 linkProps={{ flex: "0 0 auto", margin: 1 }}
             >
                 <FAIcon icon="link" iconStyle="s" mr={3} />
-                View sponsor
+                View sponsor {roomId ? "booth" : "(no booth)"}
             </LinkButton>
+            {!roomId ? (
+                <Box mt={1}>
+                    <CreateRoomButton groupId={contentGroupId} buttonText="Create booth (room)" />
+                </Box>
+            ) : undefined}
             {menu}
         </Flex>
     );

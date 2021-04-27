@@ -36695,7 +36695,7 @@ export type EditableSponsorsTable_DeleteSponsorMutationVariables = Exact<{
 
 export type EditableSponsorsTable_DeleteSponsorMutation = { readonly __typename?: 'mutation_root', readonly delete_ContentGroup?: Maybe<{ readonly __typename?: 'ContentGroup_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'ContentGroup', readonly id: any }> }> };
 
-export type EditableSponsorsTable_ContentGroupInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> };
+export type EditableSponsorsTable_ContentGroupInfoFragment = { readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly room?: Maybe<{ readonly __typename?: 'Room', readonly id: any }> };
 
 export type SponsorSecondaryEditor_GetSponsorContentItemsQueryVariables = Exact<{
   contentGroupId: Scalars['uuid'];
@@ -38132,6 +38132,9 @@ export const EditableSponsorsTable_ContentGroupInfoFragmentDoc = gql`
   id
   title
   shortTitle
+  room {
+    id
+  }
 }
     `;
 export const SponsorSecondaryEditor_ContentItemFragmentDoc = gql`

@@ -54,6 +54,9 @@ gql`
         id
         title
         shortTitle
+        room {
+            id
+        }
     }
 `;
 
@@ -219,7 +222,13 @@ export function EditableSponsorsTable(): JSX.Element {
                     start: (record) => {
                         insertSponsor({
                             variables: {
-                                contentGroup: record,
+                                contentGroup: {
+                                    id: record.id,
+                                    title: record.title,
+                                    shortTitle: record.shortTitle,
+                                    conferenceId: conference.id,
+                                    contentGroupTypeName: ContentGroupType_Enum.Sponsor,
+                                },
                             },
                             update: (cache, { data: _data }) => {
                                 if (_data?.insert_ContentGroup_one) {

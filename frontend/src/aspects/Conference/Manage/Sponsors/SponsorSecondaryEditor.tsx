@@ -1,4 +1,5 @@
 import { gql, Reference } from "@apollo/client";
+import { InfoIcon } from "@chakra-ui/icons";
 import {
     Accordion,
     AccordionButton,
@@ -10,6 +11,7 @@ import {
     AlertIcon,
     AlertTitle,
     Box,
+    chakra,
     Divider,
     Drawer,
     DrawerBody,
@@ -22,6 +24,8 @@ import {
     FormLabel,
     HStack,
     IconButton,
+    ListItem,
+    OrderedList,
     Spinner,
     Switch,
     Text,
@@ -91,6 +95,7 @@ export function SponsorSecondaryEditor({
                         {index !== null ? (
                             <AddSponsorContentMenu
                                 contentGroupId={sponsors[index].id}
+                                roomId={sponsors[index].room?.id ?? null}
                                 refetch={async () => {
                                     await contentItemsResult.refetch();
                                 }}
@@ -136,6 +141,23 @@ export function SponsorContentItems({
 
     return (
         <Accordion allowToggle allowMultiple>
+            <AccordionItem>
+                <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                        <InfoIcon mr={2} verticalAlign="middle" />
+                        <chakra.span>How to add a sponsor&apos;s logo</chakra.span>
+                    </Box>
+                    <AccordionIcon />
+                </AccordionButton>
+                <AccordionPanel pb={4}>
+                    <OrderedList>
+                        <ListItem>Add content of type &ldquo;Image file&rdquo;</ListItem>
+                        <ListItem>Enable the &ldquo;Is logo&rdquo; option</ListItem>
+                        <ListItem>For correct display, please also enable the &ldquo;Hidden&rdquo; option</ListItem>
+                        <ListItem>Upload the logo file</ListItem>
+                    </OrderedList>
+                </AccordionPanel>
+            </AccordionItem>
             {sortedContentItems.map((item) => (
                 <SponsorContentItem key={item.id} contentItem={item} />
             ))}

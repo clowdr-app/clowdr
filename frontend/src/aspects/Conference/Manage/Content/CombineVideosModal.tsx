@@ -115,7 +115,7 @@ export function CombineVideosModal({
     const [mutate] = useCombineVideosModal_CreateCombineVideosJobMutation();
 
     return (
-        <Modal scrollBehavior="inside" onClose={onClose} isOpen={isOpen} motionPreset="scale" size="full">
+        <Modal scrollBehavior="outside" onClose={onClose} isOpen={isOpen} motionPreset="scale">
             <Formik
                 initialValues={{ contentItemIds: [], outputName: "Combined video" }}
                 onSubmit={async (values, actions) => {

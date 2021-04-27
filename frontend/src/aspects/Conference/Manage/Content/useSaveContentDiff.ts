@@ -337,7 +337,7 @@ gql`
                 id
             }
         }
-        delete_ContentGroupTag(where: { tag: { id: { _in: $deleteGroupTagIds } } }) {
+        delete_ContentGroupTag(where: { contentGroupId: { _eq: $groupId }, tagId: { _in: $deleteGroupTagIds } }) {
             returning {
                 id
             }

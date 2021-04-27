@@ -61,7 +61,7 @@ gql`
                 data
             }
             videoItems: contentItems(
-                where: { contentTypeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }
+                where: { contentTypeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, isHidden: { _eq: false } }
                 limit: 1
                 order_by: { createdAt: desc_nulls_last }
             ) {

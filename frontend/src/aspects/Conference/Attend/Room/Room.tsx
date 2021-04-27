@@ -11,7 +11,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import type { ContentItemDataBlob, VideoContentBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
@@ -28,6 +28,7 @@ import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
+import { ContentItemVideo } from "../Content/Item/ContentItemVideo";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
 import { RoomContent } from "./RoomContent";
@@ -56,6 +57,14 @@ gql`
             title
             contentGroupTypeName
             zoomItems: contentItems(where: { contentTypeName: { _eq: ZOOM } }, limit: 1) {
+                id
+                data
+            }
+            videoItems: contentItems(
+                where: { contentTypeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] } }
+                limit: 1
+                order_by: { createdAt: desc_nulls_last }
+            ) {
                 id
                 data
             }
@@ -282,6 +291,24 @@ function RoomInner({
             return undefined;
         }
     }, [currentRoomEvent, nextRoomEvent, now30s]);
+
+    const maybeVideoDetails = useMemo(() => {
+        try {
+            if (currentRoomEvent) {
+                const currentVideoItems = currentRoomEvent.contentGroup?.videoItems;
+                if (currentVideoItems?.length) {
+                    const versions = currentVideoItems[0].data as ContentItemDataBlob;
+                    const latest = R.last(versions)?.data as VideoContentBlob;
+                    return { data: latest, contentItemId: currentVideoItems[0].id };
+                }
+            }
+
+            return undefined;
+        } catch (e) {
+            console.error("Error finding current event video details", e);
+            return undefined;
+        }
+    }, [currentRoomEvent]);
 
     useEffect(() => {
         if (
@@ -526,21 +553,33 @@ function RoomInner({
     );
 
     const playerEl = useMemo(() => {
-        return !showBackstage &&
-            !currentEventModeIsNone &&
-            !showDefaultBreakoutRoom &&
-            hlsUri &&
-            withinThreeMinutesOfBroadcastEvent ? (
-            <HlsPlayer
-                roomId={roomDetails.id}
-                canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                hlsUri={hlsUri}
-            />
+        const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.VideoPlayer;
+        const shouldShowLivePlayer =
+            !currentEventModeIsNone && !showDefaultBreakoutRoom && withinThreeMinutesOfBroadcastEvent;
+
+        return !showBackstage ? (
+            currentEventIsVideoPlayer ? (
+                maybeVideoDetails ? (
+                    <ContentItemVideo
+                        contentItemId={maybeVideoDetails.contentItemId}
+                        videoContentItemData={maybeVideoDetails.data}
+                    />
+                ) : (
+                    <>Could not find video.</>
+                )
+            ) : shouldShowLivePlayer && hlsUri ? (
+                <HlsPlayer
+                    roomId={roomDetails.id}
+                    canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
+                    hlsUri={hlsUri}
+                />
+            ) : undefined
         ) : undefined;
     }, [
         currentEventModeIsNone,
         currentRoomEvent,
         hlsUri,
+        maybeVideoDetails,
         roomDetails.id,
         showBackstage,
         showDefaultBreakoutRoom,

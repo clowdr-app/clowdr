@@ -4,7 +4,7 @@ import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ContentType_Enum } from "../../../../generated/graphql";
-import { ContentGroupVideo } from "../../Attend/Content/ContentGroupVideos";
+import { ContentItemVideo } from "../../Attend/Content/Item/ContentItemVideo";
 import { RefreshSubtitles } from "./RefreshSubtitles";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
@@ -120,7 +120,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
             }
             return (
                 <>
-                    <ContentGroupVideo
+                    <ContentItemVideo
                         contentItemId={data.item.isNew ? "" : data.item.id}
                         title={data.item.name}
                         videoContentItemData={latestVersion.data}

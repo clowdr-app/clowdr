@@ -20,6 +20,7 @@ import {
     MenuItem,
     MenuList,
     Switch,
+    Tag,
     Text,
 } from "@chakra-ui/react";
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
@@ -339,6 +340,11 @@ export function ContentGroupSecondaryEditor(
                                 <Box flex="1" textAlign="left">
                                     {accordianTitle}
                                 </Box>
+                                {item.isHidden && (
+                                    <Tag size="sm" mr={1}>
+                                        Hidden
+                                    </Tag>
+                                )}
                                 {accordianContents && <AccordionIcon />}
                             </AccordionButton>
                             {accordianContents && (

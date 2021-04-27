@@ -526,7 +526,11 @@ function RoomInner({
     );
 
     const playerEl = useMemo(() => {
-        return !showBackstage && !currentEventModeIsNone && hlsUri && withinThreeMinutesOfBroadcastEvent ? (
+        return !showBackstage &&
+            !currentEventModeIsNone &&
+            !showDefaultBreakoutRoom &&
+            hlsUri &&
+            withinThreeMinutesOfBroadcastEvent ? (
             <HlsPlayer
                 roomId={roomDetails.id}
                 canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
@@ -539,6 +543,7 @@ function RoomInner({
         hlsUri,
         roomDetails.id,
         showBackstage,
+        showDefaultBreakoutRoom,
         withinThreeMinutesOfBroadcastEvent,
     ]);
 

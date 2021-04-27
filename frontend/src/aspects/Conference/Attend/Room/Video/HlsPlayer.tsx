@@ -7,19 +7,16 @@ import useTrackView from "../../../../Realtime/Analytics/useTrackView";
 
 export function HlsPlayer({
     roomId,
-    hidden,
     hlsUri,
     canPlay,
 }: {
     roomId: string;
-    hidden: boolean;
     hlsUri: string;
     canPlay: boolean;
 }): JSX.Element {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     useTrackView(isPlaying, roomId, "Room.HLSStream");
 
-    const muteStream = hidden;
     const playerRef = useRef<ReactPlayer | null>(null);
     const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
     const playerEl = useMemo(() => {
@@ -41,8 +38,7 @@ export function HlsPlayer({
                         },
                     }}
                     ref={playerRef}
-                    playing={canPlay && !hidden && intendPlayStream}
-                    muted={muteStream}
+                    playing={canPlay && intendPlayStream}
                     controls={true}
                     onEnded={() => {
                         setIsPlaying(false);
@@ -61,12 +57,14 @@ export function HlsPlayer({
                 />
             </Box>
         );
-    }, [canPlay, hidden, hlsUri, intendPlayStream, muteStream]);
+    }, [canPlay, hlsUri, intendPlayStream]);
 
     useEffect(() => {
         if (playerRef.current) {
             const hls: Hls = playerRef.current.getInternalPlayer("hls") as Hls;
-            hls.subtitleDisplay = false;
+            if (hls) {
+                hls.subtitleDisplay = false;
+            }
         }
     }, []);
 

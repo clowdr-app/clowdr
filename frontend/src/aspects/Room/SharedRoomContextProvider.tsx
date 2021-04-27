@@ -16,15 +16,10 @@ export function SharedRoomContextProvider({
     return (
         <>
             <portals.InPortal node={vonageNode}>
-                <VonageRoom
-                    getAccessToken={async () => ""}
-                    vonageSessionId=""
-                    disable={false}
-                    isBackstageRoom={false}
-                />
+                <VonageRoom getAccessToken={async () => ""} vonageSessionId="" disable={true} isBackstageRoom={false} />
             </portals.InPortal>
             <portals.InPortal node={chimeNode}>
-                <ChimeRoom disable={false} roomId="" />
+                <ChimeRoom disable={true} roomId="" />
             </portals.InPortal>
             <SharedRoomContext.Provider value={ctx}>{children}</SharedRoomContext.Provider>
         </>

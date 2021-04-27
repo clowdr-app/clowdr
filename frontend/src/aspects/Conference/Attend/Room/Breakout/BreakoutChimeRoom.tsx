@@ -14,7 +14,13 @@ gql`
     }
 `;
 
-export function BreakoutChimeRoom({ room }: { room: RoomPage_RoomDetailsFragment }): JSX.Element {
+export function BreakoutChimeRoom({
+    room,
+    enable,
+}: {
+    room: RoomPage_RoomDetailsFragment;
+    enable: boolean;
+}): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
     const [getRoomChimeData] = useGetRoomChimeDataMutation({
@@ -34,9 +40,13 @@ export function BreakoutChimeRoom({ room }: { room: RoomPage_RoomDetailsFragment
         };
     }, [getRoomChimeData]);
 
-    //todo: when chime/vonage chooser is available, use it here
     return sharedRoomContext ? (
-        <portals.OutPortal node={sharedRoomContext.chimePortalNode} roomId={room.id} getMeetingData={getMeetingData} />
+        <portals.OutPortal
+            node={sharedRoomContext.chimePortalNode}
+            disable={!enable}
+            roomId={room.id}
+            getMeetingData={getMeetingData}
+        />
     ) : (
         <>Cannot load breakout room</>
     );

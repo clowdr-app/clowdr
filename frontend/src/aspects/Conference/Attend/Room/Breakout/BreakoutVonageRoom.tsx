@@ -13,7 +13,13 @@ gql`
     }
 `;
 
-export function BreakoutVonageRoom({ room }: { room: RoomPage_RoomDetailsFragment }): JSX.Element {
+export function BreakoutVonageRoom({
+    room,
+    enable,
+}: {
+    room: RoomPage_RoomDetailsFragment;
+    enable: boolean;
+}): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
     const [getRoomVonageToken] = useGetRoomVonageTokenMutation({
@@ -30,11 +36,11 @@ export function BreakoutVonageRoom({ room }: { room: RoomPage_RoomDetailsFragmen
         return result.data?.joinRoomVonageSession.accessToken;
     }, [getRoomVonageToken]);
 
-    //todo: when chime/vonage chooser is available, use it here
     return room.publicVonageSessionId && sharedRoomContext ? (
         <portals.OutPortal
             node={sharedRoomContext.vonagePortalNode}
             vonageSessionId={room.publicVonageSessionId}
+            disable={!enable}
             getAccessToken={getAccessToken}
             isBackstageRoom={false}
         />

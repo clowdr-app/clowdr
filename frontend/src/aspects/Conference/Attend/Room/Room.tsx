@@ -526,10 +526,9 @@ function RoomInner({
     );
 
     const playerEl = useMemo(() => {
-        return !currentEventModeIsNone && hlsUri && withinThreeMinutesOfBroadcastEvent ? (
+        return !showBackstage && !currentEventModeIsNone && hlsUri && withinThreeMinutesOfBroadcastEvent ? (
             <HlsPlayer
                 roomId={roomDetails.id}
-                hidden={!!showBackstage}
                 canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
                 hlsUri={hlsUri}
             />
@@ -581,11 +580,13 @@ function RoomInner({
 
                 {!showBackstage ? (
                     <>
-                        {showDefaultBreakoutRoom ? (
-                            <Box bgColor={bgColour} m={-2}>
-                                <BreakoutRoom defaultVideoBackendName={defaultVideoBackend} roomDetails={roomDetails} />
-                            </Box>
-                        ) : undefined}
+                        <Box bgColor={bgColour} m={-2}>
+                            <BreakoutRoom
+                                defaultVideoBackendName={defaultVideoBackend}
+                                roomDetails={roomDetails}
+                                enable={showDefaultBreakoutRoom}
+                            />
+                        </Box>
                         {contentEl}
                     </>
                 ) : undefined}

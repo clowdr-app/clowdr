@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
-import { RoomPage_RoomDetailsFragment, useGetRoomVonageTokenMutation } from "../../../../generated/graphql";
-import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
+import { RoomPage_RoomDetailsFragment, useGetRoomVonageTokenMutation } from "../../../../../generated/graphql";
+import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 
 gql`
     mutation GetRoomVonageToken($roomId: uuid!) {

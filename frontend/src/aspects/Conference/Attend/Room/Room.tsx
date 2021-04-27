@@ -4,25 +4,18 @@ import {
     AlertIcon,
     Box,
     Button,
-    Heading,
     HStack,
     Spinner,
-    Tag,
     Text,
     useColorModeValue,
     useToast,
     VStack,
 } from "@chakra-ui/react";
 import type { ContentItemDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
-import { formatRelative } from "date-fns";
-import type Hls from "hls.js";
-import type { HlsConfig } from "hls.js";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import ReactPlayer from "react-player";
 import { Redirect, useHistory } from "react-router-dom";
 import {
-    ContentGroupType_Enum,
     RoomMode_Enum,
     RoomPage_RoomDetailsFragment,
     RoomPrivacy_Enum,
@@ -31,21 +24,16 @@ import {
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
-import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
-import useTrackView from "../../../Realtime/Analytics/useTrackView";
 import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
-import { ContentGroupItemsWrapper } from "../Content/ContentGroupItems";
-import { HallwayLayoutWrapper } from "../Hallway/HallwayLayout";
-import { BreakoutChimeRoom } from "./BreakoutChimeRoom";
-import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
+import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
+import { RoomContent } from "./RoomContent";
 import { RoomControlBar } from "./RoomControlBar";
-import { RoomTitle } from "./RoomTitle";
-import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
+import { HlsPlayer } from "./Video/HlsPlayer";
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
@@ -253,17 +241,18 @@ function RoomInner({
         [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
     );
 
-    const notExplictlyWatchingCurrentOrNextEvent =
+    const notExplicitlyWatchingCurrentOrNextEvent =
         !watchStreamForEventId ||
         (!!currentRoomEvent && watchStreamForEventId !== currentRoomEvent.id) ||
         (!currentRoomEvent && !!nextRoomEvent && watchStreamForEventId !== nextRoomEvent.id);
     const showBackstage =
         hasBackstage &&
-        notExplictlyWatchingCurrentOrNextEvent &&
+        notExplicitlyWatchingCurrentOrNextEvent &&
         (backStageRoomJoined || presentingCurrentOrUpcomingSoonEvent || alreadyBackstage.current);
 
     alreadyBackstage.current = showBackstage;
 
+    const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.None;
     const showDefaultBreakoutRoom =
         !roomDetails.isProgramRoom || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
 
@@ -369,85 +358,6 @@ function RoomInner({
         ),
         [currentRoomEvent?.id, nextRoomEvent, roomDetails.name, roomEventsForCurrentAttendee, showBackstage]
     );
-
-    const [isPlaying, setIsPlaying] = useState<boolean>(false);
-    useTrackView(isPlaying, roomDetails.id, "Room.HLSStream");
-
-    const muteStream = showBackstage;
-    const playerRef = useRef<ReactPlayer | null>(null);
-    const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
-    const playerEl = useMemo(() => {
-        const hlsOptions: Partial<HlsConfig> = {
-            liveSyncDurationCount: 5,
-            enableCEA708Captions: false,
-            enableWebVTT: true,
-        };
-        return hlsUri && withinThreeMinutesOfBroadcastEvent ? (
-            <Box display={showBackstage ? "none" : "block"}>
-                <ReactPlayer
-                    width="100%"
-                    height="auto"
-                    url={hlsUri}
-                    config={{
-                        file: {
-                            hlsVersion: "1.0.1",
-                            hlsOptions,
-                        },
-                    }}
-                    ref={playerRef}
-                    playing={
-                        (withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent) && !showBackstage && intendPlayStream
-                    }
-                    muted={muteStream}
-                    controls={true}
-                    onEnded={() => {
-                        setIsPlaying(false);
-                    }}
-                    onError={() => {
-                        setIsPlaying(false);
-                    }}
-                    onPause={() => {
-                        setIsPlaying(false);
-                        setIntendPlayStream(false);
-                    }}
-                    onPlay={() => {
-                        setIsPlaying(true);
-                        setIntendPlayStream(true);
-                    }}
-                />
-            </Box>
-        ) : (
-            <></>
-        );
-    }, [hlsUri, withinThreeMinutesOfBroadcastEvent, showBackstage, currentRoomEvent, intendPlayStream, muteStream]);
-
-    useEffect(() => {
-        if (playerRef.current) {
-            const hls: Hls = playerRef.current.getInternalPlayer("hls") as Hls;
-            hls.subtitleDisplay = false;
-        }
-    }, []);
-
-    const breakoutRoomEl = useMemo(() => {
-        // console.log("default video backend", defaultVideoBackend, roomDetails.videoRoomBackendName);
-
-        switch (roomDetails.videoRoomBackendName) {
-            case "CHIME":
-                return <BreakoutChimeRoom room={roomDetails} />;
-            case "VONAGE":
-                return <BreakoutVonageRoom room={roomDetails} />;
-        }
-
-        switch (defaultVideoBackend) {
-            case "CHIME":
-                return <BreakoutChimeRoom room={roomDetails} />;
-            case "VONAGE":
-            case "NO_DEFAULT":
-                return <BreakoutVonageRoom room={roomDetails} />;
-        }
-
-        return <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} />;
-    }, [defaultVideoBackend, roomDetails]);
 
     const contentEl = useMemo(
         () => (
@@ -578,6 +488,61 @@ function RoomInner({
 
     const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
 
+    const startsSoonEl = useMemo(
+        () => (
+            <>
+                {showDefaultBreakoutRoom &&
+                secondsUntilNonBreakoutEvent >= 180 &&
+                secondsUntilNonBreakoutEvent <= 300 ? (
+                    <Alert status="warning">
+                        <AlertIcon />
+                        Event starting soon. Breakout room closes in {Math.round(
+                            secondsUntilNonBreakoutEvent - 180
+                        )}{" "}
+                        seconds
+                    </Alert>
+                ) : undefined}
+                {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
+                    <Alert status="info">
+                        <AlertIcon />
+                        Event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                    </Alert>
+                ) : undefined}
+                {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
+                    <Alert status="info">
+                        <AlertIcon />
+                        Event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
+                    </Alert>
+                ) : undefined}
+            </>
+        ),
+        [
+            currentRoomEvent,
+            secondsUntilBroadcastEvent,
+            secondsUntilNonBreakoutEvent,
+            secondsUntilZoomEvent,
+            showDefaultBreakoutRoom,
+        ]
+    );
+
+    const playerEl = useMemo(() => {
+        return !currentEventModeIsNone && hlsUri && withinThreeMinutesOfBroadcastEvent ? (
+            <HlsPlayer
+                roomId={roomDetails.id}
+                hidden={!!showBackstage}
+                canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
+                hlsUri={hlsUri}
+            />
+        ) : undefined;
+    }, [
+        currentEventModeIsNone,
+        currentRoomEvent,
+        hlsUri,
+        roomDetails.id,
+        showBackstage,
+        withinThreeMinutesOfBroadcastEvent,
+    ]);
+
     return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (
         <Redirect
             to={`/conference/${conference.slug}/shuffle${
@@ -589,181 +554,42 @@ function RoomInner({
             <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
                 {controlBarEl}
 
-                {showDefaultBreakoutRoom &&
-                secondsUntilNonBreakoutEvent >= 180 &&
-                secondsUntilNonBreakoutEvent <= 300 ? (
-                    <Alert status="warning">
-                        <AlertIcon />
-                        Event starting soon. Breakout room closes in {Math.round(
-                            secondsUntilNonBreakoutEvent - 180
-                        )}{" "}
-                        seconds
-                    </Alert>
-                ) : (
-                    <></>
-                )}
+                {showBackstage ? backStageEl : undefined}
 
-                {!showBackstage && secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
-                    <Alert status="info">
-                        <AlertIcon />
-                        Event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
-                    </Alert>
-                ) : (
-                    <></>
-                )}
-
-                {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
-                    <Alert status="info">
-                        <AlertIcon />
-                        Event starting in {Math.round(secondsUntilZoomEvent)} seconds
-                    </Alert>
-                ) : (
-                    <></>
-                )}
-
-                {maybeZoomUrl ? (
-                    <ExternalLinkButton
-                        to={maybeZoomUrl}
-                        isExternal={true}
-                        colorScheme="green"
-                        size="lg"
-                        w="100%"
-                        mt={4}
-                    >
-                        Go to Zoom
-                    </ExternalLinkButton>
-                ) : (
-                    <></>
-                )}
-
-                {isPresenterOfUpcomingEvent && !showBackstage ? (
-                    <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
+                {!showBackstage ? (
+                    <>
+                        {startsSoonEl}
+                        {isPresenterOfUpcomingEvent ? (
+                            <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
+                        ) : undefined}
+                        {maybeZoomUrl && !currentEventModeIsNone ? (
+                            <ExternalLinkButton
+                                to={maybeZoomUrl}
+                                isExternal={true}
+                                colorScheme="green"
+                                size="lg"
+                                w="100%"
+                                mt={4}
+                            >
+                                Go to Zoom
+                            </ExternalLinkButton>
+                        ) : undefined}
+                    </>
                 ) : undefined}
-                {showBackstage ? backStageEl : playerEl}
 
-                {showDefaultBreakoutRoom ? (
-                    <Box display={showBackstage ? "none" : "block"} bgColor={bgColour} m={-2}>
-                        {breakoutRoomEl}
-                    </Box>
-                ) : (
-                    <></>
-                )}
+                {playerEl}
 
-                {!showBackstage ? contentEl : <></>}
+                {!showBackstage ? (
+                    <>
+                        {showDefaultBreakoutRoom ? (
+                            <Box bgColor={bgColour} m={-2}>
+                                <BreakoutRoom defaultVideoBackendName={defaultVideoBackend} roomDetails={roomDetails} />
+                            </Box>
+                        ) : undefined}
+                        {contentEl}
+                    </>
+                ) : undefined}
             </VStack>
         </HStack>
-    );
-}
-
-function RoomContent({
-    currentRoomEvent,
-    nextRoomEvent,
-    roomDetails,
-}: {
-    currentRoomEvent: Room_EventSummaryFragment | null;
-    nextRoomEvent: Room_EventSummaryFragment | null;
-    roomDetails: RoomPage_RoomDetailsFragment;
-}): JSX.Element {
-    const bgColour = useColorModeValue("green.200", "green.700");
-    const nextBgColour = useColorModeValue("gray.200", "gray.700");
-
-    const currentAttendee = useCurrentAttendee();
-
-    const currentEventRole = useMemo(
-        () =>
-            currentRoomEvent?.eventPeople.find((p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id)
-                ?.roleName,
-        [currentAttendee, currentRoomEvent?.eventPeople]
-    );
-    const nextEventRole = useMemo(
-        () =>
-            nextRoomEvent?.eventPeople.find((p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id)
-                ?.roleName,
-        [currentAttendee, nextRoomEvent?.eventPeople]
-    );
-
-    const now5s = useRealTime(5000);
-
-    // TODO: Hallway layout if in exhibition mode, else content layout
-
-    return (
-        <Box flexGrow={1}>
-            <RoomTitle roomDetails={roomDetails} />
-
-            {currentRoomEvent ? (
-                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                    <HStack justifyContent="space-between">
-                        <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now5s)}</Text>
-                        {currentEventRole ? (
-                            <Tag colorScheme="green" my={2}>
-                                {currentEventRole}
-                            </Tag>
-                        ) : undefined}
-                    </HStack>
-                    <Heading as="h3" textAlign="left" size="lg" mb={2}>
-                        {currentRoomEvent.name}
-                    </Heading>
-                    {currentRoomEvent.intendedRoomModeName !== RoomMode_Enum.Exhibition &&
-                    currentRoomEvent.contentGroupId ? (
-                        <ContentGroupItemsWrapper contentGroupId={currentRoomEvent.contentGroupId} linkToItem={true} />
-                    ) : (
-                        <></>
-                    )}
-                    {currentRoomEvent.hallwayId ? (
-                        <HallwayLayoutWrapper hallwayId={currentRoomEvent.hallwayId} hideLiveViewButton={true} />
-                    ) : (
-                        <></>
-                    )}
-                </Box>
-            ) : (
-                <></>
-            )}
-            {nextRoomEvent ? (
-                <Box backgroundColor={nextBgColour} borderRadius={5} px={5} py={3} my={5}>
-                    <Heading as="h3" textAlign="left" size="lg" mb={1}>
-                        {nextRoomEvent.name}
-                    </Heading>
-                    <HStack justifyContent="space-between" mb={2}>
-                        <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}</Text>
-                        {nextEventRole ? (
-                            <Tag colorScheme="gray" my={2} textTransform="none">
-                                You are {nextEventRole}
-                            </Tag>
-                        ) : undefined}
-                    </HStack>
-                    {nextRoomEvent?.contentGroupId ? (
-                        <ContentGroupItemsWrapper contentGroupId={nextRoomEvent.contentGroupId} linkToItem={true} />
-                    ) : (
-                        <></>
-                    )}
-                </Box>
-            ) : (
-                <></>
-            )}
-
-            {!currentRoomEvent && !nextRoomEvent && roomDetails.isProgramRoom ? (
-                <Text p={5}>No events in this room in the near future.</Text>
-            ) : (
-                <></>
-            )}
-
-            {roomDetails.originatingContentGroup?.id &&
-            roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
-                <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                    <ContentGroupItemsWrapper
-                        contentGroupId={roomDetails.originatingContentGroup.id}
-                        linkToItem={true}
-                    />
-                </Box>
-            ) : (
-                <></>
-            )}
-
-            {roomDetails.originatingContentGroup ? (
-                <RoomSponsorContent contentGroupId={roomDetails.originatingContentGroup.id} />
-            ) : (
-                <></>
-            )}
-        </Box>
     );
 }

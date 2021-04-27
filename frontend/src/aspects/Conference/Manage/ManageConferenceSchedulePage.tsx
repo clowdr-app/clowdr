@@ -34,6 +34,7 @@ import React, { LegacyRef, Ref, useEffect, useMemo, useRef, useState } from "rea
 import { v4 as uuidv4 } from "uuid";
 import {
     ContentGroupFullNestedInfoFragment,
+    ContentGroupType_Enum,
     ContentPersonInfoFragment,
     EventInfoFragment,
     EventInfoFragmentDoc,
@@ -188,7 +189,12 @@ function EditableScheduleTable(): JSX.Element {
                 ? [...wholeSchedule.data.Room]
                       .filter(
                           (room) =>
-                              !room.originatingContentGroupId &&
+                              (!room.originatingContentGroupId ||
+                                  wholeSchedule.data?.ContentGroup.some(
+                                      (x) =>
+                                          x.id === room.originatingContentGroupId &&
+                                          x.contentGroupTypeName === ContentGroupType_Enum.Sponsor
+                                  )) &&
                               !room.originatingEventId &&
                               room.roomPrivacyName !== RoomPrivacy_Enum.Dm &&
                               room.roomPrivacyName !== RoomPrivacy_Enum.Managed
@@ -202,7 +208,7 @@ function EditableScheduleTable(): JSX.Element {
                           );
                       })
                 : undefined,
-        [wholeSchedule.data?.Room]
+        [wholeSchedule.data?.Room, wholeSchedule.data?.ContentGroup]
     );
 
     const roomModeOptions = useMemo(

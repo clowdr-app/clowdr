@@ -6,7 +6,7 @@ import {
 } from "@golevelup/nestjs-hasura";
 import { Injectable } from "@nestjs/common";
 import * as Bunyan from "bunyan";
-import { ChannelStackSyncService } from "./channels/channel-stack-sync/channel-stack-sync.service";
+import { ChannelStackSyncService } from "./channel-stack/channel-stack-sync/channel-stack-sync.service";
 import { Room_Mode_Enum } from "./generated/graphql";
 
 @Injectable()

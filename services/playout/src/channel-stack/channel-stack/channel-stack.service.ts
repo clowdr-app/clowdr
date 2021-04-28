@@ -14,7 +14,7 @@ import { MediaLiveChannelService } from "../media-live-channel/media-live-channe
 import { ChannelStack, ChannelStackDescription, ChannelStackProps } from "./channelStack";
 
 @Injectable()
-export class ChannelsService {
+export class ChannelStackService {
     private readonly logger: Bunyan;
     constructor(
         @RootLogger() logger: Bunyan,

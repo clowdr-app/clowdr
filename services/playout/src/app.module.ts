@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AwsModule, AwsModuleOptions } from "./aws/aws.module";
-import { ChannelsModule } from "./channels/channels.module";
+import { ChannelStackModule } from "./channel-stack/channel-stack.module";
 import { HasuraDataModule, HasuraDataModuleOptions } from "./hasura/hasura-data.module";
 import { JsonBodyMiddleware } from "./json-body.middleware";
 import { ROOT_LOGGER } from "./logger";
@@ -71,7 +71,7 @@ import { TextBodyMiddleware } from "./text-body.middleware";
             },
             inject: [ConfigService],
         }),
-        ChannelsModule,
+        ChannelStackModule,
         SnsModule,
     ],
     controllers: [AppController],

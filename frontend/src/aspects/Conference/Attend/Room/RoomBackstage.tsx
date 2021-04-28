@@ -205,7 +205,7 @@ export function RoomBackstage({
 
                 {activeEvents?.length === 0 ? (
                     <Text textAlign="center" my={8} fontSize="lg">
-                        No current or upcoming events in the speakers&apos; area.
+                        No current or upcoming events in the backstage.
                     </Text>
                 ) : undefined}
             </Box>
@@ -220,7 +220,7 @@ export function RoomBackstage({
     const heading = useMemo(
         () => (
             <Heading as="h3" size="lg">
-                {roomName}: Speakers&apos; Areas
+                {roomName}: Backstages
             </Heading>
         ),
         [roomName]
@@ -231,13 +231,13 @@ export function RoomBackstage({
             <Alert status="info" my={4}>
                 <AlertIcon />
                 <Box flex="1">
-                    <AlertTitle>Welcome to the speakers&apos; area for {roomName}</AlertTitle>
+                    <AlertTitle>Welcome to the backstage for {roomName}</AlertTitle>
                     <AlertDescription display="block">
                         <UnorderedList>
-                            <ListItem>Each event in this room has a speakers&apos; area.</ListItem>
+                            <ListItem>Each event in this room has a backstage.</ListItem>
                             <ListItem>
-                                Each speakers&apos; area becomes available to join twenty minutes before the associated
-                                event starts.
+                                Each backstage becomes available to join twenty minutes before the associated event
+                                starts.
                             </ListItem>
                             <ListItem>Keep an eye on the chat for questions!</ListItem>
                         </UnorderedList>
@@ -292,9 +292,8 @@ export function RoomBackstage({
 
                                     <AlertDialogBody>
                                         Watching the stream while speaking is strongly discouraged. The stream lag can
-                                        cause a lot of confusion. Please stay in the speakers&apos; area. Please do not
-                                        use a second device to watch the stream while you are active in the
-                                        speakers&apos; area.
+                                        cause a lot of confusion. Please stay in the backstage. Please do not use a
+                                        second device to watch the stream while you are active in the backstage.
                                     </AlertDialogBody>
 
                                     <AlertDialogFooter>
@@ -366,8 +365,8 @@ export function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFra
             <VStack alignItems="start">
                 <AlertTitle>{formatRemainingTime(timeRemaining)} until your backstage is available</AlertTitle>
                 <AlertDescription>
-                    Your speakers&apos; area for {title} will become available on this page. You will automatically be
-                    shown the speakers&apos; area 20 minutes in advance of the live period of your event.
+                    Your backstage for {title} will become available on this page. You will automatically be shown the
+                    backstage 20 minutes in advance of the live period of your event.
                 </AlertDescription>
             </VStack>
         </Alert>

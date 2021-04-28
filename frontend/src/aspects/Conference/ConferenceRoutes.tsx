@@ -13,6 +13,7 @@ import ContentGroupPage from "./Attend/Content/ContentGroupPage";
 import HallwayPage from "./Attend/Hallway/HallwayPage";
 import HallwaysPage from "./Attend/Hallway/HallwaysPage";
 import EditProfilePage from "./Attend/Profile/EditProfilePage";
+import MyBackstages from "./Attend/Profile/MyBackstages";
 import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RoomListPage from "./Attend/Room/RoomListPage";
 import RoomPage from "./Attend/Room/RoomPage";
@@ -58,6 +59,8 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                     <Redirect to={`/conference/${conference.slug}/profile/edit`} />
                 </Route>
             ) : undefined}
+
+            {mAttendee && <Route exact path={`${rootUrl}/profile/backstages`} component={MyBackstages} />}
 
             <Route exact path={`${rootUrl}`}>
                 <ConferenceLandingPage />

@@ -327,7 +327,7 @@ function RoomInner({
                 title: "You are a presenter of an event starting now",
                 description: (
                     <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
-                        Go to the speakers&apos; area
+                        Go to the backstage
                     </Button>
                 ),
             });
@@ -346,7 +346,7 @@ function RoomInner({
                 title: "You are a presenter of the next event",
                 description: (
                     <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
-                        Go to the speakers&apos; area
+                        Go to the backstage
                     </Button>
                 ),
             });

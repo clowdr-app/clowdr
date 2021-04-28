@@ -211,7 +211,7 @@ function groupByTime<S, T extends GroupableByTime<S>>(
     // Save last session
     if (session.length > 0) {
         const startTimeMs = session[0].startTimeMs;
-        const endTimeMs = session[session.length - 1].endTimeMs;
+        const endTimeMs = session.reduce((acc, session) => Math.max(acc, session.endTimeMs), Number.NEGATIVE_INFINITY);
         result.push({
             items: session,
             startTimeMs,

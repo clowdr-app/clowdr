@@ -7,6 +7,7 @@ import { ConfigService } from "@nestjs/config";
 import assert from "assert";
 import { DeployStackResult, SdkProvider } from "aws-cdk";
 import { CloudFormationDeployments } from "aws-cdk/lib/api/cloudformation-deployments";
+import { CloudFormationStackArtifact } from "aws-cdk/node_modules/@aws-cdk/cx-api/lib/artifacts/cloudformation-artifact";
 import AWS, { CredentialProviderChain } from "aws-sdk";
 import * as Bunyan from "bunyan";
 import { AWS_MODULE_OPTIONS } from "../constants";
@@ -70,7 +71,7 @@ export class AwsService implements OnModuleInit {
         });
         const cloudFormation = new CloudFormationDeployments({ sdkProvider });
         return cloudFormation.deployStack({
-            stack: stackArtifact,
+            stack: (stackArtifact as unknown) as CloudFormationStackArtifact,
             notificationArns: [notificationTopicArn],
             quiet: true,
         });

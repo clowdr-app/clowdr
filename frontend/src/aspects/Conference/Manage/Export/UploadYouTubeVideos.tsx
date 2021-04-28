@@ -477,22 +477,18 @@ export function UploadYouTubeVideos(): JSX.Element {
                                 const invalidTitles = R.filter((x) => x.title.length > 100, updatedPairs);
 
                                 R.forEachObjIndexed((value, contentItemId) => {
-                                    actions.setFieldValue(`titleCorrections.${contentItemId}`, value.title ?? null);
-                                    actions.setFieldError(
-                                        `titleCorrections.${contentItemId}`,
-                                        "Title cannot be more than 100 characters"
-                                    );
+                                    const fieldName = `titleCorrections.${contentItemId}`;
+                                    actions.setFieldValue(fieldName, value.title ?? null);
+                                    actions.setFieldError(fieldName, "Title cannot be more than 100 characters");
                                     correctionsNeeded = true;
                                 }, invalidTitles);
 
                                 R.forEachObjIndexed((value, contentItemId) => {
+                                    const fieldName = `descriptionCorrections.${contentItemId}`;
                                     const error = getDescriptionError(value.description);
                                     if (error) {
-                                        actions.setFieldValue(
-                                            `descriptionCorrections.${contentItemId}`,
-                                            value.description ?? null
-                                        );
-                                        actions.setFieldError(`descriptionCorrections.${contentItemId}`, error);
+                                        actions.setFieldValue(fieldName, value.description ?? null);
+                                        actions.setFieldError(fieldName, error);
                                         correctionsNeeded = true;
                                     }
                                 }, updatedPairs);
@@ -646,13 +642,22 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         </ListItem>
                                                     ))}
                                                     {form.values.contentItemIds.length === 0 ? (
-                                                        <Text>No videos selected.</Text>
-                                                    ) : undefined}
+                                                        <Text fontStyle="italic">No videos selected.</Text>
+                                                    ) : (
+                                                        <Text fontStyle="italic">
+                                                            {form.values.contentItemIds.length} video
+                                                            {form.values.contentItemIds.length > 1 ? "s" : ""} selected
+                                                        </Text>
+                                                    )}
                                                 </List>
                                                 <FormErrorMessage>{form.errors.contentItemIds}</FormErrorMessage>
                                             </FormControl>
                                         )}
                                     </Field>
+
+                                    <Heading as="h2" size="md" textAlign="left" my={4}>
+                                        Set video privacy
+                                    </Heading>
 
                                     <Field name="videoPrivacyStatus">
                                         {({ field, form }: FieldProps<string>) => (
@@ -1000,7 +1005,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
                                     <FieldArray
                                         name="descriptionCorrections"
-                                        render={(arrayHelpers) =>
+                                        render={(_arrayHelpers) =>
                                             values.descriptionCorrections &&
                                             Object.keys(values.descriptionCorrections).length > 0 ? (
                                                 <>
@@ -1008,7 +1013,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         Corrected video descriptions
                                                     </Heading>
                                                     {R.toPairs<string>(values.descriptionCorrections).map(
-                                                        ([contentItemId, description]) => (
+                                                        ([contentItemId, _description]) => (
                                                             <Field
                                                                 key={contentItemId}
                                                                 name={`descriptionCorrections.${contentItemId}`}

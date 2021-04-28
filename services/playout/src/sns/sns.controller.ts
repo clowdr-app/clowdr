@@ -3,7 +3,7 @@ import { Body, Controller, Post } from "@nestjs/common";
 import axios from "axios";
 import * as Bunyan from "bunyan";
 import { CloudFormationService } from "../aws/cloud-formation/cloud-formation.service";
-import { ChannelsService } from "../channels/channels/channels.service";
+import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
 import { SNSNotificationDto } from "./sns-notification.dto";
 
 @Controller("aws")
@@ -13,7 +13,7 @@ export class SnsController {
     constructor(
         @Logger() requestLogger: Bunyan,
         private cloudformationService: CloudFormationService,
-        private channelsService: ChannelsService
+        private channelsService: ChannelStackService
     ) {
         this.logger = requestLogger.child({ component: this.constructor.name });
     }

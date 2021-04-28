@@ -7,7 +7,7 @@ import {
     FindMediaLiveChannelsByStackArnDocument,
 } from "../../generated/graphql";
 import { GraphQlService } from "../../hasura/graphql.service";
-import { ChannelStackDescription } from "../channels/channelStack";
+import { ChannelStackDescription } from "../channel-stack/channelStack";
 
 @Injectable()
 export class MediaLiveChannelService {

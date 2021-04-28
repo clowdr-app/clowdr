@@ -8,7 +8,7 @@ import { GetObsoleteChannelStacksDocument, GetRoomsNeedingChannelStackDocument }
 import { GraphQlService } from "../../hasura/graphql.service";
 import { shortId } from "../../utils/id";
 import { ChannelStackCreateJobService } from "../channel-stack-create-job/channel-stack-create-job.service";
-import { ChannelsService } from "../channels/channels.service";
+import { ChannelStackService } from "../channel-stack/channel-stack.service";
 
 @Injectable()
 export class ChannelStackSyncService {
@@ -18,7 +18,7 @@ export class ChannelStackSyncService {
         private cloudFormationService: CloudFormationService,
         private graphQlService: GraphQlService,
         private channelStackCreateJobService: ChannelStackCreateJobService,
-        private channelsService: ChannelsService
+        private channelsService: ChannelStackService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }

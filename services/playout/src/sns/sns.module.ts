@@ -1,10 +1,10 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
-import { ChannelsModule } from "../channels/channels.module";
+import { ChannelStackModule } from "../channel-stack/channel-stack.module";
 import { SnsNotificationMiddleware } from "./sns-notification.middleware";
 import { SnsController } from "./sns.controller";
 
 @Module({
-    imports: [ChannelsModule],
+    imports: [ChannelStackModule],
     controllers: [SnsController],
 })
 export class SnsModule implements NestModule {

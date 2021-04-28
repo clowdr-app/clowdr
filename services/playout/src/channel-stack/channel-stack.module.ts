@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
 import { ChannelStackCreateJobService } from "./channel-stack-create-job/channel-stack-create-job.service";
 import { ChannelStackSyncService } from "./channel-stack-sync/channel-stack-sync.service";
-import { ChannelsService } from "./channels/channels.service";
+import { ChannelStackService } from "./channel-stack/channel-stack.service";
 import { MediaLiveChannelService } from "./media-live-channel/media-live-channel.service";
 
 @Module({
-    providers: [ChannelsService, ChannelStackSyncService, ChannelStackCreateJobService, MediaLiveChannelService],
+    providers: [ChannelStackService, ChannelStackSyncService, ChannelStackCreateJobService, MediaLiveChannelService],
     imports: [],
-    exports: [ChannelsService, ChannelStackSyncService],
+    exports: [ChannelStackService, ChannelStackSyncService],
 })
-export class ChannelsModule {}
+export class ChannelStackModule {}

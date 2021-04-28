@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { useAttendeeEventsWithBackstagesQuery } from "../../../../generated/graphql";
+import { MyBackstages_EventFragment, useAttendeeEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
@@ -31,6 +31,23 @@ import { useConference } from "../../useConference";
 import useCurrentAttendee from "../../useCurrentAttendee";
 
 gql`
+    fragment MyBackstages_Event on Event {
+        id
+        conferenceId
+        contentGroup {
+            id
+            title
+        }
+        endTime
+        intendedRoomModeName
+        name
+        room {
+            id
+            name
+        }
+        startTime
+    }
+
     query AttendeeEventsWithBackstages($attendeeId: uuid!) {
         Event(
             where: {
@@ -38,20 +55,7 @@ gql`
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
             }
         ) {
-            id
-            conferenceId
-            contentGroup {
-                id
-                title
-            }
-            endTime
-            intendedRoomModeName
-            name
-            room {
-                id
-                name
-            }
-            startTime
+            ...MyBackstages_Event
         }
     }
 `;
@@ -73,7 +77,7 @@ export default function MyBackstages(): JSX.Element {
     const eventsGroupedByDay = useMemo(
         () =>
             myBackstagesResponse.data?.Event &&
-            R.groupBy(
+            R.groupBy<MyBackstages_EventFragment>(
                 (x) => new Date(x.startTime).toLocaleDateString(),
                 R.sortBy(
                     (x) => Date.parse(x.startTime),

@@ -35170,12 +35170,17 @@ export type SubmitProfilePhotoMutationVariables = Exact<{
 
 export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean, readonly photoURL_350x350?: Maybe<string>, readonly photoURL_50x50?: Maybe<string> }> };
 
+export type MyBackstages_EventFragment = { readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly startTime: any, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string } };
+
 export type AttendeeEventsWithBackstagesQueryVariables = Exact<{
   attendeeId: Scalars['uuid'];
 }>;
 
 
-export type AttendeeEventsWithBackstagesQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<{ readonly __typename?: 'Event', readonly id: any, readonly conferenceId: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: RoomMode_Enum, readonly name: string, readonly startTime: any, readonly contentGroup?: Maybe<{ readonly __typename?: 'ContentGroup', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'Room', readonly id: any, readonly name: string } }> };
+export type AttendeeEventsWithBackstagesQuery = { readonly __typename?: 'query_root', readonly Event: ReadonlyArray<(
+    { readonly __typename?: 'Event' }
+    & MyBackstages_EventFragment
+  )> };
 
 export type GetRoomChimeDataMutationVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -37446,6 +37451,24 @@ export const HallwaySummaryFragmentDoc = gql`
   priority
 }
     `;
+export const MyBackstages_EventFragmentDoc = gql`
+    fragment MyBackstages_Event on Event {
+  id
+  conferenceId
+  contentGroup {
+    id
+    title
+  }
+  endTime
+  intendedRoomModeName
+  name
+  room {
+    id
+    name
+  }
+  startTime
+}
+    `;
 export const EventParticipantStreamDetailsFragmentDoc = gql`
     fragment EventParticipantStreamDetails on EventParticipantStream {
   id
@@ -39248,23 +39271,10 @@ export const AttendeeEventsWithBackstagesDocument = gql`
   Event(
     where: {eventPeople: {person: {attendeeId: {_eq: $attendeeId}}}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}
   ) {
-    id
-    conferenceId
-    contentGroup {
-      id
-      title
-    }
-    endTime
-    intendedRoomModeName
-    name
-    room {
-      id
-      name
-    }
-    startTime
+    ...MyBackstages_Event
   }
 }
-    `;
+    ${MyBackstages_EventFragmentDoc}`;
 
 /**
  * __useAttendeeEventsWithBackstagesQuery__

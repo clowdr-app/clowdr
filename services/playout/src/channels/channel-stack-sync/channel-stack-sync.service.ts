@@ -11,7 +11,7 @@ import { ChannelStackCreateJobService } from "../channel-stack-create-job/channe
 import { ChannelsService } from "../channels/channels.service";
 
 @Injectable()
-export class ChannelSyncService {
+export class ChannelStackSyncService {
     private readonly logger: Bunyan;
     constructor(
         @RootLogger() logger: Bunyan,

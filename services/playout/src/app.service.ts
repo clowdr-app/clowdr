@@ -6,14 +6,14 @@ import {
 } from "@golevelup/nestjs-hasura";
 import { Injectable } from "@nestjs/common";
 import * as Bunyan from "bunyan";
-import { ChannelSyncService } from "./channels/channel-sync/channel-sync.service";
+import { ChannelStackSyncService } from "./channels/channel-sync/channel-sync.service";
 import { Room_Mode_Enum } from "./generated/graphql";
 
 @Injectable()
 export class AppService {
     private readonly logger: Bunyan;
 
-    constructor(@RootLogger() logger: Bunyan, private channelSync: ChannelSyncService) {
+    constructor(@RootLogger() logger: Bunyan, private channelSync: ChannelStackSyncService) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 

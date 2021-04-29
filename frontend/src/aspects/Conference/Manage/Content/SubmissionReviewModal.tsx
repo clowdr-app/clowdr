@@ -4,6 +4,8 @@ import {
     AccordionIcon,
     AccordionItem,
     AccordionPanel,
+    Box,
+    Button,
     Grid,
     GridItem,
     Heading,
@@ -16,6 +18,7 @@ import {
     ModalOverlay,
     Text,
     UnorderedList,
+    useDisclosure,
     VStack,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
@@ -222,12 +225,7 @@ export function SubmissionReviewModal({
                                                                 >
                                                                     {y.name} ({y.typeName})
                                                                 </Heading>
-                                                                <ContentItem
-                                                                    item={{
-                                                                        ...item,
-                                                                        contentTypeName: item.typeName,
-                                                                    }}
-                                                                />
+                                                                <DeferredContentItem item={item} />
                                                             </VStack>
                                                         </GridItem>,
                                                     ];
@@ -245,5 +243,21 @@ export function SubmissionReviewModal({
                 </ModalBody>
             </ModalContent>
         </Modal>
+    );
+}
+
+function DeferredContentItem({ item }: { item: ContentItemDescriptor }): JSX.Element {
+    const { isOpen, onOpen } = useDisclosure();
+    return isOpen ? (
+        <ContentItem
+            item={{
+                ...item,
+                contentTypeName: item.typeName,
+            }}
+        />
+    ) : (
+        <Box pb={2}>
+            <Button onClick={onOpen}>Reveal item</Button>
+        </Box>
     );
 }

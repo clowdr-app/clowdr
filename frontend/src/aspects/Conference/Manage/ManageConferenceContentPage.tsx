@@ -30,6 +30,7 @@ import { deepCloneContentGroupDescriptor } from "./Content/Functions";
 import ManageHallwaysModal from "./Content/ManageHallwaysModal";
 import ManageTagsModal from "./Content/ManageTagsModal";
 import { SendSubmissionRequestsModal } from "./Content/SubmissionRequestsModal";
+import { SubmissionReviewModal } from "./Content/SubmissionReviewModal";
 // import PublishVideosModal from "./Content/PublishVideosModal";
 import { fitGroupToTemplate, GroupTemplates } from "./Content/Templates";
 import type {
@@ -302,7 +303,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const [editedHallwaysIds, setEditedHallwaysIds] = useState<Set<string>>(new Set());
 
     const sendSubmissionRequestsModal = useDisclosure();
+    const reviewSubmissionsModal = useDisclosure();
     const [submissionRequestContentGroups, setSubmissionRequestContentGroups] = useState<ContentGroupDescriptor[]>([]);
+    const [submissionReviewContentGroups, setSubmissionReviewContentGroups] = useState<ContentGroupDescriptor[]>([]);
 
     // const {
     //     isOpen: publishVideosModalOpen,
@@ -534,6 +537,26 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         label: "Send submission requests",
                         text: "Send submission requests",
                     },
+                    {
+                        action: async (groupKeys) => {
+                            if (!allGroupsMap) {
+                                return;
+                            }
+                            const contentGroups = Array.from(allGroupsMap.entries())
+                                .filter((entry) => groupKeys.has(entry[0]))
+                                .map((entry) => entry[1]);
+                            setSubmissionReviewContentGroups(contentGroups);
+                            reviewSubmissionsModal.onOpen();
+                        },
+                        enabledWhenNothingSelected: false,
+                        enabledWhenDirty: false,
+                        tooltipWhenDisabled: "Save your changes to enable reviewing submissions",
+                        tooltipWhenEnabled: "Opens the submission review dialog for selected items",
+                        colorScheme: "red",
+                        isRunning: false,
+                        label: "Review submissions",
+                        text: "Review submissions",
+                    },
                     // {
                     //     action: async (groupKeys) => {
                     //         setPublishVideosIds(groupKeys);
@@ -565,6 +588,11 @@ export default function ManageConferenceContentPage(): JSX.Element {
                         throw new Error("Error submitting query");
                     }
                 }}
+            />
+            <SubmissionReviewModal
+                contentGroups={submissionReviewContentGroups}
+                isOpen={reviewSubmissionsModal.isOpen}
+                onClose={reviewSubmissionsModal.onClose}
             />
             <ManageTagsModal
                 tags={allTagsMap ?? new Map()}

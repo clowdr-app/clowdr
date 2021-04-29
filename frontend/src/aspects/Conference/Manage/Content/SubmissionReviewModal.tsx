@@ -77,9 +77,9 @@ export function SubmissionReviewModal({
     );
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="6xl" isCentered>
+        <Modal isOpen={isOpen} onClose={onClose} size="full" isCentered scrollBehavior="inside">
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent m={0}>
                 <ModalHeader>Review submissions</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody mb={4}>

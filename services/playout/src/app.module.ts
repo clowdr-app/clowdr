@@ -11,6 +11,7 @@ import { ChannelStackModule } from "./channel-stack/channel-stack.module";
 import { HasuraDataModule, HasuraDataModuleOptions } from "./hasura-data/hasura-data.module";
 import { JsonBodyMiddleware } from "./json-body.middleware";
 import { ROOT_LOGGER } from "./logger";
+import { ScheduleModule } from "./schedule/schedule.module";
 import { SnsModule } from "./sns/sns.module";
 import { TextBodyMiddleware } from "./text-body.middleware";
 import { VonageModule, VonageOptions } from "./vonage/vonage.module";
@@ -88,6 +89,7 @@ import { VonageModule, VonageOptions } from "./vonage/vonage.module";
             inject: [ConfigService],
         }),
         ChannelStackModule,
+        ScheduleModule,
         SnsModule,
     ],
     controllers: [AppController],

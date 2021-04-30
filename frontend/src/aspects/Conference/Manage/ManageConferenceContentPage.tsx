@@ -165,11 +165,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 ariaLabel: "Type",
                 description: "Type of content",
                 isHidden: false,
-                // TODO: Make the type editable. When changing type, we must
-                //       update the content items / required content items
-                //       accordingly - preserve overlapping types
-                //       Warn the user before deleting any content
-                isEditable: false,
+                isEditable: true,
                 isEditableAtCreate: true,
                 defaultValue: {
                     label: "Paper",

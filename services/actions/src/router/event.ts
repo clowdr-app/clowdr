@@ -44,7 +44,11 @@ router.post("/notifyStart", bodyParser.json(), async (req: Request, res: Respons
     }
 
     try {
-        await handleEventStartNotification(req.body.payload.eventId, req.body.payload.startTime);
+        await handleEventStartNotification(
+            req.body.payload.eventId,
+            req.body.payload.startTime,
+            req.body.payload.updatedAt ?? null
+        );
     } catch (e) {
         console.error("Failure while handling event/notifyStart", e);
         res.status(500).json("Failure while handling scheduled trigger");
@@ -64,7 +68,11 @@ router.post("/notifyEnd", bodyParser.json(), async (req: Request, res: Response)
     }
 
     try {
-        await handleEventEndNotification(req.body.payload.eventId, req.body.payload.endTime);
+        await handleEventEndNotification(
+            req.body.payload.eventId,
+            req.body.payload.endTime,
+            req.body.payload.updatedAt ?? null
+        );
     } catch (e) {
         console.error("Failure while handling event/notifyEnd", e);
         res.status(500).json("Failure while handling scheduled trigger");

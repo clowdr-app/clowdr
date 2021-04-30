@@ -10,12 +10,11 @@ import {
     GetEventsWithoutVonageSessionDocument,
     GetVideoBroadcastElementsDocument,
     OtherConferencePrepareJobsDocument,
-    SetEventVonageSessionIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
+import { createEventVonageSession } from "../lib/event";
 import { createTransitions } from "../lib/transitions";
-import Vonage from "../lib/vonage/vonageClient";
 import { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
@@ -552,36 +551,12 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
         throw new Error("Failed to retrieve list of events without presenter Vonage sessions");
     }
 
-    for (const room of eventsWithoutSessionResult.data.schedule_Event) {
-        console.log("Creating Vonage session for event", room.id);
+    for (const event of eventsWithoutSessionResult.data.Event) {
+        console.log("Creating Vonage session for event", { eventId: event.id });
         try {
-            const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
-
-            if (!sessionResult) {
-                throw new Error("No session ID returned from Vonage");
-            }
-
-            gql`
-                mutation SetEventVonageSessionId($eventId: uuid!, $conferenceId: uuid!, $sessionId: String!) {
-                    insert_video_EventVonageSession_one(
-                        object: { eventId: $eventId, conferenceId: $conferenceId, sessionId: $sessionId }
-                        on_conflict: { constraint: EventVonageSession_eventId_key, update_columns: sessionId }
-                    ) {
-                        id
-                    }
-                }
-            `;
-
-            await apolloClient.mutate({
-                mutation: SetEventVonageSessionIdDocument,
-                variables: {
-                    eventId: room.id,
-                    conferenceId,
-                    sessionId: sessionResult.sessionId,
-                },
-            });
+            await createEventVonageSession(event.id, conferenceId);
         } catch (e) {
-            console.error("Failed to create Vonage session", room.id, e);
+            console.error("Failed to create Vonage session", event.id, e);
             throw new Error(`Failed to create Vonage session: ${e.message}`);
         }
     }

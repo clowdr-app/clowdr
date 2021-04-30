@@ -35,7 +35,7 @@ export async function handleGetGoogleOAuthUrl(params: getGoogleOAuthUrlArgs): Pr
         scope: [...params.scopes, "openid email"],
         include_granted_scopes: true,
         state: params.attendeeId,
-        prompt: "consent",
+        prompt: "select_account",
         redirect_uri: `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/googleoauth`,
     });
 

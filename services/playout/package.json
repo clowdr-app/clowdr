@@ -67,6 +67,7 @@
         "@types/jest": "^26.0.23",
         "@types/node": "^15.0.1",
         "@types/node-fetch": "^2.5.10",
+        "@types/opentok": "^2.10.1",
         "@types/ramda": "^0.27.40",
         "@types/sns-validator": "^0.3.0",
         "@types/uuid": "^8.3.0",

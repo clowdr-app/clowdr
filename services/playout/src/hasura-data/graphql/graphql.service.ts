@@ -5,8 +5,8 @@ import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
 import fetch from "cross-fetch";
 import WebSocket from "ws";
-import { HASURA_MODULE_OPTIONS } from "../constants";
-import { HasuraDataModuleOptions } from "./hasura-data.module";
+import { HASURA_MODULE_OPTIONS } from "../../constants";
+import { HasuraDataModuleOptions } from "../hasura-data.module";
 
 @Injectable()
 export class GraphQlService implements OnModuleInit {

@@ -5,7 +5,7 @@ import { Injectable } from "@nestjs/common";
 import { add, sub } from "date-fns";
 import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
 import { GetObsoleteChannelStacksDocument, GetRoomsNeedingChannelStackDocument } from "../../generated/graphql";
-import { GraphQlService } from "../../hasura/graphql.service";
+import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
 import { shortId } from "../../utils/id";
 import { ChannelStackCreateJobService } from "../channel-stack-create-job/channel-stack-create-job.service";
 import { ChannelStackService } from "../channel-stack/channel-stack.service";

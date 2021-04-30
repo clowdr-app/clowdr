@@ -8,9 +8,9 @@ import assert from "assert";
 import { DeployStackResult } from "aws-cdk/lib/api/deploy-stack";
 import { AwsService } from "../../aws/aws.service";
 import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
+import { MediaLiveChannelService } from "../../hasura-data/media-live-channel/media-live-channel.service";
 import { shortId } from "../../utils/id";
 import { ChannelStackCreateJobService } from "../channel-stack-create-job/channel-stack-create-job.service";
-import { MediaLiveChannelService } from "../media-live-channel/media-live-channel.service";
 import { ChannelStack, ChannelStackDescription, ChannelStackProps } from "./channelStack";
 
 @Injectable()

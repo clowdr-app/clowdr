@@ -1,6 +1,10 @@
+import { gql } from "@apollo/client/core";
+import { GetEventVonageSessionDocument, RoomMode_Enum, SetEventVonageSessionIdDocument } from "../generated/graphql";
+import { apolloClient } from "../graphqlClient";
+import Vonage from "../lib/vonage/vonageClient";
 import { hasura } from "./hasura/hasuraMetadata";
 
-export async function createEventStartTrigger(eventId: string, startTime: string): Promise<void> {
+export async function createEventStartTrigger(eventId: string, startTime: string, updatedAt: number): Promise<void> {
     const startTimeMillis = Date.parse(startTime);
 
     if (startTimeMillis < new Date().getTime()) {
@@ -16,11 +20,12 @@ export async function createEventStartTrigger(eventId: string, startTime: string
         payload: {
             eventId,
             startTime,
+            updatedAt,
         },
     });
 }
 
-export async function createEventEndTrigger(eventId: string, endTime: string): Promise<void> {
+export async function createEventEndTrigger(eventId: string, endTime: string, updatedAt: number): Promise<void> {
     const endTimeMillis = Date.parse(endTime);
 
     if (endTimeMillis < new Date().getTime()) {
@@ -36,6 +41,59 @@ export async function createEventEndTrigger(eventId: string, endTime: string): P
         payload: {
             eventId,
             endTime,
+            updatedAt,
         },
     });
+}
+
+export async function eventHasVonageSession(eventId: string): Promise<boolean> {
+    gql`
+        query GetEventVonageSession($eventId: uuid!) {
+            EventVonageSession(where: { eventId: { _eq: $eventId } }) {
+                id
+            }
+        }
+    `;
+
+    const result = await apolloClient.query({
+        query: GetEventVonageSessionDocument,
+        variables: {
+            eventId,
+        },
+    });
+
+    return !!result.data.EventVonageSession.length;
+}
+
+export async function createEventVonageSession(eventId: string, conferenceId: string): Promise<void> {
+    console.log("Creating EventVonageSession for event", { eventId, conferenceId });
+    const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
+
+    if (!sessionResult) {
+        throw new Error("No session ID returned from Vonage");
+    }
+
+    gql`
+        mutation SetEventVonageSessionId($eventId: uuid!, $conferenceId: uuid!, $sessionId: String!) {
+            insert_EventVonageSession_one(
+                object: { eventId: $eventId, conferenceId: $conferenceId, sessionId: $sessionId }
+                on_conflict: { constraint: EventVonageSession_eventId_key, update_columns: sessionId }
+            ) {
+                id
+            }
+        }
+    `;
+
+    await apolloClient.mutate({
+        mutation: SetEventVonageSessionIdDocument,
+        variables: {
+            eventId,
+            conferenceId,
+            sessionId: sessionResult.sessionId,
+        },
+    });
+}
+
+export function isLive(roomModeName: RoomMode_Enum): boolean {
+    return [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(roomModeName);
 }

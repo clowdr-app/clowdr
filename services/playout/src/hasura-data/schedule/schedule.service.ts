@@ -13,6 +13,7 @@ import * as R from "ramda";
 import {
     RoomMode_Enum,
     RtmpInput_Enum,
+    ScheduleService_GetRoomsWithLiveEventsDocument,
     ScheduleService_GetScheduleDocument,
     ScheduleService_UpdateRtmpInputsDocument,
 } from "../../generated/graphql";
@@ -36,6 +37,28 @@ export class ScheduleService {
 
     constructor(@RootLogger() logger: Bunyan, private graphQlService: GraphQlService) {
         this.logger = logger.child({ component: this.constructor.name });
+    }
+
+    public async getRoomsWithLiveEvents(): Promise<string[]> {
+        gql`
+            query ScheduleService_GetRoomsWithLiveEvents($now: timestamptz!) {
+                Room(
+                    where: {
+                        events: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }, endTime: { _gt: $now } }
+                    }
+                ) {
+                    id
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: ScheduleService_GetRoomsWithLiveEventsDocument,
+            variables: {
+                now: new Date().toISOString(),
+            },
+        });
+        return result.data.Room.map((room) => room.id);
     }
 
     public async getScheduleData(roomId: string): Promise<Schedule> {
@@ -84,6 +107,10 @@ export class ScheduleService {
 
             const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;
 
+            if (!event.eventVonageSession && this.isLive(event.intendedRoomModeName)) {
+                this.logger.warn({ eventId: event.id }, "Live event is missing a Vonage session");
+            }
+
             return {
                 eventId: event.id,
                 rtmpInputName,
@@ -98,6 +125,10 @@ export class ScheduleService {
             roomId,
             items: scheduleItems,
         };
+    }
+
+    isLive(roomMode: RoomMode_Enum): boolean {
+        return [RoomMode_Enum.QAndA, RoomMode_Enum.Presentation].includes(roomMode);
     }
 
     getLatestBroadcastVideoData(contentItemData: unknown): VideoBroadcastBlob | null {
@@ -124,7 +155,8 @@ export class ScheduleService {
 
     public async ensureRtmpInputsAlternate(scheduleData: Schedule): Promise<Schedule> {
         const liveEvents = scheduleData.items
-            .filter((item) => [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(item.roomModeName))
+            .filter((item) => this.isLive(item.roomModeName))
+            .filter((item) => item.startTime > add(Date.now(), { seconds: 30 }).getTime())
             .sort((a, b) => a.startTime - b.startTime);
 
         if (liveEvents.length === 0) {
@@ -137,10 +169,10 @@ export class ScheduleService {
         const groupedEvenEvents = R.groupBy((e) => e.rtmpInputName ?? "none", evenEvents);
         const groupedOddEvents = R.groupBy((e) => e.rtmpInputName ?? "none", oddEvents);
 
-        const allEvenAreA = groupedEvenEvents[RtmpInput_Enum.RtmpA].length === evenEvents.length;
-        const allEvenAreB = groupedEvenEvents[RtmpInput_Enum.RtmpB].length === evenEvents.length;
-        const allOddAreA = groupedOddEvents[RtmpInput_Enum.RtmpA].length === oddEvents.length;
-        const allOddAreB = groupedOddEvents[RtmpInput_Enum.RtmpB].length === oddEvents.length;
+        const allEvenAreA = groupedEvenEvents[RtmpInput_Enum.RtmpA]?.length === evenEvents.length;
+        const allEvenAreB = groupedEvenEvents[RtmpInput_Enum.RtmpB]?.length === evenEvents.length;
+        const allOddAreA = groupedOddEvents[RtmpInput_Enum.RtmpA]?.length === oddEvents.length;
+        const allOddAreB = groupedOddEvents[RtmpInput_Enum.RtmpB]?.length === oddEvents.length;
 
         // If the inputs already alternate correctly, we can no-op.
         if ((allEvenAreA && allOddAreB) || (allEvenAreB && allOddAreA)) {
@@ -150,6 +182,7 @@ export class ScheduleService {
         const evenInput = liveEvents[0].rtmpInputName ?? RtmpInput_Enum.RtmpA;
         const oddInput = evenInput === RtmpInput_Enum.RtmpA ? RtmpInput_Enum.RtmpB : RtmpInput_Enum.RtmpA;
 
+        this.logger.info({ roomId: scheduleData.roomId }, "Updating selected RTMP inputs for events.");
         gql`
             mutation ScheduleService_UpdateRtmpInputs(
                 $evenIds: [uuid!]!

@@ -18,6 +18,16 @@ export class ScheduleSyncService {
 
     public async fullScheduleSync(): Promise<void> {
         this.logger.info("Fully syncing channel schedules");
+
+        const roomIds = await this.scheduleService.getRoomsWithLiveEvents();
+
+        for (const roomId of roomIds) {
+            try {
+                await this.syncChannelSchedule(roomId);
+            } catch (err) {
+                this.logger.error({ err, roomId }, "Failure while syncing channel schedule");
+            }
+        }
     }
 
     public async syncChannelSchedule(roomId: string): Promise<void> {
@@ -46,9 +56,12 @@ export class ScheduleSyncService {
                 "Channel status precludes schedule sync. Skipping schedule sync."
             );
         }
+
+        await this.computeExpectedSchedule(roomId);
     }
 
     public async computeExpectedSchedule(roomId: string): Promise<void> {
-        const scheduleData = await this.scheduleService.getScheduleData(roomId);
+        const initialSchedule = await this.scheduleService.getScheduleData(roomId);
+        const correctedSchedule = await this.scheduleService.ensureRtmpInputsAlternate(initialSchedule);
     }
 }

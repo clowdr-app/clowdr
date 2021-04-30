@@ -13,7 +13,7 @@ import { Room_Mode_Enum } from "./generated/graphql";
 export class AppService {
     private readonly logger: Bunyan;
 
-    constructor(@RootLogger() logger: Bunyan, private channelSync: ChannelStackSyncService) {
+    constructor(@RootLogger() logger: Bunyan, private channelStackSync: ChannelStackSyncService) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
@@ -41,7 +41,7 @@ export class AppService {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannelStacks(_evt: any): void {
         this.logger.info({ event: "SyncChannelStacks", data: _evt });
-        this.channelSync.syncChannelStacks().catch((err) => this.logger.error(err));
+        this.channelStackSync.syncChannelStacks().catch((err) => this.logger.error(err));
     }
 }
 

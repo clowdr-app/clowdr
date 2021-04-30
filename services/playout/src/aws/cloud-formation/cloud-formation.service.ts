@@ -2,7 +2,6 @@ import { CloudFormation, StackStatus } from "@aws-sdk/client-cloudformation";
 import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Inject, Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import * as Bunyan from "bunyan";
 import * as R from "ramda";
 import { AWS_MODULE_OPTIONS } from "../../constants";
@@ -20,11 +19,7 @@ export class CloudFormationService {
         return this._cloudFormation;
     }
 
-    constructor(
-        @RootLogger() logger: Bunyan,
-        @Inject(AWS_MODULE_OPTIONS) config: AwsModuleOptions,
-        private configService: ConfigService
-    ) {
+    constructor(@RootLogger() logger: Bunyan, @Inject(AWS_MODULE_OPTIONS) config: AwsModuleOptions) {
         this.logger = logger.child({ component: this.constructor.name });
 
         this.credentials = config.credentials;
@@ -33,7 +28,6 @@ export class CloudFormationService {
 
     onModuleInit(): void {
         this._cloudFormation = new CloudFormation({
-            apiVersion: "2010-05-15",
             credentials: this.credentials,
             region: this.region,
         });

@@ -1,13 +1,15 @@
 import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
+import { ChannelStackDescription } from "../../channel-stack/channel-stack/channelStack";
 import {
     CreateMediaLiveChannelDocument,
     DeleteMediaLiveChannelDocument,
     FindMediaLiveChannelsByStackArnDocument,
+    GetMediaLiveChannelByRoomDocument,
 } from "../../generated/graphql";
-import { GraphQlService } from "../../hasura/graphql.service";
-import { ChannelStackDescription } from "../channel-stack/channelStack";
+import { GraphQlService } from "../graphql/graphql.service";
+import { ChannelStackDetails } from "./channel-stack-details";
 
 @Injectable()
 export class MediaLiveChannelService {
@@ -15,6 +17,44 @@ export class MediaLiveChannelService {
 
     constructor(@RootLogger() logger: Bunyan, private graphQlService: GraphQlService) {
         this.logger = logger.child({ component: this.constructor.name });
+    }
+
+    public async getChannelStackDetails(roomId: string): Promise<ChannelStackDetails | null> {
+        gql`
+            query GetMediaLiveChannelByRoom($roomId: uuid!) {
+                Room_by_pk(id: $roomId) {
+                    id
+                    conferenceId
+                    mediaLiveChannel {
+                        id
+                        mediaLiveChannelId
+                        mp4InputAttachmentName
+                        vonageInputAttachmentName
+                        loopingMp4InputAttachmentName
+                    }
+                }
+            }
+        `;
+        const channelResult = await this.graphQlService.apolloClient.query({
+            query: GetMediaLiveChannelByRoomDocument,
+            variables: {
+                roomId,
+            },
+        });
+
+        if (!channelResult.data.Room_by_pk?.mediaLiveChannel) {
+            return null;
+        }
+
+        return {
+            id: channelResult.data.Room_by_pk.mediaLiveChannel.id,
+            roomId,
+            conferenceId: channelResult.data.Room_by_pk.conferenceId,
+            mediaLiveChannelId: channelResult.data.Room_by_pk.mediaLiveChannel.mediaLiveChannelId,
+            mp4InputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.mp4InputAttachmentName,
+            vonageInputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.vonageInputAttachmentName,
+            loopingMp4InputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.loopingMp4InputAttachmentName,
+        };
     }
 
     public async createMediaLiveChannel(

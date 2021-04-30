@@ -8,11 +8,12 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AwsModule, AwsModuleOptions } from "./aws/aws.module";
 import { ChannelStackModule } from "./channel-stack/channel-stack.module";
-import { HasuraDataModule, HasuraDataModuleOptions } from "./hasura/hasura-data.module";
+import { HasuraDataModule, HasuraDataModuleOptions } from "./hasura-data/hasura-data.module";
 import { JsonBodyMiddleware } from "./json-body.middleware";
 import { ROOT_LOGGER } from "./logger";
 import { SnsModule } from "./sns/sns.module";
 import { TextBodyMiddleware } from "./text-body.middleware";
+import { VonageModule, VonageOptions } from "./vonage/vonage.module";
 
 @Module({
     imports: [
@@ -66,6 +67,21 @@ import { TextBodyMiddleware } from "./text-body.middleware";
                     graphQlApiDomain,
                     useSecureProtocols,
                     hasuraAdminSecret,
+                };
+                return config;
+            },
+            inject: [ConfigService],
+        }),
+        VonageModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => {
+                const apiKey = configService.get<string>("OPENTOK_API_KEY");
+                const apiSecret = configService.get<string>("OPENTOK_API_SECRET");
+                assert(apiKey, "Missing OPENTOK_API_KEY");
+                assert(apiSecret, "Missing OPENTOK_API_SECRET");
+                const config: VonageOptions = {
+                    apiKey,
+                    apiSecret,
                 };
                 return config;
             },

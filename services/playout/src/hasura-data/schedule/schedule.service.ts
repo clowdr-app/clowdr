@@ -19,16 +19,18 @@ import {
 } from "../../generated/graphql";
 import { GraphQlService } from "../graphql/graphql.service";
 
-export interface Schedule {
+export interface LocalSchedule {
     roomId: string;
-    items: {
-        eventId: string;
-        roomModeName: RoomMode_Enum;
-        rtmpInputName: RtmpInput_Enum | null;
-        videoData: VideoBroadcastBlob | null;
-        startTime: number;
-        endTime: number;
-    }[];
+    items: LocalScheduleAction[];
+}
+
+export interface LocalScheduleAction {
+    eventId: string;
+    roomModeName: RoomMode_Enum;
+    rtmpInputName: RtmpInput_Enum | null;
+    videoData: VideoBroadcastBlob | null;
+    startTime: number;
+    endTime: number;
 }
 
 @Injectable()
@@ -61,7 +63,7 @@ export class ScheduleService {
         return result.data.Room.map((room) => room.id);
     }
 
-    public async getScheduleData(roomId: string): Promise<Schedule> {
+    public async getScheduleData(roomId: string): Promise<LocalSchedule> {
         gql`
             query ScheduleService_GetSchedule($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
                 Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now, _lt: $cutoff } }) {
@@ -153,7 +155,7 @@ export class ScheduleService {
         return null;
     }
 
-    public async ensureRtmpInputsAlternate(scheduleData: Schedule): Promise<Schedule> {
+    public async ensureRtmpInputsAlternate(scheduleData: LocalSchedule): Promise<LocalSchedule> {
         const liveEvents = scheduleData.items
             .filter((item) => this.isLive(item.roomModeName))
             .filter((item) => item.startTime > add(Date.now(), { seconds: 30 }).getTime())

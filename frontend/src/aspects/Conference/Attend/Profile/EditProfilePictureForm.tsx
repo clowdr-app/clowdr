@@ -141,7 +141,7 @@ export default function EditProfilePitureForm({
                                     const data = result.data.updateProfilePhoto;
 
                                     const id = cache.identify({
-                                        __typename: "Profile",
+                                        __typename: "registrant_Profile",
                                         registrantId: registrant.id,
                                     });
 
@@ -290,7 +290,7 @@ export default function EditProfilePitureForm({
                                                             },
                                                             update: (cache) => {
                                                                 const id = cache.identify({
-                                                                    __typename: "Profile",
+                                                                    __typename: "registrant_Profile",
                                                                     registrantId: registrant.id,
                                                                 });
 

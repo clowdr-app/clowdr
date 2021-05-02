@@ -620,7 +620,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                             const deletedIds = data.returning.map((x) => x.id);
                             cache.modify({
                                 fields: {
-                                    Registrant(existingRefs: Reference[] = [], { readField }) {
+                                    registrant_Registrant(existingRefs: Reference[] = [], { readField }) {
                                         deletedIds.forEach((x) => {
                                             cache.evict({
                                                 id: x.id,

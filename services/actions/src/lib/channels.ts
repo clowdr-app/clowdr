@@ -352,7 +352,7 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
     const transitions = allTransitionsResult.data.video_Transitions;
     let fillerVideoKey;
     try {
-        fillerVideoKey = await getFillerVideo(channelResult.data.room_Room_by_pk?.conferenceId);
+        fillerVideoKey = await getFillerVideos(channelResult.data.room_Room_by_pk?.conferenceId);
     } catch (e) {
         console.warn("Could not retrieve filler video", channelResult.data.room_Room_by_pk.conferenceId);
     }
@@ -648,7 +648,7 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
 
     let fillerVideoKey;
     try {
-        fillerVideoKey = await getFillerVideo(conferenceId);
+        fillerVideoKey = await getFillerVideos(conferenceId);
     } catch (e) {
         console.warn("Could not find filler video, will not switch to it.");
         return;
@@ -693,7 +693,7 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
     });
 }
 
-async function getFillerVideo(conferenceId: string): Promise<string> {
+async function getFillerVideos(conferenceId: string): Promise<string> {
     let urlPath;
     try {
         const fillerVideosConfiguration = await getConferenceConfiguration<string[]>(conferenceId, "FILLER_VIDEOS");

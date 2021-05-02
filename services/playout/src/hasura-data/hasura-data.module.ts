@@ -1,8 +1,9 @@
 import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "@nestjs/common";
 import { HASURA_MODULE_OPTIONS } from "../constants";
+import { ConferenceConfigurationService } from "./conference-configuration/conference-configuration.service";
 import { GraphQlService } from "./graphql/graphql.service";
+import { LocalScheduleService } from "./local-schedule/local-schedule.service";
 import { MediaLiveChannelService } from "./media-live-channel/media-live-channel.service";
-import { ScheduleService } from "./schedule/schedule.service";
 
 export type HasuraDataModuleOptions = {
     useSecureProtocols: boolean;
@@ -12,8 +13,8 @@ export type HasuraDataModuleOptions = {
 
 @Global()
 @Module({
-    providers: [GraphQlService, MediaLiveChannelService, ScheduleService],
-    exports: [GraphQlService, MediaLiveChannelService, ScheduleService],
+    providers: [GraphQlService, MediaLiveChannelService, LocalScheduleService, ConferenceConfigurationService],
+    exports: [GraphQlService, MediaLiveChannelService, LocalScheduleService, ConferenceConfigurationService],
 })
 export class HasuraDataModule {
     static forRootAsync(

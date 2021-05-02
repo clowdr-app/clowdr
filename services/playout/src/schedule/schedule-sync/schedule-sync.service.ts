@@ -1,15 +1,26 @@
-import { ScheduleAction } from "@aws-sdk/client-medialive";
+import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
 import { VideoBroadcastBlob } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import AmazonS3URI from "amazon-s3-uri";
 import { add } from "date-fns";
 import * as R from "ramda";
-import { validate } from "uuid";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
-import { RtmpInput_Enum } from "../../generated/graphql";
+import { RoomMode_Enum, RtmpInput_Enum } from "../../generated/graphql";
 import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
+import {
+    LocalSchedule,
+    LocalScheduleAction,
+    LocalScheduleService,
+} from "../../hasura-data/local-schedule/local-schedule.service";
+import { ChannelStackDetails } from "../../hasura-data/media-live-channel/channel-stack-details";
 import { MediaLiveChannelService } from "../../hasura-data/media-live-channel/media-live-channel.service";
-import { LocalSchedule, LocalScheduleAction, ScheduleService } from "../../hasura-data/schedule/schedule.service";
+import {
+    EventAction,
+    InvalidAction,
+    RemoteSchedule,
+    RemoteScheduleAction,
+    RemoteScheduleService,
+} from "../remote-schedule/remote-schedule.service";
 
 export class ScheduleSyncService {
     private readonly logger: Bunyan;
@@ -18,7 +29,8 @@ export class ScheduleSyncService {
         private graphQlService: GraphQlService,
         private mediaLiveService: MediaLiveService,
         private mediaLiveChannelService: MediaLiveChannelService,
-        private scheduleService: ScheduleService
+        private localScheduleService: LocalScheduleService,
+        private remoteScheduleService: RemoteScheduleService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
@@ -26,7 +38,9 @@ export class ScheduleSyncService {
     public async fullScheduleSync(): Promise<void> {
         this.logger.info("Fully syncing channel schedules");
 
-        const roomIds = await this.scheduleService.getRoomsWithLiveEvents();
+        const roomIds = await this.localScheduleService.getRoomsWithBroadcastEvents();
+
+        this.logger.info(`Found ${roomIds.length} channel(s) with broadcast events. Commencing sync.`);
 
         for (const roomId of roomIds) {
             try {
@@ -64,10 +78,19 @@ export class ScheduleSyncService {
             );
         }
 
-        const remoteSchedule = await this.getRemoteSchedule(channelDetails.mediaLiveChannelId);
+        const now = Date.now();
+        const syncCutoffTime = add(now, { seconds: 20 }).getTime();
 
+        const remoteSchedule = await this.remoteScheduleService.getRemoteSchedule(channelDetails.mediaLiveChannelId);
+
+        // Attempt to remove invalid actions from the remote schedule.
+        let deletedActions: string[] = [];
         try {
-            await this.deleteInvalidActions(channelDetails.mediaLiveChannelId, remoteSchedule);
+            deletedActions = await this.deleteInvalidActions(
+                channelDetails.mediaLiveChannelId,
+                remoteSchedule,
+                syncCutoffTime
+            );
         } catch (err) {
             this.logger.error(
                 { err, mediaLiveChannelId: channelDetails.mediaLiveChannelId },
@@ -75,35 +98,167 @@ export class ScheduleSyncService {
             );
         }
 
-        const schedule = await this.computeExpectedSchedule(roomId);
+        // If items were deleted, filter them out of our local cache of the schedule.
+        remoteSchedule.items = remoteSchedule.items.filter(
+            (item) => item.actionName && !deletedActions.includes(item.actionName)
+        );
+        remoteSchedule.rawActions = remoteSchedule.rawActions.filter(
+            (item) => item.ActionName && !deletedActions.includes(item.ActionName)
+        );
+
+        const localSchedule = await this.computeExpectedSchedule(roomId);
+        const { deletes, adds } = this.computeRequiredScheduleChanges(
+            localSchedule,
+            remoteSchedule,
+            channelDetails,
+            syncCutoffTime
+        );
+        await this.mediaLiveService.updateSchedule(channelDetails.mediaLiveChannelId, deletes, adds);
     }
 
     public async computeExpectedSchedule(roomId: string): Promise<LocalSchedule> {
-        const initialSchedule = await this.scheduleService.getScheduleData(roomId);
-        return await this.scheduleService.ensureRtmpInputsAlternate(initialSchedule);
+        const initialSchedule = await this.localScheduleService.getScheduleData(roomId);
+        return await this.localScheduleService.ensureRtmpInputsAlternate(initialSchedule);
     }
 
-    public async computeRequiredScheduleChanges(
+    public computeRequiredScheduleChanges(
         localSchedule: LocalSchedule,
-        remoteSchedule: RemoteSchedule
-    ): Promise<void> {
-        const adds: LocalScheduleAction[] = [];
+        remoteSchedule: RemoteSchedule,
+        channelDetails: ChannelStackDetails,
+        syncCutoffTime: number
+    ): { adds: ScheduleAction[]; deletes: string[] } {
         const deletes: string[] = [];
+
+        // Delete outdated actions
+        for (const remoteAction of remoteSchedule.items) {
+            switch (remoteAction.type) {
+                case "event": {
+                    // Identify items in the local schedule matching the item in the remote schedule.
+                    const localCandidates = localSchedule.items.filter((item) => item.eventId === remoteAction.eventId);
+                    const localMatches = localCandidates.find((candidateAction) =>
+                        this.actionsMatch(candidateAction, remoteAction)
+                    );
+                    // If no matching item is found, and the remote item can be deleted, delete it and its chain.
+                    if (!localMatches && this.canRemoveEventAction(remoteAction, syncCutoffTime)) {
+                        deletes.push(
+                            remoteAction.actionName,
+                            ...remoteAction.chainAfter.map((x) => x.ActionName).filter(ScheduleSyncService.notEmpty)
+                        );
+                    }
+                    break;
+                }
+                case "event-follow":
+                    // We pick these up for deletion already when we look through the after-chain of an event.
+                    break;
+                case "immediate":
+                case "invalid":
+                case "manual":
+                    // At this point, we should have dealt with invalid actions.
+                    // And immediate and manual actions are to be left alone once created.
+                    break;
+            }
+        }
+        // Create missing actions
+        const missingActions: LocalScheduleAction[] = [];
         for (const localAction of localSchedule.items) {
             const remoteCandidates = remoteSchedule.items.filter(
                 (item) => item.type === "event" && item.eventId === localAction.eventId
             );
-            for (const remoteCandidate of remoteCandidates) {
-                //if ()
-            }
             const remoteMatches = remoteCandidates.filter((candidateAction) =>
                 this.actionsMatch(localAction, candidateAction)
             );
             if (remoteMatches.length === 0) {
-                adds.push(localAction);
+                missingActions.push(localAction);
             }
         }
-        return;
+
+        const adds = R.flatten(
+            missingActions.map((action) =>
+                this.convertLocalEventToScheduleActions(action, channelDetails, syncCutoffTime)
+            )
+        );
+
+        return { adds, deletes };
+    }
+
+    public convertLocalEventToScheduleActions(
+        localAction: LocalScheduleAction,
+        channelStackDetails: ChannelStackDetails,
+        syncCutoffTime: number
+    ): ScheduleAction[] {
+        if (localAction.startTime <= syncCutoffTime) {
+            return [];
+        }
+
+        if (this.localScheduleService.isLive(localAction.roomModeName)) {
+            return [
+                {
+                    ActionName: `e/${localAction.eventId}`,
+                    ScheduleActionStartSettings: {
+                        FixedModeScheduleActionStartSettings: {
+                            Time: new Date(localAction.startTime).toISOString(),
+                        },
+                    },
+                    ScheduleActionSettings: {
+                        InputSwitchSettings: {
+                            InputAttachmentNameReference:
+                                localAction.rtmpInputName === RtmpInput_Enum.RtmpB
+                                    ? channelStackDetails.rtmpBInputAttachmentName ??
+                                      channelStackDetails.rtmpAInputAttachmentName
+                                    : channelStackDetails.rtmpAInputAttachmentName,
+                        },
+                    },
+                },
+            ];
+        }
+
+        if (localAction.roomModeName === RoomMode_Enum.Prerecorded) {
+            const videoKey = localAction.videoData ? this.getVideoKey(localAction.videoData) : null;
+            if (!videoKey) {
+                this.logger.warn(
+                    { eventId: localAction.eventId },
+                    "Could not generate an action for prerecorded event because no video key was found"
+                );
+            } else {
+                return [
+                    {
+                        ActionName: `e/${localAction.eventId}`,
+                        ScheduleActionStartSettings: {
+                            FixedModeScheduleActionStartSettings: {
+                                Time: new Date(localAction.startTime).toISOString(),
+                            },
+                        },
+                        ScheduleActionSettings: {
+                            InputSwitchSettings: {
+                                InputAttachmentNameReference: channelStackDetails.mp4InputAttachmentName,
+                                UrlPath: [videoKey],
+                            },
+                        },
+                    },
+                    ...(channelStackDetails.fillerVideoKey
+                        ? [
+                              {
+                                  ActionName: `ef/${localAction.eventId}`,
+                                  ScheduleActionStartSettings: {
+                                      FollowModeScheduleActionStartSettings: {
+                                          FollowPoint: FollowPoint.END,
+                                          ReferenceActionName: `e/${localAction.eventId}`,
+                                      },
+                                  },
+                                  ScheduleActionSettings: {
+                                      InputSwitchSettings: {
+                                          InputAttachmentNameReference:
+                                              channelStackDetails.loopingMp4InputAttachmentName,
+                                          UrlPath: [channelStackDetails.fillerVideoKey],
+                                      },
+                                  },
+                              },
+                          ]
+                        : []),
+                ];
+            }
+        }
+        return [];
     }
 
     public actionsMatch(localAction: LocalScheduleAction, remoteAction: RemoteScheduleAction): boolean {
@@ -169,96 +324,28 @@ export class ScheduleSyncService {
         return null;
     }
 
-    public async getRemoteSchedule(mediaLiveChannelId: string): Promise<RemoteSchedule> {
-        const scheduleActions = await this.mediaLiveService.describeSchedule(mediaLiveChannelId);
-
-        const items = scheduleActions.map(
-            (action): RemoteScheduleAction => {
-                const actionName = this.parseActionName(action.ActionName ?? "");
-
-                if (actionName?.type === "event") {
-                    if (this.isPrerecordedAction(action)) {
-                        const prerecordedAction = this.parsePrerecordedAction(action, scheduleActions);
-                        return prerecordedAction ?? this.toInvalidAction(action, scheduleActions);
-                    }
-                    if (this.isLiveAction(action)) {
-                        const liveAction = this.parseLiveAction(action, scheduleActions);
-                        return liveAction ?? this.toInvalidAction(action, scheduleActions);
-                    }
-                }
-
-                if (actionName?.type === "event-follow") {
-                    if (this.isEventFollowAction(action)) {
-                        const followAction = this.parseEventFollowAction(action, scheduleActions);
-                        return followAction ?? this.toInvalidAction(action, scheduleActions);
-                    }
-                }
-
-                if (actionName?.type === "manual") {
-                    const chainBefore = this.scheduleService.getChainBefore(action, scheduleActions);
-                    return {
-                        type: "manual",
-                        actionName: actionName.actionName,
-                        id: actionName.id,
-                        startTime: this.scheduleService.getStartTime(action),
-                        isInputSwitch: this.isInputSwitch(action),
-                        chainAfter: this.scheduleService.getChainAfter(action, scheduleActions),
-                        chainBefore,
-                        chainBeforeStartTime: this.scheduleService.getChainBeforeStartTime(chainBefore),
-                    };
-                }
-
-                if (actionName?.type === "immediate" && this.isImmediateAction(action)) {
-                    return {
-                        type: "immediate",
-                        actionName: actionName.actionName,
-                        id: actionName.id,
-                        startTime: this.scheduleService.getStartTime(action),
-                        isInputSwitch: this.isInputSwitch(action),
-                        chainAfter: this.scheduleService.getChainAfter(action, scheduleActions),
-                        chainBefore: [],
-                        chainBeforeStartTime: null,
-                    };
-                }
-
-                return this.toInvalidAction(action, scheduleActions);
-            }
+    public async deleteInvalidActions(
+        channelId: string,
+        remoteSchedule: RemoteSchedule,
+        syncCutoffTime: number
+    ): Promise<string[]> {
+        const actionsToRemove = R.uniq(
+            R.flatten(
+                remoteSchedule.items
+                    .filter(
+                        (action) => action.type === "invalid" && this.canRemoveInvalidAction(action, syncCutoffTime)
+                    )
+                    .map((action) => [
+                        action.actionName,
+                        ...(action.type === "invalid" ? action.chainAfter.map((x) => x.ActionName) : []),
+                    ])
+            ).filter(ScheduleSyncService.notEmpty)
         );
-
-        return {
-            items,
-        };
-    }
-
-    toInvalidAction(action: ScheduleAction, otherActions: ScheduleAction[]): InvalidAction {
-        const chainBefore = this.scheduleService.getChainBefore(action, otherActions);
-        const chainBeforeStartTime = this.scheduleService.getChainBeforeStartTime(chainBefore);
-        return {
-            type: "invalid",
-            actionName: action?.ActionName ?? null,
-            startTime: this.scheduleService.getStartTime(action),
-            isInputSwitch: this.isInputSwitch(action),
-            chainBefore,
-            chainAfter: this.scheduleService.getChainAfter(action, otherActions),
-            chainBeforeStartTime,
-        };
-    }
-
-    public async deleteInvalidActions(channelId: string, remoteSchedule: RemoteSchedule): Promise<void> {
-        const now = Date.now();
-        const actionsToRemove = R.flatten(
-            remoteSchedule.items
-                .filter((action) => action.type === "invalid" && this.canRemoveInvalidAction(action, now))
-                .map((action) => [
-                    action.actionName,
-                    ...(action.type === "invalid" ? action.chainAfter.map((x) => x.ActionName) : []),
-                ])
-        ).filter(ScheduleSyncService.notEmpty);
         await this.mediaLiveService.updateSchedule(channelId, actionsToRemove, []);
+        return actionsToRemove;
     }
 
-    canRemoveInvalidAction(action: InvalidAction, now: number): boolean {
-        const removalCutoffTime = add(now, { seconds: 20 }).getTime();
+    canRemoveInvalidAction(action: InvalidAction, removalCutoffTime: number): boolean {
         const notInputSwitch = !action.isInputSwitch;
         const inFuture = !!action.startTime && action.startTime > removalCutoffTime;
         // If chainBeforeStartTime is null, implies a follow chain from an immediate action - not safe to attempt removal
@@ -266,174 +353,9 @@ export class ScheduleSyncService {
         return notInputSwitch || inFuture || inUnstartedChain;
     }
 
-    isInputSwitch(action: ScheduleAction): boolean {
-        return !!action.ScheduleActionSettings?.InputSwitchSettings;
-    }
-
-    isImmediateAction(action: ScheduleAction): boolean {
-        return !!action.ScheduleActionStartSettings?.ImmediateModeScheduleActionStartSettings;
-    }
-
-    isPrerecordedAction(action: ScheduleAction): boolean {
-        const isFixedStart = !!action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings;
-        const isPrerecordedInput = this.isPrerecordedInput(
-            action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference ?? ""
-        );
-        return isFixedStart && isPrerecordedInput;
-    }
-
-    parsePrerecordedAction(action: ScheduleAction, otherActions: ScheduleAction[]): RemoteScheduleAction | null {
-        const event = this.parseActionName(action.ActionName ?? "");
-        if (!event || event.type !== "event") {
-            return null;
-        }
-
-        const actionName = action.ActionName;
-        const startTime = action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings?.Time
-            ? Date.parse(action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings.Time)
-            : 0;
-        const s3Key =
-            action.ScheduleActionSettings?.InputSwitchSettings?.UrlPath?.length === 1
-                ? action.ScheduleActionSettings.InputSwitchSettings.UrlPath[0]
-                : null;
-
-        if (!actionName || !startTime || !s3Key) {
-            return null;
-        }
-
-        const remoteAction: RemoteScheduleAction = {
-            type: "event",
-            actionName,
-            eventId: event.eventId,
-            mode: "prerecorded",
-            startTime,
-            rtmpInputName: null,
-            s3Key,
-            chainAfter: this.scheduleService.getChainAfter(action, otherActions),
-            chainBefore: [],
-            chainBeforeStartTime: null,
-        };
-
-        return remoteAction;
-    }
-
-    isLiveAction(action: ScheduleAction): boolean {
-        const isFixedStart = !!action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings;
-
-        const isLiveInput = this.isLiveInput(
-            action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference ?? ""
-        );
-        return isFixedStart && isLiveInput;
-    }
-
-    parseLiveAction(action: ScheduleAction, otherActions: ScheduleAction[]): RemoteScheduleAction | null {
-        const event = this.parseActionName(action.ActionName ?? "");
-        if (!event || event.type !== "event") {
-            return null;
-        }
-
-        const actionName = action.ActionName;
-        const startTime = this.scheduleService.getStartTime(action);
-        const rtmpInputName = action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference?.endsWith(
-            "-rtmpA"
-        )
-            ? RtmpInput_Enum.RtmpA
-            : action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference?.endsWith("-rtmpB")
-            ? RtmpInput_Enum.RtmpB
-            : null;
-
-        if (!actionName || !startTime || !rtmpInputName) {
-            return null;
-        }
-
-        const remoteAction: RemoteScheduleAction = {
-            type: "event",
-            actionName,
-            eventId: event.eventId,
-            mode: "live",
-            startTime,
-            rtmpInputName,
-            s3Key: null,
-            chainAfter: this.scheduleService.getChainAfter(action, otherActions),
-            chainBefore: [],
-            chainBeforeStartTime: null,
-        };
-
-        return remoteAction;
-    }
-
-    isEventFollowAction(action: ScheduleAction): boolean {
-        const isFollowStart = !!action.ScheduleActionStartSettings?.FollowModeScheduleActionStartSettings;
-        const isLoopingInput = this.isLoopingInput(
-            action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference ?? ""
-        );
-        return isFollowStart && isLoopingInput;
-    }
-
-    parseEventFollowAction(action: ScheduleAction, otherActions: ScheduleAction[]): RemoteScheduleAction | null {
-        const event = this.parseActionName(action.ActionName ?? "");
-        if (!event || event.type !== "event-follow") {
-            return null;
-        }
-
-        const actionName = action.ActionName;
-
-        if (!actionName) {
-            return null;
-        }
-
-        const chainBefore = this.scheduleService.getChainBefore(action, otherActions);
-        const remoteAction: RemoteScheduleAction = {
-            type: "event-follow",
-            actionName,
-            eventId: event.eventId,
-            chainAfter: this.scheduleService.getChainAfter(action, otherActions),
-            chainBefore,
-            chainBeforeStartTime: this.scheduleService.getChainBeforeStartTime(chainBefore),
-        };
-
-        return remoteAction;
-    }
-
-    isPrerecordedInput(attachmentName: string): boolean {
-        return attachmentName.endsWith("-mp4");
-    }
-
-    isLiveInput(attachmentName: string): boolean {
-        return attachmentName.endsWith("-rtmpA") || attachmentName.endsWith("-rtmpB");
-    }
-
-    isLoopingInput(attachmentName: string): boolean {
-        return attachmentName.endsWith("-looping");
-    }
-
-    parseActionName(actionName: string): ActionName | null {
-        const parts = actionName.split("/");
-        if (parts.length !== 2) {
-            return null;
-        }
-
-        if (!validate(parts[1])) {
-            return null;
-        }
-
-        if (parts[0] === "e") {
-            return { type: "event", eventId: parts[1], actionName };
-        }
-
-        if (parts[0] === "ef") {
-            return { type: "event-follow", eventId: parts[1], actionName };
-        }
-
-        if (parts[0] === "i") {
-            return { type: "immediate", id: parts[1], actionName };
-        }
-
-        if (parts[0] === "m") {
-            return { type: "manual", id: parts[1], actionName };
-        }
-
-        return null;
+    canRemoveEventAction(action: EventAction, syncCutoffTime: number): boolean {
+        const inFuture = action.startTime > syncCutoffTime;
+        return inFuture;
     }
 
     static notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
@@ -444,69 +366,3 @@ export class ScheduleSyncService {
         return typeof value === "string";
     }
 }
-
-type ActionName =
-    | { type: "event"; eventId: string; actionName: string }
-    | { type: "manual"; id: string; actionName: string }
-    | { type: "immediate"; id: string; actionName: string }
-    | { type: "event-follow"; eventId: string; actionName: string };
-
-interface RemoteSchedule {
-    items: RemoteScheduleAction[];
-}
-
-type RemoteScheduleAction = EventAction | EventFollowAction | ManualAction | ImmediateAction | InvalidAction;
-
-interface ActionChain {
-    /**
-     * List of schedule actions that precede this action in a follow chain.
-     */
-    chainBefore: ScheduleAction[];
-    /**
-     * List of schedule actions that succeed this action in a follow chain.
-     */
-    chainAfter: ScheduleAction[];
-    /**
-     * If the preceding chain has a fixed start time, the start time. Else null implies an immediate start.
-     */
-    chainBeforeStartTime: number | null;
-}
-
-type EventAction = {
-    type: "event";
-    actionName: string;
-    eventId: string;
-    mode: "prerecorded" | "live";
-    rtmpInputName: RtmpInput_Enum | null;
-    s3Key: string | null;
-    startTime: number;
-} & ActionChain;
-
-type ManualAction = {
-    type: "manual";
-    actionName: string;
-    id: string;
-    startTime: number | null;
-    isInputSwitch: boolean;
-} & ActionChain;
-
-type ImmediateAction = {
-    type: "immediate";
-    actionName: string;
-    id: string;
-    startTime: number | null;
-    isInputSwitch: boolean;
-} & ActionChain;
-
-type InvalidAction = {
-    type: "invalid";
-    actionName: string | null;
-    startTime: number | null;
-    isInputSwitch: boolean;
-} & ActionChain;
-
-type EventFollowAction = {
-    type: "event-follow";
-    actionName: string;
-    eventId: string;
-} & ActionChain;

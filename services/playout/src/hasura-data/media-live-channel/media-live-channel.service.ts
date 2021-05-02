@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
+import AmazonS3URI from "amazon-s3-uri";
 import { ChannelStackDescription } from "../../channel-stack/channel-stack/channelStack";
 import {
     CreateMediaLiveChannelDocument,
@@ -8,6 +9,7 @@ import {
     FindMediaLiveChannelsByStackArnDocument,
     GetMediaLiveChannelByRoomDocument,
 } from "../../generated/graphql";
+import { ConferenceConfigurationService } from "../conference-configuration/conference-configuration.service";
 import { GraphQlService } from "../graphql/graphql.service";
 import { ChannelStackDetails } from "./channel-stack-details";
 
@@ -15,7 +17,11 @@ import { ChannelStackDetails } from "./channel-stack-details";
 export class MediaLiveChannelService {
     private logger: Bunyan;
 
-    constructor(@RootLogger() logger: Bunyan, private graphQlService: GraphQlService) {
+    constructor(
+        @RootLogger() logger: Bunyan,
+        private graphQlService: GraphQlService,
+        private conferenceConfigurationService: ConferenceConfigurationService
+    ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
@@ -29,7 +35,8 @@ export class MediaLiveChannelService {
                         id
                         mediaLiveChannelId
                         mp4InputAttachmentName
-                        vonageInputAttachmentName
+                        rtmpAInputAttachmentName
+                        rtmpBInputAttachmentName
                         loopingMp4InputAttachmentName
                     }
                 }
@@ -46,14 +53,18 @@ export class MediaLiveChannelService {
             return null;
         }
 
+        const fillerVideoKey = await this.getFillerVideoKey(channelResult.data.Room_by_pk.conferenceId);
+
         return {
             id: channelResult.data.Room_by_pk.mediaLiveChannel.id,
             roomId,
             conferenceId: channelResult.data.Room_by_pk.conferenceId,
             mediaLiveChannelId: channelResult.data.Room_by_pk.mediaLiveChannel.mediaLiveChannelId,
             mp4InputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.mp4InputAttachmentName,
-            vonageInputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.vonageInputAttachmentName,
+            rtmpAInputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.rtmpAInputAttachmentName,
+            rtmpBInputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.rtmpBInputAttachmentName ?? null,
             loopingMp4InputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.loopingMp4InputAttachmentName,
+            fillerVideoKey,
         };
     }
 
@@ -71,13 +82,16 @@ export class MediaLiveChannelService {
                 $mediaLiveChannelId: String!
                 $mediaPackageChannelId: String!
                 $mp4InputId: String!
-                $rtmpInputId: String!
-                $rtmpInputUri: String!
+                $rtmpAInputId: String!
+                $rtmpAInputUri: String!
+                $rtmpBInputId: String!
+                $rtmpBInputUri: String!
                 $endpointUri: String!
                 $cloudFrontDomain: String!
                 $mp4InputAttachmentName: String!
                 $loopingMp4InputAttachmentName: String!
-                $vonageInputAttachmentName: String!
+                $rtmpAInputAttachmentName: String!
+                $rtmpBInputAttachmentName: String!
                 $conferenceId: uuid!
                 $channelStackCreateJobId: uuid!
                 $roomId: uuid!
@@ -89,13 +103,16 @@ export class MediaLiveChannelService {
                         mediaLiveChannelId: $mediaLiveChannelId
                         mediaPackageChannelId: $mediaPackageChannelId
                         mp4InputId: $mp4InputId
-                        rtmpInputId: $rtmpInputId
-                        rtmpInputUri: $rtmpInputUri
+                        rtmpAInputId: $rtmpAInputId
+                        rtmpAInputUri: $rtmpAInputUri
+                        rtmpBInputId: $rtmpBInputId
+                        rtmpBInputUri: $rtmpBInputUri
                         endpointUri: $endpointUri
                         cloudFrontDomain: $cloudFrontDomain
                         mp4InputAttachmentName: $mp4InputAttachmentName
                         loopingMp4InputAttachmentName: $loopingMp4InputAttachmentName
-                        vonageInputAttachmentName: $vonageInputAttachmentName
+                        rtmpAInputAttachmentName: $rtmpAInputAttachmentName
+                        rtmpBInputAttachmentName: $rtmpBInputAttachmentName
                         conferenceId: $conferenceId
                         channelStackCreateJobId: $channelStackCreateJobId
                         roomId: $roomId
@@ -120,9 +137,12 @@ export class MediaLiveChannelService {
                 mediaPackageChannelId: stackDescription.mediaPackageChannelId,
                 mp4InputAttachmentName: stackDescription.mp4InputAttachmentName,
                 mp4InputId: stackDescription.mp4InputId,
-                rtmpInputId: stackDescription.rtmpAInputId,
-                rtmpInputUri: stackDescription.rtmpAInputUri,
-                vonageInputAttachmentName: stackDescription.rtmpAInputAttachmentName,
+                rtmpAInputId: stackDescription.rtmpAInputId,
+                rtmpAInputUri: stackDescription.rtmpAInputUri,
+                rtmpAInputAttachmentName: stackDescription.rtmpAInputAttachmentName,
+                rtmpBInputId: stackDescription.rtmpBInputId,
+                rtmpBInputUri: stackDescription.rtmpBInputUri,
+                rtmpBInputAttachmentName: stackDescription.rtmpBInputAttachmentName,
                 roomId,
             },
         });
@@ -176,5 +196,21 @@ export class MediaLiveChannelService {
             },
         });
         return result.data.video_MediaLiveChannel.map((c) => c.id);
+    }
+
+    async getFillerVideoKey(conferenceId: string): Promise<string | null> {
+        const fillerVideos = await this.conferenceConfigurationService.getFillerVideos(conferenceId);
+        const fillerVideo = fillerVideos?.length ? fillerVideos[0] : null;
+        let fillerVideoKey = null;
+        try {
+            if (fillerVideo) {
+                const { key } = new AmazonS3URI(fillerVideo);
+                fillerVideoKey = key;
+            }
+        } catch (e) {
+            this.logger.warn({ conferenceId, fillerVideo }, "Could not parse filler video URI");
+        }
+
+        return fillerVideoKey;
     }
 }

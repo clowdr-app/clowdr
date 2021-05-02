@@ -1,8 +1,8 @@
 type Mutation {
-  createContentGroupRoom (
-    contentGroupId: uuid!
+  createItemRoom (
+    itemId: uuid!
     conferenceId: uuid!
-  ): CreateContentGroupRoomOutput
+  ): CreateItemRoomOutput
 }
 
 
@@ -14,23 +14,9 @@ type Mutation {
 }
 
 
-type Query {
-  echo (
-    message: String!
-  ): EchoOutput
-}
-
-
-type Query {
-  getContentItem (
-    magicToken: String!
-  ): [GetContentItemOutput]
-}
-
-
 type Mutation {
   getGoogleOAuthUrl (
-    attendeeId: uuid!
+    registrantId: uuid!
     scopes: [String!]!
   ): GetGoogleOAuthUrlOutput
 }
@@ -111,8 +97,8 @@ type Query {
 
 type Mutation {
   refreshYouTubeData (
-    attendeeId: uuid!
-    attendeeGoogleAccountId: uuid!
+    registrantId: uuid!
+    registrantGoogleAccountId: uuid!
   ): RefreshYouTubeDataOutput
 }
 
@@ -125,14 +111,6 @@ type Mutation {
 
 
 type Mutation {
-  submitContentItem (
-    data: jsonb!
-    magicToken: String!
-  ): SubmitContentItemOutput
-}
-
-
-type Mutation {
   submitGoogleOAuthCode (
     code: String!
     state: String!
@@ -141,8 +119,16 @@ type Mutation {
 
 
 type Mutation {
+  submitUploadableElement (
+    data: jsonb!
+    magicToken: String!
+  ): SubmitUploadableElementOutput
+}
+
+
+type Mutation {
   updateProfilePhoto (
-    attendeeId: uuid!
+    registrantId: uuid!
     s3URL: String
   ): UpdateProfilePhotoResponse
 }
@@ -150,7 +136,7 @@ type Mutation {
 
 type Mutation {
   updateSubtitles (
-    contentItemId: String!
+    elementId: String!
     subtitleText: String!
     magicToken: String!
   ): SubmitUpdatedSubtitlesOutput
@@ -330,11 +316,21 @@ type PresenceFlushOutput {
 
 type JoinRoomChimeSessionOutput {
   meeting : jsonb
-  attendee : jsonb
+  registrant : jsonb
   message : String
 }
 
 type VAPIDPublicKeyOutput {
   key : String!
+}
+
+type CreateItemRoomOutput {
+  roomId : String
+  message : String
+}
+
+type SubmitUploadableElementOutput {
+  success : Boolean!
+  message : String!
 }
 

@@ -1,10 +1,10 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleContentItemUpdated, handleGetByRequiredItem, handleGetUploadAgreement } from "../handlers/content";
-import { handleContentItemSubmitted, handleUpdateSubtitles } from "../handlers/upload";
+import { handleElementUpdated, handleGetByRequiredItem, handleGetUploadAgreement } from "../handlers/content";
+import { handleElementSubmitted, handleUpdateSubtitles } from "../handlers/upload";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ContentItemData, Payload } from "../types/hasura/event";
+import { ElementData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 
@@ -13,16 +13,16 @@ router.use(checkEventSecret);
 
 router.post("/updated", bodyParser.json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<ContentItemData>>(req.body);
+        assertType<Payload<ElementData>>(req.body);
     } catch (e) {
         console.error("Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
-        await handleContentItemUpdated(req.body);
+        await handleElementUpdated(req.body);
     } catch (e) {
-        console.error("Failure while handling contentItem updated", e);
+        console.error("Failure while handling element updated", e);
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -32,7 +32,7 @@ router.post("/updated", bodyParser.json(), async (req: Request, res: Response) =
 router.post("/submit", bodyParser.json(), async (req: Request, res: Response) => {
     const params = req.body.input;
     try {
-        assertType<submitContentItemArgs>(params);
+        assertType<submitElementArgs>(params);
     } catch (e) {
         console.error(`${req.originalUrl}: invalid request`, params);
         return res.status(200).json({
@@ -43,7 +43,7 @@ router.post("/submit", bodyParser.json(), async (req: Request, res: Response) =>
 
     try {
         console.log(`${req.originalUrl}: content item submitted`);
-        const result = await handleContentItemSubmitted(params);
+        const result = await handleElementSubmitted(params);
         return res.status(200).json(result);
     } catch (e) {
         console.error(`${req.originalUrl}: failed to submit content item`, e);
@@ -72,10 +72,10 @@ router.post("/updateSubtitles", bodyParser.json(), async (req: Request, res: Res
 router.post(
     "/getByRequiredItem",
     bodyParser.json(),
-    async (req: Request, res: Response<Array<GetContentItemOutput> | string>) => {
+    async (req: Request, res: Response<Array<GetElementOutput> | string>) => {
         const params = req.body.input;
         try {
-            assertType<getContentItemArgs>(params);
+            assertType<getElementArgs>(params);
         } catch (e) {
             console.error(`${req.path}: Invalid request:`, req.body.input);
             return res.status(500).json("Invalid request");

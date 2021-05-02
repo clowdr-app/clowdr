@@ -80,7 +80,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                                 event.detail.userMetadata.combineVideosJobId,
                                 transcodeS3Url,
                                 subtitleS3Url,
-                                event.detail.userMetadata.contentGroupId
+                                event.detail.userMetadata.itemId
                             );
                         }
                     }

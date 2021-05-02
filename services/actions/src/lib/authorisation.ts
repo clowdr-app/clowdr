@@ -1,21 +1,21 @@
 import { gql } from "@apollo/client/core";
 import {
-    Authorisation_FindAttendeeDocument,
-    GetAttendeeByConferenceSlugDocument,
-    GetAttendeeDocument,
-    GetAttendee_AttendeeFragment,
+    Authorisation_FindRegistrantDocument,
+    GetRegistrantByConferenceSlugDocument,
+    GetRegistrantDocument,
+    GetRegistrant_RegistrantFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
-export async function getAttendee(userId: string, conferenceId: string): Promise<GetAttendee_AttendeeFragment> {
+export async function getRegistrant(userId: string, conferenceId: string): Promise<GetRegistrant_RegistrantFragment> {
     gql`
-        query GetAttendee($userId: String!, $conferenceId: uuid!) {
-            Attendee(where: { userId: { _eq: $userId }, conferenceId: { _eq: $conferenceId } }) {
-                ...GetAttendee_Attendee
+        query GetRegistrant($userId: String!, $conferenceId: uuid!) {
+            registrant_Registrant(where: { userId: { _eq: $userId }, conferenceId: { _eq: $conferenceId } }) {
+                ...GetRegistrant_Registrant
             }
         }
 
-        fragment GetAttendee_Attendee on Attendee {
+        fragment GetRegistrant_Registrant on registrant_Registrant {
             id
             displayName
             conferenceId
@@ -23,72 +23,72 @@ export async function getAttendee(userId: string, conferenceId: string): Promise
     `;
 
     // Check that the requesting user actually attends the conference
-    const myAttendeeResult = await apolloClient.query({
-        query: GetAttendeeDocument,
+    const myRegistrantResult = await apolloClient.query({
+        query: GetRegistrantDocument,
         variables: {
             userId,
             conferenceId,
         },
     });
 
-    if (myAttendeeResult.data.Attendee.length !== 1) {
-        throw new Error("Could not find an attendee for the user at the specified conference");
+    if (myRegistrantResult.data.registrant_Registrant.length !== 1) {
+        throw new Error("Could not find an registrant for the user at the specified conference");
     }
 
-    return myAttendeeResult.data.Attendee[0];
+    return myRegistrantResult.data.registrant_Registrant[0];
 }
 
-export async function getAttendeeByConferenceSlug(
+export async function getRegistrantByConferenceSlug(
     userId: string,
     conferenceSlug: string
-): Promise<GetAttendee_AttendeeFragment> {
+): Promise<GetRegistrant_RegistrantFragment> {
     gql`
-        query GetAttendeeByConferenceSlug($userId: String!, $conferenceSlug: String!) {
-            Attendee(where: { userId: { _eq: $userId }, conference: { slug: { _eq: $conferenceSlug } } }) {
-                ...GetAttendee_Attendee
+        query GetRegistrantByConferenceSlug($userId: String!, $conferenceSlug: String!) {
+            registrant_Registrant(where: { userId: { _eq: $userId }, conference: { slug: { _eq: $conferenceSlug } } }) {
+                ...GetRegistrant_Registrant
             }
         }
     `;
 
     // Check that the requesting user actually attends the conference
-    const myAttendeeResult = await apolloClient.query({
-        query: GetAttendeeByConferenceSlugDocument,
+    const myRegistrantResult = await apolloClient.query({
+        query: GetRegistrantByConferenceSlugDocument,
         variables: {
             userId,
             conferenceSlug,
         },
     });
 
-    if (myAttendeeResult.data.Attendee.length !== 1) {
-        throw new Error("Could not find an attendee for the user at the specified conference");
+    if (myRegistrantResult.data.registrant_Registrant.length !== 1) {
+        throw new Error("Could not find an registrant for the user at the specified conference");
     }
 
-    return myAttendeeResult.data.Attendee[0];
+    return myRegistrantResult.data.registrant_Registrant[0];
 }
 
 gql`
-    query Authorisation_FindAttendee($attendeeId: uuid!, $userId: String!) {
-        Attendee(where: { id: { _eq: $attendeeId }, userId: { _eq: $userId } }) {
-            ...GetAttendee_Attendee
+    query Authorisation_FindRegistrant($registrantId: uuid!, $userId: String!) {
+        registrant_Registrant(where: { id: { _eq: $registrantId }, userId: { _eq: $userId } }) {
+            ...GetRegistrant_Registrant
         }
     }
 `;
 
-export async function attendeeBelongsToUser(
-    attendeeId: string,
+export async function registrantBelongsToUser(
+    registrantId: string,
     userId: string
-): Promise<false | GetAttendee_AttendeeFragment> {
+): Promise<false | GetRegistrant_RegistrantFragment> {
     try {
         const result = await apolloClient.query({
-            query: Authorisation_FindAttendeeDocument,
+            query: Authorisation_FindRegistrantDocument,
             variables: {
-                attendeeId,
+                registrantId,
                 userId,
             },
         });
 
-        if (result.data.Attendee.length === 1) {
-            return result.data.Attendee[0];
+        if (result.data.registrant_Registrant.length === 1) {
+            return result.data.registrant_Registrant[0];
         }
 
         return false;

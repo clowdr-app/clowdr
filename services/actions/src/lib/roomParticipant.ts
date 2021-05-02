@@ -7,23 +7,23 @@ import {
     RoomParticipantFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { kickAttendeeFromRoom } from "./vonage/vonageTools";
+import { kickRegistrantFromRoom } from "./vonage/vonageTools";
 
 gql`
     mutation CreateRoomParticipant(
-        $attendeeId: uuid!
+        $registrantId: uuid!
         $conferenceId: uuid!
         $roomId: uuid!
         $vonageConnectionId: String
-        $chimeAttendeeId: String
+        $chimeRegistrantId: String
     ) {
-        insert_RoomParticipant_one(
+        insert_room_Participant_one(
             object: {
-                attendeeId: $attendeeId
+                registrantId: $registrantId
                 conferenceId: $conferenceId
                 roomId: $roomId
                 vonageConnectionId: $vonageConnectionId
-                chimeAttendeeId: $chimeAttendeeId
+                chimeRegistrantId: $chimeRegistrantId
             }
         ) {
             id
@@ -34,51 +34,51 @@ gql`
 export async function addRoomParticipant(
     roomId: string,
     conferenceId: string,
-    identifier: { vonageConnectionId: string } | { chimeAttendeeId: string },
-    attendeeId: string
+    identifier: { vonageConnectionId: string } | { chimeRegistrantId: string },
+    registrantId: string
 ): Promise<void> {
     const participantIdentifier =
         "vonageConnectionId" in identifier
             ? { vonageConnectionId: identifier.vonageConnectionId }
-            : { chimeAttendeeId: identifier.chimeAttendeeId };
+            : { chimeRegistrantId: identifier.chimeRegistrantId };
 
     try {
         await apolloClient.mutate({
             mutation: CreateRoomParticipantDocument,
             variables: {
-                attendeeId,
+                registrantId,
                 conferenceId,
                 roomId,
                 vonageConnectionId: null,
-                chimeAttendeeId: null,
+                chimeRegistrantId: null,
                 ...participantIdentifier,
             },
         });
     } catch (err) {
         if ("vonageConnectionId" in identifier) {
             // If there is already a row for this room, kick the previous connection before recording the new one
-            console.info("Attendee is already in the Vonage room, kicking from previous session", {
+            console.info("Registrant is already in the Vonage room, kicking from previous session", {
                 roomId,
-                attendeeId,
+                registrantId,
                 conferenceId,
             });
-            await kickAttendeeFromRoom(roomId, attendeeId);
+            await kickRegistrantFromRoom(roomId, registrantId);
 
             await apolloClient.mutate({
                 mutation: CreateRoomParticipantDocument,
                 variables: {
-                    attendeeId,
+                    registrantId,
                     conferenceId,
                     roomId,
                     vonageConnectionId: null,
-                    chimeAttendeeId: null,
+                    chimeRegistrantId: null,
                     ...participantIdentifier,
                 },
             });
         } else {
-            console.info("Attendee is already in the Chime room, ignoring", {
+            console.info("Registrant is already in the Chime room, ignoring", {
                 roomId,
-                attendeeId,
+                registrantId,
                 conferenceId,
             });
         }
@@ -87,85 +87,89 @@ export async function addRoomParticipant(
 
 gql`
     mutation RemoveRoomParticipant(
-        $attendeeId: uuid!
+        $registrantId: uuid!
         $conferenceId: uuid!
         $roomId: uuid!
         $vonageConnectionId: String
-        $chimeAttendeeId: String
+        $chimeRegistrantId: String
     ) {
-        delete_RoomParticipant(
-            where: { attendeeId: { _eq: $attendeeId }, conferenceId: { _eq: $conferenceId }, roomId: { _eq: $roomId } }
+        delete_room_Participant(
+            where: {
+                registrantId: { _eq: $registrantId }
+                conferenceId: { _eq: $conferenceId }
+                roomId: { _eq: $roomId }
+            }
         ) {
             affected_rows
         }
     }
 `;
 
-export async function removeRoomParticipant(roomId: string, conferenceId: string, attendeeId: string): Promise<void> {
+export async function removeRoomParticipant(roomId: string, conferenceId: string, registrantId: string): Promise<void> {
     try {
         const removeResult = await apolloClient.mutate({
             mutation: RemoveRoomParticipantDocument,
             variables: {
-                attendeeId,
+                registrantId,
                 conferenceId,
                 roomId,
             },
         });
 
         if (
-            !removeResult.data?.delete_RoomParticipant?.affected_rows ||
-            removeResult.data.delete_RoomParticipant.affected_rows === 0
+            !removeResult.data?.delete_room_Participant?.affected_rows ||
+            removeResult.data.delete_room_Participant.affected_rows === 0
         ) {
-            console.warn("Could not find participant to remove for room", { roomId, attendeeId });
+            console.warn("Could not find participant to remove for room", { roomId, registrantId });
         }
     } catch (err) {
-        console.error("Failed to remove RoomParticipant record", { roomId, conferenceId, attendeeId, err });
+        console.error("Failed to remove RoomParticipant record", { roomId, conferenceId, registrantId, err });
         throw new Error("Failed to remove RoomParticipant record");
     }
 }
 
 export async function getRoomParticipantDetails(
     roomId: string,
-    attendeeId: string
+    registrantId: string
 ): Promise<RoomParticipantFragment[]> {
     gql`
-        query GetRoomParticipantDetails($roomId: uuid!, $attendeeId: uuid!) {
-            RoomParticipant(where: { roomId: { _eq: $roomId }, attendeeId: { _eq: $attendeeId } }) {
+        query GetRoomParticipantDetails($roomId: uuid!, $registrantId: uuid!) {
+            room_Participant(where: { roomId: { _eq: $roomId }, registrantId: { _eq: $registrantId } }) {
                 ...RoomParticipant
             }
         }
 
-        fragment RoomParticipant on RoomParticipant {
+        fragment RoomParticipant on room_Participant {
             id
             room {
                 id
                 conferenceId
                 publicVonageSessionId
-                roomChimeMeeting {
+                chimeMeeting {
                     id
                     chimeMeetingId
                 }
             }
             vonageConnectionId
-            chimeAttendeeId
+            chimeRegistrantId
         }
     `;
 
     const result = await apolloClient.query({
         query: GetRoomParticipantDetailsDocument,
         variables: {
-            attendeeId,
+            registrantId,
             roomId,
         },
     });
 
-    return result.data.RoomParticipant;
+    return result.data.room_Participant;
 }
 
 export async function deleteRoomParticipantsCreatedBefore(date: Date): Promise<number> {
     gql`
         mutation DeleteRoomParticipantsCreatedBefore($before: timestamptz!) {
-            delete_RoomParticipant(where: { createdAt: { _lte: $before } }) {
+            delete_room_Participant(where: { createdAt: { _lte: $before } }) {
                 affected_rows
             }
         }
@@ -178,5 +182,5 @@ export async function deleteRoomParticipantsCreatedBefore(date: Date): Promise<n
         },
     });
 
-    return result.data?.delete_RoomParticipant?.affected_rows ?? 0;
+    return result.data?.delete_room_Participant?.affected_rows ?? 0;
 }

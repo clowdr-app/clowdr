@@ -1,18 +1,18 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleBroadcastContentItemUpdated } from "../handlers/broadcastContentItem";
+import { handleEventPersonDeleted } from "../handlers/eventProgramPerson";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { BroadcastContentItemData, Payload } from "../types/hasura/event";
+import { EventPersonData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/updated", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/deleted", bodyParser.json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<BroadcastContentItemData>>(req.body);
+        assertType<Payload<EventPersonData>>(req.body);
     } catch (e) {
         console.error("Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
@@ -20,9 +20,9 @@ router.post("/updated", bodyParser.json(), async (req: Request, res: Response) =
     }
 
     try {
-        await handleBroadcastContentItemUpdated(req.body);
+        await handleEventPersonDeleted(req.body);
     } catch (e) {
-        console.error("Failure while handling BroadcastContentItem updated", e);
+        console.error("Failure while handling EventPerson deleted", e);
         res.status(500).json("Failure while handling event");
         return;
     }

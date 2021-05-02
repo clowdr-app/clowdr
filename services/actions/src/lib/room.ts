@@ -3,25 +3,25 @@ import { Meeting } from "@aws-sdk/client-chime";
 import assert from "assert";
 import { is } from "typescript-is";
 import {
-    ContentGroup_CreateRoomDocument,
-    CreateContentGroupRoom_GetContentGroupDocument,
+    CreateItemRoom_GetItemDocument,
     CreateRoomChimeMeetingDocument,
     GetRoomByChimeMeetingIdDocument,
     GetRoomBySessionIdDocument,
     GetRoomChimeMeetingDocument,
     GetRoomConferenceIdDocument,
-    GetRoomThatAttendeeCanJoinDocument,
+    GetRoomThatRegistrantCanJoinDocument,
     GetRoomVonageMeetingDocument,
+    Item_CreateRoomDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { callWithRetry } from "../utils";
 import { createChimeMeeting, doesChimeMeetingExist } from "./aws/chime";
 import { deleteRoomChimeMeeting } from "./roomChimeMeeting";
 
-export async function createContentGroupBreakoutRoom(contentGroupId: string, conferenceId: string): Promise<string> {
+export async function createItemBreakoutRoom(itemId: string, conferenceId: string): Promise<string> {
     gql`
-        query CreateContentGroupRoom_GetContentGroup($id: uuid!) {
-            ContentGroup_by_pk(id: $id) {
+        query CreateItemRoom_GetItem($id: uuid!) {
+            content_Item_by_pk(id: $id) {
                 id
                 chatId
                 conferenceId
@@ -33,37 +33,37 @@ export async function createContentGroupBreakoutRoom(contentGroupId: string, con
         }
     `;
 
-    const contentGroupResult = await apolloClient.query({
-        query: CreateContentGroupRoom_GetContentGroupDocument,
+    const itemResult = await apolloClient.query({
+        query: CreateItemRoom_GetItemDocument,
         variables: {
-            id: contentGroupId,
+            id: itemId,
         },
     });
 
-    if (contentGroupResult.data.ContentGroup_by_pk?.conferenceId !== conferenceId) {
+    if (itemResult.data.content_Item_by_pk?.conferenceId !== conferenceId) {
         throw new Error("Could not find specified content group in the conference");
     }
 
-    if (contentGroupResult.data.ContentGroup_by_pk.rooms.length > 0) {
-        return contentGroupResult.data.ContentGroup_by_pk.rooms[0].id;
+    if (itemResult.data.content_Item_by_pk.rooms.length > 0) {
+        return itemResult.data.content_Item_by_pk.rooms[0].id;
     }
 
     gql`
-        mutation ContentGroup_CreateRoom(
+        mutation Item_CreateRoom(
             $chatId: uuid = null
             $conferenceId: uuid!
             $name: String!
-            $originatingContentGroupId: uuid!
+            $originatingItemId: uuid!
         ) {
-            insert_Room_one(
+            insert_room_Room_one(
                 object: {
                     capacity: 50
                     chatId: $chatId
                     conferenceId: $conferenceId
                     currentModeName: BREAKOUT
                     name: $name
-                    originatingContentGroupId: $originatingContentGroupId
-                    roomPrivacyName: PUBLIC
+                    originatingItemId: $originatingItemId
+                    managementModeName: PUBLIC
                 }
             ) {
                 id
@@ -71,24 +71,24 @@ export async function createContentGroupBreakoutRoom(contentGroupId: string, con
         }
     `;
 
-    console.log("Creating new breakout room for content group", contentGroupId, conferenceId);
+    console.log("Creating new breakout room for content group", itemId, conferenceId);
 
     const createResult = await apolloClient.mutate({
-        mutation: ContentGroup_CreateRoomDocument,
+        mutation: Item_CreateRoomDocument,
         variables: {
             conferenceId: conferenceId,
-            name: `${contentGroupResult.data.ContentGroup_by_pk.title}`,
-            originatingContentGroupId: contentGroupId,
-            chatId: contentGroupResult.data.ContentGroup_by_pk.chatId,
+            name: `${itemResult.data.content_Item_by_pk.title}`,
+            originatingItemId: itemId,
+            chatId: itemResult.data.content_Item_by_pk.chatId,
         },
     });
-    return createResult.data?.insert_Room_one?.id;
+    return createResult.data?.insert_room_Room_one?.id;
 }
 
 export async function getRoomConferenceId(roomId: string): Promise<string> {
     gql`
         query GetRoomConferenceId($roomId: uuid!) {
-            Room_by_pk(id: $roomId) {
+            room_Room_by_pk(id: $roomId) {
                 id
                 conferenceId
             }
@@ -102,37 +102,37 @@ export async function getRoomConferenceId(roomId: string): Promise<string> {
         },
     });
 
-    if (!room.data.Room_by_pk) {
+    if (!room.data.room_Room_by_pk) {
         throw new Error("Could not find room");
     }
 
-    return room.data.Room_by_pk.conferenceId;
+    return room.data.room_Room_by_pk.conferenceId;
 }
 
-export async function canUserJoinRoom(attendeeId: string, roomId: string, conferenceId: string): Promise<boolean> {
+export async function canUserJoinRoom(registrantId: string, roomId: string, conferenceId: string): Promise<boolean> {
     gql`
-        query GetRoomThatAttendeeCanJoin($roomId: uuid, $attendeeId: uuid, $conferenceId: uuid) {
-            Room(
+        query GetRoomThatRegistrantCanJoin($roomId: uuid, $registrantId: uuid, $conferenceId: uuid) {
+            room_Room(
                 where: {
                     id: { _eq: $roomId }
-                    conference: { attendees: { id: { _eq: $attendeeId } }, id: { _eq: $conferenceId } }
+                    conference: { registrants: { id: { _eq: $registrantId } }, id: { _eq: $conferenceId } }
                     _or: [
-                        { roomPeople: { attendee: { id: { _eq: $attendeeId } } } }
-                        { roomPrivacyName: { _eq: PUBLIC } }
+                        { roomPeople: { registrant: { id: { _eq: $registrantId } } } }
+                        { managementModeName: { _eq: PUBLIC } }
                     ]
                 }
             ) {
                 id
                 publicVonageSessionId
                 conference {
-                    attendees(where: { id: { _eq: $attendeeId } }) {
+                    registrants(where: { id: { _eq: $registrantId } }) {
                         id
                     }
                 }
             }
             FlatUserPermission(
                 where: {
-                    user: { attendees: { id: { _eq: $attendeeId } } }
+                    user: { registrants: { id: { _eq: $registrantId } } }
                     conference: { id: { _eq: $conferenceId } }
                     permission_name: { _eq: "CONFERENCE_VIEW_ATTENDEES" }
                 }
@@ -143,15 +143,15 @@ export async function canUserJoinRoom(attendeeId: string, roomId: string, confer
     `;
     const result = await callWithRetry(() =>
         apolloClient.query({
-            query: GetRoomThatAttendeeCanJoinDocument,
+            query: GetRoomThatRegistrantCanJoinDocument,
             variables: {
                 roomId,
-                attendeeId,
+                registrantId,
                 conferenceId,
             },
         })
     );
-    return result.data.FlatUserPermission.length > 0 && result.data.Room.length > 0;
+    return result.data.FlatUserPermission.length > 0 && result.data.room_Room.length > 0;
 }
 
 export async function createRoomChimeMeeting(roomId: string, conferenceId: string): Promise<Meeting> {
@@ -164,7 +164,7 @@ export async function createRoomChimeMeeting(roomId: string, conferenceId: strin
             $chimeMeetingId: String!
             $roomId: uuid!
         ) {
-            insert_room_RoomChimeMeeting_one(
+            insert_room_ChimeMeeting_one(
                 object: {
                     conferenceId: $conferenceId
                     chimeMeetingData: $chimeMeetingData
@@ -199,7 +199,7 @@ export async function createRoomChimeMeeting(roomId: string, conferenceId: strin
 export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeting | null> {
     gql`
         query GetRoomChimeMeeting($roomId: uuid!) {
-            room_RoomChimeMeeting(where: { roomId: { _eq: $roomId } }) {
+            room_ChimeMeeting(where: { roomId: { _eq: $roomId } }) {
                 id
                 chimeMeetingData
             }
@@ -213,15 +213,15 @@ export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeti
         },
     });
 
-    if (result.data.room_RoomChimeMeeting.length === 1) {
-        const roomChimeMeetingId = result.data.room_RoomChimeMeeting[0].id;
-        const chimeMeetingData: Meeting = result.data.room_RoomChimeMeeting[0].chimeMeetingData;
+    if (result.data.room_ChimeMeeting.length === 1) {
+        const chimeMeetingId = result.data.room_ChimeMeeting[0].id;
+        const chimeMeetingData: Meeting = result.data.room_ChimeMeeting[0].chimeMeetingData;
         if (!is<Meeting>(chimeMeetingData)) {
             console.warn("Retrieved Chime meeting data could not be validated, deleting record", {
                 chimeMeetingData,
                 roomId,
             });
-            await deleteRoomChimeMeeting(roomChimeMeetingId);
+            await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
 
@@ -230,7 +230,7 @@ export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeti
                 chimeMeetingData,
                 roomId,
             });
-            await deleteRoomChimeMeeting(roomChimeMeetingId);
+            await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
 
@@ -241,7 +241,7 @@ export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeti
                 chimeMeetingData,
                 roomId,
             });
-            await deleteRoomChimeMeeting(roomChimeMeetingId);
+            await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
 
@@ -254,7 +254,7 @@ export async function getExistingRoomChimeMeeting(roomId: string): Promise<Meeti
 export async function getExistingRoomVonageMeeting(roomId: string): Promise<string | null> {
     gql`
         query GetRoomVonageMeeting($roomId: uuid!) {
-            Room_by_pk(id: $roomId) {
+            room_Room_by_pk(id: $roomId) {
                 id
                 publicVonageSessionId
             }
@@ -268,7 +268,7 @@ export async function getExistingRoomVonageMeeting(roomId: string): Promise<stri
         },
     });
 
-    return result.data.Room_by_pk?.publicVonageSessionId ?? null;
+    return result.data.room_Room_by_pk?.publicVonageSessionId ?? null;
 }
 
 export async function getRoomChimeMeeting(roomId: string, conferenceId: string): Promise<Meeting> {
@@ -309,7 +309,7 @@ export async function getRoomByVonageSessionId(
 ): Promise<{ roomId: string; conferenceId: string } | null> {
     gql`
         query GetRoomBySessionId($sessionId: String!) {
-            Room(where: { publicVonageSessionId: { _eq: $sessionId } }) {
+            room_Room(where: { publicVonageSessionId: { _eq: $sessionId } }) {
                 id
                 conferenceId
             }
@@ -323,8 +323,8 @@ export async function getRoomByVonageSessionId(
         },
     });
 
-    return roomResult.data.Room.length === 1
-        ? { roomId: roomResult.data.Room[0].id, conferenceId: roomResult.data.Room[0].conferenceId }
+    return roomResult.data.room_Room.length === 1
+        ? { roomId: roomResult.data.room_Room[0].id, conferenceId: roomResult.data.room_Room[0].conferenceId }
         : null;
 }
 
@@ -333,7 +333,7 @@ export async function getRoomByChimeMeetingId(
 ): Promise<{ roomId: string; conferenceId: string } | null> {
     gql`
         query GetRoomByChimeMeetingId($meetingId: String!) {
-            Room(where: { roomChimeMeeting: { chimeMeetingId: { _eq: $meetingId } } }) {
+            room_Room(where: { chimeMeeting: { chimeMeetingId: { _eq: $meetingId } } }) {
                 id
                 conferenceId
             }
@@ -347,7 +347,7 @@ export async function getRoomByChimeMeetingId(
         },
     });
 
-    return roomResult.data.Room.length === 1
-        ? { roomId: roomResult.data.Room[0].id, conferenceId: roomResult.data.Room[0].conferenceId }
+    return roomResult.data.room_Room.length === 1
+        ? { roomId: roomResult.data.room_Room[0].id, conferenceId: roomResult.data.room_Room[0].conferenceId }
         : null;
 }

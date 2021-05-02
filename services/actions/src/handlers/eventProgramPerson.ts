@@ -7,9 +7,9 @@ import { EventPersonData, Payload } from "../types/hasura/event";
 
 gql`
     query FindEventConnectionsForParticipant($personId: uuid!, $eventId: uuid!) {
-        EventParticipantStream_aggregate(
+        video_EventParticipantStream_aggregate(
             distinct_on: vonageConnectionId
-            where: { attendee: { contentPeople: { id: { _eq: $personId } } }, eventId: { _eq: $eventId } }
+            where: { registrant: { programPeople: { id: { _eq: $personId } } }, eventId: { _eq: $eventId } }
         ) {
             nodes {
                 vonageConnectionId
@@ -39,7 +39,7 @@ export async function handleEventPersonDeleted(payload: Payload<EventPersonData>
         },
     });
 
-    for (const stream of result.data.EventParticipantStream_aggregate.nodes) {
+    for (const stream of result.data.video_EventParticipantStream_aggregate.nodes) {
         if (stream.event.eventVonageSession?.sessionId) {
             try {
                 console.log(

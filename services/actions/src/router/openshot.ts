@@ -20,9 +20,9 @@ async function validateOpenshotWebhook(data: ExportWebhookData, videoRenderJobId
     });
 
     if (
-        !videoRenderJobResult.data.VideoRenderJob_by_pk?.data ||
-        !videoRenderJobResult.data.VideoRenderJob_by_pk.data.webhookKey ||
-        videoRenderJobResult.data.VideoRenderJob_by_pk.data.webhookKey !== data.json.webhookKey
+        !videoRenderJobResult.data.video_VideoRenderJob_by_pk?.data ||
+        !videoRenderJobResult.data.video_VideoRenderJob_by_pk.data.webhookKey ||
+        videoRenderJobResult.data.video_VideoRenderJob_by_pk.data.webhookKey !== data.json.webhookKey
     ) {
         console.error("Invalid webhook call", videoRenderJobId, data.json.webhookKey);
         throw new Error("Invalid webhook call");

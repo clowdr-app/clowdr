@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleAttendeeGoogleAccountDeleted, handleRefreshYouTubeData } from "../handlers/attendeeGoogleAccount";
+import { handleRefreshYouTubeData, handleRegistrantGoogleAccountDeleted } from "../handlers/registrantGoogleAccount";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { AttendeeGoogleAccountData, Payload } from "../types/hasura/event";
+import { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
 
 export const router = express.Router();
 
@@ -12,7 +12,7 @@ router.use(checkEventSecret);
 
 router.post("/deleted", bodyParser.json(), async (req: Request, res: Response) => {
     try {
-        assertType<Payload<AttendeeGoogleAccountData>>(req.body);
+        assertType<Payload<RegistrantGoogleAccountData>>(req.body);
     } catch (e) {
         console.error("Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
@@ -20,9 +20,9 @@ router.post("/deleted", bodyParser.json(), async (req: Request, res: Response) =
     }
 
     try {
-        await handleAttendeeGoogleAccountDeleted(req.body);
+        await handleRegistrantGoogleAccountDeleted(req.body);
     } catch (e) {
-        console.error("Failure while handling AttendeeGoogleAccount deleted", e);
+        console.error("Failure while handling RegistrantGoogleAccount deleted", e);
         res.status(500).json("Failure while handling event");
         return;
     }

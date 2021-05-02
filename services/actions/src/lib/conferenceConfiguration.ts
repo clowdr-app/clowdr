@@ -5,7 +5,7 @@ import { apolloClient } from "../graphqlClient";
 
 gql`
     query GetConfigurationValue($key: String!, $conferenceId: uuid!) {
-        ConferenceConfiguration(where: { key: { _eq: $key }, conferenceId: { _eq: $conferenceId } }) {
+        conference_Configuration(where: { key: { _eq: $key }, conferenceId: { _eq: $conferenceId } }) {
             id
             value
         }
@@ -21,8 +21,8 @@ export async function getConferenceConfiguration<T = any>(conferenceId: string, 
         },
     });
 
-    if (result.data.ConferenceConfiguration.length > 0 && is<T>(result.data.ConferenceConfiguration[0].value)) {
-        return result.data.ConferenceConfiguration[0].value;
+    if (result.data.conference_Configuration.length > 0 && is<T>(result.data.conference_Configuration[0].value)) {
+        return result.data.conference_Configuration[0].value;
     } else {
         return null;
     }

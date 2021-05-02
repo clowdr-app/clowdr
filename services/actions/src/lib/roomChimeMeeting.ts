@@ -2,10 +2,10 @@ import { gql } from "@apollo/client/core";
 import { DeleteRoomChimeMeetingDocument, DeleteRoomChimeMeetingForRoomDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
-export async function deleteRoomChimeMeeting(roomChimeMeetingId: string): Promise<void> {
+export async function deleteRoomChimeMeeting(chimeMeetingId: string): Promise<void> {
     gql`
-        mutation DeleteRoomChimeMeeting($roomChimeMeetingId: uuid!) {
-            delete_room_RoomChimeMeeting_by_pk(id: $roomChimeMeetingId) {
+        mutation DeleteRoomChimeMeeting($chimeMeetingId: uuid!) {
+            delete_room_ChimeMeeting_by_pk(id: $chimeMeetingId) {
                 id
             }
         }
@@ -13,7 +13,7 @@ export async function deleteRoomChimeMeeting(roomChimeMeetingId: string): Promis
     await apolloClient.mutate({
         mutation: DeleteRoomChimeMeetingDocument,
         variables: {
-            roomChimeMeetingId: roomChimeMeetingId,
+            chimeMeetingId,
         },
     });
 }
@@ -21,9 +21,7 @@ export async function deleteRoomChimeMeeting(roomChimeMeetingId: string): Promis
 export async function deleteRoomChimeMeetingForRoom(roomId: string, chimeMeetingId: string): Promise<number> {
     gql`
         mutation DeleteRoomChimeMeetingForRoom($roomId: uuid!, $chimeMeetingId: String!) {
-            delete_room_RoomChimeMeeting(
-                where: { roomId: { _eq: $roomId }, chimeMeetingId: { _eq: $chimeMeetingId } }
-            ) {
+            delete_room_ChimeMeeting(where: { roomId: { _eq: $roomId }, chimeMeetingId: { _eq: $chimeMeetingId } }) {
                 affected_rows
             }
         }
@@ -37,5 +35,5 @@ export async function deleteRoomChimeMeetingForRoom(roomId: string, chimeMeeting
         },
     });
 
-    return result.data?.delete_room_RoomChimeMeeting?.affected_rows ?? 0;
+    return result.data?.delete_room_ChimeMeeting?.affected_rows ?? 0;
 }

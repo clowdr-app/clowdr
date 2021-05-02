@@ -4,7 +4,7 @@ import { completeVideoRenderJob, failVideoRenderJob } from "../lib/videoRenderJo
 
 gql`
     query GetVideoRenderJob($videoRenderJobId: uuid!) {
-        VideoRenderJob_by_pk(id: $videoRenderJobId) {
+        video_VideoRenderJob_by_pk(id: $videoRenderJobId) {
             id
             data
         }

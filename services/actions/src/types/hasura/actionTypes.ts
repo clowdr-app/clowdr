@@ -13,8 +13,8 @@ type EchoInput = {
     message: string;
 };
 
-type SubmitContentItemInput = {
-    contentItemData: jsonb;
+type SubmitElementInput = {
+    elementData: jsonb;
 };
 
 type ConfirmInvitationInput = {
@@ -27,7 +27,7 @@ type InvitationConfirmationEmailInput = {
 };
 
 type SubmitUpdatedSubtitlesInput = {
-    contentItemId: string;
+    elementId: string;
     subtitleText: string;
     accessToken: string;
 };
@@ -44,7 +44,7 @@ type ProtectedEchoOutput = {
     message: string;
 };
 
-type SubmitContentItemOutput = {
+type SubmitElementOutput = {
     success: boolean;
     message: string;
 };
@@ -59,17 +59,17 @@ type InvitationConfirmationEmailOutput = {
 };
 
 type InvitationSendEmailResult = {
-    attendeeId: string;
+    registrantId: string;
     sent: boolean;
 };
 
-type GetContentItemOutput = {
-    contentTypeName: string;
+type GetElementOutput = {
+    typeName: string;
     name: string;
     id: string;
     data: jsonb;
     layoutData?: Maybe<jsonb>;
-    contentGroupTitle: string;
+    itemTitle: string;
 };
 
 type SubmitUpdatedSubtitlesOutput = {
@@ -170,13 +170,13 @@ type PresenceFlushOutput = {
 
 type JoinRoomChimeSessionOutput = {
     meeting?: Maybe<jsonb>;
-    attendee?: Maybe<jsonb>;
+    registrant?: Maybe<jsonb>;
     message?: Maybe<string>;
 };
 
 type Query = {
     echo?: Maybe<EchoOutput>;
-    getContentItem?: Maybe<Array<Maybe<GetContentItemOutput>>>;
+    getElement?: Maybe<Array<Maybe<GetElementOutput>>>;
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
     presence_Summary?: Maybe<PresenceSummaryOutput>;
     protectedEcho?: Maybe<ProtectedEchoOutput>;
@@ -199,7 +199,7 @@ type Mutation = {
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
-    submitContentItem?: Maybe<SubmitContentItemOutput>;
+    submitElement?: Maybe<SubmitElementOutput>;
     submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
     updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
@@ -209,7 +209,7 @@ type echoArgs = {
     message: string;
 };
 
-type getContentItemArgs = {
+type getElementArgs = {
     magicToken: string;
 };
 
@@ -224,25 +224,25 @@ type protectedEchoArgs = {
 };
 
 type createContentGroupRoomArgs = {
-    contentGroupId: uuid;
+    itemId: uuid;
     conferenceId: uuid;
 };
 
 type createRoomDmArgs = {
     conferenceId: uuid;
-    attendeeIds: Array<uuid>;
+    registrantIds: Array<uuid>;
 };
 
 type generateChatRemoteServiceIdsArgs = {};
 
 type generateChatRemoteTokenArgs = {
-    attendeeId: uuid;
+    registrantId: uuid;
 };
 
 type generateChatRemoteUserIdsArgs = {};
 
 type getGoogleOAuthUrlArgs = {
-    attendeeId: uuid;
+    registrantId: uuid;
     scopes: Array<string>;
 };
 
@@ -277,15 +277,15 @@ type joinRoomVonageSessionArgs = {
 type presence_FlushArgs = {};
 
 type refreshYouTubeDataArgs = {
-    attendeeId: uuid;
-    attendeeGoogleAccountId: uuid;
+    registrantId: uuid;
+    registrantGoogleAccountId: uuid;
 };
 
 type stopEventBroadcastArgs = {
     eventId: uuid;
 };
 
-type submitContentItemArgs = {
+type submitElementArgs = {
     data: jsonb;
     magicToken: string;
 };
@@ -296,12 +296,12 @@ type submitGoogleOAuthCodeArgs = {
 };
 
 type updateProfilePhotoArgs = {
-    attendeeId: uuid;
+    registrantId: uuid;
     s3URL?: Maybe<string>;
 };
 
 type updateSubtitlesArgs = {
-    contentItemId: string;
+    elementId: string;
     subtitleText: string;
     magicToken: string;
 };

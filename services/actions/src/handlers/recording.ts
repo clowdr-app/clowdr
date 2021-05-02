@@ -1,16 +1,16 @@
 import { gql } from "@apollo/client/core";
-import { ContentBaseType, ContentItemDataBlob, ContentType_Enum } from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
 import {
     CreateMediaPackageHarvestJobDocument,
     FailMediaPackageHarvestJobDocument,
-    JobStatus_Enum,
     Recording_CompleteMediaPackageHarvestJobDocument,
     Recording_GetEventDocument,
     Recording_GetMediaPackageHarvestJobDocument,
     Recording_IgnoreMediaPackageHarvestJobDocument,
     StartMediaPackageHarvestJobDocument,
+    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createHarvestJob } from "../lib/aws/mediaPackage";
@@ -19,7 +19,7 @@ import { callWithRetry } from "../utils";
 
 gql`
     query Recording_GetEvent($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             id
             startTime
             endTime
@@ -48,10 +48,10 @@ export async function handleMediaPackageHarvestJobUpdated(payload: Payload<Media
 
     const newRow = payload.event.data.new;
 
-    if (newRow.jobStatusName === JobStatus_Enum.New) {
+    if (newRow.jobStatusName === Video_JobStatus_Enum.New) {
         if (
             !payload.event.data.old ||
-            (payload.event.data.old && payload.event.data.old.jobStatusName !== JobStatus_Enum.New)
+            (payload.event.data.old && payload.event.data.old.jobStatusName !== Video_JobStatus_Enum.New)
         ) {
             console.log("Creating new MediaPackage harvest job", newRow.id, newRow.eventId);
             const eventResult = await apolloClient.query({
@@ -61,18 +61,18 @@ export async function handleMediaPackageHarvestJobUpdated(payload: Payload<Media
                 },
             });
 
-            if (!eventResult.data.Event_by_pk) {
+            if (!eventResult.data.schedule_Event_by_pk) {
                 throw new Error("Could not retrieve event associated with MediaPackageHarvestJob");
             }
 
-            if (!eventResult.data.Event_by_pk.room.mediaLiveChannel) {
+            if (!eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel) {
                 throw new Error("Could not retrieve broadcast channel details for the event room");
             }
 
             const harvestJobId = await createHarvestJob(
-                eventResult.data.Event_by_pk.room.mediaLiveChannel.mediaPackageChannelId,
-                eventResult.data.Event_by_pk.startTime,
-                eventResult.data.Event_by_pk.endTime
+                eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.mediaPackageChannelId,
+                eventResult.data.schedule_Event_by_pk.startTime,
+                eventResult.data.schedule_Event_by_pk.endTime
             );
 
             await apolloClient.mutate({
@@ -114,7 +114,7 @@ gql`
         job_queues_MediaPackageHarvestJob(where: { mediaPackageHarvestJobId: { _eq: $mediaPackageHarvestJobId } }) {
             conferenceId
             event {
-                contentGroup {
+                item {
                     id
                     title
                 }
@@ -130,7 +130,7 @@ gql`
         $id: uuid!
         $message: String!
         $data: jsonb = ""
-        $contentGroupId: uuid = ""
+        $itemId: uuid = ""
         $conferenceId: uuid = ""
         $name: String = ""
     ) {
@@ -140,14 +140,8 @@ gql`
         ) {
             id
         }
-        insert_ContentItem_one(
-            object: {
-                data: $data
-                contentGroupId: $contentGroupId
-                conferenceId: $conferenceId
-                contentTypeName: VIDEO_FILE
-                name: $name
-            }
+        insert_content_Element_one(
+            object: { data: $data, itemId: $itemId, conferenceId: $conferenceId, typeName: VIDEO_FILE, name: $name }
         ) {
             id
         }
@@ -181,19 +175,19 @@ export async function completeMediaPackageHarvestJob(
 
     const job = result.data.job_queues_MediaPackageHarvestJob[0];
 
-    if (!job.event.contentGroup) {
+    if (!job.event.item) {
         console.warn("No ContentGroup associated with harvested event, skipping.", awsHarvestJobId, job.event.id);
         await ignoreMediaPackageHarvestJob(job.id, bucketName, manifestKey);
         return;
     }
 
-    const data: ContentItemDataBlob = [
+    const data: ElementDataBlob = [
         {
             createdAt: Date.now(),
             createdBy: "system",
             data: {
-                baseType: ContentBaseType.Video,
-                type: ContentType_Enum.VideoFile,
+                baseType: ElementBaseType.Video,
+                type: Content_ElementType_Enum.VideoFile,
                 s3Url: `s3://${bucketName}/${manifestKey}`,
                 subtitles: {},
             },
@@ -210,7 +204,7 @@ export async function completeMediaPackageHarvestJob(
                     id: job.id,
                     message: `Completed successfully. Bucket name: ${bucketName}; manifest key: ${manifestKey}`,
                     conferenceId: job.conferenceId,
-                    contentGroupId: job.event.contentGroup?.id,
+                    itemId: job.event.item?.id,
                     data,
                     name: `Recording of ${job.event.name} from ${startTime}`,
                 },

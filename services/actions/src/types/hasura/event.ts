@@ -1,14 +1,14 @@
-import { ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
 import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
 import { Credentials } from "google-auth-library/build/src/auth/credentials";
 import {
-    ContentType_Enum,
-    EventPersonRole_Enum,
-    InputType_Enum,
-    JobStatus_Enum,
-    RoomMode_Enum,
-    RoomPrivacy_Enum,
+    Content_ElementType_Enum,
+    Room_ManagementMode_Enum,
+    Room_Mode_Enum,
+    Schedule_EventProgramPersonRole_Enum,
+    Video_InputType_Enum,
+    Video_JobStatus_Enum,
 } from "../../generated/graphql";
 
 export interface Payload<T = any> {
@@ -57,14 +57,14 @@ export interface ConferenceData extends BaseData {
     slug: string;
 }
 
-export interface ContentItemData extends BaseData {
+export interface ElementData extends BaseData {
     isHidden: boolean;
-    data: ContentItemDataBlob;
+    data: ElementDataBlob;
     layoutData: any | null;
-    contentTypeName: ContentType_Enum;
+    typeName: Content_ElementType_Enum;
     name: string;
     conferenceId: string;
-    contentGroupId: string;
+    itemId: string;
     originatingDataId: string | null;
 }
 
@@ -83,7 +83,7 @@ export interface EmailData extends BaseData {
 export interface InvitationEmailJobData extends BaseData {
     conferenceId: string;
     sendRepeat: boolean;
-    attendeeIds: string[];
+    registrantIds: string[];
 }
 
 export interface SubmissionRequestEmailJobData extends BaseData {
@@ -91,59 +91,59 @@ export interface SubmissionRequestEmailJobData extends BaseData {
 }
 
 export interface ConferencePrepareJobData extends BaseData {
-    jobStatusName: JobStatus_Enum;
+    jobStatusName: Video_JobStatus_Enum;
     conferenceId: string;
 }
 
 export interface VideoRenderJobData extends BaseData {
     conferencePrepareJobId: string;
-    jobStatusName: JobStatus_Enum;
+    jobStatusName: Video_JobStatus_Enum;
     conferenceId: string;
-    broadcastContentItemId: string;
+    broadcastElementId: string;
     data: VideoRenderJobDataBlob;
     message: string | null;
 }
 
 export interface CombineVideosJobData extends BaseData {
     data: CombineVideosJobDataBlob;
-    createdByAttendeeId: string | null;
-    jobStatusName: JobStatus_Enum;
+    createdByRegistrantId: string | null;
+    jobStatusName: Video_JobStatus_Enum;
     conferenceId: string;
     message: string | null;
 }
 
-export interface BroadcastContentItemDataBase extends BaseData {
-    contentItemId: string | null;
+export interface BroadcastElementDataBase extends BaseData {
+    elementId: string | null;
     eventId: string | null;
-    input: BroadcastContentItemInput;
-    inputTypeName: InputType_Enum;
+    input: BroadcastElementInput;
+    inputTypeName: Video_InputType_Enum;
     conferenceId: string;
 }
 
-export type BroadcastContentItemData = MP4BroadcastContentItemData | VonageBroadcastContentItemData;
+export type BroadcastElementData = MP4BroadcastElementData | VonageBroadcastElementData;
 
-export interface MP4BroadcastContentItemData extends BroadcastContentItemDataBase {
-    contentItemId: string;
+export interface MP4BroadcastElementData extends BroadcastElementDataBase {
+    elementId: string;
     eventId: null;
-    inputTypeName: InputType_Enum.Mp4;
+    inputTypeName: Video_InputType_Enum.Mp4;
     input: MP4Input | PendingCreation;
 }
 
-export interface VonageBroadcastContentItemData extends BroadcastContentItemDataBase {
-    contentItemId: null;
+export interface VonageBroadcastElementData extends BroadcastElementDataBase {
+    elementId: null;
     eventId: string;
-    inputTypeName: InputType_Enum.VonageSession;
+    inputTypeName: Video_InputType_Enum.VonageSession;
     input: VonageInput | PendingCreation;
 }
 
 export interface EventData extends BaseData {
     durationSeconds: number;
-    intendedRoomModeName: RoomMode_Enum;
+    intendedRoomModeName: Room_Mode_Enum;
     name: string;
     endTime: string | null;
     startTime: string;
     conferenceId: string;
-    contentGroupId: string | null;
+    itemId: string | null;
     originatingDataId: string | null;
     roomId: string;
 }
@@ -151,12 +151,12 @@ export interface EventData extends BaseData {
 export interface RoomData extends BaseData {
     conferenceId: string;
     name: string;
-    currentModeName: RoomMode_Enum;
+    currentModeName: Room_Mode_Enum;
     originatingDataId: string | null;
     capacity: number | null;
     publicVonageSessionId: string | null;
     priority: number;
-    roomPrivacyName: RoomPrivacy_Enum;
+    managementModeName: Room_ManagementMode_Enum;
 }
 
 export interface EventVonageSessionData extends BaseData {
@@ -168,8 +168,8 @@ export interface EventVonageSessionData extends BaseData {
 
 export interface EventRoomJoinRequestData extends BaseData {
     eventId: string;
-    attendeeId: string;
-    eventPersonRoleName: EventPersonRole_Enum;
+    registrantId: string;
+    eventPersonRoleName: Schedule_EventProgramPersonRole_Enum;
     approved: boolean;
     conferenceId: string;
 }
@@ -178,12 +178,12 @@ export interface EventPersonData extends BaseData {
     id: string;
     eventId: string;
     personId: string | null;
-    roleName: EventPersonRole_Enum;
+    roleName: Schedule_EventProgramPersonRole_Enum;
 }
 
 export interface MediaPackageHarvestJob extends BaseData {
     eventId: string;
-    jobStatusName: JobStatus_Enum;
+    jobStatusName: Video_JobStatus_Enum;
     message: string | null;
     mediaPackageHarvestJobId: string | null;
     conferenceId: string;
@@ -194,13 +194,13 @@ export interface ShuffleQueueEntryData {
     updated_at: string;
     id: number;
     shufflePeriodId: string;
-    attendeeId: string;
+    registrantId: string;
     allocatedShuffleRoomId?: number | null;
 }
 
-export interface AttendeeGoogleAccountData extends BaseData {
+export interface RegistrantGoogleAccountData extends BaseData {
     tokenData: Credentials;
-    attendeeId: string;
+    registrantId: string;
     googleAccountEmail: string;
     conferenceId: string;
 }

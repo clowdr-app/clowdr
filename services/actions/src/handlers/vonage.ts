@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { Vonage_GetEventDetailsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { getAttendee } from "../lib/authorisation";
+import { getRegistrant } from "../lib/authorisation";
 import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
     addAndRemoveEventParticipantStreams,
@@ -13,7 +13,7 @@ import { CustomConnectionData, WebhookReqBody } from "../types/vonage";
 
 gql`
     query OngoingBroadcastableVideoRoomEvents($time: timestamptz!, $sessionId: String!) {
-        Event(
+        schedule_Event(
             where: {
                 eventVonageSession: { sessionId: { _eq: $sessionId } }
                 intendedRoomModeName: { _in: [Q_AND_A, PRESENTATION] }
@@ -55,7 +55,7 @@ export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBo
 
 gql`
     query Vonage_GetEventDetails($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             conferenceId
             id
             eventVonageSession {
@@ -77,22 +77,22 @@ export async function handleJoinEvent(
         },
     });
 
-    if (!result.data || !result.data.Event_by_pk || result.error) {
+    if (!result.data || !result.data.schedule_Event_by_pk || result.error) {
         console.error("Could not retrieve event information", payload.eventId);
         return {};
     }
 
-    if (!result.data.Event_by_pk.eventVonageSession) {
+    if (!result.data.schedule_Event_by_pk.eventVonageSession) {
         console.error("Could not retrieve Vonage session associated with event", payload.eventId);
         return {};
     }
 
-    let attendee;
+    let registrant;
     try {
-        attendee = await getAttendee(userId, result.data.Event_by_pk.conferenceId);
+        registrant = await getRegistrant(userId, result.data.schedule_Event_by_pk.conferenceId);
     } catch (e) {
         console.error(
-            "User does not have attendee at conference, refusing event join token",
+            "User does not have registrant at conference, refusing event join token",
             userId,
             payload.eventId,
             e
@@ -101,12 +101,12 @@ export async function handleJoinEvent(
     }
 
     const connectionData: CustomConnectionData = {
-        attendeeId: attendee.id,
+        registrantId: registrant.id,
         userId,
     };
 
     try {
-        const accessToken = Vonage.vonage.generateToken(result.data.Event_by_pk.eventVonageSession.sessionId, {
+        const accessToken = Vonage.vonage.generateToken(result.data.schedule_Event_by_pk.eventVonageSession.sessionId, {
             data: JSON.stringify(connectionData),
             role: "publisher",
         });
@@ -115,7 +115,7 @@ export async function handleJoinEvent(
         console.error(
             "Failure while generating event Vonage session token",
             payload.eventId,
-            result.data.Event_by_pk.eventVonageSession.sessionId,
+            result.data.schedule_Event_by_pk.eventVonageSession.sessionId,
             e
         );
     }
@@ -125,7 +125,7 @@ export async function handleJoinEvent(
 
 gql`
     query GetRoomThatUserCanJoin($roomId: uuid, $userId: String) {
-        Room_by_pk(id: { _eq: $roomId }) {
+        room_Room_by_pk(id: { _eq: $roomId }) {
             id
             publicVonageSessionId
         }
@@ -137,8 +137,8 @@ export async function handleJoinRoom(
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
     const roomConferenceId = await getRoomConferenceId(payload.roomId);
-    const attendee = await getAttendee(userId, roomConferenceId);
-    const canJoinRoom = await canUserJoinRoom(attendee.id, payload.roomId, roomConferenceId);
+    const registrant = await getRegistrant(userId, roomConferenceId);
+    const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId, roomConferenceId);
 
     if (!canJoinRoom) {
         console.warn("User tried to join a Vonage room, but was not permitted", { payload, userId });
@@ -148,14 +148,14 @@ export async function handleJoinRoom(
     const maybeVonageMeetingId = await getRoomVonageSession(payload.roomId);
 
     if (!maybeVonageMeetingId) {
-        console.error("Could not get Vonage meeting id", { payload, userId, attendeeId: attendee.id });
+        console.error("Could not get Vonage meeting id", { payload, userId, registrantId: registrant.id });
         return {
             message: "Could not find meeting",
         };
     }
 
     const connectionData: CustomConnectionData = {
-        attendeeId: attendee.id,
+        registrantId: registrant.id,
         userId,
     };
 

@@ -1,20 +1,20 @@
 import { gql } from "@apollo/client/core";
 import R from "ramda";
 import {
-    ContentType_Enum,
+    Content_ElementType_Enum,
     CreateTransitionDocument,
     DeleteTransitionsForConferenceDocument,
     GetEventsForRoomDocument,
     GetRoomIdsDocument,
-    InputType_Enum,
-    RoomMode_Enum,
+    Room_Mode_Enum,
+    Video_InputType_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
 export async function createTransitions(conferenceId: string): Promise<void> {
     gql`
         mutation DeleteTransitionsForConference($conferenceId: uuid!) {
-            delete_Transitions(where: { conferenceId: { _eq: $conferenceId } }) {
+            delete_video_Transitions(where: { conferenceId: { _eq: $conferenceId } }) {
                 affected_rows
             }
         }
@@ -32,11 +32,15 @@ export async function createTransitions(conferenceId: string): Promise<void> {
         throw new Error(`Failed to clear existing transitions for conference ${conferenceId}`);
     }
 
-    console.log("Cleared existing transitions", conferenceId, deleteResult.data?.delete_Transitions?.affected_rows);
+    console.log(
+        "Cleared existing transitions",
+        conferenceId,
+        deleteResult.data?.delete_video_Transitions?.affected_rows
+    );
 
     gql`
         query GetRoomIds($conferenceId: uuid!) {
-            Room(where: { conferenceId: { _eq: $conferenceId } }) {
+            room_Room(where: { conferenceId: { _eq: $conferenceId } }) {
                 id
             }
         }
@@ -49,21 +53,23 @@ export async function createTransitions(conferenceId: string): Promise<void> {
         },
     });
 
-    await Promise.all(roomsResult.data.Room.map(async (room) => await createTransitionsForRoom(conferenceId, room.id)));
+    await Promise.all(
+        roomsResult.data.room_Room.map(async (room) => await createTransitionsForRoom(conferenceId, room.id))
+    );
 }
 
 export async function createTransitionsForRoom(conferenceId: string, roomId: string): Promise<void> {
     gql`
         query GetEventsForRoom($roomId: uuid!) {
-            Room_by_pk(id: $roomId) {
+            room_Room_by_pk(id: $roomId) {
                 id
                 events(order_by: { startTime: asc }) {
-                    contentGroup {
+                    item {
                         id
-                        contentItems {
+                        elements {
                             id
-                            contentTypeName
-                            broadcastContentItem {
+                            typeName
+                            broadcastElement {
                                 id
                                 input
                                 inputTypeName
@@ -77,7 +83,7 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
                     startTime
                     intendedRoomModeName
                     name
-                    broadcastContentItem {
+                    broadcastElement {
                         id
                         inputTypeName
                     }
@@ -93,58 +99,58 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
         },
     });
 
-    if (!eventsResult.data.Room_by_pk) {
+    if (!eventsResult.data.room_Room_by_pk) {
         throw new Error(`Could not find room ${roomId}`);
     }
 
-    for (const event of eventsResult.data.Room_by_pk.events) {
+    for (const event of eventsResult.data.room_Room_by_pk.events) {
         const startTimeMillis = Date.parse(event.startTime);
 
         switch (event.intendedRoomModeName) {
-            case RoomMode_Enum.Prerecorded:
+            case Room_Mode_Enum.Prerecorded:
                 {
                     // console.log("Creating transitions for prerecorded event", event.id);
-                    // const titleContentItem = event.contentGroup?.contentItems.find(
-                    //     (contentItem) => contentItem.contentTypeName === ContentType_Enum.VideoTitles
+                    // const titleElement = event.item?.elements.find(
+                    //     (element) => element.typeName === Content_ElementType_Enum.VideoTitles
                     // );
 
-                    // if (titleContentItem && titleContentItem.broadcastContentItem) {
+                    // if (titleElement && titleElement.broadcastElement) {
                     //     await createTransition(
-                    //         titleContentItem.broadcastContentItem.id,
+                    //         titleElement.broadcastElement.id,
                     //         event.id,
                     //         roomId,
                     //         conferenceId,
                     //         new Date(startTimeMillis - 10000)
                     //     );
                     // } else {
-                    //     console.warn("No titles found for event", event.id, event.contentGroup?.id);
+                    //     console.warn("No titles found for event", event.id, event.item?.id);
                     // }
 
-                    const broadcastContentItem = event.contentGroup?.contentItems.find(
-                        (contentItem) => contentItem.contentTypeName === ContentType_Enum.VideoBroadcast
+                    const broadcastElement = event.item?.elements.find(
+                        (element) => element.typeName === Content_ElementType_Enum.VideoBroadcast
                     );
 
-                    if (broadcastContentItem && broadcastContentItem.broadcastContentItem) {
+                    if (broadcastElement && broadcastElement.broadcastElement) {
                         await createTransition(
-                            broadcastContentItem.broadcastContentItem.id,
+                            broadcastElement.broadcastElement.id,
                             event.id,
                             roomId,
                             conferenceId,
                             new Date(startTimeMillis)
                         );
                     } else {
-                        console.warn("No broadcast video found for event", event.id, event.contentGroup?.id);
+                        console.warn("No broadcast video found for event", event.id, event.item?.id);
                     }
                 }
                 break;
-            case RoomMode_Enum.Presentation:
-            case RoomMode_Enum.QAndA: {
+            case Room_Mode_Enum.Presentation:
+            case Room_Mode_Enum.QAndA: {
                 console.log("Creating transitions for live event", event.id);
-                const broadcastContentItem = event.broadcastContentItem;
+                const broadcastElement = event.broadcastElement;
 
-                if (broadcastContentItem && broadcastContentItem.inputTypeName === InputType_Enum.VonageSession) {
+                if (broadcastElement && broadcastElement.inputTypeName === Video_InputType_Enum.VonageSession) {
                     await createTransition(
-                        broadcastContentItem.id,
+                        broadcastElement.id,
                         event.id,
                         roomId,
                         conferenceId,
@@ -156,7 +162,7 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
         }
     }
 
-    R.aperture(2)(eventsResult.data.Room_by_pk.events).filter(([event1, event2]) => {
+    R.aperture(2)(eventsResult.data.room_Room_by_pk.events).filter(([event1, event2]) => {
         const event1Start = Date.parse(event1.startTime);
         const event2Start = Date.parse(event2.startTime);
         const maxGap = 2 * 60 * 60 * 1000;
@@ -165,7 +171,7 @@ export async function createTransitionsForRoom(conferenceId: string, roomId: str
 }
 
 async function createTransition(
-    broadcastContentItemId: string,
+    broadcastElementId: string,
     eventId: string,
     roomId: string,
     conferenceId: string,
@@ -173,15 +179,15 @@ async function createTransition(
 ) {
     gql`
         mutation CreateTransition(
-            $broadcastContentId: uuid!
+            $broadcastElementId: uuid!
             $conferenceId: uuid!
             $eventId: uuid
             $roomId: uuid!
             $time: timestamptz!
         ) {
-            insert_Transitions_one(
+            insert_video_Transitions_one(
                 object: {
-                    broadcastContentId: $broadcastContentId
+                    broadcastElementId: $broadcastElementId
                     conferenceId: $conferenceId
                     eventId: $eventId
                     roomId: $roomId
@@ -196,7 +202,7 @@ async function createTransition(
     await apolloClient.mutate({
         mutation: CreateTransitionDocument,
         variables: {
-            broadcastContentId: broadcastContentItemId,
+            broadcastElementId,
             eventId,
             roomId,
             conferenceId,

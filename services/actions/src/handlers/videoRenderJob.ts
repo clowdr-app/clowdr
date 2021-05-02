@@ -3,15 +3,15 @@ import assert from "assert";
 import { assertType } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
 import {
-    GetContentItemIdForVideoRenderJobDocument,
-    JobStatus_Enum,
+    GetElementIdForVideoRenderJobDocument,
     MarkAndSelectNewVideoRenderJobsDocument,
     SelectNewVideoRenderJobsDocument,
     UnmarkVideoRenderJobsDocument,
     VideoRenderJobDataFragment,
+    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import * as BroadcastContentItem from "../lib/broadcastContentItem";
+import * as BroadcastElement from "../lib/broadcastElement";
 import * as ConferencePrepareJob from "../lib/conferencePrepareJob";
 import { OpenShotClient } from "../lib/openshot/openshot";
 import { ExportParameters } from "../lib/openshot/openshotExports";
@@ -22,10 +22,10 @@ import { Payload, VideoRenderJobData } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`
-    query GetContentItemIdForVideoRenderJob($videoRenderJobId: uuid!) {
-        VideoRenderJob_by_pk(id: $videoRenderJobId) {
-            broadcastContentItem {
-                contentItemId
+    query GetElementIdForVideoRenderJob($videoRenderJobId: uuid!) {
+        video_VideoRenderJob_by_pk(id: $videoRenderJobId) {
+            broadcastElement {
+                elementId
                 id
             }
             id
@@ -58,9 +58,9 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
     switch (payload.event.data.new.data.type) {
         case "BroadcastRenderJob": {
             switch (payload.event.data.new.jobStatusName) {
-                case JobStatus_Enum.New:
+                case Video_JobStatus_Enum.New:
                     break;
-                case JobStatus_Enum.Completed: {
+                case Video_JobStatus_Enum.Completed: {
                     console.log("Completed broadcast render job", payload.event.data.new.id);
                     try {
                         if (!payload.event.data.new.data.broadcastContentItemData) {
@@ -72,8 +72,8 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                                 "Did not find any broadcast content item data in completed video render job"
                             );
                         } else {
-                            await BroadcastContentItem.updateMP4BroadcastContentItem(
-                                payload.event.data.new.broadcastContentItemId,
+                            await BroadcastElement.updateMP4BroadcastElement(
+                                payload.event.data.new.broadcastElementId,
                                 payload.event.data.new.data.broadcastContentItemData
                             );
                             await ConferencePrepareJob.updateStatusOfConferencePrepareJob(
@@ -89,7 +89,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                     }
                     break;
                 }
-                case JobStatus_Enum.Failed: {
+                case Video_JobStatus_Enum.Failed: {
                     console.log(`Failed broadcast render job ${payload.event.data.new.id}`);
                     await ConferencePrepareJob.failConferencePrepareJob(
                         payload.event.data.new.conferencePrepareJobId,
@@ -97,7 +97,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                     );
                     break;
                 }
-                case JobStatus_Enum.InProgress: {
+                case Video_JobStatus_Enum.InProgress: {
                     console.log(`In progress broadcast render job ${payload.event.data.new.id}`);
                     break;
                 }
@@ -106,9 +106,9 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
         }
         case "TitleRenderJob": {
             switch (payload.event.data.new.jobStatusName) {
-                case JobStatus_Enum.New:
+                case Video_JobStatus_Enum.New:
                     break;
-                case JobStatus_Enum.Completed: {
+                case Video_JobStatus_Enum.Completed: {
                     console.log(`Completed title render job ${payload.event.data.new.id}`);
                     try {
                         await cleanupOpenShotProject(payload.event.data.new.data.openShotProjectId);
@@ -125,10 +125,10 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                             console.log(
                                 "Updating broadcast content item with results of job",
                                 payload.event.data.new.id,
-                                payload.event.data.new.broadcastContentItemId
+                                payload.event.data.new.broadcastElementId
                             );
-                            await BroadcastContentItem.updateMP4BroadcastContentItem(
-                                payload.event.data.new.broadcastContentItemId,
+                            await BroadcastElement.updateMP4BroadcastElement(
+                                payload.event.data.new.broadcastElementId,
                                 payload.event.data.new.data.broadcastContentItemData
                             );
                             console.log(
@@ -149,7 +149,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                     }
                     break;
                 }
-                case JobStatus_Enum.Failed: {
+                case Video_JobStatus_Enum.Failed: {
                     console.log(`Failed title render job ${payload.event.data.new.id}`);
                     try {
                         await cleanupOpenShotProject(payload.event.data.new.data.openShotProjectId);
@@ -162,7 +162,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                     );
                     break;
                 }
-                case JobStatus_Enum.InProgress: {
+                case Video_JobStatus_Enum.InProgress: {
                     console.log(`In progress title render job ${payload.event.data.new.id}`);
                     break;
                 }
@@ -180,12 +180,12 @@ async function startVideoRenderJob(job: VideoRenderJobDataFragment): Promise<Vid
         case "BroadcastRenderJob": {
             console.log(`New broadcast render job ${job.id}`);
             const result = await apolloClient.query({
-                query: GetContentItemIdForVideoRenderJobDocument,
+                query: GetElementIdForVideoRenderJobDocument,
                 variables: {
                     videoRenderJobId: job.id,
                 },
             });
-            if (!result.data.VideoRenderJob_by_pk?.broadcastContentItem.contentItemId) {
+            if (!result.data.video_VideoRenderJob_by_pk?.broadcastElement.elementId) {
                 throw new Error(
                     `Could not determine associated content item for broadcast video render job (${job.id})`
                 );
@@ -233,13 +233,13 @@ async function startVideoRenderJob(job: VideoRenderJobDataFragment): Promise<Vid
 
 gql`
     query SelectNewVideoRenderJobs {
-        VideoRenderJob(limit: 10, where: { jobStatusName: { _eq: NEW } }, order_by: { created_at: asc }) {
+        video_VideoRenderJob(limit: 10, where: { jobStatusName: { _eq: NEW } }, order_by: { created_at: asc }) {
             id
         }
     }
 
     mutation MarkAndSelectNewVideoRenderJobs($ids: [uuid!]!) {
-        update_VideoRenderJob(
+        update_video_VideoRenderJob(
             where: { id: { _in: $ids }, jobStatusName: { _eq: NEW } }
             _set: { jobStatusName: IN_PROGRESS }
             _inc: { retriesCount: 1 }
@@ -250,7 +250,7 @@ gql`
         }
     }
 
-    fragment VideoRenderJobData on VideoRenderJob {
+    fragment VideoRenderJobData on video_VideoRenderJob {
         id
         jobStatusName
         data
@@ -258,7 +258,7 @@ gql`
     }
 
     mutation UnmarkVideoRenderJobs($ids: [uuid!]!) {
-        update_VideoRenderJob(where: { id: { _in: $ids } }, _set: { jobStatusName: FAILED }) {
+        update_video_VideoRenderJob(where: { id: { _in: $ids } }, _set: { jobStatusName: FAILED }) {
             affected_rows
             returning {
                 id
@@ -276,15 +276,15 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
     const videoRenderJobs = await apolloClient.mutate({
         mutation: MarkAndSelectNewVideoRenderJobsDocument,
         variables: {
-            ids: newVideoRenderJobIds.data.VideoRenderJob.map((x) => x.id),
+            ids: newVideoRenderJobIds.data.video_VideoRenderJob.map((x) => x.id),
         },
     });
-    assert(videoRenderJobs.data?.update_VideoRenderJob, "Failed to fetch new VideoRenderJobs");
+    assert(videoRenderJobs.data?.update_video_VideoRenderJob, "Failed to fetch new VideoRenderJobs");
 
     const snooze = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
     const unsuccessfulVideoRenderJobs: (string | undefined)[] = await Promise.all(
-        videoRenderJobs.data.update_VideoRenderJob.returning.map(async (job) => {
+        videoRenderJobs.data.update_video_VideoRenderJob.returning.map(async (job) => {
             try {
                 if (job.retriesCount < 3) {
                     await snooze(Math.floor(Math.random() * 5 * 1000));

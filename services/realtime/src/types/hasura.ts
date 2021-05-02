@@ -24,14 +24,14 @@ export interface Payload<T = any> {
 
 export interface Subscription {
     chatId: string;
-    attendeeId: string;
+    registrantId: string;
     wasManuallySubscribed: boolean;
     created_at: string;
 }
 
 export interface Pin {
     chatId: string;
-    attendeeId: string;
+    registrantId: string;
     wasManuallyPinned: boolean;
     created_at: string;
 }

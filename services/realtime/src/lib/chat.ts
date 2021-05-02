@@ -8,12 +8,12 @@ export function generateChatRecentMessagesSetKey(chatId: string): string {
     return `chat:chat.${chatId}.recentMessages`;
 }
 
-export function generateChatSubscriptionsChangedRoomName(attendeeId: string): string {
-    return `chat:chat.subscriptions.${attendeeId}`;
+export function generateChatSubscriptionsChangedRoomName(registrantId: string): string {
+    return `chat:chat.subscriptions.${registrantId}`;
 }
 
-export function generateChatPinsChangedRoomName(attendeeId: string): string {
-    return `chat:chat.pins.${attendeeId}`;
+export function generateChatPinsChangedRoomName(registrantId: string): string {
+    return `chat:chat.pins.${registrantId}`;
 }
 
 export function notificationsRoomName(userId: string): string {

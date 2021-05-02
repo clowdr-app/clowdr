@@ -1,7 +1,7 @@
 import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { RoomPrivacy_Enum } from "../../generated/graphql";
+import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { setReadUpToIndex } from "../../lib/cache/readUpToIndex";
 import { canSelectChat } from "../../lib/permissions";
 import { sendUnreadCount } from "../../lib/unreadCounts";
@@ -23,11 +23,11 @@ export function onRequestUnreadCount(
                         chatId,
                         conferenceSlugs,
                         false,
-                        "chat.onSubscribe:test-attendee-id",
+                        "chat.onSubscribe:test-registrant-id",
                         "chat.onSubscribe:test-conference-id",
                         "chat.onSubscribe:test-room-id",
                         "chat.onSubscribe:test-room-name",
-                        RoomPrivacy_Enum.Public,
+                        Room_ManagementMode_Enum.Public,
                         []
                     )
                 ) {
@@ -58,11 +58,11 @@ export function onSetReadUpToIndex(
                         chatId,
                         conferenceSlugs,
                         false,
-                        "chat.onSubscribe:test-attendee-id",
+                        "chat.onSubscribe:test-registrant-id",
                         "chat.onSubscribe:test-conference-id",
                         "chat.onSubscribe:test-room-id",
                         "chat.onSubscribe:test-room-name",
-                        RoomPrivacy_Enum.Public,
+                        Room_ManagementMode_Enum.Public,
                         []
                     )
                 ) {

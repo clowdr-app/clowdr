@@ -6,9 +6,9 @@ import { Cache } from "./cache";
 
 gql`
     query ReadUpToIndex($chatId: uuid!, $userId: String!) {
-        chat_ReadUpToIndex(where: { chatId: { _eq: $chatId }, attendee: { userId: { _eq: $userId } } }) {
+        chat_ReadUpToIndex(where: { chatId: { _eq: $chatId }, registrant: { userId: { _eq: $userId } } }) {
             chatId
-            attendeeId
+            registrantId
             messageSId
         }
     }

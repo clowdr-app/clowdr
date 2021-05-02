@@ -1,7 +1,7 @@
 import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { getAttendeeInfo } from "../../lib/cache/attendeeInfo";
+import { getRegistrantInfo } from "../../lib/cache/registrantInfo";
 import { generateChatSubscriptionsChangedRoomName } from "../../lib/chat";
 
 export function onListenForSubscriptionsChanged(
@@ -9,23 +9,23 @@ export function onListenForSubscriptionsChanged(
     userId: string,
     socketId: string,
     socket: Socket
-): (attendeeId: any) => Promise<void> {
-    return async (attendeeId) => {
-        if (attendeeId) {
+): (registrantId: any) => Promise<void> {
+    return async (registrantId) => {
+        if (registrantId) {
             try {
-                assert(is<string>(attendeeId), "Data does not match expected type.");
+                assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const attendeeInfo = await getAttendeeInfo(attendeeId, {
-                    displayName: "chat.onListenForSubscriptionsChanged:test-attendee-id",
+                const registrantInfo = await getRegistrantInfo(registrantId, {
+                    displayName: "chat.onListenForSubscriptionsChanged:test-registrant-id",
                     userId,
                 });
 
-                if (attendeeInfo?.userId === userId) {
-                    socket.join(generateChatSubscriptionsChangedRoomName(attendeeId));
+                if (registrantInfo?.userId === userId) {
+                    socket.join(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
             } catch (e) {
                 console.error(
-                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, attendeeId: ${attendeeId})`,
+                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`,
                     e
                 );
             }
@@ -38,23 +38,23 @@ export function onUnlistenForSubscriptionsChanged(
     userId: string,
     socketId: string,
     socket: Socket
-): (attendeeId: any) => Promise<void> {
-    return async (attendeeId) => {
-        if (attendeeId) {
+): (registrantId: any) => Promise<void> {
+    return async (registrantId) => {
+        if (registrantId) {
             try {
-                assert(is<string>(attendeeId), "Data does not match expected type.");
+                assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const attendeeInfo = await getAttendeeInfo(attendeeId, {
-                    displayName: "chat.onListenForSubscriptionsChanged:test-attendee-id",
+                const registrantInfo = await getRegistrantInfo(registrantId, {
+                    displayName: "chat.onListenForSubscriptionsChanged:test-registrant-id",
                     userId,
                 });
 
-                if (attendeeInfo?.userId === userId) {
-                    socket.leave(generateChatSubscriptionsChangedRoomName(attendeeId));
+                if (registrantInfo?.userId === userId) {
+                    socket.leave(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
             } catch (e) {
                 console.error(
-                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, attendeeId: ${attendeeId})`,
+                    `Error processing chat.subscriptions.changed.on (socket: ${socketId}, registrantId: ${registrantId})`,
                     e
                 );
             }

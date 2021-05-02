@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { ChatInfoDocument, RoomPrivacy_Enum } from "../../generated/graphql";
+import { ChatInfoDocument, Room_ManagementMode_Enum } from "../../generated/graphql";
 import { testMode } from "../../testMode";
 import { Cache } from "./cache";
 
@@ -12,18 +12,18 @@ gql`
                 id
                 slug
             }
-            contentGroup {
+            items {
                 id
                 title
                 shortTitle
             }
-            room {
+            rooms {
                 id
                 name
-                roomPrivacyName
+                managementModeName
                 roomPeople {
                     id
-                    attendee {
+                    registrant {
                         id
                         userId
                     }
@@ -34,11 +34,11 @@ gql`
 `;
 
 export type Person = {
-    attendeeId: string;
+    registrantId: string;
     userId?: string;
 };
 
-export type ContentGroup = {
+export type Item = {
     id: string;
     title: string;
     shortTitle?: string;
@@ -50,11 +50,11 @@ export type ChatInfo = {
         id: string;
         slug: string;
     };
-    contentGroups: ContentGroup[];
+    items: Item[];
     rooms: {
         id: string;
         name: string;
-        privacy: RoomPrivacy_Enum;
+        managementMode: Room_ManagementMode_Enum;
         people: Person[];
     }[];
 };
@@ -78,21 +78,21 @@ const chatInfoCache = new Cache<ChatInfo>(
                               id: response.data.chat_Chat_by_pk.conference.id,
                               slug: response.data.chat_Chat_by_pk.conference.slug,
                           },
-                          contentGroups: response.data.chat_Chat_by_pk.contentGroup.map((cg) => ({
-                              id: cg.id,
-                              shortTitle: cg.shortTitle ?? undefined,
-                              title: cg.title,
+                          items: response.data.chat_Chat_by_pk.items.map((item) => ({
+                              id: item.id,
+                              shortTitle: item.shortTitle ?? undefined,
+                              title: item.title,
                           })),
                           rooms:
-                              response.data.chat_Chat_by_pk.room.length > 0
-                                  ? response.data.chat_Chat_by_pk.room.map(
+                              response.data.chat_Chat_by_pk.rooms.length > 0
+                                  ? response.data.chat_Chat_by_pk.rooms.map(
                                         (room) => ({
                                             id: room.id,
                                             name: room.name,
-                                            privacy: room.roomPrivacyName,
+                                            managementMode: room.managementModeName,
                                             people: room.roomPeople.map<Person>((p) => ({
-                                                attendeeId: p.attendee.id,
-                                                userId: p.attendee.userId ?? undefined,
+                                                registrantId: p.registrant.id,
+                                                userId: p.registrant.userId ?? undefined,
                                             })),
                                         }),
                                         []

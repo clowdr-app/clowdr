@@ -1,7 +1,7 @@
 import assert from "assert";
 import { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { RoomPrivacy_Enum } from "../../generated/graphql";
+import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { chatListenersKeyName, generateChatRoomName, socketChatsKeyName } from "../../lib/chat";
 import { canSelectChat } from "../../lib/permissions";
 import { redisClientP } from "../../redis";
@@ -23,11 +23,11 @@ export function onSubscribe(
                         chatId,
                         conferenceSlugs,
                         false,
-                        "chat.onSubscribe:test-attendee-id",
+                        "chat.onSubscribe:test-registrant-id",
                         "chat.onSubscribe:test-conference-id",
                         "chat.onSubscribe:test-room-id",
                         "chat.onSubscribe:test-room-name",
-                        RoomPrivacy_Enum.Public,
+                        Room_ManagementMode_Enum.Public,
                         []
                     )
                 ) {
@@ -63,11 +63,11 @@ export function onUnsubscribe(
                         chatId,
                         conferenceSlugs,
                         false,
-                        "chat.onSubscribe:test-attendee-id",
+                        "chat.onSubscribe:test-registrant-id",
                         "chat.onSubscribe:test-conference-id",
                         "chat.onSubscribe:test-room-id",
                         "chat.onSubscribe:test-room-name",
-                        RoomPrivacy_Enum.Public,
+                        Room_ManagementMode_Enum.Public,
                         []
                     )
                 ) {

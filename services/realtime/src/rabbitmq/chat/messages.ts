@@ -1,6 +1,6 @@
 import { Channel, ConsumeMessage } from "amqplib";
 import { is } from "typescript-is";
-import { RoomPrivacy_Enum } from "../../generated/graphql";
+import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { canIUDMessage } from "../../lib/permissions";
 import { downlink, uplink } from "../../rabbitmq";
 import { Action, Message } from "../../types/chat";
@@ -78,11 +78,11 @@ export async function action(action: Action<Message>, userId: string, confSlugs:
             confSlugs,
             action.data.senderId ?? undefined,
             false,
-            "messages.send:test-attendee-id",
-            "messages.send:test-attendee-displayName",
+            "messages.send:test-registrant-id",
+            "messages.send:test-registrant-displayName",
             "messages.send:test-room-id",
             "messages.send:test-room-name",
-            RoomPrivacy_Enum.Public,
+            Room_ManagementMode_Enum.Public,
             []
         )
     ) {

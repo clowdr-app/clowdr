@@ -11,13 +11,13 @@ assert(
     `SERVER_URL env var should have a trailing slash: ${process.env.SERVER_URL}`
 );
 assert(process.env.USER_ID, "Missing USER_ID env var");
-assert(process.env.ATTENDEE_ID, "Missing ATTENDEE_ID env var");
+assert(process.env.REGISTRANT_ID, "Missing REGISTRANT_ID env var");
 assert(process.env.CONFERENCE_SLUG, "Missing CONFERENCE_SLUG env var");
 
 const serverURL = process.env.SERVER_URL;
 const userId = process.env.USER_ID + (process.env.DYNO ? `-${process.env.DYNO}` : "");
-// AttendeeId must be a valid uuid (VSCode: Ctrl+Shift+[)
-const attendeeId = process.env.ATTENDEE_ID;
+// RegistrantId must be a valid uuid (VSCode: Ctrl+Shift+[)
+const registrantId = process.env.REGISTRANT_ID;
 const confSlug = process.env.CONFERENCE_SLUG;
 
 // Grr npm...
@@ -105,7 +105,7 @@ async function Main(
                 op: "INSERT",
                 data: {
                     sId: uuidv4(),
-                    senderId: attendeeId,
+                    senderId: registrantId,
                     chatId,
                     message: `${totalMessagesSent}: ${message}`,
                     data: {},
@@ -147,7 +147,7 @@ async function Main(
                             op: "INSERT",
                             data: {
                                 sId: uuidv4(),
-                                senderId: attendeeId,
+                                senderId: registrantId,
                                 data: {},
                                 symbol: reaction,
                                 type: Chat_ReactionType_Enum.Emoji,

@@ -13,7 +13,7 @@ if (process.env.GRAPHQL_API_DOMAIN && process.env.HASURA_ADMIN_SECRET) {
 
     gql`
         query EmptyQuery {
-            Conference {
+            conference_Conference {
                 id
             }
         }

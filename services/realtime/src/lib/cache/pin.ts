@@ -7,14 +7,14 @@ gql`
     query Pins($chatId: uuid!) {
         chat_Pin(where: { chatId: { _eq: $chatId } }) {
             chatId
-            attendeeId
+            registrantId
         }
     }
 `;
 
 export type Pins = {
     chatId: string;
-    attendeeIds: string[];
+    registrantIds: string[];
 };
 
 const PinsCache = new Cache<Pins>(
@@ -32,7 +32,7 @@ const PinsCache = new Cache<Pins>(
                 const result: Pins | undefined = response.data.chat_Pin
                     ? {
                           chatId,
-                          attendeeIds: response.data.chat_Pin.map((x) => x.attendeeId),
+                          registrantIds: response.data.chat_Pin.map((x) => x.registrantId),
                       }
                     : undefined;
 
@@ -59,14 +59,14 @@ export async function getPins(
     return info;
 }
 
-export async function insertPin(chatId: string, attendeeId: string): Promise<void> {
+export async function insertPin(chatId: string, registrantId: string): Promise<void> {
     await PinsCache.update(
         chatId,
         (existing) => {
-            if (!existing?.attendeeIds.includes(attendeeId)) {
+            if (!existing?.registrantIds.includes(registrantId)) {
                 return {
                     chatId,
-                    attendeeIds: existing ? [...existing.attendeeIds, attendeeId] : [attendeeId],
+                    registrantIds: existing ? [...existing.registrantIds, registrantId] : [registrantId],
                 };
             } else {
                 return existing;
@@ -74,23 +74,23 @@ export async function insertPin(chatId: string, attendeeId: string): Promise<voi
         },
         {
             chatId,
-            attendeeIds: [],
+            registrantIds: [],
         }
     );
 }
 
-export async function deletePin(chatId: string, attendeeId: string): Promise<void> {
+export async function deletePin(chatId: string, registrantId: string): Promise<void> {
     await PinsCache.update(
         chatId,
         (existing) => {
             return {
                 chatId,
-                attendeeIds: existing ? existing.attendeeIds.filter((x) => x !== attendeeId) : [],
+                registrantIds: existing ? existing.registrantIds.filter((x) => x !== registrantId) : [],
             };
         },
         {
             chatId,
-            attendeeIds: [attendeeId],
+            registrantIds: [registrantId],
         }
     );
 }

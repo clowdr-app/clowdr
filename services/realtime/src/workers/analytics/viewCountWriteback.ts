@@ -8,35 +8,35 @@ import { apolloClient } from "../../graphqlClient";
 import { redisClientP } from "../../redis";
 
 gql`
-    query SelectViewCounts($contentGroupIds: [uuid!]!, $contentItemIds: [uuid!]!, $roomIds: [uuid!]!) {
-        analytics_ContentGroupStats(where: { contentGroupId: { _in: $contentGroupIds } }) {
-            contentGroupId
+    query SelectViewCounts($cutoff: timestamptz!, $itemIds: [uuid!]!, $elementIds: [uuid!]!, $roomIds: [uuid!]!) {
+        analytics_ContentItemStats(where: { itemId: { _in: $itemIds }, created_at: { _gt: $cutoff } }) {
+            itemId
             viewCount
         }
-        analytics_ContentItemStats(where: { contentItemId: { _in: $contentItemIds } }) {
-            contentItemId
+        analytics_ContentElementStats(where: { elementId: { _in: $elementIds }, created_at: { _gt: $cutoff } }) {
+            elementId
             viewCount
         }
-        analytics_RoomStats(where: { roomId: { _in: $roomIds } }) {
+        analytics_RoomStats(where: { roomId: { _in: $roomIds }, created_at: { _gt: $cutoff } }) {
             roomId
             hlsViewCount
         }
     }
 
     mutation InsertViewCounts(
-        $contentGroupStats: [analytics_ContentGroupStats_insert_input!]!
-        $contentItemStats: [analytics_ContentItemStats_insert_input!]!
+        $itemStats: [analytics_ContentItemStats_insert_input!]!
+        $elementStats: [analytics_ContentElementStats_insert_input!]!
         $roomStats: [analytics_RoomStats_insert_input!]!
     ) {
-        insert_analytics_ContentGroupStats(
-            objects: $contentGroupStats
-            on_conflict: { constraint: ContentGroupStats_pkey, update_columns: [viewCount] }
+        insert_analytics_ContentItemStats(
+            objects: $itemStats
+            on_conflict: { constraint: ContentItemStats_pkey, update_columns: [viewCount] }
         ) {
             affected_rows
         }
-        insert_analytics_ContentItemStats(
-            objects: $contentItemStats
-            on_conflict: { constraint: ContentItemStats_pkey, update_columns: [viewCount] }
+        insert_analytics_ContentElementStats(
+            objects: $elementStats
+            on_conflict: { constraint: ContentElementStats_pkey, update_columns: [viewCount] }
         ) {
             affected_rows
         }
@@ -55,11 +55,11 @@ async function Main(continueExecuting = false) {
 
         console.info("Writing back analytics view counts");
 
-        const contentGroupResults: {
+        const itemResults: {
             identifier: string;
             count: number;
         }[] = [];
-        const contentItemResults: {
+        const elementResults: {
             identifier: string;
             count: number;
         }[] = [];
@@ -89,10 +89,10 @@ async function Main(continueExecuting = false) {
             count: number;
         }[];
         partial.forEach((pair) => {
-            if (pair.contentType === "ContentGroup") {
-                contentGroupResults.push(pair);
-            } else if (pair.contentType === "ContentItem") {
-                contentItemResults.push(pair);
+            if (pair.contentType === "Item") {
+                itemResults.push(pair);
+            } else if (pair.contentType === "Element") {
+                elementResults.push(pair);
             } else if (pair.contentType === "Room.HLSStream") {
                 roomHLSResults.push(pair);
             }
@@ -119,10 +119,10 @@ async function Main(continueExecuting = false) {
                 count: number;
             }[];
             partial.forEach((pair) => {
-                if (pair.contentType === "ContentGroup") {
-                    contentGroupResults.push(pair);
-                } else if (pair.contentType === "ContentItem") {
-                    contentItemResults.push(pair);
+                if (pair.contentType === "Item") {
+                    itemResults.push(pair);
+                } else if (pair.contentType === "Element") {
+                    elementResults.push(pair);
                 } else if (pair.contentType === "Room.HLSStream") {
                     roomHLSResults.push(pair);
                 }
@@ -130,42 +130,43 @@ async function Main(continueExecuting = false) {
         }
 
         //         console.info(`View counts to write back:
-        //     ContentGroup: ${JSON.stringify(contentGroupResults, null, 2)}
+        //     Item: ${JSON.stringify(itemResults, null, 2)}
 
-        //     ContentItem: ${JSON.stringify(contentItemResults, null, 2)}
+        //     Element: ${JSON.stringify(elementResults, null, 2)}
 
         //     Room.HLSStream: ${JSON.stringify(roomHLSResults, null, 2)}
         // `);
 
-        const contentGroupIds = contentGroupResults.map((x) => x.identifier);
-        const contentItemIds = contentItemResults.map((x) => x.identifier);
+        const itemIds = itemResults.map((x) => x.identifier);
+        const elementIds = elementResults.map((x) => x.identifier);
         const roomIds = roomHLSResults.map((x) => x.identifier);
         const existingCounts = await apolloClient.query({
             query: SelectViewCountsDocument,
             variables: {
-                contentGroupIds,
-                contentItemIds,
+                itemIds,
+                elementIds,
                 roomIds,
+                cutoff: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
             },
         });
         await apolloClient.mutate({
             mutation: InsertViewCountsDocument,
             variables: {
-                contentGroupStats: contentGroupResults.map((result) => {
-                    const existing = existingCounts.data.analytics_ContentGroupStats.find(
-                        (x) => x.contentGroupId === result.identifier
+                itemStats: itemResults.map((result) => {
+                    const existing = existingCounts.data.analytics_ContentItemStats.find(
+                        (x) => x.itemId === result.identifier
                     );
                     return {
-                        contentGroupId: result.identifier,
+                        itemId: result.identifier,
                         viewCount: (existing?.viewCount ?? 0) + result.count,
                     };
                 }),
-                contentItemStats: contentItemResults.map((result) => {
-                    const existing = existingCounts.data.analytics_ContentItemStats.find(
-                        (x) => x.contentItemId === result.identifier
+                elementStats: elementResults.map((result) => {
+                    const existing = existingCounts.data.analytics_ContentElementStats.find(
+                        (x) => x.elementId === result.identifier
                     );
                     return {
-                        contentItemId: result.identifier,
+                        elementId: result.identifier,
                         viewCount: (existing?.viewCount ?? 0) + result.count,
                     };
                 }),

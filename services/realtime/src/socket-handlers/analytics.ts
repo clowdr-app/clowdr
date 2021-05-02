@@ -13,7 +13,7 @@ export function onDisconnect(_socketId: string, _userId: string): void {
 
 type ViewCountInfo = {
     identifier: string;
-    contentType: "ContentGroup" | "ContentItem" | "Room.HLSStream";
+    contentType: "Item" | "Element" | "Room.HLSStream";
 };
 
 export function onViewCount(

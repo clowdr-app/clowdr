@@ -1,6 +1,6 @@
-import { Permission_Enum, RoomPrivacy_Enum } from "../generated/graphql";
-import { AttendeeInfo, getAttendeeInfo } from "./cache/attendeeInfo";
-import { ChatInfo, ContentGroup, getChatInfo } from "./cache/chatInfo";
+import { Permissions_Permission_Enum, Room_ManagementMode_Enum } from "../generated/graphql";
+import { ChatInfo, getChatInfo, Item } from "./cache/chatInfo";
+import { getRegistrantInfo, RegistrantInfo } from "./cache/registrantInfo";
 import { hasAtLeastOnePermissionForConfSlug } from "./cache/userPermission";
 
 export async function canSelectChat(
@@ -8,17 +8,17 @@ export async function canSelectChat(
     chatId: string,
     confSlugs: string[],
     testMode_RestrictToAdmins: boolean,
-    testMode_AttendeeId: string,
+    testMode_RegistrantId: string,
     testMode_ConferenceId: string,
     testMode_RoomId: string,
     testMode_RoomName: string,
-    testMode_RoomPrivacy: RoomPrivacy_Enum,
-    testMode_ContentGroups: ContentGroup[],
+    testMode_RoomManagementMode: Room_ManagementMode_Enum,
+    testMode_Items: Item[],
     expectedPermissions = [
-        Permission_Enum.ConferenceViewAttendees,
-        Permission_Enum.ConferenceManageSchedule,
-        Permission_Enum.ConferenceModerateAttendees,
-        Permission_Enum.ConferenceManageAttendees,
+        Permissions_Permission_Enum.ConferenceViewAttendees,
+        Permissions_Permission_Enum.ConferenceManageSchedule,
+        Permissions_Permission_Enum.ConferenceModerateAttendees,
+        Permissions_Permission_Enum.ConferenceManageAttendees,
     ],
     chatInfoPrior?: ChatInfo,
     refetchPermissionsNow = false
@@ -32,13 +32,13 @@ export async function canSelectChat(
     const testMode_Result = {
         restrictToAdmins: testMode_RestrictToAdmins,
         conference: { id: testMode_ConferenceId, slug: confSlugs[0] },
-        contentGroups: testMode_ContentGroups,
+        items: testMode_Items,
         rooms: [
             {
                 id: testMode_RoomId,
                 name: testMode_RoomName,
-                people: [{ attendeeId: testMode_AttendeeId, userId }],
-                privacy: testMode_RoomPrivacy,
+                people: [{ registrantId: testMode_RegistrantId, userId }],
+                managementMode: testMode_RoomManagementMode,
             },
         ],
     };
@@ -54,12 +54,12 @@ export async function canSelectChat(
                         chatId,
                         confSlugs,
                         testMode_RestrictToAdmins,
-                        testMode_AttendeeId,
+                        testMode_RegistrantId,
                         testMode_ConferenceId,
                         testMode_RoomId,
                         testMode_RoomName,
-                        testMode_RoomPrivacy,
-                        testMode_ContentGroups,
+                        testMode_RoomManagementMode,
+                        testMode_Items,
                         expectedPermissions,
                         chatInfo,
                         true
@@ -71,7 +71,7 @@ export async function canSelectChat(
 
             if (
                 chatInfo.rooms.length === 0 ||
-                chatInfo.rooms.some((room) => room.privacy === RoomPrivacy_Enum.Public)
+                chatInfo.rooms.some((room) => room.managementMode === Room_ManagementMode_Enum.Public)
             ) {
                 return true;
             }
@@ -94,42 +94,42 @@ export async function canIUDMessage(
     senderId: string | undefined,
     testMode_RestrictToAdmins: boolean,
     testMode_ConferenceId: string,
-    testMode_AttendeeDisplayName: string,
+    testMode_RegistrantDisplayName: string,
     testMode_RoomId: string,
     testMode_RoomName: string,
-    testMode_RoomPrivacy: RoomPrivacy_Enum,
-    testMode_ContentGroups: ContentGroup[]
+    testMode_RoomManagementMode: Room_ManagementMode_Enum,
+    testMode_Items: Item[]
 ): Promise<boolean> {
     let isOwnMessage = false;
 
     if (senderId) {
-        const testMode_AttendeeInfoResult: AttendeeInfo = {
-            displayName: testMode_AttendeeDisplayName,
+        const testMode_RegistrantInfoResult: RegistrantInfo = {
+            displayName: testMode_RegistrantDisplayName,
             userId,
         };
 
-        let attendeeInfo = await getAttendeeInfo(senderId, testMode_AttendeeInfoResult);
-        if (attendeeInfo && !attendeeInfo.userId) {
-            // If the attendee existed but didn't have a user yet, we might have inadvertently
-            // cached the attendee info from before the user completed registration
-            attendeeInfo = await getAttendeeInfo(senderId, testMode_AttendeeInfoResult, true);
+        let registrantInfo = await getRegistrantInfo(senderId, testMode_RegistrantInfoResult);
+        if (registrantInfo && !registrantInfo.userId) {
+            // If the registrant existed but didn't have a user yet, we might have inadvertently
+            // cached the registrant info from before the user completed registration
+            registrantInfo = await getRegistrantInfo(senderId, testMode_RegistrantInfoResult, true);
         }
 
-        if (attendeeInfo && attendeeInfo.userId) {
-            isOwnMessage = attendeeInfo.userId === userId;
+        if (registrantInfo && registrantInfo.userId) {
+            isOwnMessage = registrantInfo.userId === userId;
         }
     }
 
     const testMode_ChatInfoResult: ChatInfo = {
         restrictToAdmins: testMode_RestrictToAdmins,
         conference: { id: testMode_ConferenceId, slug: confSlugs[0] },
-        contentGroups: testMode_ContentGroups,
+        items: testMode_Items,
         rooms: [
             {
                 id: testMode_RoomId,
                 name: testMode_RoomName,
-                people: senderId ? [{ attendeeId: senderId, userId }] : [],
-                privacy: testMode_RoomPrivacy,
+                people: senderId ? [{ registrantId: senderId, userId }] : [],
+                managementMode: testMode_RoomManagementMode,
             },
         ],
     };
@@ -146,19 +146,19 @@ export async function canIUDMessage(
             testMode_ConferenceId,
             testMode_RoomId,
             testMode_RoomName,
-            testMode_RoomPrivacy,
-            testMode_ContentGroups,
+            testMode_RoomManagementMode,
+            testMode_Items,
             !isOwnMessage || chatInfo.restrictToAdmins
                 ? [
-                      Permission_Enum.ConferenceManageSchedule,
-                      Permission_Enum.ConferenceModerateAttendees,
-                      Permission_Enum.ConferenceManageAttendees,
+                      Permissions_Permission_Enum.ConferenceManageSchedule,
+                      Permissions_Permission_Enum.ConferenceModerateAttendees,
+                      Permissions_Permission_Enum.ConferenceManageAttendees,
                   ]
                 : [
-                      Permission_Enum.ConferenceViewAttendees,
-                      Permission_Enum.ConferenceManageSchedule,
-                      Permission_Enum.ConferenceModerateAttendees,
-                      Permission_Enum.ConferenceManageAttendees,
+                      Permissions_Permission_Enum.ConferenceViewAttendees,
+                      Permissions_Permission_Enum.ConferenceManageSchedule,
+                      Permissions_Permission_Enum.ConferenceModerateAttendees,
+                      Permissions_Permission_Enum.ConferenceManageAttendees,
                   ],
             chatInfo
         );

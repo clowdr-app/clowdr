@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { Permission_Enum, UserPermissionsDocument } from "../../generated/graphql";
+import { Permissions_Permission_Enum, UserPermissionsDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
 import { Cache } from "./cache";
 
@@ -15,7 +15,7 @@ gql`
 
 export type UserPermission = {
     slug: string;
-    permission_name: Permission_Enum;
+    permission_name: Permissions_Permission_Enum;
 };
 
 const userPermissionCache = new Cache<UserPermission[]>(
@@ -33,7 +33,7 @@ const userPermissionCache = new Cache<UserPermission[]>(
                 const result = response.data.FlatUserPermission.map<UserPermission | undefined>((perm) =>
                     perm.permission_name && perm.slug
                         ? {
-                              permission_name: perm.permission_name as Permission_Enum,
+                              permission_name: perm.permission_name as Permissions_Permission_Enum,
                               slug: perm.slug,
                           }
                         : undefined
@@ -53,7 +53,7 @@ const userPermissionCache = new Cache<UserPermission[]>(
 
 export async function hasAtLeastOnePermissionForConfSlug(
     userId: string,
-    permissionNames: Permission_Enum[],
+    permissionNames: Permissions_Permission_Enum[],
     conferenceSlugs: string[],
     refetchNow = false
 ): Promise<string[] | false> {

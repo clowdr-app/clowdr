@@ -1,8 +1,8 @@
-import { Chat_MessageType_Enum, RoomPrivacy_Enum } from "../../../generated/graphql";
-import { getAttendeeInfo } from "../../../lib/cache/attendeeInfo";
+import { Chat_MessageType_Enum, Room_ManagementMode_Enum } from "../../../generated/graphql";
 import { getChatInfo } from "../../../lib/cache/chatInfo";
 import { getPins } from "../../../lib/cache/pin";
 import { setReadUpToIndex } from "../../../lib/cache/readUpToIndex";
+import { getRegistrantInfo } from "../../../lib/cache/registrantInfo";
 import { getSubscriptions } from "../../../lib/cache/subscription";
 import { chatListenersKeyName, generateChatRecentMessagesSetKey, generateChatRoomName } from "../../../lib/chat";
 import { sendNotifications } from "../../../lib/notifications";
@@ -53,13 +53,13 @@ async function updateRecentMessagesAndUnreadCounts(action: Action<Message>) {
 
     const pins = await getPins(chatId, {
         chatId,
-        attendeeIds: [],
+        registrantIds: [],
     });
     if (pins) {
         const listenerUserIds = (await redisClientP.smembers(chatListenersKeyName(chatId))).map((x) => x.split("¬")[1]);
         const infos = await Promise.all(
-            pins.attendeeIds.map((attendeeId) =>
-                getAttendeeInfo(attendeeId, {
+            pins.registrantIds.map((registrantId) =>
+                getRegistrantInfo(registrantId, {
                     displayName: "unknown",
                 })
             )
@@ -90,16 +90,16 @@ async function distributeMessageToSubscribedUsers(action: Action<Message>) {
 
     const subscriptions = await getSubscriptions(chatId, {
         chatId,
-        attendeeIds: [],
+        registrantIds: [],
     });
     if (subscriptions) {
         const listenerUserIds = (await redisClientP.smembers(chatListenersKeyName(chatId))).map((x) => x.split("¬")[1]);
-        const subscribedAttendeeIds = subscriptions.attendeeIds.filter((x) => x !== action.data.senderId);
+        const subscribedRegistrantIds = subscriptions.registrantIds.filter((x) => x !== action.data.senderId);
         const subscribedUserIds = new Set(
             (
                 await Promise.all(
-                    subscribedAttendeeIds.map((attendeeId) =>
-                        getAttendeeInfo(attendeeId, {
+                    subscribedRegistrantIds.map((registrantId) =>
+                        getRegistrantInfo(registrantId, {
                             displayName: "unknown",
                         })
                     )
@@ -114,22 +114,22 @@ async function distributeMessageToSubscribedUsers(action: Action<Message>) {
                 id: "distribution.onMessage:unknown-conference-id",
                 slug: "distribution.onMessage:unknown-conference-slug",
             },
-            contentGroups: [],
+            items: [],
             restrictToAdmins: false,
             rooms: [],
         });
         if (chatInfo) {
             const room = chatInfo.rooms.length > 0 ? chatInfo.rooms[0] : undefined;
-            const attendeeInfo =
-                room?.privacy === RoomPrivacy_Enum.Dm && action.data.senderId
-                    ? await getAttendeeInfo(action.data.senderId, {
-                          displayName: "distribution.onMessage:unknown-attendee-displayName",
+            const registrantInfo =
+                room?.managementMode === Room_ManagementMode_Enum.Dm && action.data.senderId
+                    ? await getRegistrantInfo(action.data.senderId, {
+                          displayName: "distribution.onMessage:unknown-registrant-displayName",
                       })
                     : undefined;
 
             const chatName =
-                chatInfo.contentGroups && chatInfo.contentGroups.length > 0
-                    ? chatInfo.contentGroups && chatInfo.contentGroups[0].title
+                chatInfo.items && chatInfo.items.length > 0
+                    ? chatInfo.items && chatInfo.items[0].title
                     : room?.name ?? "Unknown chat";
 
             sendNotifications(subscribedUserIds, {
@@ -149,7 +149,7 @@ async function distributeMessageToSubscribedUsers(action: Action<Message>) {
                 }`,
                 chatId,
                 linkURL: `/conference/${chatInfo.conference.slug}/chat/${chatId}`,
-                subtitle: attendeeInfo ? `from ${attendeeInfo.displayName}` : `in ${chatName}`,
+                subtitle: registrantInfo ? `from ${registrantInfo.displayName}` : `in ${chatName}`,
             });
         }
     }

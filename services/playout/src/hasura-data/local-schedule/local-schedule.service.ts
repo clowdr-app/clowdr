@@ -13,7 +13,7 @@ import * as R from "ramda";
 import {
     RoomMode_Enum,
     RtmpInput_Enum,
-    ScheduleService_GetRoomsWithLiveEventsDocument,
+    ScheduleService_GetRoomsWithBroadcastEventsDocument,
     ScheduleService_GetScheduleDocument,
     ScheduleService_UpdateRtmpInputsDocument,
 } from "../../generated/graphql";
@@ -43,10 +43,13 @@ export class LocalScheduleService {
 
     public async getRoomsWithBroadcastEvents(): Promise<string[]> {
         gql`
-            query ScheduleService_GetRoomsWithLiveEvents($now: timestamptz!) {
+            query ScheduleService_GetRoomsWithBroadcastEvents($now: timestamptz!) {
                 Room(
                     where: {
-                        events: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }, endTime: { _gt: $now } }
+                        events: {
+                            intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A, PRERECORDED] }
+                            endTime: { _gt: $now }
+                        }
                     }
                 ) {
                     id
@@ -55,7 +58,7 @@ export class LocalScheduleService {
         `;
 
         const result = await this.graphQlService.apolloClient.query({
-            query: ScheduleService_GetRoomsWithLiveEventsDocument,
+            query: ScheduleService_GetRoomsWithBroadcastEventsDocument,
             variables: {
                 now: new Date().toISOString(),
             },
@@ -104,7 +107,7 @@ export class LocalScheduleService {
 
         const scheduleItems = scheduleResult.data.Event.map((event) => {
             const videoData = event.contentGroup?.contentItems.length
-                ? this.getLatestBroadcastVideoData(event.contentGroup.contentItems[0])
+                ? this.getLatestBroadcastVideoData(event.contentGroup.contentItems[0].data)
                 : null;
 
             const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;

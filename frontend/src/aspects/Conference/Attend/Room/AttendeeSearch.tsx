@@ -36,11 +36,13 @@ export function RegistrantSearch({
                 conferenceId: conference.id,
                 search: `%${searchTerm}%`,
             });
-            return result.data.Registrant.filter((item) => !!item.userId).map((item) => ({
-                value: item.id,
-                label: item.displayName,
-                inRoom: selectedRegistrantIds.includes(item.id as string),
-            }));
+            return result.data.registrant_Registrant
+                .filter((item) => !!item.userId)
+                .map((item) => ({
+                    value: item.id,
+                    label: item.displayName,
+                    inRoom: selectedRegistrantIds.includes(item.id as string),
+                }));
         },
         [conference.id, refetch, selectedRegistrantIds]
     );

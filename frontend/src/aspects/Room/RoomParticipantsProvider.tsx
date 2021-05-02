@@ -41,7 +41,7 @@ function ParticipantsProvider_Subd({
         },
     });
 
-    const value = loading ? undefined : error ? false : data?.RoomParticipant ?? false;
+    const value = loading ? undefined : error ? false : data?.room_Participant ?? false;
 
     return <RoomParticipantsContext.Provider value={value}>{children}</RoomParticipantsContext.Provider>;
 }
@@ -60,7 +60,7 @@ function ParticipantsProvider_Polling({
         fetchPolicy: "network-only",
     });
 
-    const value = loading ? undefined : error ? false : data?.RoomParticipant ?? false;
+    const value = loading ? undefined : error ? false : data?.room_Participant ?? false;
 
     return <RoomParticipantsContext.Provider value={value}>{children}</RoomParticipantsContext.Provider>;
 }
@@ -78,8 +78,8 @@ export default function ParticipantsProvider({
     }
 
     if (roomId) {
-        return <RoomParticipantsProvider_Subd roomId={roomId}>{children}</RoomParticipantsProvider_Subd>;
+        return <ParticipantsProvider_Subd roomId={roomId}>{children}</ParticipantsProvider_Subd>;
     } else {
-        return <RoomParticipantsProvider_Polling>{children}</RoomParticipantsProvider_Polling>;
+        return <ParticipantsProvider_Polling>{children}</ParticipantsProvider_Polling>;
     }
 }

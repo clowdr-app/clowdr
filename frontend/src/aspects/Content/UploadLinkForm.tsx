@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
-import { usesubmitUploadableElementMutation } from "../../generated/graphql";
+import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 export default function UploadLinkForm({
@@ -24,7 +24,7 @@ export default function UploadLinkForm({
     handleFormSubmitted?: () => Promise<void>;
 }): JSX.Element {
     const toast = useToast();
-    const [submitUploadableElement] = usesubmitUploadableElementMutation();
+    const [submitUploadableElement] = useSubmitUploadableElementMutation();
     return (
         <>
             <Formik

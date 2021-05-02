@@ -28,7 +28,7 @@ import {
     PinChatDocument,
     PinChatMutation,
     PinChatMutationVariables,
-    room_ManagementMode_Enum,
+    Room_ManagementMode_Enum,
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
     SelectInitialChatStateQueryVariables,
@@ -463,8 +463,8 @@ export class ChatState {
         private readonly initialState: InitialChatState_ChatFragment
     ) {
         this.name =
-            (initialState.item.length > 0
-                ? initialState.item[0].shortTitle ?? initialState.item[0].title
+            (initialState.items.length > 0
+                ? initialState.items[0].shortTitle ?? initialState.items[0].title
                 : initialState.nonDMRoom.length > 0
                 ? initialState.nonDMRoom[0].name
                 : initialState.DMRoom.length > 0
@@ -506,7 +506,7 @@ export class ChatState {
         return (
             this.IsDM ||
             (this.initialState.nonDMRoom.length > 0 &&
-                this.initialState.nonDMRoom[0].managementModeName !== room_ManagementMode_Enum.Public)
+                this.initialState.nonDMRoom[0].managementModeName !== Room_ManagementMode_Enum.Public)
         );
     }
 

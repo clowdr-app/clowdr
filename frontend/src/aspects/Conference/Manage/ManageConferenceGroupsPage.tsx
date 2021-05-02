@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     CreateDeleteGroupsMutation,
-    Permission_Enum,
+    Permissions_Permission_Enum,
     UpdateGroupMutation,
     useCreateDeleteGroupsMutation,
     useSelectAllGroupsQuery,
@@ -294,7 +294,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageRoles, Permission_Enum.ConferenceManageGroups]}
+            permissions={[Permission_Enum.ConferenceManageRoles, Permissions_Permission_Enum.ConferenceManageGroups]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

@@ -18,7 +18,7 @@ import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { UploadableItemFieldsFragment, usesubmitUploadableElementMutation } from "../../generated/graphql";
+import { UploadableItemFieldsFragment, useSubmitUploadableElementMutation } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
@@ -37,7 +37,7 @@ export default function UploadFileForm({
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
-    const [submitUploadableElement] = usesubmitUploadableElementMutation();
+    const [submitUploadableElement] = useSubmitUploadableElementMutation();
     const uppy = useMemo(() => {
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "required-content-item-upload",

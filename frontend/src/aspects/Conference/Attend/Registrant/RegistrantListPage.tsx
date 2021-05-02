@@ -79,7 +79,7 @@ export default function RegistrantListPage(): JSX.Element {
             return [];
         }
 
-        return dataRegistrants?.Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
+        return dataRegistrants?.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
     }, [dataRegistrants, errorRegistrants, loadingRegistrants]);
 
     const [registrants, setRegistrants] = useState<Registrant[] | null>(null);
@@ -106,7 +106,7 @@ export default function RegistrantListPage(): JSX.Element {
                 return undefined;
             }
 
-            return dataSearch?.Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
+            return dataSearch?.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
         }
 
         setLoadedCount(30);

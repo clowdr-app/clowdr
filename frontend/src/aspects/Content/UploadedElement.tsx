@@ -39,9 +39,9 @@ export default function UploadedElement({
         <>Could not load item.</>
     ) : (
         <>
-            {data?.getElement?.length && data.getElement.length > 0 ? (
+            {data?.content_ElementByAccessToken?.length ? (
                 <>
-                    {data?.getElement?.map((item) =>
+                    {data?.content_ElementByAccessToken?.map((item) =>
                         item ? (
                             <VStack spacing={2} key={item.id}>
                                 <Tooltip label="Refresh uploaded item">

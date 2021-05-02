@@ -11,7 +11,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Permission_Enum, useManageShufflePeriods_SelectAllQuery } from "../../../generated/graphql";
+import { useManageShufflePeriods_SelectAllQuery } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useRealTime } from "../../Generic/useRealTime";
 import { useTitle } from "../../Utils/useTitle";

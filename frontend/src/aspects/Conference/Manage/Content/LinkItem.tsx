@@ -1,6 +1,6 @@
 import { FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
 import {
-    ContentBaseType,
+    ElementBaseType,
     ElementVersionData,
     LinkBlob,
     LinkButtonBlob,
@@ -21,7 +21,7 @@ function createDefaultLink(
         createdBy: "user",
         data: {
             type,
-            baseType: ContentBaseType.Link,
+            baseType: ElementBaseType.Link,
             text: "",
             url: "",
         },
@@ -129,7 +129,7 @@ export const LinkItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1] as LinkItemVersionData;
-            if (latestVersion.data.baseType !== ContentBaseType.Link) {
+            if (latestVersion.data.baseType !== ElementBaseType.Link) {
                 return <>Link Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             return (

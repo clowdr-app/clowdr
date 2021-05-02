@@ -6,7 +6,6 @@ import {
     ElementType_Enum,
     ItemElements_ItemDataFragment,
     ItemType_Enum,
-    Permission_Enum,
     useItemElements_GetItemQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";

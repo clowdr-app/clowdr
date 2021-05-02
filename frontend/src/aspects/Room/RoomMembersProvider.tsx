@@ -55,7 +55,7 @@ export default function RoomMembersProvider({
         if (error) {
             setValue(false);
         } else if (!loading && data) {
-            data.RoomPerson.forEach((person) => {
+            data.room_RoomPerson.forEach((person) => {
                 if (person.registrantId) {
                     registrantsCtx.subscribe({ registrant: person.registrantId }, onRegistrantUpdated);
                 }
@@ -63,12 +63,12 @@ export default function RoomMembersProvider({
 
             setValue((oldVals) => {
                 if (oldVals) {
-                    const addedMembers = data.RoomPerson.filter((x) => !oldVals.some((y) => y.member.id === x.id));
+                    const addedMembers = data.room_RoomPerson.filter((x) => !oldVals.some((y) => y.member.id === x.id));
                     return [
                         ...addedMembers.map((member) => ({ member })),
                         ...(oldVals
                             ? oldVals.reduce<RoomMembersInfo[]>((acc, member) => {
-                                  const updated = data.RoomPerson.find((y) => y.id === member.member.id);
+                                  const updated = data.room_RoomPerson.find((y) => y.id === member.member.id);
                                   if (updated) {
                                       return [
                                           ...acc,
@@ -83,7 +83,7 @@ export default function RoomMembersProvider({
                             : []),
                     ];
                 } else {
-                    return data.RoomPerson.map((member) => ({
+                    return data.room_RoomPerson.map((member) => ({
                         member,
                     }));
                 }

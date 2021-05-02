@@ -1,5 +1,5 @@
 import React from "react";
-import type { Permission_Enum } from "../../generated/graphql";
+import type { Permissions_Permission_Enum } from "../../generated/graphql";
 import { useConferenceCurrentUserActivePermissions } from "./useConferenceCurrentUserActivePermissions";
 
 export default function RequireAtLeastOnePermissionWrapper({
@@ -8,7 +8,7 @@ export default function RequireAtLeastOnePermissionWrapper({
     componentIfDenied,
 }: {
     children: React.ReactNode | React.ReactNodeArray;
-    permissions?: Array<Permission_Enum>;
+    permissions?: Array<Permissions_Permission_Enum>;
     componentIfDenied?: JSX.Element;
 }): JSX.Element | null {
     const activePermissions = useConferenceCurrentUserActivePermissions();

@@ -1,6 +1,5 @@
 import { Box, Heading } from "@chakra-ui/react";
 import React from "react";
-import { Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";

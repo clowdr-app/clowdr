@@ -1,5 +1,5 @@
 import { Heading, Spinner, Text } from "@chakra-ui/react";
-import type { VideoContentBlob } from "@clowdr-app/shared-types/build/content";
+import type { VideoElementBlob } from "@clowdr-app/shared-types/build/content";
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
 import AmazonS3URI from "amazon-s3-uri";
 import type Hls from "hls.js";
@@ -18,7 +18,7 @@ export function VideoElement({
     onPause,
 }: {
     elementId: string;
-    videoElementData: VideoContentBlob;
+    videoElementData: VideoElementBlob;
     title?: string;
     onPlay?: () => void;
     onPause?: () => void;

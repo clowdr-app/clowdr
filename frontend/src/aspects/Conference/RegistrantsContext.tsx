@@ -227,7 +227,10 @@ export default function RegistrantsContextProvider({
                             conferenceId: conference.id,
                         });
 
-                        if (filteredIds.length !== datas.data.Registrant.length && datas.data.Registrant.length === 0) {
+                        if (
+                            filteredIds.length !== datas.data.registrant_Registrant.length &&
+                            datas.data.registrant_Registrant.length === 0
+                        ) {
                             // We didn't get any of the ids back - probably deleted or some permissions issue.
                             // In which case we want to avoid endless refetching.
                             for (const subId of requiredRegistrant_SubIds) {
@@ -235,7 +238,7 @@ export default function RegistrantsContextProvider({
                             }
                         } else {
                             now = Date.now();
-                            datas.data.Registrant.forEach((registrant) => {
+                            datas.data.registrant_Registrant.forEach((registrant) => {
                                 if (registrant.userId) {
                                     usersToRegistrantIds.current.set(registrant.userId, registrant.id);
                                 }
@@ -255,7 +258,10 @@ export default function RegistrantsContextProvider({
                             conferenceId: conference.id,
                         });
 
-                        if (filteredIds.length !== datas.data.Registrant.length && datas.data.Registrant.length === 0) {
+                        if (
+                            filteredIds.length !== datas.data.registrant_Registrant.length &&
+                            datas.data.registrant_Registrant.length === 0
+                        ) {
                             // We didn't get any of the ids back - probably deleted or some permissions issue.
                             // In which case we want to avoid endless refetching.
                             for (const subId of requiredUser_SubIds) {
@@ -263,7 +269,7 @@ export default function RegistrantsContextProvider({
                             }
                         } else {
                             now = Date.now();
-                            datas.data.Registrant.forEach((registrant) => {
+                            datas.data.registrant_Registrant.forEach((registrant) => {
                                 if (registrant.userId) {
                                     usersToRegistrantIds.current.set(registrant.userId, registrant.id);
                                 }

@@ -180,7 +180,7 @@ function PeopleSearch({ createDM }: { createDM: (registrantId: string) => void }
                 return undefined;
             }
 
-            return dataSearch?.Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
+            return dataSearch?.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
         }
 
         setLoadedCount(30);
@@ -622,8 +622,8 @@ function RoomChatPanel({
     useEffect(() => {
         let unsubscribe: undefined | (() => void);
         if (!loading) {
-            if (data?.Room_by_pk?.chatId) {
-                unsubscribe = globalChatState.observeChatId(data?.Room_by_pk?.chatId, setChat);
+            if (data?.room_Room_by_pk?.chatId) {
+                unsubscribe = globalChatState.observeChatId(data?.room_Room_by_pk?.chatId, setChat);
             } else {
                 setChat(null);
             }
@@ -631,7 +631,7 @@ function RoomChatPanel({
         return () => {
             unsubscribe?.();
         };
-    }, [data?.Room_by_pk?.chatId, globalChatState, loading]);
+    }, [data?.room_Room_by_pk?.chatId, globalChatState, loading]);
 
     useEffect(() => {
         if (chat?.Id) {
@@ -715,8 +715,8 @@ function ItemChatPanel({
     useEffect(() => {
         let unsubscribe: undefined | (() => void);
         if (!loading) {
-            if (data?.Item_by_pk?.chatId) {
-                unsubscribe = globalChatState.observeChatId(data.Item_by_pk.chatId, setChat);
+            if (data?.content_Item_by_pk?.chatId) {
+                unsubscribe = globalChatState.observeChatId(data.content_Item_by_pk.chatId, setChat);
             } else {
                 setChat(null);
             }
@@ -724,7 +724,7 @@ function ItemChatPanel({
         return () => {
             unsubscribe?.();
         };
-    }, [data?.Item_by_pk?.chatId, globalChatState, loading]);
+    }, [data?.content_Item_by_pk?.chatId, globalChatState, loading]);
 
     useEffect(() => {
         if (chat?.Id) {
@@ -914,7 +914,7 @@ function ParticipantsList({ roomId }: { roomId: string }): JSX.Element {
 function PresencePanel_WithConnectedParticipants({ roomId }: { roomId: string }): JSX.Element {
     return (
         <>
-            <RoomParticipantsList roomId={roomId} />
+            <ParticipantsList roomId={roomId} />
             <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
                 Here with you
             </Heading>

@@ -1,11 +1,11 @@
 import { gql } from "@apollo/client";
 import { Box, Heading, Spinner } from "@chakra-ui/react";
-import { ContentBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
     ElementType_Enum,
     ItemDataFragment,
-    Permission_Enum,
+    Permissions_Permission_Enum,
     useConferenceLandingPageItemQuery,
 } from "../../../generated/graphql";
 import ConferencePageNotFound from "../../Errors/ConferencePageNotFound";
@@ -86,7 +86,7 @@ function ConferenceLandingPageInner(): JSX.Element {
                     const data: ElementDataBlob = item.data;
                     if (
                         data.length > 0 &&
-                        data[0].data.baseType === ContentBaseType.Text &&
+                        data[0].data.baseType === ElementBaseType.Text &&
                         data[0].data.text &&
                         data[0].data.text.trim() !== ""
                     ) {
@@ -131,7 +131,7 @@ function ConferenceLandingPageInner(): JSX.Element {
 export default function ConferenceLandingPage(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageContent]}
+            permissions={[Permission_Enum.ConferenceView, Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<ConferencePageNotFound />}
         >
             <ConferenceLandingPageInner />

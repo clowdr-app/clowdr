@@ -276,14 +276,18 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                         size="lg"
                         isLoading={inviteLoading}
                         emailHint={
-                            inviteData?.Invitation.length ? inviteData.Invitation[0].invitedEmailAddress : undefined
+                            inviteData?.registrant_Invitation.length
+                                ? inviteData.registrant_Invitation[0].invitedEmailAddress
+                                : undefined
                         }
                     />
                     <LoginButton
                         size="lg"
                         isLoading={inviteLoading}
                         emailHint={
-                            inviteData?.Invitation.length ? inviteData.Invitation[0].invitedEmailAddress : undefined
+                            inviteData?.registrant_Invitation.length
+                                ? inviteData.registrant_Invitation[0].invitedEmailAddress
+                                : undefined
                         }
                     />
                 </HStack>

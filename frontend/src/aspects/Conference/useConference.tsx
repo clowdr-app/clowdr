@@ -145,7 +145,7 @@ function ConferenceProvider_WithoutUser({
         );
     }
 
-    if (!data || data.Conference.length === 0) {
+    if (!data || data.conference_Conference.length === 0) {
         return (
             <VStack>
                 <PageNotFound />
@@ -153,7 +153,7 @@ function ConferenceProvider_WithoutUser({
         );
     }
 
-    return <ConferenceContext.Provider value={data.Conference[0]}>{children}</ConferenceContext.Provider>;
+    return <ConferenceContext.Provider value={data.conference_Conference[0]}>{children}</ConferenceContext.Provider>;
 }
 
 function ConferenceProvider_WithUser({
@@ -184,7 +184,7 @@ function ConferenceProvider_WithUser({
         );
     }
 
-    if (!data || data.Conference.length === 0) {
+    if (!data || data.conference_Conference.length === 0) {
         return (
             <VStack>
                 <PageNotFound />
@@ -192,7 +192,7 @@ function ConferenceProvider_WithUser({
         );
     }
 
-    return <ConferenceContext.Provider value={data.Conference[0]}>{children}</ConferenceContext.Provider>;
+    return <ConferenceContext.Provider value={data.conference_Conference[0]}>{children}</ConferenceContext.Provider>;
 }
 
 export default function ConferenceProvider({

@@ -166,7 +166,7 @@ export function MainMenuProgram(): JSX.Element {
     }, [debouncedSearch, performSearch]);
 
     const resultCountStr = `Showing ${
-        debouncedSearch.length > 0 ? searchResult.data?.Event.length ?? 0 : "upcoming"
+        debouncedSearch.length > 0 ? searchResult.data?.schedule_Event.length ?? 0 : "upcoming"
     } events`;
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
     useEffect(() => {
@@ -203,7 +203,7 @@ export function MainMenuProgram(): JSX.Element {
             </FormControl>
             {debouncedSearch.length > 0 ? (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={searchResult}>
+                    <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={searchResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <MainMenuProgramInner
                                 linkToRoom={false}
@@ -218,7 +218,7 @@ export function MainMenuProgram(): JSX.Element {
                 </>
             ) : (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={scheduleResult}>
+                    <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <>
                                 <MainMenuProgramInner

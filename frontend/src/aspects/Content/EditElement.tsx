@@ -1,5 +1,5 @@
 import { Text } from "@chakra-ui/react";
-import { ContentBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import React from "react";
 import EditSubtitles from "./EditSubtitles";
 
@@ -15,9 +15,9 @@ export function EditElement({
     const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
 
     const latestSubtitles =
-        latestVersion?.data.baseType === ContentBaseType.Video ? latestVersion?.data.subtitles["en_US"] : null;
+        latestVersion?.data.baseType === ElementBaseType.Video ? latestVersion?.data.subtitles["en_US"] : null;
     const latestTranscodeURL =
-        latestVersion?.data.baseType === ContentBaseType.Video ? latestVersion?.data.transcode?.s3Url : null;
+        latestVersion?.data.baseType === ElementBaseType.Video ? latestVersion?.data.transcode?.s3Url : null;
     return (
         <>
             {latestTranscodeURL && latestSubtitles?.s3Url?.length ? (
@@ -27,7 +27,7 @@ export function EditElement({
                     elementId={elementId}
                     magicToken={magicToken}
                 />
-            ) : latestVersion?.data.baseType === ContentBaseType.Video ? (
+            ) : latestVersion?.data.baseType === ElementBaseType.Video ? (
                 <Text>Subtitles are still being processed for this item. Please check back in 15 minutes.</Text>
             ) : undefined}
         </>

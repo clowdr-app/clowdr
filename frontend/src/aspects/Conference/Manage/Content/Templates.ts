@@ -1,4 +1,4 @@
-import { ContentBaseType, ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import { ElementType_Enum, ItemType_Enum } from "../../../../generated/graphql";
 import { ComponentItemTemplate } from "./ComponentItem";
@@ -9,13 +9,13 @@ import type { ItemBaseTemplate, ItemDescriptor } from "./Types";
 import { URLItemTemplate } from "./URLItem";
 import { VideoItemTemplate } from "./VideoItem";
 
-export const ItemBaseTemplates: { [K in ContentBaseType]: ItemBaseTemplate } = {
-    [ContentBaseType.File]: FileItemTemplate,
-    [ContentBaseType.Component]: ComponentItemTemplate,
-    [ContentBaseType.Link]: LinkItemTemplate,
-    [ContentBaseType.Text]: TextItemTemplate,
-    [ContentBaseType.URL]: URLItemTemplate,
-    [ContentBaseType.Video]: VideoItemTemplate,
+export const ItemBaseTemplates: { [K in ElementBaseType]: ItemBaseTemplate } = {
+    [ElementBaseType.File]: FileItemTemplate,
+    [ElementBaseType.Component]: ComponentItemTemplate,
+    [ElementBaseType.Link]: LinkItemTemplate,
+    [ElementBaseType.Text]: TextItemTemplate,
+    [ElementBaseType.URL]: URLItemTemplate,
+    [ElementBaseType.Video]: VideoItemTemplate,
 };
 
 export type GroupTemplate =

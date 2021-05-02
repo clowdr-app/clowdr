@@ -5,7 +5,6 @@ import {
     ItemDataFragment,
     ItemEventsFragment,
     ItemPage_ItemRoomsFragment,
-    Permission_Enum,
     useGetItemQuery,
 } from "../../../../generated/graphql";
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";

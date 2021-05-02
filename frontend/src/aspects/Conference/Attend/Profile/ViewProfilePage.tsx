@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
-import { Permission_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageFailedToLoad from "../../../Errors/PageFailedToLoad";
@@ -44,9 +44,9 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
             <VStack spacing={0} maxW={1100} w="100%" m={2}>
                 {(maybeCurrentUser.user && registrant.userId === maybeCurrentUser.user.id) ||
                 [
-                    Permission_Enum.ConferenceManageAttendees,
-                    Permission_Enum.ConferenceManageGroups,
-                    Permission_Enum.ConferenceManageRoles,
+                    Permissions_Permission_Enum.ConferenceManageAttendees,
+                    Permissions_Permission_Enum.ConferenceManageGroups,
+                    Permissions_Permission_Enum.ConferenceManageRoles,
                 ].some((permission) => activePermissions.has(permission)) ? (
                     <ButtonGroup variant="outline">
                         <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
@@ -210,10 +210,10 @@ export default function ViewProfilePage({ registrantId }: { registrantId?: strin
             maybeCurrentRegistrant.userId !== maybeCurrentUser.user.id ||
             maybeCurrentRegistrant?.id !== registrantId) &&
         ![
-            Permission_Enum.ConferenceViewAttendees,
-            Permission_Enum.ConferenceManageAttendees,
-            Permission_Enum.ConferenceManageGroups,
-            Permission_Enum.ConferenceManageRoles,
+            Permissions_Permission_Enum.ConferenceViewAttendees,
+            Permissions_Permission_Enum.ConferenceManageAttendees,
+            Permissions_Permission_Enum.ConferenceManageGroups,
+            Permissions_Permission_Enum.ConferenceManageRoles,
         ].some((permission) => activePermissions.has(permission))
     ) {
         return <Redirect to={`/conference/${conference.slug}`} />;

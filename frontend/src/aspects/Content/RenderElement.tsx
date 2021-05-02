@@ -1,5 +1,5 @@
 import { Text, VStack } from "@chakra-ui/react";
-import { ContentBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React from "react";
 import ReactPlayer from "react-player";
@@ -20,7 +20,7 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
         }
 
         switch (latestVersion.data.baseType) {
-            case ContentBaseType.File:
+            case ElementBaseType.File:
                 return (
                     <ExternalLinkButton
                         to={s3UrlToHttpUrl(latestVersion.data.s3Url)}
@@ -35,21 +35,21 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
                         </VStack>
                     </ExternalLinkButton>
                 );
-            case ContentBaseType.Link:
+            case ElementBaseType.Link:
                 return (
                     <Text>
                         <a href={latestVersion.data.url}>{latestVersion.data.text}</a>
                     </Text>
                 );
-            case ContentBaseType.Text:
+            case ElementBaseType.Text:
                 return <Text>{latestVersion.data.text}</Text>;
-            case ContentBaseType.URL:
+            case ElementBaseType.URL:
                 return (
                     <Text>
                         URL: <a href={latestVersion.data.url}>{latestVersion.data.url}</a>
                     </Text>
                 );
-            case ContentBaseType.Video: {
+            case ElementBaseType.Video: {
                 if (latestVersion.data?.transcode?.status === "FAILED") {
                     return <>Failed to process this item: {latestVersion.data.transcode.message}</>;
                 }
@@ -66,7 +66,7 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
                     />
                 );
             }
-            case ContentBaseType.Component: {
+            case ElementBaseType.Component: {
                 return <Text>This item type cannot be uploaded.</Text>;
             }
         }

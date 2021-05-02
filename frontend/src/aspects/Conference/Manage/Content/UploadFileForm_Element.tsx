@@ -1,5 +1,5 @@
 import { Button, FormControl, FormHelperText, ListItem, UnorderedList, useToast } from "@chakra-ui/react";
-import { ContentBaseType } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
@@ -23,7 +23,7 @@ export default function UploadFileForm_Element({
     item: ElementDescriptor;
     allowedFileTypes: string[];
     onItemChange?: (newItem: ElementDescriptor) => void;
-    contentBaseType: ContentBaseType.File | ContentBaseType.Video;
+    contentBaseType: ElementBaseType.File | ElementBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
@@ -122,7 +122,7 @@ export default function UploadFileForm_Element({
                         uppy.reset();
 
                         if (onItemChange) {
-                            if (contentBaseType === ContentBaseType.Video) {
+                            if (contentBaseType === ElementBaseType.Video) {
                                 onItemChange({
                                     ...item,
                                     data: [
@@ -131,7 +131,7 @@ export default function UploadFileForm_Element({
                                             createdAt: Date.now(),
                                             createdBy: "user",
                                             data: {
-                                                baseType: ContentBaseType.Video,
+                                                baseType: ElementBaseType.Video,
                                                 s3Url: `s3://${bucket}/${key}`,
                                                 type: item.typeName as any,
                                                 subtitles: {},
@@ -139,7 +139,7 @@ export default function UploadFileForm_Element({
                                         },
                                     ],
                                 });
-                            } else if (contentBaseType === ContentBaseType.File) {
+                            } else if (contentBaseType === ElementBaseType.File) {
                                 onItemChange({
                                     ...item,
                                     data: [
@@ -148,7 +148,7 @@ export default function UploadFileForm_Element({
                                             createdAt: Date.now(),
                                             createdBy: "user",
                                             data: {
-                                                baseType: ContentBaseType.File,
+                                                baseType: ElementBaseType.File,
                                                 s3Url: `s3://${bucket}/${key}`,
                                                 type: item.typeName as any,
                                             },

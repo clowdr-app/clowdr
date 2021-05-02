@@ -1,6 +1,6 @@
 import { ButtonProps, Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import type { Permission_Enum } from "../../../generated/graphql";
+import type { Permissions_Permission_Enum } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import FAIcon from "../../Icons/FAIcon";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -19,7 +19,7 @@ export default function RestrictedDashboardButton({
     name: string;
     icon: string;
     description: string;
-    permissions?: Permission_Enum[];
+    permissions?: Permissions_Permission_Enum[];
     colorScheme?: string;
 }): JSX.Element | null {
     const conference = useConference();

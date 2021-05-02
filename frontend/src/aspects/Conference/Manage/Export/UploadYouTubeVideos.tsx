@@ -29,7 +29,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import { ContentBaseType, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
 import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import Mustache from "mustache";
@@ -292,7 +292,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     : undefined;
                 const abstractElementDataLatest = abstractElementData ? R.last(abstractElementData) : undefined;
                 const abstract =
-                    abstractElementDataLatest?.data.baseType === ContentBaseType.Text
+                    abstractElementDataLatest?.data.baseType === ElementBaseType.Text
                         ? abstractElementDataLatest.data.text
                         : "";
 
@@ -309,7 +309,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                             return [];
                         }
 
-                        if (latest.data.baseType === ContentBaseType.URL) {
+                        if (latest.data.baseType === ElementBaseType.URL) {
                             return [latest.data.url];
                         } else {
                             return [];
@@ -330,7 +330,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                             return [];
                         }
 
-                        if (latest.data.baseType === ContentBaseType.Link) {
+                        if (latest.data.baseType === ElementBaseType.Link) {
                             return [{ url: latest.data.url, text: latest.data.text }];
                         } else {
                             return [];

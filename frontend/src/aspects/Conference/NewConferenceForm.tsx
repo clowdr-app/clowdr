@@ -14,10 +14,10 @@ import { Field, FieldProps, Form, Formik, FormikErrors } from "formik";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import {
-    Conference,
     ConferenceTakenDocument,
     ConferenceTakenQuery,
     ConferenceTakenQueryVariables,
+    Conference_Conference,
     useCreateConferenceMutation,
     useCreateNewConferenceMetaStructureMutation,
 } from "../../generated/graphql";
@@ -26,7 +26,7 @@ import isValidUUID from "../Utils/isValidUUID";
 
 gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
-        conference_Conference(
+        Conference_Conference(
             where: { _or: [{ name: { _eq: $name } }, { shortName: { _eq: $shortName } }, { slug: { _eq: $slug } }] }
         ) {
             id
@@ -360,15 +360,15 @@ export default function NewConferenceForm(): JSX.Element {
                     fetchPolicy: "network-only",
                 });
                 try {
-                    let ok: boolean | Pick<Conference, "id" | "name" | "shortName" | "slug"> = false;
+                    let ok: boolean | Pick<Conference_Conference, "id" | "name" | "shortName" | "slug"> = false;
                     if (takenResult.error) {
                         throw takenResult.error;
                     } else {
                         if (takenResult.data) {
-                            if (takenResult.data.Conference.length === 0) {
+                            if (takenResult.data.conference_Conference.length === 0) {
                                 ok = true;
                             } else {
-                                ok = takenResult.data.Conference[0];
+                                ok = takenResult.data.conference_Conference[0];
                             }
                         } else {
                             throw new Error("No 'name taken' data!");
@@ -382,8 +382,8 @@ export default function NewConferenceForm(): JSX.Element {
                         if (
                             result.errors ||
                             !result.data ||
-                            !result.data.insert_Conference ||
-                            !result.data.insert_Conference.returning.length
+                            !result.data.insert_conference_Conference ||
+                            !result.data.insert_conference_Conference.returning.length
                         ) {
                             toast({
                                 title: "Could not create conference",
@@ -394,7 +394,7 @@ export default function NewConferenceForm(): JSX.Element {
                             // failed = true;
                         } else {
                             failed = false;
-                            const conferenceId = result.data.insert_Conference.returning[0].id;
+                            const conferenceId = result.data.insert_conference_Conference.returning[0].id;
                             const now = Date.now();
 
                             await createNewConferenceMetaStructureMutation({
@@ -427,7 +427,9 @@ export default function NewConferenceForm(): JSX.Element {
                                 title: "Conference created",
                                 status: "success",
                             });
-                            history.push(`/conference/${result.data.insert_Conference.returning[0].slug}/manage`);
+                            history.push(
+                                `/conference/${result.data.insert_conference_Conference.returning[0].slug}/manage`
+                            );
                         }
                     } else {
                         const errors: FormikErrors<{

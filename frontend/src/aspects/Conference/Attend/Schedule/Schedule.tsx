@@ -7,7 +7,7 @@ import React, { useCallback, useMemo } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
 import {
-    Permission_Enum,
+    Permissions_Permission_Enum,
     Schedule_EventSummaryFragment,
     Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
@@ -630,7 +630,7 @@ function ScheduleFetchWrapper(): JSX.Element {
 export default function Schedule(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageSchedule]}
+            permissions={[Permission_Enum.ConferenceView, Permissions_Permission_Enum.ConferenceManageSchedule]}
         >
             <ScheduleFetchWrapper />
         </RequireAtLeastOnePermissionWrapper>

@@ -1,6 +1,6 @@
 import jsonata from "jsonata";
 import { assertType, TypeGuardError } from "typescript-is";
-import type { ContentItemDataBlob, ContentRole } from "../content";
+import type { ContentRole, ElementDataBlob } from "../content";
 
 declare enum RoomMode_Enum {
     /** Users may participate in the general video chat. */
@@ -23,11 +23,11 @@ declare enum RoomMode_Enum {
     Zoom = "ZOOM",
 }
 
-declare enum ContentType_Enum {
+declare enum ElementType_Enum {
     /** Abstract Markdown text. */
     Abstract = "ABSTRACT",
     /** List of content groups in the system. */
-    ContentGroupList = "CONTENT_GROUP_LIST",
+    ItemList = "CONTENT_GROUP_LIST",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -72,7 +72,7 @@ declare enum ContentType_Enum {
     Zoom = "ZOOM",
 }
 
-declare enum ContentGroupType_Enum {
+declare enum ItemType_Enum {
     /** A demonstration. */
     Demonstration = "DEMONSTRATION",
     /** A keynote. */
@@ -124,10 +124,10 @@ export interface IntermediaryOriginatingDataDescriptor {
 export interface IntermediaryItemDescriptor {
     id?: string;
     originatingDataSourceId?: string;
-    typeName?: ContentType_Enum;
+    typeName?: ElementType_Enum;
     isHidden?: boolean;
     name?: string;
-    data?: ContentItemDataBlob;
+    data?: ElementDataBlob;
 }
 
 export interface IntermediaryUploaderDescriptor {
@@ -140,7 +140,7 @@ export interface IntermediaryUploaderDescriptor {
 export interface IntermediaryRequiredItemDescriptor {
     id?: string;
     originatingDataSourceId?: string;
-    typeName?: ContentType_Enum;
+    typeName?: ElementType_Enum;
     name?: string;
     uploadsRemaining?: number;
 
@@ -167,7 +167,7 @@ export interface IntermediaryGroupDescriptor {
     originatingDataSourceId?: string;
 
     title?: string;
-    typeName?: ContentGroupType_Enum;
+    typeName?: ItemType_Enum;
     items?: Array<IntermediaryItemDescriptor>;
     requiredItems?: Array<IntermediaryRequiredItemDescriptor>;
     tagNames?: Array<string>;

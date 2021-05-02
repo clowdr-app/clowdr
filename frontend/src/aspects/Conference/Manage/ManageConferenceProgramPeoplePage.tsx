@@ -19,7 +19,7 @@ import {
     ManageProgramPeople_ProgramPersonFragment,
     ManageProgramPeople_ProgramPersonFragmentDoc,
     ManageProgramPeople_RegistrantFragment,
-    Permission_Enum,
+    Permissions_Permission_Enum,
     useManageProgramPeople_DeleteProgramPersonsMutation,
     useManageProgramPeople_InsertProgramPersonMutation,
     useManageProgramPeople_SelectAllPeopleQuery,
@@ -572,9 +572,9 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[
-                Permission_Enum.ConferenceManageAttendees,
-                Permission_Enum.ConferenceManageRoles,
-                Permission_Enum.ConferenceManageGroups,
+                Permissions_Permission_Enum.ConferenceManageAttendees,
+                Permissions_Permission_Enum.ConferenceManageRoles,
+                Permissions_Permission_Enum.ConferenceManageGroups,
             ]}
             componentIfDenied={<PageNotFound />}
         >

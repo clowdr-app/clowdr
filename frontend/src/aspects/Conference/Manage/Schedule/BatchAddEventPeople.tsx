@@ -46,7 +46,7 @@ import {
     EventProgramPersonInfoFragmentDoc,
     EventProgramPersonRole_Enum,
     EventProgramPerson_Insert_Input,
-    Permission_Enum,
+    Permissions_Permission_Enum,
     ProgramPersonInfoFragmentDoc,
     RoomInfoFragment,
     useAddEventPeople_InsertEventPeopleMutation,
@@ -492,7 +492,7 @@ function AddEventPeople_FromGroupPanel({
                 groupId: selectedGroupId,
             });
             await addRegistrantsToEvent(
-                registrants.data.Registrant.map((x) => x.id),
+                registrants.data.registrant_Registrant.map((x) => x.id),
                 selectRegistrantsQuery,
                 selectProgramPeople_ByRegistrantQuery,
                 insertProgramPeople,
@@ -822,7 +822,7 @@ export async function addRegistrantsToEvent(
         if (personId) {
             personIds.push(personId);
         } else {
-            const registrant = selectRegistrantsQuery.data?.Registrant.find((x) => x.id === registrantId);
+            const registrant = selectRegistrantsQuery.data?.registrant_Registrant.find((x) => x.id === registrantId);
             assert(registrant, `Failed to find registrant ${registrantId}`);
             insertProgramPersons.push({
                 name: registrant.displayName,
@@ -1048,8 +1048,8 @@ export default function BatchAddEventPeople({
                             </AccordionItem>
                             <RequireAtLeastOnePermissionWrapper
                                 permissions={[
-                                    Permission_Enum.ConferenceManageGroups,
-                                    Permission_Enum.ConferenceManageRoles,
+                                    Permissions_Permission_Enum.ConferenceManageGroups,
+                                    Permissions_Permission_Enum.ConferenceManageRoles,
                                 ]}
                             >
                                 <AccordionItem>
@@ -1064,9 +1064,9 @@ export default function BatchAddEventPeople({
                             </RequireAtLeastOnePermissionWrapper>
                             <RequireAtLeastOnePermissionWrapper
                                 permissions={[
-                                    Permission_Enum.ConferenceManageAttendees,
-                                    Permission_Enum.ConferenceManageGroups,
-                                    Permission_Enum.ConferenceManageRoles,
+                                    Permissions_Permission_Enum.ConferenceManageAttendees,
+                                    Permissions_Permission_Enum.ConferenceManageGroups,
+                                    Permissions_Permission_Enum.ConferenceManageRoles,
                                 ]}
                             >
                                 <AccordionItem>

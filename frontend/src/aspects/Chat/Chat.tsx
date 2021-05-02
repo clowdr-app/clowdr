@@ -1,6 +1,6 @@
 import type { BoxProps } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Permission_Enum } from "../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../generated/graphql";
 import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
@@ -44,9 +44,9 @@ export function Chat({
     // TODO: This is a temporary hack
     const canCompose =
         chat.Name !== "Announcements" ||
-        currentPermissions.has(Permission_Enum.ConferenceManageAttendees) ||
-        currentPermissions.has(Permission_Enum.ConferenceModerateAttendees) ||
-        currentPermissions.has(Permission_Enum.ConferenceManageSchedule);
+        currentPermissions.has(Permissions_Permission_Enum.ConferenceManageAttendees) ||
+        currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees) ||
+        currentPermissions.has(Permissions_Permission_Enum.ConferenceManageSchedule);
     const config = useMemo<ChatConfiguration>(
         () => ({
             customHeadingElements,
@@ -174,7 +174,7 @@ export function Chat({
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
+        <RequireAtLeastOnePermissionWrapper permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}>
             {/* <ReflectionInfoModalProvider> */}
             <ChatConfigurationProvider config={config}>
                 <ChatFrame {...rest} />

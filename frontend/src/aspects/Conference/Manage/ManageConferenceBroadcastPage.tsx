@@ -12,7 +12,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import React from "react";
-import { Permission_Enum, useCreateConferencePrepareJobMutation } from "../../../generated/graphql";
+import { useCreateConferencePrepareJobMutation } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Utils/useTitle";

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import React from "react";
 import {
-    Permission_Enum,
+    Permissions_Permission_Enum,
     RoomPage_RoomDetailsFragment,
     useRoomPage_GetRoomDetailsQuery,
 } from "../../../../generated/graphql";
@@ -68,7 +68,10 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
             componentIfDenied={<ConferencePageNotFound />}
-            permissions={[Permission_Enum.ConferenceViewAttendees, Permission_Enum.ConferenceManageSchedule]}
+            permissions={[
+                Permission_Enum.ConferenceViewAttendees,
+                Permissions_Permission_Enum.ConferenceManageSchedule,
+            ]}
         >
             <RoomPageInner roomId={roomId} />
         </RequireAtLeastOnePermissionWrapper>

@@ -13,7 +13,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Permission_Enum, RegistrantFieldsFragment } from "../../../generated/graphql";
+import { Permissions_Permission_Enum, RegistrantFieldsFragment } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { useTitle } from "../../Utils/useTitle";
 import useCurrentUser from "./useCurrentUser";
@@ -28,15 +28,15 @@ export default function ListConferencesView(): JSX.Element {
     const { attending, organising } = useMemo(() => {
         const attendingResult: RegistrantFieldsFragment[] = [];
         const organisingResult: RegistrantFieldsFragment[] = [];
-        const organiserPermissions: Permission_Enum[] = [
-            Permission_Enum.ConferenceManageAttendees,
-            Permission_Enum.ConferenceManageContent,
-            Permission_Enum.ConferenceManageGroups,
-            Permission_Enum.ConferenceManageName,
-            Permission_Enum.ConferenceManageRoles,
-            Permission_Enum.ConferenceManageSchedule,
-            Permission_Enum.ConferenceManageShuffle,
-            Permission_Enum.ConferenceModerateAttendees,
+        const organiserPermissions: Permissions_Permission_Enum[] = [
+            Permissions_Permission_Enum.ConferenceManageAttendees,
+            Permissions_Permission_Enum.ConferenceManageContent,
+            Permissions_Permission_Enum.ConferenceManageGroups,
+            Permissions_Permission_Enum.ConferenceManageName,
+            Permissions_Permission_Enum.ConferenceManageRoles,
+            Permissions_Permission_Enum.ConferenceManageSchedule,
+            Permissions_Permission_Enum.ConferenceManageShuffle,
+            Permissions_Permission_Enum.ConferenceModerateAttendees,
         ];
 
         for (const registrant of user.registrants) {

@@ -73,17 +73,17 @@ export function MainMenuSponsors(): JSX.Element {
         }
 
         const pairs: [string, string | null][] =
-            sponsorsResult.data?.Item.map((item) => [
+            sponsorsResult.data?.content_Item.map((item) => [
                 item.id,
                 item.logo.length > 0 ? getLogoUrlFromData(item.logo[0].data) : null,
             ]) ?? [];
         return R.fromPairs(pairs);
-    }, [sponsorsResult.data?.Item]);
+    }, [sponsorsResult.data?.content_Item]);
 
     const borderColour = useToken("colors", ["gray.300"]);
 
     return (
-        <ApolloQueryWrapper getter={(data) => data.Item} queryResult={sponsorsResult}>
+        <ApolloQueryWrapper getter={(data) => data.content_Item} queryResult={sponsorsResult}>
             {(sponsorItems: readonly MainMenuSponsors_ItemDataFragment[]) => (
                 <AccordionPanel pb={4} px={"3px"}>
                     <List>

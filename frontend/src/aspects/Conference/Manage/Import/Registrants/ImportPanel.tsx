@@ -126,7 +126,7 @@ export default function ImportPanel({
 
                         const existingRegistrant =
                             registrantsData?.Registrant &&
-                            registrantsData.Registrant.find((x) => {
+                            registrantsData.registrant_Registrant.find((x) => {
                                 return x.invitation && x.invitation.invitedEmailAddress === row.email;
                             });
 

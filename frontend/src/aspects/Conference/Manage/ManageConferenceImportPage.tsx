@@ -1,7 +1,7 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import { Permission_Enum } from "../../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -36,7 +36,10 @@ function InnerManageConferenceImportPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageContent, Permission_Enum.ConferenceManageSchedule]}
+            permissions={[
+                Permission_Enum.ConferenceManageContent,
+                Permissions_Permission_Enum.ConferenceManageSchedule,
+            ]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

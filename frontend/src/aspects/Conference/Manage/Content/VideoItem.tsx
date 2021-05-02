@@ -1,5 +1,5 @@
 import { Heading } from "@chakra-ui/react";
-import { ContentBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -25,7 +25,7 @@ function createDefaultVideo(
         createdBy: "user",
         data: {
             type,
-            baseType: ContentBaseType.Video,
+            baseType: ElementBaseType.Video,
             s3Url: "",
             subtitles: {},
         },
@@ -115,7 +115,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1];
-            if (latestVersion.data.baseType !== ContentBaseType.Video) {
+            if (latestVersion.data.baseType !== ElementBaseType.Video) {
                 return <>Video Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             return (
@@ -138,7 +138,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                             };
                             update(newData);
                         }}
-                        contentBaseType={ContentBaseType.Video}
+                        contentBaseType={ElementBaseType.Video}
                     />
                     <UploadFileForm_Subtitles
                         item={data.item}
@@ -149,7 +149,7 @@ export const VideoItemTemplate: ItemBaseTemplate = {
                             };
                             update(newData);
                         }}
-                        contentBaseType={ContentBaseType.Video}
+                        contentBaseType={ElementBaseType.Video}
                     />
                     <RefreshSubtitles
                         item={data.item}

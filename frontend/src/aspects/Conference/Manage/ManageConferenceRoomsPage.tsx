@@ -37,7 +37,6 @@ import {
 import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    Permission_Enum,
     RoomPersonRole_Enum,
     RoomWithParticipantInfoFragment,
     RoomWithParticipantInfoFragmentDoc,

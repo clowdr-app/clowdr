@@ -11,7 +11,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob, VideoContentBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob, VideoElementBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
@@ -295,7 +295,7 @@ function RoomInner({
                 const currentVideoItems = currentRoomEvent.item?.videoItems;
                 if (currentVideoItems?.length) {
                     const versions = currentVideoItems[0].data as ElementDataBlob;
-                    const latest = R.last(versions)?.data as VideoContentBlob;
+                    const latest = R.last(versions)?.data as VideoElementBlob;
                     return { data: latest, elementId: currentVideoItems[0].id };
                 }
             }

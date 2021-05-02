@@ -38,7 +38,6 @@ import {
     ExhibitionInfoFragment,
     ItemFullNestedInfoFragment,
     ItemType_Enum,
-    Permission_Enum,
     ProgramPersonInfoFragment,
     RoomInfoFragment,
     room_ManagementMode_Enum,

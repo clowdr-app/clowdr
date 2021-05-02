@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import {
     AWSJobStatus,
-    ContentBaseType,
+    ElementBaseType,
     VideoBroadcastBlob,
     VideoCountdownBlob,
     VideoFileBlob,
@@ -43,7 +43,7 @@ export default function UploadFileForm_Subtitles({
 }: {
     item: ElementDescriptor;
     onItemChange?: (newItem: ElementDescriptor) => void;
-    contentBaseType: ContentBaseType.Video;
+    contentBaseType: ElementBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
@@ -124,7 +124,7 @@ export default function UploadFileForm_Subtitles({
         | null
     >(() => {
         const latest = R.last(item.data);
-        if (!latest || latest.data.baseType !== ContentBaseType.Video) {
+        if (!latest || latest.data.baseType !== ElementBaseType.Video) {
             return null;
         }
         // Make sure subtitles are already generated so uploaded ones don't get overwritten later
@@ -181,7 +181,7 @@ export default function UploadFileForm_Subtitles({
                         uppy.reset();
 
                         if (onItemChange) {
-                            if (contentBaseType !== ContentBaseType.Video) {
+                            if (contentBaseType !== ElementBaseType.Video) {
                                 throw new Error(`Content has wrong base type ${contentBaseType}`);
                             }
 

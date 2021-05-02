@@ -14,7 +14,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import { ContentBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
@@ -63,7 +63,7 @@ function EventBoxPopover({
     let abstractText: string | undefined;
     if (abstractData) {
         const innerAbstractData = abstractData[abstractData.length - 1];
-        if (innerAbstractData.data.baseType === ContentBaseType.Text) {
+        if (innerAbstractData.data.baseType === ElementBaseType.Text) {
             abstractText = innerAbstractData.data.text;
         }
     }

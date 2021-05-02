@@ -4,7 +4,6 @@ import {
     JSONataToIntermediaryContent,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
-import { Permission_Enum } from "../../../../../generated/graphql";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 import { useTitle } from "../../../../Utils/useTitle";

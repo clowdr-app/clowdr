@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     CreateDeleteRolesMutation,
-    Permission_Enum,
+    Permissions_Permission_Enum,
     UpdateRoleMutation,
     useCreateDeleteRolesMutation,
     useSelectAllPermissionsQuery,
@@ -149,7 +149,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
 
         for (const role of allRoles.Role) {
             const permissions: { [K: string]: boolean } = {};
-            for (const key in Permission_Enum) {
+            for (const key in Permissions_Permission_Enum) {
                 const value = (Permission_Enum as any)[key] as string;
                 permissions[key] = role.rolePermissions.some((x) => x.permissionName === value);
             }
@@ -207,7 +207,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                 validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
             },
         };
-        for (const permissionEnumKey in Permission_Enum) {
+        for (const permissionEnumKey in Permissions_Permission_Enum) {
             const permissionEnumValue = (Permission_Enum as any)[permissionEnumKey] as string;
             const name = permissionEnumValue
                 .split("_")
@@ -223,8 +223,8 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                     "No description provided.",
                 isHidden: false,
                 defaultValue:
-                    permissionEnumValue === Permission_Enum.ConferenceView ||
-                    permissionEnumValue === Permission_Enum.ConferenceViewAttendees,
+                    permissionEnumValue === Permissions_Permission_Enum.ConferenceView ||
+                    permissionEnumValue === Permissions_Permission_Enum.ConferenceViewAttendees,
                 editorFalseLabel: "Deny",
                 editorTrueLabel: "Allow",
                 isEditable: true,
@@ -354,10 +354,10 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                         let changed = item.name !== existing.name;
                                         const permissionsAdded = new Set<Permission_Enum>();
                                         const permissionsDeleted = new Set<Permission_Enum>();
-                                        for (const permissionEnumKey in Permission_Enum) {
+                                        for (const permissionEnumKey in Permissions_Permission_Enum) {
                                             const permissionEnumValue = (Permission_Enum as any)[
                                                 permissionEnumKey
-                                            ] as Permission_Enum;
+                                            ] as Permissions_Permission_Enum;
                                             if (
                                                 item.permissions[permissionEnumKey] &&
                                                 !existing.permissions[permissionEnumKey]

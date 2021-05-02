@@ -1,6 +1,6 @@
 import { FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
 import {
-    ContentBaseType,
+    ElementBaseType,
     ElementVersionData,
     ImageUrlBlob,
     PaperUrlBlob,
@@ -27,7 +27,7 @@ function createDefaultURL(
         createdBy: "user",
         data: {
             type,
-            baseType: ContentBaseType.URL,
+            baseType: ElementBaseType.URL,
             url: "",
         },
     };
@@ -129,7 +129,7 @@ export const URLItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1] as UrlItemVersionData;
-            if (latestVersion.data.baseType !== ContentBaseType.URL) {
+            if (latestVersion.data.baseType !== ElementBaseType.URL) {
                 return <>URL Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             return (

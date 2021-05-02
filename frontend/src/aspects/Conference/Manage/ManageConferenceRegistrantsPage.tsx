@@ -24,7 +24,7 @@ import React, { LegacyRef, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     InvitationPartsFragmentDoc,
-    Permission_Enum,
+    Permissions_Permission_Enum,
     RegistrantPartsFragment,
     RegistrantPartsFragmentDoc,
     useDeleteRegistrantsMutation,
@@ -1074,9 +1074,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[
-                Permission_Enum.ConferenceManageAttendees,
-                Permission_Enum.ConferenceManageRoles,
-                Permission_Enum.ConferenceManageGroups,
+                Permissions_Permission_Enum.ConferenceManageAttendees,
+                Permissions_Permission_Enum.ConferenceManageRoles,
+                Permissions_Permission_Enum.ConferenceManageGroups,
             ]}
             componentIfDenied={<PageNotFound />}
         >

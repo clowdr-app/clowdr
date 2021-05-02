@@ -1,5 +1,5 @@
 import { Box, Center, Heading, Image } from "@chakra-ui/react";
-import { ContentBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import React from "react";
@@ -17,7 +17,7 @@ function createDefaultFile(
         createdBy: "user",
         data: {
             type,
-            baseType: ContentBaseType.File,
+            baseType: ElementBaseType.File,
             s3Url: "",
         },
     };
@@ -92,13 +92,13 @@ export const FileItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1];
-            if (latestVersion.data.baseType !== ContentBaseType.File) {
+            if (latestVersion.data.baseType !== ElementBaseType.File) {
                 return <>File Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             let imageSrc = undefined;
             if (
                 latestVersion &&
-                latestVersion.data.baseType === ContentBaseType.File &&
+                latestVersion.data.baseType === ElementBaseType.File &&
                 latestVersion.data.s3Url !== ""
             ) {
                 try {
@@ -151,7 +151,7 @@ export const FileItemTemplate: ItemBaseTemplate = {
                             };
                             update(newData);
                         }}
-                        contentBaseType={ContentBaseType.File}
+                        contentBaseType={ElementBaseType.File}
                     />
                 </>
             );

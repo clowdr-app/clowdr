@@ -1,6 +1,6 @@
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
-import { Permission_Enum } from "../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../generated/graphql";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import ConferencePageNotFound from "../Errors/ConferencePageNotFound";
 import PageNotFound from "../Errors/PageNotFound";
@@ -69,14 +69,14 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             <Route exact path={`${rootUrl}/manage`}>
                 <RequireAtLeastOnePermissionWrapper
                     permissions={[
-                        Permission_Enum.ConferenceManageAttendees,
-                        Permission_Enum.ConferenceManageContent,
-                        Permission_Enum.ConferenceManageGroups,
-                        Permission_Enum.ConferenceManageName,
-                        Permission_Enum.ConferenceManageRoles,
-                        Permission_Enum.ConferenceManageSchedule,
-                        Permission_Enum.ConferenceManageShuffle,
-                        Permission_Enum.ConferenceModerateAttendees,
+                        Permissions_Permission_Enum.ConferenceManageAttendees,
+                        Permissions_Permission_Enum.ConferenceManageContent,
+                        Permissions_Permission_Enum.ConferenceManageGroups,
+                        Permissions_Permission_Enum.ConferenceManageName,
+                        Permissions_Permission_Enum.ConferenceManageRoles,
+                        Permissions_Permission_Enum.ConferenceManageSchedule,
+                        Permissions_Permission_Enum.ConferenceManageShuffle,
+                        Permissions_Permission_Enum.ConferenceModerateAttendees,
                     ]}
                     componentIfDenied={<PageNotFound />}
                 >
@@ -163,10 +163,10 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
                     permissions={[
-                        Permission_Enum.ConferenceViewAttendees,
-                        Permission_Enum.ConferenceManageAttendees,
-                        Permission_Enum.ConferenceManageGroups,
-                        Permission_Enum.ConferenceManageRoles,
+                        Permissions_Permission_Enum.ConferenceViewAttendees,
+                        Permissions_Permission_Enum.ConferenceManageAttendees,
+                        Permissions_Permission_Enum.ConferenceManageGroups,
+                        Permissions_Permission_Enum.ConferenceManageRoles,
                     ]}
                 >
                     <RegistrantListPage />
@@ -186,7 +186,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             <Route path={`${rootUrl}/schedule`}>
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
-                    permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageSchedule]}
+                    permissions={[Permission_Enum.ConferenceView, Permissions_Permission_Enum.ConferenceManageSchedule]}
                 >
                     <Schedule />
                 </RequireAtLeastOnePermissionWrapper>
@@ -237,10 +237,10 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
                     permissions={[
-                        Permission_Enum.ConferenceViewAttendees,
-                        Permission_Enum.ConferenceManageAttendees,
-                        Permission_Enum.ConferenceModerateAttendees,
-                        Permission_Enum.ConferenceManageSchedule,
+                        Permissions_Permission_Enum.ConferenceViewAttendees,
+                        Permissions_Permission_Enum.ConferenceManageAttendees,
+                        Permissions_Permission_Enum.ConferenceModerateAttendees,
+                        Permissions_Permission_Enum.ConferenceManageSchedule,
                     ]}
                 >
                     <WaitingPage />

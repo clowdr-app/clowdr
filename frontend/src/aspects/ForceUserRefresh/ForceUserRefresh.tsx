@@ -66,8 +66,8 @@ export default function ForceUserRefresh(): JSX.Element {
 
     useEffect(() => {
         try {
-            if (!query.loading && !query.error && query.data && query.data.ConferenceConfiguration.length > 0) {
-                const config = query.data.ConferenceConfiguration[0];
+            if (!query.loading && !query.error && query.data && query.data.conference_Configuration.length > 0) {
+                const config = query.data.conference_Configuration[0];
                 if (config.value && config.value !== "") {
                     const latestVersion = config.value;
                     if (version !== latestVersion) {

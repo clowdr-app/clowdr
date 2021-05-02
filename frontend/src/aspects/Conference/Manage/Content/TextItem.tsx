@@ -1,5 +1,5 @@
 import { Textarea, useToast } from "@chakra-ui/react";
-import { AbstractBlob, ContentBaseType, ElementVersionData, TextBlob } from "@clowdr-app/shared-types/build/content";
+import { AbstractBlob, ElementBaseType, ElementVersionData, TextBlob } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -14,7 +14,7 @@ function createDefaultText(type: ElementType_Enum.Abstract | ElementType_Enum.Te
         createdBy: "user",
         data: {
             type,
-            baseType: ContentBaseType.Text,
+            baseType: ElementBaseType.Text,
             text: "",
         },
     };
@@ -85,7 +85,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
             }
 
             const latestVersion = data.item.data[data.item.data.length - 1] as TextItemVersionData;
-            if (latestVersion.data.baseType !== ContentBaseType.Text) {
+            if (latestVersion.data.baseType !== ElementBaseType.Text) {
                 return <>Text Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             return (

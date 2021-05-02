@@ -1,7 +1,7 @@
 import { Center, HStack, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
-import { Permission_Enum, Schedule_RoomSummaryFragment } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, Schedule_RoomSummaryFragment } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 
@@ -42,8 +42,8 @@ export default function RoomNameBox({
     // }
 
     const shouldLink = [
-        Permission_Enum.ConferenceViewAttendees,
-        Permission_Enum.ConferenceManageSchedule,
+        Permissions_Permission_Enum.ConferenceViewAttendees,
+        Permissions_Permission_Enum.ConferenceManageSchedule,
     ].some((permission) => activePermissions.has(permission));
 
     return (

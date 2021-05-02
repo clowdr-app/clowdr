@@ -16,7 +16,7 @@ import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
 import React, { useCallback, useMemo } from "react";
 import {
-    ElementType_Enum,
+    Content_ElementType_Enum,
     useGetElementQuery,
     useGetUploadAgreementQuery,
     useSelectUploadableItemQuery,
@@ -117,11 +117,11 @@ export default function SubmitItemPage({
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");
 
     const uploadableItem = useMemo(() => {
-        if (!data?.UploadableElement || data.UploadableElement.length !== 1) {
+        if (!data?.content_UploadableElement || data.content_UploadableElement.length !== 1) {
             return null;
         }
 
-        return data.UploadableElement[0];
+        return data.content_UploadableElement[0];
     }, [data]);
 
     const title = useTitle(uploadableItem?.itemTitle ? `Submit ${uploadableItem.itemTitle}` : "Clowdr");
@@ -140,12 +140,12 @@ export default function SubmitItemPage({
         }
 
         switch (uploadableItem.typeName) {
-            case ElementType_Enum.Abstract:
-            case ElementType_Enum.Text:
+            case Content_ElementType_Enum.Abstract:
+            case Content_ElementType_Enum.Text:
                 return <UploadTextForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
-            case ElementType_Enum.ImageFile:
-            case ElementType_Enum.PaperFile:
-            case ElementType_Enum.PosterFile:
+            case Content_ElementType_Enum.ImageFile:
+            case Content_ElementType_Enum.PaperFile:
+            case Content_ElementType_Enum.PosterFile:
                 return (
                     <UploadFileForm
                         magicToken={magicToken}
@@ -155,10 +155,10 @@ export default function SubmitItemPage({
                         handleFormSubmitted={formSubmitted}
                     />
                 );
-            case ElementType_Enum.Link:
-            case ElementType_Enum.LinkButton:
-            case ElementType_Enum.PaperLink:
-            case ElementType_Enum.VideoLink:
+            case Content_ElementType_Enum.Link:
+            case Content_ElementType_Enum.LinkButton:
+            case Content_ElementType_Enum.PaperLink:
+            case Content_ElementType_Enum.VideoLink:
                 return (
                     <UploadLinkForm
                         magicToken={magicToken}
@@ -166,10 +166,10 @@ export default function SubmitItemPage({
                         handleFormSubmitted={formSubmitted}
                     />
                 );
-            case ElementType_Enum.ImageUrl:
-            case ElementType_Enum.PaperUrl:
-            case ElementType_Enum.PosterUrl:
-            case ElementType_Enum.VideoUrl:
+            case Content_ElementType_Enum.ImageUrl:
+            case Content_ElementType_Enum.PaperUrl:
+            case Content_ElementType_Enum.PosterUrl:
+            case Content_ElementType_Enum.VideoUrl:
                 return (
                     <UploadUrlForm
                         magicToken={magicToken}
@@ -177,13 +177,13 @@ export default function SubmitItemPage({
                         handleFormSubmitted={formSubmitted}
                     />
                 );
-            case ElementType_Enum.VideoBroadcast:
-            case ElementType_Enum.VideoCountdown:
-            case ElementType_Enum.VideoFile:
-            case ElementType_Enum.VideoFiller:
-            case ElementType_Enum.VideoPrepublish:
-            case ElementType_Enum.VideoSponsorsFiller:
-            case ElementType_Enum.VideoTitles:
+            case Content_ElementType_Enum.VideoBroadcast:
+            case Content_ElementType_Enum.VideoCountdown:
+            case Content_ElementType_Enum.VideoFile:
+            case Content_ElementType_Enum.VideoFiller:
+            case Content_ElementType_Enum.VideoPrepublish:
+            case Content_ElementType_Enum.VideoSponsorsFiller:
+            case Content_ElementType_Enum.VideoTitles:
                 return (
                     <UploadFileForm
                         magicToken={magicToken}
@@ -230,7 +230,7 @@ export default function SubmitItemPage({
                                     </Text>
                                 ) : (
                                     <>
-                                        {uploadableItem.typeName === ElementType_Enum.VideoBroadcast ? (
+                                        {uploadableItem.typeName === Content_ElementType_Enum.VideoBroadcast ? (
                                             <Box>
                                                 <UnorderedList>
                                                     {uploadableItem.uploadsRemaining ? (
@@ -263,7 +263,7 @@ export default function SubmitItemPage({
                                                 </UnorderedList>
                                             </Box>
                                         ) : undefined}
-                                        {uploadableItem.typeName === ElementType_Enum.VideoPrepublish ? (
+                                        {uploadableItem.typeName === Content_ElementType_Enum.VideoPrepublish ? (
                                             <Box>
                                                 <UnorderedList>
                                                     {uploadableItem.uploadsRemaining ? (

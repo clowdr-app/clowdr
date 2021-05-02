@@ -3,9 +3,9 @@ import { Button, FormLabel, Input, useColorModeValue, useDisclosure } from "@cha
 import React, { LegacyRef, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
+    Content_ItemType_Enum,
+    Content_Item_Set_Input,
     EditableSponsorsTable_UpdateSponsorMutationVariables,
-    ItemType_Enum,
-    Item_Set_Input,
     useEditableSponsorsTable_DeleteSponsorMutation,
     useEditableSponsorsTable_GetAllSponsorsQuery,
     useEditableSponsorsTable_InsertSponsorMutation,
@@ -79,7 +79,7 @@ export function EditableSponsorsTable(): JSX.Element {
         fetchPolicy: "cache-and-network",
         nextFetchPolicy: "cache-first",
     });
-    const data = useMemo(() => [...(sponsors.data?.Item ?? [])], [sponsors.data?.Item]);
+    const data = useMemo(() => [...(sponsors.data?.content_Item ?? [])], [sponsors.data?.content_Item]);
 
     const {
         isOpen: isSecondaryPanelOpen,
@@ -193,12 +193,12 @@ export function EditableSponsorsTable(): JSX.Element {
         <>
             <CRUDTable
                 tableUniqueName="ManageConferenceSponsors"
-                data={!sponsors.loading && (sponsors.data?.Item ? data : null)}
+                data={!sponsors.loading && (sponsors.data?.content_Item ? data : null)}
                 columns={columns}
                 row={row}
                 edit={{
                     open: (key) => {
-                        const idx = sponsors.data?.Item.findIndex((item) => item.id === key);
+                        const idx = sponsors.data?.content_Item.findIndex((item) => item.id === key);
                         const newIdx = idx !== undefined && idx !== -1 ? idx : null;
                         setEditingIndex(newIdx);
                         if (newIdx !== null) {
@@ -213,7 +213,7 @@ export function EditableSponsorsTable(): JSX.Element {
                     generateDefaults: () => ({
                         id: uuidv4(),
                         conferenceId: conference.id,
-                        typeName: ItemType_Enum.Sponsor,
+                        typeName: Content_ItemType_Enum.Sponsor,
                         originatingDataId: null,
                         shortTitle: "New sponsor",
                         title: "New sponsor",
@@ -227,15 +227,15 @@ export function EditableSponsorsTable(): JSX.Element {
                                     title: record.title,
                                     shortTitle: record.shortTitle,
                                     conferenceId: conference.id,
-                                    typeName: ItemType_Enum.Sponsor,
+                                    typeName: Content_ItemType_Enum.Sponsor,
                                 },
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.insert_Item_one) {
-                                    const data = _data.insert_Item_one;
+                                if (_data?.insert_content_Item_one) {
+                                    const data = _data.insert_content_Item_one;
                                     cache.modify({
                                         fields: {
-                                            Item(existingRefs: Reference[] = [], { readField }) {
+                                            content_Item(existingRefs: Reference[] = [], { readField }) {
                                                 const newRef = cache.writeFragment({
                                                     data: {
                                                         ...data,
@@ -258,7 +258,7 @@ export function EditableSponsorsTable(): JSX.Element {
                 }}
                 update={{
                     ongoing: updateSponsorResponse.loading,
-                    start: (record: Item_Set_Input & { id: any }) => {
+                    start: (record: Content_Item_Set_Input & { id: any }) => {
                         const variables: DeepMutable<EditableSponsorsTable_UpdateSponsorMutationVariables> = {
                             object: {
                                 shortTitle: record.shortTitle,
@@ -269,14 +269,14 @@ export function EditableSponsorsTable(): JSX.Element {
                         updateSponsor({
                             variables,
                             optimisticResponse: {
-                                update_Item_by_pk: record,
+                                update_content_Item_by_pk: record,
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.update_Item_by_pk) {
-                                    const data = _data.update_Item_by_pk;
+                                if (_data?.update_content_Item_by_pk) {
+                                    const data = _data.update_content_Item_by_pk;
                                     cache.modify({
                                         fields: {
-                                            Item(existingRefs: Reference[] = [], { readField }) {
+                                            content_Item(existingRefs: Reference[] = [], { readField }) {
                                                 const newRef = cache.writeFragment({
                                                     data,
                                                     fragment: SponsorInfoFragmentDoc,
@@ -302,12 +302,12 @@ export function EditableSponsorsTable(): JSX.Element {
                                 itemIds: keys,
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.delete_Item) {
-                                    const data = _data.delete_Item;
+                                if (_data?.delete_content_Item) {
+                                    const data = _data.delete_content_Item;
                                     const deletedIds = data.returning.map((x) => x.id);
                                     cache.modify({
                                         fields: {
-                                            Item(existingRefs: Reference[] = [], { readField }) {
+                                            content_Item(existingRefs: Reference[] = [], { readField }) {
                                                 deletedIds.forEach((x) => {
                                                     cache.evict({
                                                         id: x.id,
@@ -342,7 +342,7 @@ export function EditableSponsorsTable(): JSX.Element {
                 forceReload={forceReloadRef}
             />
             <SponsorSecondaryEditor
-                sponsors={sponsors.data?.Item ?? []}
+                sponsors={sponsors.data?.content_Item ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
                 onSecondaryPanelClose={() => {

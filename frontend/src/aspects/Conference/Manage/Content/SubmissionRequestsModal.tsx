@@ -34,7 +34,7 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import {
-    ElementType_Enum,
+    Content_ElementType_Enum,
     SubmissionRequestsModal_ConferenceConfigurationFragment,
     useSubmissionRequestsModal_GetConferenceConfigurationsQuery,
 } from "../../../../generated/graphql";
@@ -43,53 +43,53 @@ import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import type { ItemDescriptor } from "./Types";
 
-function generateElementTypeFriendlyName(type: ElementType_Enum) {
+function generateElementTypeFriendlyName(type: Content_ElementType_Enum) {
     switch (type) {
-        case ElementType_Enum.Abstract:
+        case Content_ElementType_Enum.Abstract:
             return "Abstract";
-        case ElementType_Enum.ItemList:
+        case Content_ElementType_Enum.ContentGroupList:
             return "Content group list";
-        case ElementType_Enum.ImageFile:
+        case Content_ElementType_Enum.ImageFile:
             return "Image file";
-        case ElementType_Enum.ImageUrl:
+        case Content_ElementType_Enum.ImageUrl:
             return "Image URL";
-        case ElementType_Enum.Link:
+        case Content_ElementType_Enum.Link:
             return "Link";
-        case ElementType_Enum.LinkButton:
+        case Content_ElementType_Enum.LinkButton:
             return "Link button";
-        case ElementType_Enum.PaperFile:
+        case Content_ElementType_Enum.PaperFile:
             return "Paper file";
-        case ElementType_Enum.PaperLink:
+        case Content_ElementType_Enum.PaperLink:
             return "Paper link";
-        case ElementType_Enum.PaperUrl:
+        case Content_ElementType_Enum.PaperUrl:
             return "Paper URL";
-        case ElementType_Enum.PosterFile:
+        case Content_ElementType_Enum.PosterFile:
             return "Poster file";
-        case ElementType_Enum.PosterUrl:
+        case Content_ElementType_Enum.PosterUrl:
             return "Poster URL";
-        case ElementType_Enum.Text:
+        case Content_ElementType_Enum.Text:
             return "Text";
-        case ElementType_Enum.VideoBroadcast:
+        case Content_ElementType_Enum.VideoBroadcast:
             return "Video for broadcast";
-        case ElementType_Enum.VideoCountdown:
+        case Content_ElementType_Enum.VideoCountdown:
             return "Video countdown";
-        case ElementType_Enum.VideoFile:
+        case Content_ElementType_Enum.VideoFile:
             return "Video file";
-        case ElementType_Enum.VideoFiller:
+        case Content_ElementType_Enum.VideoFiller:
             return "Filler video";
-        case ElementType_Enum.VideoLink:
+        case Content_ElementType_Enum.VideoLink:
             return "Link to video";
-        case ElementType_Enum.VideoPrepublish:
+        case Content_ElementType_Enum.VideoPrepublish:
             return "Video for pre-publication";
-        case ElementType_Enum.VideoSponsorsFiller:
+        case Content_ElementType_Enum.VideoSponsorsFiller:
             return "Sponsors filler video";
-        case ElementType_Enum.VideoTitles:
+        case Content_ElementType_Enum.VideoTitles:
             return "Pre-roll titles video";
-        case ElementType_Enum.VideoUrl:
+        case Content_ElementType_Enum.VideoUrl:
             return "Video URL";
-        case ElementType_Enum.WholeSchedule:
+        case Content_ElementType_Enum.WholeSchedule:
             return "Whole schedule";
-        case ElementType_Enum.Zoom:
+        case Content_ElementType_Enum.Zoom:
             return "Zoom Meeting URL";
     }
 }
@@ -127,7 +127,7 @@ export function SendSubmissionRequestsModal({
         },
     });
     return (
-        <ApolloQueryWrapper queryResult={result} getter={(result) => result.ConferenceConfiguration}>
+        <ApolloQueryWrapper queryResult={result} getter={(result) => result.conference_Configuration}>
             {(conferenceConfigurations: readonly SubmissionRequestsModal_ConferenceConfigurationFragment[]) => {
                 const conferenceConfiguration =
                     conferenceConfigurations.find(
@@ -169,31 +169,31 @@ export function SendSubmissionRequestsModalInner({
     existingTemplate: EmailTemplate_BaseConfig;
     send: (_uploaderIds: string[], _emailTemplate: EmailTemplate_BaseConfig) => Promise<void>;
 }): JSX.Element {
-    const types = useMemo(() => Object.values(ElementType_Enum), []);
+    const types = useMemo(() => Object.values(Content_ElementType_Enum), []);
     const [selectedType, setSelectedType] = useState<string>();
-    const uploadableItems = useMemo(
+    const uploadableElements = useMemo(
         () =>
             R.flatten(
                 items.map((item) =>
-                    item.uploadableItems
-                        .filter((item) => !selectedType || item.typeName === selectedType)
-                        .map((item) => ({
+                    item.uploadableElements
+                        .filter((element) => !selectedType || element.typeName === selectedType)
+                        .map((element) => ({
                             item,
-                            uploadableItem: item,
+                            uploadableElement: element,
                         }))
                 )
             ),
         [items, selectedType]
     );
-    const uploadableItemsEl = useMemo(
+    const uploadableElementsEl = useMemo(
         () => (
             <Box mt={4}>
-                {uploadableItems.length === 0 ? (
+                {uploadableElements.length === 0 ? (
                     <Text>No matching files.</Text>
                 ) : (
                     <List spacing={2} maxH="40vh" overflowY="auto">
-                        {uploadableItems.map((item) => (
-                            <ListItem key={item.uploadableItem.id}>
+                        {uploadableElements.map((item) => (
+                            <ListItem key={item.uploadableElement.id}>
                                 <HStack>
                                     <FAIcon icon="file" iconStyle="r" mr={2} />
                                     <VStack alignItems="flex-start" spacing={0}>
@@ -201,10 +201,10 @@ export function SendSubmissionRequestsModalInner({
                                             {item.item.title}
                                         </Text>
                                         <Text fontSize="sm">
-                                            {item.uploadableItem.name} (
-                                            {generateElementTypeFriendlyName(item.uploadableItem.typeName)}) -{" "}
-                                            {item.uploadableItem.uploaders.length} uploader
-                                            {item.uploadableItem.uploaders.length > 1 ? "s" : undefined}
+                                            {item.uploadableElement.name} (
+                                            {generateElementTypeFriendlyName(item.uploadableElement.typeName)}) -{" "}
+                                            {item.uploadableElement.uploaders.length} uploader
+                                            {item.uploadableElement.uploaders.length > 1 ? "s" : undefined}
                                         </Text>
                                     </VStack>
                                 </HStack>
@@ -214,12 +214,15 @@ export function SendSubmissionRequestsModalInner({
                 )}
             </Box>
         ),
-        [uploadableItems]
+        [uploadableElements]
     );
 
     const uploaderIds = useMemo(
-        () => R.flatten(uploadableItems.map((item) => item.uploadableItem.uploaders.map((uploader) => uploader.id))),
-        [uploadableItems]
+        () =>
+            R.flatten(
+                uploadableElements.map((item) => item.uploadableElement.uploaders.map((uploader) => uploader.id))
+            ),
+        [uploadableElements]
     );
 
     const toast = useToast();
@@ -271,12 +274,12 @@ export function SendSubmissionRequestsModalInner({
                                     >
                                         {types.map((type) => (
                                             <option key={type} value={type}>
-                                                {generateElementTypeFriendlyName(type as ElementType_Enum)}
+                                                {generateElementTypeFriendlyName(type as Content_ElementType_Enum)}
                                             </option>
                                         ))}
                                     </Select>
                                 </FormControl>
-                                {uploadableItemsEl}
+                                {uploadableElementsEl}
                                 <Heading as="h4" textAlign="left" size="sm" mt={4}>
                                     Email template
                                 </Heading>
@@ -330,7 +333,7 @@ export function SendSubmissionRequestsModalInner({
                                     mt={4}
                                     colorScheme="green"
                                 >
-                                    Send {uploaderIds.length} emails ({uploadableItems.length} items)
+                                    Send {uploaderIds.length} emails ({uploadableElements.length} items)
                                 </Button>
                             </ModalFooter>
                         </ModalContent>

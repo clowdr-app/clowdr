@@ -17,12 +17,12 @@ import type { ElementDescriptor } from "./Types";
 export default function UploadFileForm_Element({
     item,
     allowedFileTypes,
-    onItemChange,
+    onElementChange,
     contentBaseType,
 }: {
     item: ElementDescriptor;
     allowedFileTypes: string[];
-    onItemChange?: (newItem: ElementDescriptor) => void;
+    onElementChange?: (newItem: ElementDescriptor) => void;
     contentBaseType: ElementBaseType.File | ElementBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
@@ -121,9 +121,9 @@ export default function UploadFileForm_Element({
                         });
                         uppy.reset();
 
-                        if (onItemChange) {
+                        if (onElementChange) {
                             if (contentBaseType === ElementBaseType.Video) {
-                                onItemChange({
+                                onElementChange({
                                     ...item,
                                     data: [
                                         ...item.data,
@@ -140,7 +140,7 @@ export default function UploadFileForm_Element({
                                     ],
                                 });
                             } else if (contentBaseType === ElementBaseType.File) {
-                                onItemChange({
+                                onElementChange({
                                     ...item,
                                     data: [
                                         ...item.data,

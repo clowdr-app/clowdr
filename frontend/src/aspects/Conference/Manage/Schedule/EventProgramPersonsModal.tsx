@@ -31,10 +31,10 @@ import {
     EventInfoFragmentDoc,
     EventProgramPersonInfoFragment,
     EventProgramPersonInfoFragmentDoc,
-    EventProgramPersonRole_Enum,
-    EventProgramPerson_Insert_Input,
     ProgramPersonInfoFragment,
-    room_Mode_Enum,
+    Room_Mode_Enum,
+    Schedule_EventProgramPersonRole_Enum,
+    Schedule_EventProgramPerson_Insert_Input,
     useAddEventPeople_InsertEventPeopleMutation,
     useAddEventPeople_InsertProgramPeopleMutation,
     useAddEventPeople_SelectProgramPeople_ByRegistrantQuery,
@@ -92,8 +92,8 @@ gql`
 export function requiresEventPeople(event: EventInfoFragment): boolean {
     return (
         (!event.eventPeople || event.eventPeople.length === 0) &&
-        (event.intendedRoomModeName === room_Mode_Enum.Presentation ||
-            event.intendedRoomModeName === room_Mode_Enum.QAndA)
+        (event.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+            event.intendedRoomModeName === Room_Mode_Enum.QAndA)
     );
 }
 
@@ -117,7 +117,7 @@ export function AddEventProgramPerson_RegistrantModal({
     const registrantOptions = useMemo(
         () =>
             selectRegistrantsQuery.data
-                ? [...selectRegistrantsQuery.data.Registrant]
+                ? [...selectRegistrantsQuery.data.registrant_Registrant]
                       .sort((x, y) => x.displayName.localeCompare(y.displayName))
                       .map((x) => (
                           <option key={x.id} value={x.id}>
@@ -132,10 +132,10 @@ export function AddEventProgramPerson_RegistrantModal({
 
     const roleOptions = useMemo(
         () =>
-            Object.keys(EventProgramPersonRole_Enum)
+            Object.keys(Schedule_EventProgramPersonRole_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (EventProgramPersonRole_Enum as any)[x];
+                    const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
                     return (
                         <option key={v} value={v}>
                             {formatEnumValue(v)}
@@ -146,8 +146,8 @@ export function AddEventProgramPerson_RegistrantModal({
     );
 
     const [selectedRegistrantId, setSelectedRegistrantId] = useState<string>("");
-    const [selectedRole, setSelectedRole] = useState<EventProgramPersonRole_Enum>(
-        EventProgramPersonRole_Enum.Presenter
+    const [selectedRole, setSelectedRole] = useState<Schedule_EventProgramPersonRole_Enum>(
+        Schedule_EventProgramPersonRole_Enum.Presenter
     );
 
     const insertProgramPeople = useAddEventPeople_InsertProgramPeopleMutation();
@@ -162,7 +162,7 @@ export function AddEventProgramPerson_RegistrantModal({
         setError(null);
 
         try {
-            const newEventPeople: EventProgramPerson_Insert_Input[] = await addRegistrantsToEvent(
+            const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = await addRegistrantsToEvent(
                 [selectedRegistrantId],
                 selectRegistrantsQuery,
                 selectProgramPeople_ByRegistrantQuery,
@@ -244,7 +244,9 @@ export function AddEventProgramPerson_RegistrantModal({
                                 <Select
                                     aria-label="Role of registrant"
                                     value={selectedRole}
-                                    onChange={(ev) => setSelectedRole(ev.target.value as EventProgramPersonRole_Enum)}
+                                    onChange={(ev) =>
+                                        setSelectedRole(ev.target.value as Schedule_EventProgramPersonRole_Enum)
+                                    }
                                     mb={4}
                                 >
                                     {roleOptions}
@@ -303,10 +305,10 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
 
     const roleOptions = useMemo(
         () =>
-            Object.keys(EventProgramPersonRole_Enum)
+            Object.keys(Schedule_EventProgramPersonRole_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (EventProgramPersonRole_Enum as any)[x];
+                    const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
                     return { value: v, label: formatEnumValue(v) };
                 }),
         []
@@ -384,12 +386,12 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                 set: (record, value) => {
                     record.roleName = value;
                 },
-                sort: (x: room_Mode_Enum, y: room_Mode_Enum) => x.localeCompare(y),
+                sort: (x: Room_Mode_Enum, y: Room_Mode_Enum) => x.localeCompare(y),
                 cell: function EventNameCell(props: CellProps<Partial<EventProgramPersonInfoFragment>>) {
                     return (
                         <Select
                             value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value as room_Mode_Enum)}
+                            onChange={(ev) => props.onChange?.(ev.target.value as Room_Mode_Enum)}
                             onBlur={props.onBlur}
                             ref={props.ref as LegacyRef<HTMLSelectElement>}
                         >
@@ -461,13 +463,13 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                     generateDefaults: () => ({
                                         id: uuidv4(),
                                         eventId: event.id,
-                                        roleName: EventProgramPersonRole_Enum.Presenter,
+                                        roleName: Schedule_EventProgramPersonRole_Enum.Presenter,
                                     }),
                                     makeWhole: (d) => d.personId && (d as EventProgramPersonInfoFragment),
                                     start: (record) => {
                                         assert(record.roleName);
                                         assert(record.personId);
-                                        const newEventProgramPerson: EventProgramPerson_Insert_Input = {
+                                        const newEventProgramPerson: Schedule_EventProgramPerson_Insert_Input = {
                                             id: uuidv4(),
                                             eventId: event.id,
                                             personId: record.personId,
@@ -478,11 +480,14 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                                 newEventProgramPerson,
                                             },
                                             update: (cache, { data: _data }) => {
-                                                if (_data?.insert_EventProgramPerson_one) {
-                                                    const data = _data.insert_EventProgramPerson_one;
+                                                if (_data?.insert_schedule_EventProgramPerson_one) {
+                                                    const data = _data.insert_schedule_EventProgramPerson_one;
                                                     cache.modify({
                                                         fields: {
-                                                            Event: (existingRefs: Reference[] = [], { readField }) => {
+                                                            schedule_Event: (
+                                                                existingRefs: Reference[] = [],
+                                                                { readField }
+                                                            ) => {
                                                                 const eventRef = existingRefs.find(
                                                                     (ref) => readField("id", ref) === event.id
                                                                 );
@@ -508,7 +513,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                                                 }
                                                                 return existingRefs;
                                                             },
-                                                            EventProgramPerson(
+                                                            schedule_EventProgramPerson(
                                                                 existingRefs: Reference[] = [],
                                                                 { readField }
                                                             ) {
@@ -544,11 +549,11 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                                 personId: record.personId,
                                             },
                                             update: (cache, { data: _data }) => {
-                                                if (_data?.update_EventProgramPerson_by_pk) {
-                                                    const data = _data.update_EventProgramPerson_by_pk;
+                                                if (_data?.update_schedule_EventProgramPerson_by_pk) {
+                                                    const data = _data.update_schedule_EventProgramPerson_by_pk;
                                                     cache.modify({
                                                         fields: {
-                                                            EventProgramPerson(
+                                                            schedule_EventProgramPerson(
                                                                 existingRefs: Reference[] = [],
                                                                 { readField }
                                                             ) {
@@ -581,12 +586,15 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                                 deleteEventPeopleIds: keys,
                                             },
                                             update: (cache, { data: _data }) => {
-                                                if (_data?.delete_EventProgramPerson) {
-                                                    const datas = _data.delete_EventProgramPerson;
+                                                if (_data?.delete_schedule_EventProgramPerson) {
+                                                    const datas = _data.delete_schedule_EventProgramPerson;
                                                     const ids = datas.returning.map((x) => x.id);
                                                     cache.modify({
                                                         fields: {
-                                                            Event: (existingRefs: Reference[] = [], { readField }) => {
+                                                            schedule_Event: (
+                                                                existingRefs: Reference[] = [],
+                                                                { readField }
+                                                            ) => {
                                                                 const eventRef = existingRefs.find(
                                                                     (ref) => readField("id", ref) === event.id
                                                                 );
@@ -611,7 +619,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                                                 }
                                                                 return existingRefs;
                                                             },
-                                                            EventProgramPerson(
+                                                            schedule_EventProgramPerson(
                                                                 existingRefs: Reference[] = [],
                                                                 { readField }
                                                             ) {

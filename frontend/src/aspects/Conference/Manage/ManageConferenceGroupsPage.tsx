@@ -159,7 +159,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
 
         const result = new Map<string, GroupDescriptor>();
 
-        for (const group of allGroups.Group) {
+        for (const group of allGroups.permissions_Group) {
             const roleIds: Set<string> = new Set();
             for (const groupRole of group.groupRoles) {
                 roleIds.add(groupRole.roleId);
@@ -185,7 +185,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
 
     const fields = useMemo(() => {
         const roleOptions: RoleOption[] =
-            allRoles?.Role.map((role) => ({
+            allRoles?.permissions_Role.map((role) => ({
                 value: role.id,
                 label: role.name,
             })) ?? [];
@@ -290,11 +290,14 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
             },
         };
         return result;
-    }, [allRoles?.Role]);
+    }, [allRoles?.permissions_Role]);
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageRoles, Permissions_Permission_Enum.ConferenceManageGroups]}
+            permissions={[
+                Permissions_Permission_Enum.ConferenceManageRoles,
+                Permissions_Permission_Enum.ConferenceManageGroups,
+            ]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -406,7 +409,7 @@ export default function ManageConferenceGroupsPage(): JSX.Element {
                                             item.includeUnauthenticated !== existing.includeUnauthenticated;
                                         const roleIdsAdded = new Set<string>();
                                         const roleIdsDeleted = new Set<string>();
-                                        for (const role of allRoles.Role) {
+                                        for (const role of allRoles.permissions_Role) {
                                             if (item.roleIds.has(role.id) && !existing.roleIds.has(role.id)) {
                                                 changed = true;
                                                 roleIdsAdded.add(role.id);

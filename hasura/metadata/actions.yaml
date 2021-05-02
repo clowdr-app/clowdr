@@ -30,7 +30,7 @@ actions:
 - name: getUploadAgreement
   definition:
     kind: ""
-    handler: '{{ACTION_BASE_URL}}/contentItem/getUploadAgreement'
+    handler: '{{ACTION_BASE_URL}}/element/getUploadAgreement'
     forward_client_headers: true
     headers:
     - name: x-hasura-event-secret
@@ -124,16 +124,6 @@ actions:
     headers:
     - name: x-hasura-presence-summary-secret
       value_from_env: PRESENCE_SUMMARY_SECRET
-- name: protectedEcho
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/protectedEcho'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: user
 - name: refreshYouTubeData
   definition:
     kind: synchronous

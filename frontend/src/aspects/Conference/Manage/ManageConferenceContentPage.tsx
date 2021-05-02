@@ -3,7 +3,11 @@ import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/co
 import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ItemType_Enum, useInsertSubmissionRequestEmailJobsMutation } from "../../../generated/graphql";
+import {
+    Content_ItemType_Enum,
+    Permissions_Permission_Enum,
+    useInsertSubmissionRequestEmailJobsMutation,
+} from "../../../generated/graphql";
 import CRUDTable, {
     CRUDTableProps,
     defaultSelectFilter,
@@ -28,13 +32,13 @@ import ManageTagsModal from "./Content/ManageTagsModal";
 import { SendSubmissionRequestsModal } from "./Content/SubmissionRequestsModal";
 import { SubmissionReviewModal } from "./Content/SubmissionReviewModal";
 // import PublishVideosModal from "./Content/PublishVideosModal";
-import { fitGroupToTemplate, GroupTemplates } from "./Content/Templates";
+import { fitItemToTemplate, ItemTemplates } from "./Content/Templates";
 import type {
     ElementDescriptor,
     ExhibitionDescriptor,
     ItemDescriptor,
     ProgramPersonDescriptor,
-    SupportedItemBaseTemplate,
+    SupportedElementBaseTemplate,
     UploadableElementDescriptor,
 } from "./Content/Types";
 import UploadersModal from "./Content/UploadersModal";
@@ -50,14 +54,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const saveContentDiff = useSaveContentDiff();
 
     const groupTypeOptions: SelectOption[] = useMemo(() => {
-        return Object.keys(ItemType_Enum)
+        return Object.keys(Content_ItemType_Enum)
             .filter(
                 (key) =>
-                    typeof (ItemType_Enum as any)[key] === "string" &&
-                    GroupTemplates[(ItemType_Enum as any)[key] as ItemType_Enum].supported
+                    typeof (Content_ItemType_Enum as any)[key] === "string" &&
+                    ItemTemplates[(Content_ItemType_Enum as any)[key] as Content_ItemType_Enum].supported
             )
             .map((key) => {
-                const v = (ItemType_Enum as any)[key] as string;
+                const v = (Content_ItemType_Enum as any)[key] as string;
                 return {
                     label: v
                         .split("_")
@@ -165,7 +169,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 isEditableAtCreate: true,
                 defaultValue: {
                     label: "Paper",
-                    value: ItemType_Enum.Paper,
+                    value: Content_ItemType_Enum.Paper,
                 },
                 insert: (item, v) => {
                     return {
@@ -255,7 +259,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 // Deep clone so that when we manipulate stuff later it doesn't
                 // accidentally screw up the query data
                 const newGroup: ItemDescriptor = deepCloneItemDescriptor(group);
-                // fitGroupToTemplate(newGroup);
+                // fitItemToTemplate(newGroup);
                 newGroupsMap.set(key, newGroup);
             }
             for (const [key, value] of saveContentDiff.originalPeople) {
@@ -314,7 +318,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageContent]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -344,14 +348,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 ...group,
                                 isNew: true,
                                 id: tempKey,
-                                items: [],
-                                uploadableItems: [],
+                                elements: [],
+                                uploadableElements: [],
                                 exhibitions: [],
                                 people: [],
                                 tagIds: group.tagIds ?? new Set(),
                                 rooms: [],
                             } as ItemDescriptor;
-                            fitGroupToTemplate(newGroup);
+                            fitItemToTemplate(newGroup);
                             setAllItemsMap((oldData) => {
                                 const newData = new Map(oldData ? oldData.entries() : []);
                                 newData.set(tempKey, newGroup);
@@ -871,26 +875,26 @@ export function UploadableItemEditorModal({
     itemDesc,
 }: {
     group: ItemDescriptor;
-    itemTemplate: SupportedItemBaseTemplate;
+    itemTemplate: SupportedElementBaseTemplate;
     isDirty: boolean;
     markDirty: () => void;
     setAllItemsMap: React.Dispatch<React.SetStateAction<Map<string, ItemDescriptor> | undefined>>;
     itemDesc:
         | {
               type: "required-only";
-              uploadableItem: UploadableElementDescriptor;
+              uploadableElement: UploadableElementDescriptor;
           }
         | {
-              type: "required-and-item";
-              uploadableItem: UploadableElementDescriptor;
-              item: ElementDescriptor;
+              type: "required-and-element";
+              uploadableElement: UploadableElementDescriptor;
+              element: ElementDescriptor;
           };
 }): JSX.Element {
     const reqItemEditorContents = (
         <itemTemplate.renderEditor
             data={itemDesc}
             update={(updatedDesc) => {
-                assert(updatedDesc.type !== "item-only");
+                assert(updatedDesc.type !== "element-only");
                 markDirty();
 
                 setAllItemsMap((oldGroups) => {
@@ -901,18 +905,18 @@ export function UploadableItemEditorModal({
                     assert(existingGroup);
                     newGroups.set(group.id, {
                         ...existingGroup,
-                        items:
-                            itemDesc.type === "required-and-item" && updatedDesc.type === "required-and-item"
-                                ? existingGroup.items.map((cItem) => {
-                                      return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+                        elements:
+                            itemDesc.type === "required-and-element" && updatedDesc.type === "required-and-element"
+                                ? existingGroup.elements.map((cItem) => {
+                                      return itemDesc.element.id === cItem.id ? updatedDesc.element : cItem;
                                   })
-                                : itemDesc.type === "required-only" && updatedDesc.type === "required-and-item"
-                                ? [...existingGroup.items, updatedDesc.item]
-                                : itemDesc.type === "required-and-item" && updatedDesc.type === "required-only"
-                                ? existingGroup.items.filter((x) => x.id !== itemDesc.item.id)
-                                : existingGroup.items,
-                        uploadableItems: existingGroup.uploadableItems.map((x) =>
-                            x.id === itemDesc.uploadableItem.id ? updatedDesc.uploadableItem : x
+                                : itemDesc.type === "required-only" && updatedDesc.type === "required-and-element"
+                                ? [...existingGroup.elements, updatedDesc.element]
+                                : itemDesc.type === "required-and-element" && updatedDesc.type === "required-only"
+                                ? existingGroup.elements.filter((x) => x.id !== itemDesc.element.id)
+                                : existingGroup.elements,
+                        uploadableElements: existingGroup.uploadableElements.map((x) =>
+                            x.id === itemDesc.uploadableElement.id ? updatedDesc.uploadableElement : x
                         ),
                     });
 
@@ -932,7 +936,7 @@ export function UploadableItemEditorModal({
                 onOpen={onUploadersOpen}
                 onClose={onUploadersClose}
                 groupTitle={group.title}
-                itemDesc={itemDesc.uploadableItem}
+                itemDesc={itemDesc.uploadableElement}
                 setUploadsRemaining={(newUploadsRemaining) => {
                     markDirty();
                     setAllItemsMap((oldGroups) => {
@@ -941,8 +945,8 @@ export function UploadableItemEditorModal({
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            uploadableItems: existingGroup.uploadableItems.map((existingItem) => {
-                                if (existingItem.id === itemDesc.uploadableItem.id) {
+                            uploadableElements: existingGroup.uploadableElements.map((existingItem) => {
+                                if (existingItem.id === itemDesc.uploadableElement.id) {
                                     return {
                                         ...existingItem,
                                         uploadsRemaining: newUploadsRemaining,
@@ -963,8 +967,8 @@ export function UploadableItemEditorModal({
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            uploadableItems: existingGroup.uploadableItems.map((existingItem) => {
-                                if (existingItem.id === itemDesc.uploadableItem.id) {
+                            uploadableElements: existingGroup.uploadableElements.map((existingItem) => {
+                                if (existingItem.id === itemDesc.uploadableElement.id) {
                                     return {
                                         ...existingItem,
                                         uploaders: [...existingItem.uploaders, uploader],
@@ -985,8 +989,8 @@ export function UploadableItemEditorModal({
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            uploadableItems: existingGroup.uploadableItems.map((existingItem) => {
-                                if (existingItem.id === itemDesc.uploadableItem.id) {
+                            uploadableElements: existingGroup.uploadableElements.map((existingItem) => {
+                                if (existingItem.id === itemDesc.uploadableElement.id) {
                                     return {
                                         ...existingItem,
                                         uploaders: existingItem.uploaders.map((existingUploader) =>
@@ -1009,8 +1013,8 @@ export function UploadableItemEditorModal({
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            uploadableItems: existingGroup.uploadableItems.map((existingItem) => {
-                                if (existingItem.id === itemDesc.uploadableItem.id) {
+                            uploadableElements: existingGroup.uploadableElements.map((existingItem) => {
+                                if (existingItem.id === itemDesc.uploadableElement.id) {
                                     return {
                                         ...existingItem,
                                         uploaders: existingItem.uploaders.filter(

@@ -6,7 +6,7 @@ import {
     GetRoomMembersQueryVariables,
     RoomMemberFragment,
     RoomMemberFragmentDoc,
-    RoomPersonRole_Enum,
+    Room_PersonRole_Enum,
     useAddParticipantToRoomMutation,
 } from "../../../../generated/graphql";
 import useRoomMembers from "../../../Room/useRoomMembers";
@@ -45,12 +45,12 @@ export function AddRoomPersonModal({
                     roomId,
                 },
                 update: (cache, result) => {
-                    if (result.data?.insert_RoomPerson_one) {
+                    if (result.data?.insert_room_RoomPerson_one) {
                         const data: RoomMemberFragment = {
-                            __typename: "RoomPerson",
-                            id: result.data.insert_RoomPerson_one.id,
+                            __typename: "room_RoomPerson",
+                            id: result.data.insert_room_RoomPerson_one.id,
                             registrantId,
-                            personRoleName: RoomPersonRole_Enum.Participant,
+                            personRoleName: Room_PersonRole_Enum.Participant,
                             roomId,
                         };
 
@@ -77,7 +77,7 @@ export function AddRoomPersonModal({
                                 broadcast: true,
                                 data: {
                                     __typename: query.__typename,
-                                    RoomPerson: [...query.RoomPerson, data],
+                                    room_RoomPerson: [...query.room_RoomPerson, data],
                                 },
                             });
                         }

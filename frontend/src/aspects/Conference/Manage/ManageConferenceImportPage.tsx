@@ -37,7 +37,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[
-                Permission_Enum.ConferenceManageContent,
+                Permissions_Permission_Enum.ConferenceManageContent,
                 Permissions_Permission_Enum.ConferenceManageSchedule,
             ]}
             componentIfDenied={<PageNotFound />}
@@ -61,7 +61,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     name="Content"
                     icon="align-left"
                     description="Import content such as papers, posters and authors."
-                    permissions={[Permission_Enum.ConferenceManageContent]}
+                    permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
                     colorScheme="green"
                 />
                 <RestrictedDashboardButton
@@ -69,7 +69,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     name="Schedule"
                     icon="calendar"
                     description="Import your schedule including rooms and events."
-                    permissions={[Permission_Enum.ConferenceManageSchedule]}
+                    permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
                     colorScheme="green"
                 />
                 <RestrictedDashboardButton
@@ -77,7 +77,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     name="Registrants"
                     icon="users"
                     description="Import your registrants, organisers and other users."
-                    permissions={[Permission_Enum.ConferenceManageAttendees]}
+                    permissions={[Permissions_Permission_Enum.ConferenceManageAttendees]}
                     colorScheme="red"
                 />
             </Flex>

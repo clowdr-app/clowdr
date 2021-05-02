@@ -1,19 +1,19 @@
 import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
-import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useMemo } from "react";
 import {
-    ElementType_Enum,
-    Element_Insert_Input,
+    Content_ElementType_Enum,
+    Content_Element_Insert_Input,
     useAddSponsorContentMenu_CreateElementMutation,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import { CreateRoomButton } from "../Content/CreateRoomButton";
-import { ItemBaseTemplates } from "../Content/Templates";
+import { ElementBaseTemplates } from "../Content/Templates";
 
 gql`
     mutation AddSponsorContentMenu_CreateElement($object: content_Element_insert_input!) {
@@ -37,22 +37,24 @@ export function AddSponsorContentMenu({
 
     const [createItem] = useAddSponsorContentMenu_CreateElementMutation();
 
-    const contentTypeOptions: { label: string; value: ElementType_Enum }[] = useMemo(
+    const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = useMemo(
         () =>
-            Object.keys(ElementType_Enum)
+            Object.keys(Content_ElementType_Enum)
                 .filter(
                     (key) =>
-                        typeof (ElementType_Enum as any)[key] === "string" &&
-                        ItemBaseTemplates[ItemBaseTypes[(ElementType_Enum as any)[key] as ElementType_Enum]].supported
+                        typeof (Content_ElementType_Enum as any)[key] === "string" &&
+                        ElementBaseTemplates[
+                            ElementBaseTypes[(Content_ElementType_Enum as any)[key] as Content_ElementType_Enum]
+                        ].supported
                 )
                 .map((key) => {
-                    const v = (ElementType_Enum as any)[key] as string;
+                    const v = (Content_ElementType_Enum as any)[key] as string;
                     return {
                         label: v
                             .split("_")
                             .map((x) => x[0] + x.substr(1).toLowerCase())
                             .reduce((acc, x) => `${acc} ${x}`),
-                        value: v as ElementType_Enum,
+                        value: v as Content_ElementType_Enum,
                     };
                 }),
         []
@@ -70,16 +72,16 @@ export function AddSponsorContentMenu({
                             key={typeOpt.value}
                             onClick={async () => {
                                 try {
-                                    const template = ItemBaseTemplates[ItemBaseTypes[typeOpt.value]];
+                                    const template = ElementBaseTemplates[ElementBaseTypes[typeOpt.value]];
                                     assert(template.supported);
                                     const newContent = template.createDefault(typeOpt.value, false);
-                                    assert(newContent.type === "item-only");
-                                    const obj: Element_Insert_Input = {
+                                    assert(newContent.type === "element-only");
+                                    const obj: Content_Element_Insert_Input = {
                                         conferenceId: conference.id,
                                         itemId,
-                                        data: newContent.item.data,
-                                        typeName: newContent.item.typeName,
-                                        name: newContent.item.name,
+                                        data: newContent.element.data,
+                                        typeName: newContent.element.typeName,
+                                        name: newContent.element.name,
                                     };
                                     await createItem({
                                         variables: {

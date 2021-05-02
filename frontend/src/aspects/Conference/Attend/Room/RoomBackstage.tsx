@@ -25,7 +25,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
-import { Room_EventSummaryFragment, room_Mode_Enum } from "../../../../generated/graphql";
+import { Room_EventSummaryFragment, Room_Mode_Enum } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
@@ -160,7 +160,7 @@ export function RoomBackstage({
             R.sortWith(
                 [R.ascend(R.prop("startTime"))],
                 roomEvents.filter((event) =>
-                    [room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(event.intendedRoomModeName)
+                    [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(event.intendedRoomModeName)
                 )
             ),
         [roomEvents]

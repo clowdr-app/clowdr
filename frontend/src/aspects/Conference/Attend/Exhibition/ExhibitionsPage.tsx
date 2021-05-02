@@ -114,7 +114,7 @@ export default function ExhibitionsPage(): JSX.Element {
         () =>
             exhibitionsResponse.loading && !exhibitionsResponse.data
                 ? undefined
-                : [...(exhibitionsResponse.data?.Exhibition ?? [])],
+                : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
         [exhibitionsResponse.data, exhibitionsResponse.loading]
     );
     const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);

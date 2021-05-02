@@ -15,9 +15,9 @@ export function convertScheduleToDescriptors(
     items: ItemDescriptor[];
 } {
     return {
-        items: schedule.Item.map((group) => convertItemToDescriptor(group)),
+        items: schedule.content_Item.map((group) => convertItemToDescriptor(group)),
         events: new Map(
-            schedule.Event.map((event): [string, EventDescriptor] => [
+            schedule.schedule_Event.map((event): [string, EventDescriptor] => [
                 event.id,
                 {
                     id: event.id,
@@ -34,7 +34,7 @@ export function convertScheduleToDescriptors(
             ])
         ),
         tags: new Map(
-            schedule.Tag.map((tag): [string, TagDescriptor] => [
+            schedule.collection_Tag.map((tag): [string, TagDescriptor] => [
                 tag.id,
                 {
                     id: tag.id,
@@ -46,7 +46,7 @@ export function convertScheduleToDescriptors(
             ])
         ),
         originatingDatas: new Map(
-            schedule.OriginatingData.map((data): [string, OriginatingDataDescriptor] => [
+            schedule.conference_OriginatingData.map((data): [string, OriginatingDataDescriptor] => [
                 data.id,
                 {
                     id: data.id,
@@ -56,7 +56,7 @@ export function convertScheduleToDescriptors(
             ])
         ),
         rooms: new Map(
-            schedule.Room.map((data): [string, RoomDescriptor] => [
+            schedule.room_Room.map((data): [string, RoomDescriptor] => [
                 data.id,
                 {
                     capacity: data.capacity,
@@ -70,7 +70,7 @@ export function convertScheduleToDescriptors(
             ])
         ),
         people: new Map(
-            schedule.ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
+            schedule.collection_ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
                 person.id,
                 {
                     id: person.id,

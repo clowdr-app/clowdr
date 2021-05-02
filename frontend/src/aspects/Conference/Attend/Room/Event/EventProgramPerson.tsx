@@ -3,7 +3,7 @@ import { Badge, Box, Button, HStack, Text, useToast } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import {
     EventProgramPersonDetailsFragment,
-    EventProgramPersonRole_Enum,
+    Schedule_EventProgramPersonRole_Enum,
     useDeleteEventProgramPersonMutation,
 } from "../../../../../generated/graphql";
 import { FAIcon } from "../../../../Icons/FAIcon";
@@ -64,7 +64,9 @@ export function EventProgramPerson({
         <HStack>
             <Text>{registrant?.displayName ?? "<Unknown>"}</Text>
             <Badge
-                colorScheme={eventProgramPerson.roleName === EventProgramPersonRole_Enum.Participant ? "blue" : "red"}
+                colorScheme={
+                    eventProgramPerson.roleName === Schedule_EventProgramPersonRole_Enum.Participant ? "blue" : "red"
+                }
             >
                 {eventProgramPerson.roleName}
             </Badge>

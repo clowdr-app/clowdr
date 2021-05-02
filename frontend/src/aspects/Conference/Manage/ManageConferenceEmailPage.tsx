@@ -1,5 +1,6 @@
 import { Box, Heading } from "@chakra-ui/react";
 import React from "react";
+import { Permissions_Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -12,7 +13,7 @@ export function ManageConferenceEmailPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageContent]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
             <Box w="100%">

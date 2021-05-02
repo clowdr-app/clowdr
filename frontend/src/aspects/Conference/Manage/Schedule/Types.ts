@@ -1,4 +1,4 @@
-import type { EventProgramPersonRole_Enum, room_Mode_Enum } from "../../../../generated/graphql";
+import type { Room_Mode_Enum, Schedule_EventProgramPersonRole_Enum } from "../../../../generated/graphql";
 
 export type RoomDescriptor = {
     isNew?: boolean;
@@ -7,7 +7,7 @@ export type RoomDescriptor = {
     originatingDataId?: string;
 
     name: string;
-    currentModeName: room_Mode_Enum;
+    currentModeName: Room_Mode_Enum;
     capacity?: number | null;
     priority: number;
 
@@ -21,7 +21,7 @@ export type EventDescriptor = {
     originatingDataId?: string;
 
     roomId: string;
-    intendedRoomModeName: room_Mode_Enum;
+    intendedRoomModeName: Room_Mode_Enum;
     itemId?: string | null;
     exhibitionId?: string | null;
     name: string;
@@ -42,7 +42,7 @@ export type EventProgramPersonDescriptor = {
     registrantId?: string | null;
     name: string;
     affiliation?: string | null;
-    roleName: EventProgramPersonRole_Enum;
+    roleName: Schedule_EventProgramPersonRole_Enum;
 };
 
 export type RegistrantDescriptor = {

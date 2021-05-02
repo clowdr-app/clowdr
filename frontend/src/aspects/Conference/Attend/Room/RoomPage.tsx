@@ -69,7 +69,7 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
         <RequireAtLeastOnePermissionWrapper
             componentIfDenied={<ConferencePageNotFound />}
             permissions={[
-                Permission_Enum.ConferenceViewAttendees,
+                Permissions_Permission_Enum.ConferenceViewAttendees,
                 Permissions_Permission_Enum.ConferenceManageSchedule,
             ]}
         >
@@ -85,14 +85,14 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
         },
         fetchPolicy: "network-only",
     });
-    const title = useTitle(result.loading ? "Loading room" : result.data?.Room_by_pk?.name ?? "Unknown room");
+    const title = useTitle(result.loading ? "Loading room" : result.data?.room_Room_by_pk?.name ?? "Unknown room");
 
     usePolling(result.refetch, 60000, true);
 
     return (
         <>
             {title}
-            <ApolloQueryWrapper getter={(data) => data.Room_by_pk} queryResult={result}>
+            <ApolloQueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={result}>
                 {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
             </ApolloQueryWrapper>
         </>

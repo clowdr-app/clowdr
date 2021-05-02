@@ -2,7 +2,7 @@ import { chakra, Grid, Heading, HStack, Text, useColorMode, useToken, VStack } f
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import {
-    ElementType_Enum,
+    Content_ElementType_Enum,
     ExhibitionItemFragment,
     ExhibitionWithContentFragment,
     useSelectExhibitionQuery,
@@ -50,16 +50,16 @@ function ItemTile({
 
     const primaryItem = useMemo(() => {
         const sortOrder = [
-            ElementType_Enum.VideoBroadcast,
-            ElementType_Enum.VideoFile,
-            ElementType_Enum.VideoPrepublish,
-            ElementType_Enum.VideoUrl,
-            ElementType_Enum.PosterFile,
-            ElementType_Enum.PosterUrl,
-            ElementType_Enum.ImageFile,
-            ElementType_Enum.ImageUrl,
-            ElementType_Enum.Abstract,
-            ElementType_Enum.Text,
+            Content_ElementType_Enum.VideoBroadcast,
+            Content_ElementType_Enum.VideoFile,
+            Content_ElementType_Enum.VideoPrepublish,
+            Content_ElementType_Enum.VideoUrl,
+            Content_ElementType_Enum.PosterFile,
+            Content_ElementType_Enum.PosterUrl,
+            Content_ElementType_Enum.ImageFile,
+            Content_ElementType_Enum.ImageUrl,
+            Content_ElementType_Enum.Abstract,
+            Content_ElementType_Enum.Text,
         ];
 
         return [...item.elements].sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName))[0];
@@ -165,9 +165,9 @@ export function ExhibitionLayoutWrapper({
 
     return exhibitionResponse.loading && !exhibitionResponse.data ? (
         <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
-    ) : exhibitionResponse.data?.Exhibition_by_pk ? (
+    ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
         <ExhibitionLayout
-            exhibition={exhibitionResponse.data.Exhibition_by_pk}
+            exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}
             hideLiveViewButton={hideLiveViewButton}
         />
     ) : (

@@ -10,11 +10,15 @@ import {
 import assert from "assert";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ElementType_Enum } from "../../../../generated/graphql";
-import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
+import { Content_ElementType_Enum } from "../../../../generated/graphql";
+import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 
 function createDefaultLink(
-    type: ElementType_Enum.Link | ElementType_Enum.LinkButton | ElementType_Enum.PaperLink | ElementType_Enum.VideoLink
+    type:
+        | Content_ElementType_Enum.Link
+        | Content_ElementType_Enum.LinkButton
+        | Content_ElementType_Enum.PaperLink
+        | Content_ElementType_Enum.VideoLink
 ): ElementVersionData {
     return {
         createdAt: new Date().getTime(),
@@ -28,35 +32,35 @@ function createDefaultLink(
     };
 }
 
-interface LinkItemVersionData {
+interface LinkElementVersionData {
     createdAt: number;
     createdBy: string;
     data: LinkBlob | LinkButtonBlob | PaperLinkBlob | VideoLinkBlob;
 }
 
-export const LinkItemTemplate: ItemBaseTemplate = {
+export const LinkElementTemplate: ElementBaseTemplate = {
     supported: true,
     createDefault: (type, required) => {
         assert(
-            type === ElementType_Enum.Link ||
-                type === ElementType_Enum.LinkButton ||
-                type === ElementType_Enum.PaperLink ||
-                type === ElementType_Enum.VideoLink,
-            `Link Item Template mistakenly used for type ${type}.`
+            type === Content_ElementType_Enum.Link ||
+                type === Content_ElementType_Enum.LinkButton ||
+                type === Content_ElementType_Enum.PaperLink ||
+                type === Content_ElementType_Enum.VideoLink,
+            `Link Element Template mistakenly used for type ${type}.`
         );
 
         const name =
-            type === ElementType_Enum.LinkButton
+            type === Content_ElementType_Enum.LinkButton
                 ? "Link Button"
-                : type === ElementType_Enum.PaperLink
+                : type === Content_ElementType_Enum.PaperLink
                 ? "Link to paper"
-                : type === ElementType_Enum.VideoLink
+                : type === Content_ElementType_Enum.VideoLink
                 ? "Link to video"
                 : "Link";
         if (required) {
             return {
                 type: "required-only",
-                uploadableItem: {
+                uploadableElement: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -67,8 +71,8 @@ export const LinkItemTemplate: ItemBaseTemplate = {
             };
         } else {
             return {
-                type: "item-only",
-                item: {
+                type: "element-only",
+                element: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -80,57 +84,57 @@ export const LinkItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function LinkItemEditor({ data, update }: RenderEditorProps) {
+    renderEditor: function LinkElementEditor({ data, update }: RenderEditorProps) {
         const toast = useToast();
         const [text, setText] = useState<string | null>(null);
         const [url, setUrl] = useState<string | null>(null);
 
-        if (data.type === "item-only" || data.type === "required-and-item") {
+        if (data.type === "element-only" || data.type === "required-and-element") {
             if (
                 !(
-                    data.item.typeName === ElementType_Enum.Link ||
-                    data.item.typeName === ElementType_Enum.LinkButton ||
-                    data.item.typeName === ElementType_Enum.PaperLink ||
-                    data.item.typeName === ElementType_Enum.VideoLink
+                    data.element.typeName === Content_ElementType_Enum.Link ||
+                    data.element.typeName === Content_ElementType_Enum.LinkButton ||
+                    data.element.typeName === Content_ElementType_Enum.PaperLink ||
+                    data.element.typeName === Content_ElementType_Enum.VideoLink
                 )
             ) {
-                return <>Link Item Template mistakenly used for type {data.type}.</>;
+                return <>Link Element Template mistakenly used for type {data.type}.</>;
             }
 
             const textPlaceholder =
-                data.item.typeName === ElementType_Enum.LinkButton
+                data.element.typeName === Content_ElementType_Enum.LinkButton
                     ? "Button text"
-                    : data.item.typeName === ElementType_Enum.PaperLink
+                    : data.element.typeName === Content_ElementType_Enum.PaperLink
                     ? "Paper title"
-                    : data.item.typeName === ElementType_Enum.VideoLink
+                    : data.element.typeName === Content_ElementType_Enum.VideoLink
                     ? "Video title"
                     : "Link title";
             const textLabel = textPlaceholder;
 
             const urlLabel = "URL";
             const urlPlaceholder =
-                data.item.typeName === ElementType_Enum.LinkButton
+                data.element.typeName === Content_ElementType_Enum.LinkButton
                     ? "https://www.example.org"
-                    : data.item.typeName === ElementType_Enum.PaperLink
+                    : data.element.typeName === Content_ElementType_Enum.PaperLink
                     ? "https://archive.org/..."
-                    : data.item.typeName === ElementType_Enum.VideoLink
+                    : data.element.typeName === Content_ElementType_Enum.VideoLink
                     ? "https://youtube.com/..."
                     : "https://www.example.org";
 
-            if (data.item.data.length === 0) {
+            if (data.element.data.length === 0) {
                 data = {
                     ...data,
-                    item: {
-                        ...data.item,
-                        data: [createDefaultLink(data.item.typeName)],
+                    element: {
+                        ...data.element,
+                        data: [createDefaultLink(data.element.typeName)],
                     },
                 };
                 setTimeout(() => update(data), 0);
             }
 
-            const latestVersion = data.item.data[data.item.data.length - 1] as LinkItemVersionData;
+            const latestVersion = data.element.data[data.element.data.length - 1] as LinkElementVersionData;
             if (latestVersion.data.baseType !== ElementBaseType.Link) {
-                return <>Link Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+                return <>Link Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             return (
                 <>
@@ -149,13 +153,13 @@ export const LinkItemTemplate: ItemBaseTemplate = {
                                     if (ev.target.value === latestVersion.data.text) {
                                         return;
                                     }
-                                    const oldItemIdx = data.item.data.indexOf(latestVersion);
+                                    const oldElementIdx = data.element.data.indexOf(latestVersion);
                                     const newData = {
                                         ...data,
-                                        item: {
-                                            ...data.item,
-                                            data: data.item.data.map((version, idx) => {
-                                                return idx === oldItemIdx
+                                        element: {
+                                            ...data.element,
+                                            data: data.element.data.map((version, idx) => {
+                                                return idx === oldElementIdx
                                                     ? {
                                                           ...version,
                                                           data: {
@@ -195,13 +199,13 @@ export const LinkItemTemplate: ItemBaseTemplate = {
                                     if (ev.target.value === latestVersion.data.url) {
                                         return;
                                     }
-                                    const oldItemIdx = data.item.data.indexOf(latestVersion);
+                                    const oldElementIdx = data.element.data.indexOf(latestVersion);
                                     const newData = {
                                         ...data,
-                                        item: {
-                                            ...data.item,
-                                            data: data.item.data.map((version, idx) => {
-                                                return idx === oldItemIdx
+                                        element: {
+                                            ...data.element,
+                                            data: data.element.data.map((version, idx) => {
+                                                return idx === oldElementIdx
                                                     ? {
                                                           ...version,
                                                           data: {
@@ -231,7 +235,7 @@ export const LinkItemTemplate: ItemBaseTemplate = {
         }
         return <></>;
     },
-    renderEditorHeading: function LinkItemEditorHeading(data) {
-        return <>{data.type === "item-only" ? data.item.name : data.uploadableItem.name}</>;
+    renderEditorHeading: function LinkElementEditorHeading(data) {
+        return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;
     },
 };

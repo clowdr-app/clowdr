@@ -24,7 +24,7 @@ import {
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useUpdateConferenceMutation } from "../../../generated/graphql";
+import { Permissions_Permission_Enum, useUpdateConferenceMutation } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
@@ -77,7 +77,7 @@ export default function ManageConferenceNamePage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageName]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageName]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

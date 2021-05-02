@@ -4,6 +4,7 @@ import {
     JSONataToIntermediaryContent,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
+import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 import { useTitle } from "../../../../Utils/useTitle";
@@ -141,7 +142,7 @@ const presetJSONata_CSVQuery_Content = `
                     }
                 }]
             }] : []),
-            "uploadableItems": ($."Uploadable video for pre-publication" != "" ? [{
+            "uploadableElements": ($."Uploadable video for pre-publication" != "" ? [{
                 "typeName": "VIDEO_PREPUBLISH",
                 "name": $."Uploadable video for pre-publication",
                 "uploadsRemaining": 3
@@ -202,7 +203,7 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
     "groups": $.{
         "originatingDataSourceId": $string(pid),
         "title": title,
-        "uploadableItems": [
+        "uploadableElements": [
             {
                 "typeName": "VIDEO_PREPUBLISH",
                 "name": "Pre-published video",
@@ -286,7 +287,7 @@ export default function ImportContentPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageContent]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

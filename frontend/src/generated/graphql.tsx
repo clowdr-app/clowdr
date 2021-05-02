@@ -736,7 +736,7 @@ export type InvitationConfirmationEmailOutput = {
 
 export type InvitationSendEmailResult = {
   readonly __typename?: 'InvitationSendEmailResult';
-  readonly attendeeId: Scalars['String'];
+  readonly registrantId: Scalars['String'];
   readonly sent: Scalars['Boolean'];
 };
 

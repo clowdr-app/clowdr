@@ -18,8 +18,8 @@ import { Redirect, useHistory } from "react-router-dom";
 import {
     RoomPage_RoomDetailsFragment,
     Room_EventSummaryFragment,
-    room_ManagementMode_Enum,
-    room_Mode_Enum,
+    Room_ManagementMode_Enum,
+    Room_Mode_Enum,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
@@ -28,7 +28,7 @@ import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
-import { ElementVideo } from "../Content/Element/ElementVideo";
+import { VideoElement } from "../Content/Element/VideoElement";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
 import { RoomContent } from "./RoomContent";
@@ -159,10 +159,10 @@ function Room({
 
     const [cachedRoomEvents, setCachedRoomEvents] = useState<readonly Room_EventSummaryFragment[] | null>(null);
     useEffect(() => {
-        if (data?.Event) {
-            setCachedRoomEvents(data.Event);
+        if (data?.schedule_Event) {
+            setCachedRoomEvents(data.schedule_Event);
         }
-    }, [data?.Event]);
+    }, [data?.schedule_Event]);
 
     const roomInner = useMemo(
         () =>
@@ -228,8 +228,8 @@ function RoomInner({
     const presentingCurrentOrUpcomingSoonEvent = useMemo(() => {
         const isPresenterOfCurrentEvent =
             currentRoomEvent !== null &&
-            (currentRoomEvent.intendedRoomModeName === room_Mode_Enum.Presentation ||
-                currentRoomEvent.intendedRoomModeName === room_Mode_Enum.QAndA) &&
+            (currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
             currentRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id);
 
         const isPresenterOfUpcomingSoonEvent = !!nonCurrentLiveEventsInNext20Mins?.some((event) =>
@@ -244,7 +244,7 @@ function RoomInner({
     const alreadyBackstage = useRef<boolean>(false);
 
     const hasBackstage = !!roomEvents.some((event) =>
-        [room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(event.intendedRoomModeName)
+        [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(event.intendedRoomModeName)
     );
 
     const notExplicitlyWatchingCurrentOrNextEvent =
@@ -258,9 +258,9 @@ function RoomInner({
 
     alreadyBackstage.current = showBackstage;
 
-    const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === room_Mode_Enum.None;
+    const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.None;
     const showDefaultBreakoutRoom =
-        !roomDetails.isProgramRoom || currentRoomEvent?.intendedRoomModeName === room_Mode_Enum.Breakout;
+        !roomDetails.isProgramRoom || currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout;
 
     const maybeZoomUrl = useMemo(() => {
         try {
@@ -310,8 +310,8 @@ function RoomInner({
     useEffect(() => {
         if (
             currentRoomEvent &&
-            (currentRoomEvent.intendedRoomModeName === room_Mode_Enum.Presentation ||
-                currentRoomEvent.intendedRoomModeName === room_Mode_Enum.QAndA) &&
+            (currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
             currentRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id) &&
             watchStreamForEventId === currentRoomEvent.id &&
             !showBackstage
@@ -330,8 +330,8 @@ function RoomInner({
             });
         } else if (
             nextRoomEvent &&
-            (nextRoomEvent.intendedRoomModeName === room_Mode_Enum.Presentation ||
-                nextRoomEvent.intendedRoomModeName === room_Mode_Enum.QAndA) &&
+            (nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
             nextRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id) &&
             Date.parse(nextRoomEvent.startTime) - Date.now() < 20 * 60 * 1000 &&
             !showBackstage
@@ -353,7 +353,7 @@ function RoomInner({
 
     const controlBarEl = useMemo(
         () =>
-            roomDetails.managementModeName !== room_ManagementMode_Enum.Public ? (
+            roomDetails.managementModeName !== Room_ManagementMode_Enum.Public ? (
                 <RoomControlBar roomDetails={roomDetails} />
             ) : undefined,
         [roomDetails]
@@ -426,8 +426,8 @@ function RoomInner({
             try {
                 if (
                     existingCurrentRoomEvent?.itemId &&
-                    (existingCurrentRoomEvent.intendedRoomModeName === room_Mode_Enum.Presentation ||
-                        existingCurrentRoomEvent.intendedRoomModeName === room_Mode_Enum.QAndA) &&
+                    (existingCurrentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                        existingCurrentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
                     existingCurrentRoomEvent.id !== currentRoomEvent?.id
                 ) {
                     try {
@@ -435,7 +435,11 @@ function RoomInner({
                             originatingItemId: existingCurrentRoomEvent.itemId,
                         });
 
-                        if (!breakoutRoom.data || !breakoutRoom.data.Room || breakoutRoom.data.Room.length < 1) {
+                        if (
+                            !breakoutRoom.data ||
+                            !breakoutRoom.data.room_Room ||
+                            breakoutRoom.data.room_Room.length < 1
+                        ) {
                             throw new Error("No matching room found");
                         }
 
@@ -452,7 +456,7 @@ function RoomInner({
                                         <Button
                                             onClick={() =>
                                                 history.push(
-                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
+                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`
                                                 )
                                             }
                                             colorScheme="green"
@@ -463,7 +467,9 @@ function RoomInner({
                                 ),
                             });
                             setTimeout(() => {
-                                history.push(`/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`);
+                                history.push(
+                                    `/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`
+                                );
                             }, 5000);
                         } else {
                             toast({
@@ -480,7 +486,7 @@ function RoomInner({
                                         <Button
                                             onClick={() =>
                                                 history.push(
-                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`
+                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`
                                                 )
                                             }
                                             colorScheme="green"
@@ -550,14 +556,14 @@ function RoomInner({
     );
 
     const playerEl = useMemo(() => {
-        const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === room_Mode_Enum.VideoPlayer;
+        const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoPlayer;
         const shouldShowLivePlayer =
             !currentEventModeIsNone && !showDefaultBreakoutRoom && withinThreeMinutesOfBroadcastEvent;
 
         return !showBackstage ? (
             currentEventIsVideoPlayer ? (
                 maybeVideoDetails ? (
-                    <ElementVideo elementId={maybeVideoDetails.elementId} videoElementData={maybeVideoDetails.data} />
+                    <VideoElement elementId={maybeVideoDetails.elementId} videoElementData={maybeVideoDetails.data} />
                 ) : (
                     <>Could not find video.</>
                 )

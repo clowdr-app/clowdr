@@ -20,7 +20,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
 import {
-    ElementType_Enum,
+    Content_ElementType_Enum,
     Schedule_EventSummaryFragment,
     Schedule_ItemFragment,
     useSchedule_SelectItemLazyQuery,
@@ -58,7 +58,7 @@ function EventBoxPopover({
     const isLive = eventStartMs < now + 10 * 60 * 1000 && now < eventStartMs + durationSeconds * 1000;
 
     const abstractData: ElementDataBlob | undefined = content?.abstractElements?.find(
-        (x) => x.typeName === ElementType_Enum.Abstract
+        (x) => x.typeName === Content_ElementType_Enum.Abstract
     )?.data;
     let abstractText: string | undefined;
     if (abstractData) {
@@ -181,9 +181,7 @@ function EventBoxPopover({
                     <Box>
                         <Markdown>{abstractText}</Markdown>
                     </Box>
-                    {content?.people && content?.people.length > 0 ? (
-                        <AuthorList programPeopleData={content.people} />
-                    ) : undefined}
+                    {content?.itemPeople.length ? <AuthorList programPeopleData={content.itemPeople} /> : undefined}
                 </ModalBody>
             </ModalContent>
         </Modal>
@@ -299,7 +297,7 @@ export default function EventBox({
                     durationSeconds={durationSeconds}
                     roomName={roomName}
                     events={sortedEvents}
-                    content={content.data?.Item_by_pk}
+                    content={content.data?.content_Item_by_pk}
                     isOpen={isOpen}
                     onClose={onClose}
                 />

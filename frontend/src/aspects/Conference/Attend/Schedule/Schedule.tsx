@@ -620,7 +620,7 @@ function ScheduleFetchWrapper(): JSX.Element {
             }
         >
             queryResult={roomsResult}
-            getter={(x) => ({ rooms: x.Room, events: x.Event, items: x.Item })}
+            getter={(x) => ({ rooms: x.room_Room, events: x.schedule_Event, items: x.content_Item })}
         >
             {(data) => <ScheduleInner {...data} />}
         </ApolloQueryWrapper>
@@ -630,7 +630,10 @@ function ScheduleFetchWrapper(): JSX.Element {
 export default function Schedule(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceView, Permissions_Permission_Enum.ConferenceManageSchedule]}
+            permissions={[
+                Permissions_Permission_Enum.ConferenceView,
+                Permissions_Permission_Enum.ConferenceManageSchedule,
+            ]}
         >
             <ScheduleFetchWrapper />
         </RequireAtLeastOnePermissionWrapper>

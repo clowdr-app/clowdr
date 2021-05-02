@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { AccordionPanel, Grid, GridItem, Image, List, ListItem, Text, useToken } from "@chakra-ui/react";
-import { ElementDataBlob, ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -55,9 +55,9 @@ export function MainMenuSponsors(): JSX.Element {
                 const blob = data as ElementDataBlob;
                 const latestData = R.last(blob)?.data;
 
-                if (latestData?.type === ElementType_Enum.ImageUrl) {
+                if (latestData?.type === Content_ElementType_Enum.ImageUrl) {
                     return latestData.url;
-                } else if (latestData?.type === ElementType_Enum.ImageFile) {
+                } else if (latestData?.type === Content_ElementType_Enum.ImageFile) {
                     try {
                         const { bucket, key } = new AmazonS3URI(latestData.s3Url);
                         return `https://s3.${

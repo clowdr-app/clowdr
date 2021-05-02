@@ -33,15 +33,16 @@ import { DateTime } from "luxon";
 import React, { LegacyRef, Ref, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
+    Content_ItemType_Enum,
     EventInfoFragment,
     EventInfoFragmentDoc,
     ExhibitionInfoFragment,
     ItemFullNestedInfoFragment,
-    ItemType_Enum,
+    Permissions_Permission_Enum,
     ProgramPersonInfoFragment,
     RoomInfoFragment,
-    room_ManagementMode_Enum,
-    room_Mode_Enum,
+    Room_ManagementMode_Enum,
+    Room_Mode_Enum,
     useDeleteEventInfosMutation,
     useInsertEventInfoMutation,
     useSelectWholeScheduleQuery,
@@ -165,10 +166,10 @@ function areOverlapping(start1: number, end1: number, start2: number, end2: numb
     return start1 < end2 && start2 < end1;
 }
 
-const liveStreamRoomModes: room_Mode_Enum[] = [
-    room_Mode_Enum.Prerecorded,
-    room_Mode_Enum.Presentation,
-    room_Mode_Enum.QAndA,
+const liveStreamRoomModes: Room_Mode_Enum[] = [
+    Room_Mode_Enum.Prerecorded,
+    Room_Mode_Enum.Presentation,
+    Room_Mode_Enum.QAndA,
 ];
 
 function EditableScheduleTable(): JSX.Element {
@@ -180,21 +181,23 @@ function EditableScheduleTable(): JSX.Element {
         fetchPolicy: "cache-and-network",
         nextFetchPolicy: "cache-first",
     });
-    const data = useMemo(() => [...(wholeSchedule.data?.Event ?? [])], [wholeSchedule.data?.Event]);
+    const data = useMemo(() => [...(wholeSchedule.data?.schedule_Event ?? [])], [wholeSchedule.data?.schedule_Event]);
 
     const roomOptions = useMemo(
         () =>
-            wholeSchedule.data?.Room
-                ? [...wholeSchedule.data.Room]
+            wholeSchedule.data?.room_Room
+                ? [...wholeSchedule.data.room_Room]
                       .filter(
                           (room) =>
                               (!room.originatingItemId ||
-                                  wholeSchedule.data?.Item.some(
-                                      (x) => x.id === room.originatingItemId && x.typeName === ItemType_Enum.Sponsor
+                                  wholeSchedule.data?.content_Item.some(
+                                      (x) =>
+                                          x.id === room.originatingItemId &&
+                                          x.typeName === Content_ItemType_Enum.Sponsor
                                   )) &&
                               !room.originatingEventId &&
-                              room.managementModeName !== room_ManagementMode_Enum.Dm &&
-                              room.managementModeName !== room_ManagementMode_Enum.Managed
+                              room.managementModeName !== Room_ManagementMode_Enum.Dm &&
+                              room.managementModeName !== Room_ManagementMode_Enum.Managed
                       )
                       .sort((x, y) => x.name.localeCompare(y.name))
                       .map((room) => {
@@ -205,15 +208,15 @@ function EditableScheduleTable(): JSX.Element {
                           );
                       })
                 : undefined,
-        [wholeSchedule.data?.Room, wholeSchedule.data?.Item]
+        [wholeSchedule.data?.room_Room, wholeSchedule.data?.content_Item]
     );
 
     const roomModeOptions = useMemo(
         () =>
-            Object.keys(room_Mode_Enum)
+            Object.keys(Room_Mode_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (room_Mode_Enum as any)[x];
+                    const v = (Room_Mode_Enum as any)[x];
                     return { value: v, label: formatEnumValue(v) };
                 }),
         []
@@ -221,8 +224,8 @@ function EditableScheduleTable(): JSX.Element {
 
     const itemOptions = useMemo(
         () =>
-            wholeSchedule.data?.Item
-                ? [...wholeSchedule.data.Item]
+            wholeSchedule.data?.content_Item
+                ? [...wholeSchedule.data.content_Item]
                       .sort((x, y) => x.title.localeCompare(y.title))
                       .map((content) => {
                           return (
@@ -232,13 +235,13 @@ function EditableScheduleTable(): JSX.Element {
                           );
                       })
                 : undefined,
-        [wholeSchedule.data?.Item]
+        [wholeSchedule.data?.content_Item]
     );
 
     const exhibitionOptions = useMemo(
         () =>
-            wholeSchedule.data?.Exhibition
-                ? [...wholeSchedule.data.Exhibition]
+            wholeSchedule.data?.collection_Exhibition
+                ? [...wholeSchedule.data.collection_Exhibition]
                       .sort((x, y) => x.name.localeCompare(y.name))
                       .map((exhibition) => {
                           return (
@@ -248,7 +251,7 @@ function EditableScheduleTable(): JSX.Element {
                           );
                       })
                 : undefined,
-        [wholeSchedule.data?.Exhibition]
+        [wholeSchedule.data?.collection_Exhibition]
     );
 
     const {
@@ -385,7 +388,7 @@ function EditableScheduleTable(): JSX.Element {
                         </Button>
                     );
                 },
-                get: (data) => wholeSchedule.data?.Room.find((room) => room.id === data.roomId),
+                get: (data) => wholeSchedule.data?.room_Room.find((room) => room.id === data.roomId),
                 set: (record, v: RoomInfoFragment | undefined) => {
                     record.roomId = v?.id;
                 },
@@ -395,7 +398,8 @@ function EditableScheduleTable(): JSX.Element {
                 filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
                     return rows.filter((row) => {
                         return (
-                            wholeSchedule.data?.Room.find((room) => room.id === row.roomId)
+                            wholeSchedule.data?.room_Room
+                                .find((room) => room.id === row.roomId)
                                 ?.name.toLowerCase()
                                 .includes(filterValue.toLowerCase()) ?? false
                         );
@@ -437,7 +441,7 @@ function EditableScheduleTable(): JSX.Element {
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
                                     props.onChange?.(
-                                        wholeSchedule.data?.Room.find((room) => room.id === ev.target.value)
+                                        wholeSchedule.data?.room_Room.find((room) => room.id === ev.target.value)
                                     )
                                 }
                                 onBlur={props.onBlur}
@@ -449,7 +453,7 @@ function EditableScheduleTable(): JSX.Element {
                                 {props.value &&
                                 !roomOptions?.some((option) => option.props.value === props.value?.id) ? (
                                     <option key={props.value.id} value={props.value.id}>
-                                        {wholeSchedule.data?.Room.find((x) => x.id === props.value?.id)?.name}
+                                        {wholeSchedule.data?.room_Room.find((x) => x.id === props.value?.id)?.name}
                                     </option>
                                 ) : undefined}
                             </Select>
@@ -469,13 +473,13 @@ function EditableScheduleTable(): JSX.Element {
                     );
                 },
                 get: (data) => data.intendedRoomModeName,
-                set: (record, v: room_Mode_Enum) => {
+                set: (record, v: Room_Mode_Enum) => {
                     record.intendedRoomModeName = v;
                 },
-                filterFn: (rows, v: room_Mode_Enum) => rows.filter((r) => r.intendedRoomModeName === v),
-                filterEl: SelectColumnFilter(Object.values(room_Mode_Enum)),
-                sort: (x: room_Mode_Enum, y: room_Mode_Enum) => x.localeCompare(y),
-                cell: function RoomModeCell(props: CellProps<Partial<EventInfoFragment>, room_Mode_Enum | undefined>) {
+                filterFn: (rows, v: Room_Mode_Enum) => rows.filter((r) => r.intendedRoomModeName === v),
+                filterEl: SelectColumnFilter(Object.values(Room_Mode_Enum)),
+                sort: (x: Room_Mode_Enum, y: Room_Mode_Enum) => x.localeCompare(y),
+                cell: function RoomModeCell(props: CellProps<Partial<EventInfoFragment>, Room_Mode_Enum | undefined>) {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
                     const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
@@ -501,7 +505,7 @@ function EditableScheduleTable(): JSX.Element {
                             ) : undefined}
                             <Select
                                 value={props.value ?? ""}
-                                onChange={(ev) => props.onChange?.(ev.target.value as room_Mode_Enum)}
+                                onChange={(ev) => props.onChange?.(ev.target.value as Room_Mode_Enum)}
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
@@ -574,7 +578,7 @@ function EditableScheduleTable(): JSX.Element {
                         </Button>
                     );
                 },
-                get: (data) => wholeSchedule.data?.Item.find((room) => room.id === data.itemId),
+                get: (data) => wholeSchedule.data?.content_Item.find((room) => room.id === data.itemId),
                 set: (record, value: ItemFullNestedInfoFragment | undefined) => {
                     record.itemId = value?.id;
                 },
@@ -586,7 +590,8 @@ function EditableScheduleTable(): JSX.Element {
                     return rows.filter((row) => {
                         return (
                             (row.itemId &&
-                                wholeSchedule.data?.Item.find((room) => room.id === row.itemId)
+                                wholeSchedule.data?.content_Item
+                                    .find((room) => room.id === row.itemId)
                                     ?.title.toLowerCase()
                                     .includes(filterValue.toLowerCase())) ??
                             false
@@ -631,7 +636,7 @@ function EditableScheduleTable(): JSX.Element {
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
                                     props.onChange?.(
-                                        wholeSchedule.data?.Item.find((room) => room.id === ev.target.value)
+                                        wholeSchedule.data?.content_Item.find((room) => room.id === ev.target.value)
                                     )
                                 }
                                 onBlur={props.onBlur}
@@ -657,7 +662,8 @@ function EditableScheduleTable(): JSX.Element {
                         </Button>
                     );
                 },
-                get: (data) => wholeSchedule.data?.Exhibition.find((exhibition) => exhibition.id === data.exhibitionId),
+                get: (data) =>
+                    wholeSchedule.data?.collection_Exhibition.find((exhibition) => exhibition.id === data.exhibitionId),
                 set: (record, value: ExhibitionInfoFragment | undefined) => {
                     record.exhibitionId = value?.id;
                 },
@@ -669,7 +675,8 @@ function EditableScheduleTable(): JSX.Element {
                     return rows.filter((row) => {
                         return (
                             (row.exhibitionId &&
-                                wholeSchedule.data?.Exhibition.find((exhibition) => exhibition.id === row.exhibitionId)
+                                wholeSchedule.data?.collection_Exhibition
+                                    .find((exhibition) => exhibition.id === row.exhibitionId)
                                     ?.name.toLowerCase()
                                     .includes(filterValue.toLowerCase())) ??
                             false
@@ -714,7 +721,9 @@ function EditableScheduleTable(): JSX.Element {
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
                                     props.onChange?.(
-                                        wholeSchedule.data?.Exhibition.find((room) => room.id === ev.target.value)
+                                        wholeSchedule.data?.collection_Exhibition.find(
+                                            (room) => room.id === ev.target.value
+                                        )
                                     )
                                 }
                                 onBlur={props.onBlur}
@@ -736,9 +745,9 @@ function EditableScheduleTable(): JSX.Element {
             exhibitionOptions,
             roomModeOptions,
             roomOptions,
-            wholeSchedule.data?.Item,
-            wholeSchedule.data?.Room,
-            wholeSchedule.data?.Exhibition,
+            wholeSchedule.data?.content_Item,
+            wholeSchedule.data?.room_Room,
+            wholeSchedule.data?.collection_Exhibition,
         ]
     );
 
@@ -846,7 +855,7 @@ function EditableScheduleTable(): JSX.Element {
         | undefined = useMemo(
         () => ({
             open: (key) => {
-                const idx = wholeSchedule.data?.Event.findIndex((event) => event.id === key);
+                const idx = wholeSchedule.data?.schedule_Event.findIndex((event) => event.id === key);
                 const newIdx = idx !== undefined && idx !== -1 ? idx : null;
                 setEditingIndex(newIdx);
                 if (newIdx !== null) {
@@ -856,7 +865,7 @@ function EditableScheduleTable(): JSX.Element {
                 }
             },
         }),
-        [onSecondaryPanelClose, onSecondaryPanelOpen, wholeSchedule.data?.Event]
+        [onSecondaryPanelClose, onSecondaryPanelOpen, wholeSchedule.data?.schedule_Event]
     );
 
     const insert:
@@ -875,7 +884,7 @@ function EditableScheduleTable(): JSX.Element {
                           id: uuidv4(),
                           durationSeconds: 300,
                           conferenceId: conference.id,
-                          intendedRoomModeName: room_Mode_Enum.Breakout,
+                          intendedRoomModeName: Room_Mode_Enum.Breakout,
                           name: "Innominate event",
                           roomId: roomOptions[0].props.value,
                           startTime: DateTime.local()
@@ -896,11 +905,11 @@ function EditableScheduleTable(): JSX.Element {
                           insertEvent({
                               variables: record,
                               update: (cache, { data: _data }) => {
-                                  if (_data?.insert_Event_one) {
-                                      const data = _data.insert_Event_one;
+                                  if (_data?.insert_schedule_Event_one) {
+                                      const data = _data.insert_schedule_Event_one;
                                       cache.modify({
                                           fields: {
-                                              Event(existingRefs: Reference[] = [], { readField }) {
+                                              schedule_Event(existingRefs: Reference[] = [], { readField }) {
                                                   const newRef = cache.writeFragment({
                                                       data: {
                                                           ...data,
@@ -950,14 +959,14 @@ function EditableScheduleTable(): JSX.Element {
                 updateEvent({
                     variables,
                     optimisticResponse: {
-                        update_Event_by_pk: record,
+                        update_schedule_Event_by_pk: record,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.update_Event_by_pk) {
-                            const data = _data.update_Event_by_pk;
+                        if (_data?.update_schedule_Event_by_pk) {
+                            const data = _data.update_schedule_Event_by_pk;
                             cache.modify({
                                 fields: {
-                                    Event(existingRefs: Reference[] = [], { readField }) {
+                                    schedule_Event(existingRefs: Reference[] = [], { readField }) {
                                         const newRef = cache.writeFragment({
                                             data,
                                             fragment: EventInfoFragmentDoc,
@@ -992,8 +1001,8 @@ function EditableScheduleTable(): JSX.Element {
                         eventIds: keys,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.delete_Event) {
-                            const data = _data.delete_Event;
+                        if (_data?.delete_schedule_Event) {
+                            const data = _data.delete_schedule_Event;
                             const deletedIds = data.returning.map((x) => x.id);
                             deletedIds.forEach((x) => {
                                 cache.evict({
@@ -1031,7 +1040,7 @@ function EditableScheduleTable(): JSX.Element {
                 <Button onClick={batchAddPeopleDisclosure.onOpen}>Add people to events (batch)</Button>
             </HStack>
             <VisuallyHidden>Timezone is {localTimeZone}</VisuallyHidden>
-            {wholeSchedule.data?.Room && wholeSchedule.data.Room.length === 0 ? (
+            {wholeSchedule.data?.room_Room && wholeSchedule.data.room_Room.length === 0 ? (
                 <Alert status="warning">
                     <AlertIcon />
                     <AlertTitle>No rooms</AlertTitle>
@@ -1040,7 +1049,7 @@ function EditableScheduleTable(): JSX.Element {
             ) : undefined}
             <CRUDTable
                 tableUniqueName="ManageConferenceSchedule"
-                data={!wholeSchedule.loading && (wholeSchedule.data?.Event ? data : null)}
+                data={!wholeSchedule.loading && (wholeSchedule.data?.schedule_Event ? data : null)}
                 columns={columns}
                 row={row}
                 edit={edit}
@@ -1065,8 +1074,8 @@ function EditableScheduleTable(): JSX.Element {
             />
             <EventSecondaryEditor
                 yellowC={yellow}
-                programPeople={wholeSchedule.data?.ProgramPerson ?? []}
-                events={wholeSchedule.data?.Event ?? []}
+                programPeople={wholeSchedule.data?.collection_ProgramPerson ?? []}
+                events={wholeSchedule.data?.schedule_Event ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
                 onSecondaryPanelClose={() => {
@@ -1075,7 +1084,11 @@ function EditableScheduleTable(): JSX.Element {
                     forceReloadRef.current?.();
                 }}
             />
-            <BatchAddEventPeople events={data} rooms={wholeSchedule.data?.Room ?? []} {...batchAddPeopleDisclosure} />
+            <BatchAddEventPeople
+                events={data}
+                rooms={wholeSchedule.data?.room_Room ?? []}
+                {...batchAddPeopleDisclosure}
+            />
         </>
     );
 }
@@ -1086,7 +1099,7 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageSchedule]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

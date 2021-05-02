@@ -123,7 +123,9 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
         },
     });
 
-    const registrants = useMemo(() => (registrantsData ? [...registrantsData.Registrant] : []), [registrantsData]);
+    const registrants = useMemo(() => (registrantsData ? [...registrantsData.registrant_Registrant] : []), [
+        registrantsData,
+    ]);
     const registrantOptions = useMemo(() => {
         return registrants
             .sort((x, y) => x.displayName.localeCompare(y.displayName))
@@ -347,7 +349,9 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
         },
     });
     useQueryErrorToast(errorAllProgramPersons, false);
-    const data = useMemo(() => [...(allProgramPersons?.ProgramPerson ?? [])], [allProgramPersons?.ProgramPerson]);
+    const data = useMemo(() => [...(allProgramPersons?.collection_ProgramPerson ?? [])], [
+        allProgramPersons?.collection_ProgramPerson,
+    ]);
 
     const [insertProgramPerson, insertProgramPersonResponse] = useManageProgramPeople_InsertProgramPersonMutation();
     const [deleteProgramPersons, deleteProgramPersonsResponse] = useManageProgramPeople_DeleteProgramPersonsMutation();
@@ -377,8 +381,8 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                         },
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.insert_ProgramPerson_one) {
-                            const data = _data.insert_ProgramPerson_one;
+                        if (_data?.insert_collection_ProgramPerson_one) {
+                            const data = _data.insert_collection_ProgramPerson_one;
                             cache.writeFragment({
                                 data,
                                 fragment: ManageProgramPeople_ProgramPersonFragmentDoc,
@@ -403,11 +407,11 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                     email: record.email !== "" ? record.email ?? null : null,
                 },
                 optimisticResponse: {
-                    update_ProgramPerson_by_pk: record,
+                    update_collection_ProgramPerson_by_pk: record,
                 },
                 update: (cache, { data: _data }) => {
-                    if (_data?.update_ProgramPerson_by_pk) {
-                        const data = _data.update_ProgramPerson_by_pk;
+                    if (_data?.update_collection_ProgramPerson_by_pk) {
+                        const data = _data.update_collection_ProgramPerson_by_pk;
                         cache.writeFragment({
                             data,
                             fragment: ManageProgramPeople_ProgramPersonFragmentDoc,
@@ -437,8 +441,8 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                         ids: keys,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.delete_ProgramPerson) {
-                            const data = _data.delete_ProgramPerson;
+                        if (_data?.delete_collection_ProgramPerson) {
+                            const data = _data.delete_collection_ProgramPerson;
                             const deletedIds = data.returning.map((x) => x.id);
                             cache.modify({
                                 fields: {
@@ -585,7 +589,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Program People
             </Heading>
-            {loadingAllProgramPersons && !allProgramPersons?.ProgramPerson ? (
+            {loadingAllProgramPersons && !allProgramPersons?.collection_ProgramPerson ? (
                 <></>
             ) : errorAllProgramPersons ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
@@ -593,7 +597,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 <></>
             )}
             <CRUDTable
-                data={!loadingAllProgramPersons && (allProgramPersons?.ProgramPerson ? data : null)}
+                data={!loadingAllProgramPersons && (allProgramPersons?.collection_ProgramPerson ? data : null)}
                 tableUniqueName="ManageConferenceProgramPeople"
                 row={row}
                 columns={columns}

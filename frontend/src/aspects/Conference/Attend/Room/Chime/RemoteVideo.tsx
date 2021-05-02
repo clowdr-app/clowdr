@@ -1,8 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import {
     useApplyVideoObjectFit,
+    useAttendeeStatus,
     useAudioVideo,
-    useRegistrantStatus,
     useRemoteVideoTileState,
     useRosterState,
 } from "amazon-chime-sdk-component-library-react";
@@ -14,7 +14,7 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
     const audioVideo = useAudioVideo();
     const videoEl = useRef<HTMLVideoElement>(null);
     useApplyVideoObjectFit(videoEl);
-    const { tileIdToRegistrantId } = useRemoteVideoTileState();
+    const { tileIdToAttendeeId } = useRemoteVideoTileState();
     const { roster } = useRosterState();
     const borderEl = useRef<HTMLDivElement>(null);
 
@@ -33,8 +33,8 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
         };
     }, [audioVideo, tileId]);
 
-    const registrantId = useMemo(() => tileIdToRegistrantId[tileId], [tileIdToRegistrantId, tileId]);
-    const { muted } = useRegistrantStatus(registrantId);
+    const registrantId = useMemo(() => tileIdToAttendeeId[tileId], [tileIdToAttendeeId, tileId]);
+    const { muted } = useAttendeeStatus(registrantId);
 
     useEffect(() => {
         if (!audioVideo || !registrantId || !borderEl.current) {

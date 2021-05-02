@@ -1,11 +1,11 @@
 import { chakra, Flex, Text, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
+    Content_ItemType_Enum,
     ItemDataFragment,
     ItemEventFragment,
     ItemEventsFragment,
     ItemPage_ItemRoomsFragment,
-    ItemType_Enum,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
@@ -57,7 +57,7 @@ export function ItemLive({
                 >
                     <VStack spacing={0}>
                         <Text>
-                            {itemData.typeName === ItemType_Enum.Sponsor ? (
+                            {itemData.typeName === Content_ItemType_Enum.Sponsor ? (
                                 <>
                                     <FAIcon iconStyle="s" icon="video" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
                                     <chakra.span verticalAlign="middle" pb={0.7}>

@@ -100,8 +100,8 @@ export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string 
 
     return exhibitionResponse.loading && !exhibitionResponse.data ? (
         <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
-    ) : exhibitionResponse.data?.Exhibition_by_pk ? (
-        <ExhibitionPageInner exhibition={exhibitionResponse.data.Exhibition_by_pk} />
+    ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
+        <ExhibitionPageInner exhibition={exhibitionResponse.data.collection_Exhibition_by_pk} />
     ) : (
         <PageNotFound />
     );

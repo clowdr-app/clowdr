@@ -23,10 +23,10 @@ import {
     Tag,
     Text,
 } from "@chakra-ui/react";
-import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
-import { ElementType_Enum } from "../../../../generated/graphql";
+import { Content_ElementType_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import type { SecondaryEditorComponents, SecondaryEditorFooterButton } from "../../../CRUDTable/CRUDTable";
 import FAIcon from "../../../Icons/FAIcon";
@@ -37,7 +37,7 @@ import {
 } from "../ManageConferenceContentPage";
 import type { OriginatingDataDescriptor } from "../Shared/Types";
 import { CreateRoomButton } from "./CreateRoomButton";
-import { GroupTemplates, ItemBaseTemplates } from "./Templates";
+import { ElementBaseTemplates, ItemTemplates } from "./Templates";
 import type { ContentDescriptor, ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "./Types";
 
 gql`
@@ -67,21 +67,23 @@ export function ItemSecondaryEditor(
     let editorElement: JSX.Element;
     const footerButtons: SecondaryEditorFooterButton[] = [];
 
-    const contentTypeOptions: { label: string; value: ElementType_Enum }[] = (() => {
-        return Object.keys(ElementType_Enum)
+    const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = (() => {
+        return Object.keys(Content_ElementType_Enum)
             .filter(
                 (key) =>
-                    typeof (ElementType_Enum as any)[key] === "string" &&
-                    ItemBaseTemplates[ItemBaseTypes[(ElementType_Enum as any)[key] as ElementType_Enum]].supported
+                    typeof (Content_ElementType_Enum as any)[key] === "string" &&
+                    ElementBaseTemplates[
+                        ElementBaseTypes[(Content_ElementType_Enum as any)[key] as Content_ElementType_Enum]
+                    ].supported
             )
             .map((key) => {
-                const v = (ElementType_Enum as any)[key] as string;
+                const v = (Content_ElementType_Enum as any)[key] as string;
                 return {
                     label: v
                         .split("_")
                         .map((x) => x[0] + x.substr(1).toLowerCase())
                         .reduce((acc, x) => `${acc} ${x}`),
-                    value: v as ElementType_Enum,
+                    value: v as Content_ElementType_Enum,
                 };
             });
     })();
@@ -107,13 +109,13 @@ export function ItemSecondaryEditor(
 
                                         const existingGroup = newGroups.get(group.id);
                                         assert(existingGroup);
-                                        const template = ItemBaseTemplates[ItemBaseTypes[typeOpt.value]];
+                                        const template = ElementBaseTemplates[ElementBaseTypes[typeOpt.value]];
                                         assert(template.supported);
                                         const newContent = template.createDefault(typeOpt.value, false);
-                                        assert(newContent.type === "item-only");
+                                        assert(newContent.type === "element-only");
                                         newGroups.set(group.id, {
                                             ...existingGroup,
-                                            items: [...existingGroup.items, newContent.item],
+                                            elements: [...existingGroup.elements, newContent.element],
                                         });
 
                                         return newGroups;
@@ -145,24 +147,24 @@ export function ItemSecondaryEditor(
 
                                         const existingGroup = newGroups.get(group.id);
                                         assert(existingGroup);
-                                        const template = ItemBaseTemplates[ItemBaseTypes[typeOpt.value]];
+                                        const template = ElementBaseTemplates[ElementBaseTypes[typeOpt.value]];
                                         assert(template.supported);
                                         const newContent = template.createDefault(typeOpt.value, true);
                                         if (newContent.type === "required-only") {
                                             newGroups.set(group.id, {
                                                 ...existingGroup,
-                                                uploadableItems: [
-                                                    ...existingGroup.uploadableItems,
-                                                    newContent.uploadableItem,
+                                                uploadableElements: [
+                                                    ...existingGroup.uploadableElements,
+                                                    newContent.uploadableElement,
                                                 ],
                                             });
-                                        } else if (newContent.type === "required-and-item") {
+                                        } else if (newContent.type === "required-and-element") {
                                             newGroups.set(group.id, {
                                                 ...existingGroup,
-                                                items: [...existingGroup.items, newContent.item],
-                                                uploadableItems: [
-                                                    ...existingGroup.uploadableItems,
-                                                    newContent.uploadableItem,
+                                                elements: [...existingGroup.elements, newContent.element],
+                                                uploadableElements: [
+                                                    ...existingGroup.uploadableElements,
+                                                    newContent.uploadableElement,
                                                 ],
                                             });
                                         }
@@ -216,7 +218,7 @@ export function ItemSecondaryEditor(
             </ButtonGroup>
         );
 
-        const groupTemplate = GroupTemplates[group.typeName];
+        const groupTemplate = ItemTemplates[group.typeName];
         if (groupTemplate.supported) {
             const itemElements: JSX.Element[] = [];
 
@@ -260,21 +262,21 @@ export function ItemSecondaryEditor(
                 </AccordionItem>
             );
 
-            for (const item of group.items
+            for (const item of group.elements
                 .sort((x, y) => x.name.localeCompare(y.name))
                 .sort((x, y) => x.typeName.localeCompare(y.typeName))) {
                 if (!item.uploadableId) {
                     const itemType = item.typeName;
-                    const baseType = ItemBaseTypes[itemType];
-                    const itemTemplate = ItemBaseTemplates[baseType];
+                    const baseType = ElementBaseTypes[itemType];
+                    const itemTemplate = ElementBaseTemplates[baseType];
                     let accordianTitle: string | JSX.Element = `TODO: Unsupported item type ${itemType}`;
                     let accordianContents: JSX.Element | undefined;
 
                     if (itemTemplate.supported) {
                         const itemDesc: ContentDescriptor | null = item
                             ? {
-                                  type: "item-only",
-                                  item,
+                                  type: "element-only",
+                                  element: item,
                               }
                             : null;
                         if (!itemDesc) {
@@ -292,12 +294,12 @@ export function ItemSecondaryEditor(
 
                                     const existingGroup = newGroups.get(group.id);
                                     assert(existingGroup);
-                                    if (existingGroup.items.some((x) => x.id === itemDesc.item.id)) {
+                                    if (existingGroup.elements.some((x) => x.id === itemDesc.element.id)) {
                                         return oldGroups;
                                     }
                                     newGroups.set(group.id, {
                                         ...existingGroup,
-                                        items: [...existingGroup.items, itemDesc.item],
+                                        elements: [...existingGroup.elements, itemDesc.element],
                                     });
 
                                     return newGroups;
@@ -312,7 +314,7 @@ export function ItemSecondaryEditor(
                                 update={(updatedDesc) => {
                                     markDirty();
 
-                                    assert(updatedDesc.type === "item-only");
+                                    assert(updatedDesc.type === "element-only");
 
                                     setAllItemsMap((oldGroups) => {
                                         assert(oldGroups);
@@ -322,8 +324,8 @@ export function ItemSecondaryEditor(
                                         assert(existingGroup);
                                         newGroups.set(group.id, {
                                             ...existingGroup,
-                                            items: existingGroup.items.map((cItem) => {
-                                                return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+                                            elements: existingGroup.elements.map((cItem) => {
+                                                return itemDesc.element.id === cItem.id ? updatedDesc.element : cItem;
                                             }),
                                         });
 
@@ -377,7 +379,7 @@ export function ItemSecondaryEditor(
                                                         assert(existingGroup);
                                                         newGroups.set(group.id, {
                                                             ...existingGroup,
-                                                            items: existingGroup.items.map((cItem) => {
+                                                            elements: existingGroup.elements.map((cItem) => {
                                                                 return item.id === cItem.id
                                                                     ? { ...cItem, isHidden: !cItem.isHidden }
                                                                     : cItem;
@@ -409,7 +411,7 @@ export function ItemSecondaryEditor(
                                                         assert(existingGroup);
                                                         newGroups.set(group.id, {
                                                             ...existingGroup,
-                                                            items: existingGroup.items.filter((cItem) => {
+                                                            elements: existingGroup.elements.filter((cItem) => {
                                                                 return item.id !== cItem.id;
                                                             }),
                                                         });
@@ -428,31 +430,31 @@ export function ItemSecondaryEditor(
                 }
             }
 
-            for (const uploadableItem of group.uploadableItems
+            for (const uploadableElement of group.uploadableElements
                 .sort((x, y) => x.name.localeCompare(y.name))
                 .sort((x, y) => x.typeName.localeCompare(y.typeName))) {
-                const itemType = uploadableItem.typeName;
-                const baseType = ItemBaseTypes[itemType];
-                const itemTemplate = ItemBaseTemplates[baseType];
+                const itemType = uploadableElement.typeName;
+                const baseType = ElementBaseTypes[itemType];
+                const itemTemplate = ElementBaseTemplates[baseType];
                 let accordianTitle: string | JSX.Element = `TODO: Unsupported required item type ${itemType}`;
                 let accordianContents: JSX.Element | undefined;
 
                 const item =
-                    uploadableItem &&
-                    group.items.find((x) => x.typeName === itemType && x.uploadableId === uploadableItem.id);
+                    uploadableElement &&
+                    group.elements.find((x) => x.typeName === itemType && x.uploadableId === uploadableElement.id);
 
                 if (itemTemplate.supported) {
                     const itemDesc: ContentDescriptor | null =
-                        uploadableItem && item
+                        uploadableElement && item
                             ? {
-                                  type: "required-and-item",
-                                  item,
-                                  uploadableItem,
+                                  type: "required-and-element",
+                                  element: item,
+                                  uploadableElement,
                               }
-                            : uploadableItem
+                            : uploadableElement
                             ? {
                                   type: "required-only",
-                                  uploadableItem,
+                                  uploadableElement,
                               }
                             : null;
                     if (!itemDesc) {
@@ -476,7 +478,7 @@ export function ItemSecondaryEditor(
                 }
 
                 itemElements.push(
-                    <AccordionItem key={`row-${item?.id ?? uploadableItem.id}`}>
+                    <AccordionItem key={`row-${item?.id ?? uploadableElement.id}`}>
                         <AccordionButton>
                             <Box flex="1" textAlign="left">
                                 (Uploadable) {accordianTitle}
@@ -514,14 +516,14 @@ export function ItemSecondaryEditor(
                                                         assert(existingGroup);
                                                         newGroups.set(group.id, {
                                                             ...existingGroup,
-                                                            items: existingGroup.items.map((cItem) => {
+                                                            elements: existingGroup.elements.map((cItem) => {
                                                                 return item.id === cItem.id
                                                                     ? { ...cItem, isHidden: !cItem.isHidden }
                                                                     : cItem;
                                                             }),
-                                                            uploadableItems: existingGroup.uploadableItems.map(
+                                                            uploadableElements: existingGroup.uploadableElements.map(
                                                                 (cItem) => {
-                                                                    return uploadableItem.id === cItem.id
+                                                                    return uploadableElement.id === cItem.id
                                                                         ? { ...cItem, isHidden: !cItem.isHidden }
                                                                         : cItem;
                                                                 }
@@ -552,7 +554,7 @@ export function ItemSecondaryEditor(
                                                 p={0}
                                                 lineHeight="1em"
                                                 size="sm"
-                                                isChecked={uploadableItem.isHidden}
+                                                isChecked={uploadableElement.isHidden}
                                                 onChange={() => {
                                                     markDirty();
 
@@ -564,9 +566,9 @@ export function ItemSecondaryEditor(
                                                         assert(existingGroup);
                                                         newGroups.set(group.id, {
                                                             ...existingGroup,
-                                                            uploadableItems: existingGroup.uploadableItems.map(
+                                                            uploadableElements: existingGroup.uploadableElements.map(
                                                                 (cItem) => {
-                                                                    return uploadableItem.id === cItem.id
+                                                                    return uploadableElement.id === cItem.id
                                                                         ? { ...cItem, isHidden: !cItem.isHidden }
                                                                         : cItem;
                                                                 }
@@ -599,9 +601,9 @@ export function ItemSecondaryEditor(
                                                     assert(existingGroup);
                                                     newGroups.set(group.id, {
                                                         ...existingGroup,
-                                                        uploadableItems: existingGroup.uploadableItems.filter(
+                                                        uploadableElements: existingGroup.uploadableElements.filter(
                                                             (cItem) => {
-                                                                return uploadableItem.id !== cItem.id;
+                                                                return uploadableElement.id !== cItem.id;
                                                             }
                                                         ),
                                                     });

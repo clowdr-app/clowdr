@@ -9,7 +9,7 @@ declare enum RoomMode_Enum {
     Exhibition = "EXHIBITION",
     /** An empty room. */
     None = "NONE",
-    /** Pre-recorded content should be played out to attendees. The breakout and Q&A video chats may also be available to relevant users. */
+    /** Pre-recorded content should be played out to registrants. The breakout and Q&A video chats may also be available to relevant users. */
     Prerecorded = "PRERECORDED",
     /** A live presentation should be delivered in the Q&A video chat. The breakout video chat may also be available to relevant users. */
     Presentation = "PRESENTATION",
@@ -121,7 +121,7 @@ export interface IntermediaryOriginatingDataDescriptor {
     data: IntermediaryOriginatingDataPart[];
 }
 
-export interface IntermediaryItemDescriptor {
+export interface IntermediaryElementDescriptor {
     id?: string;
     originatingDataSourceId?: string;
     typeName?: ElementType_Enum;
@@ -137,7 +137,7 @@ export interface IntermediaryUploaderDescriptor {
     name?: string;
 }
 
-export interface IntermediaryRequiredItemDescriptor {
+export interface IntermediaryUploadableElementDescriptor {
     id?: string;
     originatingDataSourceId?: string;
     typeName?: ElementType_Enum;
@@ -147,7 +147,7 @@ export interface IntermediaryRequiredItemDescriptor {
     uploaders?: Array<IntermediaryUploaderDescriptor>;
 }
 
-export interface IntermediaryGroupPersonDescriptor {
+export interface IntermediaryItemPersonDescriptor {
     id?: string;
     personId?: string;
     name_affiliation?: string;
@@ -155,27 +155,27 @@ export interface IntermediaryGroupPersonDescriptor {
     priority?: number;
 }
 
-export interface IntermediaryGroupHallwayDescriptor {
+export interface IntermediaryItemExhibitionDescriptor {
     id?: string;
-    hallwayId?: string;
+    exhibitionId?: string;
     priority?: number;
     layout?: any;
 }
 
-export interface IntermediaryGroupDescriptor {
+export interface IntermediaryItemDescriptor {
     id?: string;
     originatingDataSourceId?: string;
 
     title?: string;
     typeName?: ItemType_Enum;
-    items?: Array<IntermediaryItemDescriptor>;
-    requiredItems?: Array<IntermediaryRequiredItemDescriptor>;
+    elements?: Array<IntermediaryElementDescriptor>;
+    uploadableElements?: Array<IntermediaryUploadableElementDescriptor>;
     tagNames?: Array<string>;
-    people?: Array<IntermediaryGroupPersonDescriptor>;
-    hallways?: Array<IntermediaryGroupHallwayDescriptor>;
+    people?: Array<IntermediaryItemPersonDescriptor>;
+    exhibitions?: Array<IntermediaryItemExhibitionDescriptor>;
 }
 
-export interface IntermediaryHallwayDescriptor {
+export interface IntermediaryExhibitionDescriptor {
     id?: string;
     name?: string;
     colour?: string;
@@ -201,8 +201,8 @@ export interface IntermediaryPersonDescriptor {
 
 export interface IntermediaryContentData {
     originatingDatas?: Array<IntermediaryOriginatingDataDescriptor>;
-    groups?: Array<IntermediaryGroupDescriptor>;
-    hallways?: Array<IntermediaryHallwayDescriptor>;
+    items?: Array<IntermediaryItemDescriptor>;
+    exhibitions?: Array<IntermediaryExhibitionDescriptor>;
     tags?: Array<IntermediaryTagDescriptor>;
     people?: Array<IntermediaryPersonDescriptor>;
 }
@@ -243,8 +243,8 @@ export interface IntermediaryEventDescriptor {
     roomId?: string;
     roomName?: string;
     intendedRoomModeName?: RoomMode_Enum;
-    contentGroupId?: string | null;
-    contentGroupSourceId?: string;
+    itemId?: string | null;
+    itemSourceId?: string;
     name?: string;
     startTime?: number;
     durationSeconds?: number;
@@ -255,7 +255,7 @@ export interface IntermediaryEventDescriptor {
 export interface IntermediaryEventPersonDescriptor {
     id?: string;
     originatingDataSourceId?: string;
-    attendeeId?: string | null;
+    registrantId?: string | null;
     name?: string;
     affiliation?: string | null;
     roleName?: EventPersonRole_Enum;
@@ -290,29 +290,29 @@ export function JSONataToIntermediarySchedule(data: any, query: string): Interme
     }
 }
 
-export interface IntermediaryAttendeeData {
+export interface IntermediaryRegistrantData {
     name: string;
     email: string;
     group: string;
 }
 
-function internalAttendeeConverter(data: any, query: string): IntermediaryAttendeeData[] | string {
+function internalRegistrantConverter(data: any, query: string): IntermediaryRegistrantData[] | string {
     const expression = jsonata(query);
     const result = expression.evaluate(data);
-    if (assertType<IntermediaryAttendeeData[]>(result)) {
+    if (assertType<IntermediaryRegistrantData[]>(result)) {
         return result;
     } else {
         return "Unknown error";
     }
 }
 
-export function JSONataToIntermediaryAttendee(
+export function JSONataToIntermediaryRegistrant(
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     data: any,
     query: string
-): IntermediaryAttendeeData[] | string | undefined {
+): IntermediaryRegistrantData[] | string | undefined {
     try {
-        return internalAttendeeConverter(data, query);
+        return internalRegistrantConverter(data, query);
     } catch (e) {
         if (e instanceof TypeGuardError) {
             return e.message;

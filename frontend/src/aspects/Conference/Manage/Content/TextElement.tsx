@@ -3,12 +3,14 @@ import { AbstractBlob, ElementBaseType, ElementVersionData, TextBlob } from "@cl
 import assert from "assert";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ElementType_Enum } from "../../../../generated/graphql";
-import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
+import { Content_ElementType_Enum } from "../../../../generated/graphql";
+import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 
 // TODO: Use Markdown editor instead of textarea
 
-function createDefaultText(type: ElementType_Enum.Abstract | ElementType_Enum.Text): ElementVersionData {
+function createDefaultText(
+    type: Content_ElementType_Enum.Abstract | Content_ElementType_Enum.Text
+): ElementVersionData {
     return {
         createdAt: new Date().getTime(),
         createdBy: "user",
@@ -20,25 +22,25 @@ function createDefaultText(type: ElementType_Enum.Abstract | ElementType_Enum.Te
     };
 }
 
-interface TextItemVersionData {
+interface TextElementVersionData {
     createdAt: number;
     createdBy: string;
     data: AbstractBlob | TextBlob;
 }
 
-export const TextItemTemplate: ItemBaseTemplate = {
+export const TextElementTemplate: ElementBaseTemplate = {
     supported: true,
     createDefault: (type, required) => {
         assert(
-            type === ElementType_Enum.Abstract || type === ElementType_Enum.Text,
-            `Text Item Template mistakenly used for type ${type}.`
+            type === Content_ElementType_Enum.Abstract || type === Content_ElementType_Enum.Text,
+            `Text Element Template mistakenly used for type ${type}.`
         );
 
         const name = type[0] + type.toLowerCase().substr(1);
         if (required) {
             return {
                 type: "required-only",
-                uploadableItem: {
+                uploadableElement: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -49,8 +51,8 @@ export const TextItemTemplate: ItemBaseTemplate = {
             };
         } else {
             return {
-                type: "item-only",
-                item: {
+                type: "element-only",
+                element: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -62,31 +64,36 @@ export const TextItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function TextItemEditor({ data, update }: RenderEditorProps) {
+    renderEditor: function TextElementEditor({ data, update }: RenderEditorProps) {
         const toast = useToast();
         const [text, setText] = useState<string | null>(null);
 
-        if (data.type === "item-only" || data.type === "required-and-item") {
-            if (!(data.item.typeName === ElementType_Enum.Abstract || data.item.typeName === ElementType_Enum.Text)) {
-                return <>Text Item Template mistakenly used for type {data.type}.</>;
+        if (data.type === "element-only" || data.type === "required-and-element") {
+            if (
+                !(
+                    data.element.typeName === Content_ElementType_Enum.Abstract ||
+                    data.element.typeName === Content_ElementType_Enum.Text
+                )
+            ) {
+                return <>Text Element Template mistakenly used for type {data.type}.</>;
             }
 
-            const placeholder = data.item.typeName === ElementType_Enum.Abstract ? "Abstract" : "Text";
+            const placeholder = data.element.typeName === Content_ElementType_Enum.Abstract ? "Abstract" : "Text";
 
-            if (data.item.data.length === 0) {
+            if (data.element.data.length === 0) {
                 data = {
                     ...data,
-                    item: {
-                        ...data.item,
-                        data: [createDefaultText(data.item.typeName)],
+                    element: {
+                        ...data.element,
+                        data: [createDefaultText(data.element.typeName)],
                     },
                 };
                 setTimeout(() => update(data), 0);
             }
 
-            const latestVersion = data.item.data[data.item.data.length - 1] as TextItemVersionData;
+            const latestVersion = data.element.data[data.element.data.length - 1] as TextElementVersionData;
             if (latestVersion.data.baseType !== ElementBaseType.Text) {
-                return <>Text Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+                return <>Text Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             return (
                 <Textarea
@@ -102,13 +109,13 @@ export const TextItemTemplate: ItemBaseTemplate = {
                             if (ev.target.value === latestVersion.data.text) {
                                 return;
                             }
-                            const oldItemIdx = data.item.data.indexOf(latestVersion);
+                            const oldElementIdx = data.element.data.indexOf(latestVersion);
                             const newData = {
                                 ...data,
                                 item: {
-                                    ...data.item,
-                                    data: data.item.data.map((version, idx) => {
-                                        return idx === oldItemIdx
+                                    ...data.element,
+                                    data: data.element.data.map((version, idx) => {
+                                        return idx === oldElementIdx
                                             ? {
                                                   ...version,
                                                   data: {
@@ -136,7 +143,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
         }
         return <></>;
     },
-    renderEditorHeading: function TextItemEditorHeading(data) {
-        return <>{data.type === "item-only" ? data.item.name : data.uploadableItem.name}</>;
+    renderEditorHeading: function TextElementEditorHeading(data) {
+        return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;
     },
 };

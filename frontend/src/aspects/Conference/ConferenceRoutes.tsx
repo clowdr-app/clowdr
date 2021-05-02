@@ -186,7 +186,10 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             <Route path={`${rootUrl}/schedule`}>
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
-                    permissions={[Permission_Enum.ConferenceView, Permissions_Permission_Enum.ConferenceManageSchedule]}
+                    permissions={[
+                        Permissions_Permission_Enum.ConferenceView,
+                        Permissions_Permission_Enum.ConferenceManageSchedule,
+                    ]}
                 >
                     <Schedule />
                 </RequireAtLeastOnePermissionWrapper>

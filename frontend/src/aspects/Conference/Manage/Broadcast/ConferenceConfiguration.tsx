@@ -42,7 +42,7 @@ export function Configuration({ conferenceId }: { conferenceId: string }): JSX.E
     return (
         <ApolloQueryWrapper
             queryResult={conferenceConfigurationsResult}
-            getter={(result) => result.ConferenceConfiguration}
+            getter={(result) => result.conference_Configuration}
         >
             {(configurations: readonly ConferenceConfiguration_ConferenceConfigurationsFragment[]) => (
                 <FillerVideoConfiguration

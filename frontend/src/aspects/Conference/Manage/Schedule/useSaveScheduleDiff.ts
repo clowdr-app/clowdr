@@ -2,10 +2,10 @@ import { ApolloError, gql } from "@apollo/client";
 import assert from "assert";
 import { useEffect, useState } from "react";
 import {
-    OriginatingData_Insert_Input,
-    Room_Insert_Input,
-    room_Mode_Enum,
-    Tag_Insert_Input,
+    Collection_Tag_Insert_Input,
+    Conference_OriginatingData_Insert_Input,
+    Room_Mode_Enum,
+    Room_Room_Insert_Input,
     useDeleteEventsMutation,
     useDeleteOriginatingDatasMutation,
     useDeleteRoomsMutation,
@@ -435,7 +435,7 @@ export function useSaveScheduleDiff():
                         await insertTagsMutation({
                             variables: {
                                 newTags: Array.from(newTags.values()).map(
-                                    (tag): Tag_Insert_Input => ({
+                                    (tag): Collection_Tag_Insert_Input => ({
                                         id: tag.id,
                                         name: tag.name,
                                         colour: tag.colour,
@@ -479,7 +479,7 @@ export function useSaveScheduleDiff():
                         await insertOriginatingDatasMutation({
                             variables: {
                                 newDatas: Array.from(newOriginatingDatas.values()).map(
-                                    (originatingData): OriginatingData_Insert_Input => ({
+                                    (originatingData): Conference_OriginatingData_Insert_Input => ({
                                         id: originatingData.id,
                                         conferenceId: conference.id,
                                         data: originatingData.data,
@@ -497,14 +497,14 @@ export function useSaveScheduleDiff():
                         await insertRoomsMutation({
                             variables: {
                                 newRooms: Array.from(newRooms.values()).map(
-                                    (room): Room_Insert_Input => ({
+                                    (room): Room_Room_Insert_Input => ({
                                         id: room.id,
                                         conferenceId: conference.id,
                                         name: room.name,
                                         originatingDataId: room.originatingDataId,
                                         capacity: room.capacity,
                                         priority: room.priority,
-                                        currentModeName: room_Mode_Enum.Breakout,
+                                        currentModeName: Room_Mode_Enum.Breakout,
                                     })
                                 ),
                             },

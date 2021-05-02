@@ -42,11 +42,11 @@ export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element 
     });
 
     const elements = useMemo(() => {
-        if (!data?.Item || data.Item.length === 0) {
+        if (!data?.content_Item.length) {
             return null;
         }
 
-        const item = data.Item[0];
+        const item = data.content_Item[0];
 
         const items: {
             item: RoomSponsorContent_ElementDataFragment;
@@ -68,7 +68,7 @@ export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element 
         );
 
         return sortedItems;
-    }, [data?.Item]);
+    }, [data?.content_Item]);
 
     return (
         <>

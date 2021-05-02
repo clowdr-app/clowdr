@@ -211,7 +211,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         },
     });
     useQueryErrorToast(errorAllRegistrants, false);
-    const data = useMemo(() => [...(allRegistrants?.Registrant ?? [])], [allRegistrants?.Registrant]);
+    const data = useMemo(() => [...(allRegistrants?.registrant_Registrant ?? [])], [
+        allRegistrants?.registrant_Registrant,
+    ]);
 
     const [insertRegistrant, insertRegistrantResponse] = useInsertRegistrantMutation();
     const [
@@ -241,7 +243,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
 
     const columns: ColumnSpecification<RegistrantDescriptor>[] = useMemo(() => {
         const groupOptions: { value: string; label: string }[] =
-            allGroups?.Group.map((group) => ({
+            allGroups?.permissions_Group.map((group) => ({
                 value: group.id,
                 label: group.name,
             })) ?? [];
@@ -482,7 +484,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
         ];
         return result;
-    }, [allGroups?.Group]);
+    }, [allGroups?.permissions_Group]);
 
     const [
         insertInvitationEmailJobsMutation,
@@ -524,16 +526,16 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                             },
                         },
                         update: (cache, { data: _data }) => {
-                            if (_data?.insert_Registrant_one) {
-                                const data = _data.insert_Registrant_one;
+                            if (_data?.insert_registrant_Registrant_one) {
+                                const data = _data.insert_registrant_Registrant_one;
                                 cache.writeFragment({
                                     data,
                                     fragment: RegistrantPartsFragmentDoc,
                                     fragmentName: "RegistrantParts",
                                 });
                             }
-                            if (_data?.insert_Invitation_one) {
-                                const data = _data.insert_Invitation_one;
+                            if (_data?.insert_registrant_Invitation_one) {
+                                const data = _data.insert_registrant_Invitation_one;
                                 cache.writeFragment({
                                     data,
                                     fragment: InvitationPartsFragmentDoc,
@@ -555,8 +557,8 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                             },
                         },
                         update: (cache, { data: _data }) => {
-                            if (_data?.insert_Registrant_one) {
-                                const data = _data.insert_Registrant_one;
+                            if (_data?.insert_registrant_Registrant_one) {
+                                const data = _data.insert_registrant_Registrant_one;
                                 cache.writeFragment({
                                     data,
                                     fragment: RegistrantPartsFragmentDoc,
@@ -586,11 +588,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                         remainingGroupIds: record.groupRegistrants.map((x) => x.groupId),
                     },
                     optimisticResponse: {
-                        update_Registrant_by_pk: record,
+                        update_registrant_Registrant_by_pk: record,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.update_Registrant_by_pk) {
-                            const data = _data.update_Registrant_by_pk;
+                        if (_data?.update_registrant_Registrant_by_pk) {
+                            const data = _data.update_registrant_Registrant_by_pk;
                             cache.writeFragment({
                                 data,
                                 fragment: RegistrantPartsFragmentDoc,
@@ -613,8 +615,8 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                         deleteRegistrantIds: keys,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.delete_Registrant) {
-                            const data = _data.delete_Registrant;
+                        if (_data?.delete_registrant_Registrant) {
+                            const data = _data.delete_registrant_Registrant;
                             const deletedIds = data.returning.map((x) => x.id);
                             cache.modify({
                                 fields: {
@@ -638,8 +640,12 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         [deleteRegistrants, deleteRegistrantsResponse.loading]
     );
 
-    const enabledGroups = useMemo(() => allGroups?.Group.filter((x) => x.enabled), [allGroups?.Group]);
-    const disabledGroups = useMemo(() => allGroups?.Group.filter((x) => !x.enabled), [allGroups?.Group]);
+    const enabledGroups = useMemo(() => allGroups?.permissions_Group.filter((x) => x.enabled), [
+        allGroups?.permissions_Group,
+    ]);
+    const disabledGroups = useMemo(() => allGroups?.permissions_Group.filter((x) => !x.enabled), [
+        allGroups?.permissions_Group,
+    ]);
 
     const buttons: ExtraButton<RegistrantDescriptor>[] = useMemo(
         () => [
@@ -660,7 +666,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 name: registrant.displayName,
                                 email: registrant.invitation?.invitedEmailAddress ?? "",
                                 groups: registrant.groupRegistrants.map(
-                                    (x) => allGroups?.Group.find((g) => g.id === x.groupId)?.name ?? "<Unrecognised>"
+                                    (x) =>
+                                        allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
+                                        "<Unrecognised>"
                                 ),
                             }))
                         );
@@ -1057,7 +1065,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
         ],
         [
-            allGroups?.Group,
+            allGroups?.permissions_Group,
             conference.id,
             conference.slug,
             data,
@@ -1087,7 +1095,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Registrants
             </Heading>
-            {(loadingAllGroups && !allGroups) || (loadingAllRegistrants && !allRegistrants?.Registrant) ? (
+            {(loadingAllGroups && !allGroups) || (loadingAllRegistrants && !allRegistrants?.registrant_Registrant) ? (
                 <></>
             ) : errorAllRegistrants || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
@@ -1100,7 +1108,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 data={
                     !loadingAllGroups &&
                     !loadingAllRegistrants &&
-                    (allGroups?.Group && allRegistrants?.Registrant ? data : null)
+                    (allGroups?.permissions_Group && allRegistrants?.registrant_Registrant ? data : null)
                 }
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={

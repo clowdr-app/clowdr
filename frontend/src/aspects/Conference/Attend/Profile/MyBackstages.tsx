@@ -76,15 +76,15 @@ export default function MyBackstages(): JSX.Element {
 
     const eventsGroupedByDay = useMemo(
         () =>
-            myBackstagesResponse.data?.Event &&
+            myBackstagesResponse.data?.schedule_Event &&
             R.groupBy<MyBackstages_EventFragment>(
                 (x) => new Date(x.startTime).toLocaleDateString(),
                 R.sortBy(
                     (x) => Date.parse(x.startTime),
-                    myBackstagesResponse.data.Event.filter((x) => Date.parse(x.endTime) >= now)
+                    myBackstagesResponse.data.schedule_Event.filter((x) => Date.parse(x.endTime) >= now)
                 )
             ),
-        [myBackstagesResponse.data?.Event, now]
+        [myBackstagesResponse.data?.schedule_Event, now]
     );
     const eventsTodayAndFuture = useMemo(
         () =>

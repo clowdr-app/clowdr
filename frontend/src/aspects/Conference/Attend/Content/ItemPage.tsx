@@ -5,6 +5,7 @@ import {
     ItemDataFragment,
     ItemEventsFragment,
     ItemPage_ItemRoomsFragment,
+    Permissions_Permission_Enum,
     useGetItemQuery,
 } from "../../../../generated/graphql";
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
@@ -70,14 +71,14 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
         },
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const title = useTitle(result.data?.Item_by_pk?.title ?? "Unknown content item");
+    const title = useTitle(result.data?.content_Item_by_pk?.title ?? "Unknown content item");
 
     return (
         <RequireAtLeastOnePermissionWrapper
             componentIfDenied={<ConferencePageNotFound />}
-            permissions={[Permission_Enum.ConferenceView]}
+            permissions={[Permissions_Permission_Enum.ConferenceView]}
         >
-            <ApolloQueryWrapper queryResult={result} getter={(data) => data.Item_by_pk}>
+            <ApolloQueryWrapper queryResult={result} getter={(data) => data.content_Item_by_pk}>
                 {(itemData: ItemDataFragment & ItemEventsFragment & ItemPage_ItemRoomsFragment) => {
                     return (
                         <HStack w="100%" flexWrap="wrap" alignItems="stretch">
@@ -105,7 +106,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                         <Box ml={5} maxW="100%">
                                             <ItemElements itemData={itemData}>
                                                 <RequireAtLeastOnePermissionWrapper
-                                                    permissions={[Permission_Enum.ConferenceViewAttendees]}
+                                                    permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}
                                                 >
                                                     <ItemLive itemData={itemData} />
                                                 </RequireAtLeastOnePermissionWrapper>

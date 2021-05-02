@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
     Room_EventSummaryFragment,
-    room_Mode_Enum,
+    Room_Mode_Enum,
     useGetBreakoutRoomFromEventQuery,
 } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
@@ -33,7 +33,7 @@ export function EventEndControls({
     useEffect(() => {
         if (
             !currentRoomEvent ||
-            ![room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName)
+            ![Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName)
         ) {
             setChoice("continue");
         }
@@ -50,11 +50,11 @@ export function EventEndControls({
                 try {
                     const breakoutRoom = await refetch({ originatingEventId: eventId });
 
-                    if (!breakoutRoom.data.Room || breakoutRoom.data.Room.length < 1) {
+                    if (!breakoutRoom.data.room_Room || breakoutRoom.data.room_Room.length < 1) {
                         throw new Error("No matching room found");
                     }
 
-                    history.push(`/conference/${conference.slug}/room/${breakoutRoom.data.Room[0].id}`);
+                    history.push(`/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`);
                 } catch (e) {
                     console.error("Error while moving to breakout room at end of event", currentRoomEvent?.id, e);
                     toast({

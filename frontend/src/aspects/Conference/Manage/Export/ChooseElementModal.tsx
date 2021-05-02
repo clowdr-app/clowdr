@@ -59,12 +59,12 @@ export function ChooseElementModal({
     const [itemId, setItemId] = useState<string | null>(null);
 
     const itemOptions = useMemo(() => {
-        return itemsResult.data?.Item.map((item) => (
+        return itemsResult.data?.content_Item.map((item) => (
             <option key={item.id} value={item.id}>
                 {item.title}
             </option>
         ));
-    }, [itemsResult.data?.Item]);
+    }, [itemsResult.data?.content_Item]);
 
     const elementsResult = useChooseElementModal_GetVideoElementsQuery({
         variables: {
@@ -73,12 +73,12 @@ export function ChooseElementModal({
     });
 
     const elementOptions = useMemo(() => {
-        return elementsResult.data?.Element.map((element) => (
+        return elementsResult.data?.content_Element.map((element) => (
             <option key={element.id} value={element.id}>
                 {element.name}
             </option>
         ));
-    }, [elementsResult.data?.Element]);
+    }, [elementsResult.data?.content_Element]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>

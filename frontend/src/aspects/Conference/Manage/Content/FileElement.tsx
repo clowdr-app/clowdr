@@ -4,13 +4,13 @@ import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ElementType_Enum } from "../../../../generated/graphql";
+import { Content_ElementType_Enum } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
-import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
+import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 import UploadFileForm_Element from "./UploadFileForm_Element";
 
 function createDefaultFile(
-    type: ElementType_Enum.ImageFile | ElementType_Enum.PaperFile | ElementType_Enum.PosterFile
+    type: Content_ElementType_Enum.ImageFile | Content_ElementType_Enum.PaperFile | Content_ElementType_Enum.PosterFile
 ): ElementVersionData {
     return {
         createdAt: new Date().getTime(),
@@ -23,28 +23,28 @@ function createDefaultFile(
     };
 }
 
-export const FileItemTemplate: ItemBaseTemplate = {
+export const FileElementTemplate: ElementBaseTemplate = {
     supported: true,
     createDefault: (type, required) => {
         assert(
-            type === ElementType_Enum.ImageFile ||
-                type === ElementType_Enum.PaperFile ||
-                type === ElementType_Enum.PosterFile,
-            `File Item Template mistakenly used for type ${type}.`
+            type === Content_ElementType_Enum.ImageFile ||
+                type === Content_ElementType_Enum.PaperFile ||
+                type === Content_ElementType_Enum.PosterFile,
+            `File Element Template mistakenly used for type ${type}.`
         );
 
         const name =
-            type === ElementType_Enum.ImageFile
+            type === Content_ElementType_Enum.ImageFile
                 ? "Image (PNG/JPEG/GIF/WebP)"
-                : type === ElementType_Enum.PaperFile
+                : type === Content_ElementType_Enum.PaperFile
                 ? "Document (PDF)"
-                : type === ElementType_Enum.PosterFile
+                : type === Content_ElementType_Enum.PosterFile
                 ? "Poster (PNG/JPEG/WebP)"
                 : "File";
         if (required) {
             return {
                 type: "required-only",
-                uploadableItem: {
+                uploadableElement: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -55,8 +55,8 @@ export const FileItemTemplate: ItemBaseTemplate = {
             };
         } else {
             return {
-                type: "item-only",
-                item: {
+                type: "element-only",
+                element: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -68,32 +68,32 @@ export const FileItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function FileItemEditor({ data, update }: RenderEditorProps) {
-        if (data.type === "item-only" || data.type === "required-and-item") {
+    renderEditor: function FileElementEditor({ data, update }: RenderEditorProps) {
+        if (data.type === "element-only" || data.type === "required-and-element") {
             if (
                 !(
-                    data.item.typeName === ElementType_Enum.ImageFile ||
-                    data.item.typeName === ElementType_Enum.PosterFile ||
-                    data.item.typeName === ElementType_Enum.PaperFile
+                    data.element.typeName === Content_ElementType_Enum.ImageFile ||
+                    data.element.typeName === Content_ElementType_Enum.PosterFile ||
+                    data.element.typeName === Content_ElementType_Enum.PaperFile
                 )
             ) {
-                return <>File Item Template mistakenly used for type {data.type}.</>;
+                return <>File Element Template mistakenly used for type {data.type}.</>;
             }
 
-            if (data.item.data.length === 0) {
+            if (data.element.data.length === 0) {
                 data = {
                     ...data,
-                    item: {
-                        ...data.item,
-                        data: [createDefaultFile(data.item.typeName)],
+                    element: {
+                        ...data.element,
+                        data: [createDefaultFile(data.element.typeName)],
                     },
                 };
                 setTimeout(() => update(data), 0);
             }
 
-            const latestVersion = data.item.data[data.item.data.length - 1];
+            const latestVersion = data.element.data[data.element.data.length - 1];
             if (latestVersion.data.baseType !== ElementBaseType.File) {
-                return <>File Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+                return <>File Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             let imageSrc = undefined;
             if (
@@ -115,8 +115,8 @@ export const FileItemTemplate: ItemBaseTemplate = {
                     {imageSrc ? (
                         <>
                             <Box pb={4}>
-                                {data.item.typeName === ElementType_Enum.ImageFile ||
-                                data.item.typeName === ElementType_Enum.PosterFile ? (
+                                {data.element.typeName === Content_ElementType_Enum.ImageFile ||
+                                data.element.typeName === Content_ElementType_Enum.PosterFile ? (
                                     <>
                                         <Heading as="h3" fontSize="lg" mt={4} mb={4}>
                                             Current file
@@ -138,16 +138,16 @@ export const FileItemTemplate: ItemBaseTemplate = {
                     </Heading>
                     <UploadFileForm_Element
                         allowedFileTypes={
-                            data.item.typeName === ElementType_Enum.ImageFile ||
-                            data.item.typeName === ElementType_Enum.PosterFile
+                            data.element.typeName === Content_ElementType_Enum.ImageFile ||
+                            data.element.typeName === Content_ElementType_Enum.PosterFile
                                 ? ["image/png", "image/jpeg", "image/gif", "image/webp"]
                                 : [".pdf"]
                         }
-                        item={data.item}
-                        onItemChange={(newItem) => {
+                        item={data.element}
+                        onElementChange={(newElement) => {
                             const newData = {
                                 ...data,
-                                item: newItem,
+                                element: newElement,
                             };
                             update(newData);
                         }}
@@ -158,7 +158,7 @@ export const FileItemTemplate: ItemBaseTemplate = {
         }
         return <></>;
     },
-    renderEditorHeading: function FileItemEditorHeading(data) {
-        return <>{data.type === "item-only" ? data.item.name : data.uploadableItem.name}</>;
+    renderEditorHeading: function FileElementEditorHeading(data) {
+        return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;
     },
 };

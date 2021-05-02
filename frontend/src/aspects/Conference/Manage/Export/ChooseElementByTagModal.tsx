@@ -77,12 +77,12 @@ export function ChooseElementByTagModal({
     const [tagId, setTagId] = useState<string | null>(null);
 
     const tagOptions = useMemo(() => {
-        return tagsResult.data?.Tag.map((tag) => (
+        return tagsResult.data?.collection_Tag.map((tag) => (
             <option key={tag.id} value={tag.id}>
                 {tag.name}
             </option>
         ));
-    }, [tagsResult.data?.Tag]);
+    }, [tagsResult.data?.collection_Tag]);
 
     const [searchString, setSearchString] = useState<string | null>(null);
 
@@ -100,11 +100,11 @@ export function ChooseElementByTagModal({
                     <Spinner />
                 ) : elementsResult.error ? (
                     <Text>Could not retrieve list of files.</Text>
-                ) : elementsResult.data && elementsResult.data.Element.length === 0 ? (
+                ) : elementsResult.data && elementsResult.data.content_Element.length === 0 ? (
                     <Text>No matching files.</Text>
                 ) : undefined}
                 <List spacing={2} maxH="40vh" overflowY="auto">
-                    {elementsResult.data?.Element.map((element) => (
+                    {elementsResult.data?.content_Element.map((element) => (
                         <ListItem key={element.id}>
                             <HStack>
                                 <FAIcon icon="video" iconStyle="s" mr={2} fontSize="sm" />
@@ -130,7 +130,7 @@ export function ChooseElementByTagModal({
                 initialValues={{ tagId: null, searchString: null }}
                 onSubmit={(_values, actions) => {
                     if (elementsResult.data) {
-                        chooseItems(elementsResult.data.Element.map((item) => item.id));
+                        chooseItems(elementsResult.data.content_Element.map((item) => item.id));
                         actions.resetForm();
                         onClose();
                     } else {
@@ -198,7 +198,7 @@ export function ChooseElementByTagModal({
                                     isDisabled={
                                         !isValid ||
                                         elementsResult.loading ||
-                                        (elementsResult.data && elementsResult.data.Element.length === 0)
+                                        (elementsResult.data && elementsResult.data.content_Element.length === 0)
                                     }
                                     mt={4}
                                     colorScheme="green"

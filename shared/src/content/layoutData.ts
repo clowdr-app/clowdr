@@ -1,5 +1,5 @@
 import { assertType, is } from "typescript-is";
-import { ElementType_Enum } from "../content";
+import { Content_ElementType_Enum } from "../content";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function isLayoutDataBlob(data: any): boolean {
@@ -43,95 +43,95 @@ export interface BaseLayoutDataBlob {
 }
 
 export interface AbstractLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.Abstract;
+    contentType: Content_ElementType_Enum.Abstract;
 }
 
 export interface ContentGroupListLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.ContentGroupList;
+    contentType: Content_ElementType_Enum.ContentGroupList;
 }
 
 export interface TextLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.Text;
+    contentType: Content_ElementType_Enum.Text;
 }
 
 export interface ImageFileLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.ImageFile;
+    contentType: Content_ElementType_Enum.ImageFile;
     isLogo: boolean;
 }
 
 export interface PaperFileLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.PaperFile;
+    contentType: Content_ElementType_Enum.PaperFile;
 }
 
 export interface PosterFileLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.PosterFile;
+    contentType: Content_ElementType_Enum.PosterFile;
 }
 
 export interface ImageUrlLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.ImageUrl;
+    contentType: Content_ElementType_Enum.ImageUrl;
     isLogo: boolean;
 }
 
 export interface LinkLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.Link;
+    contentType: Content_ElementType_Enum.Link;
 }
 
 export interface PaperUrlLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.PaperUrl;
+    contentType: Content_ElementType_Enum.PaperUrl;
 }
 
 export interface PosterUrlLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.PosterUrl;
+    contentType: Content_ElementType_Enum.PosterUrl;
 }
 
 export interface LinkButtonLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.LinkButton;
+    contentType: Content_ElementType_Enum.LinkButton;
 }
 
 export interface PaperLinkLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.PaperLink;
+    contentType: Content_ElementType_Enum.PaperLink;
 }
 
 export interface VideoBroadcastLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoBroadcast;
+    contentType: Content_ElementType_Enum.VideoBroadcast;
 }
 
 export interface VideoCountdownLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoCountdown;
+    contentType: Content_ElementType_Enum.VideoCountdown;
 }
 
 export interface VideoFileLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoFile;
+    contentType: Content_ElementType_Enum.VideoFile;
 }
 
 export interface VideoFillerLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoFiller;
+    contentType: Content_ElementType_Enum.VideoFiller;
 }
 
 export interface VideoLinkLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoLink;
+    contentType: Content_ElementType_Enum.VideoLink;
 }
 
 export interface VideoPrepublishLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoPrepublish;
+    contentType: Content_ElementType_Enum.VideoPrepublish;
 }
 
 export interface VideoSponsorsFillerLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoSponsorsFiller;
+    contentType: Content_ElementType_Enum.VideoSponsorsFiller;
 }
 
 export interface VideoTitlesLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoTitles;
+    contentType: Content_ElementType_Enum.VideoTitles;
 }
 
 export interface VideoUrlLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.VideoUrl;
+    contentType: Content_ElementType_Enum.VideoUrl;
 }
 
 export interface WholeScheduleLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.WholeSchedule;
+    contentType: Content_ElementType_Enum.WholeSchedule;
 }
 
 export interface ZoomLayoutDataBlob extends BaseLayoutDataBlob {
-    contentType: ElementType_Enum.Zoom;
+    contentType: Content_ElementType_Enum.Zoom;
 }

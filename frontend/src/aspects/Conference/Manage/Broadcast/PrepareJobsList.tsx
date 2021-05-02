@@ -52,7 +52,7 @@ export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX
                 </Tr>
             </Thead>
             <Tbody>
-                {data?.ConferencePrepareJob.map((job) => (
+                {data?.conference_PrepareJob.map((job) => (
                     <Tr key={job.id}>
                         <Td>{job.createdAt}</Td>
                         <Td>

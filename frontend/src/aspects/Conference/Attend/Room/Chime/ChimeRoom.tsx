@@ -31,9 +31,9 @@ export interface MediaPlacement {
     TurnControlUrl?: string;
 }
 
-export interface Registrant {
+export interface Attendee {
     ExternalUserId?: string;
-    RegistrantId?: string;
+    AttendeeId?: string;
     JoinToken?: string;
 }
 
@@ -43,7 +43,7 @@ export function ChimeRoom({
     disable,
 }: {
     roomId: string;
-    getMeetingData?: () => Promise<{ meetingInfo: Meeting; registrantInfo: Registrant }>;
+    getMeetingData?: () => Promise<{ meetingInfo: Meeting; attendeeInfo: Attendee }>;
     disable: boolean;
 }): JSX.Element {
     const location = useLocation();
@@ -66,7 +66,7 @@ function ChimeRoomInner({
     stop,
     roomId,
 }: {
-    getMeetingData?: () => Promise<{ meetingInfo: Meeting; registrantInfo: Registrant }>;
+    getMeetingData?: () => Promise<{ meetingInfo: Meeting; attendeeInfo: Attendee }>;
     stop: boolean;
     roomId: string;
 }): JSX.Element {

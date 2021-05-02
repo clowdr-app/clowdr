@@ -11,7 +11,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { useManageShufflePeriods_SelectAllQuery } from "../../../generated/graphql";
+import { Permissions_Permission_Enum, useManageShufflePeriods_SelectAllQuery } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useRealTime } from "../../Generic/useRealTime";
 import { useTitle } from "../../Utils/useTitle";
@@ -90,7 +90,7 @@ export default function ManageConferenceShufflePage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageShuffle]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageShuffle]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

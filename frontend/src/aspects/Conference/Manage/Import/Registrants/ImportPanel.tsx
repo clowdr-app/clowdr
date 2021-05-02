@@ -23,7 +23,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    permissions_GroupRegistrant_Insert_Input,
+    Permissions_GroupRegistrant_Insert_Input,
     useImportRegistrantsMutation,
     useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,
@@ -99,16 +99,16 @@ export default function ImportPanel({
 
     const toast = useToast();
     useEffect(() => {
-        if (importData?.insert_Registrant) {
+        if (importData?.insert_registrant_Registrant) {
             toast({
-                title: `Imported ${importData.insert_Registrant.affected_rows / 2} registrants`,
+                title: `Imported ${importData.insert_registrant_Registrant.affected_rows / 2} registrants`,
                 status: "success",
                 duration: 3000,
                 position: "bottom",
             });
             refetchRegistrants();
         }
-    }, [importData?.insert_Registrant, refetchRegistrants, toast]);
+    }, [importData?.insert_registrant_Registrant, refetchRegistrants, toast]);
 
     const finalData = useMemo(() => {
         const firstPass = Object.values(inputData).reduce(
@@ -122,10 +122,12 @@ export default function ImportPanel({
                     }))
                     // Remove duplicates as compared to the existing data
                     .reduce<RegistrantFinalData[]>((acc, row) => {
-                        const group = groupsData?.Group.find((g) => g.name.toLowerCase() === row.group.toLowerCase());
+                        const group = groupsData?.permissions_Group.find(
+                            (g) => g.name.toLowerCase() === row.group.toLowerCase()
+                        );
 
                         const existingRegistrant =
-                            registrantsData?.Registrant &&
+                            registrantsData?.registrant_Registrant &&
                             registrantsData.registrant_Registrant.find((x) => {
                                 return x.invitation && x.invitation.invitedEmailAddress === row.email;
                             });
@@ -166,7 +168,7 @@ export default function ImportPanel({
         return firstPass.filter(
             (row1, index1) => !firstPass.some((row2, index2) => index2 < index1 && row2.email === row1.email)
         );
-    }, [registrantsData?.Registrant, groupsData?.Group, inputData]);
+    }, [registrantsData?.registrant_Registrant, groupsData?.permissions_Group, inputData]);
 
     const noGroup = finalData.some((x) => !x.group);
     const noEmail = finalData.some((x) => x.email.length === 0);
@@ -205,7 +207,7 @@ export default function ImportPanel({
                     isLoading={groupsLoading || importLoading || registrantsLoading}
                     onClick={() => {
                         const newRegistrants = finalData.filter((x) => x.isNew);
-                        const newGroupRegistrants: permissions_GroupRegistrant_Insert_Input[] = finalData
+                        const newGroupRegistrants: Permissions_GroupRegistrant_Insert_Input[] = finalData
                             .filter((x) => !x.isNew)
                             .map((x) => ({
                                 registrantId: x.id,
@@ -292,7 +294,10 @@ export default function ImportPanel({
                             </Text>
                             <Text overflowWrap="normal">
                                 {groupsData
-                                    ? `Currently available groups are: ${R.sortBy((x) => x.name, groupsData.Group)
+                                    ? `Currently available groups are: ${R.sortBy(
+                                          (x) => x.name,
+                                          groupsData.permissions_Group
+                                      )
                                           .reduce<string>((acc, x) => `${acc}, ${x.name}`, "")
                                           .substring(2)}`
                                     : "Unable to load the list of groups - please refresh to try again."}

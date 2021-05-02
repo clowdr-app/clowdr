@@ -36,7 +36,6 @@ import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import {
-    JobStatus_Enum,
     Job_Queues_UploadYouTubeVideoJob_Insert_Input,
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
@@ -45,6 +44,7 @@ import {
     useUploadYouTubeVideos_GetTemplateDataQuery,
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
+    Video_JobStatus_Enum,
 } from "../../../../generated/graphql";
 import { useRestorableState } from "../../../Generic/useRestorableState";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
@@ -183,16 +183,16 @@ export function UploadYouTubeVideos(): JSX.Element {
     });
 
     const googleAccountOptions = useMemo(() => {
-        return googleAccountsResult.data?.RegistrantGoogleAccount.map((account) => (
+        return googleAccountsResult.data?.registrant_GoogleAccount.map((account) => (
             <option key={account.id} value={account.id}>
                 {account.googleAccountEmail}
             </option>
         ));
-    }, [googleAccountsResult.data?.RegistrantGoogleAccount]);
+    }, [googleAccountsResult.data?.registrant_GoogleAccount]);
 
     const [registrantGoogleAccountId, setRegistrantGoogleAccountId] = useState<string | null>(null);
     const channelOptions = useMemo(() => {
-        const registrantGoogleAccount = googleAccountsResult.data?.RegistrantGoogleAccount.find(
+        const registrantGoogleAccount = googleAccountsResult.data?.registrant_GoogleAccount.find(
             (a) => a.id === registrantGoogleAccountId
         );
 
@@ -209,11 +209,11 @@ export function UploadYouTubeVideos(): JSX.Element {
                 </option>
             )) ?? []
         );
-    }, [registrantGoogleAccountId, googleAccountsResult.data?.RegistrantGoogleAccount]);
+    }, [registrantGoogleAccountId, googleAccountsResult.data?.registrant_GoogleAccount]);
 
     const [channelId, setChannelId] = useState<string | null>(null);
     const playlistOptions = useMemo(() => {
-        const registrantGoogleAccount = googleAccountsResult.data?.RegistrantGoogleAccount.find(
+        const registrantGoogleAccount = googleAccountsResult.data?.registrant_GoogleAccount.find(
             (a) => a.id === registrantGoogleAccountId
         );
 
@@ -232,7 +232,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     </option>
                 )) ?? []
         );
-    }, [registrantGoogleAccountId, channelId, googleAccountsResult.data?.RegistrantGoogleAccount]);
+    }, [registrantGoogleAccountId, channelId, googleAccountsResult.data?.registrant_GoogleAccount]);
 
     const [createJobs] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation();
 
@@ -248,7 +248,10 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const elements = useMemo(() => {
         const pairs: [string, { name: string; itemTitle: string }][] =
-            data?.Element.map((element) => [element.id, { name: element.name, itemTitle: element.item.title }]) ?? [];
+            data?.content_Element.map((element) => [
+                element.id,
+                { name: element.name, itemTitle: element.item.title },
+            ]) ?? [];
 
         return R.fromPairs(pairs);
     }, [data]);
@@ -269,7 +272,7 @@ export function UploadYouTubeVideos(): JSX.Element {
             }
 
             const pairs = elementIds.map((elementId): [string, { title: string; description: string }] => {
-                const element = result.data.Element.find((x) => x.id === elementId);
+                const element = result.data.content_Element.find((x) => x.id === elementId);
 
                 if (!element) {
                     return [
@@ -379,23 +382,23 @@ export function UploadYouTubeVideos(): JSX.Element {
         [refetchTemplateData]
     );
 
-    const jobStatus = useCallback((jobStatusName: JobStatus_Enum) => {
+    const jobStatus = useCallback((jobStatusName: Video_JobStatus_Enum) => {
         switch (jobStatusName) {
-            case JobStatus_Enum.Completed:
+            case Video_JobStatus_Enum.Completed:
                 return (
                     <Tooltip label="Upload completed">
                         <FAIcon icon="check-circle" iconStyle="s" aria-label="completed" />
                     </Tooltip>
                 );
-            case JobStatus_Enum.Expired:
-            case JobStatus_Enum.Failed:
+            case Video_JobStatus_Enum.Expired:
+            case Video_JobStatus_Enum.Failed:
                 return (
                     <Tooltip label="Upload failed">
                         <FAIcon icon="exclamation-circle" iconStyle="s" aria-label="error" />
                     </Tooltip>
                 );
-            case JobStatus_Enum.InProgress:
-            case JobStatus_Enum.New:
+            case Video_JobStatus_Enum.InProgress:
+            case Video_JobStatus_Enum.New:
                 return <Spinner size="sm" aria-label="in progress" />;
         }
     }, []);

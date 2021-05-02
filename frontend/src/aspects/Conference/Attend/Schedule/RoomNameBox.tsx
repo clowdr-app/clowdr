@@ -25,17 +25,17 @@ export default function RoomNameBox({
     // let roomIcon: JSX.Element | undefined;
     // if (typeof room !== "string") {
     //     switch (room.currentModeName) {
-    //         case room_Mode_Enum.Zoom:
-    //         case room_Mode_Enum.Breakout:
+    //         case Room_Mode_Enum.Zoom:
+    //         case Room_Mode_Enum.Breakout:
     //             roomIcon = <FAIcon iconStyle="s" icon="users" />;
     //             break;
-    //         case room_Mode_Enum.Prerecorded:
+    //         case Room_Mode_Enum.Prerecorded:
     //             roomIcon = <FAIcon iconStyle="s" icon="film" />;
     //             break;
-    //         case room_Mode_Enum.Presentation:
+    //         case Room_Mode_Enum.Presentation:
     //             roomIcon = <FAIcon iconStyle="s" icon="chalkboard-teacher" />;
     //             break;
-    //         case room_Mode_Enum.QAndA:
+    //         case Room_Mode_Enum.QAndA:
     //             roomIcon = <FAIcon iconStyle="s" icon="comments" />;
     //             break;
     //     }

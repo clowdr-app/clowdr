@@ -38,11 +38,11 @@ import type { ElementDescriptor } from "./Types";
 
 export default function UploadFileForm_Subtitles({
     item,
-    onItemChange,
+    onElementChange,
     contentBaseType,
 }: {
     item: ElementDescriptor;
-    onItemChange?: (newItem: ElementDescriptor) => void;
+    onElementChange?: (newItem: ElementDescriptor) => void;
     contentBaseType: ElementBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
@@ -180,7 +180,7 @@ export default function UploadFileForm_Subtitles({
                         });
                         uppy.reset();
 
-                        if (onItemChange) {
+                        if (onElementChange) {
                             if (contentBaseType !== ElementBaseType.Video) {
                                 throw new Error(`Content has wrong base type ${contentBaseType}`);
                             }
@@ -188,7 +188,7 @@ export default function UploadFileForm_Subtitles({
                             if (!latestVersionData) {
                                 throw new Error("Content does not have a valid existing version");
                             }
-                            onItemChange({
+                            onElementChange({
                                 ...item,
                                 data: [
                                     ...item.data,

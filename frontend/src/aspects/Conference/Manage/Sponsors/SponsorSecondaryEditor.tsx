@@ -31,7 +31,7 @@ import {
     Text,
     useToast,
 } from "@chakra-ui/react";
-import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
     SponsorSecondaryEditor_ElementFragment,
@@ -43,7 +43,7 @@ import {
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import FAIcon from "../../../Icons/FAIcon";
-import { ItemBaseTemplates } from "../Content/Templates";
+import { ElementBaseTemplates } from "../Content/Templates";
 import type { ElementDescriptor } from "../Content/Types";
 import { AddSponsorContentMenu } from "./AddSponsorContentMenu";
 import { LayoutEditor } from "./LayoutEditor";
@@ -101,7 +101,7 @@ export function SponsorSecondaryEditor({
                                 }}
                             />
                         ) : undefined}
-                        <ApolloQueryWrapper getter={(result) => result.Element} queryResult={elementsResult}>
+                        <ApolloQueryWrapper getter={(result) => result.content_Element} queryResult={elementsResult}>
                             {(elements: readonly SponsorSecondaryEditor_ElementFragment[]) => (
                                 <SponsorElements elements={elements} />
                             )}
@@ -208,8 +208,8 @@ function SponsorElementInner({ element }: { element: SponsorSecondaryEditor_Elem
     const toast = useToast();
 
     const itemType = element.typeName;
-    const baseType = ItemBaseTypes[itemType];
-    const itemTemplate = useMemo(() => ItemBaseTemplates[baseType], [baseType]);
+    const baseType = ElementBaseTypes[itemType];
+    const itemTemplate = useMemo(() => ElementBaseTemplates[baseType], [baseType]);
     const descriptor = useMemo<ElementDescriptor>(
         () => ({
             ...element,
@@ -222,26 +222,26 @@ function SponsorElementInner({ element }: { element: SponsorSecondaryEditor_Elem
     const editor = useMemo(() => {
         return itemTemplate.supported ? (
             <itemTemplate.renderEditor
-                data={{ type: "item-only", item: descriptor }}
+                data={{ type: "element-only", element: descriptor }}
                 update={(updated) => {
-                    if (updated.type === "item-only") {
+                    if (updated.type === "element-only") {
                         const updatedItem = {
-                            data: updated.item.data,
-                            layoutData: updated.item.layoutData,
+                            data: updated.element.data,
+                            layoutData: updated.element.layoutData,
                         };
                         updateElement({
                             variables: {
-                                elementId: updated.item.id,
+                                elementId: updated.element.id,
                                 element: updatedItem,
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.update_Element_by_pk) {
-                                    const data = _data.update_Element_by_pk;
+                                if (_data?.update_content_Element_by_pk) {
+                                    const data = _data.update_content_Element_by_pk;
                                     cache.modify({
                                         fields: {
                                             content_Element(existingRefs: Reference[] = [], { readField }) {
                                                 const newRef = cache.writeFragment({
-                                                    data: updated.item,
+                                                    data: updated.element,
                                                     fragment: SponsorSecondaryEditor_ElementFragmentDoc,
                                                     fragmentName: "SponsorSecondaryEditor_Element",
                                                 });
@@ -299,14 +299,14 @@ function SponsorElementInner({ element }: { element: SponsorSecondaryEditor_Elem
                                     isHidden,
                                 },
                                 update: (cache, { data: _data }) => {
-                                    if (_data?.update_Element_by_pk) {
-                                        const data = _data.update_Element_by_pk;
+                                    if (_data?.update_content_Element_by_pk) {
+                                        const data = _data.update_content_Element_by_pk;
                                         cache.modify({
                                             fields: {
                                                 content_Element(existingRefs: Reference[] = [], { readField }) {
                                                     const newRef = cache.writeFragment({
                                                         data: {
-                                                            __typename: "Element",
+                                                            __typename: "content_Element",
                                                             id: data.id,
                                                             isHidden,
                                                         },
@@ -344,8 +344,8 @@ function SponsorElementInner({ element }: { element: SponsorSecondaryEditor_Elem
                                         elementId: element.id,
                                     },
                                     update: (cache, { data: _data }) => {
-                                        if (_data?.delete_Element_by_pk) {
-                                            const data = _data.delete_Element_by_pk;
+                                        if (_data?.delete_content_Element_by_pk) {
+                                            const data = _data.delete_content_Element_by_pk;
                                             cache.modify({
                                                 fields: {
                                                     content_Element(existingRefs: Reference[] = [], { readField }) {
@@ -393,8 +393,8 @@ function SponsorElementInner({ element }: { element: SponsorSecondaryEditor_Elem
                             },
                         },
                         update: (cache, { data: _data }) => {
-                            if (_data?.update_Element_by_pk) {
-                                const data = _data.update_Element_by_pk;
+                            if (_data?.update_content_Element_by_pk) {
+                                const data = _data.update_content_Element_by_pk;
                                 cache.modify({
                                     fields: {
                                         content_Element(existingRefs: Reference[] = [], { readField }) {

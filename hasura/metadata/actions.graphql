@@ -88,13 +88,6 @@ type Query {
 }
 
 
-type Query {
-  protectedEcho (
-    message: String!
-  ): ProtectedEchoOutput
-}
-
-
 type Mutation {
   refreshYouTubeData (
     registrantId: uuid!

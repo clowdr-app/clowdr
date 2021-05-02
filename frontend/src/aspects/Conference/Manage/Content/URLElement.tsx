@@ -11,16 +11,16 @@ import {
 import assert from "assert";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ElementType_Enum } from "../../../../generated/graphql";
-import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
+import { Content_ElementType_Enum } from "../../../../generated/graphql";
+import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 
 function createDefaultURL(
     type:
-        | ElementType_Enum.ImageUrl
-        | ElementType_Enum.PaperUrl
-        | ElementType_Enum.VideoUrl
-        | ElementType_Enum.PosterUrl
-        | ElementType_Enum.Zoom
+        | Content_ElementType_Enum.ImageUrl
+        | Content_ElementType_Enum.PaperUrl
+        | Content_ElementType_Enum.VideoUrl
+        | Content_ElementType_Enum.PosterUrl
+        | Content_ElementType_Enum.Zoom
 ): ElementVersionData {
     return {
         createdAt: new Date().getTime(),
@@ -33,38 +33,38 @@ function createDefaultURL(
     };
 }
 
-interface UrlItemVersionData {
+interface UrlElementVersionData {
     createdAt: number;
     createdBy: string;
     data: ImageUrlBlob | PaperUrlBlob | VideoUrlBlob | PosterUrlBlob | ZoomBlob;
 }
 
-export const URLItemTemplate: ItemBaseTemplate = {
+export const URLElementTemplate: ElementBaseTemplate = {
     supported: true,
     createDefault: (type, required) => {
         assert(
-            type === ElementType_Enum.ImageUrl ||
-                type === ElementType_Enum.PaperUrl ||
-                type === ElementType_Enum.VideoUrl ||
-                type === ElementType_Enum.PosterUrl ||
-                type === ElementType_Enum.Zoom,
-            `URL Item Template mistakenly used for type ${type}.`
+            type === Content_ElementType_Enum.ImageUrl ||
+                type === Content_ElementType_Enum.PaperUrl ||
+                type === Content_ElementType_Enum.VideoUrl ||
+                type === Content_ElementType_Enum.PosterUrl ||
+                type === Content_ElementType_Enum.Zoom,
+            `URL Element Template mistakenly used for type ${type}.`
         );
 
         const name =
-            type === ElementType_Enum.ImageUrl
+            type === Content_ElementType_Enum.ImageUrl
                 ? "URL to an image file (PNG, JPG/JPEG, GIF or SVG only)"
-                : type === ElementType_Enum.PaperUrl
+                : type === Content_ElementType_Enum.PaperUrl
                 ? "URL to a paper file (PDF, Text or Markdown only)"
-                : type === ElementType_Enum.VideoUrl
+                : type === Content_ElementType_Enum.VideoUrl
                 ? "URL to a video file (MP4 or OGG only)"
-                : type === ElementType_Enum.Zoom
+                : type === Content_ElementType_Enum.Zoom
                 ? "URL to a Zoom Meeting"
                 : "URL to a poster image or file (PNG, JPG/JPEG, GIF, SVG or PDF only)";
         if (required) {
             return {
                 type: "required-only",
-                uploadableItem: {
+                uploadableElement: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -75,8 +75,8 @@ export const URLItemTemplate: ItemBaseTemplate = {
             };
         } else {
             return {
-                type: "item-only",
-                item: {
+                type: "element-only",
+                element: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -88,49 +88,49 @@ export const URLItemTemplate: ItemBaseTemplate = {
             };
         }
     },
-    renderEditor: function URLItemEditor({ data, update }: RenderEditorProps) {
+    renderEditor: function URLElementEditor({ data, update }: RenderEditorProps) {
         const toast = useToast();
         const [url, setUrl] = useState<string | null>(null);
 
-        if (data.type === "item-only" || data.type === "required-and-item") {
+        if (data.type === "element-only" || data.type === "required-and-element") {
             if (
                 !(
-                    data.item.typeName === ElementType_Enum.ImageUrl ||
-                    data.item.typeName === ElementType_Enum.PaperUrl ||
-                    data.item.typeName === ElementType_Enum.VideoUrl ||
-                    data.item.typeName === ElementType_Enum.PosterUrl ||
-                    data.item.typeName === ElementType_Enum.Zoom
+                    data.element.typeName === Content_ElementType_Enum.ImageUrl ||
+                    data.element.typeName === Content_ElementType_Enum.PaperUrl ||
+                    data.element.typeName === Content_ElementType_Enum.VideoUrl ||
+                    data.element.typeName === Content_ElementType_Enum.PosterUrl ||
+                    data.element.typeName === Content_ElementType_Enum.Zoom
                 )
             ) {
-                return <>URL Item Template mistakenly used for type {data.type}.</>;
+                return <>URL Element Template mistakenly used for type {data.type}.</>;
             }
 
             const urlLabel = "URL";
             const urlPlaceholder =
-                data.item.typeName === ElementType_Enum.ImageUrl
+                data.element.typeName === Content_ElementType_Enum.ImageUrl
                     ? "https://www.example.org/an-image.png"
-                    : data.item.typeName === ElementType_Enum.PaperUrl
+                    : data.element.typeName === Content_ElementType_Enum.PaperUrl
                     ? "https://ia800600.us.archive.org/7/items/archive_IHGC/Thesis.pdf"
-                    : data.item.typeName === ElementType_Enum.VideoUrl
+                    : data.element.typeName === Content_ElementType_Enum.VideoUrl
                     ? "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                    : data.item.typeName === ElementType_Enum.Zoom
+                    : data.element.typeName === Content_ElementType_Enum.Zoom
                     ? "https://zoom.us/j/12345678901?pwd=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                     : "https://www.example.org/a-poster.pdf";
 
-            if (data.item.data.length === 0) {
+            if (data.element.data.length === 0) {
                 data = {
                     ...data,
-                    item: {
-                        ...data.item,
-                        data: [createDefaultURL(data.item.typeName)],
+                    element: {
+                        ...data.element,
+                        data: [createDefaultURL(data.element.typeName)],
                     },
                 };
                 setTimeout(() => update(data), 0);
             }
 
-            const latestVersion = data.item.data[data.item.data.length - 1] as UrlItemVersionData;
+            const latestVersion = data.element.data[data.element.data.length - 1] as UrlElementVersionData;
             if (latestVersion.data.baseType !== ElementBaseType.URL) {
-                return <>URL Item Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+                return <>URL Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
             }
             return (
                 <>
@@ -149,13 +149,13 @@ export const URLItemTemplate: ItemBaseTemplate = {
                                     if (ev.target.value === latestVersion.data.url) {
                                         return;
                                     }
-                                    const oldItemIdx = data.item.data.indexOf(latestVersion);
+                                    const oldElementIdx = data.element.data.indexOf(latestVersion);
                                     const newData = {
                                         ...data,
                                         item: {
-                                            ...data.item,
-                                            data: data.item.data.map((version, idx) => {
-                                                return idx === oldItemIdx
+                                            ...data.element,
+                                            data: data.element.data.map((version, idx) => {
+                                                return idx === oldElementIdx
                                                     ? {
                                                           ...version,
                                                           data: {
@@ -185,7 +185,7 @@ export const URLItemTemplate: ItemBaseTemplate = {
         }
         return <></>;
     },
-    renderEditorHeading: function URLItemEditorHeading(data) {
-        return <>{data.type === "item-only" ? data.item.name : data.uploadableItem.name}</>;
+    renderEditorHeading: function URLElementEditorHeading(data) {
+        return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;
     },
 };

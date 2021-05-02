@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     EventProgramPersonDetailsFragment,
     Room_EventSummaryFragment,
-    room_Mode_Enum,
+    Room_Mode_Enum,
     useMakeEventRoomJoinRequestMutation,
     useMyEventRoomJoinRequestSubscription,
 } from "../../../../generated/graphql";
@@ -108,26 +108,26 @@ export function HandUpButton({
     const roomModeName = useMemo(() => {
         switch (currentRoomEvent?.intendedRoomModeName) {
             case undefined:
-            case room_Mode_Enum.Exhibition:
-            case room_Mode_Enum.None:
-            case room_Mode_Enum.Shuffle:
-            case room_Mode_Enum.VideoPlayer:
+            case Room_Mode_Enum.Exhibition:
+            case Room_Mode_Enum.None:
+            case Room_Mode_Enum.Shuffle:
+            case Room_Mode_Enum.VideoPlayer:
                 return "";
-            case room_Mode_Enum.Breakout:
+            case Room_Mode_Enum.Breakout:
                 return "breakout";
-            case room_Mode_Enum.Prerecorded:
+            case Room_Mode_Enum.Prerecorded:
                 return "prerecorded";
-            case room_Mode_Enum.QAndA:
+            case Room_Mode_Enum.QAndA:
                 return "Q&A";
-            case room_Mode_Enum.Presentation:
+            case Room_Mode_Enum.Presentation:
                 return "presentation";
-            case room_Mode_Enum.Zoom:
+            case Room_Mode_Enum.Zoom:
                 return "Zoom";
         }
     }, [currentRoomEvent?.intendedRoomModeName]);
 
     return currentRoomEvent &&
-        [room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName) ? (
+        [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName) ? (
         myEventPeople && myEventPeople.length > 0 ? (
             onGoBackstage ? (
                 <Button mt={5} size="lg" height="auto" py={5} onClick={onGoBackstage} colorScheme="green">
@@ -139,8 +139,8 @@ export function HandUpButton({
             ) : (
                 <></>
             )
-        ) : eventRoomJoinRequestData?.EventRoomJoinRequest &&
-          eventRoomJoinRequestData.EventRoomJoinRequest.length > 0 ? (
+        ) : eventRoomJoinRequestData?.schedule_EventRoomJoinRequest &&
+          eventRoomJoinRequestData.schedule_EventRoomJoinRequest.length > 0 ? (
             <Button mt={5} isDisabled={true} colorScheme="green">
                 Waiting for join request to be approved
             </Button>

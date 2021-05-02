@@ -62,7 +62,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
             <Heading as="h3" size="md" textAlign="left" mb={2}>
                 Connected accounts
             </Heading>
-            <ApolloQueryWrapper getter={(data) => data.RegistrantGoogleAccount} queryResult={result}>
+            <ApolloQueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={result}>
                 {(accounts: readonly ManageConferenceExportPage_RegistrantGoogleAccountFragment[]) => (
                     <List>
                         {accounts.map((account) => (

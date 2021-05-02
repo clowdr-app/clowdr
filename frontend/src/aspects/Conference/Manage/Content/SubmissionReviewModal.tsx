@@ -39,10 +39,10 @@ export function SubmissionReviewModal({
     const groupsWithItemsNoUploaders = useMemo(
         () =>
             sortedGroups.filter((x) =>
-                x.uploadableItems.some(
+                x.uploadableElements.some(
                     (y) =>
                         y.uploaders.length === 0 &&
-                        !sortedGroups.some((g) => g.items.some((i) => i.uploadableId === y.id))
+                        !sortedGroups.some((g) => g.elements.some((i) => i.uploadableId === y.id))
                 )
             ),
         [sortedGroups]
@@ -50,11 +50,11 @@ export function SubmissionReviewModal({
     const groupsWithItemsNoSentRequests = useMemo(
         () =>
             sortedGroups.filter((x) =>
-                x.uploadableItems.some(
+                x.uploadableElements.some(
                     (y) =>
                         y.uploaders.length !== 0 &&
                         y.uploaders.every((z) => z.emailsSentCount === 0) &&
-                        !sortedGroups.some((g) => g.items.some((i) => i.uploadableId === y.id))
+                        !sortedGroups.some((g) => g.elements.some((i) => i.uploadableId === y.id))
                 )
             ),
         [sortedGroups]
@@ -62,11 +62,11 @@ export function SubmissionReviewModal({
     const groupsWithSendRequestsNoSubmissions = useMemo(
         () =>
             sortedGroups.filter((x) =>
-                x.uploadableItems.some(
+                x.uploadableElements.some(
                     (y) =>
                         y.uploaders.length !== 0 &&
                         y.uploaders.some((z) => z.emailsSentCount !== 0) &&
-                        !sortedGroups.some((g) => g.items.some((i) => i.uploadableId === y.id))
+                        !sortedGroups.some((g) => g.elements.some((i) => i.uploadableId === y.id))
                 )
             ),
         [sortedGroups]
@@ -74,7 +74,9 @@ export function SubmissionReviewModal({
     const groupsWithSubmissions = useMemo(
         () =>
             sortedGroups.filter((x) =>
-                x.uploadableItems.some((y) => sortedGroups.some((g) => g.items.some((i) => i.uploadableId === y.id)))
+                x.uploadableElements.some((y) =>
+                    sortedGroups.some((g) => g.elements.some((i) => i.uploadableId === y.id))
+                )
             ),
         [sortedGroups]
     );
@@ -98,12 +100,12 @@ export function SubmissionReviewModal({
                                         <ListItem key={x.id}>
                                             <Text>{x.title}</Text>
                                             <UnorderedList>
-                                                {x.uploadableItems
+                                                {x.uploadableElements
                                                     .filter(
                                                         (y) =>
                                                             y.uploaders.length === 0 &&
                                                             !sortedGroups.some((g) =>
-                                                                g.items.some((i) => i.uploadableId === y.id)
+                                                                g.elements.some((i) => i.uploadableId === y.id)
                                                             )
                                                     )
                                                     .map((y) => (
@@ -129,13 +131,13 @@ export function SubmissionReviewModal({
                                         <ListItem key={x.id}>
                                             <Text>{x.title}</Text>
                                             <UnorderedList>
-                                                {x.uploadableItems
+                                                {x.uploadableElements
                                                     .filter(
                                                         (y) =>
                                                             y.uploaders.length !== 0 &&
                                                             y.uploaders.every((z) => z.emailsSentCount === 0) &&
                                                             !sortedGroups.some((g) =>
-                                                                g.items.some((i) => i.uploadableId === y.id)
+                                                                g.elements.some((i) => i.uploadableId === y.id)
                                                             )
                                                     )
                                                     .map((y) => (
@@ -161,13 +163,13 @@ export function SubmissionReviewModal({
                                         <ListItem key={x.id}>
                                             <Text>{x.title}</Text>
                                             <UnorderedList>
-                                                {x.uploadableItems
+                                                {x.uploadableElements
                                                     .filter(
                                                         (y) =>
                                                             y.uploaders.length !== 0 &&
                                                             y.uploaders.some((z) => z.emailsSentCount !== 0) &&
                                                             !sortedGroups.some((g) =>
-                                                                g.items.some((i) => i.uploadableId === y.id)
+                                                                g.elements.some((i) => i.uploadableId === y.id)
                                                             )
                                                     )
                                                     .map((y) => (
@@ -203,9 +205,9 @@ export function SubmissionReviewModal({
                                     {groupsWithSubmissions.reduce(
                                         (accOuter, x) => [
                                             ...accOuter,
-                                            ...x.uploadableItems.reduce((acc, y) => {
+                                            ...x.uploadableElements.reduce((acc, y) => {
                                                 const item = sortedGroups.reduce<ElementDescriptor | undefined>(
-                                                    (acc, g) => acc ?? g.items.find((i) => i.uploadableId === y.id),
+                                                    (acc, g) => acc ?? g.elements.find((i) => i.uploadableId === y.id),
                                                     undefined
                                                 );
                                                 if (item) {

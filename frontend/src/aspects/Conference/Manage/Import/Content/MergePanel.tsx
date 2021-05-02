@@ -30,7 +30,7 @@ function copyAuthorsToUploaders(
     people: Map<string, ProgramPersonDescriptor>
 ): void {
     groups.forEach((group) => {
-        group.uploadableItems.forEach((uploadableItem) => {
+        group.uploadableElements.forEach((uploadableElement) => {
             group.people.forEach((groupPerson) => {
                 const person = people.get(groupPerson.personId);
                 assert(
@@ -45,13 +45,15 @@ function copyAuthorsToUploaders(
                         groupPerson.roleName.toLowerCase() === "presenter")
                 ) {
                     const email = person.email.trim().toLowerCase();
-                    if (!uploadableItem.uploaders.some((uploader) => uploader.email.trim().toLowerCase() === email)) {
-                        uploadableItem.uploaders.push({
+                    if (
+                        !uploadableElement.uploaders.some((uploader) => uploader.email.trim().toLowerCase() === email)
+                    ) {
+                        uploadableElement.uploaders.push({
                             email,
                             emailsSentCount: 0,
                             id: uuidv4(),
                             name: person.name,
-                            uploadableId: uploadableItem.id,
+                            uploadableId: uploadableElement.id,
                             isNew: true,
                         });
                     }

@@ -42,7 +42,7 @@ export function ChimeRoomControlBar(): JSX.Element {
     const selectVideoInput = useSelectVideoInputDevice();
     const audioVideo = useAudioVideo();
     const { isVideoEnabled, toggleVideo } = useLocalVideo();
-    const { isLocalUserSharing, isLocalShareLoading, sharingRegistrantId } = useContentShareState();
+    const { isLocalUserSharing, isLocalShareLoading, sharingAttendeeId } = useContentShareState();
     const { muted, toggleMute } = useToggleLocalMute();
     const { toggleContentShare } = useContentShareControls();
     const videoNeedsRestartRef = useRef<boolean>(false);
@@ -309,7 +309,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                         <span style={{ marginLeft: "1rem" }}>Share screen</span>
                                     </>
                                 </Button>
-                            ) : sharingRegistrantId ? (
+                            ) : sharingAttendeeId ? (
                                 <Tag
                                     size="sm"
                                     variant="outline"

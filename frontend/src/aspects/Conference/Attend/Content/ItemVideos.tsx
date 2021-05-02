@@ -2,9 +2,9 @@ import { Box, Flex } from "@chakra-ui/react";
 import { assertIsElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
-import { ElementType_Enum, ItemDataFragment } from "../../../../generated/graphql";
+import { Content_ElementType_Enum, ItemDataFragment } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
-import { ElementVideo } from "./Element/ElementVideo";
+import { VideoElement } from "./Element/VideoElement";
 
 export function ItemVideos({ itemData }: { itemData: ItemDataFragment }): JSX.Element {
     const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
@@ -20,9 +20,9 @@ export function ItemVideos({ itemData }: { itemData: ItemDataFragment }): JSX.El
         return itemData.elements
             .filter(
                 (element) =>
-                    element.typeName === ElementType_Enum.VideoBroadcast ||
-                    element.typeName === ElementType_Enum.VideoPrepublish ||
-                    element.typeName === ElementType_Enum.VideoFile
+                    element.typeName === Content_ElementType_Enum.VideoBroadcast ||
+                    element.typeName === Content_ElementType_Enum.VideoPrepublish ||
+                    element.typeName === Content_ElementType_Enum.VideoFile
             )
             .sort((x, y) => x.typeName.localeCompare(y.typeName))
             .map((element) => {
@@ -53,7 +53,7 @@ export function ItemVideos({ itemData }: { itemData: ItemDataFragment }): JSX.El
                                 ]}
                                 overflow={["visible", "visible", "hidden"]}
                             >
-                                <ElementVideo
+                                <VideoElement
                                     elementId={element.id}
                                     title={element.name}
                                     videoElementData={latestVersion.data}

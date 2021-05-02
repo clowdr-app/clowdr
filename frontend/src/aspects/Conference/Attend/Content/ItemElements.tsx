@@ -3,9 +3,10 @@ import { Box, Container, Heading, HStack, Text, VStack } from "@chakra-ui/react"
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
-    ElementType_Enum,
+    Content_ElementType_Enum,
+    Content_ItemType_Enum,
     ItemElements_ItemDataFragment,
-    ItemType_Enum,
+    Permissions_Permission_Enum,
     useItemElements_GetItemQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -51,13 +52,13 @@ export function ItemElementsWrapper({ itemId, linkToItem }: { itemId: string; li
     });
 
     return (
-        <ApolloQueryWrapper getter={(data) => data.Item_by_pk} queryResult={result}>
+        <ApolloQueryWrapper getter={(data) => data.content_Item_by_pk} queryResult={result}>
             {(item: ItemElements_ItemDataFragment) => <ItemElements itemData={item} linkToItem={linkToItem} />}
         </ApolloQueryWrapper>
     );
 }
 
-function formatItemTypeNameForDisplay(typeName: ItemType_Enum): string {
+function formatItemTypeNameForDisplay(typeName: Content_ItemType_Enum): string {
     return typeName.replace(/_/g, " ").replace(/Q AND A/, "Q&A");
 }
 
@@ -73,7 +74,9 @@ export function ItemElements({
     useTrackView(true, itemData.id, "Item", 3000);
 
     const abstractElement = useMemo(() => {
-        const abstractItem = itemData.elements.find((element) => element.typeName === ElementType_Enum.Abstract);
+        const abstractItem = itemData.elements.find(
+            (element) => element.typeName === Content_ElementType_Enum.Abstract
+        );
         return abstractItem && <Element item={abstractItem} />;
     }, [itemData.elements]);
 
@@ -81,7 +84,7 @@ export function ItemElements({
 
     const zoomDetailsEls = useMemo(() => {
         return itemData.elements
-            .filter((element) => element.typeName === ElementType_Enum.Zoom)
+            .filter((element) => element.typeName === Content_ElementType_Enum.Zoom)
             .map((item) => {
                 return <Element key={item.id} item={item} />;
             });
@@ -90,9 +93,11 @@ export function ItemElements({
     const stackableEls = useMemo(() => {
         return itemData.elements
             .filter((element) =>
-                [ElementType_Enum.PaperUrl, ElementType_Enum.PaperLink, ElementType_Enum.PaperFile].includes(
-                    element.typeName
-                )
+                [
+                    Content_ElementType_Enum.PaperUrl,
+                    Content_ElementType_Enum.PaperLink,
+                    Content_ElementType_Enum.PaperFile,
+                ].includes(element.typeName)
             )
             .map((item) => {
                 return <Element key={item.id} item={item} />;
@@ -101,7 +106,7 @@ export function ItemElements({
 
     const videoURLEls = useMemo(() => {
         return itemData.elements
-            .filter((element) => element.typeName === ElementType_Enum.VideoUrl)
+            .filter((element) => element.typeName === Content_ElementType_Enum.VideoUrl)
             .map((item) => {
                 return <Element key={item.id} item={item} />;
             });
@@ -109,44 +114,44 @@ export function ItemElements({
 
     const otherEls = useMemo(() => {
         const contentSortOrder = [
-            ElementType_Enum.Abstract,
-            ElementType_Enum.VideoUrl,
-            ElementType_Enum.Text,
-            ElementType_Enum.PaperFile,
-            ElementType_Enum.PaperLink,
-            ElementType_Enum.PaperUrl,
-            ElementType_Enum.PosterFile,
-            ElementType_Enum.PosterUrl,
-            ElementType_Enum.ImageFile,
-            ElementType_Enum.ImageUrl,
-            ElementType_Enum.Link,
-            ElementType_Enum.LinkButton,
-            ElementType_Enum.VideoBroadcast,
-            ElementType_Enum.VideoCountdown,
-            ElementType_Enum.VideoFile,
-            ElementType_Enum.VideoFiller,
-            ElementType_Enum.VideoLink,
-            ElementType_Enum.VideoPrepublish,
-            ElementType_Enum.VideoSponsorsFiller,
-            ElementType_Enum.VideoTitles,
-            ElementType_Enum.Zoom,
-            ElementType_Enum.ItemList,
-            ElementType_Enum.WholeSchedule,
+            Content_ElementType_Enum.Abstract,
+            Content_ElementType_Enum.VideoUrl,
+            Content_ElementType_Enum.Text,
+            Content_ElementType_Enum.PaperFile,
+            Content_ElementType_Enum.PaperLink,
+            Content_ElementType_Enum.PaperUrl,
+            Content_ElementType_Enum.PosterFile,
+            Content_ElementType_Enum.PosterUrl,
+            Content_ElementType_Enum.ImageFile,
+            Content_ElementType_Enum.ImageUrl,
+            Content_ElementType_Enum.Link,
+            Content_ElementType_Enum.LinkButton,
+            Content_ElementType_Enum.VideoBroadcast,
+            Content_ElementType_Enum.VideoCountdown,
+            Content_ElementType_Enum.VideoFile,
+            Content_ElementType_Enum.VideoFiller,
+            Content_ElementType_Enum.VideoLink,
+            Content_ElementType_Enum.VideoPrepublish,
+            Content_ElementType_Enum.VideoSponsorsFiller,
+            Content_ElementType_Enum.VideoTitles,
+            Content_ElementType_Enum.Zoom,
+            Content_ElementType_Enum.ContentGroupList,
+            Content_ElementType_Enum.WholeSchedule,
         ];
 
         return itemData.elements
             .filter(
                 (element) =>
                     ![
-                        ElementType_Enum.PaperUrl,
-                        ElementType_Enum.PaperLink,
-                        ElementType_Enum.PaperFile,
-                        ElementType_Enum.VideoUrl,
-                        ElementType_Enum.Zoom,
-                        ElementType_Enum.Abstract,
-                        ElementType_Enum.VideoBroadcast,
-                        ElementType_Enum.VideoPrepublish,
-                        ElementType_Enum.VideoFile,
+                        Content_ElementType_Enum.PaperUrl,
+                        Content_ElementType_Enum.PaperLink,
+                        Content_ElementType_Enum.PaperFile,
+                        Content_ElementType_Enum.VideoUrl,
+                        Content_ElementType_Enum.Zoom,
+                        Content_ElementType_Enum.Abstract,
+                        Content_ElementType_Enum.VideoBroadcast,
+                        Content_ElementType_Enum.VideoPrepublish,
+                        Content_ElementType_Enum.VideoFile,
                     ].includes(element.typeName)
             )
             .map((item) => {
@@ -189,9 +194,9 @@ export function ItemElements({
                 </>
             )}
             {children}
-            <AuthorList programPeopleData={itemData.people ?? []} />
+            <AuthorList programPeopleData={itemData.itemPeople ?? []} />
             <HStack alignItems="flex-start" flexWrap="wrap" mt={5}>
-                <RequireAtLeastOnePermissionWrapper permissions={[Permission_Enum.ConferenceViewAttendees]}>
+                <RequireAtLeastOnePermissionWrapper permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}>
                     {zoomDetailsEls}
                 </RequireAtLeastOnePermissionWrapper>
                 {stackableEls}

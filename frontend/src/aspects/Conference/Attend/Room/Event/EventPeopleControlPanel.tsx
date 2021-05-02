@@ -2,8 +2,8 @@ import { Heading, List, ListItem, useToast } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import {
     EventProgramPersonDetailsFragment,
-    EventProgramPersonRole_Enum,
     EventRoomJoinRequestDetailsFragment,
+    Schedule_EventProgramPersonRole_Enum,
 } from "../../../../../generated/graphql";
 import useUserId from "../../../../Auth/useUserId";
 import { EventProgramPerson } from "./EventProgramPerson";
@@ -16,12 +16,12 @@ export function EventPeopleControlPanel({
 }: {
     unapprovedJoinRequests: readonly EventRoomJoinRequestDetailsFragment[];
     eventPeople: readonly EventProgramPersonDetailsFragment[];
-    myRoles: EventProgramPersonRole_Enum[];
+    myRoles: Schedule_EventProgramPersonRole_Enum[];
 }): JSX.Element {
     const canControlEventPeople = useMemo(
         () =>
-            myRoles.includes(EventProgramPersonRole_Enum.Chair) ||
-            myRoles.includes(EventProgramPersonRole_Enum.Presenter),
+            myRoles.includes(Schedule_EventProgramPersonRole_Enum.Chair) ||
+            myRoles.includes(Schedule_EventProgramPersonRole_Enum.Presenter),
         [myRoles]
     );
     const userId = useUserId();

@@ -1,5 +1,5 @@
 import { Box, HStack, Image, Link } from "@chakra-ui/react";
-import { ElementDataBlob, ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -19,14 +19,14 @@ export function Element({ item }: { item: ElementDataFragment }): JSX.Element {
     return <></>;
 }
 
-function ElementInner({ blob, type }: { blob: ElementDataBlob; type: ElementType_Enum }): JSX.Element {
+function ElementInner({ blob, type }: { blob: ElementDataBlob; type: Content_ElementType_Enum }): JSX.Element {
     const el = useMemo(() => {
         const latestVersion = R.last(blob);
 
         switch (type) {
-            case ElementType_Enum.ItemList:
+            case Content_ElementType_Enum.ContentGroupList:
                 return <ItemList />;
-            case ElementType_Enum.WholeSchedule:
+            case Content_ElementType_Enum.WholeSchedule:
                 return <Schedule />;
         }
 
@@ -35,25 +35,25 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: ElementType
         }
 
         switch (latestVersion.data.type) {
-            case ElementType_Enum.Abstract:
+            case Content_ElementType_Enum.Abstract:
                 return (
                     <Box maxW={700}>
                         <Markdown>{latestVersion.data.text}</Markdown>
                     </Box>
                 );
-            case ElementType_Enum.Zoom:
+            case Content_ElementType_Enum.Zoom:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="green">
                         Go to Zoom
                     </ExternalLinkButton>
                 );
-            case ElementType_Enum.Text:
+            case Content_ElementType_Enum.Text:
                 return (
                     <Box maxW={700}>
                         <Markdown>{latestVersion.data.text}</Markdown>
                     </Box>
                 );
-            case ElementType_Enum.VideoUrl:
+            case Content_ElementType_Enum.VideoUrl:
                 return (
                     // TODO: Chakra AspectRatio
                     // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
@@ -67,9 +67,9 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: ElementType
                         />
                     </Box>
                 );
-            case ElementType_Enum.ImageUrl:
+            case Content_ElementType_Enum.ImageUrl:
                 return <Image src={latestVersion.data.url} style={{ maxWidth: "100%" }} />;
-            case ElementType_Enum.ImageFile:
+            case Content_ElementType_Enum.ImageFile:
                 try {
                     const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
                     if (!bucket || !key) {
@@ -85,9 +85,9 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: ElementType
                 } catch (e) {
                     return <>Invalid image URL.</>;
                 }
-            case ElementType_Enum.Link:
+            case Content_ElementType_Enum.Link:
                 return <Link href={latestVersion.data.url}>{latestVersion.data.text}</Link>;
-            case ElementType_Enum.LinkButton:
+            case Content_ElementType_Enum.LinkButton:
                 return (
                     <HStack>
                         <ExternalLinkButton colorScheme="green" to={latestVersion.data.url} linkProps={{ mx: "auto" }}>
@@ -95,13 +95,13 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: ElementType
                         </ExternalLinkButton>
                     </HStack>
                 );
-            case ElementType_Enum.VideoFile:
-            case ElementType_Enum.VideoBroadcast:
-            case ElementType_Enum.VideoCountdown:
-            case ElementType_Enum.VideoFiller:
-            case ElementType_Enum.VideoPrepublish:
-            case ElementType_Enum.VideoSponsorsFiller:
-            case ElementType_Enum.VideoTitles:
+            case Content_ElementType_Enum.VideoFile:
+            case Content_ElementType_Enum.VideoBroadcast:
+            case Content_ElementType_Enum.VideoCountdown:
+            case Content_ElementType_Enum.VideoFiller:
+            case Content_ElementType_Enum.VideoPrepublish:
+            case Content_ElementType_Enum.VideoSponsorsFiller:
+            case Content_ElementType_Enum.VideoTitles:
                 try {
                     const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
                     if (!bucket || !key) {
@@ -126,19 +126,19 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: ElementType
                     return <>Invalid video URL.</>;
                 }
 
-            case ElementType_Enum.PaperUrl:
+            case Content_ElementType_Enum.PaperUrl:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="red">
                         Read the PDF
                     </ExternalLinkButton>
                 );
-            case ElementType_Enum.PaperLink:
+            case Content_ElementType_Enum.PaperLink:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="blue">
                         {latestVersion.data.text}
                     </ExternalLinkButton>
                 );
-            case ElementType_Enum.PaperFile: {
+            case Content_ElementType_Enum.PaperFile: {
                 try {
                     const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
                     if (!bucket || !key) {
@@ -156,13 +156,13 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: ElementType
                     return <>Invalid file URL.</>;
                 }
             }
-            case ElementType_Enum.PosterUrl:
+            case Content_ElementType_Enum.PosterUrl:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="red">
                         Read the PDF
                     </ExternalLinkButton>
                 );
-            case ElementType_Enum.PosterFile: {
+            case Content_ElementType_Enum.PosterFile: {
                 try {
                     const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
                     if (!bucket || !key) {
@@ -191,7 +191,7 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: ElementType
                 }
             }
 
-            case ElementType_Enum.VideoLink:
+            case Content_ElementType_Enum.VideoLink:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="blue">
                         {latestVersion.data.text}

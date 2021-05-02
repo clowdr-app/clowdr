@@ -103,7 +103,7 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                                 {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
                                 <BroadcastControlPanel
                                     live={live}
-                                    streams={streamsData?.EventParticipantStream ?? null}
+                                    streams={streamsData?.video_EventParticipantStream ?? null}
                                     eventVonageSessionId={event.eventVonageSession?.id ?? null}
                                 />
                             </PopoverBody>
@@ -112,7 +112,7 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                 </Portal>
             </Popover>
         ),
-        [event.eventVonageSession?.id, live, streamsData?.EventParticipantStream, streamsError, streamsLoading]
+        [event.eventVonageSession?.id, live, streamsData?.video_EventParticipantStream, streamsError, streamsLoading]
     );
 
     const insertSpacer = useBreakpointValue([false, false, true]);

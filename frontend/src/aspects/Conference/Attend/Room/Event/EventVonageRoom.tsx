@@ -64,7 +64,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
     return (
-        <ApolloQueryWrapper queryResult={result} getter={(data) => data.Event_by_pk}>
+        <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
                 <VStack justifyContent="stretch" w="100%">
                     <EventRoomControlPanel event={event} />

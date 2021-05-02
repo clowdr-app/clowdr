@@ -66,7 +66,6 @@ function arraysEqual<T>(
 
 function deepProfileIsEqual(x: RegistrantContextT, y: RegistrantContextT): boolean {
     return (
-        x.profile.realName === y.profile.realName &&
         x.profile.affiliation === y.profile.affiliation &&
         x.profile.affiliationURL === y.profile.affiliationURL &&
         x.profile.country === y.profile.country &&
@@ -177,7 +176,6 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             variables: {
                                 registrantId: registrant.id,
                                 profile: {
-                                    realName: editingRegistrant.profile.realName,
                                     affiliation: editingRegistrant.profile.affiliation,
                                     affiliationURL: editingRegistrant.profile.affiliationURL,
                                     country: editingRegistrant.profile.country,
@@ -551,11 +549,11 @@ function EditProfilePage_FetchWrapper({ registrantId }: { registrantId: string }
         return <PageNotFound />;
     }
 
-    return data && data.Registrant[0].profile ? (
+    return data && data.registrant_Registrant[0].profile ? (
         <EditProfilePageInner
             registrant={{
-                ...data.Registrant[0],
-                profile: data.Registrant[0].profile,
+                ...data.registrant_Registrant[0],
+                profile: data.registrant_Registrant[0].profile,
             }}
         />
     ) : (

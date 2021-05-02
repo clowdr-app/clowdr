@@ -147,10 +147,10 @@ export default function ManageConferenceRolesPage(): JSX.Element {
 
         const result = new Map<string, RoleDescriptor>();
 
-        for (const role of allRoles.Role) {
+        for (const role of allRoles.permissions_Role) {
             const permissions: { [K: string]: boolean } = {};
             for (const key in Permissions_Permission_Enum) {
-                const value = (Permission_Enum as any)[key] as string;
+                const value = (Permissions_Permission_Enum as any)[key] as string;
                 permissions[key] = role.rolePermissions.some((x) => x.permissionName === value);
             }
             result.set(role.id, {
@@ -208,7 +208,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             },
         };
         for (const permissionEnumKey in Permissions_Permission_Enum) {
-            const permissionEnumValue = (Permission_Enum as any)[permissionEnumKey] as string;
+            const permissionEnumValue = (Permissions_Permission_Enum as any)[permissionEnumKey] as string;
             const name = permissionEnumValue
                 .split("_")
                 .reduce((acc, part) => `${acc} ${part[0].toUpperCase()}${part.toLowerCase().substr(1)}`, "")
@@ -219,7 +219,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                 heading: `${name}?`,
                 ariaLabel: `${name} Permission`,
                 description:
-                    allPermissions?.Permission.find((x) => x.name === permissionEnumValue)?.description ??
+                    allPermissions?.permissions_Permission.find((x) => x.name === permissionEnumValue)?.description ??
                     "No description provided.",
                 isHidden: false,
                 defaultValue:
@@ -242,11 +242,11 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             };
         }
         return result;
-    }, [allPermissions?.Permission, permissionFieldSpec]);
+    }, [allPermissions?.permissions_Permission, permissionFieldSpec]);
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageRoles]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageRoles]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -324,8 +324,8 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                             const updatedKeys = new Map<
                                 string,
                                 {
-                                    added: Set<Permission_Enum>;
-                                    deleted: Set<Permission_Enum>;
+                                    added: Set<Permissions_Permission_Enum>;
+                                    deleted: Set<Permissions_Permission_Enum>;
                                 }
                             >();
                             const deletedKeys = new Set<string>();
@@ -352,10 +352,10 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                         }
 
                                         let changed = item.name !== existing.name;
-                                        const permissionsAdded = new Set<Permission_Enum>();
-                                        const permissionsDeleted = new Set<Permission_Enum>();
+                                        const permissionsAdded = new Set<Permissions_Permission_Enum>();
+                                        const permissionsDeleted = new Set<Permissions_Permission_Enum>();
                                         for (const permissionEnumKey in Permissions_Permission_Enum) {
-                                            const permissionEnumValue = (Permission_Enum as any)[
+                                            const permissionEnumValue = (Permissions_Permission_Enum as any)[
                                                 permissionEnumKey
                                             ] as Permissions_Permission_Enum;
                                             if (
@@ -403,7 +403,9 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                                 rolePermissions: {
                                                     data: permissionEnumKeys.map((permissionEnumKey) => {
                                                         return {
-                                                            permissionName: (Permission_Enum as any)[permissionEnumKey],
+                                                            permissionName: (Permissions_Permission_Enum as any)[
+                                                                permissionEnumKey
+                                                            ],
                                                         };
                                                     }),
                                                 },

@@ -67,7 +67,7 @@ interface MediaConvertEventPreviewUserMetadata {
 interface MediaConvertEventCombineUserMetadata {
     mode: TranscodeMode.COMBINE;
     combineVideosJobId: string;
-    contentGroupId: string;
+    itemId: string;
     environment?: string;
 }
 

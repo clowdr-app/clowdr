@@ -112,11 +112,16 @@ export default function SubmitItemPage({
         variables: {
             magicToken,
         },
+        context: {
+            headers: {
+                "x-hasura-magic-token": magicToken,
+            },
+        },
         fetchPolicy: "network-only",
     });
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");
 
-    const uploadableItem = useMemo(() => {
+    const uploadableElement = useMemo(() => {
         if (!data?.content_UploadableElement || data.content_UploadableElement.length !== 1) {
             return null;
         }
@@ -124,7 +129,7 @@ export default function SubmitItemPage({
         return data.content_UploadableElement[0];
     }, [data]);
 
-    const title = useTitle(uploadableItem?.itemTitle ? `Submit ${uploadableItem.itemTitle}` : "Clowdr");
+    const title = useTitle(uploadableElement?.itemTitle ? `Submit ${uploadableElement.itemTitle}` : "Clowdr");
 
     const uploadAgreement = useMemo(() => {
         return uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined;
@@ -135,11 +140,11 @@ export default function SubmitItemPage({
     }, [refetch]);
 
     const form = useMemo(() => {
-        if (!uploadableItem) {
+        if (!uploadableElement) {
             return <>No matching item found.</>;
         }
 
-        switch (uploadableItem.typeName) {
+        switch (uploadableElement.typeName) {
             case Content_ElementType_Enum.Abstract:
             case Content_ElementType_Enum.Text:
                 return <UploadTextForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
@@ -149,7 +154,7 @@ export default function SubmitItemPage({
                 return (
                     <UploadFileForm
                         magicToken={magicToken}
-                        uploadableItem={uploadableItem}
+                        uploadableElement={uploadableElement}
                         allowedFileTypes={[".pdf", ".png", ".jpg"]}
                         uploadAgreement={uploadAgreement}
                         handleFormSubmitted={formSubmitted}
@@ -187,14 +192,14 @@ export default function SubmitItemPage({
                 return (
                     <UploadFileForm
                         magicToken={magicToken}
-                        uploadableItem={uploadableItem}
+                        uploadableElement={uploadableElement}
                         allowedFileTypes={[".mp4", ".mkv", ".webm"]}
                         uploadAgreement={uploadAgreement}
                         handleFormSubmitted={formSubmitted}
                     />
                 );
         }
-    }, [formSubmitted, magicToken, uploadableItem, uploadAgreement]);
+    }, [formSubmitted, magicToken, uploadableElement, uploadAgreement]);
 
     return (
         <Center>
@@ -205,9 +210,9 @@ export default function SubmitItemPage({
                         <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                             Content Submission
                         </Heading>
-                        {uploadableItem && (
+                        {uploadableElement && (
                             <Heading as="h2" fontSize="1.5rem" lineHeight="2.2rem" fontStyle="italic">
-                                {uploadableItem.itemTitle}
+                                {uploadableElement.itemTitle}
                             </Heading>
                         )}
                         {(loading && !data) || (uploadAgreementLoading && !uploadAgreementData) ? (
@@ -216,27 +221,28 @@ export default function SubmitItemPage({
                             </div>
                         ) : error || uploadAgreementError ? (
                             <Text mt={4}>An error occurred while loading data.</Text>
-                        ) : !uploadableItem ? (
+                        ) : !uploadableElement ? (
                             <Text mt={4}>No matching item.</Text>
                         ) : (
                             <>
                                 <Heading as="h3" fontSize="1.2rem" mt={5}>
-                                    Upload: {uploadableItem.name}
+                                    Upload: {uploadableElement.name}
                                 </Heading>
-                                {uploadableItem.uploadsRemaining === 0 ? (
+                                {uploadableElement.uploadsRemaining === 0 ? (
                                     <Text mt={4}>
                                         No upload attempts remaining for this item. Please contact your conference
                                         organisers if you need to upload another version.
                                     </Text>
                                 ) : (
                                     <>
-                                        {uploadableItem.typeName === Content_ElementType_Enum.VideoBroadcast ? (
+                                        {uploadableElement.typeName === Content_ElementType_Enum.VideoBroadcast ? (
                                             <Box>
                                                 <UnorderedList>
-                                                    {uploadableItem.uploadsRemaining ? (
+                                                    {uploadableElement.uploadsRemaining ? (
                                                         <ListItem>
-                                                            {uploadableItem.uploadsRemaining} upload attempt
-                                                            {uploadableItem.uploadsRemaining > 1 ? "s" : ""} remaining.
+                                                            {uploadableElement.uploadsRemaining} upload attempt
+                                                            {uploadableElement.uploadsRemaining > 1 ? "s" : ""}{" "}
+                                                            remaining.
                                                         </ListItem>
                                                     ) : (
                                                         <></>
@@ -263,13 +269,14 @@ export default function SubmitItemPage({
                                                 </UnorderedList>
                                             </Box>
                                         ) : undefined}
-                                        {uploadableItem.typeName === Content_ElementType_Enum.VideoPrepublish ? (
+                                        {uploadableElement.typeName === Content_ElementType_Enum.VideoPrepublish ? (
                                             <Box>
                                                 <UnorderedList>
-                                                    {uploadableItem.uploadsRemaining ? (
+                                                    {uploadableElement.uploadsRemaining ? (
                                                         <ListItem>
-                                                            {uploadableItem.uploadsRemaining} upload attempt
-                                                            {uploadableItem.uploadsRemaining > 1 ? "s" : ""} remaining.
+                                                            {uploadableElement.uploadsRemaining} upload attempt
+                                                            {uploadableElement.uploadsRemaining > 1 ? "s" : ""}{" "}
+                                                            remaining.
                                                         </ListItem>
                                                     ) : (
                                                         <></>

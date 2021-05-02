@@ -453,7 +453,7 @@ Order of the rules matters.
 
            const userId = user.user_id;
            const fetchConferenceSlugsQuery = `query UserConferences($userId: String!) {
-   Conference(where:{attendees:{userId:{_eq: $userId }}}) {
+   conference_Conference(where:{registrants:{userId:{_eq: $userId }}}) {
        slug
    }
    }`;
@@ -471,9 +471,9 @@ Order of the rules matters.
                console.log("Response Body", body);
                if (!error &&
                    body.data &&
-                   body.data.Conference
+                   body.data.conference_Conference
                ) {
-                   const confSlugs = body.data.Conference.map(x => x.slug);
+                   const confSlugs = body.data.conference_Conference.map(x => x.slug);
                    console.log("Conference slugs", confSlugs);
                    user.app_metadata.conferenceSlugs = confSlugs;
                    user.app_metadata.conferenceSlugs_LastFetch = Date.now();
@@ -492,8 +492,8 @@ Order of the rules matters.
                }
                else {
                    console.log("body.data", body.data);
-                   console.log("body.data.Conference", body.data && body.data.Conference);
-                   callback(new Error("Unable to fetch conferences for attendee"));
+                   console.log("body.data.conference_Conference", body.data && body.data.conference_Conference);
+                   callback(new Error("Unable to fetch conferences for registrant"));
                }
            });
        }
@@ -511,101 +511,94 @@ Order of the rules matters.
    - Don't forget to `Save changes`
 
    This rule creates users in Clowdr's DB via Hasura using the Admin Secret to
-   directly access the `user` table. It also sets the `lastLoggedInAt` field
-   every time a user logs in.
+   directly access the `user` table.
 
-_Note: `lastLoggedInAt` defaults to `now()` hence why updating it with a
-blank value when there is a constraint conflict results in it reflecting the
-last logged in time._
+   ```js
+   function (user, context, callback) {
+       if (user.app_metadata.isNew) {
+           console.log("Inserting new user");
+           const userId = user.user_id;
+           const email = user.email;
+           const upsertUserQuery = `mutation Auth0_CreateUser($userId: String!, $email: String!) {
+           insert_User(objects: {id: $userId, email: $email}, on_conflict: {constraint: user_pkey, update_columns: []}) {
+               affected_rows
+           }
+           }`;
+           const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "email": email } };
 
-    ```js
-    function (user, context, callback) {
-        if (user.app_metadata.isNew) {
-            console.log("Inserting new user");
-            const userId = user.user_id;
-            const given_name = user.given_name && user.given_name.length > 0 ? user.given_name : "<Unknown>";
-            const family_name = user.family_name && user.family_name.length > 0 ? user.family_name : "<Unknown>";
-            const email = user.email;
-            const upsertUserQuery = `mutation Auth0_CreateUser($userId: String!, $firstName: String!, $lastName: String!, $email: String!) {
-            insert_User(objects: {id: $userId, firstName: $firstName, lastName: $lastName, email: $email}, on_conflict: {constraint: user_pkey, update_columns: []}) {
-                affected_rows
-            }
-            }`;
-            const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "firstName": given_name, "lastName": family_name, "email": email } };
+           // console.log("url", url);
+           // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
 
-            // console.log("url", url);
-            // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
+           const sendRequest = (url, adminSecret, user, context, cb) => {
+               request.post({
+                   headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
+                   url:   url,
+                   body:  JSON.stringify(graphqlReq)
+               }, function(error, response, body){
+                   body = JSON.parse(body);
+                   console.log(body);
+                   if (!error &&
+                       body.data &&
+                       body.data.insert_User &&
+                       typeof body.data.insert_User.affected_rows === "number"
+                   ) {
+                       console.log("Suucessfully saved to db. Marking as not new.");
+                       user.app_metadata.isNew = false;
+                   }
+                   else {
+                       console.log("body.data",
+                           body.data);
+                       console.log("body.data.insert_User",
+                           body.data && body.data.insert_User);
+                       console.log("body.data.insert_User.affected_rows",
+                           body.data &&
+                           body.data.insert_User &&
+                           body.data.insert_User.affected_rows
+                       );
+                   }
+                   cb(null, user, context);
+               });
+           };
 
-            const sendRequest = (url, adminSecret, user, context, cb) => {
-                request.post({
-                    headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
-                    url:   url,
-                    body:  JSON.stringify(graphqlReq)
-                }, function(error, response, body){
-                    body = JSON.parse(body);
-                    console.log(body);
-                    if (!error &&
-                        body.data &&
-                        body.data.insert_User &&
-                        typeof body.data.insert_User.affected_rows === "number"
-                    ) {
-                        console.log("Suucessfully saved to db. Marking as not new.");
-                        user.app_metadata.isNew = false;
-                    }
-                    else {
-                        console.log("body.data",
-                            body.data);
-                        console.log("body.data.insert_User",
-                            body.data && body.data.insert_User);
-                        console.log("body.data.insert_User.affected_rows",
-                            body.data &&
-                            body.data.insert_User &&
-                            body.data.insert_User.affected_rows
-                        );
-                    }
-                    cb(null, user, context);
-                });
-            };
-
-            sendRequest(
-                configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET,
-                user, context,
-                (_err, _user, _ctx) => {
-                    if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
-                        sendRequest(
-                            configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL,
-                            _user, _ctx,
-                            (_err2, _user2, _ctx2) => {
-                                auth0.users.updateAppMetadata(_user2.user_id, _user2.app_metadata)
-                                    .then(function(){
-                                        if (_err) {
-                                            callback(_err);
-                                        }
-                                        else if (_err2) {
-                                            callback(_err2);
-                                        }
-                                        else {
-                                            callback(null, _user2, _ctx2);
-                                        }
-                                    })
-                                    .catch(function(_err3){
-                                        callback(_err3);
-                                    });
-                            }
-                        );
-                    }
-                    else {
-                        callback(null, _user, _ctx);
-                    }
-                }
-            );
-        }
-        else {
-            console.log("Ignoring existing user");
-            callback(null, user, context);
-        }
-    }
-    ```
+           sendRequest(
+               configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET,
+               user, context,
+               (_err, _user, _ctx) => {
+                   if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
+                       sendRequest(
+                           configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL,
+                           _user, _ctx,
+                           (_err2, _user2, _ctx2) => {
+                               auth0.users.updateAppMetadata(_user2.user_id, _user2.app_metadata)
+                                   .then(function(){
+                                       if (_err) {
+                                           callback(_err);
+                                       }
+                                       else if (_err2) {
+                                           callback(_err2);
+                                       }
+                                       else {
+                                           callback(null, _user2, _ctx2);
+                                       }
+                                   })
+                                   .catch(function(_err3){
+                                       callback(_err3);
+                                   });
+                           }
+                       );
+                   }
+                   else {
+                       callback(null, _user, _ctx);
+                   }
+               }
+           );
+       }
+       else {
+           console.log("Ignoring existing user");
+           callback(null, user, context);
+       }
+   }
+   ```
 
 #### 5. Configure Rules
 

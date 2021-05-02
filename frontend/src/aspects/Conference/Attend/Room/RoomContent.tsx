@@ -2,10 +2,10 @@ import { Box, Heading, HStack, Tag, Text, useColorModeValue } from "@chakra-ui/r
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
 import {
-    ItemType_Enum,
+    Content_ItemType_Enum,
     RoomPage_RoomDetailsFragment,
     Room_EventSummaryFragment,
-    room_Mode_Enum,
+    Room_Mode_Enum,
 } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Generic/useRealTime";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
@@ -63,7 +63,7 @@ export function RoomContent({
                     <Heading as="h3" textAlign="left" size="lg" mb={2}>
                         {currentRoomEvent.name}
                     </Heading>
-                    {currentRoomEvent.intendedRoomModeName !== room_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
+                    {currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
                         <ItemElementsWrapper itemId={currentRoomEvent.itemId} linkToItem={true} />
                     ) : (
                         <></>
@@ -109,7 +109,8 @@ export function RoomContent({
                 <></>
             )}
 
-            {roomDetails.originatingItem?.id && roomDetails.originatingItem.typeName !== ItemType_Enum.Sponsor ? (
+            {roomDetails.originatingItem?.id &&
+            roomDetails.originatingItem.typeName !== Content_ItemType_Enum.Sponsor ? (
                 <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
                     <ItemElementsWrapper itemId={roomDetails.originatingItem.id} linkToItem={true} />
                 </Box>

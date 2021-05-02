@@ -25,10 +25,10 @@ import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import {
-    ElementType_Enum,
-    JobStatus_Enum,
+    Content_ElementType_Enum,
     useCombineVideosModal_CreateCombineVideosJobMutation,
     useCombineVideosModal_GetCombineVideosJobQuery,
+    Video_JobStatus_Enum,
 } from "../../../../generated/graphql";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useConference } from "../../useConference";
@@ -77,19 +77,19 @@ export function CombineVideosModal({
 
     const options = useMemo(
         () =>
-            item?.items
-                .filter((item) =>
+            item?.elements
+                .filter((element) =>
                     [
-                        ElementType_Enum.VideoFile,
-                        ElementType_Enum.VideoBroadcast,
-                        ElementType_Enum.VideoPrepublish,
-                    ].includes(item.typeName)
+                        Content_ElementType_Enum.VideoFile,
+                        Content_ElementType_Enum.VideoBroadcast,
+                        Content_ElementType_Enum.VideoPrepublish,
+                    ].includes(element.typeName)
                 )
-                .map((item) => ({
-                    label: item.isHidden ? `[HIDDEN] ${item.name}` : item.name,
-                    value: item.id,
+                .map((element) => ({
+                    label: element.isHidden ? `[HIDDEN] ${element.name}` : element.name,
+                    value: element.id,
                 })) ?? [],
-        [item?.items]
+        [item?.elements]
     );
 
     const toast = useToast();
@@ -121,11 +121,11 @@ export function CombineVideosModal({
                 onSubmit={async (values, actions) => {
                     console.log(values.elementIds);
                     const items: InputElement[] = values.elementIds.map((id) => ({
-                        elementId: id,
+                        contentItemId: id,
                         includeSubtitles: false,
                     }));
                     const data: CombineVideosJobDataBlob = {
-                        inputElements: items,
+                        inputContentItems: items,
                     };
 
                     try {
@@ -270,7 +270,7 @@ export function CombineVideosModal({
                                                 {data?.job_queues_CombineVideosJob_by_pk?.jobStatusName}
                                             </Badge>
                                             {data.job_queues_CombineVideosJob_by_pk?.jobStatusName ===
-                                            JobStatus_Enum.InProgress ? (
+                                            Video_JobStatus_Enum.InProgress ? (
                                                 <Spinner size="sm" ml={2} mt={1} />
                                             ) : undefined}
                                             {data?.job_queues_CombineVideosJob_by_pk?.message ? (

@@ -39,7 +39,7 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
     const toast = useToast();
 
     const options = useMemo(() => {
-        return data?.Event.map(
+        return data?.schedule_Event.map(
             (event) =>
                 (
                     <option key={event.id} value={event.id}>
@@ -47,7 +47,7 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
                     </option>
                 ) ?? []
         );
-    }, [data?.Event]);
+    }, [data?.schedule_Event]);
 
     return (
         <Formik<{ eventId: string | null }>

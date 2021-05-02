@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Room_EventSummaryFragment, room_Mode_Enum } from "../../../../generated/graphql";
+import { Room_EventSummaryFragment, Room_Mode_Enum } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 
 interface Result {
@@ -17,14 +17,14 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
     const broadcastEvents = useMemo(
         () =>
             roomEvents.filter((event) =>
-                [room_Mode_Enum.Prerecorded, room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(
+                [Room_Mode_Enum.Prerecorded, Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(
                     event.intendedRoomModeName
                 )
             ),
         [roomEvents]
     );
 
-    const zoomEvents = useMemo(() => roomEvents.filter((event) => event.intendedRoomModeName === room_Mode_Enum.Zoom), [
+    const zoomEvents = useMemo(() => roomEvents.filter((event) => event.intendedRoomModeName === Room_Mode_Enum.Zoom), [
         roomEvents,
     ]);
 
@@ -129,8 +129,8 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         const now = Date.now();
         const filteredEvents = roomEvents.filter((event) => {
             if (
-                event.intendedRoomModeName !== room_Mode_Enum.Presentation &&
-                event.intendedRoomModeName !== room_Mode_Enum.QAndA
+                event.intendedRoomModeName !== Room_Mode_Enum.Presentation &&
+                event.intendedRoomModeName !== Room_Mode_Enum.QAndA
             ) {
                 return false;
             }
@@ -151,8 +151,8 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         const cutoff = now + 20 * 60 * 1000;
         const filteredEvents = roomEvents.filter((event) => {
             if (
-                event.intendedRoomModeName !== room_Mode_Enum.Presentation &&
-                event.intendedRoomModeName !== room_Mode_Enum.QAndA
+                event.intendedRoomModeName !== Room_Mode_Enum.Presentation &&
+                event.intendedRoomModeName !== Room_Mode_Enum.QAndA
             ) {
                 return false;
             }

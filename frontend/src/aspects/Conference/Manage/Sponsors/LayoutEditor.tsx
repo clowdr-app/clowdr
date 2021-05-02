@@ -11,9 +11,9 @@ import {
     NumberInputStepper,
     Switch,
 } from "@chakra-ui/react";
-import { ElementType_Enum } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Content_ElementType_Enum } from "../../../../generated/graphql";
 
 export function LayoutEditor({
     layoutDataBlob,
@@ -21,13 +21,13 @@ export function LayoutEditor({
     update,
 }: {
     layoutDataBlob: LayoutDataBlob | null;
-    elementType: ElementType_Enum;
+    elementType: Content_ElementType_Enum;
     update: (_updated: LayoutDataBlob) => void;
 }): JSX.Element {
-    const newLayoutData = useCallback((contentType: ElementType_Enum): LayoutDataBlob => {
+    const newLayoutData = useCallback((contentType: Content_ElementType_Enum): LayoutDataBlob => {
         switch (contentType) {
-            case ElementType_Enum.ImageUrl:
-            case ElementType_Enum.ImageFile:
+            case Content_ElementType_Enum.ImageUrl:
+            case Content_ElementType_Enum.ImageFile:
                 return {
                     contentType,
                     wide: false,
@@ -58,8 +58,8 @@ export function LayoutEditor({
 
     return (
         <HStack alignItems="flex-start" mt={4}>
-            {layoutData.contentType === ElementType_Enum.ImageUrl ||
-            layoutData.contentType === ElementType_Enum.ImageFile ? (
+            {layoutData.contentType === Content_ElementType_Enum.ImageUrl ||
+            layoutData.contentType === Content_ElementType_Enum.ImageFile ? (
                 <FormControl>
                     <FormLabel>Is logo?</FormLabel>
                     <Switch

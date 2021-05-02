@@ -13,10 +13,10 @@ export function convertContentToDescriptors(
 } {
     return {
         items: new Map(
-            allContent.Item.map((group): [string, ItemDescriptor] => [group.id, convertItemToDescriptor(group)])
+            allContent.content_Item.map((group): [string, ItemDescriptor] => [group.id, convertItemToDescriptor(group)])
         ),
         tags: new Map(
-            allContent.Tag.map((tag): [string, TagDescriptor] => [
+            allContent.collection_Tag.map((tag): [string, TagDescriptor] => [
                 tag.id,
                 {
                     id: tag.id,
@@ -28,7 +28,7 @@ export function convertContentToDescriptors(
             ])
         ),
         people: new Map(
-            allContent.ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
+            allContent.collection_ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
                 person.id,
                 {
                     id: person.id,
@@ -42,7 +42,7 @@ export function convertContentToDescriptors(
             ])
         ),
         originatingDatas: new Map(
-            allContent.OriginatingData.map((data): [string, OriginatingDataDescriptor] => [
+            allContent.conference_OriginatingData.map((data): [string, OriginatingDataDescriptor] => [
                 data.id,
                 {
                     id: data.id,
@@ -52,7 +52,7 @@ export function convertContentToDescriptors(
             ])
         ),
         exhibitions: new Map(
-            allContent.Exhibition.map((data): [string, ExhibitionDescriptor] => [
+            allContent.collection_Exhibition.map((data): [string, ExhibitionDescriptor] => [
                 data.id,
                 {
                     id: data.id,
@@ -72,7 +72,7 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
         shortTitle: group.shortTitle,
         typeName: group.typeName,
         tagIds: new Set(group.itemTags.map((x) => x.tagId)),
-        items: group.elements.map((item) => ({
+        elements: group.elements.map((item) => ({
             id: item.id,
             isHidden: item.isHidden,
             name: item.name,
@@ -82,7 +82,7 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
             uploadableId: item.uploadableId,
             originatingDataId: item.originatingDataId,
         })),
-        uploadableItems: group.uploadableElements.map((item) => ({
+        uploadableElements: group.uploadableElements.map((item) => ({
             id: item.id,
             name: item.name,
             typeName: item.typeName,
@@ -93,11 +93,11 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
                 email: uploader.email,
                 emailsSentCount: uploader.emailsSentCount,
                 name: uploader.name,
-                uploadableId: uploader.uploadableId,
+                uploadableId: uploader.uploadableElementId,
             })),
             originatingDataId: item.originatingDataId,
         })),
-        people: group.people.map((groupPerson) => ({
+        people: group.itemPeople.map((groupPerson) => ({
             conferenceId: groupPerson.conferenceId,
             itemId: groupPerson.itemId,
             id: groupPerson.id,
@@ -105,7 +105,7 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
             priority: groupPerson.priority,
             roleName: groupPerson.roleName,
         })),
-        exhibitions: group.exhibitions.map((groupExhibition) => ({
+        exhibitions: group.itemExhibitions.map((groupExhibition) => ({
             conferenceId: groupExhibition.conferenceId,
             itemId: groupExhibition.itemId,
             exhibitionId: groupExhibition.exhibitionId,
@@ -121,7 +121,7 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
 export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
     return {
         id: group.id,
-        items: group.items.map((item) => ({
+        elements: group.elements.map((item) => ({
             data: item.data.map((d) => ({
                 createdAt: d.createdAt,
                 createdBy: d.createdBy,
@@ -135,7 +135,7 @@ export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
             uploadableId: item.uploadableId,
             originatingDataId: item.originatingDataId,
         })),
-        uploadableItems: group.uploadableItems.map((item) => ({
+        uploadableElements: group.uploadableElements.map((item) => ({
             id: item.id,
             name: item.name,
             typeName: item.typeName,

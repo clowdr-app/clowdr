@@ -3,18 +3,18 @@ import assert from "assert";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    collection_ProgramPerson_Insert_Input,
-    Element_Insert_Input,
-    Exhibition_Insert_Input,
-    ItemExhibition_Insert_Input,
-    ItemPerson_Insert_Input,
-    Item_Insert_Input,
-    OriginatingData_Insert_Input,
-    Tag_Insert_Input,
-    UploadableElement_Insert_Input,
-    Uploader_Constraint,
-    Uploader_Insert_Input,
-    Uploader_Update_Column,
+    Collection_Exhibition_Insert_Input,
+    Collection_ProgramPerson_Insert_Input,
+    Collection_Tag_Insert_Input,
+    Conference_OriginatingData_Insert_Input,
+    Content_Element_Insert_Input,
+    Content_ItemExhibition_Insert_Input,
+    Content_ItemProgramPerson_Insert_Input,
+    Content_Item_Insert_Input,
+    Content_UploadableElement_Insert_Input,
+    Content_Uploader_Constraint,
+    Content_Uploader_Insert_Input,
+    Content_Uploader_Update_Column,
     useDeleteExhibitionsMutation,
     useDeleteOriginatingDatasMutation,
     useDeleteProgramPeopleMutation,
@@ -731,7 +731,7 @@ export function useSaveContentDiff():
                         await insertTagsMutation({
                             variables: {
                                 newTags: Array.from(newTags.values()).map(
-                                    (tag): Tag_Insert_Input => ({
+                                    (tag): Collection_Tag_Insert_Input => ({
                                         id: tag.id,
                                         name: tag.name,
                                         colour: tag.colour,
@@ -777,7 +777,7 @@ export function useSaveContentDiff():
                         await insertOriginatingDatasMutation({
                             variables: {
                                 newDatas: Array.from(newOriginatingDatas.values()).map(
-                                    (originatingData): OriginatingData_Insert_Input => ({
+                                    (originatingData): Conference_OriginatingData_Insert_Input => ({
                                         id: originatingData.id,
                                         conferenceId: conference.id,
                                         data: originatingData.data,
@@ -795,7 +795,7 @@ export function useSaveContentDiff():
                         await insertProgramPeopleMutation({
                             variables: {
                                 newPeople: Array.from(newPeople.values()).map(
-                                    (person): collection_ProgramPerson_Insert_Input => ({
+                                    (person): Collection_ProgramPerson_Insert_Input => ({
                                         id: person.id,
                                         conferenceId: conference.id,
                                         affiliation: person.affiliation,
@@ -844,7 +844,7 @@ export function useSaveContentDiff():
                         await insertExhibitionsMutation({
                             variables: {
                                 newExhibitions: Array.from(newExhibitions.values()).map(
-                                    (exhibition): Exhibition_Insert_Input => ({
+                                    (exhibition): Collection_Exhibition_Insert_Input => ({
                                         id: exhibition.id,
                                         conferenceId: conference.id,
                                         name: exhibition.name,
@@ -890,7 +890,7 @@ export function useSaveContentDiff():
                             variables: {
                                 deleteGroupIds: Array.from(deletedGroupKeys.values()),
                                 newGroups: Array.from(newGroups.values()).map((group) => {
-                                    const groupResult: Item_Insert_Input = {
+                                    const groupResult: Content_Item_Insert_Input = {
                                         id: group.id,
                                         conferenceId: conference.id,
                                         itemTags: {
@@ -900,8 +900,8 @@ export function useSaveContentDiff():
                                         },
                                         typeName: group.typeName,
                                         elements: {
-                                            data: group.items.map((item) => {
-                                                const itemResult: Element_Insert_Input = {
+                                            data: group.elements.map((item) => {
+                                                const itemResult: Content_Element_Insert_Input = {
                                                     id: item.id,
                                                     conferenceId: conference.id,
                                                     typeName: item.typeName,
@@ -916,8 +916,8 @@ export function useSaveContentDiff():
                                             }),
                                         },
                                         uploadableElements: {
-                                            data: group.uploadableItems.map((item) => {
-                                                const itemResult: UploadableElement_Insert_Input = {
+                                            data: group.uploadableElements.map((item) => {
+                                                const itemResult: Content_UploadableElement_Insert_Input = {
                                                     id: item.id,
                                                     conferenceId: conference.id,
                                                     accessToken: uuidv4(),
@@ -927,7 +927,7 @@ export function useSaveContentDiff():
                                                     uploadsRemaining: item.uploadsRemaining,
                                                     uploaders: {
                                                         data: item.uploaders.map(
-                                                            (uploader): Uploader_Insert_Input => ({
+                                                            (uploader): Content_Uploader_Insert_Input => ({
                                                                 conferenceId: conference.id,
                                                                 email: uploader.email,
                                                                 id: uploader.id,
@@ -936,8 +936,8 @@ export function useSaveContentDiff():
                                                         ),
                                                         on_conflict: {
                                                             constraint:
-                                                                Uploader_Constraint.UploaderEmailUploadableIdKey,
-                                                            update_columns: [Uploader_Update_Column.Name],
+                                                                Content_Uploader_Constraint.UploaderEmailUploadableElementIdKey,
+                                                            update_columns: [Content_Uploader_Update_Column.Name],
                                                         },
                                                     },
                                                     originatingDataId: item.originatingDataId,
@@ -945,9 +945,9 @@ export function useSaveContentDiff():
                                                 return itemResult;
                                             }),
                                         },
-                                        people: {
+                                        itemPeople: {
                                             data: group.people.map((personGroup) => {
-                                                const personGroupResult: ItemPerson_Insert_Input = {
+                                                const personGroupResult: Content_ItemProgramPerson_Insert_Input = {
                                                     id: personGroup.id,
                                                     conferenceId: conference.id,
                                                     priority: personGroup.priority,
@@ -957,9 +957,9 @@ export function useSaveContentDiff():
                                                 return personGroupResult;
                                             }),
                                         },
-                                        exhibitions: {
+                                        itemExhibitions: {
                                             data: group.exhibitions.map((exhibitionGroup) => {
-                                                const exhibitionGroupResult: ItemExhibition_Insert_Input = {
+                                                const exhibitionGroupResult: Content_ItemExhibition_Insert_Input = {
                                                     id: exhibitionGroup.id,
                                                     conferenceId: conference.id,
                                                     priority: exhibitionGroup.priority,
@@ -1026,20 +1026,20 @@ export function useSaveContentDiff():
 
                                 const existingGroup = original.items.get(group.id);
                                 assert(existingGroup);
-                                for (const item of group.items) {
+                                for (const item of group.elements) {
                                     if (item.isNew) {
                                         newItems.set(item.id, item);
                                     } else {
                                         updatedItems.set(item.id, item);
                                     }
                                 }
-                                for (const existingItem of existingGroup.items) {
+                                for (const existingItem of existingGroup.elements) {
                                     if (!updatedItems.has(existingItem.id)) {
                                         deleteItemKeys.add(existingItem.id);
                                     }
                                 }
 
-                                for (const item of group.uploadableItems) {
+                                for (const item of group.uploadableElements) {
                                     if (item.isNew) {
                                         newUploadableItems.set(item.id, item);
                                     } else {
@@ -1054,7 +1054,7 @@ export function useSaveContentDiff():
                                         }
                                     }
                                 }
-                                for (const existingItem of existingGroup.uploadableItems) {
+                                for (const existingItem of existingGroup.uploadableElements) {
                                     if (!updatedUploadableItems.has(existingItem.id)) {
                                         deleteUploadableItemKeys.add(existingItem.id);
                                     }
@@ -1190,7 +1190,7 @@ export function useSaveContentDiff():
                                         deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
                                         deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
                                         deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
-                                        itemId: group.id,
+                                        groupId: group.id,
                                         newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
                                             itemId: group.id,
                                             tagId,
@@ -1219,7 +1219,7 @@ export function useSaveContentDiff():
                                             originatingDataId: item.originatingDataId,
                                             uploaders: {
                                                 data: item.uploaders.map(
-                                                    (uploader): Uploader_Insert_Input => ({
+                                                    (uploader): Content_Uploader_Insert_Input => ({
                                                         id: uploader.id,
                                                         email: uploader.email,
                                                         name: uploader.name,

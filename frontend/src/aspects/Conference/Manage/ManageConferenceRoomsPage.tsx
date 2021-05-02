@@ -37,11 +37,12 @@ import {
 import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    RoomPersonRole_Enum,
+    Permissions_Permission_Enum,
     RoomWithParticipantInfoFragment,
     RoomWithParticipantInfoFragmentDoc,
-    room_ManagementMode_Enum,
-    room_Mode_Enum,
+    Room_ManagementMode_Enum,
+    Room_Mode_Enum,
+    Room_PersonRole_Enum,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
     useInsertRoomPeopleMutation,
@@ -227,10 +228,10 @@ function RoomSecondaryEditor({
                     if (!result.error && result.data) {
                         insertRoomPeople({
                             variables: {
-                                people: result.data.GroupRegistrant.map((x) => ({
+                                people: result.data.permissions_GroupRegistrant.map((x) => ({
                                     registrantId: x.registrantId,
                                     roomId: room.id,
-                                    personRoleName: RoomPersonRole_Enum.Participant,
+                                    personRoleName: Room_PersonRole_Enum.Participant,
                                 })),
                             },
                         });
@@ -271,7 +272,7 @@ function RoomSecondaryEditor({
                                         <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
                                         View room
                                     </LinkButton>
-                                    {room.managementModeName === room_ManagementMode_Enum.Private ? (
+                                    {room.managementModeName === Room_ManagementMode_Enum.Private ? (
                                         <Menu>
                                             <MenuButton
                                                 as={Button}
@@ -283,7 +284,7 @@ function RoomSecondaryEditor({
                                                 Add people from group
                                             </MenuButton>
                                             <MenuList>
-                                                {groups.data?.Group.map((group) => (
+                                                {groups.data?.permissions_Group.map((group) => (
                                                     <MenuItem
                                                         key={group.id}
                                                         onClick={() => addUsersFromGroup(group.id)}
@@ -366,7 +367,7 @@ function RoomSecondaryEditor({
 
                                     {room &&
                                     people.data &&
-                                    room.managementModeName !== room_ManagementMode_Enum.Public ? (
+                                    room.managementModeName !== Room_ManagementMode_Enum.Public ? (
                                         <AccordionItem>
                                             <AccordionButton>
                                                 <Box flex="1" textAlign="left">
@@ -375,11 +376,11 @@ function RoomSecondaryEditor({
                                                 <AccordionIcon />
                                             </AccordionButton>
                                             <AccordionPanel pt={4} pb={4}>
-                                                {people.data.RoomPerson.length === 0 ? (
+                                                {people.data.room_RoomPerson.length === 0 ? (
                                                     "Room has no members."
                                                 ) : (
                                                     <UnorderedList>
-                                                        {people.data.RoomPerson.map((member) => (
+                                                        {people.data.room_RoomPerson.map((member) => (
                                                             <ListItem key={member.id}>
                                                                 {member.registrant.displayName}
                                                             </ListItem>
@@ -418,7 +419,9 @@ function EditableRoomsCRUDTable() {
             conferenceId: conference.id,
         },
     });
-    const data = useMemo(() => [...(selectAllRoomsResult.data?.Room ?? [])], [selectAllRoomsResult.data?.Room]);
+    const data = useMemo(() => [...(selectAllRoomsResult.data?.room_Room ?? [])], [
+        selectAllRoomsResult.data?.room_Room,
+    ]);
 
     const {
         isOpen: isSecondaryPanelOpen,
@@ -429,8 +432,8 @@ function EditableRoomsCRUDTable() {
 
     const itemOptions = useMemo(
         () =>
-            items.data?.Item
-                ? [...items.data.Item]
+            items.data?.content_Item
+                ? [...items.data.content_Item]
                       .sort((x, y) => x.title.localeCompare(y.title))
                       .map((content) => {
                           return (
@@ -440,7 +443,7 @@ function EditableRoomsCRUDTable() {
                           );
                       })
                 : undefined,
-        [items.data?.Item]
+        [items.data?.content_Item]
     );
 
     const row: RowSpecification<RoomWithParticipantInfoFragment> = useMemo(
@@ -633,8 +636,8 @@ function EditableRoomsCRUDTable() {
                 },
                 get: (data) => data.currentModeName,
                 sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows, v: room_Mode_Enum) => rows.filter((r) => r.currentModeName === v),
-                filterEl: SelectColumnFilter(Object.values(room_Mode_Enum)),
+                filterFn: (rows, v: Room_Mode_Enum) => rows.filter((r) => r.currentModeName === v),
+                filterEl: SelectColumnFilter(Object.values(Room_Mode_Enum)),
                 cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
                     return <Text>{props.value}</Text>;
                 },
@@ -655,12 +658,12 @@ function EditableRoomsCRUDTable() {
                     row.managementModeName = value;
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows, v: room_ManagementMode_Enum) => rows.filter((r) => r.managementModeName === v),
-                filterEl: SelectColumnFilter(Object.values(room_ManagementMode_Enum)),
+                filterFn: (rows, v: Room_ManagementMode_Enum) => rows.filter((r) => r.managementModeName === v),
+                filterEl: SelectColumnFilter(Object.values(Room_ManagementMode_Enum)),
                 cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
                     if (
-                        props.value !== room_ManagementMode_Enum.Private &&
-                        props.value !== room_ManagementMode_Enum.Public
+                        props.value !== Room_ManagementMode_Enum.Private &&
+                        props.value !== Room_ManagementMode_Enum.Public
                     ) {
                         return <Text>{props.value}</Text>;
                     } else {
@@ -668,16 +671,16 @@ function EditableRoomsCRUDTable() {
                         return (
                             <Select
                                 value={v}
-                                onChange={(ev) => props.onChange?.(ev.target.value as room_ManagementMode_Enum)}
+                                onChange={(ev) => props.onChange?.(ev.target.value as Room_ManagementMode_Enum)}
                                 onBlur={props.onBlur}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
                             >
                                 {v === "" ||
-                                (v !== room_ManagementMode_Enum.Public && v !== room_ManagementMode_Enum.Private) ? (
+                                (v !== Room_ManagementMode_Enum.Public && v !== Room_ManagementMode_Enum.Private) ? (
                                     <option value="">&lt;Error&gt;</option>
                                 ) : undefined}
-                                <option value={room_ManagementMode_Enum.Public}>Public</option>
-                                <option value={room_ManagementMode_Enum.Private}>Private</option>
+                                <option value={Room_ManagementMode_Enum.Public}>Public</option>
+                                <option value={Room_ManagementMode_Enum.Private}>Private</option>
                             </Select>
                         );
                     }
@@ -694,7 +697,7 @@ function EditableRoomsCRUDTable() {
                         </Button>
                     );
                 },
-                get: (data) => items.data?.Item.find((group) => group.id === data.originatingItemId),
+                get: (data) => items.data?.content_Item.find((group) => group.id === data.originatingItemId),
                 set: (record, value: { id: string; title: string } | undefined) => {
                     record.originatingItemId = (value?.id as any) as DeepWriteable<any> | undefined;
                 },
@@ -706,7 +709,8 @@ function EditableRoomsCRUDTable() {
                     return rows.filter((row) => {
                         return (
                             (row.originatingItemId &&
-                                items.data?.Item.find((group) => group.id === row.originatingItemId)
+                                items.data?.content_Item
+                                    .find((group) => group.id === row.originatingItemId)
                                     ?.title.toLowerCase()
                                     .includes(filterValue.toLowerCase())) ??
                             false
@@ -724,7 +728,7 @@ function EditableRoomsCRUDTable() {
                         <Select
                             value={props.value?.id ?? ""}
                             onChange={(ev) =>
-                                props.onChange?.(items.data?.Item.find((group) => group.id === ev.target.value))
+                                props.onChange?.(items.data?.content_Item.find((group) => group.id === ev.target.value))
                             }
                             onBlur={props.onBlur}
                             ref={props.ref as LegacyRef<HTMLSelectElement>}
@@ -753,7 +757,7 @@ function EditableRoomsCRUDTable() {
     return (
         <>
             <CRUDTable
-                data={!selectAllRoomsResult.loading && (selectAllRoomsResult.data?.Room ? data : null)}
+                data={!selectAllRoomsResult.loading && (selectAllRoomsResult.data?.room_Room ? data : null)}
                 tableUniqueName="ManageConferenceRooms"
                 row={row}
                 columns={columns}
@@ -770,10 +774,10 @@ function EditableRoomsCRUDTable() {
                         conferenceId: conference.id,
                         capacity: undefined,
                         priority: 10,
-                        currentModeName: room_Mode_Enum.Breakout,
+                        currentModeName: Room_Mode_Enum.Breakout,
                         name: "New room " + (data.length + 1),
                         participants: [],
-                        managementModeName: room_ManagementMode_Enum.Public,
+                        managementModeName: Room_ManagementMode_Enum.Public,
                     }),
                     makeWhole: (d) => d as RoomWithParticipantInfoFragment,
                     start: (record) => {
@@ -791,8 +795,8 @@ function EditableRoomsCRUDTable() {
                                 },
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.insert_Room_one) {
-                                    const data = _data.insert_Room_one;
+                                if (_data?.insert_room_Room_one) {
+                                    const data = _data.insert_room_Room_one;
                                     cache.writeFragment({
                                         data,
                                         fragment: RoomWithParticipantInfoFragmentDoc,
@@ -816,11 +820,11 @@ function EditableRoomsCRUDTable() {
                                 originatingItemId: record.originatingItemId,
                             },
                             optimisticResponse: {
-                                update_Room_by_pk: record,
+                                update_room_Room_by_pk: record,
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.update_Room_by_pk) {
-                                    const data = _data.update_Room_by_pk;
+                                if (_data?.update_room_Room_by_pk) {
+                                    const data = _data.update_room_Room_by_pk;
                                     cache.writeFragment({
                                         data,
                                         fragment: RoomWithParticipantInfoFragmentDoc,
@@ -839,12 +843,12 @@ function EditableRoomsCRUDTable() {
                                 deleteRoomIds: keys,
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.delete_Room) {
-                                    const data = _data.delete_Room;
+                                if (_data?.delete_room_Room) {
+                                    const data = _data.delete_room_Room;
                                     const deletedIds = data.returning.map((x) => x.id);
                                     cache.modify({
                                         fields: {
-                                            Room(existingRefs: Reference[] = [], { readField }) {
+                                            room_Room(existingRefs: Reference[] = [], { readField }) {
                                                 deletedIds.forEach((x) => {
                                                     cache.evict({
                                                         id: x.id,
@@ -898,7 +902,7 @@ export default function ManageConferenceRoomsPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageSchedule]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

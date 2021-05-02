@@ -75,7 +75,7 @@ export function ConfigureEmailTemplates(): JSX.Element {
 
     return (
         <ApolloQueryWrapper
-            getter={(result) => result.ConferenceConfiguration}
+            getter={(result) => result.conference_Configuration}
             queryResult={conferenceConfigurationResult}
         >
             {(conferenceConfigurations: readonly ConfigureEmailTemplates_ConferenceConfigurationFragment[]) => (
@@ -128,13 +128,13 @@ export function ConfigureEmailTemplatesInner({
                     value: newValue,
                 },
                 update: (cache, { data: _data }) => {
-                    if (_data?.insert_ConferenceConfiguration_one) {
-                        const data = _data.insert_ConferenceConfiguration_one;
+                    if (_data?.insert_conference_Configuration_one) {
+                        const data = _data.insert_conference_Configuration_one;
                         const item: ConfigureEmailTemplates_ConferenceConfigurationFragment = {
                             id: data.id,
                             conferenceId: conference.id,
                             key,
-                            __typename: "ConferenceConfiguration",
+                            __typename: "conference_Configuration",
                             value: newValue,
                         };
                         cache.writeFragment({

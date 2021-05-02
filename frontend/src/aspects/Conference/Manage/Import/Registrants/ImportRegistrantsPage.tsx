@@ -4,6 +4,7 @@ import {
     JSONataToIntermediaryRegistrant,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
+import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
@@ -66,7 +67,7 @@ export default function ImportRegistrantsPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageAttendees]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageAttendees]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

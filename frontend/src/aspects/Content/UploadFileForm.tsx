@@ -23,13 +23,13 @@ import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 export default function UploadFileForm({
-    uploadableItem,
+    uploadableElement,
     magicToken,
     allowedFileTypes,
     uploadAgreement,
     handleFormSubmitted,
 }: {
-    uploadableItem: UploadableItemFieldsFragment;
+    uploadableElement: UploadableItemFieldsFragment;
     magicToken: string;
     allowedFileTypes: string[];
     uploadAgreement?: string;
@@ -42,7 +42,7 @@ export default function UploadFileForm({
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "required-content-item-upload",
             meta: {
-                uploadableId: uploadableItem.id,
+                uploadableId: uploadableElement.id,
             },
             allowMultipleUploads: false,
             restrictions: {
@@ -58,7 +58,7 @@ export default function UploadFileForm({
             companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
         });
         return uppy;
-    }, [allowedFileTypes, uploadableItem.id]);
+    }, [allowedFileTypes, uploadableElement.id]);
 
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;

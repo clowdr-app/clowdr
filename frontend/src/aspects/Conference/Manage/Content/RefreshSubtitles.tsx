@@ -6,10 +6,10 @@ import type { ElementDescriptor } from "./Types";
 
 export function RefreshSubtitles({
     item,
-    onItemChange,
+    onElementChange,
 }: {
     item: ElementDescriptor;
-    onItemChange: (_newItem: ElementDescriptor) => void;
+    onElementChange: (_newItem: ElementDescriptor) => void;
 }): JSX.Element {
     return (
         <Button
@@ -18,7 +18,7 @@ export function RefreshSubtitles({
             onClick={() => {
                 const latestVersion = R.last(item.data);
                 if (latestVersion?.data.baseType === ElementBaseType.Video) {
-                    onItemChange({
+                    onElementChange({
                         ...item,
                         data: [
                             ...item.data,

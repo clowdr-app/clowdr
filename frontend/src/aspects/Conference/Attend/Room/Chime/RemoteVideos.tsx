@@ -4,13 +4,13 @@ import { RemoteVideo } from "./RemoteVideo";
 
 export function RemoteVideos({ participantWidth }: { participantWidth: number }): JSX.Element {
     const { roster } = useRosterState();
-    const { tiles, tileIdToRegistrantId } = useRemoteVideoTileState();
+    const { tiles, tileIdToAttendeeId } = useRemoteVideoTileState();
     const audioVideo = useAudioVideo();
 
     return (
         <>
             {tiles.map((tileId) => {
-                const registrant = roster[tileIdToRegistrantId[tileId]] || {};
+                const registrant = roster[tileIdToAttendeeId[tileId]] || {};
                 return <RemoteVideo key={tileId} tileId={tileId} participantWidth={participantWidth} />;
             })}
         </>

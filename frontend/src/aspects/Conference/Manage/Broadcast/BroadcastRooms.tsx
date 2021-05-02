@@ -73,7 +73,7 @@ export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {data?.Room.map((room) => (
+                    {data?.room_Room.map((room) => (
                         <Tr key={room.id}>
                             <Td>{room.name}</Td>
                             <Td>

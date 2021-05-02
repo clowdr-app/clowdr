@@ -180,7 +180,7 @@ function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: strin
         );
     }
 
-    if (!data?.Registrant[0] || !data.Registrant[0].profile) {
+    if (!data?.registrant_Registrant[0] || !data.registrant_Registrant[0].profile) {
         return (
             <div>
                 <Spinner />
@@ -191,8 +191,8 @@ function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: strin
     return (
         <ViewProfilePageInner
             registrant={{
-                ...data.Registrant[0],
-                profile: data.Registrant[0].profile,
+                ...data.registrant_Registrant[0],
+                profile: data.registrant_Registrant[0].profile,
             }}
         />
     );

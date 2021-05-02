@@ -6,7 +6,7 @@ export enum ContentRole {
     Chair = "CHAIR",
 }
 
-export enum ElementType_Enum {
+export enum Content_ElementType_Enum {
     /** Abstract Markdown text. */
     Abstract = "ABSTRACT",
     /** List of content groups in the system. */
@@ -99,95 +99,95 @@ export type ElementBlob =
     | ZoomBlob;
 
 export interface AbstractBlob extends TextualElementBlob {
-    type: ElementType_Enum.Abstract;
+    type: Content_ElementType_Enum.Abstract;
 }
 
 export interface ContentGroupListBlob extends ComponentBlob {
-    type: ElementType_Enum.ContentGroupList;
+    type: Content_ElementType_Enum.ContentGroupList;
 }
 
 export interface TextBlob extends TextualElementBlob {
-    type: ElementType_Enum.Text;
+    type: Content_ElementType_Enum.Text;
 }
 
 export interface ImageFileBlob extends FileElementBlob {
-    type: ElementType_Enum.ImageFile;
+    type: Content_ElementType_Enum.ImageFile;
 }
 
 export interface PaperFileBlob extends FileElementBlob {
-    type: ElementType_Enum.PaperFile;
+    type: Content_ElementType_Enum.PaperFile;
 }
 
 export interface PosterFileBlob extends FileElementBlob {
-    type: ElementType_Enum.PosterFile;
+    type: Content_ElementType_Enum.PosterFile;
 }
 
 export interface ImageUrlBlob extends UrlElementBlob {
-    type: ElementType_Enum.ImageUrl;
+    type: Content_ElementType_Enum.ImageUrl;
 }
 
 export interface LinkBlob extends LinkElementBlob {
-    type: ElementType_Enum.Link;
+    type: Content_ElementType_Enum.Link;
 }
 
 export interface PaperUrlBlob extends UrlElementBlob {
-    type: ElementType_Enum.PaperUrl;
+    type: Content_ElementType_Enum.PaperUrl;
 }
 
 export interface PosterUrlBlob extends UrlElementBlob {
-    type: ElementType_Enum.PosterUrl;
+    type: Content_ElementType_Enum.PosterUrl;
 }
 
 export interface LinkButtonBlob extends LinkElementBlob {
-    type: ElementType_Enum.LinkButton;
+    type: Content_ElementType_Enum.LinkButton;
 }
 
 export interface PaperLinkBlob extends LinkElementBlob {
-    type: ElementType_Enum.PaperLink;
+    type: Content_ElementType_Enum.PaperLink;
 }
 
 export interface VideoBroadcastBlob extends VideoElementBlob {
-    type: ElementType_Enum.VideoBroadcast;
+    type: Content_ElementType_Enum.VideoBroadcast;
 }
 
 export interface VideoCountdownBlob extends VideoElementBlob {
-    type: ElementType_Enum.VideoCountdown;
+    type: Content_ElementType_Enum.VideoCountdown;
 }
 
 export interface VideoFileBlob extends VideoElementBlob {
-    type: ElementType_Enum.VideoFile;
+    type: Content_ElementType_Enum.VideoFile;
 }
 
 export interface VideoFillerBlob extends VideoElementBlob {
-    type: ElementType_Enum.VideoFiller;
+    type: Content_ElementType_Enum.VideoFiller;
 }
 
 export interface VideoLinkBlob extends LinkElementBlob {
-    type: ElementType_Enum.VideoLink;
+    type: Content_ElementType_Enum.VideoLink;
 }
 
 export interface VideoPrepublishBlob extends VideoElementBlob {
-    type: ElementType_Enum.VideoPrepublish;
+    type: Content_ElementType_Enum.VideoPrepublish;
 }
 
 export interface VideoSponsorsFillerBlob extends VideoElementBlob {
-    type: ElementType_Enum.VideoSponsorsFiller;
+    type: Content_ElementType_Enum.VideoSponsorsFiller;
 }
 
 export interface VideoTitlesBlob extends VideoElementBlob {
-    type: ElementType_Enum.VideoTitles;
+    type: Content_ElementType_Enum.VideoTitles;
 }
 
 export interface VideoUrlBlob extends UrlElementBlob {
-    type: ElementType_Enum.VideoUrl;
+    type: Content_ElementType_Enum.VideoUrl;
 }
 
 export interface WholeScheduleBlob extends ComponentBlob {
-    type: ElementType_Enum.WholeSchedule;
+    type: Content_ElementType_Enum.WholeSchedule;
 }
 
 export interface ZoomBlob extends UrlElementBlob {
-    type: ElementType_Enum.Zoom;
+    type: Content_ElementType_Enum.Zoom;
 }
 
 /* Meta content types */
@@ -201,30 +201,30 @@ export enum ElementBaseType {
     Video = "video",
 }
 
-export const ItemBaseTypes: { [K in ElementType_Enum]: ElementBaseType } = {
-    [ElementType_Enum.Abstract]: ElementBaseType.Text,
-    [ElementType_Enum.ContentGroupList]: ElementBaseType.Component,
-    [ElementType_Enum.ImageFile]: ElementBaseType.File,
-    [ElementType_Enum.ImageUrl]: ElementBaseType.URL,
-    [ElementType_Enum.Link]: ElementBaseType.Link,
-    [ElementType_Enum.LinkButton]: ElementBaseType.Link,
-    [ElementType_Enum.PaperFile]: ElementBaseType.File,
-    [ElementType_Enum.PaperLink]: ElementBaseType.Link,
-    [ElementType_Enum.PaperUrl]: ElementBaseType.URL,
-    [ElementType_Enum.PosterFile]: ElementBaseType.File,
-    [ElementType_Enum.PosterUrl]: ElementBaseType.URL,
-    [ElementType_Enum.Text]: ElementBaseType.Text,
-    [ElementType_Enum.VideoBroadcast]: ElementBaseType.Video,
-    [ElementType_Enum.VideoCountdown]: ElementBaseType.Video,
-    [ElementType_Enum.VideoFile]: ElementBaseType.Video,
-    [ElementType_Enum.VideoFiller]: ElementBaseType.Video,
-    [ElementType_Enum.VideoLink]: ElementBaseType.Link,
-    [ElementType_Enum.VideoPrepublish]: ElementBaseType.Video,
-    [ElementType_Enum.VideoSponsorsFiller]: ElementBaseType.Video,
-    [ElementType_Enum.VideoTitles]: ElementBaseType.Video,
-    [ElementType_Enum.VideoUrl]: ElementBaseType.URL,
-    [ElementType_Enum.Zoom]: ElementBaseType.URL,
-    [ElementType_Enum.WholeSchedule]: ElementBaseType.Component,
+export const ElementBaseTypes: { [K in Content_ElementType_Enum]: ElementBaseType } = {
+    [Content_ElementType_Enum.Abstract]: ElementBaseType.Text,
+    [Content_ElementType_Enum.ContentGroupList]: ElementBaseType.Component,
+    [Content_ElementType_Enum.ImageFile]: ElementBaseType.File,
+    [Content_ElementType_Enum.ImageUrl]: ElementBaseType.URL,
+    [Content_ElementType_Enum.Link]: ElementBaseType.Link,
+    [Content_ElementType_Enum.LinkButton]: ElementBaseType.Link,
+    [Content_ElementType_Enum.PaperFile]: ElementBaseType.File,
+    [Content_ElementType_Enum.PaperLink]: ElementBaseType.Link,
+    [Content_ElementType_Enum.PaperUrl]: ElementBaseType.URL,
+    [Content_ElementType_Enum.PosterFile]: ElementBaseType.File,
+    [Content_ElementType_Enum.PosterUrl]: ElementBaseType.URL,
+    [Content_ElementType_Enum.Text]: ElementBaseType.Text,
+    [Content_ElementType_Enum.VideoBroadcast]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoCountdown]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoFile]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoFiller]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoLink]: ElementBaseType.Link,
+    [Content_ElementType_Enum.VideoPrepublish]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoSponsorsFiller]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoTitles]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoUrl]: ElementBaseType.URL,
+    [Content_ElementType_Enum.Zoom]: ElementBaseType.URL,
+    [Content_ElementType_Enum.WholeSchedule]: ElementBaseType.Component,
 };
 
 export interface ComponentBlob extends BaseElementBlob {

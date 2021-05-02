@@ -15,7 +15,7 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { RoomPage_RoomDetailsFragment, RoomPersonRole_Enum } from "../../../../generated/graphql";
+import { RoomPage_RoomDetailsFragment, Room_PersonRole_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
@@ -128,7 +128,7 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
             {roomDetails.roomPeople.find(
                 (person) =>
                     user.user.registrants.find((myRegistrant) => myRegistrant.id === person.registrantId) &&
-                    person.personRoleName === RoomPersonRole_Enum.Admin
+                    person.personRoleName === Room_PersonRole_Enum.Admin
             ) ? (
                 <Box textAlign="right" mb={2}>
                     <Button

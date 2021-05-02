@@ -170,7 +170,7 @@ function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Elemen
                 <Twemoji className="twemoji" text={group.title} />
             </Text>
             <Text as="p" fontSize="0.9em" textColor={textColour} whiteSpace="normal" lineHeight="3ex">
-                {[...group.people]
+                {[...group.itemPeople]
                     .sort(sortAuthors)
                     .reduce((acc, person) => `${acc}, ${person.person.name}`, "")
                     .substr(2)}
@@ -192,7 +192,7 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
                 const data = await contentOfTag.refetch({
                     id: tag.id,
                 });
-                setContent(data.data?.ItemTag ? [...data.data.ItemTag] : []);
+                setContent(data.data?.content_ItemTag ? [...data.data.content_ItemTag] : []);
             })();
         }
     }, [content, contentOfTag, isExpanded, tag.id]);
@@ -204,8 +204,8 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
         () =>
             sortedGroups?.map((group) => ({
                 title: group.title.toLowerCase(),
-                names: group.people.map((person) => person.person.name.toLowerCase()),
-                affiliations: group.people.map((person) => person.person.affiliation?.toLowerCase() ?? ""),
+                names: group.itemPeople.map((person) => person.person.name.toLowerCase()),
+                affiliations: group.itemPeople.map((person) => person.person.affiliation?.toLowerCase() ?? ""),
                 el: <ItemButton key={group.id} group={group} />,
             })),
         [sortedGroups]
@@ -303,10 +303,12 @@ export default function ItemList(): JSX.Element {
 
     const sortedTags = useMemo(
         () =>
-            data?.Tag
-                ? [...data.Tag].sort((x, y) => x.name.localeCompare(y.name)).sort((x, y) => x.priority - y.priority)
+            data?.collection_Tag
+                ? [...data.collection_Tag]
+                      .sort((x, y) => x.name.localeCompare(y.name))
+                      .sort((x, y) => x.priority - y.priority)
                 : [],
-        [data?.Tag]
+        [data?.collection_Tag]
     );
 
     if (loading && !sortedTags) {

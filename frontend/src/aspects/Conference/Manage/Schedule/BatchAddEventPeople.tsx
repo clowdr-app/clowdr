@@ -40,15 +40,15 @@ import {
     AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables,
     AddEventPeople_SelectRegistrantsQuery,
     AddEventPeople_SelectRegistrantsQueryVariables,
-    collection_ProgramPerson_Insert_Input,
+    Collection_ProgramPerson_Insert_Input,
     EventInfoFragment,
     EventInfoFragmentDoc,
     EventProgramPersonInfoFragmentDoc,
-    EventProgramPersonRole_Enum,
-    EventProgramPerson_Insert_Input,
     Permissions_Permission_Enum,
     ProgramPersonInfoFragmentDoc,
     RoomInfoFragment,
+    Schedule_EventProgramPersonRole_Enum,
+    Schedule_EventProgramPerson_Insert_Input,
     useAddEventPeople_InsertEventPeopleMutation,
     useAddEventPeople_InsertProgramPeopleMutation,
     useAddEventPeople_SelectGroupsQuery,
@@ -151,14 +151,14 @@ gql`
     }
 `;
 
-function ItemProgramPersonRoleToEventProgramPersonRole(role: string): EventProgramPersonRole_Enum {
+function ItemProgramPersonRoleToEventProgramPersonRole(role: string): Schedule_EventProgramPersonRole_Enum {
     switch (role.toLowerCase()) {
         case "chair":
-            return EventProgramPersonRole_Enum.Chair;
+            return Schedule_EventProgramPersonRole_Enum.Chair;
         case "session chair":
-            return EventProgramPersonRole_Enum.Chair;
+            return Schedule_EventProgramPersonRole_Enum.Chair;
         default:
-            return EventProgramPersonRole_Enum.Presenter;
+            return Schedule_EventProgramPersonRole_Enum.Presenter;
     }
 }
 
@@ -188,11 +188,11 @@ function AddEventPeople_FromContentPanel({
             const itemPeopleQ = await selectItemPeopleQuery.refetch({
                 itemIds,
             });
-            const itemPeople = itemPeopleQ.data.ItemPerson;
+            const itemPeople = itemPeopleQ.data.content_ItemProgramPerson;
             const itemPeopleByGroup = new Map(
-                itemIds.map((groupId) => [groupId, itemPeople.filter((x) => x.groupId === groupId)])
+                itemIds.map((groupId) => [groupId, itemPeople.filter((x) => x.itemId === groupId)])
             );
-            const newEventPeople: EventProgramPerson_Insert_Input[] = [];
+            const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];
             for (const event of eventsWithContent) {
                 const existingEventPeople = event.eventPeople;
                 const groupPeople = itemPeopleByGroup.get(event.itemId) as AddEventPeople_ItemPersonFragment[];
@@ -282,7 +282,7 @@ function AddEventPeople_SingleProgramPersonPanel({
     const peopleOptions = useMemo(
         () =>
             selectProgramPeopleQuery.data
-                ? [...selectProgramPeopleQuery.data.ProgramPerson]
+                ? [...selectProgramPeopleQuery.data.collection_ProgramPerson]
                       .sort((x, y) => x.name.localeCompare(y.name))
                       .map((x) => (
                           <option key={x.id} value={x.id}>
@@ -297,10 +297,10 @@ function AddEventPeople_SingleProgramPersonPanel({
 
     const roleOptions = useMemo(
         () =>
-            Object.keys(EventProgramPersonRole_Enum)
+            Object.keys(Schedule_EventProgramPersonRole_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (EventProgramPersonRole_Enum as any)[x];
+                    const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
                     return (
                         <option key={v} value={v}>
                             {formatEnumValue(v)}
@@ -311,8 +311,8 @@ function AddEventPeople_SingleProgramPersonPanel({
     );
 
     const [selectedPersonId, setSelectedPersonId] = useState<string>("");
-    const [selectedRole, setSelectedRole] = useState<EventProgramPersonRole_Enum>(
-        EventProgramPersonRole_Enum.Presenter
+    const [selectedRole, setSelectedRole] = useState<Schedule_EventProgramPersonRole_Enum>(
+        Schedule_EventProgramPersonRole_Enum.Presenter
     );
 
     const insert = useAddEventPeople_InsertEventPeopleMutation();
@@ -327,9 +327,11 @@ function AddEventPeople_SingleProgramPersonPanel({
 
         try {
             assert(selectProgramPeopleQuery.data);
-            const selectedPerson = selectProgramPeopleQuery.data.ProgramPerson.find((x) => x.id === selectedPersonId);
+            const selectedPerson = selectProgramPeopleQuery.data.collection_ProgramPerson.find(
+                (x) => x.id === selectedPersonId
+            );
             assert(selectedPerson);
-            const newEventPeople: EventProgramPerson_Insert_Input[] = [];
+            const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];
             for (const event of events) {
                 const existingEventPeople = event.eventPeople;
                 if (
@@ -394,7 +396,7 @@ function AddEventPeople_SingleProgramPersonPanel({
                 <Select
                     aria-label="Role of person"
                     value={selectedRole}
-                    onChange={(ev) => setSelectedRole(ev.target.value as EventProgramPersonRole_Enum)}
+                    onChange={(ev) => setSelectedRole(ev.target.value as Schedule_EventProgramPersonRole_Enum)}
                     mb={4}
                 >
                     {roleOptions}
@@ -445,7 +447,7 @@ function AddEventPeople_FromGroupPanel({
     const registrantOptions = useMemo(
         () =>
             selectGroupsQuery.data
-                ? [...selectGroupsQuery.data.Group]
+                ? [...selectGroupsQuery.data.permissions_Group]
                       .sort((x, y) => x.name.localeCompare(y.name))
                       .map((x) => (
                           <option key={x.id} value={x.id}>
@@ -458,10 +460,10 @@ function AddEventPeople_FromGroupPanel({
 
     const roleOptions = useMemo(
         () =>
-            Object.keys(EventProgramPersonRole_Enum)
+            Object.keys(Schedule_EventProgramPersonRole_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (EventProgramPersonRole_Enum as any)[x];
+                    const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
                     return (
                         <option key={v} value={v}>
                             {formatEnumValue(v)}
@@ -472,8 +474,8 @@ function AddEventPeople_FromGroupPanel({
     );
 
     const [selectedGroupId, setSelectedGroupId] = useState<string>("");
-    const [selectedRole, setSelectedRole] = useState<EventProgramPersonRole_Enum>(
-        EventProgramPersonRole_Enum.Presenter
+    const [selectedRole, setSelectedRole] = useState<Schedule_EventProgramPersonRole_Enum>(
+        Schedule_EventProgramPersonRole_Enum.Presenter
     );
 
     const insertProgramPeople = useAddEventPeople_InsertProgramPeopleMutation();
@@ -561,7 +563,7 @@ function AddEventPeople_FromGroupPanel({
                 <Select
                     aria-label="Role of registrant"
                     value={selectedRole}
-                    onChange={(ev) => setSelectedRole(ev.target.value as EventProgramPersonRole_Enum)}
+                    onChange={(ev) => setSelectedRole(ev.target.value as Schedule_EventProgramPersonRole_Enum)}
                     mb={4}
                 >
                     {roleOptions}
@@ -603,7 +605,7 @@ function AddEventPeople_SingleRegistrantPanel({
     const registrantOptions = useMemo(
         () =>
             selectRegistrantsQuery.data
-                ? [...selectRegistrantsQuery.data.Registrant]
+                ? [...selectRegistrantsQuery.data.registrant_Registrant]
                       .sort((x, y) => x.displayName.localeCompare(y.displayName))
                       .map((x) => (
                           <option key={x.id} value={x.id}>
@@ -618,10 +620,10 @@ function AddEventPeople_SingleRegistrantPanel({
 
     const roleOptions = useMemo(
         () =>
-            Object.keys(EventProgramPersonRole_Enum)
+            Object.keys(Schedule_EventProgramPersonRole_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (EventProgramPersonRole_Enum as any)[x];
+                    const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
                     return (
                         <option key={v} value={v}>
                             {formatEnumValue(v)}
@@ -632,8 +634,8 @@ function AddEventPeople_SingleRegistrantPanel({
     );
 
     const [selectedRegistrantId, setSelectedRegistrantId] = useState<string>("");
-    const [selectedRole, setSelectedRole] = useState<EventProgramPersonRole_Enum>(
-        EventProgramPersonRole_Enum.Presenter
+    const [selectedRole, setSelectedRole] = useState<Schedule_EventProgramPersonRole_Enum>(
+        Schedule_EventProgramPersonRole_Enum.Presenter
     );
 
     const insertProgramPeople = useAddEventPeople_InsertProgramPeopleMutation();
@@ -648,7 +650,7 @@ function AddEventPeople_SingleRegistrantPanel({
         setError(null);
 
         try {
-            const newEventPeople: EventProgramPerson_Insert_Input[] = await addRegistrantsToEvent(
+            const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = await addRegistrantsToEvent(
                 [selectedRegistrantId],
                 selectRegistrantsQuery,
                 selectProgramPeople_ByRegistrantQuery,
@@ -717,7 +719,7 @@ function AddEventPeople_SingleRegistrantPanel({
                 <Select
                     aria-label="Role of registrant"
                     value={selectedRole}
-                    onChange={(ev) => setSelectedRole(ev.target.value as EventProgramPersonRole_Enum)}
+                    onChange={(ev) => setSelectedRole(ev.target.value as Schedule_EventProgramPersonRole_Enum)}
                     mb={4}
                 >
                     {roleOptions}
@@ -732,7 +734,7 @@ function AddEventPeople_SingleRegistrantPanel({
 
 async function insertEventPeople(
     events: EventInfoFragment[],
-    newEventPeople: EventProgramPerson_Insert_Input[],
+    newEventPeople: Schedule_EventProgramPerson_Insert_Input[],
     insert: MutationTuple<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>
 ): Promise<void> {
     await insert[0]({
@@ -740,11 +742,11 @@ async function insertEventPeople(
             objects: newEventPeople,
         },
         update: (cache, { data: _data }) => {
-            if (_data?.insert_EventProgramPerson) {
-                const data = _data.insert_EventProgramPerson;
+            if (_data?.insert_schedule_EventProgramPerson) {
+                const data = _data.insert_schedule_EventProgramPerson;
                 cache.modify({
                     fields: {
-                        Event: (existingRefs: Reference[] = [], { readField }) => {
+                        schedule_Event: (existingRefs: Reference[] = [], { readField }) => {
                             const eventRefs = existingRefs.filter((ref) =>
                                 events.some((x) => x.id === readField("id", ref))
                             );
@@ -772,7 +774,7 @@ async function insertEventPeople(
 
                             return existingRefs;
                         },
-                        EventProgramPerson(existingRefs: Reference[] = []) {
+                        schedule_EventProgramPerson(existingRefs: Reference[] = []) {
                             const newRefs = data.returning.map((x) =>
                                 cache.writeFragment({
                                     data: x,
@@ -805,20 +807,20 @@ export async function addRegistrantsToEvent(
     >,
     conferenceId: string,
     events: EventInfoFragment[],
-    selectedRole: EventProgramPersonRole_Enum,
+    selectedRole: Schedule_EventProgramPersonRole_Enum,
     insertEventPeopleQ: MutationTuple<
         AddEventPeople_InsertEventPeopleMutation,
         AddEventPeople_InsertEventPeopleMutationVariables
     >
-): Promise<EventProgramPerson_Insert_Input[]> {
+): Promise<Schedule_EventProgramPerson_Insert_Input[]> {
     const programPeople = await selectProgramPeople_ByRegistrantQuery.refetch({
         registrantIds,
     });
 
     const personIds: string[] = [];
-    const insertProgramPersons: collection_ProgramPerson_Insert_Input[] = [];
+    const insertProgramPersons: Collection_ProgramPerson_Insert_Input[] = [];
     for (const registrantId of registrantIds) {
-        const personId = programPeople.data.ProgramPerson.find((x) => x.registrantId === registrantId)?.id;
+        const personId = programPeople.data.collection_ProgramPerson.find((x) => x.registrantId === registrantId)?.id;
         if (personId) {
             personIds.push(personId);
         } else {
@@ -840,8 +842,8 @@ export async function addRegistrantsToEvent(
                 objects: insertProgramPersons,
             },
             update: (cache, result) => {
-                if (result.data?.insert_ProgramPerson) {
-                    const data = result.data.insert_ProgramPerson;
+                if (result.data?.insert_collection_ProgramPerson) {
+                    const data = result.data.insert_collection_ProgramPerson;
                     cache.modify({
                         fields: {
                             collection_ProgramPerson(existingRefs: Reference[] = []) {
@@ -859,11 +861,11 @@ export async function addRegistrantsToEvent(
                 }
             },
         });
-        assert(newPeople.data?.insert_ProgramPerson?.returning, "Failed to insert content people");
-        personIds.push(...newPeople.data.insert_ProgramPerson.returning.map((x) => x.id));
+        assert(newPeople.data?.insert_collection_ProgramPerson?.returning, "Failed to insert content people");
+        personIds.push(...newPeople.data.insert_collection_ProgramPerson.returning.map((x) => x.id));
     }
 
-    const newEventPeople: EventProgramPerson_Insert_Input[] = [];
+    const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];
     for (const event of events) {
         const existingEventPeople = event.eventPeople;
         for (const personId of personIds) {

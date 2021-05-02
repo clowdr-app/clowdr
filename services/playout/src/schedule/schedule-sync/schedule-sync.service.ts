@@ -1,6 +1,9 @@
 import { ScheduleAction } from "@aws-sdk/client-medialive";
+import { VideoBroadcastBlob } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import AmazonS3URI from "amazon-s3-uri";
 import { add } from "date-fns";
+import * as R from "ramda";
 import { validate } from "uuid";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { RtmpInput_Enum } from "../../generated/graphql";
@@ -64,7 +67,7 @@ export class ScheduleSyncService {
         const remoteSchedule = await this.getRemoteSchedule(channelDetails.mediaLiveChannelId);
 
         try {
-            await this.removeInvalidActions(channelDetails.mediaLiveChannelId, remoteSchedule);
+            await this.deleteInvalidActions(channelDetails.mediaLiveChannelId, remoteSchedule);
         } catch (err) {
             this.logger.error(
                 { err, mediaLiveChannelId: channelDetails.mediaLiveChannelId },
@@ -84,11 +87,86 @@ export class ScheduleSyncService {
         localSchedule: LocalSchedule,
         remoteSchedule: RemoteSchedule
     ): Promise<void> {
+        const adds: LocalScheduleAction[] = [];
+        const deletes: string[] = [];
+        for (const localAction of localSchedule.items) {
+            const remoteCandidates = remoteSchedule.items.filter(
+                (item) => item.type === "event" && item.eventId === localAction.eventId
+            );
+            for (const remoteCandidate of remoteCandidates) {
+                //if ()
+            }
+            const remoteMatches = remoteCandidates.filter((candidateAction) =>
+                this.actionsMatch(localAction, candidateAction)
+            );
+            if (remoteMatches.length === 0) {
+                adds.push(localAction);
+            }
+        }
         return;
     }
 
     public actionsMatch(localAction: LocalScheduleAction, remoteAction: RemoteScheduleAction): boolean {
-        return false;
+        if (remoteAction.type !== "event") {
+            return false;
+        }
+
+        const modesMatch =
+            (remoteAction.mode === "prerecorded" && !!localAction.videoData) ||
+            (remoteAction.mode === "live" && !!localAction.rtmpInputName);
+        const rtmpInputsMatch = remoteAction.rtmpInputName === localAction.rtmpInputName;
+        const videosMatch = !!localAction.videoData && this.getVideoKey(localAction.videoData) === remoteAction.s3Key;
+        const timesMatch = remoteAction.startTime === localAction.startTime;
+
+        return (
+            remoteAction.eventId === localAction.eventId && modesMatch && rtmpInputsMatch && videosMatch && timesMatch
+        );
+    }
+
+    public getVideoKey(videoBroadcastData: VideoBroadcastBlob): string | null {
+        if (videoBroadcastData.broadcastTranscode?.s3Url) {
+            try {
+                const { key } = new AmazonS3URI(videoBroadcastData.broadcastTranscode.s3Url);
+                if (!key) {
+                    throw new Error("Key in S3 URL was empty");
+                }
+                return key;
+            } catch (err) {
+                this.logger.warn(
+                    { err, s3Url: videoBroadcastData.broadcastTranscode.s3Url },
+                    "Could not parse S3 URL of broadcast transcode."
+                );
+            }
+        }
+        if (videoBroadcastData.transcode?.s3Url) {
+            try {
+                const { key } = new AmazonS3URI(videoBroadcastData.transcode.s3Url);
+                if (!key) {
+                    throw new Error("Key in S3 URL was empty");
+                }
+                return key;
+            } catch (err) {
+                this.logger.warn(
+                    { err, s3Url: videoBroadcastData.transcode.s3Url },
+                    "Could not parse S3 URL of preview transcode."
+                );
+            }
+        }
+        if (videoBroadcastData.s3Url) {
+            try {
+                const { key } = new AmazonS3URI(videoBroadcastData.s3Url);
+                if (!key) {
+                    throw new Error("Key in S3 URL was empty");
+                }
+                return key;
+            } catch (err) {
+                this.logger.warn(
+                    { err, s3Url: videoBroadcastData.s3Url },
+                    "Could not parse S3 URL of original upload."
+                );
+            }
+        }
+        return null;
     }
 
     public async getRemoteSchedule(mediaLiveChannelId: string): Promise<RemoteSchedule> {
@@ -100,36 +178,33 @@ export class ScheduleSyncService {
 
                 if (actionName?.type === "event") {
                     if (this.isPrerecordedAction(action)) {
-                        const prerecordedAction = this.parsePrerecordedAction(action);
-                        return (
-                            prerecordedAction ?? {
-                                type: "invalid",
-                                actionName: actionName.actionName,
-                                startTime: this.getStartTime(action),
-                                isInputSwitch: this.isInputSwitch(action),
-                            }
-                        );
+                        const prerecordedAction = this.parsePrerecordedAction(action, scheduleActions);
+                        return prerecordedAction ?? this.toInvalidAction(action, scheduleActions);
                     }
                     if (this.isLiveAction(action)) {
-                        const liveAction = this.parseLiveAction(action);
-                        return (
-                            liveAction ?? {
-                                type: "invalid",
-                                actionName: actionName.actionName,
-                                startTime: this.getStartTime(action),
-                                isInputSwitch: this.isInputSwitch(action),
-                            }
-                        );
+                        const liveAction = this.parseLiveAction(action, scheduleActions);
+                        return liveAction ?? this.toInvalidAction(action, scheduleActions);
+                    }
+                }
+
+                if (actionName?.type === "event-follow") {
+                    if (this.isEventFollowAction(action)) {
+                        const followAction = this.parseEventFollowAction(action, scheduleActions);
+                        return followAction ?? this.toInvalidAction(action, scheduleActions);
                     }
                 }
 
                 if (actionName?.type === "manual") {
+                    const chainBefore = this.scheduleService.getChainBefore(action, scheduleActions);
                     return {
                         type: "manual",
                         actionName: actionName.actionName,
                         id: actionName.id,
-                        startTime: this.getStartTime(action),
+                        startTime: this.scheduleService.getStartTime(action),
                         isInputSwitch: this.isInputSwitch(action),
+                        chainAfter: this.scheduleService.getChainAfter(action, scheduleActions),
+                        chainBefore,
+                        chainBeforeStartTime: this.scheduleService.getChainBeforeStartTime(chainBefore),
                     };
                 }
 
@@ -138,17 +213,15 @@ export class ScheduleSyncService {
                         type: "immediate",
                         actionName: actionName.actionName,
                         id: actionName.id,
-                        startTime: this.getStartTime(action),
+                        startTime: this.scheduleService.getStartTime(action),
                         isInputSwitch: this.isInputSwitch(action),
+                        chainAfter: this.scheduleService.getChainAfter(action, scheduleActions),
+                        chainBefore: [],
+                        chainBeforeStartTime: null,
                     };
                 }
 
-                return {
-                    type: "invalid",
-                    actionName: actionName?.actionName ?? null,
-                    startTime: this.getStartTime(action),
-                    isInputSwitch: this.isInputSwitch(action),
-                };
+                return this.toInvalidAction(action, scheduleActions);
             }
         );
 
@@ -157,12 +230,30 @@ export class ScheduleSyncService {
         };
     }
 
-    public async removeInvalidActions(channelId: string, remoteSchedule: RemoteSchedule): Promise<void> {
+    toInvalidAction(action: ScheduleAction, otherActions: ScheduleAction[]): InvalidAction {
+        const chainBefore = this.scheduleService.getChainBefore(action, otherActions);
+        const chainBeforeStartTime = this.scheduleService.getChainBeforeStartTime(chainBefore);
+        return {
+            type: "invalid",
+            actionName: action?.ActionName ?? null,
+            startTime: this.scheduleService.getStartTime(action),
+            isInputSwitch: this.isInputSwitch(action),
+            chainBefore,
+            chainAfter: this.scheduleService.getChainAfter(action, otherActions),
+            chainBeforeStartTime,
+        };
+    }
+
+    public async deleteInvalidActions(channelId: string, remoteSchedule: RemoteSchedule): Promise<void> {
         const now = Date.now();
-        const actionsToRemove = remoteSchedule.items
-            .filter((action) => action.type === "invalid" && this.canRemoveInvalidAction(action, now))
-            .map((item) => item.actionName)
-            .filter(ScheduleSyncService.notEmpty);
+        const actionsToRemove = R.flatten(
+            remoteSchedule.items
+                .filter((action) => action.type === "invalid" && this.canRemoveInvalidAction(action, now))
+                .map((action) => [
+                    action.actionName,
+                    ...(action.type === "invalid" ? action.chainAfter.map((x) => x.ActionName) : []),
+                ])
+        ).filter(ScheduleSyncService.notEmpty);
         await this.mediaLiveService.updateSchedule(channelId, actionsToRemove, []);
     }
 
@@ -170,7 +261,9 @@ export class ScheduleSyncService {
         const removalCutoffTime = add(now, { seconds: 20 }).getTime();
         const notInputSwitch = !action.isInputSwitch;
         const inFuture = !!action.startTime && action.startTime > removalCutoffTime;
-        return notInputSwitch || inFuture;
+        // If chainBeforeStartTime is null, implies a follow chain from an immediate action - not safe to attempt removal
+        const inUnstartedChain = !!action.chainBeforeStartTime && action.chainBeforeStartTime > removalCutoffTime;
+        return notInputSwitch || inFuture || inUnstartedChain;
     }
 
     isInputSwitch(action: ScheduleAction): boolean {
@@ -189,7 +282,7 @@ export class ScheduleSyncService {
         return isFixedStart && isPrerecordedInput;
     }
 
-    parsePrerecordedAction(action: ScheduleAction): RemoteScheduleAction | null {
+    parsePrerecordedAction(action: ScheduleAction, otherActions: ScheduleAction[]): RemoteScheduleAction | null {
         const event = this.parseActionName(action.ActionName ?? "");
         if (!event || event.type !== "event") {
             return null;
@@ -216,6 +309,9 @@ export class ScheduleSyncService {
             startTime,
             rtmpInputName: null,
             s3Key,
+            chainAfter: this.scheduleService.getChainAfter(action, otherActions),
+            chainBefore: [],
+            chainBeforeStartTime: null,
         };
 
         return remoteAction;
@@ -230,14 +326,14 @@ export class ScheduleSyncService {
         return isFixedStart && isLiveInput;
     }
 
-    parseLiveAction(action: ScheduleAction): RemoteScheduleAction | null {
+    parseLiveAction(action: ScheduleAction, otherActions: ScheduleAction[]): RemoteScheduleAction | null {
         const event = this.parseActionName(action.ActionName ?? "");
         if (!event || event.type !== "event") {
             return null;
         }
 
         const actionName = action.ActionName;
-        const startTime = this.getStartTime(action);
+        const startTime = this.scheduleService.getStartTime(action);
         const rtmpInputName = action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference?.endsWith(
             "-rtmpA"
         )
@@ -258,6 +354,42 @@ export class ScheduleSyncService {
             startTime,
             rtmpInputName,
             s3Key: null,
+            chainAfter: this.scheduleService.getChainAfter(action, otherActions),
+            chainBefore: [],
+            chainBeforeStartTime: null,
+        };
+
+        return remoteAction;
+    }
+
+    isEventFollowAction(action: ScheduleAction): boolean {
+        const isFollowStart = !!action.ScheduleActionStartSettings?.FollowModeScheduleActionStartSettings;
+        const isLoopingInput = this.isLoopingInput(
+            action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference ?? ""
+        );
+        return isFollowStart && isLoopingInput;
+    }
+
+    parseEventFollowAction(action: ScheduleAction, otherActions: ScheduleAction[]): RemoteScheduleAction | null {
+        const event = this.parseActionName(action.ActionName ?? "");
+        if (!event || event.type !== "event-follow") {
+            return null;
+        }
+
+        const actionName = action.ActionName;
+
+        if (!actionName) {
+            return null;
+        }
+
+        const chainBefore = this.scheduleService.getChainBefore(action, otherActions);
+        const remoteAction: RemoteScheduleAction = {
+            type: "event-follow",
+            actionName,
+            eventId: event.eventId,
+            chainAfter: this.scheduleService.getChainAfter(action, otherActions),
+            chainBefore,
+            chainBeforeStartTime: this.scheduleService.getChainBeforeStartTime(chainBefore),
         };
 
         return remoteAction;
@@ -271,15 +403,13 @@ export class ScheduleSyncService {
         return attachmentName.endsWith("-rtmpA") || attachmentName.endsWith("-rtmpB");
     }
 
-    getStartTime(action: ScheduleAction): number | null {
-        return action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings?.Time
-            ? Date.parse(action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings.Time)
-            : null;
+    isLoopingInput(attachmentName: string): boolean {
+        return attachmentName.endsWith("-looping");
     }
 
     parseActionName(actionName: string): ActionName | null {
         const parts = actionName.split("/");
-        if (parts.length !== 3) {
+        if (parts.length !== 2) {
             return null;
         }
 
@@ -287,20 +417,20 @@ export class ScheduleSyncService {
             return null;
         }
 
-        if (!parts[2].match(/^\d+$/)) {
-            return null;
+        if (parts[0] === "e") {
+            return { type: "event", eventId: parts[1], actionName };
         }
 
-        if (parts[0] === "e") {
-            return { type: "event", eventId: parts[1], number: Number.parseInt(parts[2]), actionName };
+        if (parts[0] === "ef") {
+            return { type: "event-follow", eventId: parts[1], actionName };
         }
 
         if (parts[0] === "i") {
-            return { type: "immediate", id: parts[1], number: Number.parseInt(parts[2]), actionName };
+            return { type: "immediate", id: parts[1], actionName };
         }
 
         if (parts[0] === "m") {
-            return { type: "manual", id: parts[1], number: Number.parseInt(parts[2]), actionName };
+            return { type: "manual", id: parts[1], actionName };
         }
 
         return null;
@@ -316,17 +446,33 @@ export class ScheduleSyncService {
 }
 
 type ActionName =
-    | { type: "event"; eventId: string; number: number; actionName: string }
-    | { type: "manual"; id: string; number: number; actionName: string }
-    | { type: "immediate"; id: string; number: number; actionName: string };
+    | { type: "event"; eventId: string; actionName: string }
+    | { type: "manual"; id: string; actionName: string }
+    | { type: "immediate"; id: string; actionName: string }
+    | { type: "event-follow"; eventId: string; actionName: string };
 
 interface RemoteSchedule {
     items: RemoteScheduleAction[];
 }
 
-type RemoteScheduleAction = EventAction | ManualAction | ImmediateAction | InvalidAction;
+type RemoteScheduleAction = EventAction | EventFollowAction | ManualAction | ImmediateAction | InvalidAction;
 
-interface EventAction {
+interface ActionChain {
+    /**
+     * List of schedule actions that precede this action in a follow chain.
+     */
+    chainBefore: ScheduleAction[];
+    /**
+     * List of schedule actions that succeed this action in a follow chain.
+     */
+    chainAfter: ScheduleAction[];
+    /**
+     * If the preceding chain has a fixed start time, the start time. Else null implies an immediate start.
+     */
+    chainBeforeStartTime: number | null;
+}
+
+type EventAction = {
     type: "event";
     actionName: string;
     eventId: string;
@@ -334,27 +480,33 @@ interface EventAction {
     rtmpInputName: RtmpInput_Enum | null;
     s3Key: string | null;
     startTime: number;
-}
+} & ActionChain;
 
-interface ManualAction {
+type ManualAction = {
     type: "manual";
     actionName: string;
     id: string;
     startTime: number | null;
     isInputSwitch: boolean;
-}
+} & ActionChain;
 
-interface ImmediateAction {
+type ImmediateAction = {
     type: "immediate";
     actionName: string;
     id: string;
     startTime: number | null;
     isInputSwitch: boolean;
-}
+} & ActionChain;
 
-interface InvalidAction {
+type InvalidAction = {
     type: "invalid";
     actionName: string | null;
     startTime: number | null;
     isInputSwitch: boolean;
-}
+} & ActionChain;
+
+type EventFollowAction = {
+    type: "event-follow";
+    actionName: string;
+    eventId: string;
+} & ActionChain;

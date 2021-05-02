@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { ScheduleAction } from "@aws-sdk/client-medialive";
 import {
     ContentBaseType,
     ContentItemDataBlob,
@@ -231,5 +232,63 @@ export class ScheduleService {
         scheduleData.items = newItems;
 
         return scheduleData;
+    }
+
+    public getChainBefore(action: ScheduleAction, otherActions: ScheduleAction[]): ScheduleAction[] {
+        const chain: ScheduleAction[] = [];
+        let precedingAction = this.precedingAction(action, otherActions);
+        while (precedingAction) {
+            chain.push(precedingAction);
+            precedingAction = this.precedingAction(precedingAction, otherActions);
+        }
+        return chain;
+    }
+
+    public getChainBeforeStartTime(chain: ScheduleAction[]): number | null {
+        const maxChainBeforeStartTime = Math.max(...chain.map((item) => this.getStartTime(item) ?? 0));
+        const chainBeforeStartTime = maxChainBeforeStartTime === 0 ? null : maxChainBeforeStartTime;
+        return chainBeforeStartTime;
+    }
+
+    public getChainAfter(action: ScheduleAction, otherActions: ScheduleAction[]): ScheduleAction[] {
+        const chain: ScheduleAction[] = [];
+        let succeedingAction = this.succeedingAction(action, otherActions);
+        while (succeedingAction) {
+            chain.push(succeedingAction);
+            succeedingAction = this.succeedingAction(succeedingAction, otherActions);
+        }
+        return chain;
+    }
+
+    public precedingAction(action: ScheduleAction, otherActions: ScheduleAction[]): ScheduleAction | null {
+        const actionName =
+            action.ScheduleActionStartSettings?.FollowModeScheduleActionStartSettings?.ReferenceActionName;
+
+        if (!actionName) {
+            return null;
+        }
+
+        const precedingAction = otherActions.find((item) => item.ActionName === actionName);
+        return precedingAction ?? null;
+    }
+
+    public succeedingAction(action: ScheduleAction, otherActions: ScheduleAction[]): ScheduleAction | null {
+        const succeedingAction = otherActions.find(
+            (item) =>
+                action.ActionName &&
+                item.ScheduleActionStartSettings?.FollowModeScheduleActionStartSettings?.ReferenceActionName ===
+                    action.ActionName
+        );
+        return succeedingAction ?? null;
+    }
+
+    public getStartTime(action: ScheduleAction): number | null {
+        return action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings?.Time
+            ? Date.parse(action.ScheduleActionStartSettings?.FixedModeScheduleActionStartSettings.Time)
+            : null;
+    }
+
+    public getFollowReference(action: ScheduleAction): string | null {
+        return action.ScheduleActionStartSettings?.FollowModeScheduleActionStartSettings?.ReferenceActionName ?? null;
     }
 }

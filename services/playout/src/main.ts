@@ -7,7 +7,7 @@ import { ROOT_LOGGER } from "./logger";
 
 gql`
     query GetMediaLiveChannelByRoom($roomId: uuid!) {
-        Room_by_pk(id: $roomId) {
+        room_Room_by_pk(id: $roomId) {
             id
             conferenceId
             mediaLiveChannel {

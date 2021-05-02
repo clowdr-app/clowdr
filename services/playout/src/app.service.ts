@@ -7,7 +7,7 @@ import {
 import { Injectable } from "@nestjs/common";
 import * as Bunyan from "bunyan";
 import { ChannelSyncService } from "./channels/channel-sync/channel-sync.service";
-import { RoomMode_Enum } from "./generated/graphql";
+import { Room_Mode_Enum } from "./generated/graphql";
 
 @Injectable()
 export class AppService {
@@ -53,12 +53,12 @@ export interface BaseData {
 
 export interface EventData extends BaseData {
     durationSeconds: number;
-    intendedRoomModeName: RoomMode_Enum;
+    intendedRoomModeName: Room_Mode_Enum;
     name: string;
     endTime: string | null;
     startTime: string;
     conferenceId: string;
-    contentGroupId: string | null;
+    itemId: string | null;
     originatingDataId: string | null;
     roomId: string;
 }

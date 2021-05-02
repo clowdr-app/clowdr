@@ -4,6 +4,8 @@ export interface ChannelStackDetails {
     conferenceId: string;
     mediaLiveChannelId: string;
     mp4InputAttachmentName: string;
-    vonageInputAttachmentName: string;
+    rtmpAInputAttachmentName: string;
+    rtmpBInputAttachmentName: string | null;
     loopingMp4InputAttachmentName: string;
+    fillerVideoKey: string | null;
 }

@@ -113,7 +113,20 @@ export class ScheduleSyncService {
             channelDetails,
             syncCutoffTime
         );
+        this.logger.info(
+            {
+                deleteCount: deletes.length,
+                addCount: adds.length,
+                mediaLiveChannelId: channelDetails.mediaLiveChannelId,
+                roomId,
+            },
+            "Computed required schedule changes for channel"
+        );
         await this.mediaLiveService.updateSchedule(channelDetails.mediaLiveChannelId, deletes, adds);
+        this.logger.info(
+            { roomId, mediaLiveChannelId: channelDetails.mediaLiveChannelId },
+            "Finished syncing channel schedule"
+        );
     }
 
     public async computeExpectedSchedule(roomId: string): Promise<LocalSchedule> {

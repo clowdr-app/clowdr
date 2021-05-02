@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleElementUpdated, handleGetByRequiredItem, handleGetUploadAgreement } from "../handlers/content";
+import { handleElementUpdated, handleGetUploadAgreement } from "../handlers/content";
 import { handleElementSubmitted, handleUpdateSubtitles } from "../handlers/upload";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ElementData, Payload } from "../types/hasura/event";
@@ -68,28 +68,6 @@ router.post("/updateSubtitles", bodyParser.json(), async (req: Request, res: Res
         });
     }
 });
-
-router.post(
-    "/getByRequiredItem",
-    bodyParser.json(),
-    async (req: Request, res: Response<Array<GetElementOutput> | string>) => {
-        const params = req.body.input;
-        try {
-            assertType<getElementArgs>(params);
-        } catch (e) {
-            console.error(`${req.path}: Invalid request:`, req.body.input);
-            return res.status(500).json("Invalid request");
-        }
-
-        try {
-            const result = await handleGetByRequiredItem(params);
-            return res.status(200).json(result);
-        } catch (e) {
-            console.error(`${req.path}: Failed to retrieve item`, e);
-            return res.status(500).json("Failed to retrieve item");
-        }
-    }
-);
 
 router.post(
     "/getUploadAgreement",

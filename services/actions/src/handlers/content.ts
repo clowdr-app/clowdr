@@ -13,7 +13,6 @@ import R from "ramda";
 import {
     ElementAddNewVersionDocument,
     Email_Insert_Input,
-    GetElementByRequiredItemDocument,
     GetElementDetailsDocument,
     GetUploadableElementDocument,
     GetUploadAgreementDocument,
@@ -410,43 +409,6 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
     }
 
     await insertEmails(emails);
-}
-
-gql`
-    query GetElementByRequiredItem($accessToken: String!) {
-        content_Element(where: { uploadableElement: { accessToken: { _eq: $accessToken } } }) {
-            id
-            typeName
-            data
-            layoutData
-            name
-            item {
-                title
-            }
-        }
-    }
-`;
-
-export async function handleGetByRequiredItem(args: getElementArgs): Promise<Array<GetElementOutput>> {
-    const result = await apolloClient.query({
-        query: GetElementByRequiredItemDocument,
-        variables: {
-            accessToken: args.magicToken,
-        },
-    });
-
-    if (result.error) {
-        throw new Error("No item found");
-    }
-
-    return result.data.content_Element.map((item) => ({
-        id: item.id,
-        name: item.name,
-        layoutData: item.layoutData,
-        data: item.data,
-        typeName: item.typeName,
-        itemTitle: item.item.title,
-    }));
 }
 
 gql`

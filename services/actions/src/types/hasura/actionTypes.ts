@@ -63,15 +63,6 @@ type InvitationSendEmailResult = {
     sent: boolean;
 };
 
-type GetElementOutput = {
-    typeName: string;
-    name: string;
-    id: string;
-    data: jsonb;
-    layoutData?: Maybe<jsonb>;
-    itemTitle: string;
-};
-
 type SubmitUpdatedSubtitlesOutput = {
     success: boolean;
     message: string;
@@ -176,7 +167,6 @@ type JoinRoomChimeSessionOutput = {
 
 type Query = {
     echo?: Maybe<EchoOutput>;
-    getElement?: Maybe<Array<Maybe<GetElementOutput>>>;
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
     presence_Summary?: Maybe<PresenceSummaryOutput>;
     protectedEcho?: Maybe<ProtectedEchoOutput>;

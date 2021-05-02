@@ -736,7 +736,7 @@ export type InvitationConfirmationEmailOutput = {
 
 export type InvitationSendEmailResult = {
   readonly __typename?: 'InvitationSendEmailResult';
-  readonly registrantId: Scalars['String'];
+  readonly attendeeId: Scalars['String'];
   readonly sent: Scalars['Boolean'];
 };
 
@@ -19407,8 +19407,6 @@ export type Query_Root = {
   readonly permissions_Role_by_pk?: Maybe<Permissions_Role>;
   /** perform the action: "presence_Summary" */
   readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
-  /** perform the action: "protectedEcho" */
-  readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
   /** fetch data from the table: "registrant.GoogleAccount" */
   readonly registrant_GoogleAccount: ReadonlyArray<Registrant_GoogleAccount>;
   /** fetch aggregated fields from the table: "registrant.GoogleAccount" */
@@ -20930,12 +20928,6 @@ export type Query_RootPermissions_Role_AggregateArgs = {
 /** query root */
 export type Query_RootPermissions_Role_By_PkArgs = {
   id: Scalars['uuid'];
-};
-
-
-/** query root */
-export type Query_RootProtectedEchoArgs = {
-  message: Scalars['String'];
 };
 
 
@@ -28475,8 +28467,6 @@ export type Subscription_Root = {
   readonly permissions_Role_by_pk?: Maybe<Permissions_Role>;
   /** perform the action: "presence_Summary" */
   readonly presence_Summary?: Maybe<PresenceSummaryOutput>;
-  /** perform the action: "protectedEcho" */
-  readonly protectedEcho?: Maybe<ProtectedEchoOutput>;
   /** fetch data from the table: "registrant.GoogleAccount" */
   readonly registrant_GoogleAccount: ReadonlyArray<Registrant_GoogleAccount>;
   /** fetch aggregated fields from the table: "registrant.GoogleAccount" */
@@ -29998,12 +29988,6 @@ export type Subscription_RootPermissions_Role_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootPermissions_Role_By_PkArgs = {
   id: Scalars['uuid'];
-};
-
-
-/** subscription root */
-export type Subscription_RootProtectedEchoArgs = {
-  message: Scalars['String'];
 };
 
 
@@ -34083,27 +34067,6 @@ export type GetChatPathQueryVariables = Exact<{
 
 export type GetChatPathQuery = { readonly __typename?: 'query_root', readonly chat_Chat_by_pk?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any }> }> };
 
-export type SelectRegistrantsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type SelectRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<(
-    { readonly __typename?: 'registrant_Registrant' }
-    & RegistrantDataFragment
-  )> };
-
-export type SearchRegistrantsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  search: Scalars['String'];
-}>;
-
-
-export type SearchRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<(
-    { readonly __typename?: 'registrant_Registrant' }
-    & RegistrantDataFragment
-  )> };
-
 export type ConferenceLandingPageItemQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -34284,6 +34247,27 @@ export type RegistrantEventsWithBackstagesQueryVariables = Exact<{
 export type RegistrantEventsWithBackstagesQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
     { readonly __typename?: 'schedule_Event' }
     & MyBackstages_EventFragment
+  )> };
+
+export type SelectRegistrantsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<(
+    { readonly __typename?: 'registrant_Registrant' }
+    & RegistrantDataFragment
+  )> };
+
+export type SearchRegistrantsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  search: Scalars['String'];
+}>;
+
+
+export type SearchRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<(
+    { readonly __typename?: 'registrant_Registrant' }
+    & RegistrantDataFragment
   )> };
 
 export type GetRoomChimeDataMutationVariables = Exact<{
@@ -37849,83 +37833,6 @@ export function useGetChatPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetChatPathQueryHookResult = ReturnType<typeof useGetChatPathQuery>;
 export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLazyQuery>;
 export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
-export const SelectRegistrantsDocument = gql`
-    query SelectRegistrants($conferenceId: uuid!) {
-  registrant_Registrant(
-    where: {conferenceId: {_eq: $conferenceId}}
-    order_by: {displayName: asc}
-  ) {
-    ...RegistrantData
-  }
-}
-    ${RegistrantDataFragmentDoc}`;
-
-/**
- * __useSelectRegistrantsQuery__
- *
- * To run a query within a React component, call `useSelectRegistrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectRegistrantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>(SelectRegistrantsDocument, options);
-      }
-export function useSelectRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>(SelectRegistrantsDocument, options);
-        }
-export type SelectRegistrantsQueryHookResult = ReturnType<typeof useSelectRegistrantsQuery>;
-export type SelectRegistrantsLazyQueryHookResult = ReturnType<typeof useSelectRegistrantsLazyQuery>;
-export type SelectRegistrantsQueryResult = Apollo.QueryResult<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>;
-export const SearchRegistrantsDocument = gql`
-    query SearchRegistrants($conferenceId: uuid!, $search: String!) {
-  registrant_Registrant(
-    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {_or: [{displayName: {_ilike: $search}}, {profile: {_or: [{affiliation: {_ilike: $search}}, {bio: {_ilike: $search}}]}}, {badges: {name: {_ilike: $search}}}]}]}
-    order_by: {displayName: asc}
-  ) {
-    ...RegistrantData
-  }
-}
-    ${RegistrantDataFragmentDoc}`;
-
-/**
- * __useSearchRegistrantsQuery__
- *
- * To run a query within a React component, call `useSearchRegistrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchRegistrantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      search: // value for 'search'
- *   },
- * });
- */
-export function useSearchRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, options);
-      }
-export function useSearchRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, options);
-        }
-export type SearchRegistrantsQueryHookResult = ReturnType<typeof useSearchRegistrantsQuery>;
-export type SearchRegistrantsLazyQueryHookResult = ReturnType<typeof useSearchRegistrantsLazyQuery>;
-export type SearchRegistrantsQueryResult = Apollo.QueryResult<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>;
 export const ConferenceLandingPageItemDocument = gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) {
   content_Item(
@@ -38362,6 +38269,83 @@ export function useRegistrantEventsWithBackstagesLazyQuery(baseOptions?: Apollo.
 export type RegistrantEventsWithBackstagesQueryHookResult = ReturnType<typeof useRegistrantEventsWithBackstagesQuery>;
 export type RegistrantEventsWithBackstagesLazyQueryHookResult = ReturnType<typeof useRegistrantEventsWithBackstagesLazyQuery>;
 export type RegistrantEventsWithBackstagesQueryResult = Apollo.QueryResult<RegistrantEventsWithBackstagesQuery, RegistrantEventsWithBackstagesQueryVariables>;
+export const SelectRegistrantsDocument = gql`
+    query SelectRegistrants($conferenceId: uuid!) {
+  registrant_Registrant(
+    where: {conferenceId: {_eq: $conferenceId}}
+    order_by: {displayName: asc}
+  ) {
+    ...RegistrantData
+  }
+}
+    ${RegistrantDataFragmentDoc}`;
+
+/**
+ * __useSelectRegistrantsQuery__
+ *
+ * To run a query within a React component, call `useSelectRegistrantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectRegistrantsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSelectRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>(SelectRegistrantsDocument, options);
+      }
+export function useSelectRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>(SelectRegistrantsDocument, options);
+        }
+export type SelectRegistrantsQueryHookResult = ReturnType<typeof useSelectRegistrantsQuery>;
+export type SelectRegistrantsLazyQueryHookResult = ReturnType<typeof useSelectRegistrantsLazyQuery>;
+export type SelectRegistrantsQueryResult = Apollo.QueryResult<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>;
+export const SearchRegistrantsDocument = gql`
+    query SearchRegistrants($conferenceId: uuid!, $search: String!) {
+  registrant_Registrant(
+    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {_or: [{displayName: {_ilike: $search}}, {profile: {_or: [{affiliation: {_ilike: $search}}, {bio: {_ilike: $search}}]}}, {badges: {name: {_ilike: $search}}}]}]}
+    order_by: {displayName: asc}
+  ) {
+    ...RegistrantData
+  }
+}
+    ${RegistrantDataFragmentDoc}`;
+
+/**
+ * __useSearchRegistrantsQuery__
+ *
+ * To run a query within a React component, call `useSearchRegistrantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchRegistrantsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useSearchRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, options);
+      }
+export function useSearchRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, options);
+        }
+export type SearchRegistrantsQueryHookResult = ReturnType<typeof useSearchRegistrantsQuery>;
+export type SearchRegistrantsLazyQueryHookResult = ReturnType<typeof useSearchRegistrantsLazyQuery>;
+export type SearchRegistrantsQueryResult = Apollo.QueryResult<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>;
 export const GetRoomChimeDataDocument = gql`
     mutation GetRoomChimeData($roomId: uuid!) {
   joinRoomChimeSession(roomId: $roomId) {

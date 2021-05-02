@@ -26,7 +26,7 @@ import isValidUUID from "../Utils/isValidUUID";
 
 gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
-        Conference_Conference(
+        conference_Conference(
             where: { _or: [{ name: { _eq: $name } }, { shortName: { _eq: $shortName } }, { slug: { _eq: $slug } }] }
         ) {
             id

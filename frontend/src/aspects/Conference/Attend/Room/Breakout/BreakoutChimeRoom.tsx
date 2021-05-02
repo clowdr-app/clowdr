@@ -35,7 +35,7 @@ export function BreakoutChimeRoom({
             throw new Error(`Could not join meeting: ${result.data?.joinRoomChimeSession?.message}`);
         }
         return {
-            registrantInfo: result.data.joinRoomChimeSession.registrant,
+            attendeeInfo: result.data.joinRoomChimeSession.registrant,
             meetingInfo: result.data.joinRoomChimeSession.meeting,
         };
     }, [getRoomChimeData]);

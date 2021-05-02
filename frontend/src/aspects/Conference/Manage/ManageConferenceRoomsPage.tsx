@@ -38,17 +38,17 @@ import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } f
 import { v4 as uuidv4 } from "uuid";
 import {
     Permission_Enum,
-    RoomMode_Enum,
     RoomPersonRole_Enum,
-    RoomPrivacy_Enum,
     RoomWithParticipantInfoFragment,
     RoomWithParticipantInfoFragmentDoc,
+    room_ManagementMode_Enum,
+    room_Mode_Enum,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
     useInsertRoomPeopleMutation,
-    useManageRooms_SelectContentGroupsQuery,
-    useManageRooms_SelectGroupAttendeesQuery,
+    useManageRooms_SelectGroupRegistrantsQuery,
     useManageRooms_SelectGroupsQuery,
+    useManageRooms_SelectItemsQuery,
     useManageRooms_SelectRoomPeopleQuery,
     useSelectAllRoomsWithParticipantsQuery,
     useUpdateRoomsWithParticipantsMutation,
@@ -76,19 +76,19 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 
 gql`
-    fragment RoomParticipantWithAttendeeInfo on RoomParticipant {
+    fragment RoomParticipantWithRegistrantInfo on room_Participant {
         id
         conferenceId
-        attendeeId
+        registrantId
         roomId
 
-        attendee {
+        registrant {
             id
             displayName
         }
     }
 
-    fragment RoomWithParticipantInfo on Room {
+    fragment RoomWithParticipantInfo on room_Room {
         id
         conferenceId
         name
@@ -96,11 +96,11 @@ gql`
         capacity
         priority
         originatingEventId
-        originatingContentGroupId
-        roomPrivacyName
+        originatingItemId
+        managementModeName
         isProgramRoom
         participants {
-            ...RoomParticipantWithAttendeeInfo
+            ...RoomParticipantWithRegistrantInfo
         }
         originatingData {
             ...OriginatingDataInfo
@@ -108,50 +108,50 @@ gql`
     }
 
     query SelectAllRoomsWithParticipants($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _in: [PUBLIC, PRIVATE] } }) {
+        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
             ...RoomWithParticipantInfo
         }
     }
 
     query ManageRooms_SelectGroups($conferenceId: uuid!) {
-        Group(where: { conferenceId: { _eq: $conferenceId } }) {
+        permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
         }
     }
 
-    query ManageRooms_SelectContentGroups($conferenceId: uuid!) {
-        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
+    query ManageRooms_SelectItems($conferenceId: uuid!) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             title
         }
     }
 
-    query ManageRooms_SelectGroupAttendees($groupId: uuid!) {
-        GroupAttendee(where: { groupId: { _eq: $groupId } }) {
+    query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
+        permissions_GroupRegistrant(where: { groupId: { _eq: $groupId } }) {
             id
             groupId
-            attendeeId
+            registrantId
         }
     }
 
-    fragment RoomPersonInfo on RoomPerson {
+    fragment RoomPersonInfo on room_RoomPerson {
         id
-        attendee {
+        registrant {
             id
             displayName
         }
-        roomPersonRoleName
+        personRoleName
     }
 
     query ManageRooms_SelectRoomPeople($roomId: uuid!) {
-        RoomPerson(where: { roomId: { _eq: $roomId } }) {
+        room_RoomPerson(where: { roomId: { _eq: $roomId } }) {
             ...RoomPersonInfo
         }
     }
 
-    mutation CreateRoom($room: Room_insert_input!) {
-        insert_Room_one(object: $room) {
+    mutation CreateRoom($room: room_Room_insert_input!) {
+        insert_room_Room_one(object: $room) {
             ...RoomWithParticipantInfo
         }
     }
@@ -161,27 +161,27 @@ gql`
         $name: String!
         $capacity: Int
         $priority: Int!
-        $roomPrivacyName: RoomPrivacy_enum!
-        $originatingContentGroupId: uuid
+        $managementModeName: room_ManagementMode_enum!
+        $originatingItemId: uuid
     ) {
-        update_Room_by_pk(
+        update_room_Room_by_pk(
             pk_columns: { id: $id }
             _set: {
                 name: $name
                 capacity: $capacity
                 priority: $priority
-                roomPrivacyName: $roomPrivacyName
-                originatingContentGroupId: $originatingContentGroupId
+                managementModeName: $managementModeName
+                originatingItemId: $originatingItemId
             }
         ) {
             ...RoomWithParticipantInfo
         }
     }
 
-    mutation InsertRoomPeople($people: [RoomPerson_insert_input!]!) {
-        insert_RoomPerson(
+    mutation InsertRoomPeople($people: [room_RoomPerson_insert_input!]!) {
+        insert_room_RoomPerson(
             objects: $people
-            on_conflict: { constraint: RoomPerson_attendeeId_roomId_key, update_columns: [] }
+            on_conflict: { constraint: RoomPerson_registrantId_roomId_key, update_columns: [] }
         ) {
             returning {
                 ...RoomPersonInfo
@@ -211,27 +211,27 @@ function RoomSecondaryEditor({
         },
         skip: !room,
     });
-    const groupAttendeesQ = useManageRooms_SelectGroupAttendeesQuery({
+    const groupRegistrantsQ = useManageRooms_SelectGroupRegistrantsQuery({
         skip: true,
     });
     const [insertRoomPeople, insertRoomPeopleResponse] = useInsertRoomPeopleMutation();
-    useQueryErrorToast(groupAttendeesQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupAttendees");
+    useQueryErrorToast(groupRegistrantsQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupRegistrants");
     useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
 
     const addUsersFromGroup = useCallback(
         async (groupId: string) => {
             if (room) {
                 try {
-                    const result = await groupAttendeesQ.refetch({
+                    const result = await groupRegistrantsQ.refetch({
                         groupId,
                     });
                     if (!result.error && result.data) {
                         insertRoomPeople({
                             variables: {
-                                people: result.data.GroupAttendee.map((x) => ({
-                                    attendeeId: x.attendeeId,
+                                people: result.data.GroupRegistrant.map((x) => ({
+                                    registrantId: x.registrantId,
                                     roomId: room.id,
-                                    roomPersonRoleName: RoomPersonRole_Enum.Participant,
+                                    personRoleName: RoomPersonRole_Enum.Participant,
                                 })),
                             },
                         });
@@ -241,7 +241,7 @@ function RoomSecondaryEditor({
                 }
             }
         },
-        [groupAttendeesQ, insertRoomPeople, room]
+        [groupRegistrantsQ, insertRoomPeople, room]
     );
 
     return (
@@ -266,17 +266,19 @@ function RoomSecondaryEditor({
                                         colorScheme="green"
                                         mb={4}
                                         isExternal={true}
-                                        aria-label={`View ${room.name} as an attendee`}
-                                        title={`View ${room.name} as an attendee`}
+                                        aria-label={`View ${room.name} as an registrant`}
+                                        title={`View ${room.name} as an registrant`}
                                     >
                                         <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
                                         View room
                                     </LinkButton>
-                                    {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                                    {room.managementModeName === room_ManagementMode_Enum.Private ? (
                                         <Menu>
                                             <MenuButton
                                                 as={Button}
-                                                isLoading={groupAttendeesQ.loading || insertRoomPeopleResponse.loading}
+                                                isLoading={
+                                                    groupRegistrantsQ.loading || insertRoomPeopleResponse.loading
+                                                }
                                             >
                                                 <FAIcon iconStyle="s" icon="user-plus" mr={2} />
                                                 Add people from group
@@ -309,7 +311,7 @@ function RoomSecondaryEditor({
                                                 <UnorderedList>
                                                     {room.participants.map((participant) => (
                                                         <ListItem key={participant.id}>
-                                                            {participant.attendee.displayName}
+                                                            {participant.registrant.displayName}
                                                         </ListItem>
                                                     ))}
                                                 </UnorderedList>
@@ -363,7 +365,9 @@ function RoomSecondaryEditor({
                                         </AccordionItem>
                                     ) : undefined}
 
-                                    {room && people.data && room.roomPrivacyName !== RoomPrivacy_Enum.Public ? (
+                                    {room &&
+                                    people.data &&
+                                    room.managementModeName !== room_ManagementMode_Enum.Public ? (
                                         <AccordionItem>
                                             <AccordionButton>
                                                 <Box flex="1" textAlign="left">
@@ -378,7 +382,7 @@ function RoomSecondaryEditor({
                                                     <UnorderedList>
                                                         {people.data.RoomPerson.map((member) => (
                                                             <ListItem key={member.id}>
-                                                                {member.attendee.displayName}
+                                                                {member.registrant.displayName}
                                                             </ListItem>
                                                         ))}
                                                     </UnorderedList>
@@ -404,7 +408,7 @@ function EditableRoomsCRUDTable() {
     const [deleteRooms, deleteRoomsResponse] = useDeleteRoomsMutation();
     const [updateRoom, updateRoomResponse] = useUpdateRoomsWithParticipantsMutation();
 
-    const contentGroups = useManageRooms_SelectContentGroupsQuery({
+    const items = useManageRooms_SelectItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -424,10 +428,10 @@ function EditableRoomsCRUDTable() {
     } = useDisclosure();
     const [editingRoom, setEditingRoom] = useState<RoomWithParticipantInfoFragment | null>(null);
 
-    const contentGroupOptions = useMemo(
+    const itemOptions = useMemo(
         () =>
-            contentGroups.data?.ContentGroup
-                ? [...contentGroups.data.ContentGroup]
+            items.data?.Item
+                ? [...items.data.Item]
                       .sort((x, y) => x.title.localeCompare(y.title))
                       .map((content) => {
                           return (
@@ -437,7 +441,7 @@ function EditableRoomsCRUDTable() {
                           );
                       })
                 : undefined,
-        [contentGroups.data?.ContentGroup]
+        [items.data?.Item]
     );
 
     const row: RowSpecification<RoomWithParticipantInfoFragment> = useMemo(
@@ -630,8 +634,8 @@ function EditableRoomsCRUDTable() {
                 },
                 get: (data) => data.currentModeName,
                 sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows, v: RoomMode_Enum) => rows.filter((r) => r.currentModeName === v),
-                filterEl: SelectColumnFilter(Object.values(RoomMode_Enum)),
+                filterFn: (rows, v: room_Mode_Enum) => rows.filter((r) => r.currentModeName === v),
+                filterEl: SelectColumnFilter(Object.values(room_Mode_Enum)),
                 cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
                     return <Text>{props.value}</Text>;
                 },
@@ -647,37 +651,41 @@ function EditableRoomsCRUDTable() {
                         </Button>
                     );
                 },
-                get: (data) => data.roomPrivacyName,
+                get: (data) => data.managementModeName,
                 set: (row, value) => {
-                    row.roomPrivacyName = value;
+                    row.managementModeName = value;
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows, v: RoomPrivacy_Enum) => rows.filter((r) => r.roomPrivacyName === v),
-                filterEl: SelectColumnFilter(Object.values(RoomPrivacy_Enum)),
+                filterFn: (rows, v: room_ManagementMode_Enum) => rows.filter((r) => r.managementModeName === v),
+                filterEl: SelectColumnFilter(Object.values(room_ManagementMode_Enum)),
                 cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
-                    if (props.value !== RoomPrivacy_Enum.Private && props.value !== RoomPrivacy_Enum.Public) {
+                    if (
+                        props.value !== room_ManagementMode_Enum.Private &&
+                        props.value !== room_ManagementMode_Enum.Public
+                    ) {
                         return <Text>{props.value}</Text>;
                     } else {
                         const v = props.value ?? "";
                         return (
                             <Select
                                 value={v}
-                                onChange={(ev) => props.onChange?.(ev.target.value as RoomPrivacy_Enum)}
+                                onChange={(ev) => props.onChange?.(ev.target.value as room_ManagementMode_Enum)}
                                 onBlur={props.onBlur}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
                             >
-                                {v === "" || (v !== RoomPrivacy_Enum.Public && v !== RoomPrivacy_Enum.Private) ? (
+                                {v === "" ||
+                                (v !== room_ManagementMode_Enum.Public && v !== room_ManagementMode_Enum.Private) ? (
                                     <option value="">&lt;Error&gt;</option>
                                 ) : undefined}
-                                <option value={RoomPrivacy_Enum.Public}>Public</option>
-                                <option value={RoomPrivacy_Enum.Private}>Private</option>
+                                <option value={room_ManagementMode_Enum.Public}>Public</option>
+                                <option value={room_ManagementMode_Enum.Private}>Private</option>
                             </Select>
                         );
                     }
                 },
             },
             {
-                id: "originatingContentGroupid",
+                id: "originatingItemid",
                 header: function ContentHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
                     return props.isInCreate ? (
                         <FormLabel>Associated item to discuss (optional)</FormLabel>
@@ -687,10 +695,9 @@ function EditableRoomsCRUDTable() {
                         </Button>
                     );
                 },
-                get: (data) =>
-                    contentGroups.data?.ContentGroup.find((group) => group.id === data.originatingContentGroupId),
+                get: (data) => items.data?.Item.find((group) => group.id === data.originatingItemId),
                 set: (record, value: { id: string; title: string } | undefined) => {
-                    record.originatingContentGroupId = (value?.id as any) as DeepWriteable<any> | undefined;
+                    record.originatingItemId = (value?.id as any) as DeepWriteable<any> | undefined;
                 },
                 sortType: (rowA: { id: string; title: string }, rowB: { id: string; title: string }) => {
                     const compared = rowA && rowB ? rowA.title.localeCompare(rowB.title) : rowA ? 1 : rowB ? -1 : 0;
@@ -699,10 +706,8 @@ function EditableRoomsCRUDTable() {
                 filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: string) => {
                     return rows.filter((row) => {
                         return (
-                            (row.originatingContentGroupId &&
-                                contentGroups.data?.ContentGroup.find(
-                                    (group) => group.id === row.originatingContentGroupId
-                                )
+                            (row.originatingItemId &&
+                                items.data?.Item.find((group) => group.id === row.originatingItemId)
                                     ?.title.toLowerCase()
                                     .includes(filterValue.toLowerCase())) ??
                             false
@@ -720,22 +725,20 @@ function EditableRoomsCRUDTable() {
                         <Select
                             value={props.value?.id ?? ""}
                             onChange={(ev) =>
-                                props.onChange?.(
-                                    contentGroups.data?.ContentGroup.find((group) => group.id === ev.target.value)
-                                )
+                                props.onChange?.(items.data?.Item.find((group) => group.id === ev.target.value))
                             }
                             onBlur={props.onBlur}
                             ref={props.ref as LegacyRef<HTMLSelectElement>}
                             maxW={400}
                         >
                             <option value={""}>{"<None selected>"}</option>
-                            {contentGroupOptions}
+                            {itemOptions}
                         </Select>
                     );
                 },
             },
         ],
-        [contentGroups, contentGroupOptions]
+        [items, itemOptions]
     );
 
     const forceReloadRef = useRef<() => void>(() => {
@@ -768,10 +771,10 @@ function EditableRoomsCRUDTable() {
                         conferenceId: conference.id,
                         capacity: undefined,
                         priority: 10,
-                        currentModeName: RoomMode_Enum.Breakout,
+                        currentModeName: room_Mode_Enum.Breakout,
                         name: "New room " + (data.length + 1),
                         participants: [],
-                        roomPrivacyName: RoomPrivacy_Enum.Public,
+                        managementModeName: room_ManagementMode_Enum.Public,
                     }),
                     makeWhole: (d) => d as RoomWithParticipantInfoFragment,
                     start: (record) => {
@@ -784,8 +787,8 @@ function EditableRoomsCRUDTable() {
                                     priority: record.priority,
                                     currentModeName: record.currentModeName,
                                     name: record.name,
-                                    roomPrivacyName: record.roomPrivacyName,
-                                    originatingContentGroupId: record.originatingContentGroupId,
+                                    managementModeName: record.managementModeName,
+                                    originatingItemId: record.originatingItemId,
                                 },
                             },
                             update: (cache, { data: _data }) => {
@@ -810,8 +813,8 @@ function EditableRoomsCRUDTable() {
                                 name: record.name,
                                 priority: record.priority,
                                 capacity: record.capacity,
-                                roomPrivacyName: record.roomPrivacyName,
-                                originatingContentGroupId: record.originatingContentGroupId,
+                                managementModeName: record.managementModeName,
+                                originatingItemId: record.originatingItemId,
                             },
                             optimisticResponse: {
                                 update_Room_by_pk: record,

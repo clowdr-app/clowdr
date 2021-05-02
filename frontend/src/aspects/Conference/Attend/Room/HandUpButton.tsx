@@ -2,28 +2,28 @@ import { gql } from "@apollo/client";
 import { Button, Stack, Text, useToast } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    EventPersonDetailsFragment,
-    RoomMode_Enum,
+    EventProgramPersonDetailsFragment,
     Room_EventSummaryFragment,
+    room_Mode_Enum,
     useMakeEventRoomJoinRequestMutation,
     useMyEventRoomJoinRequestSubscription,
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import useCurrentAttendee from "../../useCurrentAttendee";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
 
 gql`
-    mutation MakeEventRoomJoinRequest($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
-        insert_EventRoomJoinRequest_one(
-            object: { attendeeId: $attendeeId, conferenceId: $conferenceId, eventId: $eventId }
+    mutation MakeEventRoomJoinRequest($registrantId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
+        insert_schedule_EventRoomJoinRequest_one(
+            object: { registrantId: $registrantId, conferenceId: $conferenceId, eventId: $eventId }
         ) {
             id
         }
     }
 
-    subscription MyEventRoomJoinRequest($attendeeId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
-        EventRoomJoinRequest(
+    subscription MyEventRoomJoinRequest($registrantId: uuid!, $conferenceId: uuid!, $eventId: uuid!) {
+        schedule_EventRoomJoinRequest(
             where: {
-                attendeeId: { _eq: $attendeeId }
+                registrantId: { _eq: $registrantId }
                 conferenceId: { _eq: $conferenceId }
                 eventId: { _eq: $eventId }
             }
@@ -40,11 +40,11 @@ export function HandUpButton({
     onGoBackstage,
 }: {
     currentRoomEvent: Room_EventSummaryFragment | null;
-    eventPeople: readonly EventPersonDetailsFragment[];
+    eventPeople: readonly EventProgramPersonDetailsFragment[];
     onGoBackstage?: () => void;
 }): JSX.Element {
     const [loading, setLoading] = useState<boolean>(false);
-    const attendee = useCurrentAttendee();
+    const registrant = useCurrentRegistrant();
     const toast = useToast();
 
     const [makeEventRoomJoinRequestMutation] = useMakeEventRoomJoinRequestMutation();
@@ -54,7 +54,7 @@ export function HandUpButton({
         try {
             await makeEventRoomJoinRequestMutation({
                 variables: {
-                    attendeeId: attendee.id,
+                    registrantId: registrant.id,
                     conferenceId: currentRoomEvent?.conferenceId,
                     eventId: currentRoomEvent?.id,
                 },
@@ -66,23 +66,24 @@ export function HandUpButton({
             });
         }
         setLoading(false);
-    }, [attendee.id, currentRoomEvent?.conferenceId, currentRoomEvent?.id, makeEventRoomJoinRequestMutation, toast]);
+    }, [registrant.id, currentRoomEvent?.conferenceId, currentRoomEvent?.id, makeEventRoomJoinRequestMutation, toast]);
 
     const { data: eventRoomJoinRequestData, error } = useMyEventRoomJoinRequestSubscription({
         variables: {
-            attendeeId: attendee.id,
+            registrantId: registrant.id,
             conferenceId: currentRoomEvent?.conferenceId ?? "00000000-0000-0000-0000-000000000000",
             eventId: currentRoomEvent?.id ?? "00000000-0000-0000-0000-000000000000",
         },
     });
     useQueryErrorToast(error, true, "useMyEventRoomJoinRequestSubscription");
 
-    const [myEventPeople, setMyEventPeople] = useState<EventPersonDetailsFragment[] | null>(null);
+    const [myEventPeople, setMyEventPeople] = useState<EventProgramPersonDetailsFragment[] | null>(null);
     useEffect(() => {
         const people =
             eventPeople?.filter(
-                (eventPerson) =>
-                    eventPerson.eventId === currentRoomEvent?.id && attendee.id === eventPerson.person.attendeeId
+                (eventProgramPerson) =>
+                    eventProgramPerson.eventId === currentRoomEvent?.id &&
+                    registrant.id === eventProgramPerson.person.registrantId
             ) ?? [];
 
         if (myEventPeople && myEventPeople.length === 0 && people.length > 0) {
@@ -102,31 +103,31 @@ export function HandUpButton({
 
         setMyEventPeople(people);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [attendee.id, currentRoomEvent?.id, eventPeople]);
+    }, [registrant.id, currentRoomEvent?.id, eventPeople]);
 
     const roomModeName = useMemo(() => {
         switch (currentRoomEvent?.intendedRoomModeName) {
             case undefined:
-            case RoomMode_Enum.Exhibition:
-            case RoomMode_Enum.None:
-            case RoomMode_Enum.Shuffle:
-            case RoomMode_Enum.VideoPlayer:
+            case room_Mode_Enum.Exhibition:
+            case room_Mode_Enum.None:
+            case room_Mode_Enum.Shuffle:
+            case room_Mode_Enum.VideoPlayer:
                 return "";
-            case RoomMode_Enum.Breakout:
+            case room_Mode_Enum.Breakout:
                 return "breakout";
-            case RoomMode_Enum.Prerecorded:
+            case room_Mode_Enum.Prerecorded:
                 return "prerecorded";
-            case RoomMode_Enum.QAndA:
+            case room_Mode_Enum.QAndA:
                 return "Q&A";
-            case RoomMode_Enum.Presentation:
+            case room_Mode_Enum.Presentation:
                 return "presentation";
-            case RoomMode_Enum.Zoom:
+            case room_Mode_Enum.Zoom:
                 return "Zoom";
         }
     }, [currentRoomEvent?.intendedRoomModeName]);
 
     return currentRoomEvent &&
-        [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName) ? (
+        [room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName) ? (
         myEventPeople && myEventPeople.length > 0 ? (
             onGoBackstage ? (
                 <Button mt={5} size="lg" height="auto" py={5} onClick={onGoBackstage} colorScheme="green">

@@ -34,32 +34,32 @@ import {
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
-    SponsorSecondaryEditor_ContentItemFragment,
-    SponsorSecondaryEditor_ContentItemFragmentDoc,
-    useSponsorContentItemInner_UpdateContentItemMutation,
-    useSponsorContentItem_DeleteContentItemMutation,
-    useSponsorContentItem_SetContentItemIsHiddenMutation,
-    useSponsorSecondaryEditor_GetSponsorContentItemsQuery,
+    SponsorSecondaryEditor_ElementFragment,
+    SponsorSecondaryEditor_ElementFragmentDoc,
+    useSponsorElementInner_UpdateElementMutation,
+    useSponsorElement_DeleteElementMutation,
+    useSponsorElement_SetElementIsHiddenMutation,
+    useSponsorSecondaryEditor_GetSponsorElementsQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import FAIcon from "../../../Icons/FAIcon";
 import { ItemBaseTemplates } from "../Content/Templates";
-import type { ContentItemDescriptor } from "../Content/Types";
+import type { ElementDescriptor } from "../Content/Types";
 import { AddSponsorContentMenu } from "./AddSponsorContentMenu";
 import { LayoutEditor } from "./LayoutEditor";
 import type { SponsorInfoFragment } from "./Types";
 
 gql`
-    query SponsorSecondaryEditor_GetSponsorContentItems($contentGroupId: uuid!) {
-        ContentItem(where: { contentGroupId: { _eq: $contentGroupId } }) {
-            ...SponsorSecondaryEditor_ContentItem
+    query SponsorSecondaryEditor_GetSponsorElements($itemId: uuid!) {
+        content_Element(where: { itemId: { _eq: $itemId } }) {
+            ...SponsorSecondaryEditor_Element
         }
     }
 
-    fragment SponsorSecondaryEditor_ContentItem on ContentItem {
+    fragment SponsorSecondaryEditor_Element on content_Element {
         id
         name
-        contentTypeName
+        typeName
         data
         layoutData
         isHidden
@@ -78,9 +78,9 @@ export function SponsorSecondaryEditor({
     onSecondaryPanelClose: () => void;
     index: number | null;
 }): JSX.Element {
-    const contentItemsResult = useSponsorSecondaryEditor_GetSponsorContentItemsQuery({
+    const elementsResult = useSponsorSecondaryEditor_GetSponsorElementsQuery({
         variables: {
-            contentGroupId: index !== null && index < sponsors.length ? sponsors[index].id : "",
+            itemId: index !== null && index < sponsors.length ? sponsors[index].id : "",
         },
         skip: index === null || index >= sponsors.length,
     });
@@ -94,16 +94,16 @@ export function SponsorSecondaryEditor({
                     <DrawerBody>
                         {index !== null ? (
                             <AddSponsorContentMenu
-                                contentGroupId={sponsors[index].id}
+                                itemId={sponsors[index].id}
                                 roomId={sponsors[index].room?.id ?? null}
                                 refetch={async () => {
-                                    await contentItemsResult.refetch();
+                                    await elementsResult.refetch();
                                 }}
                             />
                         ) : undefined}
-                        <ApolloQueryWrapper getter={(result) => result.ContentItem} queryResult={contentItemsResult}>
-                            {(contentItems: readonly SponsorSecondaryEditor_ContentItemFragment[]) => (
-                                <SponsorContentItems contentItems={contentItems} />
+                        <ApolloQueryWrapper getter={(result) => result.Element} queryResult={elementsResult}>
+                            {(elements: readonly SponsorSecondaryEditor_ElementFragment[]) => (
+                                <SponsorElements elements={elements} />
                             )}
                         </ApolloQueryWrapper>
                     </DrawerBody>
@@ -113,15 +113,15 @@ export function SponsorSecondaryEditor({
     );
 }
 
-export function SponsorContentItems({
-    contentItems,
+export function SponsorElements({
+    elements,
 }: {
-    contentItems: readonly SponsorSecondaryEditor_ContentItemFragment[];
+    elements: readonly SponsorSecondaryEditor_ElementFragment[];
 }): JSX.Element {
-    const sortedContentItems = useMemo(() => {
-        const sortedContentItems = [...contentItems];
+    const sortedElements = useMemo(() => {
+        const sortedElements = [...elements];
 
-        sortedContentItems.sort((a, b) => {
+        sortedElements.sort((a, b) => {
             if ((!a.layoutData || !("priority" in a.layoutData)) && (!b.layoutData || !("priority" in b.layoutData))) {
                 return a.name.localeCompare(b.name);
             }
@@ -136,8 +136,8 @@ export function SponsorContentItems({
             return priorityOrder === 0 ? a.name.localeCompare(b.name) : priorityOrder;
         });
 
-        return sortedContentItems;
-    }, [contentItems]);
+        return sortedElements;
+    }, [elements]);
 
     return (
         <Accordion allowToggle allowMultiple>
@@ -158,73 +158,65 @@ export function SponsorContentItems({
                     </OrderedList>
                 </AccordionPanel>
             </AccordionItem>
-            {sortedContentItems.map((item) => (
-                <SponsorContentItem key={item.id} contentItem={item} />
+            {sortedElements.map((item) => (
+                <SponsorElement key={item.id} element={item} />
             ))}
         </Accordion>
     );
 }
 
 gql`
-    mutation SponsorContentItem_DeleteContentItem($contentItemId: uuid!) {
-        delete_ContentItem_by_pk(id: $contentItemId) {
+    mutation SponsorElement_DeleteElement($elementId: uuid!) {
+        delete_content_Element_by_pk(id: $elementId) {
             id
         }
     }
 
-    mutation SponsorContentItem_SetContentItemIsHidden($contentItemId: uuid!, $isHidden: Boolean!) {
-        update_ContentItem_by_pk(pk_columns: { id: $contentItemId }, _set: { isHidden: $isHidden }) {
+    mutation SponsorElement_SetElementIsHidden($elementId: uuid!, $isHidden: Boolean!) {
+        update_content_Element_by_pk(pk_columns: { id: $elementId }, _set: { isHidden: $isHidden }) {
             id
         }
     }
 
-    mutation SponsorContentItemInner_UpdateContentItem($contentItemId: uuid!, $contentItem: ContentItem_set_input!) {
-        update_ContentItem_by_pk(pk_columns: { id: $contentItemId }, _set: $contentItem) {
+    mutation SponsorElementInner_UpdateElement($elementId: uuid!, $element: content_Element_set_input!) {
+        update_content_Element_by_pk(pk_columns: { id: $elementId }, _set: $element) {
             id
         }
     }
 `;
 
-export function SponsorContentItem({
-    contentItem,
-}: {
-    contentItem: SponsorSecondaryEditor_ContentItemFragment;
-}): JSX.Element {
+export function SponsorElement({ element }: { element: SponsorSecondaryEditor_ElementFragment }): JSX.Element {
     return (
         <AccordionItem>
             <AccordionButton>
                 <Box flex="1" textAlign="left">
-                    {contentItem.name}
+                    {element.name}
                 </Box>
                 <AccordionIcon />
             </AccordionButton>
             <AccordionPanel pb={4}>
-                <SponsorContentItemInner contentItem={contentItem} />
+                <SponsorElementInner element={element} />
             </AccordionPanel>
         </AccordionItem>
     );
 }
 
-function SponsorContentItemInner({
-    contentItem,
-}: {
-    contentItem: SponsorSecondaryEditor_ContentItemFragment;
-}): JSX.Element {
-    const [deleteContentItem] = useSponsorContentItem_DeleteContentItemMutation();
-    const [setIsHidden, setIsHiddenResponse] = useSponsorContentItem_SetContentItemIsHiddenMutation();
-    const [updateContentItem, updateContentItemResponse] = useSponsorContentItemInner_UpdateContentItemMutation();
+function SponsorElementInner({ element }: { element: SponsorSecondaryEditor_ElementFragment }): JSX.Element {
+    const [deleteElement] = useSponsorElement_DeleteElementMutation();
+    const [setIsHidden, setIsHiddenResponse] = useSponsorElement_SetElementIsHiddenMutation();
+    const [updateElement, updateElementResponse] = useSponsorElementInner_UpdateElementMutation();
     const toast = useToast();
 
-    const itemType = contentItem.contentTypeName;
+    const itemType = element.typeName;
     const baseType = ItemBaseTypes[itemType];
     const itemTemplate = useMemo(() => ItemBaseTemplates[baseType], [baseType]);
-    const descriptor = useMemo<ContentItemDescriptor>(
+    const descriptor = useMemo<ElementDescriptor>(
         () => ({
-            ...contentItem,
-            typeName: contentItem.contentTypeName,
-            layoutData: contentItem.layoutData ?? null,
+            ...element,
+            typeName: element.typeName,
+            layoutData: element.layoutData ?? null,
         }),
-        [contentItem]
+        [element]
     );
 
     const editor = useMemo(() => {
@@ -237,21 +229,21 @@ function SponsorContentItemInner({
                             data: updated.item.data,
                             layoutData: updated.item.layoutData,
                         };
-                        updateContentItem({
+                        updateElement({
                             variables: {
-                                contentItemId: updated.item.id,
-                                contentItem: updatedItem,
+                                elementId: updated.item.id,
+                                element: updatedItem,
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.update_ContentItem_by_pk) {
-                                    const data = _data.update_ContentItem_by_pk;
+                                if (_data?.update_Element_by_pk) {
+                                    const data = _data.update_Element_by_pk;
                                     cache.modify({
                                         fields: {
-                                            ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                            content_Element(existingRefs: Reference[] = [], { readField }) {
                                                 const newRef = cache.writeFragment({
                                                     data: updated.item,
-                                                    fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
-                                                    fragmentName: "SponsorSecondaryEditor_ContentItem",
+                                                    fragment: SponsorSecondaryEditor_ElementFragmentDoc,
+                                                    fragmentName: "SponsorSecondaryEditor_Element",
                                                 });
                                                 if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
                                                     return existingRefs;
@@ -269,15 +261,15 @@ function SponsorContentItemInner({
         ) : (
             <Text>Cannot edit {itemType} items.</Text>
         );
-    }, [descriptor, itemTemplate, itemType, updateContentItem]);
+    }, [descriptor, itemTemplate, itemType, updateElement]);
 
     return (
         <>
-            {updateContentItemResponse.error ? (
+            {updateElementResponse.error ? (
                 <Alert status="error">
                     <AlertIcon />
                     <AlertTitle>Error saving changes</AlertTitle>
-                    <AlertDescription>{updateContentItemResponse.error.message}</AlertDescription>
+                    <AlertDescription>{updateElementResponse.error.message}</AlertDescription>
                 </Alert>
             ) : undefined}
             {setIsHiddenResponse.error ? (
@@ -298,28 +290,28 @@ function SponsorContentItemInner({
                         p={0}
                         lineHeight="1em"
                         size="sm"
-                        isChecked={contentItem.isHidden}
+                        isChecked={element.isHidden}
                         onChange={async (event) => {
                             const isHidden = event.target.checked;
                             setIsHidden({
                                 variables: {
-                                    contentItemId: contentItem.id,
+                                    elementId: element.id,
                                     isHidden,
                                 },
                                 update: (cache, { data: _data }) => {
-                                    if (_data?.update_ContentItem_by_pk) {
-                                        const data = _data.update_ContentItem_by_pk;
+                                    if (_data?.update_Element_by_pk) {
+                                        const data = _data.update_Element_by_pk;
                                         cache.modify({
                                             fields: {
-                                                ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                                content_Element(existingRefs: Reference[] = [], { readField }) {
                                                     const newRef = cache.writeFragment({
                                                         data: {
-                                                            __typename: "ContentItem",
+                                                            __typename: "Element",
                                                             id: data.id,
                                                             isHidden,
                                                         },
-                                                        fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
-                                                        fragmentName: "SponsorSecondaryEditor_ContentItem",
+                                                        fragment: SponsorSecondaryEditor_ElementFragmentDoc,
+                                                        fragmentName: "SponsorSecondaryEditor_Element",
                                                     });
                                                     if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
                                                         return existingRefs;
@@ -334,10 +326,10 @@ function SponsorContentItemInner({
                         }}
                     />
                     <FormHelperText m={0} ml={2} p={0}>
-                        Enable to hide this content from attendees.
+                        Enable to hide this content from registrants.
                     </FormHelperText>
                 </FormControl>
-                {updateContentItemResponse.loading ? <Spinner label="Saving changes" /> : undefined}
+                {updateElementResponse.loading ? <Spinner label="Saving changes" /> : undefined}
                 {setIsHiddenResponse.loading ? <Spinner label="Saving changes" /> : undefined}
                 <Box>
                     <IconButton
@@ -347,19 +339,19 @@ function SponsorContentItemInner({
                         icon={<FAIcon iconStyle="s" icon="trash-alt" />}
                         onClick={async () => {
                             try {
-                                await deleteContentItem({
+                                await deleteElement({
                                     variables: {
-                                        contentItemId: contentItem.id,
+                                        elementId: element.id,
                                     },
                                     update: (cache, { data: _data }) => {
-                                        if (_data?.delete_ContentItem_by_pk) {
-                                            const data = _data.delete_ContentItem_by_pk;
+                                        if (_data?.delete_Element_by_pk) {
+                                            const data = _data.delete_Element_by_pk;
                                             cache.modify({
                                                 fields: {
-                                                    ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                                    content_Element(existingRefs: Reference[] = [], { readField }) {
                                                         cache.evict({
                                                             id: data.id,
-                                                            fieldName: "SponsorSecondaryEditor_ContentItemFragment",
+                                                            fieldName: "SponsorSecondaryEditor_ElementFragment",
                                                             broadcast: true,
                                                         });
                                                         return existingRefs.filter(
@@ -386,30 +378,30 @@ function SponsorContentItemInner({
             <Divider my={2} />
             <LayoutEditor
                 layoutDataBlob={descriptor.layoutData}
-                contentItemType={contentItem.contentTypeName}
+                elementType={element.typeName}
                 update={(layoutData) => {
-                    const newState: ContentItemDescriptor = {
+                    const newState: ElementDescriptor = {
                         ...descriptor,
                         layoutData,
                     };
-                    updateContentItem({
+                    updateElement({
                         variables: {
-                            contentItemId: contentItem.id,
-                            contentItem: {
+                            elementId: element.id,
+                            element: {
                                 data: newState.data,
                                 layoutData: newState.layoutData,
                             },
                         },
                         update: (cache, { data: _data }) => {
-                            if (_data?.update_ContentItem_by_pk) {
-                                const data = _data.update_ContentItem_by_pk;
+                            if (_data?.update_Element_by_pk) {
+                                const data = _data.update_Element_by_pk;
                                 cache.modify({
                                     fields: {
-                                        ContentItem(existingRefs: Reference[] = [], { readField }) {
+                                        content_Element(existingRefs: Reference[] = [], { readField }) {
                                             const newRef = cache.writeFragment({
                                                 data: newState,
-                                                fragment: SponsorSecondaryEditor_ContentItemFragmentDoc,
-                                                fragmentName: "SponsorSecondaryEditor_ContentItem",
+                                                fragment: SponsorSecondaryEditor_ElementFragmentDoc,
+                                                fragmentName: "SponsorSecondaryEditor_Element",
                                             });
                                             if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
                                                 return existingRefs;

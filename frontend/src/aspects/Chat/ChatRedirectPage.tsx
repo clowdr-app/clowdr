@@ -10,10 +10,10 @@ gql`
     query GetChatPath($chatId: uuid!) {
         chat_Chat_by_pk(id: $chatId) {
             id
-            room {
+            rooms {
                 id
             }
-            contentGroup {
+            items {
                 id
             }
         }
@@ -30,7 +30,7 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
 
     const conference = useConference();
 
-    if (loading || (!data?.chat_Chat_by_pk?.room && !data?.chat_Chat_by_pk?.contentGroup)) {
+    if (loading || (!data?.chat_Chat_by_pk?.room && !data?.chat_Chat_by_pk?.item)) {
         return <CenteredSpinner />;
     }
 
@@ -43,7 +43,7 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
             to={`/conference/${conference.slug}${
                 data?.chat_Chat_by_pk?.room
                     ? `/room/${data?.chat_Chat_by_pk?.room[0].id}`
-                    : `/item/${data?.chat_Chat_by_pk?.contentGroup[0].id}`
+                    : `/item/${data?.chat_Chat_by_pk?.item[0].id}`
             }`}
         />
     );

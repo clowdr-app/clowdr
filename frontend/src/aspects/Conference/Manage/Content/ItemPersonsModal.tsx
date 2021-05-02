@@ -23,44 +23,38 @@ import CRUDTable, {
 } from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
 import { useConference } from "../../useConference";
-import {
-    ContentGroupDescriptor,
-    ContentGroupPersonDescriptor,
-    ContentPersonDescriptor,
-    ContentRoleNames,
-} from "./Types";
+import { ContentRoleNames, ItemDescriptor, ItemPersonDescriptor, ProgramPersonDescriptor } from "./Types";
 
-const ContentGroupPersonCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupPersonDescriptor, "id">>) =>
-    CRUDTable(props);
+const ItemPersonCRUDTable = (props: Readonly<CRUDTableProps<ItemPersonDescriptor, "id">>) => CRUDTable(props);
 
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
     isGroupDirty: boolean;
-    group: ContentGroupDescriptor;
-    peopleMap: Map<string, ContentPersonDescriptor>;
-    insertContentGroupPerson: (contentGroupPerson: ContentGroupPersonDescriptor) => void;
-    updateContentGroupPerson: (contentGroupPerson: ContentGroupPersonDescriptor) => void;
-    deleteContentGroupPerson: (contentGroupPersonId: string) => void;
+    group: ItemDescriptor;
+    peopleMap: Map<string, ProgramPersonDescriptor>;
+    insertItemPerson: (itemPerson: ItemPersonDescriptor) => void;
+    updateItemPerson: (itemPerson: ItemPersonDescriptor) => void;
+    deleteItemPerson: (itemPersonId: string) => void;
 }
 
-export default function ContentGroupPersonsModal({
+export default function ItemProgramPersonsModal({
     isOpen,
     onOpen,
     onClose,
     isGroupDirty,
     group,
     peopleMap,
-    insertContentGroupPerson,
-    updateContentGroupPerson,
-    deleteContentGroupPerson,
+    insertItemPerson,
+    updateItemPerson,
+    deleteItemPerson,
 }: Props): JSX.Element {
-    const contentGroupPersonsMap = useMemo(() => {
-        const results = new Map<string, ContentGroupPersonDescriptor>();
+    const itemPersonsMap = useMemo(() => {
+        const results = new Map<string, ItemPersonDescriptor>();
 
-        group.people.forEach((contentGroupPerson) => {
-            results.set(contentGroupPerson.id, contentGroupPerson);
+        group.people.forEach((itemPerson) => {
+            results.set(itemPerson.id, itemPerson);
         });
 
         return results;
@@ -105,8 +99,8 @@ export default function ContentGroupPersonsModal({
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            <ContentGroupPersonCRUDTable
-                                data={contentGroupPersonsMap}
+                            <ItemPersonCRUDTable
+                                data={itemPersonsMap}
                                 externalUnsavedChanges={isGroupDirty}
                                 primaryFields={{
                                     keyField: {
@@ -242,27 +236,27 @@ export default function ContentGroupPersonsModal({
                                 csud={{
                                     cudCallbacks: {
                                         create: async (
-                                            partialContentGroupPerson: Partial<ContentGroupPersonDescriptor>
+                                            partialItemPerson: Partial<ItemPersonDescriptor>
                                         ): Promise<string | null> => {
-                                            assert(partialContentGroupPerson.personId);
-                                            assert(partialContentGroupPerson.roleName);
-                                            const newContentGroupPerson: ContentGroupPersonDescriptor = {
+                                            assert(partialItemPerson.personId);
+                                            assert(partialItemPerson.roleName);
+                                            const newItemPerson: ItemPersonDescriptor = {
                                                 id: uuidv4(),
                                                 isNew: true,
                                                 conferenceId: conference.id,
-                                                groupId: group.id,
-                                                personId: partialContentGroupPerson.personId,
-                                                roleName: partialContentGroupPerson.roleName,
-                                                priority: partialContentGroupPerson.priority,
+                                                itemId: group.id,
+                                                personId: partialItemPerson.personId,
+                                                roleName: partialItemPerson.roleName,
+                                                priority: partialItemPerson.priority,
                                             };
-                                            insertContentGroupPerson(newContentGroupPerson);
-                                            return newContentGroupPerson.id;
+                                            insertItemPerson(newItemPerson);
+                                            return newItemPerson.id;
                                         },
-                                        update: async (contentGroupPersons): Promise<Map<string, UpdateResult>> => {
+                                        update: async (itemPersons): Promise<Map<string, UpdateResult>> => {
                                             const results = new Map<string, UpdateResult>();
-                                            for (const [key, contentGroupPerson] of contentGroupPersons) {
+                                            for (const [key, itemPerson] of itemPersons) {
                                                 results.set(key, true);
-                                                updateContentGroupPerson(contentGroupPerson);
+                                                updateItemPerson(itemPerson);
                                             }
                                             return results;
                                         },
@@ -270,7 +264,7 @@ export default function ContentGroupPersonsModal({
                                             const results = new Map<string, boolean>();
                                             for (const key of keys) {
                                                 results.set(key, true);
-                                                deleteContentGroupPerson(key);
+                                                deleteItemPerson(key);
                                             }
                                             return results;
                                         },

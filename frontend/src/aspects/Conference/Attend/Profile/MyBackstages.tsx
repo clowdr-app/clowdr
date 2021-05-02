@@ -21,20 +21,20 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { MyBackstages_EventFragment, useAttendeeEventsWithBackstagesQuery } from "../../../../generated/graphql";
+import { MyBackstages_EventFragment, useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
-import useCurrentAttendee from "../../useCurrentAttendee";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
 
 gql`
-    fragment MyBackstages_Event on Event {
+    fragment MyBackstages_Event on schedule_Event {
         id
         conferenceId
-        contentGroup {
+        item {
             id
             title
         }
@@ -48,10 +48,10 @@ gql`
         startTime
     }
 
-    query AttendeeEventsWithBackstages($attendeeId: uuid!) {
-        Event(
+    query RegistrantEventsWithBackstages($registrantId: uuid!) {
+        schedule_Event(
             where: {
-                eventPeople: { person: { attendeeId: { _eq: $attendeeId } } }
+                eventPeople: { person: { registrantId: { _eq: $registrantId } } }
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
             }
         ) {
@@ -63,11 +63,11 @@ gql`
 export default function MyBackstages(): JSX.Element {
     const conference = useConference();
     const title = useTitle("My Backstages");
-    const attendee = useCurrentAttendee();
+    const registrant = useCurrentRegistrant();
 
-    const myBackstagesResponse = useAttendeeEventsWithBackstagesQuery({
+    const myBackstagesResponse = useRegistrantEventsWithBackstagesQuery({
         variables: {
-            attendeeId: attendee.id,
+            registrantId: registrant.id,
         },
         fetchPolicy: "network-only",
     });
@@ -108,7 +108,7 @@ export default function MyBackstages(): JSX.Element {
             {title}
             <Heading as="h1">My Backstages</Heading>
             <Heading as="h2" fontSize="lg" fontStyle="italic">
-                ({attendee.displayName})
+                ({registrant.displayName})
             </Heading>
             <Box>
                 On this page, authors, presenters and chairs of events can find the list of backstages (for current and
@@ -234,7 +234,7 @@ export default function MyBackstages(): JSX.Element {
                                                                               })}
                                                                     </Td>
                                                                     <Td maxW="12em">{x.name}</Td>
-                                                                    <Td maxW="25em">{x.contentGroup?.title ?? ""}</Td>
+                                                                    <Td maxW="25em">{x.item?.title ?? ""}</Td>
                                                                     <Td maxW="15em">
                                                                         {x.room ? (
                                                                             <Link

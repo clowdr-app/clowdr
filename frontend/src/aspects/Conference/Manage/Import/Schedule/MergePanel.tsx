@@ -27,7 +27,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const {
         errorContent,
         loadingContent,
-        contentGroups,
+        items,
         originalEvents,
         originalRooms,
         originalOriginatingDatas,
@@ -44,7 +44,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (contentGroups && originalEvents && originalRooms && originalOriginatingDatas && originalTags) {
+        if (items && originalEvents && originalRooms && originalOriginatingDatas && originalTags) {
             try {
                 setError(null);
                 const merged = mergeSchedule(
@@ -54,7 +54,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                     originalRooms,
                     originalOriginatingDatas,
                     originalTags,
-                    contentGroups
+                    items
                 );
                 setMergedEventsMap(merged.newEvents);
                 setMergedRoomsMap(merged.newRooms);
@@ -71,7 +71,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                 setError(e.message);
             }
         }
-    }, [conference.id, data, originalEvents, originalRooms, originalOriginatingDatas, originalTags, contentGroups]);
+    }, [conference.id, data, originalEvents, originalRooms, originalOriginatingDatas, originalTags, items]);
 
     const finalData = {
         events: Array.from(mergedEventsMap?.values() ?? []),

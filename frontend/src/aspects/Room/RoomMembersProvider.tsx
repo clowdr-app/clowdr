@@ -1,22 +1,22 @@
 import { gql } from "@apollo/client";
 import React, { useCallback, useEffect, useState } from "react";
-import { AttendeeDataFragment, useGetRoomMembersQuery } from "../../generated/graphql";
-import { useAttendeesContext } from "../Conference/AttendeesContext";
+import { RegistrantDataFragment, useGetRoomMembersQuery } from "../../generated/graphql";
+import { useRegistrantsContext } from "../Conference/RegistrantsContext";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { RoomMembersContext, RoomMembersInfo, RoomMembersInfos } from "./useRoomMembers";
 
 gql`
     query GetRoomMembers($roomId: uuid!) {
-        RoomPerson(where: { roomId: { _eq: $roomId } }) {
+        room_RoomPerson(where: { roomId: { _eq: $roomId } }) {
             ...RoomMember
         }
     }
 
-    fragment RoomMember on RoomPerson {
+    fragment RoomMember on room_RoomPerson {
         id
         roomId
-        roomPersonRoleName
-        attendeeId
+        personRoleName
+        registrantId
     }
 `;
 
@@ -34,16 +34,16 @@ export default function RoomMembersProvider({
     });
     useQueryErrorToast(error, true, "RoomMembersProvider:GetRoomMembers");
 
-    const attendeesCtx = useAttendeesContext();
+    const registrantsCtx = useRegistrantsContext();
     const [value, setValue] = useState<RoomMembersInfos | false>(false);
-    const onAttendeeUpdated = useCallback((data: AttendeeDataFragment) => {
+    const onRegistrantUpdated = useCallback((data: RegistrantDataFragment) => {
         setValue((oldVals) => {
             return oldVals
                 ? oldVals.map((x) =>
-                      x.member.attendeeId === data.id
+                      x.member.registrantId === data.id
                           ? {
                                 ...x,
-                                attendee: data,
+                                registrant: data,
                             }
                           : x
                   )
@@ -56,8 +56,8 @@ export default function RoomMembersProvider({
             setValue(false);
         } else if (!loading && data) {
             data.RoomPerson.forEach((person) => {
-                if (person.attendeeId) {
-                    attendeesCtx.subscribe({ attendee: person.attendeeId }, onAttendeeUpdated);
+                if (person.registrantId) {
+                    registrantsCtx.subscribe({ registrant: person.registrantId }, onRegistrantUpdated);
                 }
             });
 
@@ -73,7 +73,7 @@ export default function RoomMembersProvider({
                                       return [
                                           ...acc,
                                           {
-                                              attendee: member.attendee,
+                                              registrant: member.registrant,
                                               member: updated,
                                           },
                                       ];
@@ -89,7 +89,7 @@ export default function RoomMembersProvider({
                 }
             });
         }
-    }, [attendeesCtx, data, error, loading, onAttendeeUpdated]);
+    }, [registrantsCtx, data, error, loading, onRegistrantUpdated]);
 
     return <RoomMembersContext.Provider value={value}>{children}</RoomMembersContext.Provider>;
 }

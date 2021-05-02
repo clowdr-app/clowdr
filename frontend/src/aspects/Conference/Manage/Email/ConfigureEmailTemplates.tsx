@@ -38,12 +38,12 @@ import { useConference } from "../../useConference";
 
 gql`
     query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
-        ConferenceConfiguration(where: { conferenceId: { _eq: $conferenceId } }) {
+        conference_Configuration(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ConfigureEmailTemplates_ConferenceConfiguration
         }
     }
 
-    fragment ConfigureEmailTemplates_ConferenceConfiguration on ConferenceConfiguration {
+    fragment ConfigureEmailTemplates_ConferenceConfiguration on conference_Configuration {
         id
         conferenceId
         key
@@ -55,9 +55,9 @@ gql`
         $conferenceId: uuid!
         $key: String!
     ) {
-        insert_ConferenceConfiguration_one(
+        insert_conference_Configuration_one(
             object: { value: $value, conferenceId: $conferenceId, key: $key }
-            on_conflict: { constraint: ConferenceConfiguration_conferenceId_key_key, update_columns: value }
+            on_conflict: { constraint: Configuration_conferenceId_key_key, update_columns: value }
         ) {
             id
         }

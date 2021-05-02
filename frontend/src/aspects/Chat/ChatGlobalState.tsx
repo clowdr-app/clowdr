@@ -28,7 +28,7 @@ import {
     PinChatDocument,
     PinChatMutation,
     PinChatMutationVariables,
-    RoomPrivacy_Enum,
+    room_ManagementMode_Enum,
     SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
     SelectInitialChatStateQueryVariables,
@@ -48,7 +48,7 @@ import {
     UnsubscribeChatMutation,
     UnsubscribeChatMutationVariables,
 } from "../../generated/graphql";
-import type { Attendee } from "../Conference/useCurrentAttendee";
+import type { Registrant } from "../Conference/useCurrentRegistrant";
 import { realtimeService } from "../Realtime/RealtimeService";
 import type { Action, Message, Notification, Reaction } from "../Realtime/RealtimeServiceCommonTypes";
 import { Markdown } from "../Text/Markdown";
@@ -91,23 +91,23 @@ gql`
 
     fragment InitialChatState_Chat on chat_Chat {
         id
-        contentGroup {
+        items {
             id
             title
             shortTitle
         }
-        nonDMRoom: room(where: { roomPrivacyName: { _neq: DM } }) {
+        nonDMRoom: rooms(where: { managementModeName: { _neq: DM } }) {
             id
             name
             priority
-            roomPrivacyName
+            managementModeName
         }
-        DMRoom: room(where: { roomPrivacyName: { _eq: DM } }) {
+        DMRoom: rooms(where: { managementModeName: { _eq: DM } }) {
             id
             name
             roomPeople {
                 id
-                attendee {
+                registrant {
                     id
                     displayName
                 }
@@ -117,35 +117,35 @@ gql`
         enableAutoSubscribe
         enableMandatoryPin
         enableMandatorySubscribe
-        pins(where: { attendeeId: { _eq: $attendeeId } }) {
-            attendeeId
+        pins(where: { registrantId: { _eq: $registrantId } }) {
+            registrantId
             chatId
             wasManuallyPinned
         }
-        subscriptions(where: { attendeeId: { _eq: $attendeeId } }) {
-            attendeeId
+        subscriptions(where: { registrantId: { _eq: $registrantId } }) {
+            registrantId
             chatId
             wasManuallySubscribed
         }
     }
 
-    query InitialChatState($attendeeId: uuid!) {
-        chat_Pin(where: { attendeeId: { _eq: $attendeeId } }) {
+    query InitialChatState($registrantId: uuid!) {
+        chat_Pin(where: { registrantId: { _eq: $registrantId } }) {
             chatId
-            attendeeId
+            registrantId
             chat {
                 ...InitialChatState_Chat
             }
         }
     }
 
-    query SelectInitialChatState($chatId: uuid!, $attendeeId: uuid!) {
+    query SelectInitialChatState($chatId: uuid!, $registrantId: uuid!) {
         chat_Chat_by_pk(id: $chatId) {
             ...InitialChatState_Chat
         }
     }
 
-    query SelectInitialChatStates($chatIds: [uuid!]!, $attendeeId: uuid!) {
+    query SelectInitialChatStates($chatIds: [uuid!]!, $registrantId: uuid!) {
         chat_Chat(where: { id: { _in: $chatIds } }) {
             ...InitialChatState_Chat
         }
@@ -153,42 +153,42 @@ gql`
 `;
 
 gql`
-    mutation SubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
+    mutation SubscribeChat($chatId: uuid!, $registrantId: uuid!) {
         insert_chat_Subscription(
-            objects: { chatId: $chatId, attendeeId: $attendeeId }
+            objects: { chatId: $chatId, registrantId: $registrantId }
             on_conflict: { constraint: Subscription_pkey, update_columns: wasManuallySubscribed }
         ) {
             returning {
                 chatId
-                attendeeId
+                registrantId
             }
         }
     }
 
-    mutation UnsubscribeChat($chatId: uuid!, $attendeeId: uuid!) {
-        delete_chat_Subscription_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-            attendeeId
+    mutation UnsubscribeChat($chatId: uuid!, $registrantId: uuid!) {
+        delete_chat_Subscription_by_pk(chatId: $chatId, registrantId: $registrantId) {
+            registrantId
             chatId
         }
     }
 `;
 
 gql`
-    mutation PinChat($chatId: uuid!, $attendeeId: uuid!) {
+    mutation PinChat($chatId: uuid!, $registrantId: uuid!) {
         insert_chat_Pin(
-            objects: { chatId: $chatId, attendeeId: $attendeeId }
+            objects: { chatId: $chatId, registrantId: $registrantId }
             on_conflict: { constraint: ChatPin_pkey, update_columns: wasManuallyPinned }
         ) {
             returning {
                 chatId
-                attendeeId
+                registrantId
             }
         }
     }
 
-    mutation UnpinChat($chatId: uuid!, $attendeeId: uuid!) {
-        delete_chat_Pin_by_pk(chatId: $chatId, attendeeId: $attendeeId) {
-            attendeeId
+    mutation UnpinChat($chatId: uuid!, $registrantId: uuid!) {
+        delete_chat_Pin_by_pk(chatId: $chatId, registrantId: $registrantId) {
+            registrantId
             chatId
         }
     }
@@ -232,12 +232,6 @@ gql`
             ...ChatMessageData
         }
     }
-
-    # subscription NewMessages($chatId: uuid!) {
-    #     chat_Message(order_by: { id: desc }, where: { chatId: { _eq: $chatId } }, limit: 5) {
-    #         ...SubscribedChatMessageData
-    #     }
-    # }
 `;
 
 gql`
@@ -373,7 +367,7 @@ export class MessageState {
                 messageSId: this.sId,
                 sId: uuidv4(),
                 updated_at: now.toISOString(),
-                senderId: this.globalState.attendee.id,
+                senderId: this.globalState.registrant.id,
             };
             const socket = this.globalState.socket;
             assert(socket, "Not connected to chat service.");
@@ -469,13 +463,13 @@ export class ChatState {
         private readonly initialState: InitialChatState_ChatFragment
     ) {
         this.name =
-            (initialState.contentGroup.length > 0
-                ? initialState.contentGroup[0].shortTitle ?? initialState.contentGroup[0].title
+            (initialState.item.length > 0
+                ? initialState.item[0].shortTitle ?? initialState.item[0].title
                 : initialState.nonDMRoom.length > 0
                 ? initialState.nonDMRoom[0].name
                 : initialState.DMRoom.length > 0
-                ? initialState.DMRoom[0].roomPeople.find((x) => x?.attendee?.id !== globalState.attendee.id)?.attendee
-                      ?.displayName
+                ? initialState.DMRoom[0].roomPeople.find((x) => x?.registrant?.id !== globalState.registrant.id)
+                      ?.registrant?.displayName
                 : undefined) ?? "<No name available>";
 
         this.isPinned = initialState.pins.length > 0;
@@ -512,7 +506,7 @@ export class ChatState {
         return (
             this.IsDM ||
             (this.initialState.nonDMRoom.length > 0 &&
-                this.initialState.nonDMRoom[0].roomPrivacyName !== RoomPrivacy_Enum.Public)
+                this.initialState.nonDMRoom[0].managementModeName !== room_ManagementMode_Enum.Public)
         );
     }
 
@@ -560,7 +554,7 @@ export class ChatState {
                         await this.globalState.apolloClient.mutate<UnpinChatMutation, UnpinChatMutationVariables>({
                             mutation: UnpinChatDocument,
                             variables: {
-                                attendeeId: this.globalState.attendee.id,
+                                registrantId: this.globalState.registrant.id,
                                 chatId: this.Id,
                             },
                         });
@@ -577,7 +571,7 @@ export class ChatState {
                     >({
                         mutation: PinChatDocument,
                         variables: {
-                            attendeeId: this.globalState.attendee.id,
+                            registrantId: this.globalState.registrant.id,
                             chatId: this.Id,
                         },
                     });
@@ -642,7 +636,7 @@ export class ChatState {
                         >({
                             mutation: UnsubscribeChatDocument,
                             variables: {
-                                attendeeId: this.globalState.attendee.id,
+                                registrantId: this.globalState.registrant.id,
                                 chatId: this.Id,
                             },
                         });
@@ -659,7 +653,7 @@ export class ChatState {
                     >({
                         mutation: SubscribeChatDocument,
                         variables: {
-                            attendeeId: this.globalState.attendee.id,
+                            registrantId: this.globalState.registrant.id,
                             chatId: this.Id,
                         },
                     });
@@ -993,7 +987,7 @@ export class ChatState {
                 updated_at: new Date().toISOString(),
                 chatId,
                 message,
-                senderId: this.globalState.attendee.id,
+                senderId: this.globalState.registrant.id,
                 type,
                 data,
                 isPinned,
@@ -1161,7 +1155,7 @@ export class GlobalChatState {
             name: string;
             shortName: string;
         },
-        public readonly attendee: Attendee,
+        public readonly registrant: Registrant,
         public readonly apolloClient: ApolloClient<unknown>
     ) {}
 
@@ -1338,7 +1332,7 @@ export class GlobalChatState {
                                     >({
                                         query: SelectInitialChatStatesDocument,
                                         variables: {
-                                            attendeeId: this.attendee.id,
+                                            registrantId: this.registrant.id,
                                             chatIds: [chatId],
                                         },
                                         fetchPolicy: "network-only",
@@ -1421,8 +1415,8 @@ export class GlobalChatState {
                             chat?.setUnreadCount(count);
                         });
 
-                        socket.emit("chat.subscriptions.changed.on", this.attendee.id);
-                        socket.emit("chat.pins.changed.on", this.attendee.id);
+                        socket.emit("chat.subscriptions.changed.on", this.registrant.id);
+                        socket.emit("chat.pins.changed.on", this.registrant.id);
 
                         if (this.chatStates) {
                             for (const chatState of this.chatStates) {
@@ -1442,7 +1436,7 @@ export class GlobalChatState {
                     >({
                         query: InitialChatStateDocument,
                         variables: {
-                            attendeeId: this.attendee.id,
+                            registrantId: this.registrant.id,
                         },
                     });
 
@@ -1501,8 +1495,8 @@ export class GlobalChatState {
 
     private offSocketEvents(socket: SocketIOClient.Socket, disconnected = false) {
         if (!disconnected) {
-            socket.emit("chat.subscriptions.changed.off", this.attendee.id);
-            socket.emit("chat.pins.changed.off", this.attendee.id);
+            socket.emit("chat.subscriptions.changed.off", this.registrant.id);
+            socket.emit("chat.pins.changed.off", this.registrant.id);
         }
 
         socket.off("notification");
@@ -1538,7 +1532,7 @@ export class GlobalChatState {
                         query: SelectInitialChatStateDocument,
                         variables: {
                             chatId,
-                            attendeeId: this.attendee.id,
+                            registrantId: this.registrant.id,
                         },
                         fetchPolicy: "network-only",
                     });

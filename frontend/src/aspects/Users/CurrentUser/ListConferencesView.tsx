@@ -13,7 +13,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { AttendeeFieldsFragment, Permission_Enum } from "../../../generated/graphql";
+import { Permission_Enum, RegistrantFieldsFragment } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { useTitle } from "../../Utils/useTitle";
 import useCurrentUser from "./useCurrentUser";
@@ -26,8 +26,8 @@ export default function ListConferencesView(): JSX.Element {
     const buttonTextColour = useColorModeValue("black", "white");
 
     const { attending, organising } = useMemo(() => {
-        const attendingResult: AttendeeFieldsFragment[] = [];
-        const organisingResult: AttendeeFieldsFragment[] = [];
+        const attendingResult: RegistrantFieldsFragment[] = [];
+        const organisingResult: RegistrantFieldsFragment[] = [];
         const organiserPermissions: Permission_Enum[] = [
             Permission_Enum.ConferenceManageAttendees,
             Permission_Enum.ConferenceManageContent,
@@ -39,32 +39,32 @@ export default function ListConferencesView(): JSX.Element {
             Permission_Enum.ConferenceModerateAttendees,
         ];
 
-        for (const attendee of user.attendees) {
+        for (const registrant of user.registrants) {
             if (
-                attendee.groupAttendees.some((ga) =>
+                registrant.groupRegistrants.some((ga) =>
                     ga.group.groupRoles.some((gr) =>
                         gr.role.rolePermissions.some((rp) => organiserPermissions.includes(rp.permissionName))
                     )
                 )
             ) {
-                organisingResult.push(attendee);
+                organisingResult.push(registrant);
             }
-            attendingResult.push(attendee);
+            attendingResult.push(registrant);
         }
 
         return {
             attending: attendingResult,
             organising: organisingResult,
         };
-    }, [user.attendees]);
+    }, [user.registrants]);
 
     const renderConferenceList = (
         icon: ComponentWithAs<"svg", IconProps>,
-        attendees: AttendeeFieldsFragment[],
+        registrants: RegistrantFieldsFragment[],
         button: JSX.Element,
         subPath: string
     ) => {
-        if (attendees.length === 0) {
+        if (registrants.length === 0) {
             return (
                 <>
                     <Text>No conferences.</Text>
@@ -76,16 +76,16 @@ export default function ListConferencesView(): JSX.Element {
         return (
             <>
                 <List spacing={2} display="flex" flexDir="column" alignItems="stretch">
-                    {attendees
+                    {registrants
                         .sort((x, y) => x.conference.shortName.localeCompare(y.conference.shortName))
-                        .map((attendee) => {
+                        .map((registrant) => {
                             return (
-                                <ListItem key={attendee.id} display="list-item">
+                                <ListItem key={registrant.id} display="list-item">
                                     <LinkButton
                                         leftIcon={
                                             <Icon as={icon} color="green.500" fontSize="50%" verticalAlign="middle" />
                                         }
-                                        to={`/conference/${attendee.conference.slug}/${subPath}`}
+                                        to={`/conference/${registrant.conference.slug}/${subPath}`}
                                         background="none"
                                         color={buttonTextColour}
                                         border="1px solid"
@@ -95,7 +95,7 @@ export default function ListConferencesView(): JSX.Element {
                                         justifyContent="flex-start"
                                     >
                                         <Text as="span" verticalAlign="middle">
-                                            {attendee.conference.shortName}
+                                            {registrant.conference.shortName}
                                         </Text>
                                     </LinkButton>
                                 </ListItem>

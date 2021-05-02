@@ -14,12 +14,12 @@ import Room from "./Room";
 
 gql`
     query RoomPage_GetRoomDetails($roomId: uuid!) {
-        Room_by_pk(id: $roomId) {
+        room_Room_by_pk(id: $roomId) {
             ...RoomPage_RoomDetails
         }
     }
 
-    fragment RoomPage_RoomDetails on Room {
+    fragment RoomPage_RoomDetails on room_Room {
         id
         name
         currentModeName
@@ -31,14 +31,11 @@ gql`
         }
         publicVonageSessionId
         chatId
-        originatingContentGroup {
+        originatingItem {
             id
-            contentGroupTypeName
-            contentItems(
-                where: {
-                    contentTypeName: { _in: [IMAGE_URL, IMAGE_FILE] }
-                    layoutData: { _contains: { isLogo: true } }
-                }
+            typeName
+            elements(
+                where: { typeName: { _in: [IMAGE_URL, IMAGE_FILE] }, layoutData: { _contains: { isLogo: true } } }
                 limit: 1
                 order_by: { updatedAt: desc }
             ) {
@@ -47,7 +44,7 @@ gql`
             }
             title
         }
-        roomPrivacyName
+        managementModeName
         ...RoomPage_RoomPeople
         shuffleRooms(limit: 1, order_by: { id: desc }) {
             id
@@ -55,14 +52,14 @@ gql`
             durationMinutes
             reshuffleUponEnd
         }
-        videoRoomBackendName
+        backendName
     }
 
-    fragment RoomPage_RoomPeople on Room {
+    fragment RoomPage_RoomPeople on room_Room {
         roomPeople {
             id
-            roomPersonRoleName
-            attendeeId
+            personRoleName
+            registrantId
         }
     }
 `;
@@ -107,7 +104,7 @@ gql`
     }
 
     query GetEventVonageDetails($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             eventVonageSession {
                 sessionId
                 id

@@ -11,21 +11,21 @@ import { useConference } from "../../useConference";
 
 gql`
     query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
-        YouTubeUpload(where: { conferenceId: { _eq: $conferenceId } }) {
+        video_YouTubeUpload(where: { conferenceId: { _eq: $conferenceId } }) {
             ...UploadYouTubeVideos_YouTubeUpload
         }
     }
 
-    fragment UploadYouTubeVideos_YouTubeUpload on YouTubeUpload {
+    fragment UploadYouTubeVideos_YouTubeUpload on video_YouTubeUpload {
         id
         videoId
         videoPrivacyStatus
         videoStatus
         videoTitle
-        contentItem {
+        element {
             id
             name
-            contentGroup {
+            item {
                 id
                 title
             }

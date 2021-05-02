@@ -10,8 +10,8 @@ import TranscriptEditor from "../../TranscriptEditor";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 gql`
-    mutation UpdateSubtitles($contentItemId: String!, $magicToken: String!, $subtitleText: String!) {
-        updateSubtitles(contentItemId: $contentItemId, magicToken: $magicToken, subtitleText: $subtitleText) {
+    mutation UpdateSubtitles($elementId: String!, $magicToken: String!, $subtitleText: String!) {
+        updateSubtitles(elementId: $elementId, magicToken: $magicToken, subtitleText: $subtitleText) {
             message
             success
         }
@@ -21,12 +21,12 @@ gql`
 export default function EditSubtitles({
     videoS3URL,
     data,
-    contentItemId,
+    elementId,
     magicToken,
 }: {
     videoS3URL: string;
     data: SubtitleDetails;
-    contentItemId: string;
+    elementId: string;
     magicToken: string;
 }): JSX.Element {
     const [updateSubtitles] = useUpdateSubtitlesMutation();
@@ -58,7 +58,7 @@ export default function EditSubtitles({
                         try {
                             const result = await updateSubtitles({
                                 variables: {
-                                    contentItemId,
+                                    elementId,
                                     magicToken,
                                     subtitleText: srtTranscript,
                                 },

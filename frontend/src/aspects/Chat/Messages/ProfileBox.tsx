@@ -1,14 +1,14 @@
 import { Button, ButtonProps, Image, useToast } from "@chakra-ui/react";
 import React from "react";
-import type { AttendeeDataFragment } from "../../../generated/graphql";
+import type { RegistrantDataFragment } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
 import { useChatConfiguration } from "../Configuration";
 import { useChatProfileModal } from "../Frame/ChatProfileModalProvider";
 
 export default function ProfilePictureBox({
-    attendee,
+    registrant,
     ...props
-}: { attendee: AttendeeDataFragment | null } & ButtonProps): JSX.Element {
+}: { registrant: RegistrantDataFragment | null } & ButtonProps): JSX.Element {
     const config = useChatConfiguration();
     const profileModal = useChatProfileModal();
     const toast = useToast();
@@ -26,10 +26,10 @@ export default function ProfilePictureBox({
             background="none"
             {...props}
             onClick={() => {
-                if (attendee && attendee.profile) {
+                if (registrant && registrant.profile) {
                     profileModal.open({
-                        ...attendee,
-                        profile: attendee.profile,
+                        ...registrant,
+                        profile: registrant.profile,
                     });
                 } else {
                     toast({
@@ -42,20 +42,20 @@ export default function ProfilePictureBox({
             fontSize="inherit"
         >
             {config.messageConfig.showProfilePictures &&
-            attendee &&
-            attendee.profile &&
-            attendee.profile.photoURL_50x50 ? (
+            registrant &&
+            registrant.profile &&
+            registrant.profile.photoURL_50x50 ? (
                 <Image
                     borderRadius={5}
                     w="100%"
                     h="auto"
                     objectFit="cover"
                     objectPosition="center"
-                    src={attendee.profile.photoURL_50x50}
-                    aria-label={`Profile picture of ${attendee.displayName}`}
+                    src={registrant.profile.photoURL_50x50}
+                    aria-label={`Profile picture of ${registrant.displayName}`}
                     overflow="hidden"
                 />
-            ) : config.messageConfig.showPlaceholderProfilePictures && attendee !== null ? (
+            ) : config.messageConfig.showPlaceholderProfilePictures && registrant !== null ? (
                 <FAIcon iconStyle="s" icon="cat" fontSize={((props.w ?? 35) as number) * 0.8 + "px"} />
             ) : (
                 <></>

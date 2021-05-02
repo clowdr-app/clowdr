@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client";
 import { Box, Heading, Spinner } from "@chakra-ui/react";
-import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ContentBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
-    ContentGroupDataFragment,
-    ContentType_Enum,
+    ElementType_Enum,
+    ItemDataFragment,
     Permission_Enum,
-    useConferenceLandingPageContentGroupQuery,
+    useConferenceLandingPageItemQuery,
 } from "../../../generated/graphql";
 import ConferencePageNotFound from "../../Errors/ConferencePageNotFound";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
@@ -14,47 +14,45 @@ import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import { ContentItem } from "./Content/Item/ContentItem";
+import { Element } from "./Content/Element/Element";
 
 gql`
-    query ConferenceLandingPageContentGroup($conferenceId: uuid!) {
-        ContentGroup(
-            where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { contentGroupTypeName: { _eq: LANDING_PAGE } }] }
-        ) {
-            ...ContentGroupData
+    query ConferenceLandingPageItem($conferenceId: uuid!) {
+        content_Item(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { typeName: { _eq: LANDING_PAGE } }] }) {
+            ...ItemData
         }
     }
 `;
 
-function ConferenceLandingContent({ group }: { group: ContentGroupDataFragment }): JSX.Element {
+function ConferenceLandingContent({ group }: { group: ItemDataFragment }): JSX.Element {
     const conferenceLandingContentSortOrder = [
-        ContentType_Enum.Abstract,
-        ContentType_Enum.VideoUrl,
-        ContentType_Enum.Text,
-        ContentType_Enum.PaperFile,
-        ContentType_Enum.PaperLink,
-        ContentType_Enum.PaperUrl,
-        ContentType_Enum.PosterFile,
-        ContentType_Enum.PosterUrl,
-        ContentType_Enum.ImageFile,
-        ContentType_Enum.ImageUrl,
-        ContentType_Enum.Link,
-        ContentType_Enum.LinkButton,
-        ContentType_Enum.VideoBroadcast,
-        ContentType_Enum.VideoCountdown,
-        ContentType_Enum.VideoFile,
-        ContentType_Enum.VideoFiller,
-        ContentType_Enum.VideoLink,
-        ContentType_Enum.VideoPrepublish,
-        ContentType_Enum.VideoSponsorsFiller,
-        ContentType_Enum.VideoTitles,
-        ContentType_Enum.Zoom,
-        ContentType_Enum.ContentGroupList,
-        ContentType_Enum.WholeSchedule,
+        ElementType_Enum.Abstract,
+        ElementType_Enum.VideoUrl,
+        ElementType_Enum.Text,
+        ElementType_Enum.PaperFile,
+        ElementType_Enum.PaperLink,
+        ElementType_Enum.PaperUrl,
+        ElementType_Enum.PosterFile,
+        ElementType_Enum.PosterUrl,
+        ElementType_Enum.ImageFile,
+        ElementType_Enum.ImageUrl,
+        ElementType_Enum.Link,
+        ElementType_Enum.LinkButton,
+        ElementType_Enum.VideoBroadcast,
+        ElementType_Enum.VideoCountdown,
+        ElementType_Enum.VideoFile,
+        ElementType_Enum.VideoFiller,
+        ElementType_Enum.VideoLink,
+        ElementType_Enum.VideoPrepublish,
+        ElementType_Enum.VideoSponsorsFiller,
+        ElementType_Enum.VideoTitles,
+        ElementType_Enum.Zoom,
+        ElementType_Enum.ItemList,
+        ElementType_Enum.WholeSchedule,
     ];
 
-    const elements = group.contentItems
-        .map((item) => ({ el: <ContentItem key={item.id} item={item} />, type: item.contentTypeName }))
+    const elements = group.elements
+        .map((item) => ({ el: <Element key={item.id} item={item} />, type: item.typeName }))
         .sort(
             (x, y) =>
                 conferenceLandingContentSortOrder.indexOf(x.type) - conferenceLandingContentSortOrder.indexOf(y.type)
@@ -67,7 +65,7 @@ function ConferenceLandingPageInner(): JSX.Element {
 
     const title = useTitle(conference.name);
 
-    const { error, data } = useConferenceLandingPageContentGroupQuery({
+    const { error, data } = useConferenceLandingPageItemQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -75,17 +73,17 @@ function ConferenceLandingPageInner(): JSX.Element {
     useQueryErrorToast(error, false, "ConferenceLandingPage.tsx");
 
     const group = useMemo(() => {
-        if (data && data.ContentGroup.length > 0) {
-            return data.ContentGroup[0];
+        if (data && data.Item.length > 0) {
+            return data.Item[0];
         }
         return null;
     }, [data]);
 
     const hasAbstract = useMemo(
         () =>
-            group?.contentItems.some((item) => {
-                if (item.contentTypeName === ContentType_Enum.Abstract) {
-                    const data: ContentItemDataBlob = item.data;
+            group?.elements.some((item) => {
+                if (item.typeName === ElementType_Enum.Abstract) {
+                    const data: ElementDataBlob = item.data;
                     if (
                         data.length > 0 &&
                         data[0].data.baseType === ContentBaseType.Text &&
@@ -97,7 +95,7 @@ function ConferenceLandingPageInner(): JSX.Element {
                 }
                 return false;
             }),
-        [group?.contentItems]
+        [group?.elements]
     );
 
     if (!group) {

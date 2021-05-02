@@ -4,14 +4,14 @@ import React, { useMemo } from "react";
 import type { Schedule_EventTagFragment } from "../../../../generated/graphql";
 
 gql`
-    fragment Schedule_Tag on Tag {
+    fragment Schedule_Tag on collection_Tag {
         id
         name
         colour
         priority
     }
 
-    fragment Schedule_EventTag on EventTag {
+    fragment Schedule_EventTag on schedule_EventTag {
         id
         tag {
             ...Schedule_Tag

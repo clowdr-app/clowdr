@@ -3,10 +3,10 @@ import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import BadgeList from "../../../Badges/BadgeList";
 import FAIcon from "../../../Icons/FAIcon";
-import type { Attendee } from "../../useCurrentAttendee";
+import type { Registrant } from "../../useCurrentRegistrant";
 import ProfileModal from "./ProfileModal";
 
-export function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () => void }): JSX.Element {
+export function RegistrantTile({ registrant, onClick }: { registrant: Registrant; onClick: () => void }): JSX.Element {
     return (
         <Button
             variant="outline"
@@ -19,11 +19,11 @@ export function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClic
             onClick={onClick}
             overflow="hidden"
         >
-            {attendee.profile.photoURL_50x50 ? (
+            {registrant.profile.photoURL_50x50 ? (
                 <Image
                     flex="0 0 60px"
-                    aria-describedby={`attendee-trigger-${attendee.id}`}
-                    src={attendee.profile.photoURL_50x50}
+                    aria-describedby={`registrant-trigger-${registrant.id}`}
+                    src={registrant.profile.photoURL_50x50}
                     w="60px"
                     h="60px"
                 />
@@ -43,17 +43,17 @@ export function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClic
             >
                 <Text
                     as="span"
-                    id={`attendee-trigger-${attendee.id}`}
+                    id={`registrant-trigger-${registrant.id}`}
                     maxW="100%"
                     whiteSpace="normal"
                     overflowWrap="anywhere"
                     fontSize="sm"
                 >
-                    {attendee.displayName}
+                    {registrant.displayName}
                 </Text>
-                {attendee.profile.badges ? (
+                {registrant.profile.badges ? (
                     <BadgeList
-                        badges={R.slice(0, 3, attendee.profile.badges)}
+                        badges={R.slice(0, 3, registrant.profile.badges)}
                         mt={2}
                         whiteSpace="normal"
                         textAlign="left"
@@ -65,69 +65,69 @@ export function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClic
     );
 }
 
-export default function AttendeesList({
-    allAttendees,
-    searchedAttendees,
+export default function RegistrantsList({
+    allRegistrants,
+    searchedRegistrants,
 }: {
-    allAttendees?: Attendee[];
-    searchedAttendees?: Attendee[];
+    allRegistrants?: Registrant[];
+    searchedRegistrants?: Registrant[];
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(null);
+    const [selectedRegistrant, setSelectedRegistrant] = useState<Registrant | null>(null);
     const openProfileModal = useCallback(
-        (attendee: Attendee) => {
-            setSelectedAttendee(attendee);
+        (registrant: Registrant) => {
+            setSelectedRegistrant(registrant);
             onOpen();
         },
         [onOpen]
     );
 
-    const allAttendeesEls = useMemo(
+    const allRegistrantsEls = useMemo(
         () =>
-            allAttendees?.map((attendee, idx) => (
-                <AttendeeTile
-                    key={attendee.id + "-all-" + idx}
-                    attendee={{
-                        ...attendee,
+            allRegistrants?.map((registrant, idx) => (
+                <RegistrantTile
+                    key={registrant.id + "-all-" + idx}
+                    registrant={{
+                        ...registrant,
                         profile: {
-                            ...attendee.profile,
-                            badges: attendee.profile.badges && R.slice(0, 3, attendee.profile.badges),
+                            ...registrant.profile,
+                            badges: registrant.profile.badges && R.slice(0, 3, registrant.profile.badges),
                         },
                     }}
                     onClick={() => {
-                        openProfileModal(attendee);
+                        openProfileModal(registrant);
                     }}
                 />
             )),
-        [allAttendees, openProfileModal]
+        [allRegistrants, openProfileModal]
     );
     const allSearchedEls = useMemo(
         () =>
-            searchedAttendees?.map((attendee, idx) => (
-                <AttendeeTile
-                    key={attendee.id + "-search-" + idx}
-                    attendee={attendee}
+            searchedRegistrants?.map((registrant, idx) => (
+                <RegistrantTile
+                    key={registrant.id + "-search-" + idx}
+                    registrant={registrant}
                     onClick={() => {
-                        openProfileModal(attendee);
+                        openProfileModal(registrant);
                     }}
                 />
             )),
-        [openProfileModal, searchedAttendees]
+        [openProfileModal, searchedRegistrants]
     );
 
-    const attendeesEls = allSearchedEls ?? allAttendeesEls;
+    const registrantsEls = allSearchedEls ?? allRegistrantsEls;
 
-    return attendeesEls ? (
+    return registrantsEls ? (
         <>
             <SimpleGrid
-                columns={[1, Math.min(2, attendeesEls.length), Math.min(3, attendeesEls.length)]}
+                columns={[1, Math.min(2, registrantsEls.length), Math.min(3, registrantsEls.length)]}
                 autoRows="min-content"
                 spacing={[2, 2, 4]}
                 maxW="5xl"
             >
-                {attendeesEls}
+                {registrantsEls}
             </SimpleGrid>
-            <ProfileModal isOpen={isOpen} onClose={onClose} attendee={selectedAttendee} />
+            <ProfileModal isOpen={isOpen} onClose={onClose} registrant={selectedRegistrant} />
         </>
     ) : (
         <div>

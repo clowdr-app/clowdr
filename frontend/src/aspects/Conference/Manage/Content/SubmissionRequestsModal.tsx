@@ -34,74 +34,74 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import {
-    ContentType_Enum,
+    ElementType_Enum,
     SubmissionRequestsModal_ConferenceConfigurationFragment,
     useSubmissionRequestsModal_GetConferenceConfigurationsQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
-import type { ContentGroupDescriptor } from "./Types";
+import type { ItemDescriptor } from "./Types";
 
-function generateContentTypeFriendlyName(type: ContentType_Enum) {
+function generateElementTypeFriendlyName(type: ElementType_Enum) {
     switch (type) {
-        case ContentType_Enum.Abstract:
+        case ElementType_Enum.Abstract:
             return "Abstract";
-        case ContentType_Enum.ContentGroupList:
+        case ElementType_Enum.ItemList:
             return "Content group list";
-        case ContentType_Enum.ImageFile:
+        case ElementType_Enum.ImageFile:
             return "Image file";
-        case ContentType_Enum.ImageUrl:
+        case ElementType_Enum.ImageUrl:
             return "Image URL";
-        case ContentType_Enum.Link:
+        case ElementType_Enum.Link:
             return "Link";
-        case ContentType_Enum.LinkButton:
+        case ElementType_Enum.LinkButton:
             return "Link button";
-        case ContentType_Enum.PaperFile:
+        case ElementType_Enum.PaperFile:
             return "Paper file";
-        case ContentType_Enum.PaperLink:
+        case ElementType_Enum.PaperLink:
             return "Paper link";
-        case ContentType_Enum.PaperUrl:
+        case ElementType_Enum.PaperUrl:
             return "Paper URL";
-        case ContentType_Enum.PosterFile:
+        case ElementType_Enum.PosterFile:
             return "Poster file";
-        case ContentType_Enum.PosterUrl:
+        case ElementType_Enum.PosterUrl:
             return "Poster URL";
-        case ContentType_Enum.Text:
+        case ElementType_Enum.Text:
             return "Text";
-        case ContentType_Enum.VideoBroadcast:
+        case ElementType_Enum.VideoBroadcast:
             return "Video for broadcast";
-        case ContentType_Enum.VideoCountdown:
+        case ElementType_Enum.VideoCountdown:
             return "Video countdown";
-        case ContentType_Enum.VideoFile:
+        case ElementType_Enum.VideoFile:
             return "Video file";
-        case ContentType_Enum.VideoFiller:
+        case ElementType_Enum.VideoFiller:
             return "Filler video";
-        case ContentType_Enum.VideoLink:
+        case ElementType_Enum.VideoLink:
             return "Link to video";
-        case ContentType_Enum.VideoPrepublish:
+        case ElementType_Enum.VideoPrepublish:
             return "Video for pre-publication";
-        case ContentType_Enum.VideoSponsorsFiller:
+        case ElementType_Enum.VideoSponsorsFiller:
             return "Sponsors filler video";
-        case ContentType_Enum.VideoTitles:
+        case ElementType_Enum.VideoTitles:
             return "Pre-roll titles video";
-        case ContentType_Enum.VideoUrl:
+        case ElementType_Enum.VideoUrl:
             return "Video URL";
-        case ContentType_Enum.WholeSchedule:
+        case ElementType_Enum.WholeSchedule:
             return "Whole schedule";
-        case ContentType_Enum.Zoom:
+        case ElementType_Enum.Zoom:
             return "Zoom Meeting URL";
     }
 }
 
 gql`
     query SubmissionRequestsModal_GetConferenceConfigurations($conferenceId: uuid!) {
-        ConferenceConfiguration(where: { conferenceId: { _eq: $conferenceId } }) {
+        conference_Configuration(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ConfigureEmailTemplates_ConferenceConfiguration
         }
     }
 
-    fragment SubmissionRequestsModal_ConferenceConfiguration on ConferenceConfiguration {
+    fragment SubmissionRequestsModal_ConferenceConfiguration on conference_Configuration {
         id
         conferenceId
         key
@@ -112,12 +112,12 @@ gql`
 export function SendSubmissionRequestsModal({
     isOpen,
     onClose,
-    contentGroups,
+    items,
     send,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    contentGroups: ContentGroupDescriptor[];
+    items: ItemDescriptor[];
     send: (_uploaderIds: string[], _emailTemplate: EmailTemplate_BaseConfig) => Promise<void>;
 }): JSX.Element {
     const conference = useConference();
@@ -146,7 +146,7 @@ export function SendSubmissionRequestsModal({
                     <SendSubmissionRequestsModalInner
                         isOpen={isOpen}
                         onClose={onClose}
-                        contentGroups={contentGroups}
+                        items={items}
                         existingTemplate={existingTemplate}
                         send={send}
                     />
@@ -159,52 +159,52 @@ export function SendSubmissionRequestsModal({
 export function SendSubmissionRequestsModalInner({
     isOpen,
     onClose,
-    contentGroups,
+    items,
     existingTemplate,
     send,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    contentGroups: ContentGroupDescriptor[];
+    items: ItemDescriptor[];
     existingTemplate: EmailTemplate_BaseConfig;
     send: (_uploaderIds: string[], _emailTemplate: EmailTemplate_BaseConfig) => Promise<void>;
 }): JSX.Element {
-    const types = useMemo(() => Object.values(ContentType_Enum), []);
+    const types = useMemo(() => Object.values(ElementType_Enum), []);
     const [selectedType, setSelectedType] = useState<string>();
-    const requiredItems = useMemo(
+    const uploadableItems = useMemo(
         () =>
             R.flatten(
-                contentGroups.map((contentGroup) =>
-                    contentGroup.requiredItems
+                items.map((item) =>
+                    item.uploadableItems
                         .filter((item) => !selectedType || item.typeName === selectedType)
                         .map((item) => ({
-                            contentGroup,
-                            requiredItem: item,
+                            item,
+                            uploadableItem: item,
                         }))
                 )
             ),
-        [contentGroups, selectedType]
+        [items, selectedType]
     );
-    const requiredItemsEl = useMemo(
+    const uploadableItemsEl = useMemo(
         () => (
             <Box mt={4}>
-                {requiredItems.length === 0 ? (
+                {uploadableItems.length === 0 ? (
                     <Text>No matching files.</Text>
                 ) : (
                     <List spacing={2} maxH="40vh" overflowY="auto">
-                        {requiredItems.map((item) => (
-                            <ListItem key={item.requiredItem.id}>
+                        {uploadableItems.map((item) => (
+                            <ListItem key={item.uploadableItem.id}>
                                 <HStack>
                                     <FAIcon icon="file" iconStyle="r" mr={2} />
                                     <VStack alignItems="flex-start" spacing={0}>
                                         <Text fontWeight="bold" fontSize="sm">
-                                            {item.contentGroup.title}
+                                            {item.item.title}
                                         </Text>
                                         <Text fontSize="sm">
-                                            {item.requiredItem.name} (
-                                            {generateContentTypeFriendlyName(item.requiredItem.typeName)}) -{" "}
-                                            {item.requiredItem.uploaders.length} uploader
-                                            {item.requiredItem.uploaders.length > 1 ? "s" : undefined}
+                                            {item.uploadableItem.name} (
+                                            {generateElementTypeFriendlyName(item.uploadableItem.typeName)}) -{" "}
+                                            {item.uploadableItem.uploaders.length} uploader
+                                            {item.uploadableItem.uploaders.length > 1 ? "s" : undefined}
                                         </Text>
                                     </VStack>
                                 </HStack>
@@ -214,12 +214,12 @@ export function SendSubmissionRequestsModalInner({
                 )}
             </Box>
         ),
-        [requiredItems]
+        [uploadableItems]
     );
 
     const uploaderIds = useMemo(
-        () => R.flatten(requiredItems.map((item) => item.requiredItem.uploaders.map((uploader) => uploader.id))),
-        [requiredItems]
+        () => R.flatten(uploadableItems.map((item) => item.uploadableItem.uploaders.map((uploader) => uploader.id))),
+        [uploadableItems]
     );
 
     const toast = useToast();
@@ -271,12 +271,12 @@ export function SendSubmissionRequestsModalInner({
                                     >
                                         {types.map((type) => (
                                             <option key={type} value={type}>
-                                                {generateContentTypeFriendlyName(type as ContentType_Enum)}
+                                                {generateElementTypeFriendlyName(type as ElementType_Enum)}
                                             </option>
                                         ))}
                                     </Select>
                                 </FormControl>
-                                {requiredItemsEl}
+                                {uploadableItemsEl}
                                 <Heading as="h4" textAlign="left" size="sm" mt={4}>
                                     Email template
                                 </Heading>
@@ -330,7 +330,7 @@ export function SendSubmissionRequestsModalInner({
                                     mt={4}
                                     colorScheme="green"
                                 >
-                                    Send {uploaderIds.length} emails ({requiredItems.length} items)
+                                    Send {uploaderIds.length} emails ({uploadableItems.length} items)
                                 </Button>
                             </ModalFooter>
                         </ModalContent>

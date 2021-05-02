@@ -45,7 +45,7 @@ const presetJSONata_ScheduleCSVQuery = `
                 "startTime": $startTime,
                 "durationSeconds": $durationSeconds,
 
-                "contentGroupSourceId": $."Content Id",
+                "itemSourceId": $."Content Id",
                 "intendedRoomModeName": $modeName,
                 "name": $name,
 

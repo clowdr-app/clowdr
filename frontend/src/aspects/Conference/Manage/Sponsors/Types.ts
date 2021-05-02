@@ -1,6 +1,6 @@
 import {
-    EditableSponsorsTable_ContentGroupInfoFragment,
-    EditableSponsorsTable_ContentGroupInfoFragmentDoc,
+    EditableSponsorsTable_ItemInfoFragment,
+    EditableSponsorsTable_ItemInfoFragmentDoc,
 } from "../../../../generated/graphql";
-export type SponsorInfoFragment = EditableSponsorsTable_ContentGroupInfoFragment;
-export const SponsorInfoFragmentDoc = EditableSponsorsTable_ContentGroupInfoFragmentDoc;
+export type SponsorInfoFragment = EditableSponsorsTable_ItemInfoFragment;
+export const SponsorInfoFragmentDoc = EditableSponsorsTable_ItemInfoFragmentDoc;

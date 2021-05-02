@@ -19,12 +19,12 @@ gql`
     }
 
     query GetEventDetails($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             ...RoomEventDetails
         }
     }
 
-    fragment RoomEventDetails on Event {
+    fragment RoomEventDetails on schedule_Event {
         id
         conferenceId
         startTime

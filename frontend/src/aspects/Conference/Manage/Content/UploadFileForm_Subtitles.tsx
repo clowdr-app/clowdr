@@ -34,15 +34,15 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import srtValidator, { SrtValidationError } from "srt-validator";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
-import type { ContentItemDescriptor } from "./Types";
+import type { ElementDescriptor } from "./Types";
 
 export default function UploadFileForm_Subtitles({
     item,
     onItemChange,
     contentBaseType,
 }: {
-    item: ContentItemDescriptor;
-    onItemChange?: (newItem: ContentItemDescriptor) => void;
+    item: ElementDescriptor;
+    onItemChange?: (newItem: ElementDescriptor) => void;
     contentBaseType: ContentBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
@@ -67,7 +67,7 @@ export default function UploadFileForm_Subtitles({
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "subtitles-upload",
             meta: {
-                contentItemId: item.id,
+                elementId: item.id,
             },
             allowMultipleUploads: false,
             restrictions: {

@@ -2,10 +2,10 @@ import { chakra, Grid, Heading, HStack, Text, useColorMode, useToken, VStack } f
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import {
-    ContentType_Enum,
-    HallwayContentGroupFragment,
-    HallwayWithContentFragment,
-    useSelectHallwayQuery,
+    ElementType_Enum,
+    ExhibitionItemFragment,
+    ExhibitionWithContentFragment,
+    useSelectExhibitionQuery,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -14,15 +14,15 @@ import { FAIcon } from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useConference } from "../../useConference";
-import { ContentItem } from "../Content/Item/ContentItem";
+import { Element } from "../Content/Element/Element";
 
 function ItemTile({
-    contentGroup,
-    hallwayColour,
+    item,
+    exhibitionColour,
     hideLiveViewButton,
 }: {
-    contentGroup: HallwayContentGroupFragment;
-    hallwayColour: string;
+    item: ExhibitionItemFragment;
+    exhibitionColour: string;
     hideLiveViewButton: boolean;
 }): JSX.Element {
     const conference = useConference();
@@ -30,9 +30,9 @@ function ItemTile({
     const { colorMode } = useColorMode();
     const baseBgColour = colorMode === "light" ? "blue.300" : "blue.600";
     const baseGrey = useToken("colors", baseBgColour);
-    const baseColour = useMemo(() => (Color(hallwayColour).getAlpha() !== 0 ? hallwayColour : baseGrey), [
+    const baseColour = useMemo(() => (Color(exhibitionColour).getAlpha() !== 0 ? exhibitionColour : baseGrey), [
         baseGrey,
-        hallwayColour,
+        exhibitionColour,
     ]);
     const bgColour = useMemo(() => {
         const c = Color(baseColour).desaturate(colorMode == "dark" ? 60 : 70);
@@ -50,43 +50,41 @@ function ItemTile({
 
     const primaryItem = useMemo(() => {
         const sortOrder = [
-            ContentType_Enum.VideoBroadcast,
-            ContentType_Enum.VideoFile,
-            ContentType_Enum.VideoPrepublish,
-            ContentType_Enum.VideoUrl,
-            ContentType_Enum.PosterFile,
-            ContentType_Enum.PosterUrl,
-            ContentType_Enum.ImageFile,
-            ContentType_Enum.ImageUrl,
-            ContentType_Enum.Abstract,
-            ContentType_Enum.Text,
+            ElementType_Enum.VideoBroadcast,
+            ElementType_Enum.VideoFile,
+            ElementType_Enum.VideoPrepublish,
+            ElementType_Enum.VideoUrl,
+            ElementType_Enum.PosterFile,
+            ElementType_Enum.PosterUrl,
+            ElementType_Enum.ImageFile,
+            ElementType_Enum.ImageUrl,
+            ElementType_Enum.Abstract,
+            ElementType_Enum.Text,
         ];
 
-        return [...contentGroup.contentItems].sort(
-            (x, y) => sortOrder.indexOf(x.contentTypeName) - sortOrder.indexOf(y.contentTypeName)
-        )[0];
-    }, [contentGroup.contentItems]);
+        return [...item.elements].sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName))[0];
+    }, [item.elements]);
 
     const now = useRealTime(30000);
     const liveEvent = useMemo(() => {
-        const liveEvents = contentGroup.events.filter(
+        const liveEvents = item.events.filter(
             (x) => Date.parse(x.startTime) <= now + 2 * 60 * 1000 && now <= Date.parse(x.endTime)
         );
         return liveEvents.length > 0 ? liveEvents[0] : undefined;
-    }, [contentGroup.events, now]);
+    }, [item.events, now]);
     const liveRoomUrl = liveEvent ? `/conference/${conference.slug}/room/${liveEvent.roomId}` : undefined;
 
-    const discussionRoomUrl = contentGroup.discussionRoom?.length
-        ? `/conference/${conference.slug}/room/${contentGroup.discussionRoom[0].id}`
+    const discussionRoomUrl = item.discussionRoom?.length
+        ? `/conference/${conference.slug}/room/${item.discussionRoom[0].id}`
         : undefined;
 
-    const itemUrl = `/conference/${conference.slug}/item/${contentGroup.id}`;
+    const itemUrl = `/conference/${conference.slug}/item/${item.id}`;
 
     return (
         <VStack alignItems="flex-start" backgroundColor={bgColour.toRgbString()} color={textColour} p={[1, 2, 4]}>
             <Heading as="h2" fontSize="lg" textAlign="left">
-                <chakra.span mr={4}>{contentGroup.title}</chakra.span>
-                <PageCountText path={`/conference/${conference.slug}/item/${contentGroup.id}`} />
+                <chakra.span mr={4}>{item.title}</chakra.span>
+                <PageCountText path={`/conference/${conference.slug}/item/${item.id}`} />
             </Heading>
             <HStack spacing={2} flexWrap="wrap" rowGap={2}>
                 {liveRoomUrl && !hideLiveViewButton ? (
@@ -121,30 +119,30 @@ function ItemTile({
                     <PageCountText path={itemUrl} fontSize="inherit" />
                 </LinkButton>
             </HStack>
-            <ContentItem item={primaryItem} />
+            <Element item={primaryItem} />
             {/* <Text>TODO: A marker to show if any of the authors are present</Text> */}
         </VStack>
     );
 }
 
-export default function HallwayLayout({
-    hallway,
+export default function ExhibitionLayout({
+    exhibition,
     hideLiveViewButton,
 }: {
-    hallway: HallwayWithContentFragment;
+    exhibition: ExhibitionWithContentFragment;
     hideLiveViewButton?: boolean;
 }): JSX.Element {
     const sortedGroups = useMemo(
-        () => [...hallway.contentGroups].sort((x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b)),
-        [hallway.contentGroups]
+        () => [...exhibition.items].sort((x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b)),
+        [exhibition.items]
     );
     return (
         <Grid templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(2, 1fr)"]} mt={0} gap={[2, 2, 4]}>
             {sortedGroups.map((cgh) => (
                 <ItemTile
                     key={cgh.id}
-                    contentGroup={cgh.contentGroup}
-                    hallwayColour={hallway.colour}
+                    item={cgh.item}
+                    exhibitionColour={exhibition.colour}
                     hideLiveViewButton={hideLiveViewButton ?? false}
                 />
             ))}
@@ -152,23 +150,26 @@ export default function HallwayLayout({
     );
 }
 
-export function HallwayLayoutWrapper({
-    hallwayId,
+export function ExhibitionLayoutWrapper({
+    exhibitionId,
     hideLiveViewButton,
 }: {
-    hallwayId: string;
+    exhibitionId: string;
     hideLiveViewButton?: boolean;
 }): JSX.Element {
-    const hallwayResponse = useSelectHallwayQuery({
+    const exhibitionResponse = useSelectExhibitionQuery({
         variables: {
-            id: hallwayId,
+            id: exhibitionId,
         },
     });
 
-    return hallwayResponse.loading && !hallwayResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading hallway" }} />
-    ) : hallwayResponse.data?.Hallway_by_pk ? (
-        <HallwayLayout hallway={hallwayResponse.data.Hallway_by_pk} hideLiveViewButton={hideLiveViewButton} />
+    return exhibitionResponse.loading && !exhibitionResponse.data ? (
+        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
+    ) : exhibitionResponse.data?.Exhibition_by_pk ? (
+        <ExhibitionLayout
+            exhibition={exhibitionResponse.data.Exhibition_by_pk}
+            hideLiveViewButton={hideLiveViewButton}
+        />
     ) : (
         <></>
     );

@@ -22,20 +22,16 @@ import { formatDistanceStrict } from "date-fns";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
-import type {
-    ContentGroupEventFragment,
-    ContentGroupEventsFragment,
-    ContentGroupRoomEventFragment,
-} from "../../../../generated/graphql";
+import type { ItemEventFragment, ItemEventsFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
 
 gql`
-    fragment ContentGroupRoomEvent on Event {
+    fragment ItemRoomEvent on schedule_Event {
         startTime
-        contentGroup {
+        item {
             id
             title
         }
@@ -47,20 +43,14 @@ gql`
     }
 `;
 
-export function ContentGroupEvents({
-    itemId,
-    contentGroupEvents,
-}: {
-    itemId: string;
-    contentGroupEvents: ContentGroupEventsFragment;
-}): JSX.Element {
-    const thisPaperTable = useMemo(() => <EventsTable events={contentGroupEvents.events} includeRoom={true} />, [
-        contentGroupEvents.events,
+export function ItemEvents({ itemId, itemEvents }: { itemId: string; itemEvents: ItemEventsFragment }): JSX.Element {
+    const thisPaperTable = useMemo(() => <EventsTable events={itemEvents.events} includeRoom={true} />, [
+        itemEvents.events,
     ]);
 
     const rooms = useMemo(
         () => [
-            ...contentGroupEvents.events
+            ...itemEvents.events
                 .reduce((acc, event) => {
                     const existing = acc.get(event.room.id);
                     if (!existing) {
@@ -69,10 +59,10 @@ export function ContentGroupEvents({
                         existing.events.push(event);
                     }
                     return acc;
-                }, new Map<string, { roomName: string; events: ContentGroupEventFragment[] }>())
+                }, new Map<string, { roomName: string; events: ItemEventFragment[] }>())
                 .entries(),
         ],
-        [contentGroupEvents.events]
+        [itemEvents.events]
     );
 
     return (
@@ -116,13 +106,13 @@ function RoomEventsSummary({
 }: {
     roomId: string;
     thisItemId: string;
-    events: ContentGroupEventFragment[];
+    events: ItemEventFragment[];
 }): JSX.Element {
     const queryString = useMemo(
         () => `
-fragment ContentGroupRoomEvent on Event {
+fragment ItemRoomEvent on schedule_Event {
     startTime
-    contentGroup {
+    item {
         id
         title
     }
@@ -133,11 +123,11 @@ fragment ContentGroupRoomEvent on Event {
     intendedRoomModeName
 }
 
-query ContentGroupEvent_RoomNearbyEvents {
+query ItemEvent_RoomNearbyEvents {
     ${events.reduce((acc, event, index) => {
         return `${acc}
 
-        Event_${index}_prior: Event(
+        Event_${index}_prior: schedule_Event(
             where: {
                 roomId: { _eq: "${roomId}" }
                 startTime: { _lt: "${event.startTime}" }
@@ -145,9 +135,9 @@ query ContentGroupEvent_RoomNearbyEvents {
             order_by: { startTime: desc }, 
             limit: 3
         ) {
-            ...ContentGroupRoomEvent
+            ...ItemRoomEvent
         }
-        Event_${index}_post: Event(
+        Event_${index}_post: schedule_Event(
             where: {
                 roomId: { _eq: "${roomId}" }
                 endTime: { _gt: "${new Date(
@@ -157,7 +147,7 @@ query ContentGroupEvent_RoomNearbyEvents {
             order_by: { startTime: asc }, 
             limit: 3
         ) {
-            ...ContentGroupRoomEvent
+            ...ItemRoomEvent
         }`;
     }, "")}
 }
@@ -166,17 +156,17 @@ query ContentGroupEvent_RoomNearbyEvents {
     );
     const queryDocument = useMemo(() => gql(queryString), [queryString]);
     const query = useQuery(queryDocument, {});
-    useQueryErrorToast(query.error, false, "ContentGroupEvents:ContentGroupEvents_RoomLocalisedSchedule");
+    useQueryErrorToast(query.error, false, "ItemEvents:ItemEvents_RoomLocalisedSchedule");
 
     // console.log(query.data);
-    const fullEventsList: (ContentGroupEventFragment | ContentGroupRoomEventFragment)[] = useMemo(
+    const fullEventsList: (ItemEventFragment | ItemRoomEventFragment)[] = useMemo(
         () =>
             query.loading || !query.data
                 ? []
                 : R.uniqBy((x) => x.id, [
                       ...events.map((event) => ({
                           ...event,
-                          contentGroup: {
+                          item: {
                               id: "",
                               title: "This item",
                           },
@@ -184,10 +174,10 @@ query ContentGroupEvent_RoomNearbyEvents {
                       ...(Object.values(query.data) as any[][])
                           .reduce((acc, evs) => [...acc, ...evs], [])
                           .map((event) =>
-                              event.contentGroup?.id === thisItemId
+                              event.item?.id === thisItemId
                                   ? {
                                         ...event,
-                                        contentGroup: {
+                                        item: {
                                             id: "",
                                             title: "This item",
                                         },
@@ -207,7 +197,7 @@ function EventsTable({
     events,
     includeRoom,
 }: {
-    events: readonly (ContentGroupEventFragment | ContentGroupRoomEventFragment)[];
+    events: readonly (ItemEventFragment | ItemRoomEventFragment)[];
     includeRoom: boolean;
 }): JSX.Element {
     return (
@@ -225,7 +215,7 @@ function EventsTable({
             <Tbody>
                 {events.length > 0 ? (
                     R.sort((a, b) => Date.parse(a.startTime) - Date.parse(b.startTime), events).map((event) => (
-                        <Event key={event.id} contentGroupEvent={event} includeRoom={includeRoom} />
+                        <Event key={event.id} itemEvent={event} includeRoom={includeRoom} />
                     ))
                 ) : (
                     <>No events.</>
@@ -236,17 +226,17 @@ function EventsTable({
 }
 
 function Event({
-    contentGroupEvent,
+    itemEvent,
     includeRoom,
 }: {
-    contentGroupEvent: ContentGroupEventFragment | ContentGroupRoomEventFragment;
+    itemEvent: ItemEventFragment | ItemRoomEventFragment;
     includeRoom: boolean;
 }): JSX.Element {
     const conference = useConference();
     const now = useRealTime(60000);
 
-    const startMillis = useMemo(() => Date.parse(contentGroupEvent.startTime), [contentGroupEvent.startTime]);
-    const endMillis = useMemo(() => Date.parse(contentGroupEvent.endTime), [contentGroupEvent.endTime]);
+    const startMillis = useMemo(() => Date.parse(itemEvent.startTime), [itemEvent.startTime]);
+    const endMillis = useMemo(() => Date.parse(itemEvent.endTime), [itemEvent.endTime]);
 
     const startDate = useMemo(() => {
         return new Date(startMillis).toLocaleString(undefined, {
@@ -282,11 +272,11 @@ function Event({
                 <Text>{duration}</Text>
             </Td>
             {includeRoom ? (
-                "room" in contentGroupEvent && contentGroupEvent.room ? (
+                "room" in itemEvent && itemEvent.room ? (
                     <Td>
                         <LinkButton
-                            to={`/conference/${conference.slug}/room/${contentGroupEvent.room.id}`}
-                            aria-label={`Go to room: ${contentGroupEvent.room.name}`}
+                            to={`/conference/${conference.slug}/room/${itemEvent.room.id}`}
+                            aria-label={`Go to room: ${itemEvent.room.name}`}
                             whiteSpace="normal"
                             variant="outline"
                             size="sm"
@@ -296,7 +286,7 @@ function Event({
                             colorScheme="blue"
                             linkProps={{ maxH: "unset" }}
                         >
-                            <Twemoji className="twemoji" text={contentGroupEvent.room.name} />
+                            <Twemoji className="twemoji" text={itemEvent.room.name} />
                         </LinkButton>
                     </Td>
                 ) : (
@@ -304,12 +294,12 @@ function Event({
                 )
             ) : undefined}
             {!includeRoom ? (
-                "contentGroup" in contentGroupEvent && contentGroupEvent.contentGroup ? (
+                "item" in itemEvent && itemEvent.item ? (
                     <Td>
-                        {contentGroupEvent.contentGroup.id !== "" ? (
+                        {itemEvent.item.id !== "" ? (
                             <LinkButton
-                                to={`/conference/${conference.slug}/item/${contentGroupEvent.contentGroup.id}`}
-                                aria-label={`Go to item: ${contentGroupEvent.contentGroup.title}`}
+                                to={`/conference/${conference.slug}/item/${itemEvent.item.id}`}
+                                aria-label={`Go to item: ${itemEvent.item.title}`}
                                 whiteSpace="normal"
                                 variant="outline"
                                 size="sm"
@@ -319,11 +309,11 @@ function Event({
                                 colorScheme="blue"
                                 linkProps={{ maxH: "unset" }}
                             >
-                                <Twemoji className="twemoji" text={contentGroupEvent.contentGroup.title} />
+                                <Twemoji className="twemoji" text={itemEvent.item.title} />
                             </LinkButton>
                         ) : (
                             <chakra.span fontWeight="bold" fontStyle="italic">
-                                <Twemoji className="twemoji" text={contentGroupEvent.contentGroup.title} />
+                                <Twemoji className="twemoji" text={itemEvent.item.title} />
                             </chakra.span>
                         )}
                     </Td>
@@ -332,7 +322,7 @@ function Event({
                 )
             ) : undefined}
             <Td>
-                <Text>{contentGroupEvent.name}</Text>
+                <Text>{itemEvent.name}</Text>
             </Td>
         </Tr>
     );

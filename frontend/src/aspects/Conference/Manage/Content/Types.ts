@@ -1,6 +1,6 @@
-import { ContentItemDataBlob, ContentRole } from "@clowdr-app/shared-types/build/content";
+import { ContentRole, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
-import type { ContentGroupType_Enum, ContentType_Enum } from "../../../../generated/graphql";
+import type { ElementType_Enum, ItemType_Enum } from "../../../../generated/graphql";
 
 export const ContentRoleNames: ReadonlyArray<ContentRole> = [
     ContentRole.Author,
@@ -8,7 +8,7 @@ export const ContentRoleNames: ReadonlyArray<ContentRole> = [
     ContentRole.Presenter,
 ];
 
-export type HallwayDescriptor = {
+export type ExhibitionDescriptor = {
     isNew?: boolean;
 
     id: string;
@@ -17,24 +17,24 @@ export type HallwayDescriptor = {
     priority: number;
 };
 
-export type ContentItemDescriptor = {
+export type ElementDescriptor = {
     isNew?: boolean;
 
     id: string;
-    typeName: ContentType_Enum;
+    typeName: ElementType_Enum;
     isHidden: boolean;
     layoutData: LayoutDataBlob | null;
-    requiredContentId?: string | null;
+    uploadableId?: string | null;
     name: string;
-    data: ContentItemDataBlob;
+    data: ElementDataBlob;
     originatingDataId?: string;
 };
 
-export type RequiredContentItemDescriptor = {
+export type UploadableElementDescriptor = {
     isNew?: boolean;
 
     id: string;
-    typeName: ContentType_Enum;
+    typeName: ElementType_Enum;
     name: string;
     isHidden: boolean;
     uploaders: UploaderDescriptor[];
@@ -49,25 +49,25 @@ export type UploaderDescriptor = {
     email: string;
     emailsSentCount: number;
     name: string;
-    requiredContentItemId: string;
+    uploadableId: string;
 };
 
 export type ContentDescriptor =
     | {
           type: "required-only";
-          requiredItem: RequiredContentItemDescriptor;
+          uploadableItem: UploadableElementDescriptor;
       }
     | {
           type: "required-and-item";
-          requiredItem: RequiredContentItemDescriptor;
-          item: ContentItemDescriptor;
+          uploadableItem: UploadableElementDescriptor;
+          item: ElementDescriptor;
       }
     | {
           type: "item-only";
-          item: ContentItemDescriptor;
+          item: ElementDescriptor;
       };
 
-export type ContentPersonDescriptor = {
+export type ProgramPersonDescriptor = {
     isNew?: boolean;
 
     id: string;
@@ -76,43 +76,43 @@ export type ContentPersonDescriptor = {
     affiliation?: string | null;
     email?: string | null;
     originatingDataId?: string;
-    attendeeId?: string | null;
+    registrantId?: string | null;
 };
 
-export type ContentGroupHallwayDescriptor = {
+export type ItemExhibitionDescriptor = {
     isNew?: boolean;
 
     id: string;
     conferenceId: string;
-    groupId: string;
-    hallwayId: string;
+    itemId: string;
+    exhibitionId: string;
     priority?: number | null;
     layout?: any | null;
 };
 
-export type ContentGroupPersonDescriptor = {
+export type ItemPersonDescriptor = {
     isNew?: boolean;
 
     id: string;
     conferenceId: string;
-    groupId: string;
+    itemId: string;
     priority?: number | null;
     roleName: string;
     personId: string;
 };
 
-export type ContentGroupDescriptor = {
+export type ItemDescriptor = {
     isNew?: boolean;
 
     id: string;
     title: string;
     shortTitle?: string | null;
-    typeName: ContentGroupType_Enum;
+    typeName: ItemType_Enum;
     tagIds: Set<string>;
-    items: ContentItemDescriptor[];
-    requiredItems: RequiredContentItemDescriptor[];
-    people: ContentGroupPersonDescriptor[];
-    hallways: ContentGroupHallwayDescriptor[];
+    items: ElementDescriptor[];
+    uploadableItems: UploadableElementDescriptor[];
+    people: ItemPersonDescriptor[];
+    exhibitions: ItemExhibitionDescriptor[];
     originatingDataId?: string;
     rooms: {
         id: string;
@@ -132,7 +132,7 @@ export type ItemBaseTemplate =
 
 export type SupportedItemBaseTemplate = {
     supported: true;
-    createDefault: (itemType: ContentType_Enum, required: boolean) => ContentDescriptor;
+    createDefault: (itemType: ElementType_Enum, required: boolean) => ContentDescriptor;
     renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
     renderEditor: (props: RenderEditorProps) => JSX.Element;
 };

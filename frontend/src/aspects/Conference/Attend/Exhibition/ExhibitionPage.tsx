@@ -1,21 +1,21 @@
 import { gql } from "@apollo/client";
 import { chakra, Circle, Heading } from "@chakra-ui/react";
 import React from "react";
-import { HallwayWithContentFragment, useSelectHallwayQuery } from "../../../../generated/graphql";
+import { ExhibitionWithContentFragment, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useTitle } from "../../../Utils/useTitle";
-import HallwayLayout from "./HallwayLayout";
+import ExhibitionLayout from "./ExhibitionLayout";
 
 gql`
-    fragment HallwayContentGroup on ContentGroup {
+    fragment ExhibitionItem on content_Item {
         id
         title
-        contentGroupTypeName
-        contentItems(
+        typeName
+        elements(
             where: {
                 isHidden: { _eq: false }
-                contentTypeName: {
+                typeName: {
                     _in: [
                         ABSTRACT
                         IMAGE_FILE
@@ -31,7 +31,7 @@ gql`
                 }
             }
         ) {
-            ...ContentItemData
+            ...ElementData
         }
         events {
             id
@@ -48,60 +48,60 @@ gql`
         }
     }
 
-    fragment HallwayWithContent on Hallway {
+    fragment ExhibitionWithContent on collection_Exhibition {
         id
         name
         colour
         priority
         conferenceId
-        contentGroups {
+        items {
             id
-            groupId
-            hallwayId
+            itemId
+            exhibitionId
             layout
             priority
-            contentGroup {
-                ...HallwayContentGroup
+            item {
+                ...ExhibitionItem
             }
         }
     }
 
-    query SelectHallway($id: uuid!) {
-        Hallway_by_pk(id: $id) {
-            ...HallwayWithContent
+    query SelectExhibition($id: uuid!) {
+        collection_Exhibition_by_pk(id: $id) {
+            ...ExhibitionWithContent
         }
     }
 `;
 
-function HallwayPageInner({ hallway }: { hallway: HallwayWithContentFragment }): JSX.Element {
-    const title = useTitle(hallway.name);
+function ExhibitionPageInner({ exhibition }: { exhibition: ExhibitionWithContentFragment }): JSX.Element {
+    const title = useTitle(exhibition.name);
 
     return (
         <>
             {title}
             <Heading as="h1" pt={2}>
-                <Circle size="0.7em" bg={hallway.colour} display="inline-block" verticalAlign="middle" mr="0.4em" />
+                <Circle size="0.7em" bg={exhibition.colour} display="inline-block" verticalAlign="middle" mr="0.4em" />
                 <chakra.span verticalAlign="text-bottom" mr="1.1em">
-                    {hallway.name}
+                    {exhibition.name}
                 </chakra.span>
-                {/*TODO: Link to live event for this hallway if any.*/}
+                {/*TODO: Link to live event for this exhibition if any.*/}
             </Heading>
-            <HallwayLayout hallway={hallway} />
+            <ExhibitionLayout exhibition={exhibition} />
         </>
     );
 }
 
-export default function HallwayPage({ hallwayId }: { hallwayId: string }): JSX.Element {
-    const hallwayResponse = useSelectHallwayQuery({
+export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string }): JSX.Element {
+    const exhibitionResponse = useSelectExhibitionQuery({
         variables: {
-            id: hallwayId,
+            id: exhibitionId,
         },
     });
 
-    return hallwayResponse.loading && !hallwayResponse.data ? (
-        <CenteredSpinner spinnerProps={{ label: "Loading hallway" }} />
-    ) : hallwayResponse.data?.Hallway_by_pk ? (
-        <HallwayPageInner hallway={hallwayResponse.data.Hallway_by_pk} />
+    return exhibitionResponse.loading && !exhibitionResponse.data ? (
+        <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
+    ) : exhibitionResponse.data?.Exhibition_by_pk ? (
+        <ExhibitionPageInner exhibition={exhibitionResponse.data.Exhibition_by_pk} />
     ) : (
         <PageNotFound />
     );

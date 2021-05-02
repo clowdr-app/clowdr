@@ -10,15 +10,15 @@ import ReactPlayer, { Config } from "react-player";
 import type { TrackProps } from "react-player/file";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
 
-export function ContentItemVideo({
-    contentItemId,
-    videoContentItemData,
+export function VideoElement({
+    elementId,
+    videoElementData,
     title,
     onPlay,
     onPause,
 }: {
-    contentItemId: string;
-    videoContentItemData: VideoContentBlob;
+    elementId: string;
+    videoElementData: VideoContentBlob;
     title?: string;
     onPlay?: () => void;
     onPause?: () => void;
@@ -27,10 +27,10 @@ export function ContentItemVideo({
         let s3Url;
 
         // Special case to handle recordings for now
-        if (videoContentItemData.s3Url.endsWith(".m3u8")) {
-            s3Url = videoContentItemData.s3Url;
+        if (videoElementData.s3Url.endsWith(".m3u8")) {
+            s3Url = videoElementData.s3Url;
         } else {
-            s3Url = videoContentItemData.transcode?.s3Url;
+            s3Url = videoElementData.transcode?.s3Url;
         }
 
         if (!s3Url) {
@@ -39,14 +39,14 @@ export function ContentItemVideo({
         const { bucket, key } = new AmazonS3URI(s3Url);
 
         return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
-    }, [videoContentItemData.s3Url, videoContentItemData.transcode?.s3Url]);
+    }, [videoElementData.s3Url, videoElementData.transcode?.s3Url]);
 
     const { result: subtitlesUrl, loading, error } = useAsync(async () => {
-        if (!videoContentItemData.subtitles["en_US"] || !videoContentItemData.subtitles["en_US"].s3Url?.length) {
+        if (!videoElementData.subtitles["en_US"] || !videoElementData.subtitles["en_US"].s3Url?.length) {
             return undefined;
         } else {
             try {
-                const { bucket, key } = new AmazonS3URI(videoContentItemData.subtitles["en_US"].s3Url);
+                const { bucket, key } = new AmazonS3URI(videoElementData.subtitles["en_US"].s3Url);
                 const s3Url = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
 
                 const response = await fetch(s3Url);
@@ -62,7 +62,7 @@ export function ContentItemVideo({
                 console.error("Failure while parsing subtitle location", e);
             }
         }
-    }, [videoContentItemData.subtitles["en_US"]]);
+    }, [videoElementData.subtitles["en_US"]]);
 
     const config = useMemo<Config | null>(() => {
         if (loading) {
@@ -92,7 +92,7 @@ export function ContentItemVideo({
     }, [error, loading, subtitlesUrl]);
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
-    useTrackView(isPlaying, contentItemId, "ContentItem");
+    useTrackView(isPlaying, elementId, "Element");
 
     const playerRef = useRef<ReactPlayer | null>(null);
     const player = useMemo(() => {
@@ -149,7 +149,7 @@ export function ContentItemVideo({
                         : title}
                 </Heading>
             ) : undefined}
-            {videoContentItemData.s3Url && (!previewTranscodeUrl || !config) ? (
+            {videoElementData.s3Url && (!previewTranscodeUrl || !config) ? (
                 <>
                     <Spinner />
                     <Text mb={2}>Video is still being processed.</Text>

@@ -12,17 +12,17 @@ import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
-import type { ContentItemDescriptor } from "./Types";
+import type { ElementDescriptor } from "./Types";
 
-export default function UploadFileForm_ContentItem({
+export default function UploadFileForm_Element({
     item,
     allowedFileTypes,
     onItemChange,
     contentBaseType,
 }: {
-    item: ContentItemDescriptor;
+    item: ElementDescriptor;
     allowedFileTypes: string[];
-    onItemChange?: (newItem: ContentItemDescriptor) => void;
+    onItemChange?: (newItem: ElementDescriptor) => void;
     contentBaseType: ContentBaseType.File | ContentBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
@@ -31,7 +31,7 @@ export default function UploadFileForm_ContentItem({
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "content-item-upload",
             meta: {
-                contentItemId: item.id,
+                elementId: item.id,
             },
             allowMultipleUploads: false,
             restrictions: {

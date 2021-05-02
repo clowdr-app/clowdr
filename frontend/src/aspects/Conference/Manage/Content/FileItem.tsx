@@ -1,17 +1,17 @@
 import { Box, Center, Heading, Image } from "@chakra-ui/react";
-import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
+import { ContentBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ContentType_Enum } from "../../../../generated/graphql";
+import { ElementType_Enum } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
-import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
+import UploadFileForm_Element from "./UploadFileForm_Element";
 
 function createDefaultFile(
-    type: ContentType_Enum.ImageFile | ContentType_Enum.PaperFile | ContentType_Enum.PosterFile
-): ContentItemVersionData {
+    type: ElementType_Enum.ImageFile | ElementType_Enum.PaperFile | ElementType_Enum.PosterFile
+): ElementVersionData {
     return {
         createdAt: new Date().getTime(),
         createdBy: "user",
@@ -27,24 +27,24 @@ export const FileItemTemplate: ItemBaseTemplate = {
     supported: true,
     createDefault: (type, required) => {
         assert(
-            type === ContentType_Enum.ImageFile ||
-                type === ContentType_Enum.PaperFile ||
-                type === ContentType_Enum.PosterFile,
+            type === ElementType_Enum.ImageFile ||
+                type === ElementType_Enum.PaperFile ||
+                type === ElementType_Enum.PosterFile,
             `File Item Template mistakenly used for type ${type}.`
         );
 
         const name =
-            type === ContentType_Enum.ImageFile
+            type === ElementType_Enum.ImageFile
                 ? "Image (PNG/JPEG/GIF/WebP)"
-                : type === ContentType_Enum.PaperFile
+                : type === ElementType_Enum.PaperFile
                 ? "Document (PDF)"
-                : type === ContentType_Enum.PosterFile
+                : type === ElementType_Enum.PosterFile
                 ? "Poster (PNG/JPEG/WebP)"
                 : "File";
         if (required) {
             return {
                 type: "required-only",
-                requiredItem: {
+                uploadableItem: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -72,9 +72,9 @@ export const FileItemTemplate: ItemBaseTemplate = {
         if (data.type === "item-only" || data.type === "required-and-item") {
             if (
                 !(
-                    data.item.typeName === ContentType_Enum.ImageFile ||
-                    data.item.typeName === ContentType_Enum.PosterFile ||
-                    data.item.typeName === ContentType_Enum.PaperFile
+                    data.item.typeName === ElementType_Enum.ImageFile ||
+                    data.item.typeName === ElementType_Enum.PosterFile ||
+                    data.item.typeName === ElementType_Enum.PaperFile
                 )
             ) {
                 return <>File Item Template mistakenly used for type {data.type}.</>;
@@ -115,8 +115,8 @@ export const FileItemTemplate: ItemBaseTemplate = {
                     {imageSrc ? (
                         <>
                             <Box pb={4}>
-                                {data.item.typeName === ContentType_Enum.ImageFile ||
-                                data.item.typeName === ContentType_Enum.PosterFile ? (
+                                {data.item.typeName === ElementType_Enum.ImageFile ||
+                                data.item.typeName === ElementType_Enum.PosterFile ? (
                                     <>
                                         <Heading as="h3" fontSize="lg" mt={4} mb={4}>
                                             Current file
@@ -136,10 +136,10 @@ export const FileItemTemplate: ItemBaseTemplate = {
                     <Heading as="h3" fontSize="lg" mb={4}>
                         Upload new file
                     </Heading>
-                    <UploadFileForm_ContentItem
+                    <UploadFileForm_Element
                         allowedFileTypes={
-                            data.item.typeName === ContentType_Enum.ImageFile ||
-                            data.item.typeName === ContentType_Enum.PosterFile
+                            data.item.typeName === ElementType_Enum.ImageFile ||
+                            data.item.typeName === ElementType_Enum.PosterFile
                                 ? ["image/png", "image/jpeg", "image/gif", "image/webp"]
                                 : [".pdf"]
                         }
@@ -159,6 +159,6 @@ export const FileItemTemplate: ItemBaseTemplate = {
         return <></>;
     },
     renderEditorHeading: function FileItemEditorHeading(data) {
-        return <>{data.type === "item-only" ? data.item.name : data.requiredItem.name}</>;
+        return <>{data.type === "item-only" ? data.item.name : data.uploadableItem.name}</>;
     },
 };

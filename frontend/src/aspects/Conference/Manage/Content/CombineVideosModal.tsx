@@ -20,31 +20,31 @@ import {
     Text,
     useToast,
 } from "@chakra-ui/react";
-import type { CombineVideosJobDataBlob, InputContentItem } from "@clowdr-app/shared-types/build/combineVideosJob";
+import type { CombineVideosJobDataBlob, InputElement } from "@clowdr-app/shared-types/build/combineVideosJob";
 import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import {
-    ContentType_Enum,
+    ElementType_Enum,
     JobStatus_Enum,
     useCombineVideosModal_CreateCombineVideosJobMutation,
     useCombineVideosModal_GetCombineVideosJobQuery,
 } from "../../../../generated/graphql";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useConference } from "../../useConference";
-import type { ContentGroupDescriptor } from "./Types";
+import type { ItemDescriptor } from "./Types";
 
 gql`
     mutation CombineVideosModal_CreateCombineVideosJob(
         $conferenceId: uuid!
-        $createdByAttendeeId: uuid!
+        $createdByRegistrantId: uuid!
         $outputName: String!
         $data: jsonb!
     ) {
         insert_job_queues_CombineVideosJob_one(
             object: {
                 conferenceId: $conferenceId
-                createdByAttendeeId: $createdByAttendeeId
+                createdByRegistrantId: $createdByRegistrantId
                 outputName: $outputName
                 data: $data
             }
@@ -66,30 +66,30 @@ export function CombineVideosModal({
     isOpen,
     onClose,
     allGroupsMap,
-    contentGroupId,
+    itemId,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    allGroupsMap?: Map<string, ContentGroupDescriptor>;
-    contentGroupId: string;
+    allGroupsMap?: Map<string, ItemDescriptor>;
+    itemId: string;
 }): JSX.Element {
-    const contentGroup = useMemo(() => allGroupsMap?.get(contentGroupId), [allGroupsMap, contentGroupId]);
+    const item = useMemo(() => allGroupsMap?.get(itemId), [allGroupsMap, itemId]);
 
     const options = useMemo(
         () =>
-            contentGroup?.items
+            item?.items
                 .filter((item) =>
                     [
-                        ContentType_Enum.VideoFile,
-                        ContentType_Enum.VideoBroadcast,
-                        ContentType_Enum.VideoPrepublish,
+                        ElementType_Enum.VideoFile,
+                        ElementType_Enum.VideoBroadcast,
+                        ElementType_Enum.VideoPrepublish,
                     ].includes(item.typeName)
                 )
                 .map((item) => ({
                     label: item.isHidden ? `[HIDDEN] ${item.name}` : item.name,
                     value: item.id,
                 })) ?? [],
-        [contentGroup?.items]
+        [item?.items]
     );
 
     const toast = useToast();
@@ -117,22 +117,22 @@ export function CombineVideosModal({
     return (
         <Modal scrollBehavior="outside" onClose={onClose} isOpen={isOpen} motionPreset="scale">
             <Formik
-                initialValues={{ contentItemIds: [], outputName: "Combined video" }}
+                initialValues={{ elementIds: [], outputName: "Combined video" }}
                 onSubmit={async (values, actions) => {
-                    console.log(values.contentItemIds);
-                    const items: InputContentItem[] = values.contentItemIds.map((id) => ({
-                        contentItemId: id,
+                    console.log(values.elementIds);
+                    const items: InputElement[] = values.elementIds.map((id) => ({
+                        elementId: id,
                         includeSubtitles: false,
                     }));
                     const data: CombineVideosJobDataBlob = {
-                        inputContentItems: items,
+                        inputElements: items,
                     };
 
                     try {
                         const result = await mutate({
                             variables: {
                                 conferenceId: conference.id,
-                                createdByAttendeeId: user.user.attendees[0].id,
+                                createdByRegistrantId: user.user.registrants[0].id,
                                 outputName: values.outputName,
                                 data,
                             },
@@ -175,13 +175,13 @@ export function CombineVideosModal({
                                             </FormControl>
                                         )}
                                     </Field>
-                                    <FieldArray name="contentItemIds">
+                                    <FieldArray name="elementIds">
                                         {({ form, name }) => (
                                             <FormControl
-                                                isInvalid={!!form.errors.contentItemIds && !form.touched.contentItemIds}
+                                                isInvalid={!!form.errors.elementIds && !form.touched.elementIds}
                                                 isRequired
                                             >
-                                                <FormLabel htmlFor="contentItemIds">Videos</FormLabel>
+                                                <FormLabel htmlFor="elementIds">Videos</FormLabel>
                                                 <Select
                                                     options={options}
                                                     isMulti={true}
@@ -250,7 +250,7 @@ export function CombineVideosModal({
                                                     }}
                                                 />
                                                 <FormHelperText>Videos to be combined into a new file.</FormHelperText>
-                                                <FormErrorMessage>{form.errors.contentItemIds}</FormErrorMessage>
+                                                <FormErrorMessage>{form.errors.elementIds}</FormErrorMessage>
                                             </FormControl>
                                         )}
                                     </FieldArray>

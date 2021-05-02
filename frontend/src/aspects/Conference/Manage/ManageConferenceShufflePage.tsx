@@ -29,8 +29,8 @@ gql`
         startAt
         endAt
         roomDurationMinutes
-        targetAttendeesPerRoom
-        maxAttendeesPerRoom
+        targetRegistrantsPerRoom
+        maxRegistrantsPerRoom
         waitRoomMaxDurationSeconds
         name
         organiserId

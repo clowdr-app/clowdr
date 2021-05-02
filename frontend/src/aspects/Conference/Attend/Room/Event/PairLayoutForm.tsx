@@ -49,7 +49,7 @@ export function PairLayoutForm({
                                 <Select {...{ ...field }} placeholder="Choose a stream" isRequired>
                                     {streams.map((stream) => (
                                         <option key={stream.id} value={stream.vonageStreamId}>
-                                            {stream.attendee.displayName} ({stream.vonageStreamType})
+                                            {stream.registrant.displayName} ({stream.vonageStreamType})
                                         </option>
                                     ))}
                                 </Select>
@@ -68,7 +68,7 @@ export function PairLayoutForm({
                                 <Select {...{ ...field }} placeholder="Choose a stream" isRequired>
                                     {streams.map((stream) => (
                                         <option key={stream.id} value={stream.vonageStreamId}>
-                                            {stream.attendee.displayName} ({stream.vonageStreamType})
+                                            {stream.registrant.displayName} ({stream.vonageStreamType})
                                         </option>
                                     ))}
                                 </Select>

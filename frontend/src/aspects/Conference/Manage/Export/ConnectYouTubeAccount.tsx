@@ -4,36 +4,36 @@ import * as R from "ramda";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-    ManageConferenceExportPage_AttendeeGoogleAccountFragment,
-    useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation,
-    useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery,
+    ManageConferenceExportPage_RegistrantGoogleAccountFragment,
+    useManageConferenceExportPage_DeleteRegistrantGoogleAccountMutation,
     useManageConferenceExportPage_GetGoogleOAuthUrlMutation,
+    useManageConferenceExportPage_GetRegistrantGoogleAccountsQuery,
 } from "../../../../generated/graphql";
 import { useGoogleOAuthRedirectPath } from "../../../Google/useGoogleOAuthRedirectUrl";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
-import useCurrentAttendee from "../../useCurrentAttendee";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
 
 gql`
-    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($attendeeId: uuid!, $scopes: [String!]!) {
-        getGoogleOAuthUrl(attendeeId: $attendeeId, scopes: $scopes) {
+    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {
+        getGoogleOAuthUrl(registrantId: $registrantId, scopes: $scopes) {
             url
         }
     }
 
-    query ManageConferenceExportPage_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
-        AttendeeGoogleAccount(where: { attendeeId: { _eq: $attendeeId } }) {
-            ...ManageConferenceExportPage_AttendeeGoogleAccount
+    query ManageConferenceExportPage_GetRegistrantGoogleAccounts($registrantId: uuid!) {
+        registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId } }) {
+            ...ManageConferenceExportPage_RegistrantGoogleAccount
         }
     }
 
-    fragment ManageConferenceExportPage_AttendeeGoogleAccount on AttendeeGoogleAccount {
+    fragment ManageConferenceExportPage_RegistrantGoogleAccount on registrant_GoogleAccount {
         id
         googleAccountEmail
     }
 
-    mutation ManageConferenceExportPage_DeleteAttendeeGoogleAccount($attendeeGoogleAccountId: uuid!) {
-        delete_AttendeeGoogleAccount_by_pk(id: $attendeeGoogleAccountId) {
+    mutation ManageConferenceExportPage_DeleteRegistrantGoogleAccount($registrantGoogleAccountId: uuid!) {
+        delete_registrant_GoogleAccount_by_pk(id: $registrantGoogleAccountId) {
             id
         }
     }
@@ -44,14 +44,14 @@ export function ConnectYouTubeAccount(): JSX.Element {
 
     const [mutation] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation();
 
-    const attendee = useCurrentAttendee();
-    const result = useManageConferenceExportPage_GetAttendeeGoogleAccountsQuery({
+    const registrant = useCurrentRegistrant();
+    const result = useManageConferenceExportPage_GetRegistrantGoogleAccountsQuery({
         variables: {
-            attendeeId: attendee?.id,
+            registrantId: registrant?.id,
         },
     });
 
-    const [deleteAccount] = useManageConferenceExportPage_DeleteAttendeeGoogleAccountMutation();
+    const [deleteAccount] = useManageConferenceExportPage_DeleteRegistrantGoogleAccountMutation();
     const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
 
     const history = useHistory();
@@ -62,8 +62,8 @@ export function ConnectYouTubeAccount(): JSX.Element {
             <Heading as="h3" size="md" textAlign="left" mb={2}>
                 Connected accounts
             </Heading>
-            <ApolloQueryWrapper getter={(data) => data.AttendeeGoogleAccount} queryResult={result}>
-                {(accounts: readonly ManageConferenceExportPage_AttendeeGoogleAccountFragment[]) => (
+            <ApolloQueryWrapper getter={(data) => data.RegistrantGoogleAccount} queryResult={result}>
+                {(accounts: readonly ManageConferenceExportPage_RegistrantGoogleAccountFragment[]) => (
                     <List>
                         {accounts.map((account) => (
                             <ListItem
@@ -88,7 +88,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                                             setDeleting((x) => R.set(R.lensProp(account.id), true, x));
                                             try {
                                                 await deleteAccount({
-                                                    variables: { attendeeGoogleAccountId: account.id },
+                                                    variables: { registrantGoogleAccountId: account.id },
                                                 });
                                                 await result.refetch();
                                                 toast({
@@ -119,7 +119,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                     try {
                         const urlResult = await mutation({
                             variables: {
-                                attendeeId: attendee.id,
+                                registrantId: registrant.id,
                                 scopes: [
                                     "https://www.googleapis.com/auth/youtube.upload",
                                     "https://www.googleapis.com/auth/youtube.readonly",

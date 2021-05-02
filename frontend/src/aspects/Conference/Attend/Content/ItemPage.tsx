@@ -2,55 +2,55 @@ import { gql } from "@apollo/client";
 import { Box, Flex, Heading, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import {
-    ContentGroupDataFragment,
-    ContentGroupEventsFragment,
-    ContentGroupPage_ContentGroupRoomsFragment,
+    ItemDataFragment,
+    ItemEventsFragment,
+    ItemPage_ItemRoomsFragment,
     Permission_Enum,
-    useGetContentGroupQuery,
+    useGetItemQuery,
 } from "../../../../generated/graphql";
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { ContentGroupEvents } from "./ContentGroupEvents";
-import { ContentGroupItems } from "./ContentGroupItems";
-import { ContentGroupLive } from "./ContentGroupLive";
-import { ContentGroupVideos } from "./ContentGroupVideos";
+import { ItemElements } from "./ItemElements";
+import { ItemEvents } from "./ItemEvents";
+import { ItemLive } from "./ItemLive";
+import { ItemVideos } from "./ItemVideos";
 
 gql`
-    query GetContentGroup($contentGroupId: uuid!) {
-        ContentGroup_by_pk(id: $contentGroupId) {
-            ...ContentGroupData
-            ...ContentGroupEvents
-            ...ContentGroupPage_ContentGroupRooms
+    query GetItem($itemId: uuid!) {
+        content_Item_by_pk(id: $itemId) {
+            ...ItemData
+            ...ItemEvents
+            ...ItemPage_ItemRooms
         }
     }
 
-    fragment ContentGroupData on ContentGroup {
+    fragment ItemData on content_Item {
         id
         title
-        contentGroupTypeName
-        contentItems(where: { isHidden: { _eq: false } }) {
-            ...ContentItemData
+        typeName
+        elements(where: { isHidden: { _eq: false } }) {
+            ...ElementData
         }
-        people(order_by: { priority: asc }) {
-            ...ContentPersonData
+        itemPeople(order_by: { priority: asc }) {
+            ...ProgramPersonData
         }
     }
 
-    fragment ContentGroupPage_ContentGroupRooms on ContentGroup {
+    fragment ItemPage_ItemRooms on content_Item {
         rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
             id
         }
     }
 
-    fragment ContentGroupEvents on ContentGroup {
+    fragment ItemEvents on content_Item {
         events {
-            ...ContentGroupEvent
+            ...ItemEvent
         }
     }
 
-    fragment ContentGroupEvent on Event {
+    fragment ItemEvent on schedule_Event {
         startTime
         room {
             name
@@ -64,26 +64,22 @@ gql`
     }
 `;
 
-export default function ContentGroupPage({ contentGroupId }: { contentGroupId: string }): JSX.Element {
-    const result = useGetContentGroupQuery({
+export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
+    const result = useGetItemQuery({
         variables: {
-            contentGroupId,
+            itemId,
         },
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
-    const title = useTitle(result.data?.ContentGroup_by_pk?.title ?? "Unknown content item");
+    const title = useTitle(result.data?.Item_by_pk?.title ?? "Unknown content item");
 
     return (
         <RequireAtLeastOnePermissionWrapper
             componentIfDenied={<ConferencePageNotFound />}
             permissions={[Permission_Enum.ConferenceView]}
         >
-            <ApolloQueryWrapper queryResult={result} getter={(data) => data.ContentGroup_by_pk}>
-                {(
-                    contentGroupData: ContentGroupDataFragment &
-                        ContentGroupEventsFragment &
-                        ContentGroupPage_ContentGroupRoomsFragment
-                ) => {
+            <ApolloQueryWrapper queryResult={result} getter={(data) => data.Item_by_pk}>
+                {(itemData: ItemDataFragment & ItemEventsFragment & ItemPage_ItemRoomsFragment) => {
                     return (
                         <HStack w="100%" flexWrap="wrap" alignItems="stretch">
                             <VStack
@@ -105,23 +101,20 @@ export default function ContentGroupPage({ contentGroupId }: { contentGroupId: s
                                 >
                                     <Box maxW="100%" textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
                                         <Box>
-                                            <ContentGroupVideos contentGroupData={contentGroupData} />
+                                            <ItemVideos itemData={itemData} />
                                         </Box>
                                         <Box ml={5} maxW="100%">
-                                            <ContentGroupItems contentGroupData={contentGroupData}>
+                                            <ItemElements itemData={itemData}>
                                                 <RequireAtLeastOnePermissionWrapper
                                                     permissions={[Permission_Enum.ConferenceViewAttendees]}
                                                 >
-                                                    <ContentGroupLive contentGroupData={contentGroupData} />
+                                                    <ItemLive itemData={itemData} />
                                                 </RequireAtLeastOnePermissionWrapper>
-                                            </ContentGroupItems>
+                                            </ItemElements>
                                             <Heading as="h3" size="lg" textAlign="left">
                                                 Events
                                             </Heading>
-                                            <ContentGroupEvents
-                                                contentGroupEvents={contentGroupData}
-                                                itemId={contentGroupId}
-                                            />
+                                            <ItemEvents itemEvents={itemData} itemId={itemId} />
                                         </Box>
                                     </Box>
                                 </Flex>

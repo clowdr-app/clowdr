@@ -26,7 +26,7 @@ export function GoogleOAuthRedirect(): JSX.Element {
         if (code && state) {
             const updatedSearchParams = new URLSearchParams({
                 code,
-                attendeeId: state,
+                registrantId: state,
             });
             window.location.href = `/googleoauth2?${updatedSearchParams.toString()}`;
         } else {
@@ -55,13 +55,13 @@ export function GoogleOAuth(): JSX.Element {
             try {
                 const searchParams = new URLSearchParams(location.search);
                 const code = searchParams.get("code");
-                const attendeeId = searchParams.get("attendeeId");
+                const registrantId = searchParams.get("registrantId");
 
-                if (code && attendeeId) {
+                if (code && registrantId) {
                     const result = await submit({
                         variables: {
                             code,
-                            state: attendeeId,
+                            state: registrantId,
                         },
                     });
 

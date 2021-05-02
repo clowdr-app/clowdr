@@ -23,50 +23,49 @@ import CRUDTable, {
 } from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
 import { useConference } from "../../useConference";
-import type { ContentGroupDescriptor, ContentGroupHallwayDescriptor, HallwayDescriptor } from "./Types";
+import type { ExhibitionDescriptor, ItemDescriptor, ItemExhibitionDescriptor } from "./Types";
 
-const ContentGroupHallwayCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupHallwayDescriptor, "id">>) =>
-    CRUDTable(props);
+const ItemExhibitionCRUDTable = (props: Readonly<CRUDTableProps<ItemExhibitionDescriptor, "id">>) => CRUDTable(props);
 
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
     isGroupDirty: boolean;
-    group: ContentGroupDescriptor;
-    hallwaysMap: Map<string, HallwayDescriptor>;
-    insertContentGroupHallway: (contentGroupHallway: ContentGroupHallwayDescriptor) => void;
-    updateContentGroupHallway: (contentGroupHallway: ContentGroupHallwayDescriptor) => void;
-    deleteContentGroupHallway: (contentGroupHallwayId: string) => void;
+    group: ItemDescriptor;
+    exhibitionsMap: Map<string, ExhibitionDescriptor>;
+    insertItemExhibition: (itemExhibition: ItemExhibitionDescriptor) => void;
+    updateItemExhibition: (itemExhibition: ItemExhibitionDescriptor) => void;
+    deleteItemExhibition: (itemExhibitionId: string) => void;
 }
 
-export default function ContentGroupHallwaysModal({
+export default function ItemExhibitionsModal({
     isOpen,
     onOpen,
     onClose,
     isGroupDirty,
     group,
-    hallwaysMap,
-    insertContentGroupHallway,
-    updateContentGroupHallway,
-    deleteContentGroupHallway,
+    exhibitionsMap,
+    insertItemExhibition,
+    updateItemExhibition,
+    deleteItemExhibition,
 }: Props): JSX.Element {
-    const contentGroupHallwaysMap = useMemo(() => {
-        const results = new Map<string, ContentGroupHallwayDescriptor>();
+    const itemExhibitionsMap = useMemo(() => {
+        const results = new Map<string, ItemExhibitionDescriptor>();
 
-        group.hallways.forEach((contentGroupHallway) => {
-            results.set(contentGroupHallway.id, contentGroupHallway);
+        group.exhibitions.forEach((itemExhibition) => {
+            results.set(itemExhibition.id, itemExhibition);
         });
 
         return results;
-    }, [group.hallways]);
+    }, [group.exhibitions]);
 
-    const hallwayOptions = useMemo(() => {
-        return Array.from(hallwaysMap.values()).map((hallway) => ({
-            label: hallway.name,
-            value: hallway.id,
+    const exhibitionOptions = useMemo(() => {
+        return Array.from(exhibitionsMap.values()).map((exhibition) => ({
+            label: exhibition.name,
+            value: exhibition.id,
         }));
-    }, [hallwaysMap]);
+    }, [exhibitionsMap]);
 
     const conference = useConference();
 
@@ -92,8 +91,8 @@ export default function ContentGroupHallwaysModal({
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            <ContentGroupHallwayCRUDTable
-                                data={contentGroupHallwaysMap}
+                            <ItemExhibitionCRUDTable
+                                data={itemExhibitionsMap}
                                 externalUnsavedChanges={isGroupDirty}
                                 primaryFields={{
                                     keyField: {
@@ -115,13 +114,13 @@ export default function ContentGroupHallwaysModal({
                                         },
                                         validate: (v) => isValidUUID(v) || ["Invalid UUID"],
                                         getRowTitle: (v) => {
-                                            const hallway = hallwaysMap.get(v.hallwayId);
-                                            assert(hallway);
-                                            return hallway.name;
+                                            const exhibition = exhibitionsMap.get(v.exhibitionId);
+                                            assert(exhibition);
+                                            return exhibition.name;
                                         },
                                     },
                                     otherFields: {
-                                        hallway: {
+                                        exhibition: {
                                             heading: "Exhibition",
                                             ariaLabel: "Exhibition",
                                             description: "Exhibition",
@@ -132,10 +131,10 @@ export default function ContentGroupHallwaysModal({
                                             insert: (item, v) => {
                                                 return {
                                                     ...item,
-                                                    hallwayId: v,
+                                                    exhibitionId: v,
                                                 };
                                             },
-                                            extract: (item) => item.hallwayId,
+                                            extract: (item) => item.exhibitionId,
                                             spec: {
                                                 fieldType: FieldType.select,
                                                 convertFromUI: (opt) => {
@@ -146,19 +145,19 @@ export default function ContentGroupHallwaysModal({
                                                         return opt.value;
                                                     }
                                                 },
-                                                convertToUI: (hallwayId) => {
-                                                    const opt = hallwayOptions.find((x) => x.value === hallwayId);
+                                                convertToUI: (exhibitionId) => {
+                                                    const opt = exhibitionOptions.find((x) => x.value === exhibitionId);
                                                     if (opt) {
                                                         return opt;
                                                     } else {
                                                         return {
-                                                            label: `<Unknown (${hallwayId})>`,
-                                                            value: hallwayId,
+                                                            label: `<Unknown (${exhibitionId})>`,
+                                                            value: exhibitionId,
                                                         };
                                                     }
                                                 },
                                                 multiSelect: false,
-                                                options: () => hallwayOptions,
+                                                options: () => exhibitionOptions,
                                                 filter: defaultSelectFilter,
                                             },
                                         },
@@ -166,10 +165,10 @@ export default function ContentGroupHallwaysModal({
                                             heading: "Priority",
                                             ariaLabel: "Priority",
                                             description:
-                                                "Priority determines the order items are listed in the hallway. Ascending sort (lowest first).",
+                                                "Priority determines the order items are listed in the exhibition. Ascending sort (lowest first).",
                                             isHidden: false,
                                             isEditable: true,
-                                            defaultValue: group.hallways.length - 1,
+                                            defaultValue: group.exhibitions.length - 1,
                                             insert: (item, v) => {
                                                 return {
                                                     ...item,
@@ -190,29 +189,29 @@ export default function ContentGroupHallwaysModal({
                                 csud={{
                                     cudCallbacks: {
                                         create: async (
-                                            partialContentGroupHallway: Partial<ContentGroupHallwayDescriptor>
+                                            partialItemExhibition: Partial<ItemExhibitionDescriptor>
                                         ): Promise<string | null> => {
-                                            assert(partialContentGroupHallway.hallwayId);
+                                            assert(partialItemExhibition.exhibitionId);
                                             assert(
-                                                partialContentGroupHallway.priority !== null &&
-                                                    partialContentGroupHallway.priority !== undefined
+                                                partialItemExhibition.priority !== null &&
+                                                    partialItemExhibition.priority !== undefined
                                             );
-                                            const newContentGroupHallway: ContentGroupHallwayDescriptor = {
+                                            const newItemExhibition: ItemExhibitionDescriptor = {
                                                 id: uuidv4(),
                                                 isNew: true,
                                                 conferenceId: conference.id,
-                                                groupId: group.id,
-                                                hallwayId: partialContentGroupHallway.hallwayId,
-                                                priority: partialContentGroupHallway.priority,
+                                                itemId: group.id,
+                                                exhibitionId: partialItemExhibition.exhibitionId,
+                                                priority: partialItemExhibition.priority,
                                             };
-                                            insertContentGroupHallway(newContentGroupHallway);
-                                            return newContentGroupHallway.id;
+                                            insertItemExhibition(newItemExhibition);
+                                            return newItemExhibition.id;
                                         },
-                                        update: async (contentGroupHallways): Promise<Map<string, UpdateResult>> => {
+                                        update: async (itemExhibitions): Promise<Map<string, UpdateResult>> => {
                                             const results = new Map<string, UpdateResult>();
-                                            for (const [key, contentGroupHallway] of contentGroupHallways) {
+                                            for (const [key, itemExhibition] of itemExhibitions) {
                                                 results.set(key, true);
-                                                updateContentGroupHallway(contentGroupHallway);
+                                                updateItemExhibition(itemExhibition);
                                             }
                                             return results;
                                         },
@@ -220,7 +219,7 @@ export default function ContentGroupHallwaysModal({
                                             const results = new Map<string, boolean>();
                                             for (const key of keys) {
                                                 results.set(key, true);
-                                                deleteContentGroupHallway(key);
+                                                deleteItemExhibition(key);
                                             }
                                             return results;
                                         },

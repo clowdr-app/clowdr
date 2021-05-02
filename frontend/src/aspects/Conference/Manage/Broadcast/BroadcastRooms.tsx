@@ -28,7 +28,7 @@ import FAIcon from "../../../Icons/FAIcon";
 
 gql`
     query GetMediaLiveChannels($conferenceId: uuid!) {
-        Room(where: { mediaLiveChannel: {}, conferenceId: { _eq: $conferenceId } }) {
+        room_Room(where: { mediaLiveChannel: {}, conferenceId: { _eq: $conferenceId } }) {
             mediaLiveChannel {
                 cloudFrontDomain
                 endpointUri

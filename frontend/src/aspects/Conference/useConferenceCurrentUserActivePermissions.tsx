@@ -43,13 +43,13 @@ export default function ConferenceCurrentUserActivePermissionsProvider({
             if (conference.createdBy === user.user.id) {
                 return new Set(Object.values(Permission_Enum));
             } else {
-                if ("attendees" in conference && conference.attendees.length > 0) {
+                if ("registrants" in conference && conference.registrants.length > 0) {
                     return reduceToSet(
-                        conference.attendees[0].groupAttendees,
-                        (acc, groupAttendee) => {
-                            if (groupAttendee.group.enabled) {
+                        conference.registrants[0].groupRegistrants,
+                        (acc, groupRegistrant) => {
+                            if (groupRegistrant.group.enabled) {
                                 return reduceToSet(
-                                    groupAttendee.group.groupRoles,
+                                    groupRegistrant.group.groupRoles,
                                     (acc, groupRole) => {
                                         return reduceToSet(
                                             groupRole.role.rolePermissions,

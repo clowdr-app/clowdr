@@ -20,21 +20,25 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
 import {
     RoomListRoomDetailsFragmentDoc,
-    RoomPrivacy_Enum,
-    useAttendeeCreateRoomMutation,
+    room_ManagementMode_Enum,
+    useRegistrantCreateRoomMutation,
 } from "../../../../generated/graphql";
 import { normaliseName, validateShortName } from "../../NewConferenceForm";
 import { useConference } from "../../useConference";
 
 gql`
-    mutation AttendeeCreateRoom($conferenceId: uuid!, $name: String!, $roomPrivacyName: RoomPrivacy_enum!) {
-        insert_Room_one(
+    mutation registrant_RegistrantCreateRoom(
+        $conferenceId: uuid!
+        $name: String!
+        $managementModeName: room_ManagementMode_enum!
+    ) {
+        insert_room_Room_one(
             object: {
                 capacity: 50
                 conferenceId: $conferenceId
                 currentModeName: BREAKOUT
                 name: $name
-                roomPrivacyName: $roomPrivacyName
+                managementModeName: $managementModeName
             }
         ) {
             ...RoomListRoomDetails
@@ -51,7 +55,7 @@ export function CreateRoomModal({
     onClose: () => void;
     onCreated: (id: string, cb: () => void) => Promise<void>;
 }): JSX.Element {
-    const [createAttendeeRoomMutation] = useAttendeeCreateRoomMutation();
+    const [createRegistrantRoomMutation] = useRegistrantCreateRoomMutation();
     const conference = useConference();
     const toast = useToast();
 
@@ -69,13 +73,13 @@ export function CreateRoomModal({
                     onSubmit={async (values) => {
                         const name = normaliseName(values.new_room_name);
                         try {
-                            const result = await createAttendeeRoomMutation({
+                            const result = await createRegistrantRoomMutation({
                                 variables: {
                                     conferenceId: conference.id,
                                     name,
-                                    roomPrivacyName: values.new_room_private
-                                        ? RoomPrivacy_Enum.Private
-                                        : RoomPrivacy_Enum.Public,
+                                    managementModeName: values.new_room_private
+                                        ? room_ManagementMode_Enum.Private
+                                        : room_ManagementMode_Enum.Public,
                                 },
                                 update: (cache, { data: _data }) => {
                                     if (_data?.insert_Room_one) {

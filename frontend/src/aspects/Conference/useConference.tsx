@@ -14,34 +14,34 @@ import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
     query ConferenceBySlug_WithUser($slug: String!, $userId: String!) {
-        Conference(where: { slug: { _eq: $slug } }) {
+        conference_Conference(where: { slug: { _eq: $slug } }) {
             ...PublicConferenceInfo
             ...AuthdConferenceInfo
         }
     }
 
     query ConferenceBySlug_WithoutUser($slug: String!) {
-        Conference(where: { slug: { _eq: $slug } }) {
+        conference_Conference(where: { slug: { _eq: $slug } }) {
             ...PublicConferenceInfo
         }
     }
 
-    fragment AuthdConferenceInfo on Conference {
-        attendees(where: { userId: { _eq: $userId } }) {
-            ...AttendeeData
+    fragment AuthdConferenceInfo on conference_Conference {
+        registrants(where: { userId: { _eq: $userId } }) {
+            ...RegistrantData
 
-            groupAttendees {
+            groupRegistrants {
                 group {
                     ...GroupData
                 }
                 id
                 groupId
-                attendeeId
+                registrantId
             }
         }
     }
 
-    fragment PublicConferenceInfo on Conference {
+    fragment PublicConferenceInfo on conference_Conference {
         id
         name
         shortName
@@ -53,7 +53,7 @@ gql`
         }
     }
 
-    fragment GroupData on Group {
+    fragment GroupData on permissions_Group {
         groupRoles {
             role {
                 rolePermissions {
@@ -76,8 +76,8 @@ gql`
         conferenceId
     }
 
-    fragment AttendeeProfileData on AttendeeProfile {
-        attendeeId
+    fragment ProfileData on registrant_Profile {
+        registrantId
         badges
         affiliation
         affiliationURL
@@ -93,13 +93,13 @@ gql`
         hasBeenEdited
     }
 
-    fragment AttendeeData on Attendee {
+    fragment RegistrantData on registrant_Registrant {
         id
         userId
         conferenceId
         displayName
         profile {
-            ...AttendeeProfileData
+            ...ProfileData
         }
     }
 `;

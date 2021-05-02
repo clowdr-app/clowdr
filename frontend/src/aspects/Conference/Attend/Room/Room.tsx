@@ -11,15 +11,15 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { ContentItemDataBlob, VideoContentBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob, VideoContentBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import {
-    RoomMode_Enum,
     RoomPage_RoomDetailsFragment,
-    RoomPrivacy_Enum,
     Room_EventSummaryFragment,
+    room_ManagementMode_Enum,
+    room_Mode_Enum,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
@@ -27,8 +27,8 @@ import {
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useConference } from "../../useConference";
-import useCurrentAttendee from "../../useCurrentAttendee";
-import { ContentItemVideo } from "../Content/Item/ContentItemVideo";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
+import { ElementVideo } from "../Content/Element/ElementVideo";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
 import { RoomContent } from "./RoomContent";
@@ -38,30 +38,30 @@ import { HlsPlayer } from "./Video/HlsPlayer";
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
-        Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }) {
+        schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now }, startTime: { _lte: $cutoff } }) {
             ...Room_EventSummary
         }
     }
 
-    fragment Room_EventSummary on Event {
+    fragment Room_EventSummary on schedule_Event {
         id
         conferenceId
         startTime
         name
         endTime
         intendedRoomModeName
-        contentGroupId
-        hallwayId
-        contentGroup {
+        itemId
+        exhibitionId
+        item {
             id
             title
-            contentGroupTypeName
-            zoomItems: contentItems(where: { contentTypeName: { _eq: ZOOM } }, limit: 1) {
+            typeName
+            zoomItems: elements(where: { typeName: { _eq: ZOOM } }, limit: 1) {
                 id
                 data
             }
-            videoItems: contentItems(
-                where: { contentTypeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, isHidden: { _eq: false } }
+            videoItems: elements(
+                where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, isHidden: { _eq: false } }
                 limit: 1
                 order_by: { createdAt: desc_nulls_last }
             ) {
@@ -76,18 +76,15 @@ gql`
                 id
                 name
                 affiliation
-                attendeeId
+                registrantId
             }
             roleName
         }
     }
 
-    query Room_GetEventBreakoutRoom($originatingContentGroupId: uuid!) {
-        Room(
-            where: {
-                originatingEventId: { _is_null: true }
-                originatingContentGroupId: { _eq: $originatingContentGroupId }
-            }
+    query Room_GetEventBreakoutRoom($originatingItemId: uuid!) {
+        room_Room(
+            where: { originatingEventId: { _is_null: true }, originatingItemId: { _eq: $originatingItemId } }
             order_by: { created_at: asc }
             limit: 1
         ) {
@@ -196,7 +193,7 @@ function RoomInner({
     roomEvents: readonly Room_EventSummaryFragment[];
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
-    const currentAttendee = useCurrentAttendee();
+    const currentRegistrant = useCurrentRegistrant();
 
     const now5s = useRealTime(5000);
     const now30s = useRealTime(30000);
@@ -223,31 +220,31 @@ function RoomInner({
     const isPresenterOfUpcomingEvent = useMemo(
         () =>
             nonCurrentLiveEvents?.find((event) =>
-                event?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
+                event?.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id)
             ) ?? false,
-        [currentAttendee.id, nonCurrentLiveEvents]
+        [currentRegistrant.id, nonCurrentLiveEvents]
     );
 
     const presentingCurrentOrUpcomingSoonEvent = useMemo(() => {
         const isPresenterOfCurrentEvent =
             currentRoomEvent !== null &&
-            (currentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
-                currentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
-            currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id);
+            (currentRoomEvent.intendedRoomModeName === room_Mode_Enum.Presentation ||
+                currentRoomEvent.intendedRoomModeName === room_Mode_Enum.QAndA) &&
+            currentRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id);
 
         const isPresenterOfUpcomingSoonEvent = !!nonCurrentLiveEventsInNext20Mins?.some((event) =>
-            event?.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
+            event?.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id)
         );
 
         return isPresenterOfCurrentEvent || !!isPresenterOfUpcomingSoonEvent;
-    }, [currentAttendee.id, currentRoomEvent, nonCurrentLiveEventsInNext20Mins]);
+    }, [currentRegistrant.id, currentRoomEvent, nonCurrentLiveEventsInNext20Mins]);
 
     const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
     const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);
     const alreadyBackstage = useRef<boolean>(false);
 
     const hasBackstage = !!roomEvents.some((event) =>
-        [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
+        [room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(event.intendedRoomModeName)
     );
 
     const notExplicitlyWatchingCurrentOrNextEvent =
@@ -261,25 +258,25 @@ function RoomInner({
 
     alreadyBackstage.current = showBackstage;
 
-    const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.None;
+    const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === room_Mode_Enum.None;
     const showDefaultBreakoutRoom =
-        !roomDetails.isProgramRoom || currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.Breakout;
+        !roomDetails.isProgramRoom || currentRoomEvent?.intendedRoomModeName === room_Mode_Enum.Breakout;
 
     const maybeZoomUrl = useMemo(() => {
         try {
             if (currentRoomEvent) {
-                const currentZoomItems = currentRoomEvent.contentGroup?.zoomItems;
+                const currentZoomItems = currentRoomEvent.item?.zoomItems;
                 if (currentZoomItems?.length) {
-                    const versions = currentZoomItems[0].data as ContentItemDataBlob;
+                    const versions = currentZoomItems[0].data as ElementDataBlob;
                     const latest = R.last(versions)?.data as ZoomBlob;
                     return latest.url;
                 }
             }
 
             if (nextRoomEvent) {
-                const nextZoomItems = nextRoomEvent.contentGroup?.zoomItems;
+                const nextZoomItems = nextRoomEvent.item?.zoomItems;
                 if (nextZoomItems?.length && now30s > Date.parse(nextRoomEvent.startTime) - 20 * 60 * 1000) {
-                    const versions = nextZoomItems[0].data as ContentItemDataBlob;
+                    const versions = nextZoomItems[0].data as ElementDataBlob;
                     const latest = R.last(versions)?.data as ZoomBlob;
                     return latest.url;
                 }
@@ -295,11 +292,11 @@ function RoomInner({
     const maybeVideoDetails = useMemo(() => {
         try {
             if (currentRoomEvent) {
-                const currentVideoItems = currentRoomEvent.contentGroup?.videoItems;
+                const currentVideoItems = currentRoomEvent.item?.videoItems;
                 if (currentVideoItems?.length) {
-                    const versions = currentVideoItems[0].data as ContentItemDataBlob;
+                    const versions = currentVideoItems[0].data as ElementDataBlob;
                     const latest = R.last(versions)?.data as VideoContentBlob;
-                    return { data: latest, contentItemId: currentVideoItems[0].id };
+                    return { data: latest, elementId: currentVideoItems[0].id };
                 }
             }
 
@@ -313,9 +310,9 @@ function RoomInner({
     useEffect(() => {
         if (
             currentRoomEvent &&
-            (currentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
-                currentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
-            currentRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
+            (currentRoomEvent.intendedRoomModeName === room_Mode_Enum.Presentation ||
+                currentRoomEvent.intendedRoomModeName === room_Mode_Enum.QAndA) &&
+            currentRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id) &&
             watchStreamForEventId === currentRoomEvent.id &&
             !showBackstage
         ) {
@@ -333,9 +330,9 @@ function RoomInner({
             });
         } else if (
             nextRoomEvent &&
-            (nextRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
-                nextRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
-            nextRoomEvent.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id) &&
+            (nextRoomEvent.intendedRoomModeName === room_Mode_Enum.Presentation ||
+                nextRoomEvent.intendedRoomModeName === room_Mode_Enum.QAndA) &&
+            nextRoomEvent.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id) &&
             Date.parse(nextRoomEvent.startTime) - Date.now() < 20 * 60 * 1000 &&
             !showBackstage
         ) {
@@ -356,18 +353,18 @@ function RoomInner({
 
     const controlBarEl = useMemo(
         () =>
-            roomDetails.roomPrivacyName !== RoomPrivacy_Enum.Public ? (
+            roomDetails.managementModeName !== room_ManagementMode_Enum.Public ? (
                 <RoomControlBar roomDetails={roomDetails} />
             ) : undefined,
         [roomDetails]
     );
 
-    const roomEventsForCurrentAttendee = useMemo(
+    const roomEventsForCurrentRegistrant = useMemo(
         () =>
             roomEvents.filter((event) =>
-                event.eventPeople.some((person) => person.person.attendeeId === currentAttendee.id)
+                event.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id)
             ),
-        [currentAttendee.id, roomEvents]
+        [currentRegistrant.id, roomEvents]
     );
     const [backstageSelectedEventId, setBackstageSelectedEventId] = useState<string | null>(null);
     const backStageEl = useMemo(
@@ -375,7 +372,7 @@ function RoomInner({
             <RoomBackstage
                 showBackstage={showBackstage}
                 roomName={roomDetails.name}
-                roomEvents={roomEventsForCurrentAttendee}
+                roomEvents={roomEventsForCurrentRegistrant}
                 currentRoomEventId={currentRoomEvent?.id}
                 nextRoomEventId={nextRoomEvent?.id}
                 setWatchStreamForEventId={setWatchStreamForEventId}
@@ -383,7 +380,7 @@ function RoomInner({
                 onEventSelected={setBackstageSelectedEventId}
             />
         ),
-        [currentRoomEvent?.id, nextRoomEvent, roomDetails.name, roomEventsForCurrentAttendee, showBackstage]
+        [currentRoomEvent?.id, nextRoomEvent, roomDetails.name, roomEventsForCurrentRegistrant, showBackstage]
     );
 
     const contentEl = useMemo(
@@ -428,14 +425,14 @@ function RoomInner({
         async function fn() {
             try {
                 if (
-                    existingCurrentRoomEvent?.contentGroupId &&
-                    (existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.Presentation ||
-                        existingCurrentRoomEvent.intendedRoomModeName === RoomMode_Enum.QAndA) &&
+                    existingCurrentRoomEvent?.itemId &&
+                    (existingCurrentRoomEvent.intendedRoomModeName === room_Mode_Enum.Presentation ||
+                        existingCurrentRoomEvent.intendedRoomModeName === room_Mode_Enum.QAndA) &&
                     existingCurrentRoomEvent.id !== currentRoomEvent?.id
                 ) {
                     try {
                         const breakoutRoom = await refetchBreakout({
-                            originatingContentGroupId: existingCurrentRoomEvent.contentGroupId,
+                            originatingItemId: existingCurrentRoomEvent.itemId,
                         });
 
                         if (!breakoutRoom.data || !breakoutRoom.data.Room || breakoutRoom.data.Room.length < 1) {
@@ -553,17 +550,14 @@ function RoomInner({
     );
 
     const playerEl = useMemo(() => {
-        const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === RoomMode_Enum.VideoPlayer;
+        const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === room_Mode_Enum.VideoPlayer;
         const shouldShowLivePlayer =
             !currentEventModeIsNone && !showDefaultBreakoutRoom && withinThreeMinutesOfBroadcastEvent;
 
         return !showBackstage ? (
             currentEventIsVideoPlayer ? (
                 maybeVideoDetails ? (
-                    <ContentItemVideo
-                        contentItemId={maybeVideoDetails.contentItemId}
-                        videoContentItemData={maybeVideoDetails.data}
-                    />
+                    <ElementVideo elementId={maybeVideoDetails.elementId} videoElementData={maybeVideoDetails.data} />
                 ) : (
                     <>Could not find video.</>
                 )

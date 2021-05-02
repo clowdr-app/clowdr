@@ -3,8 +3,8 @@ import assert from "assert";
 import { useEffect, useState } from "react";
 import {
     OriginatingData_Insert_Input,
-    RoomMode_Enum,
     Room_Insert_Input,
+    room_Mode_Enum,
     Tag_Insert_Input,
     useDeleteEventsMutation,
     useDeleteOriginatingDatasMutation,
@@ -21,13 +21,13 @@ import {
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
-import type { ContentGroupDescriptor, ContentPersonDescriptor } from "../Content/Types";
+import type { ItemDescriptor, ProgramPersonDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
 import { convertScheduleToDescriptors } from "./Functions";
 import type { EventDescriptor, RoomDescriptor } from "./Types";
 
 gql`
-    fragment RoomInfo on Room {
+    fragment RoomInfo on room_Room {
         capacity
         conferenceId
         currentModeName
@@ -36,8 +36,8 @@ gql`
         priority
         originatingDataId
         originatingEventId
-        originatingContentGroupId
-        roomPrivacyName
+        originatingItemId
+        managementModeName
         originatingData {
             ...OriginatingDataInfo
         }
@@ -46,19 +46,19 @@ gql`
         }
     }
 
-    fragment RoomParticipantInfo on RoomParticipant {
-        attendeeId
+    fragment RoomParticipantInfo on room_Participant {
+        registrantId
         conferenceId
         id
         roomId
     }
 
-    fragment EventInfo on Event {
+    fragment EventInfo on schedule_Event {
         conferenceId
         id
         durationSeconds
         eventPeople {
-            ...EventPersonInfo
+            ...EventProgramPersonInfo
         }
         eventTags {
             ...EventTagInfo
@@ -70,49 +70,49 @@ gql`
         roomId
         startTime
         endTime
-        contentGroupId
-        hallwayId
+        itemId
+        exhibitionId
     }
 
-    fragment EventPersonInfo on EventPerson {
+    fragment EventProgramPersonInfo on schedule_EventProgramPerson {
         id
         eventId
         roleName
         personId
     }
 
-    fragment EventTagInfo on EventTag {
+    fragment EventTagInfo on schedule_EventTag {
         eventId
         id
         tagId
     }
 
     query SelectWholeSchedule($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId } }) {
+        room_Room(where: { conferenceId: { _eq: $conferenceId } }) {
             ...RoomInfo
         }
-        Event(where: { conferenceId: { _eq: $conferenceId } }, order_by: { startTime: asc, endTime: asc }) {
+        schedule_Event(where: { conferenceId: { _eq: $conferenceId } }, order_by: { startTime: asc, endTime: asc }) {
             ...EventInfo
         }
-        OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
+        conference_OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
             ...OriginatingDataInfo
         }
-        Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...TagInfo
         }
-        Hallway(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...HallwayInfo
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ExhibitionInfo
         }
-        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ContentGroupFullNestedInfo
+        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ItemFullNestedInfo
         }
-        ContentPerson(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ContentPersonInfo
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ProgramPersonInfo
         }
     }
 
-    mutation InsertRooms($newRooms: [Room_insert_input!]!) {
-        insert_Room(objects: $newRooms) {
+    mutation InsertRooms($newRooms: [room_Room_insert_input!]!) {
+        insert_room_Room(objects: $newRooms) {
             returning {
                 ...RoomInfo
             }
@@ -120,7 +120,7 @@ gql`
     }
 
     mutation DeleteRooms($deleteRoomIds: [uuid!]!) {
-        delete_Room(where: { id: { _in: $deleteRoomIds } }) {
+        delete_room_Room(where: { id: { _in: $deleteRoomIds } }) {
             returning {
                 id
             }
@@ -134,7 +134,7 @@ gql`
         $originatingDataId: uuid = null
         $priority: Int!
     ) {
-        update_Room_by_pk(
+        update_room_Room_by_pk(
             pk_columns: { id: $id }
             _set: { name: $name, capacity: $capacity, originatingDataId: $originatingDataId, priority: $priority }
         ) {
@@ -143,15 +143,15 @@ gql`
     }
 
     mutation DeleteEvents($deleteEventIds: [uuid!]!) {
-        delete_Event(where: { id: { _in: $deleteEventIds } }) {
+        delete_schedule_Event(where: { id: { _in: $deleteEventIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation InsertEvent($newEvent: Event_insert_input!) {
-        insert_Event_one(object: $newEvent) {
+    mutation InsertEvent($newEvent: schedule_Event_insert_input!) {
+        insert_schedule_Event_one(object: $newEvent) {
             ...EventInfo
         }
     }
@@ -159,22 +159,22 @@ gql`
     mutation UpdateEvent(
         $eventId: uuid!
         $roomId: uuid!
-        $intendedRoomModeName: RoomMode_enum!
+        $intendedRoomModeName: room_Mode_enum!
         $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
-        $contentGroupId: uuid = null
-        $hallwayId: uuid = null
-        $newEventTags: [EventTag_insert_input!]!
+        $itemId: uuid = null
+        $exhibitionId: uuid = null
+        $newEventTags: [schedule_EventTag_insert_input!]!
         $deleteEventTagIds: [uuid!]!
     ) {
-        insert_EventTag(objects: $newEventTags) {
+        insert_schedule_EventTag(objects: $newEventTags) {
             returning {
                 ...EventTagInfo
             }
         }
-        update_Event_by_pk(
+        update_schedule_Event_by_pk(
             pk_columns: { id: $eventId }
             _set: {
                 roomId: $roomId
@@ -183,13 +183,13 @@ gql`
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
-                contentGroupId: $contentGroupId
-                hallwayId: $hallwayId
+                itemId: $itemId
+                exhibitionId: $exhibitionId
             }
         ) {
             ...EventInfo
         }
-        delete_EventTag(where: { tag: { id: { _in: $deleteEventTagIds } } }) {
+        delete_schedule_EventTag(where: { tag: { id: { _in: $deleteEventTagIds } } }) {
             returning {
                 id
             }
@@ -203,8 +203,8 @@ export type WholeScheduleStateT =
           tags: Map<string, TagDescriptor>;
           rooms: Map<string, RoomDescriptor>;
           originatingDatas: Map<string, OriginatingDataDescriptor>;
-          people: Map<string, ContentPersonDescriptor>;
-          contentGroups: ContentGroupDescriptor[];
+          people: Map<string, ProgramPersonDescriptor>;
+          items: ItemDescriptor[];
       }
     | undefined;
 
@@ -217,7 +217,7 @@ export function useSaveScheduleDiff():
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
           originalPeople: undefined;
-          contentGroups: undefined;
+          items: undefined;
       }
     | {
           loadingContent: false;
@@ -227,7 +227,7 @@ export function useSaveScheduleDiff():
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
           originalPeople: undefined;
-          contentGroups: undefined;
+          items: undefined;
       }
     | {
           loadingContent: false;
@@ -237,7 +237,7 @@ export function useSaveScheduleDiff():
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
           originalPeople: undefined;
-          contentGroups: undefined;
+          items: undefined;
       }
     | {
           loadingContent: boolean;
@@ -246,8 +246,8 @@ export function useSaveScheduleDiff():
           originalTags: Map<string, TagDescriptor>;
           originalOriginatingDatas: Map<string, OriginatingDataDescriptor>;
           originalRooms: Map<string, RoomDescriptor>;
-          originalPeople: Map<string, ContentPersonDescriptor>;
-          contentGroups: ContentGroupDescriptor[];
+          originalPeople: Map<string, ProgramPersonDescriptor>;
+          items: ItemDescriptor[];
           saveScheduleDiff: (
               dirtyKeys: {
                   tagKeys: Set<string>;
@@ -305,7 +305,7 @@ export function useSaveScheduleDiff():
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
             originalPeople: undefined,
-            contentGroups: undefined,
+            items: undefined,
         };
     } else if (errorContent) {
         return {
@@ -316,7 +316,7 @@ export function useSaveScheduleDiff():
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
             originalPeople: undefined,
-            contentGroups: undefined,
+            items: undefined,
         };
     } else if (!original) {
         return {
@@ -327,7 +327,7 @@ export function useSaveScheduleDiff():
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
             originalPeople: undefined,
-            contentGroups: undefined,
+            items: undefined,
         };
     } else {
         return {
@@ -338,7 +338,7 @@ export function useSaveScheduleDiff():
             originalTags: original.tags,
             originalRooms: original.rooms,
             originalPeople: original.people,
-            contentGroups: original.contentGroups,
+            items: original.items,
             saveScheduleDiff: async function saveScheduleDiff(
                 { eventKeys, originatingDataKeys, tagKeys, roomKeys },
                 tags,
@@ -504,7 +504,7 @@ export function useSaveScheduleDiff():
                                         originatingDataId: room.originatingDataId,
                                         capacity: room.capacity,
                                         priority: room.priority,
-                                        currentModeName: RoomMode_Enum.Breakout,
+                                        currentModeName: room_Mode_Enum.Breakout,
                                     })
                                 ),
                             },
@@ -555,8 +555,8 @@ export function useSaveScheduleDiff():
                                             conferenceId: conference.id,
                                             roomId: event.roomId,
                                             intendedRoomModeName: event.intendedRoomModeName,
-                                            contentGroupId: event.contentGroupId,
-                                            hallwayId: event.hallwayId,
+                                            itemId: event.itemId,
+                                            exhibitionId: event.exhibitionId,
                                             name: event.name,
                                             startTime: new Date(event.startTime).toISOString(),
                                             durationSeconds: event.durationSeconds,
@@ -616,8 +616,8 @@ export function useSaveScheduleDiff():
                                         originatingDataId: event.originatingDataId,
                                         roomId: event.roomId,
                                         intendedRoomModeName: event.intendedRoomModeName,
-                                        contentGroupId: event.contentGroupId,
-                                        hallwayId: event.hallwayId,
+                                        itemId: event.itemId,
+                                        exhibitionId: event.exhibitionId,
                                         name: event.name,
                                         startTime: new Date(event.startTime).toISOString(),
                                         durationSeconds: event.durationSeconds,

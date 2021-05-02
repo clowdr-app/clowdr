@@ -33,16 +33,16 @@ import { DateTime } from "luxon";
 import React, { LegacyRef, Ref, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    ContentGroupFullNestedInfoFragment,
-    ContentGroupType_Enum,
-    ContentPersonInfoFragment,
     EventInfoFragment,
     EventInfoFragmentDoc,
-    HallwayInfoFragment,
+    ExhibitionInfoFragment,
+    ItemFullNestedInfoFragment,
+    ItemType_Enum,
     Permission_Enum,
+    ProgramPersonInfoFragment,
     RoomInfoFragment,
-    RoomMode_Enum,
-    RoomPrivacy_Enum,
+    room_ManagementMode_Enum,
+    room_Mode_Enum,
     useDeleteEventInfosMutation,
     useInsertEventInfoMutation,
     useSelectWholeScheduleQuery,
@@ -71,22 +71,22 @@ import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import BatchAddEventPeople from "./Schedule/BatchAddEventPeople";
-import { EventPersonsModal, requiresEventPeople } from "./Schedule/EventPersonsModal";
+import { EventProgramPersonsModal, requiresEventPeople } from "./Schedule/EventProgramPersonsModal";
 
 gql`
     mutation InsertEventInfo(
         $id: uuid!
         $roomId: uuid!
         $conferenceId: uuid!
-        $intendedRoomModeName: RoomMode_enum!
+        $intendedRoomModeName: room_Mode_enum!
         $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
-        $contentGroupId: uuid = null
-        $hallwayId: uuid = null
+        $itemId: uuid = null
+        $exhibitionId: uuid = null
     ) {
-        insert_Event_one(
+        insert_schedule_Event_one(
             object: {
                 id: $id
                 roomId: $roomId
@@ -96,8 +96,8 @@ gql`
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
-                contentGroupId: $contentGroupId
-                hallwayId: $hallwayId
+                itemId: $itemId
+                exhibitionId: $exhibitionId
             }
         ) {
             ...EventInfo
@@ -107,15 +107,15 @@ gql`
     mutation UpdateEventInfo(
         $eventId: uuid!
         $roomId: uuid!
-        $intendedRoomModeName: RoomMode_enum!
+        $intendedRoomModeName: room_Mode_enum!
         $originatingDataId: uuid = null
         $name: String!
         $startTime: timestamptz!
         $durationSeconds: Int!
-        $contentGroupId: uuid = null
-        $hallwayId: uuid = null
+        $itemId: uuid = null
+        $exhibitionId: uuid = null
     ) {
-        update_Event_by_pk(
+        update_schedule_Event_by_pk(
             pk_columns: { id: $eventId }
             _set: {
                 roomId: $roomId
@@ -124,8 +124,8 @@ gql`
                 name: $name
                 startTime: $startTime
                 durationSeconds: $durationSeconds
-                contentGroupId: $contentGroupId
-                hallwayId: $hallwayId
+                itemId: $itemId
+                exhibitionId: $exhibitionId
             }
         ) {
             ...EventInfo
@@ -133,7 +133,7 @@ gql`
     }
 
     mutation DeleteEventInfos($eventIds: [uuid!]!) {
-        delete_Event(where: { id: { _in: $eventIds } }) {
+        delete_schedule_Event(where: { id: { _in: $eventIds } }) {
             returning {
                 id
             }
@@ -148,7 +148,7 @@ enum ColumnId {
     RoomMode = "roomMode",
     Name = "name",
     Content = "content",
-    Hallway = "hallway",
+    Exhibition = "exhibition",
 }
 
 function rowWarning(row: EventInfoFragment) {
@@ -166,10 +166,10 @@ function areOverlapping(start1: number, end1: number, start2: number, end2: numb
     return start1 < end2 && start2 < end1;
 }
 
-const liveStreamRoomModes: RoomMode_Enum[] = [
-    RoomMode_Enum.Prerecorded,
-    RoomMode_Enum.Presentation,
-    RoomMode_Enum.QAndA,
+const liveStreamRoomModes: room_Mode_Enum[] = [
+    room_Mode_Enum.Prerecorded,
+    room_Mode_Enum.Presentation,
+    room_Mode_Enum.QAndA,
 ];
 
 function EditableScheduleTable(): JSX.Element {
@@ -189,15 +189,13 @@ function EditableScheduleTable(): JSX.Element {
                 ? [...wholeSchedule.data.Room]
                       .filter(
                           (room) =>
-                              (!room.originatingContentGroupId ||
-                                  wholeSchedule.data?.ContentGroup.some(
-                                      (x) =>
-                                          x.id === room.originatingContentGroupId &&
-                                          x.contentGroupTypeName === ContentGroupType_Enum.Sponsor
+                              (!room.originatingItemId ||
+                                  wholeSchedule.data?.Item.some(
+                                      (x) => x.id === room.originatingItemId && x.typeName === ItemType_Enum.Sponsor
                                   )) &&
                               !room.originatingEventId &&
-                              room.roomPrivacyName !== RoomPrivacy_Enum.Dm &&
-                              room.roomPrivacyName !== RoomPrivacy_Enum.Managed
+                              room.managementModeName !== room_ManagementMode_Enum.Dm &&
+                              room.managementModeName !== room_ManagementMode_Enum.Managed
                       )
                       .sort((x, y) => x.name.localeCompare(y.name))
                       .map((room) => {
@@ -208,24 +206,24 @@ function EditableScheduleTable(): JSX.Element {
                           );
                       })
                 : undefined,
-        [wholeSchedule.data?.Room, wholeSchedule.data?.ContentGroup]
+        [wholeSchedule.data?.Room, wholeSchedule.data?.Item]
     );
 
     const roomModeOptions = useMemo(
         () =>
-            Object.keys(RoomMode_Enum)
+            Object.keys(room_Mode_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (RoomMode_Enum as any)[x];
+                    const v = (room_Mode_Enum as any)[x];
                     return { value: v, label: formatEnumValue(v) };
                 }),
         []
     );
 
-    const contentGroupOptions = useMemo(
+    const itemOptions = useMemo(
         () =>
-            wholeSchedule.data?.ContentGroup
-                ? [...wholeSchedule.data.ContentGroup]
+            wholeSchedule.data?.Item
+                ? [...wholeSchedule.data.Item]
                       .sort((x, y) => x.title.localeCompare(y.title))
                       .map((content) => {
                           return (
@@ -235,23 +233,23 @@ function EditableScheduleTable(): JSX.Element {
                           );
                       })
                 : undefined,
-        [wholeSchedule.data?.ContentGroup]
+        [wholeSchedule.data?.Item]
     );
 
-    const hallwayOptions = useMemo(
+    const exhibitionOptions = useMemo(
         () =>
-            wholeSchedule.data?.Hallway
-                ? [...wholeSchedule.data.Hallway]
+            wholeSchedule.data?.Exhibition
+                ? [...wholeSchedule.data.Exhibition]
                       .sort((x, y) => x.name.localeCompare(y.name))
-                      .map((hallway) => {
+                      .map((exhibition) => {
                           return (
-                              <option key={hallway.id} value={hallway.id}>
-                                  {hallway.name}
+                              <option key={exhibition.id} value={exhibition.id}>
+                                  {exhibition.name}
                               </option>
                           );
                       })
                 : undefined,
-        [wholeSchedule.data?.Hallway]
+        [wholeSchedule.data?.Exhibition]
     );
 
     const {
@@ -472,13 +470,13 @@ function EditableScheduleTable(): JSX.Element {
                     );
                 },
                 get: (data) => data.intendedRoomModeName,
-                set: (record, v: RoomMode_Enum) => {
+                set: (record, v: room_Mode_Enum) => {
                     record.intendedRoomModeName = v;
                 },
-                filterFn: (rows, v: RoomMode_Enum) => rows.filter((r) => r.intendedRoomModeName === v),
-                filterEl: SelectColumnFilter(Object.values(RoomMode_Enum)),
-                sort: (x: RoomMode_Enum, y: RoomMode_Enum) => x.localeCompare(y),
-                cell: function RoomModeCell(props: CellProps<Partial<EventInfoFragment>, RoomMode_Enum | undefined>) {
+                filterFn: (rows, v: room_Mode_Enum) => rows.filter((r) => r.intendedRoomModeName === v),
+                filterEl: SelectColumnFilter(Object.values(room_Mode_Enum)),
+                sort: (x: room_Mode_Enum, y: room_Mode_Enum) => x.localeCompare(y),
+                cell: function RoomModeCell(props: CellProps<Partial<EventInfoFragment>, room_Mode_Enum | undefined>) {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
                     const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
@@ -504,7 +502,7 @@ function EditableScheduleTable(): JSX.Element {
                             ) : undefined}
                             <Select
                                 value={props.value ?? ""}
-                                onChange={(ev) => props.onChange?.(ev.target.value as RoomMode_Enum)}
+                                onChange={(ev) => props.onChange?.(ev.target.value as room_Mode_Enum)}
                                 onBlur={props.onBlur}
                                 isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
@@ -577,19 +575,19 @@ function EditableScheduleTable(): JSX.Element {
                         </Button>
                     );
                 },
-                get: (data) => wholeSchedule.data?.ContentGroup.find((room) => room.id === data.contentGroupId),
-                set: (record, value: ContentGroupFullNestedInfoFragment | undefined) => {
-                    record.contentGroupId = value?.id;
+                get: (data) => wholeSchedule.data?.Item.find((room) => room.id === data.itemId),
+                set: (record, value: ItemFullNestedInfoFragment | undefined) => {
+                    record.itemId = value?.id;
                 },
-                sortType: (rowA: ContentGroupFullNestedInfoFragment, rowB: ContentGroupFullNestedInfoFragment) => {
+                sortType: (rowA: ItemFullNestedInfoFragment, rowB: ItemFullNestedInfoFragment) => {
                     const compared = rowA && rowB ? rowA.title.localeCompare(rowB.title) : rowA ? 1 : rowB ? -1 : 0;
                     return compared;
                 },
                 filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
                     return rows.filter((row) => {
                         return (
-                            (row.contentGroupId &&
-                                wholeSchedule.data?.ContentGroup.find((room) => room.id === row.contentGroupId)
+                            (row.itemId &&
+                                wholeSchedule.data?.Item.find((room) => room.id === row.itemId)
                                     ?.title.toLowerCase()
                                     .includes(filterValue.toLowerCase())) ??
                             false
@@ -598,7 +596,7 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 filterEl: TextColumnFilter,
                 cell: function ContentCell(
-                    props: CellProps<Partial<EventInfoFragment>, ContentGroupFullNestedInfoFragment | undefined>
+                    props: CellProps<Partial<EventInfoFragment>, ItemFullNestedInfoFragment | undefined>
                 ) {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
@@ -634,7 +632,7 @@ function EditableScheduleTable(): JSX.Element {
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
                                     props.onChange?.(
-                                        wholeSchedule.data?.ContentGroup.find((room) => room.id === ev.target.value)
+                                        wholeSchedule.data?.Item.find((room) => room.id === ev.target.value)
                                     )
                                 }
                                 onBlur={props.onBlur}
@@ -643,15 +641,15 @@ function EditableScheduleTable(): JSX.Element {
                                 maxW={400}
                             >
                                 <option value={""}>{"<None selected>"}</option>
-                                {contentGroupOptions}
+                                {itemOptions}
                             </Select>
                         </HStack>
                     );
                 },
             },
             {
-                id: ColumnId.Hallway,
-                header: function HallwayHeader(props: ColumnHeaderProps<EventInfoFragment>) {
+                id: ColumnId.Exhibition,
+                header: function ExhibitionHeader(props: ColumnHeaderProps<EventInfoFragment>) {
                     return props.isInCreate ? (
                         <FormLabel>Exhibition (optional)</FormLabel>
                     ) : (
@@ -660,19 +658,19 @@ function EditableScheduleTable(): JSX.Element {
                         </Button>
                     );
                 },
-                get: (data) => wholeSchedule.data?.Hallway.find((hallway) => hallway.id === data.hallwayId),
-                set: (record, value: HallwayInfoFragment | undefined) => {
-                    record.hallwayId = value?.id;
+                get: (data) => wholeSchedule.data?.Exhibition.find((exhibition) => exhibition.id === data.exhibitionId),
+                set: (record, value: ExhibitionInfoFragment | undefined) => {
+                    record.exhibitionId = value?.id;
                 },
-                sortType: (rowA: HallwayInfoFragment, rowB: HallwayInfoFragment) => {
+                sortType: (rowA: ExhibitionInfoFragment, rowB: ExhibitionInfoFragment) => {
                     const compared = rowA && rowB ? rowA.name.localeCompare(rowB.name) : rowA ? 1 : rowB ? -1 : 0;
                     return compared;
                 },
                 filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
                     return rows.filter((row) => {
                         return (
-                            (row.hallwayId &&
-                                wholeSchedule.data?.Hallway.find((hallway) => hallway.id === row.hallwayId)
+                            (row.exhibitionId &&
+                                wholeSchedule.data?.Exhibition.find((exhibition) => exhibition.id === row.exhibitionId)
                                     ?.name.toLowerCase()
                                     .includes(filterValue.toLowerCase())) ??
                             false
@@ -680,8 +678,8 @@ function EditableScheduleTable(): JSX.Element {
                     });
                 },
                 filterEl: TextColumnFilter,
-                cell: function HallwayCell(
-                    props: CellProps<Partial<EventInfoFragment>, HallwayInfoFragment | undefined>
+                cell: function ExhibitionCell(
+                    props: CellProps<Partial<EventInfoFragment>, ExhibitionInfoFragment | undefined>
                 ) {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
@@ -699,17 +697,17 @@ function EditableScheduleTable(): JSX.Element {
                             {props.value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/hallway/${props.value.id}`}
+                                    to={`/conference/${conference.slug}/exhibition/${props.value.id}`}
                                     size="xs"
-                                    aria-label="Go to hallway in new tab"
+                                    aria-label="Go to exhibition in new tab"
                                 >
-                                    <Tooltip label="Go to hallway in new tab">
+                                    <Tooltip label="Go to exhibition in new tab">
                                         <FAIcon iconStyle="s" icon="link" />
                                     </Tooltip>
                                 </LinkButton>
                             ) : undefined}
                             {!props.isInCreate && (ongoing || past) && isLivestream ? (
-                                <Tooltip label="You cannot edit the hallway of an ongoing or past livestream event.">
+                                <Tooltip label="You cannot edit the exhibition of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
@@ -717,7 +715,7 @@ function EditableScheduleTable(): JSX.Element {
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
                                     props.onChange?.(
-                                        wholeSchedule.data?.Hallway.find((room) => room.id === ev.target.value)
+                                        wholeSchedule.data?.Exhibition.find((room) => room.id === ev.target.value)
                                     )
                                 }
                                 onBlur={props.onBlur}
@@ -726,7 +724,7 @@ function EditableScheduleTable(): JSX.Element {
                                 maxW={400}
                             >
                                 <option value={""}>{"<None selected>"}</option>
-                                {hallwayOptions}
+                                {exhibitionOptions}
                             </Select>
                         </HStack>
                     );
@@ -735,13 +733,13 @@ function EditableScheduleTable(): JSX.Element {
         ],
         [
             conference.slug,
-            contentGroupOptions,
-            hallwayOptions,
+            itemOptions,
+            exhibitionOptions,
             roomModeOptions,
             roomOptions,
-            wholeSchedule.data?.ContentGroup,
+            wholeSchedule.data?.Item,
             wholeSchedule.data?.Room,
-            wholeSchedule.data?.Hallway,
+            wholeSchedule.data?.Exhibition,
         ]
     );
 
@@ -769,9 +767,9 @@ function EditableScheduleTable(): JSX.Element {
                     };
                 }
 
-                if (!record.name && !record.contentGroupId && !record.hallwayId) {
+                if (!record.name && !record.itemId && !record.exhibitionId) {
                     return {
-                        reason: "Event must have a name, content or hallway.",
+                        reason: "Event must have a name, content or exhibition.",
                         columnId: ColumnId.Name,
                     };
                 }
@@ -878,7 +876,7 @@ function EditableScheduleTable(): JSX.Element {
                           id: uuidv4(),
                           durationSeconds: 300,
                           conferenceId: conference.id,
-                          intendedRoomModeName: RoomMode_Enum.Breakout,
+                          intendedRoomModeName: room_Mode_Enum.Breakout,
                           name: "Innominate event",
                           roomId: roomOptions[0].props.value,
                           startTime: DateTime.local()
@@ -890,8 +888,8 @@ function EditableScheduleTable(): JSX.Element {
                                   milliseconds: 1,
                               })
                               .toISO(),
-                          contentGroupId: null,
-                          hallwayId: null,
+                          itemId: null,
+                          exhibitionId: null,
                           originatingDataId: null,
                       }),
                       makeWhole: (d) => d as EventInfoFragment,
@@ -1068,7 +1066,7 @@ function EditableScheduleTable(): JSX.Element {
             />
             <EventSecondaryEditor
                 yellowC={yellow}
-                contentPeople={wholeSchedule.data?.ContentPerson ?? []}
+                programPeople={wholeSchedule.data?.ProgramPerson ?? []}
                 events={wholeSchedule.data?.Event ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
@@ -1106,14 +1104,14 @@ export default function ManageConferenceSchedulePage(): JSX.Element {
 
 function EventSecondaryEditor({
     events,
-    contentPeople,
+    programPeople,
     isSecondaryPanelOpen,
     onSecondaryPanelClose,
     index,
     yellowC,
 }: {
     events: readonly EventInfoFragment[];
-    contentPeople: readonly ContentPersonInfoFragment[];
+    programPeople: readonly ProgramPersonInfoFragment[];
     isSecondaryPanelOpen: boolean;
     onSecondaryPanelClose: () => void;
     index: number | null;
@@ -1148,7 +1146,7 @@ function EventSecondaryEditor({
                                         <EventPeopleEditorModal
                                             yellowC={yellowC}
                                             event={event}
-                                            contentPeople={contentPeople}
+                                            programPeople={programPeople}
                                         />
                                     </AccordionPanel>
                                 </AccordionItem>
@@ -1165,22 +1163,22 @@ function EventSecondaryEditor({
 
 function EventPeopleEditorModal({
     event,
-    contentPeople,
+    programPeople,
     yellowC,
 }: {
     event: EventInfoFragment;
-    contentPeople: readonly ContentPersonInfoFragment[];
+    programPeople: readonly ProgramPersonInfoFragment[];
     yellowC: string;
 }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const accordionContents = (
-        <EventPersonsModal
+        <EventProgramPersonsModal
             yellow={yellowC}
             isOpen={isOpen}
             onOpen={onOpen}
             onClose={onClose}
             event={event}
-            contentPeople={contentPeople}
+            programPeople={programPeople}
         />
     );
     return accordionContents;

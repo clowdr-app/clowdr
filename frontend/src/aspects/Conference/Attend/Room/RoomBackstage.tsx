@@ -25,7 +25,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
-import { RoomMode_Enum, Room_EventSummaryFragment } from "../../../../generated/graphql";
+import { Room_EventSummaryFragment, room_Mode_Enum } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
@@ -60,7 +60,7 @@ function EventBackstage({
     const isActive = isNow || isSoon;
     const category = isNow ? "Happening now" : isSoon ? "Starting soon" : "Ended";
     const borderColour = isNow ? "red" : greyBorderColour;
-    const title = event?.contentGroup ? `${event.contentGroup.title} (${event.name})` : event.name;
+    const title = event?.item ? `${event.item.title} (${event.name})` : event.name;
     const isSelected = event.id === selectedEventId;
     const summaryInfo = useMemo(
         () => (
@@ -160,7 +160,7 @@ export function RoomBackstage({
             R.sortWith(
                 [R.ascend(R.prop("startTime"))],
                 roomEvents.filter((event) =>
-                    [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(event.intendedRoomModeName)
+                    [room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(event.intendedRoomModeName)
                 )
             ),
         [roomEvents]
@@ -348,16 +348,16 @@ export function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFra
     const timeRemaining = (startTime + 5000 - now - 20 * 60 * 1000) / 1000;
 
     const title = useMemo(() => {
-        if (event.contentGroup) {
-            if (event.contentGroup.title.toLowerCase().includes(event.name.toLowerCase())) {
-                return event.contentGroup.title;
+        if (event.item) {
+            if (event.item.title.toLowerCase().includes(event.name.toLowerCase())) {
+                return event.item.title;
             } else {
-                return event.name + ": " + event.contentGroup.title;
+                return event.name + ": " + event.item.title;
             }
         } else {
             return event.name;
         }
-    }, [event.contentGroup, event.name]);
+    }, [event.item, event.name]);
 
     return timeRemaining > 0 ? (
         <Alert status="info" alignItems="flex-start">

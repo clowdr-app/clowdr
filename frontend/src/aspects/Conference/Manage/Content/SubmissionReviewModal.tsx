@@ -22,27 +22,27 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { ContentItem } from "../../Attend/Content/Item/ContentItem";
-import type { ContentGroupDescriptor, ContentItemDescriptor } from "./Types";
+import { Element } from "../../Attend/Content/Element/Element";
+import type { ElementDescriptor, ItemDescriptor } from "./Types";
 
 export function SubmissionReviewModal({
     isOpen,
     onClose,
-    contentGroups,
+    items,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    contentGroups: ContentGroupDescriptor[];
+    items: ItemDescriptor[];
 }): JSX.Element {
-    const sortedGroups = useMemo(() => contentGroups.sort((x, y) => x.title.localeCompare(y.title)), [contentGroups]);
+    const sortedGroups = useMemo(() => items.sort((x, y) => x.title.localeCompare(y.title)), [items]);
 
     const groupsWithItemsNoUploaders = useMemo(
         () =>
             sortedGroups.filter((x) =>
-                x.requiredItems.some(
+                x.uploadableItems.some(
                     (y) =>
                         y.uploaders.length === 0 &&
-                        !sortedGroups.some((g) => g.items.some((i) => i.requiredContentId === y.id))
+                        !sortedGroups.some((g) => g.items.some((i) => i.uploadableId === y.id))
                 )
             ),
         [sortedGroups]
@@ -50,11 +50,11 @@ export function SubmissionReviewModal({
     const groupsWithItemsNoSentRequests = useMemo(
         () =>
             sortedGroups.filter((x) =>
-                x.requiredItems.some(
+                x.uploadableItems.some(
                     (y) =>
                         y.uploaders.length !== 0 &&
                         y.uploaders.every((z) => z.emailsSentCount === 0) &&
-                        !sortedGroups.some((g) => g.items.some((i) => i.requiredContentId === y.id))
+                        !sortedGroups.some((g) => g.items.some((i) => i.uploadableId === y.id))
                 )
             ),
         [sortedGroups]
@@ -62,11 +62,11 @@ export function SubmissionReviewModal({
     const groupsWithSendRequestsNoSubmissions = useMemo(
         () =>
             sortedGroups.filter((x) =>
-                x.requiredItems.some(
+                x.uploadableItems.some(
                     (y) =>
                         y.uploaders.length !== 0 &&
                         y.uploaders.some((z) => z.emailsSentCount !== 0) &&
-                        !sortedGroups.some((g) => g.items.some((i) => i.requiredContentId === y.id))
+                        !sortedGroups.some((g) => g.items.some((i) => i.uploadableId === y.id))
                 )
             ),
         [sortedGroups]
@@ -74,7 +74,7 @@ export function SubmissionReviewModal({
     const groupsWithSubmissions = useMemo(
         () =>
             sortedGroups.filter((x) =>
-                x.requiredItems.some((y) => sortedGroups.some((g) => g.items.some((i) => i.requiredContentId === y.id)))
+                x.uploadableItems.some((y) => sortedGroups.some((g) => g.items.some((i) => i.uploadableId === y.id)))
             ),
         [sortedGroups]
     );
@@ -98,12 +98,12 @@ export function SubmissionReviewModal({
                                         <ListItem key={x.id}>
                                             <Text>{x.title}</Text>
                                             <UnorderedList>
-                                                {x.requiredItems
+                                                {x.uploadableItems
                                                     .filter(
                                                         (y) =>
                                                             y.uploaders.length === 0 &&
                                                             !sortedGroups.some((g) =>
-                                                                g.items.some((i) => i.requiredContentId === y.id)
+                                                                g.items.some((i) => i.uploadableId === y.id)
                                                             )
                                                     )
                                                     .map((y) => (
@@ -129,13 +129,13 @@ export function SubmissionReviewModal({
                                         <ListItem key={x.id}>
                                             <Text>{x.title}</Text>
                                             <UnorderedList>
-                                                {x.requiredItems
+                                                {x.uploadableItems
                                                     .filter(
                                                         (y) =>
                                                             y.uploaders.length !== 0 &&
                                                             y.uploaders.every((z) => z.emailsSentCount === 0) &&
                                                             !sortedGroups.some((g) =>
-                                                                g.items.some((i) => i.requiredContentId === y.id)
+                                                                g.items.some((i) => i.uploadableId === y.id)
                                                             )
                                                     )
                                                     .map((y) => (
@@ -161,13 +161,13 @@ export function SubmissionReviewModal({
                                         <ListItem key={x.id}>
                                             <Text>{x.title}</Text>
                                             <UnorderedList>
-                                                {x.requiredItems
+                                                {x.uploadableItems
                                                     .filter(
                                                         (y) =>
                                                             y.uploaders.length !== 0 &&
                                                             y.uploaders.some((z) => z.emailsSentCount !== 0) &&
                                                             !sortedGroups.some((g) =>
-                                                                g.items.some((i) => i.requiredContentId === y.id)
+                                                                g.items.some((i) => i.uploadableId === y.id)
                                                             )
                                                     )
                                                     .map((y) => (
@@ -203,10 +203,9 @@ export function SubmissionReviewModal({
                                     {groupsWithSubmissions.reduce(
                                         (accOuter, x) => [
                                             ...accOuter,
-                                            ...x.requiredItems.reduce((acc, y) => {
-                                                const item = sortedGroups.reduce<ContentItemDescriptor | undefined>(
-                                                    (acc, g) =>
-                                                        acc ?? g.items.find((i) => i.requiredContentId === y.id),
+                                            ...x.uploadableItems.reduce((acc, y) => {
+                                                const item = sortedGroups.reduce<ElementDescriptor | undefined>(
+                                                    (acc, g) => acc ?? g.items.find((i) => i.uploadableId === y.id),
                                                     undefined
                                                 );
                                                 if (item) {
@@ -225,7 +224,7 @@ export function SubmissionReviewModal({
                                                                 >
                                                                     {y.name} ({y.typeName})
                                                                 </Heading>
-                                                                <DeferredContentItem item={item} />
+                                                                <DeferredElement item={item} />
                                                             </VStack>
                                                         </GridItem>,
                                                     ];
@@ -246,13 +245,13 @@ export function SubmissionReviewModal({
     );
 }
 
-function DeferredContentItem({ item }: { item: ContentItemDescriptor }): JSX.Element {
+function DeferredElement({ item }: { item: ElementDescriptor }): JSX.Element {
     const { isOpen, onOpen } = useDisclosure();
     return isOpen ? (
-        <ContentItem
+        <Element
             item={{
                 ...item,
-                contentTypeName: item.typeName,
+                typeName: item.typeName,
             }}
         />
     ) : (

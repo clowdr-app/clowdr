@@ -2208,6 +2208,7 @@
   - role: unauthenticated
     permission:
       columns:
+      - accessToken
       - data
       - id
       - itemTitle
@@ -2220,6 +2221,7 @@
   - role: user
     permission:
       columns:
+      - accessToken
       - data
       - id
       - itemTitle
@@ -5023,7 +5025,7 @@
           schema: room
           name: Participant
   computed_fields:
-  - name: hasBeenInvited
+  - name: inviteSent
     definition:
       function:
         schema: registrant
@@ -5072,7 +5074,7 @@
       - updated_at
       - userId
       computed_fields:
-      - hasBeenInvited
+      - inviteSent
       filter:
         _or:
         - _and:

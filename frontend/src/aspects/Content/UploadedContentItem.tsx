@@ -1,12 +1,12 @@
 import type { ApolloQueryResult } from "@apollo/client";
 import { Button, Spinner, Text, Tooltip, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import type { Exact, GetContentItemQuery } from "../../generated/graphql";
+import type { Exact, GetElementQuery } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
-import { EditContentItem } from "./EditContentItem";
-import RenderContentItem from "./RenderContentItem";
+import { EditElement } from "./EditElement";
+import RenderElement from "./RenderElement";
 
-export default function UploadedContentItem({
+export default function UploadedElement({
     magicToken,
     loading,
     error,
@@ -16,10 +16,10 @@ export default function UploadedContentItem({
     magicToken: string;
     loading: boolean;
     error: boolean;
-    data: GetContentItemQuery | undefined;
+    data: GetElementQuery | undefined;
     refetch: (
         variables?: Partial<Exact<{ magicToken: string }>> | undefined
-    ) => Promise<ApolloQueryResult<GetContentItemQuery>>;
+    ) => Promise<ApolloQueryResult<GetElementQuery>>;
 }): JSX.Element {
     const [disableRefresh, setDisableRefresh] = useState<boolean>(false);
     useEffect(() => {
@@ -39,9 +39,9 @@ export default function UploadedContentItem({
         <>Could not load item.</>
     ) : (
         <>
-            {data?.getContentItem?.length && data.getContentItem.length > 0 ? (
+            {data?.getElement?.length && data.getElement.length > 0 ? (
                 <>
-                    {data?.getContentItem?.map((item) =>
+                    {data?.getElement?.map((item) =>
                         item ? (
                             <VStack spacing={2} key={item.id}>
                                 <Tooltip label="Refresh uploaded item">
@@ -65,9 +65,9 @@ export default function UploadedContentItem({
                                 item?.data[item.data.length - 1]?.data.baseType !== "video" ||
                                 !item?.data[item.data.length - 1]?.data.subtitles["en_US"] ||
                                 !item?.data[item.data.length - 1]?.data.subtitles["en_US"]?.s3Url?.length ? (
-                                    <RenderContentItem data={item.data} />
+                                    <RenderElement data={item.data} />
                                 ) : undefined}
-                                <EditContentItem data={item.data} contentItemId={item.id} magicToken={magicToken} />
+                                <EditElement data={item.data} elementId={item.id} magicToken={magicToken} />
                             </VStack>
                         ) : (
                             <></>

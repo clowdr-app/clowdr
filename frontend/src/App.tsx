@@ -6,12 +6,12 @@ import { ThemeProvider } from "styled-components";
 import "./App.css";
 import Routing from "./AppRouting";
 import { GlobalChatStateContext, GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
-import AttendeesContextProvider from "./aspects/Conference/AttendeesContext";
+import AttendeesContextProvider from "./aspects/Conference/RegistrantsContext";
 import ConferenceProvider, { useMaybeConference } from "./aspects/Conference/useConference";
 import ConferenceCurrentUserActivePermissionsProvider, {
     useConferenceCurrentUserActivePermissions,
 } from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
-import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conference/useCurrentAttendee";
+import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conference/useCurrentRegistrant";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";

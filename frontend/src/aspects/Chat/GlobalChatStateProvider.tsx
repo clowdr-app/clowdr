@@ -1,7 +1,7 @@
 import { useApolloClient } from "@apollo/client";
 import React, { useEffect, useMemo } from "react";
 import { useConference } from "../Conference/useConference";
-import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
+import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { GlobalChatState } from "./ChatGlobalState";
 
 export const GlobalChatStateContext = React.createContext<GlobalChatState | undefined>(undefined);
@@ -20,10 +20,10 @@ export function GlobalChatStateProvider({
     children: string | JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
     const conference = useConference();
-    const attendee = useMaybeCurrentAttendee();
+    const registrant = useMaybeCurrentRegistrant();
     const client = useApolloClient();
-    const state = useMemo(() => (attendee ? new GlobalChatState(conference, attendee, client) : undefined), [
-        attendee,
+    const state = useMemo(() => (registrant ? new GlobalChatState(conference, registrant, client) : undefined), [
+        registrant,
         conference,
         client,
     ]);

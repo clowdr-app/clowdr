@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { Grid, GridItem, Heading, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
-import { HallwaySummaryFragment, useSelectAllHallwaysQuery } from "../../../../generated/graphql";
+import { ExhibitionSummaryFragment, useSelectAllExhibitionsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageCountText from "../../../Realtime/PageCountText";
@@ -10,30 +10,30 @@ import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 
 gql`
-    fragment HallwaySummary on Hallway {
+    fragment ExhibitionSummary on collection_Exhibition {
         id
         name
         colour
         priority
     }
 
-    query SelectAllHallways($conferenceId: uuid!) {
-        Hallway(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...HallwaySummary
+    query SelectAllExhibitions($conferenceId: uuid!) {
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ExhibitionSummary
         }
     }
 `;
 
-function HallwayTile({ hallway }: { hallway: HallwaySummaryFragment }): JSX.Element {
+function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment }): JSX.Element {
     const conference = useConference();
     const borderColour = useColorModeValue("gray.300", "gray.600");
 
     const { colorMode } = useColorMode();
     const baseBgColour = colorMode === "light" ? "gray.200" : "gray.600";
     const baseGrey = useToken("colors", baseBgColour);
-    const baseColour = useMemo(() => (Color(hallway.colour).getAlpha() !== 0 ? hallway.colour : baseGrey), [
+    const baseColour = useMemo(() => (Color(exhibition.colour).getAlpha() !== 0 ? exhibition.colour : baseGrey), [
         baseGrey,
-        hallway.colour,
+        exhibition.colour,
     ]);
     const bgColour = useMemo(() => Color(baseColour), [baseColour]);
     const bgColour_Hover = useMemo(
@@ -56,7 +56,7 @@ function HallwayTile({ hallway }: { hallway: HallwaySummaryFragment }): JSX.Elem
     return (
         <GridItem>
             <LinkButton
-                to={`/conference/${conference.slug}/hallway/${hallway.id}`}
+                to={`/conference/${conference.slug}/exhibition/${exhibition.id}`}
                 w="100%"
                 py={8}
                 linkProps={{
@@ -95,36 +95,36 @@ function HallwayTile({ hallway }: { hallway: HallwaySummaryFragment }): JSX.Elem
                     color: "inherit",
                 }}
             >
-                <Text px={5}>{hallway.name}</Text>
-                <PageCountText path={`/conference/${conference.slug}/hallway/${hallway.id}`} />
+                <Text px={5}>{exhibition.name}</Text>
+                <PageCountText path={`/conference/${conference.slug}/exhibition/${exhibition.id}`} />
             </LinkButton>
         </GridItem>
     );
 }
 
-export default function HallwaysPage(): JSX.Element {
+export default function ExhibitionsPage(): JSX.Element {
     const conference = useConference();
-    const hallwaysResponse = useSelectAllHallwaysQuery({
+    const exhibitionsResponse = useSelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
 
-    const hallways = useMemo(
+    const exhibitions = useMemo(
         () =>
-            hallwaysResponse.loading && !hallwaysResponse.data
+            exhibitionsResponse.loading && !exhibitionsResponse.data
                 ? undefined
-                : [...(hallwaysResponse.data?.Hallway ?? [])],
-        [hallwaysResponse.data, hallwaysResponse.loading]
+                : [...(exhibitionsResponse.data?.Exhibition ?? [])],
+        [exhibitionsResponse.data, exhibitionsResponse.loading]
     );
-    const sortedHallways = useMemo(() => hallways?.sort((x, y) => x.priority - y.priority), [hallways]);
+    const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);
 
     const title = useTitle("Exhibitions");
 
     return (
         <>
             {title}
-            {sortedHallways === undefined ? (
+            {sortedExhibitions === undefined ? (
                 <CenteredSpinner spinnerProps={{ label: "Loading exhibitions" }} />
             ) : (
                 <>
@@ -132,8 +132,8 @@ export default function HallwaysPage(): JSX.Element {
                         Exhibitions
                     </Heading>
                     <Grid templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={4}>
-                        {sortedHallways.map((hallway) => (
-                            <HallwayTile key={hallway.id} hallway={hallway} />
+                        {sortedExhibitions.map((exhibition) => (
+                            <ExhibitionTile key={exhibition.id} exhibition={exhibition} />
                         ))}
                     </Grid>
                 </>

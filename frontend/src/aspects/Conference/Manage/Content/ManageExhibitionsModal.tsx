@@ -20,29 +20,29 @@ import CRUDTable, {
     UpdateResult,
 } from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
-import type { HallwayDescriptor } from "./Types";
+import type { ExhibitionDescriptor } from "./Types";
 
-const HallwayCRUDTable = (props: Readonly<CRUDTableProps<HallwayDescriptor, "id">>) => CRUDTable(props);
+const ExhibitionCRUDTable = (props: Readonly<CRUDTableProps<ExhibitionDescriptor, "id">>) => CRUDTable(props);
 
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
-    hallways: Map<string, HallwayDescriptor>;
-    areHallwaysDirty: boolean;
-    insertHallway: (hallway: HallwayDescriptor) => void;
-    updateHallway: (hallway: HallwayDescriptor) => void;
-    deleteHallway: (hallwayId: string) => void;
+    exhibitions: Map<string, ExhibitionDescriptor>;
+    areExhibitionsDirty: boolean;
+    insertExhibition: (exhibition: ExhibitionDescriptor) => void;
+    updateExhibition: (exhibition: ExhibitionDescriptor) => void;
+    deleteExhibition: (exhibitionId: string) => void;
 }
 
-export default function ManageHallwaysModal({
+export default function ManageExhibitionsModal({
     isOpen,
     onClose,
-    hallways,
-    areHallwaysDirty,
-    insertHallway,
-    updateHallway,
-    deleteHallway,
+    exhibitions,
+    areExhibitionsDirty,
+    insertExhibition,
+    updateExhibition,
+    deleteExhibition,
 }: Props): JSX.Element {
     return (
         <>
@@ -53,9 +53,9 @@ export default function ManageHallwaysModal({
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            <HallwayCRUDTable
-                                data={hallways}
-                                externalUnsavedChanges={areHallwaysDirty}
+                            <ExhibitionCRUDTable
+                                data={exhibitions}
+                                externalUnsavedChanges={areExhibitionsDirty}
                                 primaryFields={{
                                     keyField: {
                                         heading: "Id",
@@ -103,7 +103,7 @@ export default function ManageHallwaysModal({
                                         colour: {
                                             heading: "Colour",
                                             ariaLabel: "Colour",
-                                            description: "The colour of the hallway (hex or rgb or rgba format).",
+                                            description: "The colour of the exhibition (hex or rgb or rgba format).",
                                             isHidden: false,
                                             isEditable: true,
                                             defaultValue: "#6a0dad",
@@ -126,10 +126,10 @@ export default function ManageHallwaysModal({
                                             heading: "Priority",
                                             ariaLabel: "Priority",
                                             description:
-                                                "Priority determines the order hallways are listed. Ascending sort (lowest first).",
+                                                "Priority determines the order exhibitions are listed. Ascending sort (lowest first).",
                                             isHidden: false,
                                             isEditable: true,
-                                            defaultValue: hallways.size,
+                                            defaultValue: exhibitions.size,
                                             insert: (item, v) => {
                                                 return {
                                                     ...item,
@@ -149,29 +149,29 @@ export default function ManageHallwaysModal({
                                 csud={{
                                     cudCallbacks: {
                                         create: async (
-                                            partialHallway: Partial<HallwayDescriptor>
+                                            partialExhibition: Partial<ExhibitionDescriptor>
                                         ): Promise<string | null> => {
-                                            assert(partialHallway.colour);
-                                            assert(partialHallway.name);
+                                            assert(partialExhibition.colour);
+                                            assert(partialExhibition.name);
                                             assert(
-                                                partialHallway.priority !== null &&
-                                                    partialHallway.priority !== undefined
+                                                partialExhibition.priority !== null &&
+                                                    partialExhibition.priority !== undefined
                                             );
-                                            const newHallway: HallwayDescriptor = {
-                                                colour: partialHallway.colour,
+                                            const newExhibition: ExhibitionDescriptor = {
+                                                colour: partialExhibition.colour,
                                                 id: uuidv4(),
-                                                name: partialHallway.name,
-                                                priority: partialHallway.priority,
+                                                name: partialExhibition.name,
+                                                priority: partialExhibition.priority,
                                                 isNew: true,
                                             };
-                                            insertHallway(newHallway);
-                                            return newHallway.id;
+                                            insertExhibition(newExhibition);
+                                            return newExhibition.id;
                                         },
-                                        update: async (hallways): Promise<Map<string, UpdateResult>> => {
+                                        update: async (exhibitions): Promise<Map<string, UpdateResult>> => {
                                             const results = new Map<string, UpdateResult>();
-                                            for (const [key, hallway] of hallways) {
+                                            for (const [key, exhibition] of exhibitions) {
                                                 results.set(key, true);
-                                                updateHallway(hallway);
+                                                updateExhibition(exhibition);
                                             }
                                             return results;
                                         },
@@ -179,7 +179,7 @@ export default function ManageHallwaysModal({
                                             const results = new Map<string, boolean>();
                                             for (const key of keys) {
                                                 results.set(key, true);
-                                                deleteHallway(key);
+                                                deleteExhibition(key);
                                             }
                                             return results;
                                         },

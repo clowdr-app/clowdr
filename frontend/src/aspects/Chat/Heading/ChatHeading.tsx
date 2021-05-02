@@ -17,7 +17,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                 <HeadingText />
                 {/* <Spacer /> */}
                 {/* <PageCountBox /> */}
-                {config.currentAttendeeId ? (
+                {config.currentRegistrantId ? (
                     <>
                         <ButtonGroup isAttached borderRadius={5} overflow="hidden">
                             <ChatPinnedQueryProvider>

@@ -12,23 +12,23 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { useSearchAttendeesLazyQuery, useSelectAttendeesQuery } from "../../../../generated/graphql";
+import { useSearchRegistrantsLazyQuery, useSelectRegistrantsQuery } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
-import type { Attendee } from "../../useCurrentAttendee";
-import AttendeesList from "./AttendeesList";
+import type { Registrant } from "../../useCurrentRegistrant";
+import RegistrantsList from "./RegistrantsList";
 
 gql`
-    query SelectAttendees($conferenceId: uuid!) {
-        Attendee(where: { conferenceId: { _eq: $conferenceId } }, order_by: { displayName: asc }) {
-            ...AttendeeData
+    query SelectRegistrants($conferenceId: uuid!) {
+        registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }, order_by: { displayName: asc }) {
+            ...RegistrantData
         }
     }
 
-    query SearchAttendees($conferenceId: uuid!, $search: String!) {
-        Attendee(
+    query SearchRegistrants($conferenceId: uuid!, $search: String!) {
+        registrant_Registrant(
             where: {
                 _and: [
                     { conferenceId: { _eq: $conferenceId } }
@@ -43,53 +43,53 @@ gql`
             }
             order_by: { displayName: asc }
         ) {
-            ...AttendeeData
+            ...RegistrantData
         }
     }
 `;
 
-export default function AttendeeListPage(): JSX.Element {
+export default function RegistrantListPage(): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
-    const title = useTitle(`Attendees at ${conference.shortName}`);
+    const title = useTitle(`Registrants at ${conference.shortName}`);
 
     const [
         searchQuery,
         { loading: loadingSearch, error: errorSearch, data: dataSearch },
-    ] = useSearchAttendeesLazyQuery();
-    useQueryErrorToast(errorSearch, false, "AttendeeListPage.tsx -- search");
+    ] = useSearchRegistrantsLazyQuery();
+    useQueryErrorToast(errorSearch, false, "RegistrantListPage.tsx -- search");
 
-    const { loading: loadingAttendees, error: errorAttendees, data: dataAttendees } = useSelectAttendeesQuery({
+    const { loading: loadingRegistrants, error: errorRegistrants, data: dataRegistrants } = useSelectRegistrantsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAttendees, false, "AttendeeListPage.tsx -- attendees");
+    useQueryErrorToast(errorRegistrants, false, "RegistrantListPage.tsx -- registrants");
 
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(true);
     const [loadedCount, setLoadedCount] = useState<number>(30);
 
-    const allAttendees = useMemo(() => {
-        if ((loadingAttendees && !dataAttendees) || errorAttendees) {
+    const allRegistrants = useMemo(() => {
+        if ((loadingRegistrants && !dataRegistrants) || errorRegistrants) {
             return undefined;
         }
 
-        if (!dataAttendees) {
+        if (!dataRegistrants) {
             return [];
         }
 
-        return dataAttendees?.Attendee.filter((x) => !!x.profile && !!x.userId) as Attendee[];
-    }, [dataAttendees, errorAttendees, loadingAttendees]);
+        return dataRegistrants?.Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
+    }, [dataRegistrants, errorRegistrants, loadingRegistrants]);
 
-    const [attendees, setAttendees] = useState<Attendee[] | null>(null);
-    const [searched, setSearched] = useState<Attendee[] | null>(null);
-    const [allSearched, setAllSearched] = useState<Attendee[] | null>(null);
+    const [registrants, setRegistrants] = useState<Registrant[] | null>(null);
+    const [searched, setSearched] = useState<Registrant[] | null>(null);
+    const [allSearched, setAllSearched] = useState<Registrant[] | null>(null);
 
     useEffect(() => {
-        setAttendees(allAttendees?.slice(0, loadedCount) ?? null);
+        setRegistrants(allRegistrants?.slice(0, loadedCount) ?? null);
         setIsLoadingMore(false);
-    }, [allAttendees, loadedCount]);
+    }, [allRegistrants, loadedCount]);
 
     useEffect(() => {
         setSearched(allSearched?.slice(0, loadedCount) ?? null);
@@ -106,7 +106,7 @@ export default function AttendeeListPage(): JSX.Element {
                 return undefined;
             }
 
-            return dataSearch?.Attendee.filter((x) => !!x.profile && !!x.userId) as Attendee[];
+            return dataSearch?.Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
         }
 
         setLoadedCount(30);
@@ -137,14 +137,14 @@ export default function AttendeeListPage(): JSX.Element {
     return (
         <>
             {title}
-            <Heading as="h1">Attendees</Heading>
+            <Heading as="h1">Registrants</Heading>
             <FormControl maxW={400}>
                 <InputGroup>
-                    <InputLeftAddon as="label" id="attendees-search">
+                    <InputLeftAddon as="label" id="registrants-search">
                         Search
                     </InputLeftAddon>
                     <Input
-                        aria-labelledby="attendees-search"
+                        aria-labelledby="registrants-search"
                         value={search}
                         onChange={(ev) => setSearch(ev.target.value)}
                         placeholder="Type to search"
@@ -155,11 +155,11 @@ export default function AttendeeListPage(): JSX.Element {
                 </InputGroup>
                 <FormHelperText>Search badges, names, affiliations and bios. (Min length 3)</FormHelperText>
             </FormControl>
-            <AttendeesList
-                allAttendees={attendees ?? undefined}
-                searchedAttendees={searched && search.length > 0 ? searched : undefined}
+            <RegistrantsList
+                allRegistrants={registrants ?? undefined}
+                searchedRegistrants={searched && search.length > 0 ? searched : undefined}
             />
-            {allAttendees && loadedCount < allAttendees.length ? (
+            {allRegistrants && loadedCount < allRegistrants.length ? (
                 <Button
                     isLoading={isLoadingMore}
                     onClick={() => {

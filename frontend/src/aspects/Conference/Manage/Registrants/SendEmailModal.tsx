@@ -23,12 +23,12 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo } from "react";
-import type { AttendeePartsFragment } from "../../../../generated/graphql";
+import type { RegistrantPartsFragment } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
 
 gql`
     query SendEmail_GetAllGroups($conferenceId: uuid!) {
-        Group(where: { conferenceId: { _eq: $conferenceId } }) {
+        permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             enabled
             name
@@ -39,13 +39,13 @@ gql`
 export function SendEmailModal({
     isOpen,
     onClose,
-    attendees,
+    registrants,
     send,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    attendees: AttendeePartsFragment[];
-    send: (_attendeeIds: string[], htmlBody: string, subject: string) => Promise<void>;
+    registrants: RegistrantPartsFragment[];
+    send: (_registrantIds: string[], htmlBody: string, subject: string) => Promise<void>;
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
@@ -56,20 +56,20 @@ export function SendEmailModal({
                 <Heading as="h3" textAlign="left" size="md" mb={2}>
                     Recipients
                 </Heading>
-                {attendees.length === 0 ? (
-                    <Text>No attendees selected.</Text>
+                {registrants.length === 0 ? (
+                    <Text>No registrants selected.</Text>
                 ) : (
                     <List spacing={2} maxH="20vh" overflowY="auto">
-                        {attendees.map((attendee) => (
-                            <ListItem key={attendee.id}>
-                                <Text>{attendee.displayName}</Text>
+                        {registrants.map((registrant) => (
+                            <ListItem key={registrant.id}>
+                                <Text>{registrant.displayName}</Text>
                             </ListItem>
                         ))}
                     </List>
                 )}
             </Box>
         ),
-        [attendees]
+        [registrants]
     );
 
     return (
@@ -77,14 +77,14 @@ export function SendEmailModal({
             <Formik<{ subject: string; htmlBody: string }>
                 initialValues={{
                     subject: `${conference.shortName}: Update`,
-                    htmlBody: `<p>Dear attendee,</p>
+                    htmlBody: `<p>Dear registrant,</p>
 <p>We hope you enjoy the conference.</p>
 <p>${conference.shortName} organisers</p>`,
                 }}
                 onSubmit={async (values, actions) => {
                     try {
                         await send(
-                            attendees.map((x) => x.id),
+                            registrants.map((x) => x.id),
                             values.htmlBody,
                             values.subject
                         );
@@ -153,11 +153,11 @@ export function SendEmailModal({
                                 <Button
                                     type="submit"
                                     isLoading={isSubmitting}
-                                    isDisabled={!isValid || attendees.length === 0}
+                                    isDisabled={!isValid || registrants.length === 0}
                                     mt={4}
                                     colorScheme="green"
                                 >
-                                    Send {attendees.length} emails
+                                    Send {registrants.length} emails
                                 </Button>
                             </ModalFooter>
                         </ModalContent>

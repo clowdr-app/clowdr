@@ -3,9 +3,9 @@ import { Button, FormLabel, Input, useColorModeValue, useDisclosure } from "@cha
 import React, { LegacyRef, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    ContentGroupType_Enum,
-    ContentGroup_Set_Input,
     EditableSponsorsTable_UpdateSponsorMutationVariables,
+    ItemType_Enum,
+    Item_Set_Input,
     useEditableSponsorsTable_DeleteSponsorMutation,
     useEditableSponsorsTable_GetAllSponsorsQuery,
     useEditableSponsorsTable_InsertSponsorMutation,
@@ -25,32 +25,32 @@ import { SponsorInfoFragment, SponsorInfoFragmentDoc } from "./Types";
 
 gql`
     query EditableSponsorsTable_GetAllSponsors($conferenceId: uuid!) {
-        ContentGroup(where: { contentGroupTypeName: { _eq: SPONSOR }, conferenceId: { _eq: $conferenceId } }) {
-            ...EditableSponsorsTable_ContentGroupInfo
+        content_Item(where: { typeName: { _eq: SPONSOR }, conferenceId: { _eq: $conferenceId } }) {
+            ...EditableSponsorsTable_ItemInfo
         }
     }
 
-    mutation EditableSponsorsTable_InsertSponsor($contentGroup: ContentGroup_insert_input!) {
-        insert_ContentGroup_one(object: $contentGroup) {
-            ...EditableSponsorsTable_ContentGroupInfo
+    mutation EditableSponsorsTable_InsertSponsor($item: content_Item_insert_input!) {
+        insert_content_Item_one(object: $item) {
+            ...EditableSponsorsTable_ItemInfo
         }
     }
 
-    mutation EditableSponsorsTable_UpdateSponsor($contentGroupId: uuid!, $object: ContentGroup_set_input!) {
-        update_ContentGroup_by_pk(pk_columns: { id: $contentGroupId }, _set: $object) {
+    mutation EditableSponsorsTable_UpdateSponsor($itemId: uuid!, $object: content_Item_set_input!) {
+        update_content_Item_by_pk(pk_columns: { id: $itemId }, _set: $object) {
             id
         }
     }
 
-    mutation EditableSponsorsTable_DeleteSponsor($contentGroupIds: [uuid!]!) {
-        delete_ContentGroup(where: { id: { _in: $contentGroupIds } }) {
+    mutation EditableSponsorsTable_DeleteSponsor($itemIds: [uuid!]!) {
+        delete_content_Item(where: { id: { _in: $itemIds } }) {
             returning {
                 id
             }
         }
     }
 
-    fragment EditableSponsorsTable_ContentGroupInfo on ContentGroup {
+    fragment EditableSponsorsTable_ItemInfo on content_Item {
         id
         title
         shortTitle
@@ -79,7 +79,7 @@ export function EditableSponsorsTable(): JSX.Element {
         fetchPolicy: "cache-and-network",
         nextFetchPolicy: "cache-first",
     });
-    const data = useMemo(() => [...(sponsors.data?.ContentGroup ?? [])], [sponsors.data?.ContentGroup]);
+    const data = useMemo(() => [...(sponsors.data?.Item ?? [])], [sponsors.data?.Item]);
 
     const {
         isOpen: isSecondaryPanelOpen,
@@ -193,12 +193,12 @@ export function EditableSponsorsTable(): JSX.Element {
         <>
             <CRUDTable
                 tableUniqueName="ManageConferenceSponsors"
-                data={!sponsors.loading && (sponsors.data?.ContentGroup ? data : null)}
+                data={!sponsors.loading && (sponsors.data?.Item ? data : null)}
                 columns={columns}
                 row={row}
                 edit={{
                     open: (key) => {
-                        const idx = sponsors.data?.ContentGroup.findIndex((contentGroup) => contentGroup.id === key);
+                        const idx = sponsors.data?.Item.findIndex((item) => item.id === key);
                         const newIdx = idx !== undefined && idx !== -1 ? idx : null;
                         setEditingIndex(newIdx);
                         if (newIdx !== null) {
@@ -213,7 +213,7 @@ export function EditableSponsorsTable(): JSX.Element {
                     generateDefaults: () => ({
                         id: uuidv4(),
                         conferenceId: conference.id,
-                        contentGroupTypeName: ContentGroupType_Enum.Sponsor,
+                        typeName: ItemType_Enum.Sponsor,
                         originatingDataId: null,
                         shortTitle: "New sponsor",
                         title: "New sponsor",
@@ -222,26 +222,26 @@ export function EditableSponsorsTable(): JSX.Element {
                     start: (record) => {
                         insertSponsor({
                             variables: {
-                                contentGroup: {
+                                item: {
                                     id: record.id,
                                     title: record.title,
                                     shortTitle: record.shortTitle,
                                     conferenceId: conference.id,
-                                    contentGroupTypeName: ContentGroupType_Enum.Sponsor,
+                                    typeName: ItemType_Enum.Sponsor,
                                 },
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.insert_ContentGroup_one) {
-                                    const data = _data.insert_ContentGroup_one;
+                                if (_data?.insert_Item_one) {
+                                    const data = _data.insert_Item_one;
                                     cache.modify({
                                         fields: {
-                                            ContentGroup(existingRefs: Reference[] = [], { readField }) {
+                                            Item(existingRefs: Reference[] = [], { readField }) {
                                                 const newRef = cache.writeFragment({
                                                     data: {
                                                         ...data,
                                                     },
                                                     fragment: SponsorInfoFragmentDoc,
-                                                    fragmentName: "EditableSponsorsTable_ContentGroupInfo",
+                                                    fragmentName: "EditableSponsorsTable_ItemInfo",
                                                 });
                                                 if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
                                                     return existingRefs;
@@ -258,29 +258,29 @@ export function EditableSponsorsTable(): JSX.Element {
                 }}
                 update={{
                     ongoing: updateSponsorResponse.loading,
-                    start: (record: ContentGroup_Set_Input & { id: any }) => {
+                    start: (record: Item_Set_Input & { id: any }) => {
                         const variables: DeepMutable<EditableSponsorsTable_UpdateSponsorMutationVariables> = {
                             object: {
                                 shortTitle: record.shortTitle,
                                 title: record.title,
                             },
-                            contentGroupId: record.id,
+                            itemId: record.id,
                         };
                         updateSponsor({
                             variables,
                             optimisticResponse: {
-                                update_ContentGroup_by_pk: record,
+                                update_Item_by_pk: record,
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.update_ContentGroup_by_pk) {
-                                    const data = _data.update_ContentGroup_by_pk;
+                                if (_data?.update_Item_by_pk) {
+                                    const data = _data.update_Item_by_pk;
                                     cache.modify({
                                         fields: {
-                                            ContentGroup(existingRefs: Reference[] = [], { readField }) {
+                                            Item(existingRefs: Reference[] = [], { readField }) {
                                                 const newRef = cache.writeFragment({
                                                     data,
                                                     fragment: SponsorInfoFragmentDoc,
-                                                    fragmentName: "EditableSponsorsTable_ContentGroupInfo",
+                                                    fragmentName: "EditableSponsorsTable_ItemInfo",
                                                 });
                                                 if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
                                                     return existingRefs;
@@ -299,19 +299,19 @@ export function EditableSponsorsTable(): JSX.Element {
                     start: (keys) => {
                         deleteSponsors({
                             variables: {
-                                contentGroupIds: keys,
+                                itemIds: keys,
                             },
                             update: (cache, { data: _data }) => {
-                                if (_data?.delete_ContentGroup) {
-                                    const data = _data.delete_ContentGroup;
+                                if (_data?.delete_Item) {
+                                    const data = _data.delete_Item;
                                     const deletedIds = data.returning.map((x) => x.id);
                                     cache.modify({
                                         fields: {
-                                            ContentGroup(existingRefs: Reference[] = [], { readField }) {
+                                            Item(existingRefs: Reference[] = [], { readField }) {
                                                 deletedIds.forEach((x) => {
                                                     cache.evict({
                                                         id: x.id,
-                                                        fieldName: "EditableSponsorsTable_ContentGroupInfo",
+                                                        fieldName: "EditableSponsorsTable_ItemInfo",
                                                         broadcast: true,
                                                     });
                                                 });
@@ -342,7 +342,7 @@ export function EditableSponsorsTable(): JSX.Element {
                 forceReload={forceReloadRef}
             />
             <SponsorSecondaryEditor
-                sponsors={sponsors.data?.ContentGroup ?? []}
+                sponsors={sponsors.data?.Item ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
                 onSecondaryPanelClose={() => {

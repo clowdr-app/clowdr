@@ -2,9 +2,9 @@ import { GridItem, HStack, SimpleGrid, Text } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import useRoomParticipants from "../../../Room/useRoomParticipants";
-import { useAttendee } from "../../AttendeesContext";
+import { useRegistrant } from "../../RegistrantsContext";
 
-export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
+export function Participants({ roomId }: { roomId: string }): JSX.Element {
     const roomParticipants = useRoomParticipants();
 
     const columns = 2;
@@ -34,7 +34,7 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
             {thisRoomParticipants
                 .slice(0, thisRoomParticipants.length > numberToShow ? numberToShow - 1 : thisRoomParticipants.length)
                 .map((participant) => (
-                    <ParticipantGridItem key={participant.id} attendeeId={participant.attendeeId} />
+                    <ParticipantGridItem key={participant.id} registrantId={participant.registrantId} />
                 ))}
             {thisRoomParticipants.length > numberToShow ? (
                 <GridItem fontWeight="light">+ {thisRoomParticipants.length - numberToShow + 1} more</GridItem>
@@ -47,14 +47,14 @@ export function RoomParticipants({ roomId }: { roomId: string }): JSX.Element {
     );
 }
 
-function ParticipantGridItem({ attendeeId }: { attendeeId: string }): JSX.Element {
-    const attendeeIdObj = useMemo(() => ({ attendee: attendeeId }), [attendeeId]);
-    const attendee = useAttendee(attendeeIdObj);
+function ParticipantGridItem({ registrantId }: { registrantId: string }): JSX.Element {
+    const registrantIdObj = useMemo(() => ({ registrant: registrantId }), [registrantId]);
+    const registrant = useRegistrant(registrantIdObj);
     return (
         <GridItem fontWeight="light" fontSize="xs">
             <HStack alignItems="center">
                 <FAIcon icon="video" iconStyle="s" fontSize="0.5rem" color="green.400" mr={1} />
-                <Text whiteSpace="normal">{attendee?.displayName ?? "Loading"}</Text>
+                <Text whiteSpace="normal">{registrant?.displayName ?? "Loading"}</Text>
             </HStack>
         </GridItem>
     );

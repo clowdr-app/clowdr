@@ -1,15 +1,15 @@
 import { Text } from "@chakra-ui/react";
-import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ContentBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import React from "react";
 import EditSubtitles from "./EditSubtitles";
 
-export function EditContentItem({
+export function EditElement({
     data,
-    contentItemId,
+    elementId,
     magicToken,
 }: {
-    data: ContentItemDataBlob;
-    contentItemId: string;
+    data: ElementDataBlob;
+    elementId: string;
     magicToken: string;
 }): JSX.Element {
     const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
@@ -24,7 +24,7 @@ export function EditContentItem({
                 <EditSubtitles
                     videoS3URL={latestTranscodeURL}
                     data={latestSubtitles}
-                    contentItemId={contentItemId}
+                    elementId={elementId}
                     magicToken={magicToken}
                 />
             ) : latestVersion?.data.baseType === ContentBaseType.Video ? (

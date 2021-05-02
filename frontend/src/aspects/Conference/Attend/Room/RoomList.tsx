@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { RoomListRoomDetailsFragment, RoomPrivacy_Enum } from "../../../../generated/graphql";
+import { RoomListRoomDetailsFragment, room_ManagementMode_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
@@ -60,9 +60,9 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                 return (
                     <>
                         <Center flexWrap="wrap" mt={1} mb={2} mx={2}>
-                            {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                            {room.managementModeName === room_ManagementMode_Enum.Private ? (
                                 <FAIcon icon="lock" iconStyle="s" textAlign="center" />
-                            ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
+                            ) : room.managementModeName === room_ManagementMode_Enum.Dm ? (
                                 <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
                             ) : (
                                 <></>
@@ -86,9 +86,9 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                 return (
                     <VStack spacing={1} width="100%" px={2}>
                         <HStack width="100%" fontSize="sm" my={"3px"}>
-                            {room.roomPrivacyName === RoomPrivacy_Enum.Private ? (
+                            {room.managementModeName === room_ManagementMode_Enum.Private ? (
                                 <FAIcon icon="lock" iconStyle="s" textAlign="center" />
-                            ) : room.roomPrivacyName === RoomPrivacy_Enum.Dm ? (
+                            ) : room.managementModeName === room_ManagementMode_Enum.Dm ? (
                                 <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
                             ) : (
                                 <FAIcon icon="mug-hot" iconStyle="s" textAlign="center" />
@@ -117,7 +117,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
         () =>
             sortedRooms.map((room) => ({
                 name: room.name.toLowerCase(),
-                showByDefault: room.roomPrivacyName !== RoomPrivacy_Enum.Dm,
+                showByDefault: room.managementModeName !== room_ManagementMode_Enum.Dm,
                 el: (
                     <LinkButton
                         key={room.id}

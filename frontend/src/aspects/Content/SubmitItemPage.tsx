@@ -16,51 +16,51 @@ import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
 import React, { useCallback, useMemo } from "react";
 import {
-    ContentType_Enum,
-    useGetContentItemQuery,
+    ElementType_Enum,
+    useGetElementQuery,
     useGetUploadAgreementQuery,
-    useSelectRequiredItemQuery,
+    useSelectUploadableItemQuery,
 } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useTitle } from "../Utils/useTitle";
-import UploadedContentItem from "./UploadedContentItem";
+import UploadedElement from "./UploadedElement";
 import UploadFileForm from "./UploadFileForm";
 import UploadLinkForm from "./UploadLinkForm";
 import UploadTextForm from "./UploadTextForm";
 import UploadUrlForm from "./UploadUrlForm";
 
 gql`
-    query GetContentItem($magicToken: String!) {
-        getContentItem(magicToken: $magicToken) {
-            contentTypeName
+    query GetElement($magicToken: String!) {
+        content_ElementByAccessToken(where: { accessToken: { _eq: $magicToken } }) {
+            typeName
             data
             layoutData
             name
             id
-            contentGroupTitle
+            itemTitle
         }
     }
 
-    query SelectRequiredItem($requiredContentItemId: uuid!) {
-        RequiredContentItem(where: { id: { _eq: $requiredContentItemId } }) {
-            ...RequiredItemFields
+    query SelectUploadableItem($uploadableId: uuid!) {
+        content_UploadableElement(where: { id: { _eq: $uploadableId } }) {
+            ...UploadableItemFields
         }
     }
 
-    fragment RequiredItemFields on RequiredContentItem {
+    fragment UploadableItemFields on content_UploadableElement {
         id
-        contentTypeName
+        typeName
         name
         uploadsRemaining
         conference {
             id
             name
         }
-        contentGroupTitle
+        itemTitle
     }
 
-    mutation SubmitContentItem($contentItemData: jsonb!, $magicToken: String!) {
-        submitContentItem(data: $contentItemData, magicToken: $magicToken) {
+    mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!) {
+        submitUploadableElement(data: $elementData, magicToken: $magicToken) {
             message
             success
         }
@@ -75,12 +75,12 @@ gql`
 
 export default function SubmitItemPage({
     magicToken,
-    requiredContentItemId,
+    uploadableId,
 }: {
     magicToken: string;
-    requiredContentItemId: string;
+    uploadableId: string;
 }): JSX.Element {
-    const { loading, error, data, refetch } = useSelectRequiredItemQuery({
+    const { loading, error, data, refetch } = useSelectUploadableItemQuery({
         fetchPolicy: "network-only",
         context: {
             headers: {
@@ -88,7 +88,7 @@ export default function SubmitItemPage({
             },
         },
         variables: {
-            requiredContentItemId,
+            uploadableId,
         },
     });
     const {
@@ -104,11 +104,11 @@ export default function SubmitItemPage({
     useQueryErrorToast(error, false, "SubmitItemPage -- upload agreement");
 
     const {
-        loading: loadingContentItem,
-        error: errorContentItem,
-        data: dataContentItem,
-        refetch: refetchContentItem,
-    } = useGetContentItemQuery({
+        loading: loadingElement,
+        error: errorElement,
+        data: dataElement,
+        refetch: refetchElement,
+    } = useGetElementQuery({
         variables: {
             magicToken,
         },
@@ -116,15 +116,15 @@ export default function SubmitItemPage({
     });
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");
 
-    const requiredItem = useMemo(() => {
-        if (!data?.RequiredContentItem || data.RequiredContentItem.length !== 1) {
+    const uploadableItem = useMemo(() => {
+        if (!data?.UploadableElement || data.UploadableElement.length !== 1) {
             return null;
         }
 
-        return data.RequiredContentItem[0];
+        return data.UploadableElement[0];
     }, [data]);
 
-    const title = useTitle(requiredItem?.contentGroupTitle ? `Submit ${requiredItem.contentGroupTitle}` : "Clowdr");
+    const title = useTitle(uploadableItem?.itemTitle ? `Submit ${uploadableItem.itemTitle}` : "Clowdr");
 
     const uploadAgreement = useMemo(() => {
         return uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined;
@@ -135,30 +135,30 @@ export default function SubmitItemPage({
     }, [refetch]);
 
     const form = useMemo(() => {
-        if (!requiredItem) {
+        if (!uploadableItem) {
             return <>No matching item found.</>;
         }
 
-        switch (requiredItem.contentTypeName) {
-            case ContentType_Enum.Abstract:
-            case ContentType_Enum.Text:
+        switch (uploadableItem.typeName) {
+            case ElementType_Enum.Abstract:
+            case ElementType_Enum.Text:
                 return <UploadTextForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
-            case ContentType_Enum.ImageFile:
-            case ContentType_Enum.PaperFile:
-            case ContentType_Enum.PosterFile:
+            case ElementType_Enum.ImageFile:
+            case ElementType_Enum.PaperFile:
+            case ElementType_Enum.PosterFile:
                 return (
                     <UploadFileForm
                         magicToken={magicToken}
-                        requiredItem={requiredItem}
+                        uploadableItem={uploadableItem}
                         allowedFileTypes={[".pdf", ".png", ".jpg"]}
                         uploadAgreement={uploadAgreement}
                         handleFormSubmitted={formSubmitted}
                     />
                 );
-            case ContentType_Enum.Link:
-            case ContentType_Enum.LinkButton:
-            case ContentType_Enum.PaperLink:
-            case ContentType_Enum.VideoLink:
+            case ElementType_Enum.Link:
+            case ElementType_Enum.LinkButton:
+            case ElementType_Enum.PaperLink:
+            case ElementType_Enum.VideoLink:
                 return (
                     <UploadLinkForm
                         magicToken={magicToken}
@@ -166,10 +166,10 @@ export default function SubmitItemPage({
                         handleFormSubmitted={formSubmitted}
                     />
                 );
-            case ContentType_Enum.ImageUrl:
-            case ContentType_Enum.PaperUrl:
-            case ContentType_Enum.PosterUrl:
-            case ContentType_Enum.VideoUrl:
+            case ElementType_Enum.ImageUrl:
+            case ElementType_Enum.PaperUrl:
+            case ElementType_Enum.PosterUrl:
+            case ElementType_Enum.VideoUrl:
                 return (
                     <UploadUrlForm
                         magicToken={magicToken}
@@ -177,24 +177,24 @@ export default function SubmitItemPage({
                         handleFormSubmitted={formSubmitted}
                     />
                 );
-            case ContentType_Enum.VideoBroadcast:
-            case ContentType_Enum.VideoCountdown:
-            case ContentType_Enum.VideoFile:
-            case ContentType_Enum.VideoFiller:
-            case ContentType_Enum.VideoPrepublish:
-            case ContentType_Enum.VideoSponsorsFiller:
-            case ContentType_Enum.VideoTitles:
+            case ElementType_Enum.VideoBroadcast:
+            case ElementType_Enum.VideoCountdown:
+            case ElementType_Enum.VideoFile:
+            case ElementType_Enum.VideoFiller:
+            case ElementType_Enum.VideoPrepublish:
+            case ElementType_Enum.VideoSponsorsFiller:
+            case ElementType_Enum.VideoTitles:
                 return (
                     <UploadFileForm
                         magicToken={magicToken}
-                        requiredItem={requiredItem}
+                        uploadableItem={uploadableItem}
                         allowedFileTypes={[".mp4", ".mkv", ".webm"]}
                         uploadAgreement={uploadAgreement}
                         handleFormSubmitted={formSubmitted}
                     />
                 );
         }
-    }, [formSubmitted, magicToken, requiredItem, uploadAgreement]);
+    }, [formSubmitted, magicToken, uploadableItem, uploadAgreement]);
 
     return (
         <Center>
@@ -205,9 +205,9 @@ export default function SubmitItemPage({
                         <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                             Content Submission
                         </Heading>
-                        {requiredItem && (
+                        {uploadableItem && (
                             <Heading as="h2" fontSize="1.5rem" lineHeight="2.2rem" fontStyle="italic">
-                                {requiredItem.contentGroupTitle}
+                                {uploadableItem.itemTitle}
                             </Heading>
                         )}
                         {(loading && !data) || (uploadAgreementLoading && !uploadAgreementData) ? (
@@ -216,27 +216,27 @@ export default function SubmitItemPage({
                             </div>
                         ) : error || uploadAgreementError ? (
                             <Text mt={4}>An error occurred while loading data.</Text>
-                        ) : !requiredItem ? (
+                        ) : !uploadableItem ? (
                             <Text mt={4}>No matching item.</Text>
                         ) : (
                             <>
                                 <Heading as="h3" fontSize="1.2rem" mt={5}>
-                                    Upload: {requiredItem.name}
+                                    Upload: {uploadableItem.name}
                                 </Heading>
-                                {requiredItem.uploadsRemaining === 0 ? (
+                                {uploadableItem.uploadsRemaining === 0 ? (
                                     <Text mt={4}>
                                         No upload attempts remaining for this item. Please contact your conference
                                         organisers if you need to upload another version.
                                     </Text>
                                 ) : (
                                     <>
-                                        {requiredItem.contentTypeName === ContentType_Enum.VideoBroadcast ? (
+                                        {uploadableItem.typeName === ElementType_Enum.VideoBroadcast ? (
                                             <Box>
                                                 <UnorderedList>
-                                                    {requiredItem.uploadsRemaining ? (
+                                                    {uploadableItem.uploadsRemaining ? (
                                                         <ListItem>
-                                                            {requiredItem.uploadsRemaining} upload attempt
-                                                            {requiredItem.uploadsRemaining > 1 ? "s" : ""} remaining.
+                                                            {uploadableItem.uploadsRemaining} upload attempt
+                                                            {uploadableItem.uploadsRemaining > 1 ? "s" : ""} remaining.
                                                         </ListItem>
                                                     ) : (
                                                         <></>
@@ -263,13 +263,13 @@ export default function SubmitItemPage({
                                                 </UnorderedList>
                                             </Box>
                                         ) : undefined}
-                                        {requiredItem.contentTypeName === ContentType_Enum.VideoPrepublish ? (
+                                        {uploadableItem.typeName === ElementType_Enum.VideoPrepublish ? (
                                             <Box>
                                                 <UnorderedList>
-                                                    {requiredItem.uploadsRemaining ? (
+                                                    {uploadableItem.uploadsRemaining ? (
                                                         <ListItem>
-                                                            {requiredItem.uploadsRemaining} upload attempt
-                                                            {requiredItem.uploadsRemaining > 1 ? "s" : ""} remaining.
+                                                            {uploadableItem.uploadsRemaining} upload attempt
+                                                            {uploadableItem.uploadsRemaining > 1 ? "s" : ""} remaining.
                                                         </ListItem>
                                                     ) : (
                                                         <></>
@@ -294,12 +294,12 @@ export default function SubmitItemPage({
                                     <Heading as="h3" fontSize="1.2rem">
                                         Previously uploaded
                                     </Heading>
-                                    <UploadedContentItem
+                                    <UploadedElement
                                         magicToken={magicToken}
-                                        data={dataContentItem}
-                                        error={!!errorContentItem}
-                                        loading={loadingContentItem}
-                                        refetch={refetchContentItem}
+                                        data={dataElement}
+                                        error={!!errorElement}
+                                        loading={loadingElement}
+                                        refetch={refetchElement}
                                     />
                                 </VStack>
                             </>

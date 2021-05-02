@@ -11,25 +11,28 @@ import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 
 gql`
     query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
-        ConferenceConfiguration(where: { conferenceId: { _eq: $conferenceId } }) {
+        conference_Configuration(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ConferenceConfiguration_ConferenceConfigurations
         }
     }
 
-    fragment ConferenceConfiguration_ConferenceConfigurations on ConferenceConfiguration {
+    fragment ConferenceConfiguration_ConferenceConfigurations on conference_Configuration {
         id
         key
         value
     }
 
-    mutation ConferenceConfiguration_UpdateConferenceConfigurations($conferenceConfigurationId: uuid!, $value: jsonb!) {
-        update_ConferenceConfiguration_by_pk(pk_columns: { id: $conferenceConfigurationId }, _set: { value: $value }) {
+    mutation conference_Configuration_UpdateConferenceConfigurations(
+        $conferenceConfigurationId: uuid!
+        $value: jsonb!
+    ) {
+        update_conference_Configuration_by_pk(pk_columns: { id: $conferenceConfigurationId }, _set: { value: $value }) {
             id
         }
     }
 `;
 
-export function ConferenceConfiguration({ conferenceId }: { conferenceId: string }): JSX.Element {
+export function Configuration({ conferenceId }: { conferenceId: string }): JSX.Element {
     const conferenceConfigurationsResult = useConferenceConfiguration_GetConferenceConfigurationsQuery({
         variables: {
             conferenceId,

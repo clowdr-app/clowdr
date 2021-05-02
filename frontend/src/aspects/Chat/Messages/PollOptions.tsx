@@ -65,7 +65,7 @@ export default function PollOptions({
     reactions: readonly ChatReactionDataFragment[];
 }): JSX.Element {
     const config = useChatConfiguration();
-    const currentAttendeeId = config.currentAttendeeId;
+    const currentRegistrantId = config.currentRegistrantId;
     const isClosed = useMemo(() => reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed), [
         reactions,
     ]);
@@ -75,20 +75,21 @@ export default function PollOptions({
     );
     const ownVoteCount = useMemo(
         () =>
-            currentAttendeeId
+            currentRegistrantId
                 ? reactions.filter(
                       (reaction) =>
-                          reaction.type === Chat_ReactionType_Enum.PollChoice && reaction.senderId === currentAttendeeId
+                          reaction.type === Chat_ReactionType_Enum.PollChoice &&
+                          reaction.senderId === currentRegistrantId
                   ).length
                 : 0,
-        [currentAttendeeId, reactions]
+        [currentRegistrantId, reactions]
     );
 
     const data = message.data as PollMessageData;
-    const maxVotes = data.maxVotesPerAttendee !== 0 ? data.maxVotesPerAttendee : Number.POSITIVE_INFINITY;
+    const maxVotes = data.maxVotesPerRegistrant !== 0 ? data.maxVotesPerRegistrant : Number.POSITIVE_INFINITY;
     const options = useMemo(() => {
         const providedOptions = data.options ?? [];
-        const userCreatedOptions = data.canAttendeesCreateOptions
+        const userCreatedOptions = data.canRegistrantsCreateOptions
             ? [
                   ...new Set(
                       reactions
@@ -97,16 +98,20 @@ export default function PollOptions({
                                   reaction.type === Chat_ReactionType_Enum.PollChoice &&
                                   (isCompleted ||
                                       data.revealBeforeComplete ||
-                                      (currentAttendeeId &&
-                                          (reaction.senderId === currentAttendeeId ||
-                                              message.senderId === currentAttendeeId)))
+                                      (currentRegistrantId &&
+                                          (reaction.senderId === currentRegistrantId ||
+                                              message.senderId === currentRegistrantId)))
                           )
                           .map((x) => x.symbol)
                   ).values(),
               ]
             : [];
         const allOptions = [...providedOptions, ...userCreatedOptions];
-        if (isCompleted || data.revealBeforeComplete || (currentAttendeeId && message.senderId === currentAttendeeId)) {
+        if (
+            isCompleted ||
+            data.revealBeforeComplete ||
+            (currentRegistrantId && message.senderId === currentRegistrantId)
+        ) {
             const optionsWithPopularity = new Map<string, number>(allOptions.map((x) => [x, 0]));
             reactions.forEach((reaction) => {
                 if (reaction.type === Chat_ReactionType_Enum.PollChoice) {
@@ -119,8 +124,8 @@ export default function PollOptions({
             return new Map<string, number>(allOptions.map((x) => [x, 0]));
         }
     }, [
-        currentAttendeeId,
-        data.canAttendeesCreateOptions,
+        currentRegistrantId,
+        data.canRegistrantsCreateOptions,
         data.options,
         data.revealBeforeComplete,
         isCompleted,
@@ -163,7 +168,7 @@ export default function PollOptions({
                             value={opt[0]}
                             count={opt[1]}
                             onClick={
-                                currentAttendeeId && !isClosed && ownVoteCount < maxVotes
+                                currentRegistrantId && !isClosed && ownVoteCount < maxVotes
                                     ? async () => {
                                           await message.addReaction({
                                               data: {},
@@ -175,7 +180,7 @@ export default function PollOptions({
                             }
                         />
                     ))}
-                {data.canAttendeesCreateOptions && !isClosed && ownVoteCount < maxVotes ? (
+                {data.canRegistrantsCreateOptions && !isClosed && ownVoteCount < maxVotes ? (
                     <ListItem>
                         <Input
                             min={config.pollConfig.answerLength?.min}

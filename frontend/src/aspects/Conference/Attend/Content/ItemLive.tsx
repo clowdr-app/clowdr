@@ -1,11 +1,11 @@
 import { chakra, Flex, Text, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ContentGroupDataFragment,
-    ContentGroupEventFragment,
-    ContentGroupEventsFragment,
-    ContentGroupPage_ContentGroupRoomsFragment,
-    ContentGroupType_Enum,
+    ItemDataFragment,
+    ItemEventFragment,
+    ItemEventsFragment,
+    ItemPage_ItemRoomsFragment,
+    ItemType_Enum,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
@@ -13,36 +13,32 @@ import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { useConference } from "../../useConference";
 
-export function ContentGroupLive({
-    contentGroupData,
+export function ItemLive({
+    itemData,
 }: {
-    contentGroupData: ContentGroupDataFragment &
-        ContentGroupEventsFragment &
-        ContentGroupPage_ContentGroupRoomsFragment;
+    itemData: ItemDataFragment & ItemEventsFragment & ItemPage_ItemRoomsFragment;
 }): JSX.Element {
-    const [liveEvents, setLiveEvents] = useState<ContentGroupEventFragment[] | null>(null);
-    // const [nextEvent, setNextEvent] = useState<ContentGroupEventFragment | null>(null);
+    const [liveEvents, setLiveEvents] = useState<ItemEventFragment[] | null>(null);
+    // const [nextEvent, setNextEvent] = useState<ItemEventFragment | null>(null);
     // const [now, setNow] = useState<number>(Date.now());
     const computeLiveEvent = useCallback(() => {
         const now = Date.now();
-        const currentEvents = contentGroupData.events.filter(
+        const currentEvents = itemData.events.filter(
             (event) => Date.parse(event.startTime) <= now + 60000 && now <= Date.parse(event.endTime)
         );
         setLiveEvents(currentEvents);
 
         // const nextEvent = R.sortWith(
         //     [R.ascend(R.prop("startTime"))],
-        //     contentGroupData.events.filter((event) => Date.parse(event.startTime) > now)
+        //     itemData.events.filter((event) => Date.parse(event.startTime) > now)
         // );
         // setNextEvent(nextEvent.length > 0 ? nextEvent[0] : null);
         // setNow(now);
-    }, [contentGroupData.events]);
+    }, [itemData.events]);
     usePolling(computeLiveEvent, 30000, true);
     useEffect(() => computeLiveEvent(), [computeLiveEvent]);
 
-    const currentRoom = useMemo(() => (contentGroupData.rooms.length > 0 ? contentGroupData.rooms[0] : undefined), [
-        contentGroupData.rooms,
-    ]);
+    const currentRoom = useMemo(() => (itemData.rooms.length > 0 ? itemData.rooms[0] : undefined), [itemData.rooms]);
 
     const conference = useConference();
 
@@ -61,7 +57,7 @@ export function ContentGroupLive({
                 >
                     <VStack spacing={0}>
                         <Text>
-                            {contentGroupData.contentGroupTypeName === ContentGroupType_Enum.Sponsor ? (
+                            {itemData.typeName === ItemType_Enum.Sponsor ? (
                                 <>
                                     <FAIcon iconStyle="s" icon="video" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
                                     <chakra.span verticalAlign="middle" pb={0.7}>

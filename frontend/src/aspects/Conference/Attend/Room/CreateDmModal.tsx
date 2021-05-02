@@ -15,11 +15,11 @@ import { Field, FieldArray, Form, Formik } from "formik";
 import React from "react";
 import { useCreateDmMutation } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
-import { AttendeeSearch } from "./AttendeeSearch";
+import { RegistrantSearch } from "./RegistrantSearch";
 
 gql`
-    mutation CreateDm($attendeeIds: [uuid]!, $conferenceId: uuid!) {
-        createRoomDm(attendeeIds: $attendeeIds, conferenceId: $conferenceId) {
+    mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
+        createRoomDm(registrantIds: $registrantIds, conferenceId: $conferenceId) {
             message
             roomId
             chatId
@@ -46,15 +46,15 @@ export function CreateDmModal({
             <ModalContent>
                 <ModalHeader pb={0}>Create new DM</ModalHeader>
                 <ModalCloseButton />
-                <Formik<{ new_dm_attendees: string[] }>
+                <Formik<{ new_dm_registrants: string[] }>
                     initialValues={{
-                        new_dm_attendees: [],
+                        new_dm_registrants: [],
                     }}
                     onSubmit={async (values) => {
                         try {
                             const result = await createDmMutation({
                                 variables: {
-                                    attendeeIds: values.new_dm_attendees,
+                                    registrantIds: values.new_dm_registrants,
                                     conferenceId: conference.id,
                                 },
                             });
@@ -85,19 +85,19 @@ export function CreateDmModal({
                             <Form>
                                 <ModalBody>
                                     <Box>
-                                        <FieldArray name="new_dm_attendees">
+                                        <FieldArray name="new_dm_registrants">
                                             {(arrayHelpers) => (
                                                 <>
-                                                    <AttendeeSearch
-                                                        selectedAttendeeIds={values.new_dm_attendees}
-                                                        onSelect={async (attendeeId) => {
-                                                            arrayHelpers.push(attendeeId);
+                                                    <RegistrantSearch
+                                                        selectedRegistrantIds={values.new_dm_registrants}
+                                                        onSelect={async (registrantId) => {
+                                                            arrayHelpers.push(registrantId);
                                                         }}
                                                     />
 
-                                                    {values.new_dm_attendees.map((attendeeId, index) => (
+                                                    {values.new_dm_registrants.map((registrantId, index) => (
                                                         <div key={index}>
-                                                            <Field name={`new_dm_attendees.${index}`} hidden />
+                                                            <Field name={`new_dm_registrants.${index}`} hidden />
                                                         </div>
                                                     ))}
                                                 </>

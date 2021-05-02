@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { Permission_Enum } from "../../generated/graphql";
 import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
-import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
+import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../Generic/useRestorableState";
 import type { ChatState } from "./ChatGlobalState";
 import { ChatConfiguration, ChatConfigurationProvider, ChatSpacing } from "./Configuration";
@@ -14,7 +14,7 @@ export interface ChatProps {
     customHeadingElements?: React.ReactNodeArray;
     chat: ChatState;
 
-    onProfileModalOpened?: (attendeeId: string, close: () => void) => void;
+    onProfileModalOpened?: (registrantId: string, close: () => void) => void;
     onEmoteReceived?: (emote: EmoteMessageData) => void;
 }
 
@@ -25,7 +25,7 @@ export function Chat({
     onEmoteReceived,
     ...rest
 }: ChatProps & BoxProps): JSX.Element {
-    const currentAttendee = useMaybeCurrentAttendee();
+    const currentRegistrant = useMaybeCurrentRegistrant();
     const currentPermissions = useConferenceCurrentUserActivePermissions();
     const [spacing, setSpacing] = useRestorableState<ChatSpacing>(
         "clowdr-chatSpacing",
@@ -146,8 +146,8 @@ export function Chat({
                     max: 20,
                 },
             },
-            currentAttendeeId: currentAttendee?.id,
-            currentAttendeeName: currentAttendee?.displayName,
+            currentRegistrantId: currentRegistrant?.id,
+            currentRegistrantName: currentRegistrant?.displayName,
             spacing,
             setSpacing,
             setFontSize: (next) =>
@@ -161,8 +161,8 @@ export function Chat({
         [
             canCompose,
             chat,
-            currentAttendee?.displayName,
-            currentAttendee?.id,
+            currentRegistrant?.displayName,
+            currentRegistrant?.id,
             customHeadingElements,
             fontSize,
             onEmoteReceived,

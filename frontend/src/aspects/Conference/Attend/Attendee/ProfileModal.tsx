@@ -27,30 +27,30 @@ import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
-import { Attendee, useMaybeCurrentAttendee } from "../../useCurrentAttendee";
-import AttendeeExtraInfo from "../Profile/AttendeeExtraInfo";
+import { Registrant, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import RegistrantExtraInfo from "../Profile/RegistrantExtraInfo";
 
 export default function ProfileModal({
-    attendee,
+    registrant,
     isOpen,
     onClose,
 }: {
-    attendee: Attendee | null;
+    registrant: Registrant | null;
     isOpen: boolean;
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
-    const mCurrentAttendee = useMaybeCurrentAttendee();
+    const mCurrentRegistrant = useMaybeCurrentRegistrant();
     const history = useHistory();
 
     const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
     const toast = useToast();
     const createDM = useCallback(async () => {
-        if (attendee) {
+        if (registrant) {
             try {
                 const result = await createDmMutation({
                     variables: {
-                        attendeeIds: [attendee.id],
+                        registrantIds: [registrant.id],
                         conferenceId: conference.id,
                     },
                 });
@@ -81,7 +81,7 @@ export default function ProfileModal({
                 console.error("Could not create DM", e);
             }
         }
-    }, [attendee, conference.id, conference.slug, createDmMutation, history, onClose, toast]);
+    }, [registrant, conference.id, conference.slug, createDmMutation, history, onClose, toast]);
 
     return (
         <Portal>
@@ -89,14 +89,14 @@ export default function ProfileModal({
                 <ModalOverlay />
                 <ModalContent maxW={350} pb={4}>
                     <ModalHeader>
-                        {attendee ? (
+                        {registrant ? (
                             <>
                                 <Heading as="h4" size="sm" textAlign="left" mr={8}>
-                                    {attendee.displayName}
+                                    {registrant.displayName}
                                     <br />
-                                    {attendee.profile.affiliation ? (
+                                    {registrant.profile.affiliation ? (
                                         <Text as="span" fontStyle="italic" fontSize="0.9em">
-                                            ({attendee.profile.affiliation})
+                                            ({registrant.profile.affiliation})
                                         </Text>
                                     ) : undefined}
                                 </Heading>
@@ -105,35 +105,37 @@ export default function ProfileModal({
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody px={0}>
-                        {attendee ? (
+                        {registrant ? (
                             <VStack spacing={4}>
                                 <HStack justifyContent="flex-start" w="100%" px={2} alignItems="flex-start">
                                     <VStack alignItems="flex-start">
-                                        {attendee.profile.pronouns ? (
-                                            <PronounList pronouns={attendee.profile.pronouns} px={2} />
+                                        {registrant.profile.pronouns ? (
+                                            <PronounList pronouns={registrant.profile.pronouns} px={2} />
                                         ) : undefined}
-                                        {attendee.profile.affiliation ? (
+                                        {registrant.profile.affiliation ? (
                                             <Text>
-                                                {attendee.profile.affiliationURL ? (
+                                                {registrant.profile.affiliationURL ? (
                                                     <>
                                                         <FAIcon iconStyle="s" icon="link" fontSize="0.7rem" />
                                                         &nbsp;
                                                         <Link
                                                             isExternal
-                                                            href={`https://${attendee.profile.affiliationURL}`}
+                                                            href={`https://${registrant.profile.affiliationURL}`}
                                                         >
-                                                            {attendee.profile.affiliation}
+                                                            {registrant.profile.affiliation}
                                                         </Link>
                                                     </>
                                                 ) : (
-                                                    attendee.profile.affiliation
+                                                    registrant.profile.affiliation
                                                 )}
                                             </Text>
                                         ) : undefined}
                                     </VStack>
                                     <Spacer />
                                     <VStack alignItems="stretch">
-                                        {mCurrentAttendee && mCurrentAttendee?.id !== attendee.id && attendee.userId ? (
+                                        {mCurrentRegistrant &&
+                                        mCurrentRegistrant?.id !== registrant.id &&
+                                        registrant.userId ? (
                                             <Button
                                                 onClick={createDM}
                                                 isLoading={creatingDM}
@@ -144,7 +146,7 @@ export default function ProfileModal({
                                             </Button>
                                         ) : undefined}
                                         <LinkButton
-                                            to={`/conference/${conference.slug}/profile/view/${attendee.id}`}
+                                            to={`/conference/${conference.slug}/profile/view/${registrant.id}`}
                                             size="sm"
                                             variant="outline"
                                             colorScheme="green"
@@ -154,28 +156,28 @@ export default function ProfileModal({
                                         </LinkButton>
                                     </VStack>
                                 </HStack>
-                                {attendee.profile.photoURL_350x350 ? (
+                                {registrant.profile.photoURL_350x350 ? (
                                     <Image
                                         maxW={350}
                                         maxH={350}
                                         w="100%"
                                         h="auto"
-                                        aria-describedby={`attendee-trigger-${attendee.id}`}
-                                        src={attendee.profile.photoURL_350x350}
+                                        aria-describedby={`registrant-trigger-${registrant.id}`}
+                                        src={registrant.profile.photoURL_350x350}
                                     />
                                 ) : undefined}
-                                {attendee.profile.badges ? (
-                                    <BadgeList badges={attendee.profile.badges} px={2} />
+                                {registrant.profile.badges ? (
+                                    <BadgeList badges={registrant.profile.badges} px={2} />
                                 ) : undefined}
-                                {attendee.profile.bio ? (
+                                {registrant.profile.bio ? (
                                     <Box py={0} px={2} w="100%">
-                                        <Markdown restrictHeadingSize>{attendee.profile.bio}</Markdown>
+                                        <Markdown restrictHeadingSize>{registrant.profile.bio}</Markdown>
                                     </Box>
                                 ) : undefined}
-                                <AttendeeExtraInfo attendee={attendee} mb={4} px={2} maxW="100%" />
+                                <RegistrantExtraInfo registrant={registrant} mb={4} px={2} maxW="100%" />
                             </VStack>
                         ) : (
-                            <Spinner label="Loading attendee profile, please wait" />
+                            <Spinner label="Loading registrant profile, please wait" />
                         )}
                     </ModalBody>
                 </ModalContent>

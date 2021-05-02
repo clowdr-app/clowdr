@@ -1,12 +1,12 @@
 import { Text, VStack } from "@chakra-ui/react";
-import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ContentBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React from "react";
 import ReactPlayer from "react-player";
 import { ExternalLinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 
-export default function RenderContentItem({ data }: { data: ContentItemDataBlob }): JSX.Element {
+export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.Element {
     const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
 
     function s3UrlToHttpUrl(s3Url: string): string {

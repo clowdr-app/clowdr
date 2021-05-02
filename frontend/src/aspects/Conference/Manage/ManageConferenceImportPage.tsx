@@ -73,7 +73,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     to="import/registrants"
                     name="Registrants"
                     icon="users"
-                    description="Import your attendees, organisers and other users."
+                    description="Import your registrants, organisers and other users."
                     permissions={[Permission_Enum.ConferenceManageAttendees]}
                     colorScheme="red"
                 />

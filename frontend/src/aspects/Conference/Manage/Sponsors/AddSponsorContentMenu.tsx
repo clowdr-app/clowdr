@@ -5,9 +5,9 @@ import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useMemo } from "react";
 import {
-    ContentItem_Insert_Input,
-    ContentType_Enum,
-    useAddSponsorContentMenu_CreateContentItemMutation,
+    ElementType_Enum,
+    Element_Insert_Input,
+    useAddSponsorContentMenu_CreateElementMutation,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
@@ -16,43 +16,43 @@ import { CreateRoomButton } from "../Content/CreateRoomButton";
 import { ItemBaseTemplates } from "../Content/Templates";
 
 gql`
-    mutation AddSponsorContentMenu_CreateContentItem($object: ContentItem_insert_input!) {
-        insert_ContentItem_one(object: $object) {
+    mutation AddSponsorContentMenu_CreateElement($object: content_Element_insert_input!) {
+        insert_content_Element_one(object: $object) {
             id
         }
     }
 `;
 
 export function AddSponsorContentMenu({
-    contentGroupId,
+    itemId,
     roomId,
     refetch,
 }: {
-    contentGroupId: string;
+    itemId: string;
     roomId: string | null;
     refetch: () => void;
 }): JSX.Element {
     const toast = useToast();
     const conference = useConference();
 
-    const [createItem] = useAddSponsorContentMenu_CreateContentItemMutation();
+    const [createItem] = useAddSponsorContentMenu_CreateElementMutation();
 
-    const contentTypeOptions: { label: string; value: ContentType_Enum }[] = useMemo(
+    const contentTypeOptions: { label: string; value: ElementType_Enum }[] = useMemo(
         () =>
-            Object.keys(ContentType_Enum)
+            Object.keys(ElementType_Enum)
                 .filter(
                     (key) =>
-                        typeof (ContentType_Enum as any)[key] === "string" &&
-                        ItemBaseTemplates[ItemBaseTypes[(ContentType_Enum as any)[key] as ContentType_Enum]].supported
+                        typeof (ElementType_Enum as any)[key] === "string" &&
+                        ItemBaseTemplates[ItemBaseTypes[(ElementType_Enum as any)[key] as ElementType_Enum]].supported
                 )
                 .map((key) => {
-                    const v = (ContentType_Enum as any)[key] as string;
+                    const v = (ElementType_Enum as any)[key] as string;
                     return {
                         label: v
                             .split("_")
                             .map((x) => x[0] + x.substr(1).toLowerCase())
                             .reduce((acc, x) => `${acc} ${x}`),
-                        value: v as ContentType_Enum,
+                        value: v as ElementType_Enum,
                     };
                 }),
         []
@@ -74,11 +74,11 @@ export function AddSponsorContentMenu({
                                     assert(template.supported);
                                     const newContent = template.createDefault(typeOpt.value, false);
                                     assert(newContent.type === "item-only");
-                                    const obj: ContentItem_Insert_Input = {
+                                    const obj: Element_Insert_Input = {
                                         conferenceId: conference.id,
-                                        contentGroupId,
+                                        itemId,
                                         data: newContent.item.data,
-                                        contentTypeName: newContent.item.typeName,
+                                        typeName: newContent.item.typeName,
                                         name: newContent.item.name,
                                     };
                                     await createItem({
@@ -103,7 +103,7 @@ export function AddSponsorContentMenu({
                 </MenuList>
             </Menu>
         ),
-        [conference.id, contentGroupId, contentTypeOptions, createItem, refetch, toast]
+        [conference.id, itemId, contentTypeOptions, createItem, refetch, toast]
     );
 
     return (
@@ -112,7 +112,7 @@ export function AddSponsorContentMenu({
                 to={
                     roomId
                         ? `/conference/${conference.slug}/room/${roomId}`
-                        : `/conference/${conference.slug}/item/${contentGroupId}`
+                        : `/conference/${conference.slug}/item/${itemId}`
                 }
                 colorScheme="green"
                 mb={4}
@@ -126,7 +126,7 @@ export function AddSponsorContentMenu({
             </LinkButton>
             {!roomId ? (
                 <Box mt={1}>
-                    <CreateRoomButton groupId={contentGroupId} buttonText="Create booth (room)" />
+                    <CreateRoomButton groupId={itemId} buttonText="Create booth (room)" />
                 </Box>
             ) : undefined}
             {menu}

@@ -9,22 +9,22 @@ import {
     ListItem,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSearchAttendeesQuery } from "../../../../generated/graphql";
+import { useSearchRegistrantsQuery } from "../../../../generated/graphql";
 import useDebouncedState from "../../../CRUDTable/useDebouncedState";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 
-export function AttendeeSearch({
-    selectedAttendeeIds,
+export function RegistrantSearch({
+    selectedRegistrantIds,
     onSelect,
 }: {
-    selectedAttendeeIds: string[];
-    onSelect: (attendeeId: string) => Promise<void>;
+    selectedRegistrantIds: string[];
+    onSelect: (registrantId: string) => Promise<void>;
 }): JSX.Element {
     const [search, searchDebounced, setSearch] = useDebouncedState<string>("");
     const [options, setOptions] = useState<{ label: string; value: string; inRoom: boolean }[]>([]);
     const ariaSearchResultStr = `${options.length} people`;
-    const { refetch } = useSearchAttendeesQuery({ skip: true });
+    const { refetch } = useSearchRegistrantsQuery({ skip: true });
     const conference = useConference();
 
     const getSelectOptions = useCallback(
@@ -36,13 +36,13 @@ export function AttendeeSearch({
                 conferenceId: conference.id,
                 search: `%${searchTerm}%`,
             });
-            return result.data.Attendee.filter((item) => !!item.userId).map((item) => ({
+            return result.data.Registrant.filter((item) => !!item.userId).map((item) => ({
                 value: item.id,
                 label: item.displayName,
-                inRoom: selectedAttendeeIds.includes(item.id as string),
+                inRoom: selectedRegistrantIds.includes(item.id as string),
             }));
         },
-        [conference.id, refetch, selectedAttendeeIds]
+        [conference.id, refetch, selectedRegistrantIds]
     );
     useEffect(() => {
         async function fn() {
@@ -56,7 +56,7 @@ export function AttendeeSearch({
     return (
         <>
             <FormControl>
-                <FormLabel htmlFor="attendee_id">Attendee</FormLabel>
+                <FormLabel htmlFor="registrant_id">Registrant</FormLabel>
                 <Input
                     aria-label={"Search found " + ariaSearchResultStr}
                     type="text"
@@ -69,7 +69,7 @@ export function AttendeeSearch({
                 <InputRightElement>
                     <FAIcon iconStyle="s" icon="search" />
                 </InputRightElement>
-                <FormHelperText>Search for an attendee by name</FormHelperText>
+                <FormHelperText>Search for an registrant by name</FormHelperText>
             </FormControl>
             <List>
                 {options.map((option) => (

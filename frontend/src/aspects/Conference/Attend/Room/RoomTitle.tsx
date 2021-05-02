@@ -1,5 +1,5 @@
 import { Heading, Image } from "@chakra-ui/react";
-import { ContentItemDataBlob, ContentType_Enum, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementDataBlob, ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -9,35 +9,32 @@ import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql
 export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
     const sponsorLogoUrl = useMemo((): string | null => {
         try {
-            if (
-                !roomDetails.originatingContentGroup?.contentItems ||
-                !roomDetails.originatingContentGroup.contentItems.length
-            ) {
+            if (!roomDetails.originatingItem?.elements || !roomDetails.originatingItem.elements.length) {
                 return null;
             }
 
-            const dataBlob = roomDetails.originatingContentGroup.contentItems[0].data;
+            const dataBlob = roomDetails.originatingItem.elements[0].data;
 
-            if (!isContentItemDataBlob(dataBlob)) {
+            if (!isElementDataBlob(dataBlob)) {
                 return null;
             }
 
-            const contentItemDataBlob = dataBlob as ContentItemDataBlob;
+            const elementDataBlob = dataBlob as ElementDataBlob;
 
-            const latestVersion = R.last(contentItemDataBlob);
+            const latestVersion = R.last(elementDataBlob);
 
             if (!latestVersion) {
                 return null;
             }
 
             if (
-                latestVersion.data.type !== ContentType_Enum.ImageUrl &&
-                latestVersion.data.type !== ContentType_Enum.ImageFile
+                latestVersion.data.type !== ElementType_Enum.ImageUrl &&
+                latestVersion.data.type !== ElementType_Enum.ImageFile
             ) {
                 return null;
             }
 
-            if (latestVersion.data.type === ContentType_Enum.ImageUrl) {
+            if (latestVersion.data.type === ElementType_Enum.ImageUrl) {
                 return latestVersion.data.url;
             } else {
                 const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
@@ -46,15 +43,15 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
         } catch {
             return null;
         }
-    }, [roomDetails.originatingContentGroup?.contentItems]);
+    }, [roomDetails.originatingItem?.elements]);
 
-    return roomDetails.originatingContentGroup ? (
+    return roomDetails.originatingItem ? (
         <>
             {sponsorLogoUrl ? (
                 <Image src={sponsorLogoUrl} ml={5} maxWidth="20rem" mt={5} bgColor="white" p={5} borderRadius="md" />
             ) : (
                 <Heading as="h2" textAlign="left" mt={5} ml={5}>
-                    <Twemoji className="twemoji" text={roomDetails.originatingContentGroup.title} />
+                    <Twemoji className="twemoji" text={roomDetails.originatingItem.title} />
                 </Heading>
             )}
         </>

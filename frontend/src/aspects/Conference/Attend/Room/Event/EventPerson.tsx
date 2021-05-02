@@ -2,38 +2,38 @@ import { gql } from "@apollo/client";
 import { Badge, Box, Button, HStack, Text, useToast } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import {
-    EventPersonDetailsFragment,
-    EventPersonRole_Enum,
-    useDeleteEventPersonMutation,
+    EventProgramPersonDetailsFragment,
+    EventProgramPersonRole_Enum,
+    useDeleteEventProgramPersonMutation,
 } from "../../../../../generated/graphql";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { useAttendee } from "../../../AttendeesContext";
+import { useRegistrant } from "../../../RegistrantsContext";
 
 gql`
-    mutation DeleteEventPerson($eventPersonId: uuid!) {
-        delete_EventPerson_by_pk(id: $eventPersonId) {
+    mutation DeleteEventProgramPerson($eventProgramPersonId: uuid!) {
+        delete_schedule_EventProgramPerson_by_pk(id: $eventProgramPersonId) {
             id
         }
     }
 `;
 
-export function EventPerson({
-    eventPerson,
+export function EventProgramPerson({
+    eventProgramPerson,
     enableDelete: enableDeleteInput,
     userId,
 }: {
-    eventPerson: EventPersonDetailsFragment;
+    eventProgramPerson: EventProgramPersonDetailsFragment;
     enableDelete: boolean;
     userId: string | null;
 }): JSX.Element {
-    const [deleteEventPersonMutation] = useDeleteEventPersonMutation();
+    const [deleteEventProgramPersonMutation] = useDeleteEventProgramPersonMutation();
     const toast = useToast();
 
-    const deleteEventPerson = useCallback(async () => {
+    const deleteEventProgramPerson = useCallback(async () => {
         try {
-            await deleteEventPersonMutation({
+            await deleteEventProgramPersonMutation({
                 variables: {
-                    eventPersonId: eventPerson.id,
+                    eventProgramPersonId: eventProgramPerson.id,
                 },
             });
             toast({
@@ -41,33 +41,38 @@ export function EventPerson({
                 status: "success",
             });
         } catch (e) {
-            console.error("Could not remove event person", eventPerson.id);
+            console.error("Could not remove event person", eventProgramPerson.id);
             toast({
                 title: "Could not remove person from this event",
                 status: "error",
             });
         }
-    }, [deleteEventPersonMutation, eventPerson.id, toast]);
+    }, [deleteEventProgramPersonMutation, eventProgramPerson.id, toast]);
 
-    const eventPersonIdObj = useMemo(
-        () => (eventPerson.person?.attendeeId ? { attendee: eventPerson.person.attendeeId } : undefined),
-        [eventPerson.person.attendeeId]
+    const eventProgramPersonIdObj = useMemo(
+        () =>
+            eventProgramPerson.person?.registrantId
+                ? { registrant: eventProgramPerson.person.registrantId }
+                : undefined,
+        [eventProgramPerson.person.registrantId]
     );
-    const attendee = useAttendee(eventPersonIdObj);
+    const registrant = useRegistrant(eventProgramPersonIdObj);
     // Intentionally using `!=` (rather than `!==`) because `userId` may be null or undefined
-    const enableDelete = enableDeleteInput && attendee?.userId != userId;
+    const enableDelete = enableDeleteInput && registrant?.userId != userId;
 
     return (
         <HStack>
-            <Text>{attendee?.displayName ?? "<Unknown>"}</Text>
-            <Badge colorScheme={eventPerson.roleName === EventPersonRole_Enum.Participant ? "blue" : "red"}>
-                {eventPerson.roleName}
+            <Text>{registrant?.displayName ?? "<Unknown>"}</Text>
+            <Badge
+                colorScheme={eventProgramPerson.roleName === EventProgramPersonRole_Enum.Participant ? "blue" : "red"}
+            >
+                {eventProgramPerson.roleName}
             </Badge>
             {enableDelete ? (
                 <Box flexGrow={1} textAlign="right">
                     <Button
-                        onClick={deleteEventPerson}
-                        aria-label={`Remove ${attendee?.displayName ?? "<Loading name>"} from the event room`}
+                        onClick={deleteEventProgramPerson}
+                        aria-label={`Remove ${registrant?.displayName ?? "<Loading name>"} from the event room`}
                         p={0}
                         colorScheme="red"
                         size="xs"

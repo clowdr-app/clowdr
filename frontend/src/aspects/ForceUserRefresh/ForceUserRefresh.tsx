@@ -21,7 +21,7 @@ import { useRestorableState } from "../Generic/useRestorableState";
 
 gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
-        ConferenceConfiguration(where: { conferenceId: { _eq: $conferenceId }, key: { _eq: "CLOWDR_APP_VERSION" } }) {
+        conference_Configuration(where: { conferenceId: { _eq: $conferenceId }, key: { _eq: "CLOWDR_APP_VERSION" } }) {
             id
             conferenceId
             key

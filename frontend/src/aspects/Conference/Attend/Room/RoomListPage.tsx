@@ -15,31 +15,31 @@ import { RoomList } from "./RoomList";
 
 gql`
     query GetAllRooms($conferenceId: uuid!) {
-        socialRooms: Room(
+        socialRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                originatingContentGroupId: { _is_null: true }
+                originatingItemId: { _is_null: true }
                 originatingEventId: { _is_null: true }
-                roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
         ) {
             ...RoomListRoomDetails
         }
-        discussionRooms: Room(
+        discussionRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                _or: [{ originatingContentGroupId: { _is_null: false } }, { originatingEventId: { _is_null: false } }]
-                roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
+                _or: [{ originatingItemId: { _is_null: false } }, { originatingEventId: { _is_null: false } }]
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
         ) {
             ...RoomListRoomDetails
         }
-        programRooms: Room(
-            where: { conferenceId: { _eq: $conferenceId }, events: {}, roomPrivacyName: { _in: [PUBLIC, PRIVATE] } }
+        programRooms: room_Room(
+            where: { conferenceId: { _eq: $conferenceId }, events: {}, managementModeName: { _in: [PUBLIC, PRIVATE] } }
             order_by: { name: asc }
         ) {
             ...RoomListRoomDetails
@@ -47,21 +47,21 @@ gql`
     }
 
     query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
-        socialOrDiscussionRooms: Room(
+        socialOrDiscussionRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
         ) {
             ...RoomListRoomDetails
         }
-        programRooms: Room(
+        programRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 events: { startTime: { _lte: $todayEnd }, endTime: { _gte: $todayStart } }
-                roomPrivacyName: { _in: [PUBLIC, PRIVATE] }
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
         ) {
@@ -69,12 +69,12 @@ gql`
         }
     }
 
-    fragment RoomListRoomDetails on Room {
+    fragment RoomListRoomDetails on room_Room {
         id
         name
         priority
-        roomPrivacyName
-        originatingContentGroupId
+        managementModeName
+        originatingItemId
         originatingEventId
     }
 `;

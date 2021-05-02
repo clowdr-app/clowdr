@@ -15,25 +15,25 @@
 //     useToast,
 //     VStack,
 // } from "@chakra-ui/react";
-// import { ContentItemPublishState, contentItemPublishState } from "@clowdr-app/shared-types/build/content";
+// import { ElementPublishState, elementPublishState } from "@clowdr-app/shared-types/build/content";
 // import * as R from "ramda";
 // import React, { useCallback, useEffect, useMemo, useState } from "react";
-// import { useInsertPublishVideoJobsMutation, useSelectContentGroupsQuery } from "../../../../generated/graphql";
+// import { useInsertPublishVideoJobsMutation, useSelectItemsQuery } from "../../../../generated/graphql";
 // import { useConference } from "../../useConference";
 
 // interface Props {
 //     isOpen: boolean;
 //     onOpen: () => void;
 //     onClose: () => void;
-//     contentGroupIds: Set<string>;
+//     itemIds: Set<string>;
 // }
 
 // gql`
-//     query SelectContentGroups($conferenceId: uuid!, $contentGroupIds: [uuid!]!) {
-//         ContentGroup(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $contentGroupIds } }) {
-//             contentItems(where: { contentTypeName: { _in: [VIDEO_BROADCAST, VIDEO_PREPUBLISH] } }) {
+//     query SelectItems($conferenceId: uuid!, $itemIds: [uuid!]!) {
+//         Item(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $itemIds } }) {
+//             elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_PREPUBLISH] } }) {
 //                 id
-//                 contentTypeName
+//                 typeName
 //                 data
 //                 name
 //             }
@@ -52,39 +52,39 @@
 //     }
 // `;
 
-// export default function PublishVideosModal({ isOpen, onClose, contentGroupIds }: Props): JSX.Element {
+// export default function PublishVideosModal({ isOpen, onClose, itemIds }: Props): JSX.Element {
 //     const conference = useConference();
-//     const { loading, error, data } = useSelectContentGroupsQuery({
+//     const { loading, error, data } = useSelectItemsQuery({
 //         variables: {
 //             conferenceId: conference.id,
-//             contentGroupIds: Array.from(contentGroupIds),
+//             itemIds: Array.from(itemIds),
 //         },
 //     });
 
-//     const contentItems = useMemo(
+//     const elements = useMemo(
 //         () =>
 //             R.flatten(
-//                 data?.ContentGroup.map((group) =>
-//                     group.contentItems.map((item) => ({
+//                 data?.Item.map((group) =>
+//                     group.elements.map((item) => ({
 //                         id: `${item.id}`,
-//                         publishState: contentItemPublishState(item.data),
-//                         contentGroupName: group.title,
-//                         contentItemName: item.name,
+//                         publishState: elementPublishState(item.data),
+//                         itemName: group.title,
+//                         elementName: item.name,
 //                     }))
 //                 ) ?? []
 //             ),
-//         [data?.ContentGroup]
+//         [data?.Item]
 //     );
 
 //     const defaultCheckedItemIds = useMemo(() => {
-//         return contentItems
+//         return elements
 //             .filter(
 //                 (item) =>
-//                     item.publishState === ContentItemPublishState.AlreadyPublishedButPublishable ||
-//                     item.publishState === ContentItemPublishState.Publishable
+//                     item.publishState === ElementPublishState.AlreadyPublishedButPublishable ||
+//                     item.publishState === ElementPublishState.Publishable
 //             )
 //             .map((item) => item.id);
-//     }, [contentItems]);
+//     }, [elements]);
 
 //     useEffect(() => {
 //         setCheckedItemIds(defaultCheckedItemIds);
@@ -99,22 +99,22 @@
 //     const publishVideos = useCallback(async () => {
 //         await insertPublishVideoJobs({
 //             variables: {
-//                 objects: checkedItemIds.map((itemId) => ({ contentItemId: itemId, conferenceId: conference.id })),
+//                 objects: checkedItemIds.map((itemId) => ({ elementId: itemId, conferenceId: conference.id })),
 //             },
 //         });
 //     }, [checkedItemIds, conference.id, insertPublishVideoJobs]);
 
-//     function publishStateToLabel(status: ContentItemPublishState): string {
+//     function publishStateToLabel(status: ElementPublishState): string {
 //         switch (status) {
-//             case ContentItemPublishState.AlreadyPublishedAndUpToDate:
+//             case ElementPublishState.AlreadyPublishedAndUpToDate:
 //                 return "already published and up to date";
-//             case ContentItemPublishState.AlreadyPublishedButNotPublishable:
+//             case ElementPublishState.AlreadyPublishedButNotPublishable:
 //                 return "previous version published - new version is still being processed";
-//             case ContentItemPublishState.AlreadyPublishedButPublishable:
+//             case ElementPublishState.AlreadyPublishedButPublishable:
 //                 return "can publish updated version";
-//             case ContentItemPublishState.NotPublishable:
+//             case ElementPublishState.NotPublishable:
 //                 return "cannot publish - video not yet uploaded or processed";
-//             case ContentItemPublishState.Publishable:
+//             case ElementPublishState.Publishable:
 //                 return "can publish";
 //         }
 //     }
@@ -135,14 +135,14 @@
 //                                 <>Could not load items</>
 //                             ) : (
 //                                 <VStack mt={5} alignItems="left" overflowY="auto" maxHeight="50vh">
-//                                     {contentItems.map((item) => (
+//                                     {elements.map((item) => (
 //                                         <Checkbox
 //                                             key={item.id}
 //                                             isChecked={checkedItemIds.includes(item.id)}
 //                                             isDisabled={
-//                                                 item.publishState !== ContentItemPublishState.Publishable &&
+//                                                 item.publishState !== ElementPublishState.Publishable &&
 //                                                 item.publishState !==
-//                                                     ContentItemPublishState.AlreadyPublishedButPublishable
+//                                                     ElementPublishState.AlreadyPublishedButPublishable
 //                                             }
 //                                             onChange={(e) =>
 //                                                 e.target.checked
@@ -150,7 +150,7 @@
 //                                                     : setCheckedItemIds(R.without([item.id], checkedItemIds))
 //                                             }
 //                                         >
-//                                             {item.contentGroupName}: {item.contentItemName} (
+//                                             {item.itemName}: {item.elementName} (
 //                                             {publishStateToLabel(item.publishState)})
 //                                         </Checkbox>
 //                                     ))}

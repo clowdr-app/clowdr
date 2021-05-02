@@ -30,7 +30,7 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 
 gql`
-    fragment ManageGroups_Group on Group {
+    fragment ManageGroups_Group on permissions_Group {
         conferenceId
         enabled
         id
@@ -44,18 +44,18 @@ gql`
     }
 
     query SelectAllGroups($conferenceId: uuid!) {
-        Group(where: { conferenceId: { _eq: $conferenceId } }) {
+        permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ManageGroups_Group
         }
     }
 
-    mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [Group_insert_input!]!) {
-        delete_Group(where: { id: { _in: $deleteGroupIds } }) {
+    mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [permissions_Group_insert_input!]!) {
+        delete_permissions_Group(where: { id: { _in: $deleteGroupIds } }) {
             returning {
                 id
             }
         }
-        insert_Group(objects: $insertGroups) {
+        insert_permissions_Group(objects: $insertGroups) {
             returning {
                 id
                 conferenceId
@@ -76,10 +76,10 @@ gql`
         $groupName: String!
         $enabled: Boolean!
         $includeUnauthenticated: Boolean!
-        $insertRoles: [GroupRole_insert_input!]!
+        $insertRoles: [permissions_GroupRole_insert_input!]!
         $deleteRoleIds: [uuid!] = []
     ) {
-        update_Group(
+        update_permissions_Group(
             where: { id: { _eq: $groupId } }
             _set: { name: $groupName, enabled: $enabled, includeUnauthenticated: $includeUnauthenticated }
         ) {
@@ -94,14 +94,14 @@ gql`
                 conferenceId
             }
         }
-        insert_GroupRole(objects: $insertRoles) {
+        insert_permissions_GroupRole(objects: $insertRoles) {
             returning {
                 id
                 groupId
                 roleId
             }
         }
-        delete_GroupRole(where: { roleId: { _in: $deleteRoleIds } }) {
+        delete_permissions_GroupRole(where: { roleId: { _in: $deleteRoleIds } }) {
             returning {
                 id
             }

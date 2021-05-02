@@ -231,22 +231,22 @@ async function createApolloClient(
     const cache = new InMemoryCache({
         typePolicies: {
             chat_Pin: {
-                keyFields: ["chatId", "attendeeId"],
+                keyFields: ["chatId", "registrantId"],
             },
             chat_Subscription: {
-                keyFields: ["chatId", "attendeeId"],
+                keyFields: ["chatId", "registrantId"],
             },
             chat_Typer: {
-                keyFields: ["chatId", "attendeeId"],
+                keyFields: ["chatId", "registrantId"],
             },
             chat_ReadUpToIndex: {
                 keyFields: ["chatId"],
             },
             chat_PinnedOrSubscribed: {
-                keyFields: ["chatId", "attendeeId"],
+                keyFields: ["chatId", "registrantId"],
             },
-            AttendeeProfile: {
-                keyFields: ["attendeeId"],
+            Profile: {
+                keyFields: ["registrantId"],
             },
         },
     });

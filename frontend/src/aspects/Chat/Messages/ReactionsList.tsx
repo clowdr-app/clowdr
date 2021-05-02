@@ -9,7 +9,7 @@ export default function ReactionsList({
     subscribeToReactions,
     ...rest
 }: {
-    currentAttendeeId?: string;
+    currentRegistrantId?: string;
     message: MessageState;
     reactions: readonly ChatReactionDataFragment[];
     subscribeToReactions: boolean;
@@ -26,7 +26,7 @@ function ReactionsListSubscriptionWrapper({
     message,
     ...rest
 }: {
-    currentAttendeeId?: string;
+    currentRegistrantId?: string;
     message: MessageState;
     reactions: readonly ChatReactionDataFragment[];
 } & BoxProps): JSX.Element {
@@ -42,16 +42,16 @@ function ReactionsListSubscriptionWrapper({
 
 function ReactionsListInner({
     reactions,
-    currentAttendeeId,
+    currentRegistrantId,
     message,
     ...rest
 }: {
-    currentAttendeeId?: string;
+    currentRegistrantId?: string;
     message: MessageState;
     reactions: readonly ChatReactionDataFragment[];
 } & BoxProps): JSX.Element {
     const reactionsGrouped: Array<
-        [string, { senderIds: string[]; attendeeSentThisReactionSId: string | false }]
+        [string, { senderIds: string[]; registrantSentThisReactionSId: string | false }]
     > = useMemo(() => {
         return R.sortWith(
             [(x, y) => y[1].senderIds.length - x[1].senderIds.length, (x, y) => x[0].localeCompare(y[0])],
@@ -61,24 +61,24 @@ function ReactionsListInner({
                         if (reaction.type === Chat_ReactionType_Enum.Emoji) {
                             const info = acc.get(reaction.symbol) ?? {
                                 senderIds: [],
-                                attendeeSentThisReactionSId: false,
+                                registrantSentThisReactionSId: false,
                             };
                             acc.set(reaction.symbol, {
                                 senderIds: [...info.senderIds, reaction.senderId],
-                                attendeeSentThisReactionSId:
-                                    info.attendeeSentThisReactionSId !== false
-                                        ? info.attendeeSentThisReactionSId
-                                        : currentAttendeeId && reaction.senderId === currentAttendeeId
+                                registrantSentThisReactionSId:
+                                    info.registrantSentThisReactionSId !== false
+                                        ? info.registrantSentThisReactionSId
+                                        : currentRegistrantId && reaction.senderId === currentRegistrantId
                                         ? reaction.sId
                                         : false,
                             });
                         }
                         return acc;
-                    }, new Map<string, { senderIds: string[]; attendeeSentThisReactionSId: string | false }>())
+                    }, new Map<string, { senderIds: string[]; registrantSentThisReactionSId: string | false }>())
                     .entries(),
             ]
         );
-    }, [currentAttendeeId, reactions]);
+    }, [currentRegistrantId, reactions]);
 
     return (
         <Box display="block" w="100%" {...rest}>
@@ -89,10 +89,10 @@ function ReactionsListInner({
                     key={`reaction-${reaction}`}
                     reaction={reaction}
                     senderIds={info.senderIds}
-                    currentAttendeeId={currentAttendeeId}
+                    currentRegistrantId={currentRegistrantId}
                     onClick={async () => {
-                        if (info.attendeeSentThisReactionSId) {
-                            await message.deleteReaction(info.attendeeSentThisReactionSId);
+                        if (info.registrantSentThisReactionSId) {
+                            await message.deleteReaction(info.registrantSentThisReactionSId);
                         } else {
                             await message.addReaction({
                                 data: {},

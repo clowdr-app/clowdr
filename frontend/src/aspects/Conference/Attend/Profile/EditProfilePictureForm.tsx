@@ -9,17 +9,17 @@ import "@uppy/status-bar/dist/style.css";
 import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    AttendeeProfileDataFragment,
-    AttendeeProfileDataFragmentDoc,
+    ProfileDataFragment,
+    ProfileDataFragmentDoc,
     useSubmitProfilePhotoMutation,
 } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
-import type { AttendeeContextT } from "../../useCurrentAttendee";
+import type { RegistrantContextT } from "../../useCurrentRegistrant";
 
 gql`
-    mutation SubmitProfilePhoto($attendeeId: uuid!, $s3URL: String!) {
-        updateProfilePhoto(attendeeId: $attendeeId, s3URL: $s3URL) {
+    mutation SubmitProfilePhoto($registrantId: uuid!, $s3URL: String!) {
+        updateProfilePhoto(registrantId: $registrantId, s3URL: $s3URL) {
             ok
             photoURL_350x350
             photoURL_50x50
@@ -29,10 +29,10 @@ gql`
 
 export default function EditProfilePitureForm({
     handleFormSubmitted,
-    attendee,
+    registrant,
 }: {
     handleFormSubmitted?: () => Promise<void>;
-    attendee: AttendeeContextT;
+    registrant: RegistrantContextT;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
@@ -42,7 +42,7 @@ export default function EditProfilePitureForm({
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "profile-photo-upload",
             meta: {
-                attendeeId: attendee.id,
+                registrantId: registrant.id,
             },
             allowMultipleUploads: false,
             restrictions: {
@@ -58,7 +58,7 @@ export default function EditProfilePitureForm({
             companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
         });
         return uppy;
-    }, [allowedFileTypes, attendee.id]);
+    }, [allowedFileTypes, registrant.id]);
 
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;
@@ -92,7 +92,7 @@ export default function EditProfilePitureForm({
     useEffect(() => {
         uppy?.on("file-added", updateFiles);
         uppy?.on("file-removed", updateFiles);
-    }, [attendee, toast, updateFiles, uppy]);
+    }, [registrant, toast, updateFiles, uppy]);
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
@@ -134,20 +134,20 @@ export default function EditProfilePitureForm({
                         const submitResult = await submitProfilePhoto({
                             variables: {
                                 s3URL,
-                                attendeeId: attendee.id,
+                                registrantId: registrant.id,
                             },
                             update: (cache, result) => {
                                 if (result.data?.updateProfilePhoto) {
                                     const data = result.data.updateProfilePhoto;
 
                                     const id = cache.identify({
-                                        __typename: "AttendeeProfile",
-                                        attendeeId: attendee.id,
+                                        __typename: "Profile",
+                                        registrantId: registrant.id,
                                     });
 
-                                    const frag = cache.readFragment<AttendeeProfileDataFragment>({
-                                        fragment: AttendeeProfileDataFragmentDoc,
-                                        fragmentName: "AttendeeProfileData",
+                                    const frag = cache.readFragment<ProfileDataFragment>({
+                                        fragment: ProfileDataFragmentDoc,
+                                        fragmentName: "ProfileData",
                                         id,
                                     });
 
@@ -160,8 +160,8 @@ export default function EditProfilePitureForm({
                                                 photoURL_50x50: data.photoURL_50x50 ?? "",
                                                 hasBeenEdited: true,
                                             },
-                                            fragment: AttendeeProfileDataFragmentDoc,
-                                            fragmentName: "AttendeeProfileData",
+                                            fragment: ProfileDataFragmentDoc,
+                                            fragmentName: "ProfileData",
                                             broadcast: true,
                                         });
                                     }
@@ -214,7 +214,7 @@ export default function EditProfilePitureForm({
                                     overflow="hidden"
                                     backgroundColor="#222"
                                 >
-                                    {files.length === 1 || attendee.profile.photoURL_350x350 ? (
+                                    {files.length === 1 || registrant.profile.photoURL_350x350 ? (
                                         <Image
                                             mt={2}
                                             alt={
@@ -225,7 +225,7 @@ export default function EditProfilePitureForm({
                                             src={
                                                 (files.length === 1
                                                     ? URL.createObjectURL(files[0].data)
-                                                    : attendee.profile.photoURL_350x350) as string
+                                                    : registrant.profile.photoURL_350x350) as string
                                             }
                                             objectFit="cover"
                                             w="100%"
@@ -256,7 +256,7 @@ export default function EditProfilePitureForm({
                                         >
                                             {files.length === 1
                                                 ? "Please press Upload when you're ready"
-                                                : !attendee.profile.photoURL_350x350
+                                                : !registrant.profile.photoURL_350x350
                                                 ? "Please upload a picture."
                                                 : undefined}
                                         </Text>
@@ -269,7 +269,7 @@ export default function EditProfilePitureForm({
                                             allowMultipleFiles={false}
                                         />
                                     </Box>
-                                    {attendee.profile.photoURL_350x350 ? (
+                                    {registrant.profile.photoURL_350x350 ? (
                                         <Button
                                             isLoading={isDeleting}
                                             pos="absolute"
@@ -286,19 +286,17 @@ export default function EditProfilePitureForm({
                                                         await submitProfilePhoto({
                                                             variables: {
                                                                 s3URL: "",
-                                                                attendeeId: attendee.id,
+                                                                registrantId: registrant.id,
                                                             },
                                                             update: (cache) => {
                                                                 const id = cache.identify({
-                                                                    __typename: "AttendeeProfile",
-                                                                    attendeeId: attendee.id,
+                                                                    __typename: "Profile",
+                                                                    registrantId: registrant.id,
                                                                 });
 
-                                                                const frag = cache.readFragment<
-                                                                    AttendeeProfileDataFragment
-                                                                >({
-                                                                    fragment: AttendeeProfileDataFragmentDoc,
-                                                                    fragmentName: "AttendeeProfileData",
+                                                                const frag = cache.readFragment<ProfileDataFragment>({
+                                                                    fragment: ProfileDataFragmentDoc,
+                                                                    fragmentName: "ProfileData",
                                                                     id,
                                                                 });
 
@@ -310,8 +308,8 @@ export default function EditProfilePitureForm({
                                                                             photoURL_350x350: "",
                                                                             photoURL_50x50: "",
                                                                         },
-                                                                        fragment: AttendeeProfileDataFragmentDoc,
-                                                                        fragmentName: "AttendeeProfileData",
+                                                                        fragment: ProfileDataFragmentDoc,
+                                                                        fragmentName: "ProfileData",
                                                                         broadcast: true,
                                                                     });
                                                                 }

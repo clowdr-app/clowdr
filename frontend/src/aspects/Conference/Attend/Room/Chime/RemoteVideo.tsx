@@ -1,8 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import {
     useApplyVideoObjectFit,
-    useAttendeeStatus,
     useAudioVideo,
+    useRegistrantStatus,
     useRemoteVideoTileState,
     useRosterState,
 } from "amazon-chime-sdk-component-library-react";
@@ -14,7 +14,7 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
     const audioVideo = useAudioVideo();
     const videoEl = useRef<HTMLVideoElement>(null);
     useApplyVideoObjectFit(videoEl);
-    const { tileIdToAttendeeId } = useRemoteVideoTileState();
+    const { tileIdToRegistrantId } = useRemoteVideoTileState();
     const { roster } = useRosterState();
     const borderEl = useRef<HTMLDivElement>(null);
 
@@ -33,11 +33,11 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
         };
     }, [audioVideo, tileId]);
 
-    const attendeeId = useMemo(() => tileIdToAttendeeId[tileId], [tileIdToAttendeeId, tileId]);
-    const { muted } = useAttendeeStatus(attendeeId);
+    const registrantId = useMemo(() => tileIdToRegistrantId[tileId], [tileIdToRegistrantId, tileId]);
+    const { muted } = useRegistrantStatus(registrantId);
 
     useEffect(() => {
-        if (!audioVideo || !attendeeId || !borderEl.current) {
+        if (!audioVideo || !registrantId || !borderEl.current) {
             return;
         }
 
@@ -60,13 +60,13 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
             }
         }, 1000);
 
-        audioVideo.realtimeSubscribeToVolumeIndicator(attendeeId, callback);
+        audioVideo.realtimeSubscribeToVolumeIndicator(registrantId, callback);
 
         return () => {
-            audioVideo.realtimeUnsubscribeFromVolumeIndicator(attendeeId, callback);
+            audioVideo.realtimeUnsubscribeFromVolumeIndicator(registrantId, callback);
             clearTimeout(decay);
         };
-    }, [attendeeId, audioVideo]);
+    }, [registrantId, audioVideo]);
 
     return (
         <Box
@@ -79,7 +79,7 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
             <video ref={videoEl} style={{ zIndex: 200, position: "relative", height: "100%" }} />
             <Box position="absolute" left="1" bottom="1" zIndex="200" w="100%">
                 <VonageOverlay
-                    connectionData={JSON.stringify({ attendeeId: roster[attendeeId]?.externalUserId })}
+                    connectionData={JSON.stringify({ registrantId: roster[registrantId]?.externalUserId })}
                     microphoneEnabled={!muted}
                 />
             </Box>

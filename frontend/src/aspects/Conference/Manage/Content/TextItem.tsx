@@ -1,19 +1,14 @@
 import { Textarea, useToast } from "@chakra-ui/react";
-import {
-    AbstractBlob,
-    ContentBaseType,
-    ContentItemVersionData,
-    TextBlob,
-} from "@clowdr-app/shared-types/build/content";
+import { AbstractBlob, ContentBaseType, ElementVersionData, TextBlob } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ContentType_Enum } from "../../../../generated/graphql";
+import { ElementType_Enum } from "../../../../generated/graphql";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 
 // TODO: Use Markdown editor instead of textarea
 
-function createDefaultText(type: ContentType_Enum.Abstract | ContentType_Enum.Text): ContentItemVersionData {
+function createDefaultText(type: ElementType_Enum.Abstract | ElementType_Enum.Text): ElementVersionData {
     return {
         createdAt: new Date().getTime(),
         createdBy: "user",
@@ -35,7 +30,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
     supported: true,
     createDefault: (type, required) => {
         assert(
-            type === ContentType_Enum.Abstract || type === ContentType_Enum.Text,
+            type === ElementType_Enum.Abstract || type === ElementType_Enum.Text,
             `Text Item Template mistakenly used for type ${type}.`
         );
 
@@ -43,7 +38,7 @@ export const TextItemTemplate: ItemBaseTemplate = {
         if (required) {
             return {
                 type: "required-only",
-                requiredItem: {
+                uploadableItem: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -72,11 +67,11 @@ export const TextItemTemplate: ItemBaseTemplate = {
         const [text, setText] = useState<string | null>(null);
 
         if (data.type === "item-only" || data.type === "required-and-item") {
-            if (!(data.item.typeName === ContentType_Enum.Abstract || data.item.typeName === ContentType_Enum.Text)) {
+            if (!(data.item.typeName === ElementType_Enum.Abstract || data.item.typeName === ElementType_Enum.Text)) {
                 return <>Text Item Template mistakenly used for type {data.type}.</>;
             }
 
-            const placeholder = data.item.typeName === ContentType_Enum.Abstract ? "Abstract" : "Text";
+            const placeholder = data.item.typeName === ElementType_Enum.Abstract ? "Abstract" : "Text";
 
             if (data.item.data.length === 0) {
                 data = {
@@ -142,6 +137,6 @@ export const TextItemTemplate: ItemBaseTemplate = {
         return <></>;
     },
     renderEditorHeading: function TextItemEditorHeading(data) {
-        return <>{data.type === "item-only" ? data.item.name : data.requiredItem.name}</>;
+        return <>{data.type === "item-only" ? data.item.name : data.uploadableItem.name}</>;
     },
 };

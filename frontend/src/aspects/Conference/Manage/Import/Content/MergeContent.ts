@@ -1,24 +1,24 @@
 import type {
     IntermediaryContentData,
+    IntermediaryExhibitionDescriptor,
     IntermediaryGroupDescriptor,
-    IntermediaryGroupHallwayDescriptor,
+    IntermediaryGroupExhibitionDescriptor,
     IntermediaryGroupPersonDescriptor,
-    IntermediaryHallwayDescriptor,
     IntermediaryItemDescriptor,
     IntermediaryPersonDescriptor,
-    IntermediaryRequiredItemDescriptor,
     IntermediaryTagDescriptor,
+    IntermediaryUploadableItemDescriptor,
     IntermediaryUploaderDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
 import type {
-    ContentGroupDescriptor,
-    ContentGroupHallwayDescriptor,
-    ContentGroupPersonDescriptor,
-    ContentItemDescriptor,
-    ContentPersonDescriptor,
-    HallwayDescriptor,
-    RequiredContentItemDescriptor,
+    ElementDescriptor,
+    ExhibitionDescriptor,
+    ItemDescriptor,
+    ItemExhibitionDescriptor,
+    ItemPersonDescriptor,
+    ProgramPersonDescriptor,
+    UploadableElementDescriptor,
     UploaderDescriptor,
 } from "../../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
@@ -47,12 +47,12 @@ import {
 type Context = {
     idMaps: {
         Uploader: IdMap;
-        RequiredItem: IdMap;
+        UploadableItem: IdMap;
         Item: IdMap;
         GroupPerson: IdMap;
-        GroupHallway: IdMap;
+        GroupExhibition: IdMap;
         Group: IdMap;
-        Hallway: IdMap;
+        Exhibition: IdMap;
         Tag: IdMap;
         OriginatingData: IdMap;
         Person: IdMap;
@@ -60,7 +60,7 @@ type Context = {
 
     conferenceId: string;
     originatingDatas: OriginatingDataDescriptor[];
-    people: ContentPersonDescriptor[];
+    people: ProgramPersonDescriptor[];
     tags: TagDescriptor[];
 };
 
@@ -103,7 +103,7 @@ function mergeUploader(
 }
 
 function convertUploader(
-    requiredContentItemId: string
+    uploadableId: string
 ): (context: Context, item: IntermediaryUploaderDescriptor | UploaderDescriptor) => UploaderDescriptor {
     return (_context, item) => {
         const result = { ...item } as UploaderDescriptor;
@@ -116,14 +116,14 @@ function convertUploader(
             result.emailsSentCount = 0;
         }
 
-        result.requiredContentItemId = requiredContentItemId;
+        result.uploadableId = uploadableId;
 
         return result;
     };
 }
 
 function mergeUploaders(
-    requiredContentItemId: string
+    uploadableId: string
 ): (
     context: Context,
     items1: UploaderDescriptor[],
@@ -139,24 +139,24 @@ function mergeUploaders(
             items1,
             items2,
             findUploader,
-            convertUploader(requiredContentItemId),
+            convertUploader(uploadableId),
             mergeUploader
         );
     };
 }
 
-function mergeRequiredItem(
+function mergeUploadableItem(
     context: Context,
-    item1: RequiredContentItemDescriptor,
-    item2: RequiredContentItemDescriptor
+    item1: UploadableElementDescriptor,
+    item2: UploadableElementDescriptor
 ): {
     changes: ChangeSummary[];
-    result: RequiredContentItemDescriptor;
+    result: UploadableElementDescriptor;
 } {
     const changes: ChangeSummary[] = [];
-    const result = {} as RequiredContentItemDescriptor;
+    const result = {} as UploadableElementDescriptor;
 
-    mergeIdInPlace("RequiredItem", context, changes, result, item1, item2);
+    mergeIdInPlace("UploadableItem", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
     mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
@@ -171,7 +171,7 @@ function mergeRequiredItem(
                     changes: [
                         {
                             type: "MERGE",
-                            location: "RequiredContentItem.uploadsRemaining",
+                            location: "UploadableElement.uploadsRemaining",
                             description: "Merged uploads remaining to maximum of the two values.",
                             importData: [x, y],
                             newData: r,
@@ -210,7 +210,7 @@ function mergeRequiredItem(
     mergeFieldInPlace(context, changes, result, "uploaders", item1, item2, true, mergeUploaders(result.id));
 
     changes.push({
-        location: "RequiredContentItem",
+        location: "UploadableElement",
         type: "MERGE",
         description: "Merged two matching required items.",
         importData: [item1, item2],
@@ -223,10 +223,10 @@ function mergeRequiredItem(
     };
 }
 
-function convertRequiredItem(
+function convertUploadableItem(
     context: Context,
-    item: IntermediaryRequiredItemDescriptor | RequiredContentItemDescriptor
-): RequiredContentItemDescriptor {
+    item: IntermediaryUploadableItemDescriptor | UploadableElementDescriptor
+): UploadableElementDescriptor {
     const result = {
         id: item.id ?? uuidv4(),
         isNew: ("isNew" in item && item.isNew) || !item.id,
@@ -236,7 +236,7 @@ function convertRequiredItem(
         isHidden: "isHidden" in item && item.isHidden,
         uploadsRemaining: item.uploadsRemaining,
         uploaders: [],
-    } as RequiredContentItemDescriptor;
+    } as UploadableElementDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
     if (origDataIdx !== undefined) {
@@ -253,35 +253,35 @@ function convertRequiredItem(
     return result;
 }
 
-function mergeRequiredItems(
+function mergeUploadableItems(
     context: Context,
-    items1: RequiredContentItemDescriptor[],
-    items2: (IntermediaryRequiredItemDescriptor | RequiredContentItemDescriptor)[]
+    items1: UploadableElementDescriptor[],
+    items2: (IntermediaryUploadableItemDescriptor | UploadableElementDescriptor)[]
 ): {
     changes: ChangeSummary[];
-    result: RequiredContentItemDescriptor[];
+    result: UploadableElementDescriptor[];
 } {
     return mergeLists(
         context,
-        "RequiredContentItem",
+        "UploadableElement",
         items1,
         items2,
-        findExistingNamedItem("RequiredItem"),
-        convertRequiredItem,
-        mergeRequiredItem
+        findExistingNamedItem("UploadableItem"),
+        convertUploadableItem,
+        mergeUploadableItem
     );
 }
 
 function mergeItem(
     context: Context,
-    item1: ContentItemDescriptor,
-    item2: ContentItemDescriptor
+    item1: ElementDescriptor,
+    item2: ElementDescriptor
 ): {
     changes: ChangeSummary[];
-    result: ContentItemDescriptor;
+    result: ElementDescriptor;
 } {
     const changes: ChangeSummary[] = [];
-    const result = {} as ContentItemDescriptor;
+    const result = {} as ElementDescriptor;
 
     mergeIdInPlace("Item", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
@@ -292,7 +292,7 @@ function mergeItem(
     mergeFieldInPlace(context, changes, result, "data", item1, item2);
 
     changes.push({
-        location: "ContentItem",
+        location: "Element",
         type: "MERGE",
         description: "Merged two matching items.",
         importData: [item1, item2],
@@ -305,10 +305,7 @@ function mergeItem(
     };
 }
 
-function convertItem(
-    context: Context,
-    item: IntermediaryItemDescriptor | ContentItemDescriptor
-): ContentItemDescriptor {
+function convertItem(context: Context, item: IntermediaryItemDescriptor | ElementDescriptor): ElementDescriptor {
     const result = {
         id: item.id ?? uuidv4(),
         isNew: ("isNew" in item && item.isNew) || !item.id,
@@ -318,8 +315,8 @@ function convertItem(
         data: item.data,
         isHidden: item.isHidden,
         layoutData: "layoutData" in item ? item.layoutData : undefined,
-        requiredContentId: "requiredContentId" in item ? item.requiredContentId : undefined,
-    } as ContentItemDescriptor;
+        uploadableId: "uploadableId" in item ? item.uploadableId : undefined,
+    } as ElementDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
     if (origDataIdx !== undefined) {
@@ -331,13 +328,13 @@ function convertItem(
 
 function mergeItems(
     context: Context,
-    items1: ContentItemDescriptor[],
-    items2: (IntermediaryItemDescriptor | ContentItemDescriptor)[]
+    items1: ElementDescriptor[],
+    items2: (IntermediaryItemDescriptor | ElementDescriptor)[]
 ): {
     changes: ChangeSummary[];
-    result: ContentItemDescriptor[];
+    result: ElementDescriptor[];
 } {
-    return mergeLists(context, "ContentItem", items1, items2, findExistingNamedItem("Item"), convertItem, mergeItem);
+    return mergeLists(context, "Element", items1, items2, findExistingNamedItem("Item"), convertItem, mergeItem);
 }
 
 function convertTagName(context: Context, tagName: string): string {
@@ -353,8 +350,8 @@ function convertTagName(context: Context, tagName: string): string {
 
 function findExistingGroupPerson(
     ctx: Context,
-    items: ContentGroupPersonDescriptor[],
-    item: IntermediaryGroupPersonDescriptor | ContentGroupPersonDescriptor
+    items: ItemPersonDescriptor[],
+    item: IntermediaryGroupPersonDescriptor | ItemPersonDescriptor
 ): number | undefined {
     return (
         findMatch(ctx, items, item, isMatch_Id("GroupPerson")) ??
@@ -364,8 +361,8 @@ function findExistingGroupPerson(
             }
             return isMatch_String_Exact<
                 Context,
-                ContentGroupPersonDescriptor | IntermediaryGroupPersonDescriptor,
-                ContentGroupPersonDescriptor
+                ItemPersonDescriptor | IntermediaryGroupPersonDescriptor,
+                ItemPersonDescriptor
             >("personId")(ctxInner, item1, item2);
         })
         // TODO: Find by name_affiliation
@@ -374,25 +371,25 @@ function findExistingGroupPerson(
 
 function mergeGroupPerson(
     context: Context,
-    item1: ContentGroupPersonDescriptor,
-    item2: ContentGroupPersonDescriptor
+    item1: ItemPersonDescriptor,
+    item2: ItemPersonDescriptor
 ): {
     changes: ChangeSummary[];
-    result: ContentGroupPersonDescriptor;
+    result: ItemPersonDescriptor;
 } {
     const changes: ChangeSummary[] = [];
-    const result = {} as ContentGroupPersonDescriptor;
+    const result = {} as ItemPersonDescriptor;
 
     mergeIdInPlace("GroupPerson", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "conferenceId", item1, item2);
-    mergeFieldInPlace(context, changes, result, "groupId", item1, item2, false);
+    mergeFieldInPlace(context, changes, result, "itemId", item1, item2, false);
     mergeFieldInPlace(context, changes, result, "personId", item1, item2);
     mergeFieldInPlace(context, changes, result, "priority", item1, item2);
     mergeFieldInPlace(context, changes, result, "roleName", item1, item2);
 
     changes.push({
-        location: "ContentGroupPerson",
+        location: "ItemPerson",
         type: "MERGE",
         description: "Merged two matching group-persons.",
         importData: [item1, item2],
@@ -407,17 +404,17 @@ function mergeGroupPerson(
 
 function convertGroupPerson(
     context: Context,
-    item: IntermediaryGroupPersonDescriptor | ContentGroupPersonDescriptor
-): ContentGroupPersonDescriptor {
+    item: IntermediaryGroupPersonDescriptor | ItemPersonDescriptor
+): ItemPersonDescriptor {
     const result = {
         id: item.id ?? uuidv4(),
         isNew: ("isNew" in item && item.isNew) || !item.id,
 
         conferenceId: context.conferenceId,
-        groupId: "groupId" in item ? item.groupId : undefined,
+        itemId: "itemId" in item ? item.itemId : undefined,
         roleName: "roleName" in item ? item.roleName : item.role,
         priority: item.priority,
-    } as ContentGroupPersonDescriptor;
+    } as ItemPersonDescriptor;
 
     const personIdx = findExistingPersonForGroup(context, context.people, item);
     if (personIdx !== undefined) {
@@ -431,15 +428,15 @@ function convertGroupPerson(
 
 function mergeGroupPeople(
     context: Context,
-    items1: ContentGroupPersonDescriptor[],
-    items2: (IntermediaryGroupPersonDescriptor | ContentGroupPersonDescriptor)[]
+    items1: ItemPersonDescriptor[],
+    items2: (IntermediaryGroupPersonDescriptor | ItemPersonDescriptor)[]
 ): {
     changes: ChangeSummary[];
-    result: ContentGroupPersonDescriptor[];
+    result: ItemPersonDescriptor[];
 } {
     return mergeLists(
         context,
-        "ContentGroupPerson",
+        "ItemPerson",
         items1,
         items2,
         findExistingGroupPerson,
@@ -448,44 +445,44 @@ function mergeGroupPeople(
     );
 }
 
-function convertGroupHallway(
+function convertGroupExhibition(
     context: Context,
-    groupHallway: IntermediaryGroupHallwayDescriptor | ContentGroupHallwayDescriptor
-): ContentGroupHallwayDescriptor {
+    groupExhibition: IntermediaryGroupExhibitionDescriptor | ItemExhibitionDescriptor
+): ItemExhibitionDescriptor {
     const result = {
-        id: groupHallway.id ?? uuidv4(),
-        isNew: ("isNew" in groupHallway && groupHallway.isNew) || !groupHallway.id,
+        id: groupExhibition.id ?? uuidv4(),
+        isNew: ("isNew" in groupExhibition && groupExhibition.isNew) || !groupExhibition.id,
         conferenceId: context.conferenceId,
-        groupId: "groupId" in groupHallway ? groupHallway.groupId : undefined,
-        hallwayId: groupHallway.hallwayId,
-        layout: groupHallway.layout,
-        priority: groupHallway.priority,
-    } as ContentGroupHallwayDescriptor;
+        itemId: "itemId" in groupExhibition ? groupExhibition.itemId : undefined,
+        exhibitionId: groupExhibition.exhibitionId,
+        layout: groupExhibition.layout,
+        priority: groupExhibition.priority,
+    } as ItemExhibitionDescriptor;
 
     return result;
 }
 
-function mergeGroupHallway(
+function mergeGroupExhibition(
     context: Context,
-    item1: ContentGroupHallwayDescriptor,
-    item2: ContentGroupHallwayDescriptor
+    item1: ItemExhibitionDescriptor,
+    item2: ItemExhibitionDescriptor
 ): {
     changes: ChangeSummary[];
-    result: ContentGroupHallwayDescriptor;
+    result: ItemExhibitionDescriptor;
 } {
     const changes: ChangeSummary[] = [];
-    const result = {} as ContentGroupHallwayDescriptor;
+    const result = {} as ItemExhibitionDescriptor;
 
-    mergeIdInPlace("GroupHallway", context, changes, result, item1, item2);
+    mergeIdInPlace("GroupExhibition", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
-    mergeFieldInPlace(context, changes, result, "hallwayId", item1, item2);
+    mergeFieldInPlace(context, changes, result, "exhibitionId", item1, item2);
     mergeFieldInPlace(context, changes, result, "layout", item1, item2);
     mergeFieldInPlace(context, changes, result, "priority", item1, item2);
 
     changes.push({
-        location: "ContentGroupHallway",
+        location: "ItemExhibition",
         type: "MERGE",
-        description: "Merged two matching group-hallways.",
+        description: "Merged two matching group-exhibitions.",
         importData: [item1, item2],
         newData: result,
     });
@@ -496,40 +493,37 @@ function mergeGroupHallway(
     };
 }
 
-function findExistingGroupHallway(
+function findExistingGroupExhibition(
     ctx: Context,
-    items: ContentGroupHallwayDescriptor[],
-    item: IntermediaryGroupHallwayDescriptor | ContentGroupHallwayDescriptor
+    items: ItemExhibitionDescriptor[],
+    item: IntermediaryGroupExhibitionDescriptor | ItemExhibitionDescriptor
 ): number | undefined {
     return (
-        findMatch(ctx, items, item, isMatch_Id("GroupHallway")) ||
-        findMatch(ctx, items, item, isMatch_String_Exact("hallwayId"))
+        findMatch(ctx, items, item, isMatch_Id("GroupExhibition")) ||
+        findMatch(ctx, items, item, isMatch_String_Exact("exhibitionId"))
     );
 }
 
-function mergeGroupHallways(
+function mergeGroupExhibitions(
     context: Context,
-    items1: ContentGroupHallwayDescriptor[],
-    items2: (IntermediaryGroupHallwayDescriptor | ContentGroupHallwayDescriptor)[]
+    items1: ItemExhibitionDescriptor[],
+    items2: (IntermediaryGroupExhibitionDescriptor | ItemExhibitionDescriptor)[]
 ): {
     changes: ChangeSummary[];
-    result: ContentGroupHallwayDescriptor[];
+    result: ItemExhibitionDescriptor[];
 } {
     return mergeLists(
         context,
-        "ContentGroupHallway",
+        "ItemExhibition",
         items1,
         items2,
-        findExistingGroupHallway,
-        convertGroupHallway,
-        mergeGroupHallway
+        findExistingGroupExhibition,
+        convertGroupExhibition,
+        mergeGroupExhibition
     );
 }
 
-function convertGroup(
-    context: Context,
-    item: IntermediaryGroupDescriptor | ContentGroupDescriptor
-): ContentGroupDescriptor {
+function convertGroup(context: Context, item: IntermediaryGroupDescriptor | ItemDescriptor): ItemDescriptor {
     const result = {
         id: item.id ?? uuidv4(),
         isNew: ("isNew" in item && item.isNew) || !item.id,
@@ -537,13 +531,13 @@ function convertGroup(
         title: item.title,
         typeName: item.typeName,
         shortTitle: "shortTitle" in item ? item.shortTitle : undefined,
-        hallways: [],
+        exhibitions: [],
         items: [],
         people: [],
-        requiredItems: [],
+        uploadableItems: [],
         tagIds: new Set(),
         rooms: [],
-    } as ContentGroupDescriptor;
+    } as ItemDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
     if (origDataIdx !== undefined) {
@@ -556,15 +550,15 @@ function convertGroup(
         }
     }
 
-    if (item.requiredItems) {
-        for (const x of item.requiredItems) {
-            result.requiredItems.push(convertRequiredItem(context, x));
+    if (item.uploadableItems) {
+        for (const x of item.uploadableItems) {
+            result.uploadableItems.push(convertUploadableItem(context, x));
         }
     }
 
-    if (item.hallways) {
-        for (const x of item.hallways) {
-            result.hallways.push(convertGroupHallway(context, x));
+    if (item.exhibitions) {
+        for (const x of item.exhibitions) {
+            result.exhibitions.push(convertGroupExhibition(context, x));
         }
     }
 
@@ -589,15 +583,15 @@ function convertGroup(
 
 function mergeGroup(
     context: Context,
-    item1: ContentGroupDescriptor,
-    item2: ContentGroupDescriptor
+    item1: ItemDescriptor,
+    item2: ItemDescriptor
 ): {
-    result: ContentGroupDescriptor;
+    result: ItemDescriptor;
     changes: ChangeSummary[];
 } {
     const changes: ChangeSummary[] = [];
 
-    const result = {} as ContentGroupDescriptor;
+    const result = {} as ItemDescriptor;
 
     mergeIdInPlace("Group", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
@@ -605,7 +599,7 @@ function mergeGroup(
     mergeFieldInPlace(context, changes, result, "title", item1, item2);
     mergeFieldInPlace(context, changes, result, "typeName", item1, item2);
     mergeFieldInPlace(context, changes, result, "items", item1, item2, true, mergeItems);
-    mergeFieldInPlace(context, changes, result, "requiredItems", item1, item2, true, mergeRequiredItems);
+    mergeFieldInPlace(context, changes, result, "uploadableItems", item1, item2, true, mergeUploadableItems);
     mergeFieldInPlace(context, changes, result, "tagIds", item1, item2, true, (_ctx, items1, items2, _prefer) => {
         const tagIdsMerged = new Set(items1);
         items2.forEach((id) => tagIdsMerged.add(id));
@@ -623,10 +617,10 @@ function mergeGroup(
         };
     });
     mergeFieldInPlace(context, changes, result, "people", item1, item2, true, mergeGroupPeople);
-    mergeFieldInPlace(context, changes, result, "hallways", item1, item2, true, mergeGroupHallways);
+    mergeFieldInPlace(context, changes, result, "exhibitions", item1, item2, true, mergeGroupExhibitions);
 
     changes.push({
-        location: "ContentGroup",
+        location: "Item",
         type: "MERGE",
         description: "Merged two matching groups.",
         importData: [item1, item2],
@@ -641,8 +635,8 @@ function mergeGroup(
 
 function findExistingGroup(
     ctx: Context,
-    items: ContentGroupDescriptor[],
-    item: IntermediaryGroupDescriptor | ContentGroupDescriptor
+    items: ItemDescriptor[],
+    item: IntermediaryGroupDescriptor | ItemDescriptor
 ): number | undefined {
     return (
         findMatch(ctx, items, item, isMatch_Id("Group")) ??
@@ -652,7 +646,10 @@ function findExistingGroup(
     );
 }
 
-function convertHallway(context: Context, item: IntermediaryHallwayDescriptor | HallwayDescriptor): HallwayDescriptor {
+function convertExhibition(
+    context: Context,
+    item: IntermediaryExhibitionDescriptor | ExhibitionDescriptor
+): ExhibitionDescriptor {
     const result = {
         id: item.id ?? uuidv4(),
         isNew: ("isNew" in item && item.isNew) || !item.id,
@@ -660,33 +657,33 @@ function convertHallway(context: Context, item: IntermediaryHallwayDescriptor | 
         name: item.name,
         colour: item.colour ?? "rgba(0,0,0,0)",
         priority: item.priority ?? 0,
-    } as HallwayDescriptor;
+    } as ExhibitionDescriptor;
 
     return result;
 }
 
-function mergeHallway(
+function mergeExhibition(
     context: Context,
-    item1: HallwayDescriptor,
-    item2: HallwayDescriptor
+    item1: ExhibitionDescriptor,
+    item2: ExhibitionDescriptor
 ): {
-    result: HallwayDescriptor;
+    result: ExhibitionDescriptor;
     changes: ChangeSummary[];
 } {
     const changes: ChangeSummary[] = [];
 
-    const result = {} as HallwayDescriptor;
+    const result = {} as ExhibitionDescriptor;
 
-    mergeIdInPlace("Hallway", context, changes, result, item1, item2);
+    mergeIdInPlace("Exhibition", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "colour", item1, item2);
     mergeFieldInPlace(context, changes, result, "priority", item1, item2);
 
     changes.push({
-        location: "Hallway",
+        location: "Exhibition",
         type: "MERGE",
-        description: "Merged two matching hallways.",
+        description: "Merged two matching exhibitions.",
         importData: [item1, item2],
         newData: result,
     });
@@ -697,13 +694,13 @@ function mergeHallway(
     };
 }
 
-function findExistingHallway(
+function findExistingExhibition(
     ctx: Context,
-    items: HallwayDescriptor[],
-    item: IntermediaryHallwayDescriptor | HallwayDescriptor
+    items: ExhibitionDescriptor[],
+    item: IntermediaryExhibitionDescriptor | ExhibitionDescriptor
 ): number | undefined {
     return (
-        findMatch(ctx, items, item, isMatch_Id("Hallway")) ??
+        findMatch(ctx, items, item, isMatch_Id("Exhibition")) ??
         findMatch(ctx, items, item, isMatch_String_Exact("name")) ??
         findMatch(ctx, items, item, isMatch_String_EditDistance("name"))
     );
@@ -772,8 +769,8 @@ function findExistingTag(
 
 function convertPerson(
     context: Context,
-    item: IntermediaryPersonDescriptor | ContentPersonDescriptor
-): ContentPersonDescriptor {
+    item: IntermediaryPersonDescriptor | ProgramPersonDescriptor
+): ProgramPersonDescriptor {
     const result = {
         id: item.id ?? uuidv4(),
         isNew: ("isNew" in item && item.isNew) || !item.id,
@@ -782,7 +779,7 @@ function convertPerson(
         name: item.name,
         affiliation: item.affiliation,
         email: item.email,
-    } as ContentPersonDescriptor;
+    } as ProgramPersonDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
     if (origDataIdx !== undefined) {
@@ -794,15 +791,15 @@ function convertPerson(
 
 function mergePerson(
     context: Context,
-    item1: ContentPersonDescriptor,
-    item2: ContentPersonDescriptor
+    item1: ProgramPersonDescriptor,
+    item2: ProgramPersonDescriptor
 ): {
-    result: ContentPersonDescriptor;
+    result: ProgramPersonDescriptor;
     changes: ChangeSummary[];
 } {
     const changes: ChangeSummary[] = [];
 
-    const result = {} as ContentPersonDescriptor;
+    const result = {} as ProgramPersonDescriptor;
 
     mergeIdInPlace("Person", context, changes, result, item1, item2);
     mergeIsNewInPlace(context, result, item1, item2);
@@ -810,7 +807,7 @@ function mergePerson(
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "affiliation", item1, item2);
     mergeFieldInPlace(context, changes, result, "email", item1, item2);
-    mergeFieldInPlace(context, changes, result, "attendeeId", item1, item2);
+    mergeFieldInPlace(context, changes, result, "registrantId", item1, item2);
 
     changes.push({
         location: "Person",
@@ -828,10 +825,10 @@ function mergePerson(
 
 function findExistingPerson(
     ctx: Context,
-    items: ContentPersonDescriptor[],
-    item: IntermediaryPersonDescriptor | ContentPersonDescriptor
+    items: ProgramPersonDescriptor[],
+    item: IntermediaryPersonDescriptor | ProgramPersonDescriptor
 ): number | undefined {
-    const generateMatchableName = (x: ContentPersonDescriptor | IntermediaryPersonDescriptor): string | undefined => {
+    const generateMatchableName = (x: ProgramPersonDescriptor | IntermediaryPersonDescriptor): string | undefined => {
         if (!x.name) {
             return undefined;
         }
@@ -870,10 +867,10 @@ function findExistingPerson(
 
 function findExistingPersonForGroup(
     ctx: Context,
-    items: ContentPersonDescriptor[],
-    item: IntermediaryGroupPersonDescriptor | ContentGroupPersonDescriptor
+    items: ProgramPersonDescriptor[],
+    item: IntermediaryGroupPersonDescriptor | ItemPersonDescriptor
 ): number | undefined {
-    const generateMatchableNameA = (x: ContentPersonDescriptor): string | undefined => {
+    const generateMatchableNameA = (x: ProgramPersonDescriptor): string | undefined => {
         if (!x.name) {
             return undefined;
         }
@@ -883,7 +880,7 @@ function findExistingPersonForGroup(
         return `${x.name} (No affiliation)`;
     };
     const generateMatchableNameB = (
-        x: ContentGroupPersonDescriptor | IntermediaryGroupPersonDescriptor
+        x: ItemPersonDescriptor | IntermediaryGroupPersonDescriptor
     ): string | undefined => {
         if ("name_affiliation" in x) {
             return x.name_affiliation;
@@ -949,17 +946,17 @@ function findExistingPersonForGroup(
 function mergeData(
     conferenceId: string,
     importData: Record<string, IntermediaryContentData>,
-    originalContentGroups: ContentGroupDescriptor[],
-    originalHallways: HallwayDescriptor[],
+    originalItems: ItemDescriptor[],
+    originalExhibitions: ExhibitionDescriptor[],
     originalOriginatingDatas: OriginatingDataDescriptor[],
-    originalPeople: ContentPersonDescriptor[],
+    originalPeople: ProgramPersonDescriptor[],
     originalTags: TagDescriptor[]
 ): {
-    newContentGroups: ContentGroupDescriptor[];
-    newPeople: ContentPersonDescriptor[];
+    newItems: ItemDescriptor[];
+    newPeople: ProgramPersonDescriptor[];
     newTags: TagDescriptor[];
     newOriginatingDatas: OriginatingDataDescriptor[];
-    newHallways: HallwayDescriptor[];
+    newExhibitions: ExhibitionDescriptor[];
 
     changes: ChangeSummary[];
 } {
@@ -971,41 +968,41 @@ function mergeData(
     const result: {
         idMaps: {
             Uploader: IdMap;
-            RequiredItem: IdMap;
+            UploadableItem: IdMap;
             Item: IdMap;
             GroupPerson: IdMap;
-            GroupHallway: IdMap;
+            GroupExhibition: IdMap;
             Group: IdMap;
-            Hallway: IdMap;
+            Exhibition: IdMap;
             Tag: IdMap;
             OriginatingData: IdMap;
             Person: IdMap;
         };
         conferenceId: string;
-        groups: ContentGroupDescriptor[];
-        people: ContentPersonDescriptor[];
+        groups: ItemDescriptor[];
+        people: ProgramPersonDescriptor[];
         tags: TagDescriptor[];
         originatingDatas: OriginatingDataDescriptor[];
-        hallways: HallwayDescriptor[];
+        exhibitions: ExhibitionDescriptor[];
     } = {
         idMaps: {
             Uploader: new Map(),
-            RequiredItem: new Map(),
+            UploadableItem: new Map(),
             Item: new Map(),
             GroupPerson: new Map(),
-            GroupHallway: new Map(),
+            GroupExhibition: new Map(),
             Group: new Map(),
-            Hallway: new Map(),
+            Exhibition: new Map(),
             Tag: new Map(),
             OriginatingData: new Map(),
             Person: new Map(),
         },
         conferenceId,
-        groups: [...originalContentGroups],
+        groups: [...originalItems],
         people: [...originalPeople],
         tags: [...originalTags],
         originatingDatas: [...originalOriginatingDatas],
-        hallways: [...originalHallways],
+        exhibitions: [...originalExhibitions],
     };
     const changes: ChangeSummary[] = [];
 
@@ -1030,17 +1027,17 @@ function mergeData(
     for (const dataKey of dataKeys) {
         const data = importData[dataKey];
 
-        if (data.hallways) {
+        if (data.exhibitions) {
             const newDatas = mergeLists(
                 result,
-                "Hallway",
-                result.hallways,
-                data.hallways,
-                findExistingHallway,
-                convertHallway,
-                mergeHallway
+                "Exhibition",
+                result.exhibitions,
+                data.exhibitions,
+                findExistingExhibition,
+                convertExhibition,
+                mergeExhibition
             );
-            result.hallways = newDatas.result;
+            result.exhibitions = newDatas.result;
             changes.push(...newDatas.changes);
         }
     }
@@ -1079,7 +1076,7 @@ function mergeData(
         if (data.groups) {
             const newGroups = mergeLists(
                 result,
-                "ContentGroup",
+                "Item",
                 result.groups,
                 data.groups,
                 findExistingGroup,
@@ -1092,11 +1089,11 @@ function mergeData(
     }
 
     return {
-        newContentGroups: result.groups,
+        newItems: result.groups,
         newPeople: result.people,
         newTags: result.tags,
         newOriginatingDatas: result.originatingDatas,
-        newHallways: result.hallways,
+        newExhibitions: result.exhibitions,
         changes,
     };
 }
@@ -1104,40 +1101,40 @@ function mergeData(
 export default function mergeContent(
     conferenceId: string,
     importData: Record<string, IntermediaryContentData>,
-    originalContentGroups: Map<string, ContentGroupDescriptor>,
-    originalHallways: Map<string, HallwayDescriptor>,
+    originalItems: Map<string, ItemDescriptor>,
+    originalExhibitions: Map<string, ExhibitionDescriptor>,
     originalOriginatingDatas: Map<string, OriginatingDataDescriptor>,
-    originalPeople: Map<string, ContentPersonDescriptor>,
+    originalPeople: Map<string, ProgramPersonDescriptor>,
     originalTags: Map<string, TagDescriptor>
 ): {
     changes: ChangeSummary[];
-    newContentGroups: Map<string, ContentGroupDescriptor>;
-    newPeople: Map<string, ContentPersonDescriptor>;
+    newItems: Map<string, ItemDescriptor>;
+    newPeople: Map<string, ProgramPersonDescriptor>;
     newTags: Map<string, TagDescriptor>;
     newOriginatingDatas: Map<string, OriginatingDataDescriptor>;
-    newHallways: Map<string, HallwayDescriptor>;
+    newExhibitions: Map<string, ExhibitionDescriptor>;
 } {
     const changes: ChangeSummary[] = [];
 
     const result = mergeData(
         conferenceId,
         importData,
-        Array.from(originalContentGroups.values()),
-        Array.from(originalHallways.values()),
+        Array.from(originalItems.values()),
+        Array.from(originalExhibitions.values()),
         Array.from(originalOriginatingDatas.values()),
         Array.from(originalPeople.values()),
         Array.from(originalTags.values())
     );
     changes.push(...result.changes);
 
-    const newContentGroups = new Map(result.newContentGroups.map((x) => [x.id, x]));
+    const newItems = new Map(result.newItems.map((x) => [x.id, x]));
     const newPeople = new Map(result.newPeople.map((x) => [x.id, x]));
     const newTags = new Map(result.newTags.map((x) => [x.id, x]));
     const newOriginatingDatas = new Map(result.newOriginatingDatas.map((x) => [x.id, x]));
-    const newHallways = new Map(result.newHallways.map((x) => [x.id, x]));
+    const newExhibitions = new Map(result.newExhibitions.map((x) => [x.id, x]));
 
     const unusedOriginatingDataIds = new Set(newOriginatingDatas.keys());
-    newContentGroups.forEach((group) => {
+    newItems.forEach((group) => {
         if (group.originatingDataId) {
             unusedOriginatingDataIds.delete(group.originatingDataId);
         }
@@ -1148,7 +1145,7 @@ export default function mergeContent(
             }
         });
 
-        group.requiredItems.forEach((item) => {
+        group.uploadableItems.forEach((item) => {
             if (item.originatingDataId) {
                 unusedOriginatingDataIds.delete(item.originatingDataId);
             }
@@ -1173,10 +1170,10 @@ export default function mergeContent(
 
     return {
         changes,
-        newContentGroups,
+        newItems,
         newPeople,
         newTags,
         newOriginatingDatas,
-        newHallways,
+        newExhibitions,
     };
 }

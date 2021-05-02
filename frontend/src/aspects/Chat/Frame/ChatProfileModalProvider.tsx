@@ -1,10 +1,10 @@
 import { useDisclosure } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
-import ProfileModal from "../../Conference/Attend/Attendee/ProfileModal";
-import type { Attendee } from "../../Conference/useCurrentAttendee";
+import ProfileModal from "../../Conference/Attend/Registrant/ProfileModal";
+import type { Registrant } from "../../Conference/useCurrentRegistrant";
 
 interface ChatProfileModalCtx {
-    open: (attendee: Attendee) => void;
+    open: (registrant: Registrant) => void;
     close: () => void;
 }
 
@@ -24,12 +24,12 @@ export default function ChatProfileModalProvider({
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [attendee, setAttendee] = useState<Attendee | null>(null);
+    const [registrant, setRegistrant] = useState<Registrant | null>(null);
 
     const open = useCallback(
-        (attendee: Attendee) => {
+        (registrant: Registrant) => {
             onOpen();
-            setAttendee(attendee);
+            setRegistrant(registrant);
         },
         [onOpen]
     );
@@ -38,7 +38,7 @@ export default function ChatProfileModalProvider({
             open,
             close: () => {
                 onClose();
-                setAttendee(null);
+                setRegistrant(null);
             },
         }),
         [onClose, open]
@@ -47,7 +47,7 @@ export default function ChatProfileModalProvider({
     return (
         <ChatProfileModalContext.Provider value={ctx}>
             {children}
-            <ProfileModal attendee={attendee} isOpen={isOpen} onClose={onClose} />
+            <ProfileModal registrant={registrant} isOpen={isOpen} onClose={onClose} />
         </ChatProfileModalContext.Provider>
     );
 }

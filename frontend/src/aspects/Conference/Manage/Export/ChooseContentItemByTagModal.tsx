@@ -25,32 +25,32 @@ import {
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
 import {
-    useChooseContentItemByTagModal_GetTagsQuery,
-    useChooseContentItemByTagModal_GetVideoContentItemsQuery,
+    useChooseElementByTagModal_GetTagsQuery,
+    useChooseElementByTagModal_GetVideoElementsQuery,
 } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 
 gql`
-    query ChooseContentItemByTagModal_GetTags($conferenceId: uuid!) {
-        Tag(where: { conferenceId: { _eq: $conferenceId } }, order_by: { name: asc }) {
+    query ChooseElementByTagModal_GetTags($conferenceId: uuid!) {
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }, order_by: { name: asc }) {
             id
             name
         }
     }
 
-    query ChooseContentItemByTagModal_GetVideoContentItems($tagId: uuid!, $name: String!) {
-        ContentItem(
+    query ChooseElementByTagModal_GetVideoElements($tagId: uuid!, $name: String!) {
+        content_Element(
             where: {
-                contentTypeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] }
-                contentGroup: { contentGroupTags: { tag: { id: { _eq: $tagId } } } }
+                typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] }
+                item: { itemTags: { tag: { id: { _eq: $tagId } } } }
                 name: { _ilike: $name }
             }
-            order_by: { contentGroup: { title: asc }, name: asc }
+            order_by: { item: { title: asc }, name: asc }
         ) {
             id
             name
-            contentGroup {
+            item {
                 id
                 title
             }
@@ -58,17 +58,17 @@ gql`
     }
 `;
 
-export function ChooseContentItemByTagModal({
+export function ChooseElementByTagModal({
     isOpen,
     onClose,
     chooseItems,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    chooseItems: (contentItemIds: string[]) => void;
+    chooseItems: (elementIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
-    const tagsResult = useChooseContentItemByTagModal_GetTagsQuery({
+    const tagsResult = useChooseElementByTagModal_GetTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -86,34 +86,34 @@ export function ChooseContentItemByTagModal({
 
     const [searchString, setSearchString] = useState<string | null>(null);
 
-    const contentItemsResult = useChooseContentItemByTagModal_GetVideoContentItemsQuery({
+    const elementsResult = useChooseElementByTagModal_GetVideoElementsQuery({
         variables: {
             tagId,
             name: searchString ?? "%%",
         },
     });
 
-    const contentItems = useMemo(() => {
+    const elements = useMemo(() => {
         return (
             <Box mt={4}>
-                {contentItemsResult.loading ? (
+                {elementsResult.loading ? (
                     <Spinner />
-                ) : contentItemsResult.error ? (
+                ) : elementsResult.error ? (
                     <Text>Could not retrieve list of files.</Text>
-                ) : contentItemsResult.data && contentItemsResult.data.ContentItem.length === 0 ? (
+                ) : elementsResult.data && elementsResult.data.Element.length === 0 ? (
                     <Text>No matching files.</Text>
                 ) : undefined}
                 <List spacing={2} maxH="40vh" overflowY="auto">
-                    {contentItemsResult.data?.ContentItem.map((contentItem) => (
-                        <ListItem key={contentItem.id}>
+                    {elementsResult.data?.Element.map((element) => (
+                        <ListItem key={element.id}>
                             <HStack>
                                 <FAIcon icon="video" iconStyle="s" mr={2} fontSize="sm" />
                                 <VStack alignItems="flex-start" spacing={0}>
                                     <Text fontSize="sm" fontWeight="bold">
-                                        {contentItem.name}
+                                        {element.name}
                                     </Text>
                                     <Text fontSize="sm" mt={0}>
-                                        {contentItem.contentGroup.title}
+                                        {element.item.title}
                                     </Text>
                                 </VStack>
                             </HStack>
@@ -122,19 +122,19 @@ export function ChooseContentItemByTagModal({
                 </List>
             </Box>
         );
-    }, [contentItemsResult]);
+    }, [elementsResult]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
             <Formik<{ tagId: string | null; searchString: string | null }>
                 initialValues={{ tagId: null, searchString: null }}
                 onSubmit={(_values, actions) => {
-                    if (contentItemsResult.data) {
-                        chooseItems(contentItemsResult.data.ContentItem.map((item) => item.id));
+                    if (elementsResult.data) {
+                        chooseItems(elementsResult.data.Element.map((item) => item.id));
                         actions.resetForm();
                         onClose();
                     } else {
-                        actions.setFieldError("contentItemIds", "Must pick at least one video");
+                        actions.setFieldError("elementIds", "Must pick at least one video");
                         actions.setSubmitting(false);
                     }
                 }}
@@ -185,11 +185,11 @@ export function ChooseContentItemByTagModal({
                                                 onChange={(event) => setSearchString(event.target.value)}
                                             />
                                             <FormErrorMessage>{form.errors.searchString}</FormErrorMessage>
-                                            <FormErrorMessage>{form.errors.contentItemIds}</FormErrorMessage>
+                                            <FormErrorMessage>{form.errors.elementIds}</FormErrorMessage>
                                         </FormControl>
                                     )}
                                 </Field>
-                                {contentItems}
+                                {elements}
                             </ModalBody>
                             <ModalFooter>
                                 <Button
@@ -197,8 +197,8 @@ export function ChooseContentItemByTagModal({
                                     isLoading={isSubmitting}
                                     isDisabled={
                                         !isValid ||
-                                        contentItemsResult.loading ||
-                                        (contentItemsResult.data && contentItemsResult.data.ContentItem.length === 0)
+                                        elementsResult.loading ||
+                                        (elementsResult.data && elementsResult.data.Element.length === 0)
                                     }
                                     mt={4}
                                     colorScheme="green"

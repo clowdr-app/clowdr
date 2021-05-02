@@ -1,39 +1,42 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Badge, chakra, Grid, GridItem, GridProps, Link } from "@chakra-ui/react";
 import React from "react";
-import type { Attendee } from "../../useCurrentAttendee";
+import type { Registrant } from "../../useCurrentRegistrant";
 
-export default function AttendeeExtraInfo({ attendee, ...rest }: { attendee: Attendee } & GridProps): JSX.Element {
-    return (attendee.profile.timezoneUTCOffset !== undefined && attendee.profile.timezoneUTCOffset !== null) ||
-        attendee.profile.country ||
-        attendee.profile.website ||
-        attendee.profile.twitter ||
-        attendee.profile.github ? (
+export default function RegistrantExtraInfo({
+    registrant,
+    ...rest
+}: { registrant: Registrant } & GridProps): JSX.Element {
+    return (registrant.profile.timezoneUTCOffset !== undefined && registrant.profile.timezoneUTCOffset !== null) ||
+        registrant.profile.country ||
+        registrant.profile.website ||
+        registrant.profile.twitter ||
+        registrant.profile.github ? (
         <Grid gridTemplateColumns="auto auto" gap={4} alignSelf="flex-start" {...rest}>
-            {attendee.profile.timezoneUTCOffset !== undefined && attendee.profile.timezoneUTCOffset !== null ? (
+            {registrant.profile.timezoneUTCOffset !== undefined && registrant.profile.timezoneUTCOffset !== null ? (
                 <>
                     <GridItem fontWeight="600">Timezone</GridItem>
                     <GridItem>
                         <Badge fontSize="md" p={1}>
-                            &nbsp; UTC{attendee.profile.timezoneUTCOffset < 0 ? "-" : "+"}
-                            {Math.abs(attendee.profile.timezoneUTCOffset)}
+                            &nbsp; UTC{registrant.profile.timezoneUTCOffset < 0 ? "-" : "+"}
+                            {Math.abs(registrant.profile.timezoneUTCOffset)}
                             &nbsp;&nbsp;
                         </Badge>
                     </GridItem>
                 </>
             ) : undefined}
-            {attendee.profile.country ? (
+            {registrant.profile.country ? (
                 <>
                     <GridItem fontWeight="600">Country</GridItem>
-                    <GridItem overflowWrap="break-word">{attendee.profile.country}</GridItem>
+                    <GridItem overflowWrap="break-word">{registrant.profile.country}</GridItem>
                 </>
             ) : undefined}
-            {attendee.profile.website ? (
+            {registrant.profile.website ? (
                 <>
                     <GridItem fontWeight="600">Website</GridItem>
                     <GridItem overflowWrap="anywhere">
-                        <Link isExternal href={`https://${attendee.profile.website}`} overflowWrap="anywhere">
-                            {attendee.profile.website}
+                        <Link isExternal href={`https://${registrant.profile.website}`} overflowWrap="anywhere">
+                            {registrant.profile.website}
                             &nbsp;
                             <chakra.sup>
                                 <ExternalLinkIcon />
@@ -42,16 +45,16 @@ export default function AttendeeExtraInfo({ attendee, ...rest }: { attendee: Att
                     </GridItem>
                 </>
             ) : undefined}
-            {attendee.profile.twitter ? (
+            {registrant.profile.twitter ? (
                 <>
                     <GridItem fontWeight="600">Twitter</GridItem>
                     <GridItem overflowWrap="anywhere">
                         <Link
                             isExternal
-                            href={`https://twitter.com/${attendee.profile.twitter}`}
+                            href={`https://twitter.com/${registrant.profile.twitter}`}
                             overflowWrap="anywhere"
                         >
-                            @{attendee.profile.twitter}
+                            @{registrant.profile.twitter}
                             &nbsp;
                             <chakra.sup>
                                 <ExternalLinkIcon />
@@ -60,12 +63,16 @@ export default function AttendeeExtraInfo({ attendee, ...rest }: { attendee: Att
                     </GridItem>
                 </>
             ) : undefined}
-            {attendee.profile.github ? (
+            {registrant.profile.github ? (
                 <>
                     <GridItem fontWeight="600">GitHub</GridItem>
                     <GridItem overflowWrap="anywhere">
-                        <Link isExternal href={`https://github.com/${attendee.profile.github}`} overflowWrap="anywhere">
-                            {attendee.profile.github}
+                        <Link
+                            isExternal
+                            href={`https://github.com/${registrant.profile.github}`}
+                            overflowWrap="anywhere"
+                        >
+                            {registrant.profile.github}
                             &nbsp;
                             <chakra.sup>
                                 <ExternalLinkIcon />

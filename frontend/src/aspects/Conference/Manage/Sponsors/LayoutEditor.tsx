@@ -11,23 +11,23 @@ import {
     NumberInputStepper,
     Switch,
 } from "@chakra-ui/react";
-import { ContentType_Enum } from "@clowdr-app/shared-types/build/content";
+import { ElementType_Enum } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 export function LayoutEditor({
     layoutDataBlob,
-    contentItemType,
+    elementType,
     update,
 }: {
     layoutDataBlob: LayoutDataBlob | null;
-    contentItemType: ContentType_Enum;
+    elementType: ElementType_Enum;
     update: (_updated: LayoutDataBlob) => void;
 }): JSX.Element {
-    const newLayoutData = useCallback((contentType: ContentType_Enum): LayoutDataBlob => {
+    const newLayoutData = useCallback((contentType: ElementType_Enum): LayoutDataBlob => {
         switch (contentType) {
-            case ContentType_Enum.ImageUrl:
-            case ContentType_Enum.ImageFile:
+            case ElementType_Enum.ImageUrl:
+            case ElementType_Enum.ImageFile:
                 return {
                     contentType,
                     wide: false,
@@ -45,8 +45,8 @@ export function LayoutEditor({
         }
     }, []);
 
-    const layoutData = useMemo<LayoutDataBlob>(() => layoutDataBlob ?? newLayoutData(contentItemType), [
-        contentItemType,
+    const layoutData = useMemo<LayoutDataBlob>(() => layoutDataBlob ?? newLayoutData(elementType), [
+        elementType,
         layoutDataBlob,
         newLayoutData,
     ]);
@@ -58,8 +58,8 @@ export function LayoutEditor({
 
     return (
         <HStack alignItems="flex-start" mt={4}>
-            {layoutData.contentType === ContentType_Enum.ImageUrl ||
-            layoutData.contentType === ContentType_Enum.ImageFile ? (
+            {layoutData.contentType === ElementType_Enum.ImageUrl ||
+            layoutData.contentType === ElementType_Enum.ImageFile ? (
                 <FormControl>
                     <FormLabel>Is logo?</FormLabel>
                     <Switch

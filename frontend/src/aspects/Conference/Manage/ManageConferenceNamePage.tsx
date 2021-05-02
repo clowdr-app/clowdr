@@ -35,7 +35,10 @@ import { useConference } from "../useConference";
 
 const _updateConferenceQueries = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
-        update_Conference(where: { id: { _eq: $id } }, _set: { name: $name, shortName: $shortName, slug: $slug }) {
+        update_conference_Conference(
+            where: { id: { _eq: $id } }
+            _set: { name: $name, shortName: $shortName, slug: $slug }
+        ) {
             returning {
                 id
                 name

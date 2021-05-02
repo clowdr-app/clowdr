@@ -27,21 +27,21 @@ import assert from "assert";
 import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    ContentPersonInfoFragment,
     EventInfoFragment,
     EventInfoFragmentDoc,
-    EventPersonInfoFragment,
-    EventPersonInfoFragmentDoc,
-    EventPersonRole_Enum,
-    EventPerson_Insert_Input,
-    RoomMode_Enum,
-    useAddEventPeople_InsertContentPeopleMutation,
+    EventProgramPersonInfoFragment,
+    EventProgramPersonInfoFragmentDoc,
+    EventProgramPersonRole_Enum,
+    EventProgramPerson_Insert_Input,
+    ProgramPersonInfoFragment,
+    room_Mode_Enum,
     useAddEventPeople_InsertEventPeopleMutation,
-    useAddEventPeople_SelectAttendeesQuery,
-    useAddEventPeople_SelectContentPeople_ByAttendeeQuery,
-    useDeleteEventPersonsMutation,
-    useInsertEventPersonMutation,
-    useUpdateEventPersonMutation,
+    useAddEventPeople_InsertProgramPeopleMutation,
+    useAddEventPeople_SelectProgramPeople_ByRegistrantQuery,
+    useAddEventPeople_SelectRegistrantsQuery,
+    useDeleteEventProgramPersonsMutation,
+    useInsertEventProgramPersonMutation,
+    useUpdateEventProgramPersonMutation,
 } from "../../../../generated/graphql";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
@@ -53,35 +53,38 @@ import CRUDTable, {
 } from "../../../CRUDTable2/CRUDTable2";
 import FAIcon from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
-import { addAttendeesToEvent } from "./BatchAddEventPeople";
+import { addRegistrantsToEvent } from "./BatchAddEventPeople";
 
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
     event: EventInfoFragment;
-    contentPeople: readonly ContentPersonInfoFragment[];
+    programPeople: readonly ProgramPersonInfoFragment[];
     yellow: string;
 }
 
 gql`
-    mutation InsertEventPerson($newEventPerson: EventPerson_insert_input!) {
-        insert_EventPerson_one(object: $newEventPerson) {
-            ...EventPersonInfo
+    mutation InsertEventProgramPerson($newEventProgramPerson: schedule_EventProgramPerson_insert_input!) {
+        insert_schedule_EventProgramPerson_one(object: $newEventProgramPerson) {
+            ...EventProgramPersonInfo
         }
     }
 
-    mutation DeleteEventPersons($deleteEventPeopleIds: [uuid!]!) {
-        delete_EventPerson(where: { id: { _in: $deleteEventPeopleIds } }) {
+    mutation DeleteEventProgramPersons($deleteEventPeopleIds: [uuid!]!) {
+        delete_schedule_EventProgramPerson(where: { id: { _in: $deleteEventPeopleIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation UpdateEventPerson($id: uuid!, $personId: uuid!, $roleName: EventPersonRole_enum!) {
-        update_EventPerson_by_pk(pk_columns: { id: $id }, _set: { personId: $personId, roleName: $roleName }) {
-            ...EventPersonInfo
+    mutation UpdateEventProgramPerson($id: uuid!, $personId: uuid!, $roleName: schedule_EventProgramPersonRole_enum!) {
+        update_schedule_EventProgramPerson_by_pk(
+            pk_columns: { id: $id }
+            _set: { personId: $personId, roleName: $roleName }
+        ) {
+            ...EventProgramPersonInfo
         }
     }
 `;
@@ -89,12 +92,12 @@ gql`
 export function requiresEventPeople(event: EventInfoFragment): boolean {
     return (
         (!event.eventPeople || event.eventPeople.length === 0) &&
-        (event.intendedRoomModeName === RoomMode_Enum.Presentation ||
-            event.intendedRoomModeName === RoomMode_Enum.QAndA)
+        (event.intendedRoomModeName === room_Mode_Enum.Presentation ||
+            event.intendedRoomModeName === room_Mode_Enum.QAndA)
     );
 }
 
-export function AddEventPerson_RegistrantModal({
+export function AddEventProgramPerson_RegistrantModal({
     event,
     closeOuter,
 }: {
@@ -103,18 +106,18 @@ export function AddEventPerson_RegistrantModal({
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const selectAttendeesQuery = useAddEventPeople_SelectAttendeesQuery({
+    const selectRegistrantsQuery = useAddEventPeople_SelectRegistrantsQuery({
         variables: {
             conferenceId: event.conferenceId,
         },
     });
-    const selectContentPeople_ByAttendeeQuery = useAddEventPeople_SelectContentPeople_ByAttendeeQuery({
+    const selectProgramPeople_ByRegistrantQuery = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
         skip: true,
     });
     const registrantOptions = useMemo(
         () =>
-            selectAttendeesQuery.data
-                ? [...selectAttendeesQuery.data.Attendee]
+            selectRegistrantsQuery.data
+                ? [...selectRegistrantsQuery.data.Registrant]
                       .sort((x, y) => x.displayName.localeCompare(y.displayName))
                       .map((x) => (
                           <option key={x.id} value={x.id}>
@@ -124,15 +127,15 @@ export function AddEventPerson_RegistrantModal({
                           </option>
                       ))
                 : undefined,
-        [selectAttendeesQuery.data]
+        [selectRegistrantsQuery.data]
     );
 
     const roleOptions = useMemo(
         () =>
-            Object.keys(EventPersonRole_Enum)
+            Object.keys(EventProgramPersonRole_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (EventPersonRole_Enum as any)[x];
+                    const v = (EventProgramPersonRole_Enum as any)[x];
                     return (
                         <option key={v} value={v}>
                             {formatEnumValue(v)}
@@ -142,10 +145,12 @@ export function AddEventPerson_RegistrantModal({
         []
     );
 
-    const [selectedAttendeeId, setSelectedAttendeeId] = useState<string>("");
-    const [selectedRole, setSelectedRole] = useState<EventPersonRole_Enum>(EventPersonRole_Enum.Presenter);
+    const [selectedRegistrantId, setSelectedRegistrantId] = useState<string>("");
+    const [selectedRole, setSelectedRole] = useState<EventProgramPersonRole_Enum>(
+        EventProgramPersonRole_Enum.Presenter
+    );
 
-    const insertContentPeople = useAddEventPeople_InsertContentPeopleMutation();
+    const insertProgramPeople = useAddEventPeople_InsertProgramPeopleMutation();
     const insertEventPeopleQ = useAddEventPeople_InsertEventPeopleMutation();
     const toast = useToast();
 
@@ -157,11 +162,11 @@ export function AddEventPerson_RegistrantModal({
         setError(null);
 
         try {
-            const newEventPeople: EventPerson_Insert_Input[] = await addAttendeesToEvent(
-                [selectedAttendeeId],
-                selectAttendeesQuery,
-                selectContentPeople_ByAttendeeQuery,
-                insertContentPeople,
+            const newEventPeople: EventProgramPerson_Insert_Input[] = await addRegistrantsToEvent(
+                [selectedRegistrantId],
+                selectRegistrantsQuery,
+                selectProgramPeople_ByRegistrantQuery,
+                insertProgramPeople,
                 event.conferenceId,
                 [event],
                 selectedRole,
@@ -184,12 +189,12 @@ export function AddEventPerson_RegistrantModal({
         }
     }, [
         event,
-        insertContentPeople,
+        insertProgramPeople,
         insertEventPeopleQ,
         onClose,
-        selectAttendeesQuery,
-        selectContentPeople_ByAttendeeQuery,
-        selectedAttendeeId,
+        selectRegistrantsQuery,
+        selectProgramPeople_ByRegistrantQuery,
+        selectedRegistrantId,
         selectedRole,
         toast,
         closeOuter,
@@ -204,7 +209,7 @@ export function AddEventPerson_RegistrantModal({
                     <ModalHeader>Add registrant to event</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {error || selectAttendeesQuery.error ? (
+                        {error || selectRegistrantsQuery.error ? (
                             <Alert
                                 status="error"
                                 variant="subtle"
@@ -219,7 +224,9 @@ export function AddEventPerson_RegistrantModal({
                                             ? "Error adding registrant to event"
                                             : "Error loading list of registrants"}
                                     </AlertTitle>
-                                    <AlertDescription>{error ?? selectAttendeesQuery.error?.message}</AlertDescription>
+                                    <AlertDescription>
+                                        {error ?? selectRegistrantsQuery.error?.message}
+                                    </AlertDescription>
                                 </VStack>
                             </Alert>
                         ) : undefined}
@@ -227,8 +234,8 @@ export function AddEventPerson_RegistrantModal({
                             <>
                                 <Select
                                     aria-label="Registrant to add"
-                                    value={selectedAttendeeId}
-                                    onChange={(ev) => setSelectedAttendeeId(ev.target.value)}
+                                    value={selectedRegistrantId}
+                                    onChange={(ev) => setSelectedRegistrantId(ev.target.value)}
                                     mb={4}
                                 >
                                     <option value="">Select a registrant</option>
@@ -237,7 +244,7 @@ export function AddEventPerson_RegistrantModal({
                                 <Select
                                     aria-label="Role of registrant"
                                     value={selectedRole}
-                                    onChange={(ev) => setSelectedRole(ev.target.value as EventPersonRole_Enum)}
+                                    onChange={(ev) => setSelectedRole(ev.target.value as EventProgramPersonRole_Enum)}
                                     mb={4}
                                 >
                                     {roleOptions}
@@ -252,7 +259,7 @@ export function AddEventPerson_RegistrantModal({
                             <Button onClick={onClose}>Cancel</Button>
                             <Button
                                 colorScheme="green"
-                                isDisabled={selectAttendeesQuery.loading || selectedAttendeeId === ""}
+                                isDisabled={selectRegistrantsQuery.loading || selectedRegistrantId === ""}
                                 isLoading={adding}
                                 onClick={add}
                             >
@@ -266,24 +273,24 @@ export function AddEventPerson_RegistrantModal({
     );
 }
 
-export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeople }: Props): JSX.Element {
+export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, programPeople }: Props): JSX.Element {
     const data = useMemo(() => [...event.eventPeople], [event.eventPeople]);
 
     const options = useMemo(() => {
-        return [...contentPeople]
+        return [...programPeople]
             .sort((x, y) => x.name.localeCompare(y.name))
             .map((person) => (
                 <option key={person.id} value={person.id}>
                     {person.name}
                 </option>
             ));
-    }, [contentPeople]);
+    }, [programPeople]);
 
-    const [insertEventPerson, insertEventPersonResponse] = useInsertEventPersonMutation();
-    const [updateEventPerson, updateEventPersonResponse] = useUpdateEventPersonMutation();
-    const [deleteEventPersons, deleteEventPersonsResponse] = useDeleteEventPersonsMutation();
+    const [insertEventProgramPerson, insertEventProgramPersonResponse] = useInsertEventProgramPersonMutation();
+    const [updateEventProgramPerson, updateEventProgramPersonResponse] = useUpdateEventProgramPersonMutation();
+    const [deleteEventProgramPersons, deleteEventProgramPersonsResponse] = useDeleteEventProgramPersonsMutation();
 
-    const row: RowSpecification<EventPersonInfoFragment> = useMemo(
+    const row: RowSpecification<EventProgramPersonInfoFragment> = useMemo(
         () => ({
             getKey: (record) => record.id,
             canSelect: (_record) => true,
@@ -296,21 +303,21 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
 
     const roleOptions = useMemo(
         () =>
-            Object.keys(EventPersonRole_Enum)
+            Object.keys(EventProgramPersonRole_Enum)
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
-                    const v = (EventPersonRole_Enum as any)[x];
+                    const v = (EventProgramPersonRole_Enum as any)[x];
                     return { value: v, label: formatEnumValue(v) };
                 }),
         []
     );
 
-    const columns: ColumnSpecification<EventPersonInfoFragment>[] = useMemo(
+    const columns: ColumnSpecification<EventProgramPersonInfoFragment>[] = useMemo(
         () => [
             {
-                id: "ContentPerson",
+                id: "ProgramPerson",
                 defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader(props: ColumnHeaderProps<EventPersonInfoFragment>) {
+                header: function NameHeader(props: ColumnHeaderProps<EventProgramPersonInfoFragment>) {
                     return props.isInCreate ? (
                         <FormLabel>Person</FormLabel>
                     ) : (
@@ -319,11 +326,11 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                         </Button>
                     );
                 },
-                get: (data) => contentPeople.find((x) => x.id === data.personId),
-                set: (record, value: ContentPersonInfoFragment | undefined) => {
+                get: (data) => programPeople.find((x) => x.id === data.personId),
+                set: (record, value: ProgramPersonInfoFragment | undefined) => {
                     record.personId = value?.id;
                 },
-                sort: (x: ContentPersonInfoFragment | undefined, y: ContentPersonInfoFragment | undefined) =>
+                sort: (x: ProgramPersonInfoFragment | undefined, y: ProgramPersonInfoFragment | undefined) =>
                     x && y
                         ? x.name.localeCompare(y.name) ||
                           maybeCompare(x.affiliation, y.affiliation, (a, b) => a.localeCompare(b))
@@ -332,18 +339,18 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                         : y
                         ? -1
                         : 0,
-                cell: function ContentPersonCell({
+                cell: function ProgramPersonCell({
                     isInCreate,
                     value,
                     onChange,
                     onBlur,
                     ref,
-                }: CellProps<Partial<EventPersonInfoFragment>, ContentPersonInfoFragment | undefined>) {
+                }: CellProps<Partial<EventProgramPersonInfoFragment>, ProgramPersonInfoFragment | undefined>) {
                     if (isInCreate) {
                         return (
                             <Select
                                 value={value?.id ?? ""}
-                                onChange={(ev) => onChange?.(contentPeople.find((x) => x.id === ev.target.value))}
+                                onChange={(ev) => onChange?.(programPeople.find((x) => x.id === ev.target.value))}
                                 onBlur={onBlur}
                                 ref={ref as LegacyRef<HTMLSelectElement>}
                             >
@@ -364,7 +371,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
             },
             {
                 id: "role",
-                header: function RoleHeader(props: ColumnHeaderProps<EventPersonInfoFragment>) {
+                header: function RoleHeader(props: ColumnHeaderProps<EventProgramPersonInfoFragment>) {
                     return props.isInCreate ? (
                         <FormLabel>Role</FormLabel>
                     ) : (
@@ -377,12 +384,12 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                 set: (record, value) => {
                     record.roleName = value;
                 },
-                sort: (x: RoomMode_Enum, y: RoomMode_Enum) => x.localeCompare(y),
-                cell: function EventNameCell(props: CellProps<Partial<EventPersonInfoFragment>>) {
+                sort: (x: room_Mode_Enum, y: room_Mode_Enum) => x.localeCompare(y),
+                cell: function EventNameCell(props: CellProps<Partial<EventProgramPersonInfoFragment>>) {
                     return (
                         <Select
                             value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value as RoomMode_Enum)}
+                            onChange={(ev) => props.onChange?.(ev.target.value as room_Mode_Enum)}
                             onBlur={props.onBlur}
                             ref={props.ref as LegacyRef<HTMLSelectElement>}
                         >
@@ -398,7 +405,7 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                 },
             },
         ],
-        [options, contentPeople, roleOptions]
+        [options, programPeople, roleOptions]
     );
 
     const forceReloadRef = useRef<() => void>(() => {
@@ -406,10 +413,18 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
     });
 
     useEffect(() => {
-        if (insertEventPersonResponse.error || updateEventPersonResponse.error || deleteEventPersonsResponse.error) {
+        if (
+            insertEventProgramPersonResponse.error ||
+            updateEventProgramPersonResponse.error ||
+            deleteEventProgramPersonsResponse.error
+        ) {
             forceReloadRef.current?.();
         }
-    }, [deleteEventPersonsResponse.error, insertEventPersonResponse.error, updateEventPersonResponse.error]);
+    }, [
+        deleteEventProgramPersonsResponse.error,
+        insertEventProgramPersonResponse.error,
+        updateEventProgramPersonResponse.error,
+    ]);
 
     const eventPeopleRequired = requiresEventPeople(event);
     return (
@@ -435,36 +450,36 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            <AddEventPerson_RegistrantModal event={event} closeOuter={onClose} />
+                            <AddEventProgramPerson_RegistrantModal event={event} closeOuter={onClose} />
                             <CRUDTable
                                 data={data}
-                                tableUniqueName="ManageConferenceSchedule_EventPersonsModal"
+                                tableUniqueName="ManageConferenceSchedule_EventProgramPersonsModal"
                                 row={row}
                                 columns={columns}
                                 insert={{
-                                    ongoing: insertEventPersonResponse.loading,
+                                    ongoing: insertEventProgramPersonResponse.loading,
                                     generateDefaults: () => ({
                                         id: uuidv4(),
                                         eventId: event.id,
-                                        roleName: EventPersonRole_Enum.Presenter,
+                                        roleName: EventProgramPersonRole_Enum.Presenter,
                                     }),
-                                    makeWhole: (d) => d.personId && (d as EventPersonInfoFragment),
+                                    makeWhole: (d) => d.personId && (d as EventProgramPersonInfoFragment),
                                     start: (record) => {
                                         assert(record.roleName);
                                         assert(record.personId);
-                                        const newEventPerson: EventPerson_Insert_Input = {
+                                        const newEventProgramPerson: EventProgramPerson_Insert_Input = {
                                             id: uuidv4(),
                                             eventId: event.id,
                                             personId: record.personId,
                                             roleName: record.roleName,
                                         };
-                                        insertEventPerson({
+                                        insertEventProgramPerson({
                                             variables: {
-                                                newEventPerson,
+                                                newEventProgramPerson,
                                             },
                                             update: (cache, { data: _data }) => {
-                                                if (_data?.insert_EventPerson_one) {
-                                                    const data = _data.insert_EventPerson_one;
+                                                if (_data?.insert_EventProgramPerson_one) {
+                                                    const data = _data.insert_EventProgramPerson_one;
                                                     cache.modify({
                                                         fields: {
                                                             Event: (existingRefs: Reference[] = [], { readField }) => {
@@ -493,11 +508,14 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                                                                 }
                                                                 return existingRefs;
                                                             },
-                                                            EventPerson(existingRefs: Reference[] = [], { readField }) {
+                                                            EventProgramPerson(
+                                                                existingRefs: Reference[] = [],
+                                                                { readField }
+                                                            ) {
                                                                 const newRef = cache.writeFragment({
                                                                     data,
-                                                                    fragment: EventPersonInfoFragmentDoc,
-                                                                    fragmentName: "EventPersonInfo",
+                                                                    fragment: EventProgramPersonInfoFragmentDoc,
+                                                                    fragmentName: "EventProgramPersonInfo",
                                                                 });
                                                                 if (
                                                                     existingRefs.some(
@@ -517,24 +535,27 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                                     },
                                 }}
                                 update={{
-                                    ongoing: updateEventPersonResponse.loading,
+                                    ongoing: updateEventProgramPersonResponse.loading,
                                     start: (record) => {
-                                        updateEventPerson({
+                                        updateEventProgramPerson({
                                             variables: {
                                                 id: record.id,
                                                 roleName: record.roleName,
                                                 personId: record.personId,
                                             },
                                             update: (cache, { data: _data }) => {
-                                                if (_data?.update_EventPerson_by_pk) {
-                                                    const data = _data.update_EventPerson_by_pk;
+                                                if (_data?.update_EventProgramPerson_by_pk) {
+                                                    const data = _data.update_EventProgramPerson_by_pk;
                                                     cache.modify({
                                                         fields: {
-                                                            EventPerson(existingRefs: Reference[] = [], { readField }) {
+                                                            EventProgramPerson(
+                                                                existingRefs: Reference[] = [],
+                                                                { readField }
+                                                            ) {
                                                                 const newRef = cache.writeFragment({
                                                                     data,
-                                                                    fragment: EventPersonInfoFragmentDoc,
-                                                                    fragmentName: "EventPersonInfo",
+                                                                    fragment: EventProgramPersonInfoFragmentDoc,
+                                                                    fragmentName: "EventProgramPersonInfo",
                                                                 });
                                                                 if (
                                                                     existingRefs.some(
@@ -553,15 +574,15 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                                     },
                                 }}
                                 delete={{
-                                    ongoing: deleteEventPersonsResponse.loading,
+                                    ongoing: deleteEventProgramPersonsResponse.loading,
                                     start: (keys) => {
-                                        deleteEventPersons({
+                                        deleteEventProgramPersons({
                                             variables: {
                                                 deleteEventPeopleIds: keys,
                                             },
                                             update: (cache, { data: _data }) => {
-                                                if (_data?.delete_EventPerson) {
-                                                    const datas = _data.delete_EventPerson;
+                                                if (_data?.delete_EventProgramPerson) {
+                                                    const datas = _data.delete_EventProgramPerson;
                                                     const ids = datas.returning.map((x) => x.id);
                                                     cache.modify({
                                                         fields: {
@@ -590,11 +611,14 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                                                                 }
                                                                 return existingRefs;
                                                             },
-                                                            EventPerson(existingRefs: Reference[] = [], { readField }) {
+                                                            EventProgramPerson(
+                                                                existingRefs: Reference[] = [],
+                                                                { readField }
+                                                            ) {
                                                                 for (const id of ids) {
                                                                     cache.evict({
                                                                         id,
-                                                                        fieldName: "EventPersonInfo",
+                                                                        fieldName: "EventProgramPersonInfo",
                                                                         broadcast: true,
                                                                     });
                                                                 }
@@ -611,16 +635,16 @@ export function EventPersonsModal({ isOpen, onOpen, onClose, event, contentPeopl
                                     },
                                 }}
                                 alert={
-                                    insertEventPersonResponse.error ||
-                                    updateEventPersonResponse.error ||
-                                    deleteEventPersonsResponse.error
+                                    insertEventProgramPersonResponse.error ||
+                                    updateEventProgramPersonResponse.error ||
+                                    deleteEventProgramPersonsResponse.error
                                         ? {
                                               status: "error",
                                               title: "Error saving changes",
                                               description:
-                                                  insertEventPersonResponse.error?.message ??
-                                                  updateEventPersonResponse.error?.message ??
-                                                  deleteEventPersonsResponse.error?.message ??
+                                                  insertEventProgramPersonResponse.error?.message ??
+                                                  updateEventProgramPersonResponse.error?.message ??
+                                                  deleteEventProgramPersonsResponse.error?.message ??
                                                   "Unknown error",
                                           }
                                         : undefined

@@ -48,7 +48,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                         </ReceiveMessageQueriesProvider>
                     </EmojiPickerProvider>
                 </ChatProfileModalProvider>
-                {config.currentAttendeeId &&
+                {config.currentRegistrantId &&
                 (config.permissions.canMessage ||
                     config.permissions.canEmote ||
                     config.permissions.canReact ||

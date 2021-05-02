@@ -6,7 +6,7 @@ import useCurrentUser from "./useCurrentUser";
 export default function CurrentUserPage(): JSX.Element {
     const { user } = useCurrentUser();
 
-    if (user.attendees.length > 0) {
+    if (user.registrants.length > 0) {
         return <ListConferencesView />;
     } else {
         return <Redirect to="/join" />;

@@ -16,25 +16,22 @@ import {
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
 import {
-    useChooseContentItemModal_GetContentGroupsQuery,
-    useChooseContentItemModal_GetVideoContentItemsQuery,
+    useChooseElementModal_GetItemsQuery,
+    useChooseElementModal_GetVideoElementsQuery,
 } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
 
 gql`
-    query ChooseContentItemModal_GetContentGroups($conferenceId: uuid!) {
-        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }, order_by: { title: asc }) {
+    query ChooseElementModal_GetItems($conferenceId: uuid!) {
+        content_Item(where: { conferenceId: { _eq: $conferenceId } }, order_by: { title: asc }) {
             id
             title
         }
     }
 
-    query ChooseContentItemModal_GetVideoContentItems($contentGroupId: uuid) {
-        ContentItem(
-            where: {
-                contentGroupId: { _eq: $contentGroupId }
-                contentTypeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] }
-            }
+    query ChooseElementModal_GetVideoElements($itemId: uuid) {
+        content_Element(
+            where: { itemId: { _eq: $itemId }, typeName: { _in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] } }
             order_by: { name: asc }
         ) {
             id
@@ -43,57 +40,57 @@ gql`
     }
 `;
 
-export function ChooseContentItemModal({
+export function ChooseElementModal({
     isOpen,
     onClose,
     chooseItem,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    chooseItem: (contentItemId: string) => void;
+    chooseItem: (elementId: string) => void;
 }): JSX.Element {
     const conference = useConference();
-    const contentGroupsResult = useChooseContentItemModal_GetContentGroupsQuery({
+    const itemsResult = useChooseElementModal_GetItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
 
-    const [contentGroupId, setContentGroupId] = useState<string | null>(null);
+    const [itemId, setItemId] = useState<string | null>(null);
 
-    const contentGroupOptions = useMemo(() => {
-        return contentGroupsResult.data?.ContentGroup.map((contentGroup) => (
-            <option key={contentGroup.id} value={contentGroup.id}>
-                {contentGroup.title}
+    const itemOptions = useMemo(() => {
+        return itemsResult.data?.Item.map((item) => (
+            <option key={item.id} value={item.id}>
+                {item.title}
             </option>
         ));
-    }, [contentGroupsResult.data?.ContentGroup]);
+    }, [itemsResult.data?.Item]);
 
-    const contentItemsResult = useChooseContentItemModal_GetVideoContentItemsQuery({
+    const elementsResult = useChooseElementModal_GetVideoElementsQuery({
         variables: {
-            contentGroupId,
+            itemId,
         },
     });
 
-    const contentItemOptions = useMemo(() => {
-        return contentItemsResult.data?.ContentItem.map((contentItem) => (
-            <option key={contentItem.id} value={contentItem.id}>
-                {contentItem.name}
+    const elementOptions = useMemo(() => {
+        return elementsResult.data?.Element.map((element) => (
+            <option key={element.id} value={element.id}>
+                {element.name}
             </option>
         ));
-    }, [contentItemsResult.data?.ContentItem]);
+    }, [elementsResult.data?.Element]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
-            <Formik<{ contentItemId: string | null; attendeeGoogleAccountId: string | null }>
-                initialValues={{ contentItemId: null, attendeeGoogleAccountId: null }}
+            <Formik<{ elementId: string | null; registrantGoogleAccountId: string | null }>
+                initialValues={{ elementId: null, registrantGoogleAccountId: null }}
                 onSubmit={(values, actions) => {
-                    if (values.contentItemId) {
-                        chooseItem(values.contentItemId);
+                    if (values.elementId) {
+                        chooseItem(values.elementId);
                         actions.resetForm();
                         onClose();
                     } else {
-                        actions.setFieldError("contentItemId", "Must pick a video");
+                        actions.setFieldError("elementId", "Must pick a video");
                     }
                 }}
             >
@@ -104,25 +101,25 @@ export function ChooseContentItemModal({
                             <ModalHeader>Choose a video</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody>
-                                <Field name="contentItemId">
+                                <Field name="elementId">
                                     {({ field, form }: FieldProps<string>) => (
                                         <FormControl
-                                            isInvalid={!!form.errors.contentItemId && !!form.touched.contentItemId}
+                                            isInvalid={!!form.errors.elementId && !!form.touched.elementId}
                                             isRequired
                                         >
-                                            <FormLabel htmlFor="contentItemId" mt={2}>
+                                            <FormLabel htmlFor="elementId" mt={2}>
                                                 Content Item
                                             </FormLabel>
                                             <Select
                                                 placeholder="Choose item"
-                                                onChange={(event) => setContentGroupId(event.target.value)}
+                                                onChange={(event) => setItemId(event.target.value)}
                                             >
-                                                {contentGroupOptions}
+                                                {itemOptions}
                                             </Select>
-                                            <Select {...field} id="contentItemId" placeholder="Choose file" mt={2}>
-                                                {contentItemOptions}
+                                            <Select {...field} id="elementId" placeholder="Choose file" mt={2}>
+                                                {elementOptions}
                                             </Select>
-                                            <FormErrorMessage>{form.errors.contentItemId}</FormErrorMessage>
+                                            <FormErrorMessage>{form.errors.elementId}</FormErrorMessage>
                                         </FormControl>
                                     )}
                                 </Field>

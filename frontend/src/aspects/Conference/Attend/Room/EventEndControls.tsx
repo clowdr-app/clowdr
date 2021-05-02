@@ -4,8 +4,8 @@ import { formatDistanceToNow } from "date-fns";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-    RoomMode_Enum,
     Room_EventSummaryFragment,
+    room_Mode_Enum,
     useGetBreakoutRoomFromEventQuery,
 } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
@@ -13,7 +13,7 @@ import { useConference } from "../../useConference";
 
 gql`
     query GetBreakoutRoomFromEvent($originatingEventId: uuid!) {
-        Room(where: { originatingEventId: { _eq: $originatingEventId } }) {
+        room_Room(where: { originatingEventId: { _eq: $originatingEventId } }) {
             id
         }
     }
@@ -33,7 +33,7 @@ export function EventEndControls({
     useEffect(() => {
         if (
             !currentRoomEvent ||
-            ![RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName)
+            ![room_Mode_Enum.Presentation, room_Mode_Enum.QAndA].includes(currentRoomEvent.intendedRoomModeName)
         ) {
             setChoice("continue");
         }

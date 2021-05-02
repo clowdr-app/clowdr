@@ -26,37 +26,37 @@ import {
 import { ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
-import { ContentType_Enum } from "../../../../generated/graphql";
+import { ElementType_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import type { SecondaryEditorComponents, SecondaryEditorFooterButton } from "../../../CRUDTable/CRUDTable";
 import FAIcon from "../../../Icons/FAIcon";
 import {
-    GroupHallwaysEditorModal,
+    GroupExhibitionsEditorModal,
     GroupPeopleEditorModal,
-    RequiredItemEditorModal,
+    UploadableItemEditorModal,
 } from "../ManageConferenceContentPage";
 import type { OriginatingDataDescriptor } from "../Shared/Types";
 import { CreateRoomButton } from "./CreateRoomButton";
 import { GroupTemplates, ItemBaseTemplates } from "./Templates";
-import type { ContentDescriptor, ContentGroupDescriptor, ContentPersonDescriptor, HallwayDescriptor } from "./Types";
+import type { ContentDescriptor, ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "./Types";
 
 gql`
-    mutation ContentGroup_CreateRoom($conferenceId: uuid!, $contentGroupId: uuid!) {
-        createContentGroupRoom(conferenceId: $conferenceId, contentGroupId: $contentGroupId) {
+    mutation Item_CreateRoom($conferenceId: uuid!, $itemId: uuid!) {
+        createItemRoom(conferenceId: $conferenceId, itemId: $itemId) {
             roomId
             message
         }
     }
 `;
 
-export function ContentGroupSecondaryEditor(
-    allGroupsMap: Map<string, ContentGroupDescriptor>,
-    allPeopleMap: Map<string, ContentPersonDescriptor>,
+export function ItemSecondaryEditor(
+    allGroupsMap: Map<string, ItemDescriptor>,
+    allPeopleMap: Map<string, ProgramPersonDescriptor>,
     allOriginatingDatasMap: Map<string, OriginatingDataDescriptor>,
-    allHallwaysMap: Map<string, HallwayDescriptor>,
+    allExhibitionsMap: Map<string, ExhibitionDescriptor>,
     key: string,
     markDirty: () => void,
-    setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>,
+    setAllItemsMap: React.Dispatch<React.SetStateAction<Map<string, ItemDescriptor> | undefined>>,
     isDirty: boolean,
     conferenceSlug: string,
     onCombineVideosOpen: () => void,
@@ -67,21 +67,21 @@ export function ContentGroupSecondaryEditor(
     let editorElement: JSX.Element;
     const footerButtons: SecondaryEditorFooterButton[] = [];
 
-    const contentTypeOptions: { label: string; value: ContentType_Enum }[] = (() => {
-        return Object.keys(ContentType_Enum)
+    const contentTypeOptions: { label: string; value: ElementType_Enum }[] = (() => {
+        return Object.keys(ElementType_Enum)
             .filter(
                 (key) =>
-                    typeof (ContentType_Enum as any)[key] === "string" &&
-                    ItemBaseTemplates[ItemBaseTypes[(ContentType_Enum as any)[key] as ContentType_Enum]].supported
+                    typeof (ElementType_Enum as any)[key] === "string" &&
+                    ItemBaseTemplates[ItemBaseTypes[(ElementType_Enum as any)[key] as ElementType_Enum]].supported
             )
             .map((key) => {
-                const v = (ContentType_Enum as any)[key] as string;
+                const v = (ElementType_Enum as any)[key] as string;
                 return {
                     label: v
                         .split("_")
                         .map((x) => x[0] + x.substr(1).toLowerCase())
                         .reduce((acc, x) => `${acc} ${x}`),
-                    value: v as ContentType_Enum,
+                    value: v as ElementType_Enum,
                 };
             });
     })();
@@ -101,7 +101,7 @@ export function ContentGroupSecondaryEditor(
                                 onClick={() => {
                                     markDirty();
 
-                                    setAllContentGroupsMap((oldGroups) => {
+                                    setAllItemsMap((oldGroups) => {
                                         assert(oldGroups);
                                         const newGroups = new Map(oldGroups);
 
@@ -139,7 +139,7 @@ export function ContentGroupSecondaryEditor(
                                 onClick={() => {
                                     markDirty();
 
-                                    setAllContentGroupsMap((oldGroups) => {
+                                    setAllItemsMap((oldGroups) => {
                                         assert(oldGroups);
                                         const newGroups = new Map(oldGroups);
 
@@ -151,18 +151,18 @@ export function ContentGroupSecondaryEditor(
                                         if (newContent.type === "required-only") {
                                             newGroups.set(group.id, {
                                                 ...existingGroup,
-                                                requiredItems: [
-                                                    ...existingGroup.requiredItems,
-                                                    newContent.requiredItem,
+                                                uploadableItems: [
+                                                    ...existingGroup.uploadableItems,
+                                                    newContent.uploadableItem,
                                                 ],
                                             });
                                         } else if (newContent.type === "required-and-item") {
                                             newGroups.set(group.id, {
                                                 ...existingGroup,
                                                 items: [...existingGroup.items, newContent.item],
-                                                requiredItems: [
-                                                    ...existingGroup.requiredItems,
-                                                    newContent.requiredItem,
+                                                uploadableItems: [
+                                                    ...existingGroup.uploadableItems,
+                                                    newContent.uploadableItem,
                                                 ],
                                             });
                                         }
@@ -185,8 +185,8 @@ export function ContentGroupSecondaryEditor(
                     to={`/conference/${conferenceSlug}/item/${group.id}`}
                     colorScheme="green"
                     isExternal={true}
-                    aria-label={`View ${group.title} in the attendee view`}
-                    title={`View ${group.title} in the attendee view`}
+                    aria-label={`View ${group.title} in the registrant view`}
+                    title={`View ${group.title} in the registrant view`}
                     linkProps={{
                         flex: "0 0 auto",
                     }}
@@ -202,8 +202,8 @@ export function ContentGroupSecondaryEditor(
                         to={`/conference/${conferenceSlug}/room/${group.rooms[0].id}`}
                         colorScheme="green"
                         isExternal={true}
-                        aria-label={"View discussion room in the attendee view"}
-                        title={"View discussion room in the attendee view"}
+                        aria-label={"View discussion room in the registrant view"}
+                        title={"View discussion room in the registrant view"}
                         linkProps={{
                             flex: "0 0 auto",
                         }}
@@ -234,14 +234,14 @@ export function ContentGroupSecondaryEditor(
                             isDirty={isDirty}
                             markDirty={markDirty}
                             peopleMap={allPeopleMap}
-                            setAllContentGroupsMap={setAllContentGroupsMap}
+                            setAllItemsMap={setAllItemsMap}
                         />
                     </AccordionPanel>
                 </AccordionItem>
             );
 
             itemElements.push(
-                <AccordionItem key="hallways">
+                <AccordionItem key="exhibitions">
                     <AccordionButton>
                         <Box flex="1" textAlign="left">
                             Exhibitions
@@ -249,12 +249,12 @@ export function ContentGroupSecondaryEditor(
                         <AccordionIcon />
                     </AccordionButton>
                     <AccordionPanel pb={4}>
-                        <GroupHallwaysEditorModal
+                        <GroupExhibitionsEditorModal
                             group={group}
                             isDirty={isDirty}
                             markDirty={markDirty}
-                            hallwaysMap={allHallwaysMap}
-                            setAllContentGroupsMap={setAllContentGroupsMap}
+                            exhibitionsMap={allExhibitionsMap}
+                            setAllItemsMap={setAllItemsMap}
                         />
                     </AccordionPanel>
                 </AccordionItem>
@@ -263,7 +263,7 @@ export function ContentGroupSecondaryEditor(
             for (const item of group.items
                 .sort((x, y) => x.name.localeCompare(y.name))
                 .sort((x, y) => x.typeName.localeCompare(y.typeName))) {
-                if (!item.requiredContentId) {
+                if (!item.uploadableId) {
                     const itemType = item.typeName;
                     const baseType = ItemBaseTypes[itemType];
                     const itemTemplate = ItemBaseTemplates[baseType];
@@ -286,7 +286,7 @@ export function ContentGroupSecondaryEditor(
                         if (!item) {
                             setTimeout(() => {
                                 markDirty();
-                                setAllContentGroupsMap((oldGroups) => {
+                                setAllItemsMap((oldGroups) => {
                                     assert(oldGroups);
                                     const newGroups = new Map(oldGroups);
 
@@ -314,7 +314,7 @@ export function ContentGroupSecondaryEditor(
 
                                     assert(updatedDesc.type === "item-only");
 
-                                    setAllContentGroupsMap((oldGroups) => {
+                                    setAllItemsMap((oldGroups) => {
                                         assert(oldGroups);
                                         const newGroups = new Map(oldGroups);
 
@@ -369,7 +369,7 @@ export function ContentGroupSecondaryEditor(
                                                 onChange={() => {
                                                     markDirty();
 
-                                                    setAllContentGroupsMap((oldGroups) => {
+                                                    setAllItemsMap((oldGroups) => {
                                                         assert(oldGroups);
                                                         const newGroups = new Map(oldGroups);
 
@@ -389,7 +389,7 @@ export function ContentGroupSecondaryEditor(
                                                 }}
                                             />
                                             <FormHelperText m={0} ml={2} p={0}>
-                                                Enable to hide this content from attendees.
+                                                Enable to hide this content from registrants.
                                             </FormHelperText>
                                         </FormControl>
                                         <Box ml="auto">
@@ -401,7 +401,7 @@ export function ContentGroupSecondaryEditor(
                                                 onClick={() => {
                                                     markDirty();
 
-                                                    setAllContentGroupsMap((oldGroups) => {
+                                                    setAllItemsMap((oldGroups) => {
                                                         assert(oldGroups);
                                                         const newGroups = new Map(oldGroups);
 
@@ -428,31 +428,31 @@ export function ContentGroupSecondaryEditor(
                 }
             }
 
-            for (const requiredItem of group.requiredItems
+            for (const uploadableItem of group.uploadableItems
                 .sort((x, y) => x.name.localeCompare(y.name))
                 .sort((x, y) => x.typeName.localeCompare(y.typeName))) {
-                const itemType = requiredItem.typeName;
+                const itemType = uploadableItem.typeName;
                 const baseType = ItemBaseTypes[itemType];
                 const itemTemplate = ItemBaseTemplates[baseType];
                 let accordianTitle: string | JSX.Element = `TODO: Unsupported required item type ${itemType}`;
                 let accordianContents: JSX.Element | undefined;
 
                 const item =
-                    requiredItem &&
-                    group.items.find((x) => x.typeName === itemType && x.requiredContentId === requiredItem.id);
+                    uploadableItem &&
+                    group.items.find((x) => x.typeName === itemType && x.uploadableId === uploadableItem.id);
 
                 if (itemTemplate.supported) {
                     const itemDesc: ContentDescriptor | null =
-                        requiredItem && item
+                        uploadableItem && item
                             ? {
                                   type: "required-and-item",
                                   item,
-                                  requiredItem,
+                                  uploadableItem,
                               }
-                            : requiredItem
+                            : uploadableItem
                             ? {
                                   type: "required-only",
-                                  requiredItem,
+                                  uploadableItem,
                               }
                             : null;
                     if (!itemDesc) {
@@ -464,19 +464,19 @@ export function ContentGroupSecondaryEditor(
                     accordianTitle = itemTemplate.renderEditorHeading(itemDesc);
 
                     accordianContents = (
-                        <RequiredItemEditorModal
+                        <UploadableItemEditorModal
                             group={group}
                             itemTemplate={itemTemplate}
                             isDirty={isDirty}
                             markDirty={markDirty}
-                            setAllContentGroupsMap={setAllContentGroupsMap}
+                            setAllItemsMap={setAllItemsMap}
                             itemDesc={itemDesc}
                         />
                     );
                 }
 
                 itemElements.push(
-                    <AccordionItem key={`row-${item?.id ?? requiredItem.id}`}>
+                    <AccordionItem key={`row-${item?.id ?? uploadableItem.id}`}>
                         <AccordionButton>
                             <Box flex="1" textAlign="left">
                                 (Uploadable) {accordianTitle}
@@ -506,7 +506,7 @@ export function ContentGroupSecondaryEditor(
                                                 onChange={() => {
                                                     markDirty();
 
-                                                    setAllContentGroupsMap((oldGroups) => {
+                                                    setAllItemsMap((oldGroups) => {
                                                         assert(oldGroups);
                                                         const newGroups = new Map(oldGroups);
 
@@ -519,11 +519,13 @@ export function ContentGroupSecondaryEditor(
                                                                     ? { ...cItem, isHidden: !cItem.isHidden }
                                                                     : cItem;
                                                             }),
-                                                            requiredItems: existingGroup.requiredItems.map((cItem) => {
-                                                                return requiredItem.id === cItem.id
-                                                                    ? { ...cItem, isHidden: !cItem.isHidden }
-                                                                    : cItem;
-                                                            }),
+                                                            uploadableItems: existingGroup.uploadableItems.map(
+                                                                (cItem) => {
+                                                                    return uploadableItem.id === cItem.id
+                                                                        ? { ...cItem, isHidden: !cItem.isHidden }
+                                                                        : cItem;
+                                                                }
+                                                            ),
                                                         });
 
                                                         return newGroups;
@@ -531,7 +533,7 @@ export function ContentGroupSecondaryEditor(
                                                 }}
                                             />
                                             <FormHelperText m={0} ml={2} p={0}>
-                                                Enable to hide this content from attendees.
+                                                Enable to hide this content from registrants.
                                             </FormHelperText>
                                         </FormControl>
                                     ) : (
@@ -550,11 +552,11 @@ export function ContentGroupSecondaryEditor(
                                                 p={0}
                                                 lineHeight="1em"
                                                 size="sm"
-                                                isChecked={requiredItem.isHidden}
+                                                isChecked={uploadableItem.isHidden}
                                                 onChange={() => {
                                                     markDirty();
 
-                                                    setAllContentGroupsMap((oldGroups) => {
+                                                    setAllItemsMap((oldGroups) => {
                                                         assert(oldGroups);
                                                         const newGroups = new Map(oldGroups);
 
@@ -562,11 +564,13 @@ export function ContentGroupSecondaryEditor(
                                                         assert(existingGroup);
                                                         newGroups.set(group.id, {
                                                             ...existingGroup,
-                                                            requiredItems: existingGroup.requiredItems.map((cItem) => {
-                                                                return requiredItem.id === cItem.id
-                                                                    ? { ...cItem, isHidden: !cItem.isHidden }
-                                                                    : cItem;
-                                                            }),
+                                                            uploadableItems: existingGroup.uploadableItems.map(
+                                                                (cItem) => {
+                                                                    return uploadableItem.id === cItem.id
+                                                                        ? { ...cItem, isHidden: !cItem.isHidden }
+                                                                        : cItem;
+                                                                }
+                                                            ),
                                                         });
 
                                                         return newGroups;
@@ -574,7 +578,7 @@ export function ContentGroupSecondaryEditor(
                                                 }}
                                             />
                                             <FormHelperText m={0} ml={2} p={0}>
-                                                Enable to hide this content from attendees.
+                                                Enable to hide this content from registrants.
                                             </FormHelperText>
                                         </FormControl>
                                     )}
@@ -587,7 +591,7 @@ export function ContentGroupSecondaryEditor(
                                             onClick={() => {
                                                 markDirty();
 
-                                                setAllContentGroupsMap((oldGroups) => {
+                                                setAllItemsMap((oldGroups) => {
                                                     assert(oldGroups);
                                                     const newGroups = new Map(oldGroups);
 
@@ -595,9 +599,11 @@ export function ContentGroupSecondaryEditor(
                                                     assert(existingGroup);
                                                     newGroups.set(group.id, {
                                                         ...existingGroup,
-                                                        requiredItems: existingGroup.requiredItems.filter((cItem) => {
-                                                            return requiredItem.id !== cItem.id;
-                                                        }),
+                                                        uploadableItems: existingGroup.uploadableItems.filter(
+                                                            (cItem) => {
+                                                                return uploadableItem.id !== cItem.id;
+                                                            }
+                                                        ),
                                                     });
 
                                                     return newGroups;

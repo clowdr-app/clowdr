@@ -1,7 +1,7 @@
 import { FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
 import {
     ContentBaseType,
-    ContentItemVersionData,
+    ElementVersionData,
     LinkBlob,
     LinkButtonBlob,
     PaperLinkBlob,
@@ -10,12 +10,12 @@ import {
 import assert from "assert";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ContentType_Enum } from "../../../../generated/graphql";
+import { ElementType_Enum } from "../../../../generated/graphql";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
 
 function createDefaultLink(
-    type: ContentType_Enum.Link | ContentType_Enum.LinkButton | ContentType_Enum.PaperLink | ContentType_Enum.VideoLink
-): ContentItemVersionData {
+    type: ElementType_Enum.Link | ElementType_Enum.LinkButton | ElementType_Enum.PaperLink | ElementType_Enum.VideoLink
+): ElementVersionData {
     return {
         createdAt: new Date().getTime(),
         createdBy: "user",
@@ -38,25 +38,25 @@ export const LinkItemTemplate: ItemBaseTemplate = {
     supported: true,
     createDefault: (type, required) => {
         assert(
-            type === ContentType_Enum.Link ||
-                type === ContentType_Enum.LinkButton ||
-                type === ContentType_Enum.PaperLink ||
-                type === ContentType_Enum.VideoLink,
+            type === ElementType_Enum.Link ||
+                type === ElementType_Enum.LinkButton ||
+                type === ElementType_Enum.PaperLink ||
+                type === ElementType_Enum.VideoLink,
             `Link Item Template mistakenly used for type ${type}.`
         );
 
         const name =
-            type === ContentType_Enum.LinkButton
+            type === ElementType_Enum.LinkButton
                 ? "Link Button"
-                : type === ContentType_Enum.PaperLink
+                : type === ElementType_Enum.PaperLink
                 ? "Link to paper"
-                : type === ContentType_Enum.VideoLink
+                : type === ElementType_Enum.VideoLink
                 ? "Link to video"
                 : "Link";
         if (required) {
             return {
                 type: "required-only",
-                requiredItem: {
+                uploadableItem: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -88,32 +88,32 @@ export const LinkItemTemplate: ItemBaseTemplate = {
         if (data.type === "item-only" || data.type === "required-and-item") {
             if (
                 !(
-                    data.item.typeName === ContentType_Enum.Link ||
-                    data.item.typeName === ContentType_Enum.LinkButton ||
-                    data.item.typeName === ContentType_Enum.PaperLink ||
-                    data.item.typeName === ContentType_Enum.VideoLink
+                    data.item.typeName === ElementType_Enum.Link ||
+                    data.item.typeName === ElementType_Enum.LinkButton ||
+                    data.item.typeName === ElementType_Enum.PaperLink ||
+                    data.item.typeName === ElementType_Enum.VideoLink
                 )
             ) {
                 return <>Link Item Template mistakenly used for type {data.type}.</>;
             }
 
             const textPlaceholder =
-                data.item.typeName === ContentType_Enum.LinkButton
+                data.item.typeName === ElementType_Enum.LinkButton
                     ? "Button text"
-                    : data.item.typeName === ContentType_Enum.PaperLink
+                    : data.item.typeName === ElementType_Enum.PaperLink
                     ? "Paper title"
-                    : data.item.typeName === ContentType_Enum.VideoLink
+                    : data.item.typeName === ElementType_Enum.VideoLink
                     ? "Video title"
                     : "Link title";
             const textLabel = textPlaceholder;
 
             const urlLabel = "URL";
             const urlPlaceholder =
-                data.item.typeName === ContentType_Enum.LinkButton
+                data.item.typeName === ElementType_Enum.LinkButton
                     ? "https://www.example.org"
-                    : data.item.typeName === ContentType_Enum.PaperLink
+                    : data.item.typeName === ElementType_Enum.PaperLink
                     ? "https://archive.org/..."
-                    : data.item.typeName === ContentType_Enum.VideoLink
+                    : data.item.typeName === ElementType_Enum.VideoLink
                     ? "https://youtube.com/..."
                     : "https://www.example.org";
 
@@ -232,6 +232,6 @@ export const LinkItemTemplate: ItemBaseTemplate = {
         return <></>;
     },
     renderEditorHeading: function LinkItemEditorHeading(data) {
-        return <>{data.type === "item-only" ? data.item.name : data.requiredItem.name}</>;
+        return <>{data.type === "item-only" ? data.item.name : data.uploadableItem.name}</>;
     },
 };

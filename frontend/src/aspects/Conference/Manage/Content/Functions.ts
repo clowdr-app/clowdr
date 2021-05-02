@@ -1,22 +1,19 @@
-import type { ContentGroupFullNestedInfoFragment, SelectAllContentQuery } from "../../../../generated/graphql";
+import type { ItemFullNestedInfoFragment, SelectAllContentQuery } from "../../../../generated/graphql";
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
-import type { ContentGroupDescriptor, ContentPersonDescriptor, HallwayDescriptor } from "./Types";
+import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "./Types";
 
 export function convertContentToDescriptors(
     allContent: SelectAllContentQuery
 ): {
-    contentGroups: Map<string, ContentGroupDescriptor>;
-    people: Map<string, ContentPersonDescriptor>;
+    items: Map<string, ItemDescriptor>;
+    people: Map<string, ProgramPersonDescriptor>;
     tags: Map<string, TagDescriptor>;
     originatingDatas: Map<string, OriginatingDataDescriptor>;
-    hallways: Map<string, HallwayDescriptor>;
+    exhibitions: Map<string, ExhibitionDescriptor>;
 } {
     return {
-        contentGroups: new Map(
-            allContent.ContentGroup.map((group): [string, ContentGroupDescriptor] => [
-                group.id,
-                convertContentGroupToDescriptor(group),
-            ])
+        items: new Map(
+            allContent.Item.map((group): [string, ItemDescriptor] => [group.id, convertItemToDescriptor(group)])
         ),
         tags: new Map(
             allContent.Tag.map((tag): [string, TagDescriptor] => [
@@ -31,7 +28,7 @@ export function convertContentToDescriptors(
             ])
         ),
         people: new Map(
-            allContent.ContentPerson.map((person): [string, ContentPersonDescriptor] => [
+            allContent.ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
                 person.id,
                 {
                     id: person.id,
@@ -40,7 +37,7 @@ export function convertContentToDescriptors(
                     affiliation: person.affiliation,
                     email: person.email,
                     originatingDataId: person.originatingDataId,
-                    attendeeId: person.attendeeId,
+                    registrantId: person.registrantId,
                 },
             ])
         ),
@@ -54,8 +51,8 @@ export function convertContentToDescriptors(
                 },
             ])
         ),
-        hallways: new Map(
-            allContent.Hallway.map((data): [string, HallwayDescriptor] => [
+        exhibitions: new Map(
+            allContent.Exhibition.map((data): [string, ExhibitionDescriptor] => [
                 data.id,
                 {
                     id: data.id,
@@ -68,27 +65,27 @@ export function convertContentToDescriptors(
     };
 }
 
-export function convertContentGroupToDescriptor(group: ContentGroupFullNestedInfoFragment): ContentGroupDescriptor {
+export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): ItemDescriptor {
     return {
         id: group.id,
         title: group.title,
         shortTitle: group.shortTitle,
-        typeName: group.contentGroupTypeName,
-        tagIds: new Set(group.contentGroupTags.map((x) => x.tagId)),
-        items: group.contentItems.map((item) => ({
+        typeName: group.typeName,
+        tagIds: new Set(group.itemTags.map((x) => x.tagId)),
+        items: group.elements.map((item) => ({
             id: item.id,
             isHidden: item.isHidden,
             name: item.name,
-            typeName: item.contentTypeName,
+            typeName: item.typeName,
             data: Array.isArray(item.data) ? [...item.data] : { ...item.data },
             layoutData: item.layoutData,
-            requiredContentId: item.requiredContentId,
+            uploadableId: item.uploadableId,
             originatingDataId: item.originatingDataId,
         })),
-        requiredItems: group.requiredContentItems.map((item) => ({
+        uploadableItems: group.uploadableElements.map((item) => ({
             id: item.id,
             name: item.name,
-            typeName: item.contentTypeName,
+            typeName: item.typeName,
             uploadsRemaining: item.uploadsRemaining,
             isHidden: item.isHidden,
             uploaders: item.uploaders.map((uploader) => ({
@@ -96,32 +93,32 @@ export function convertContentGroupToDescriptor(group: ContentGroupFullNestedInf
                 email: uploader.email,
                 emailsSentCount: uploader.emailsSentCount,
                 name: uploader.name,
-                requiredContentItemId: uploader.requiredContentItemId,
+                uploadableId: uploader.uploadableId,
             })),
             originatingDataId: item.originatingDataId,
         })),
         people: group.people.map((groupPerson) => ({
             conferenceId: groupPerson.conferenceId,
-            groupId: groupPerson.groupId,
+            itemId: groupPerson.itemId,
             id: groupPerson.id,
             personId: groupPerson.personId,
             priority: groupPerson.priority,
             roleName: groupPerson.roleName,
         })),
-        hallways: group.hallways.map((groupHallway) => ({
-            conferenceId: groupHallway.conferenceId,
-            groupId: groupHallway.groupId,
-            hallwayId: groupHallway.hallwayId,
-            id: groupHallway.id,
-            layout: groupHallway.layout,
-            priority: groupHallway.priority,
+        exhibitions: group.exhibitions.map((groupExhibition) => ({
+            conferenceId: groupExhibition.conferenceId,
+            itemId: groupExhibition.itemId,
+            exhibitionId: groupExhibition.exhibitionId,
+            id: groupExhibition.id,
+            layout: groupExhibition.layout,
+            priority: groupExhibition.priority,
         })),
         originatingDataId: group.originatingDataId,
         rooms: [...group.rooms],
     };
 }
 
-export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): ContentGroupDescriptor {
+export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
     return {
         id: group.id,
         items: group.items.map((item) => ({
@@ -135,10 +132,10 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
             layoutData: item.layoutData,
             name: item.name,
             typeName: item.typeName,
-            requiredContentId: item.requiredContentId,
+            uploadableId: item.uploadableId,
             originatingDataId: item.originatingDataId,
         })),
-        requiredItems: group.requiredItems.map((item) => ({
+        uploadableItems: group.uploadableItems.map((item) => ({
             id: item.id,
             name: item.name,
             typeName: item.typeName,
@@ -150,20 +147,20 @@ export function deepCloneContentGroupDescriptor(group: ContentGroupDescriptor): 
                 email: uploader.email,
                 emailsSentCount: uploader.emailsSentCount,
                 name: uploader.name,
-                requiredContentItemId: uploader.requiredContentItemId,
+                uploadableId: uploader.uploadableId,
             })),
         })),
         people: group.people.map((groupPerson) => ({
             conferenceId: groupPerson.conferenceId,
-            groupId: groupPerson.groupId,
+            itemId: groupPerson.itemId,
             id: groupPerson.id,
             personId: groupPerson.personId,
             priority: groupPerson.priority,
             roleName: groupPerson.roleName,
         })),
-        hallways: group.hallways.map((groupHallway) => ({
-            ...groupHallway,
-            layout: groupHallway.layout ? { ...groupHallway.layout } : null,
+        exhibitions: group.exhibitions.map((groupExhibition) => ({
+            ...groupExhibition,
+            layout: groupExhibition.layout ? { ...groupExhibition.layout } : null,
         })),
         shortTitle: group.shortTitle,
         title: group.title,

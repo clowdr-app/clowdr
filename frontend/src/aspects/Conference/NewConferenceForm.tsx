@@ -26,7 +26,7 @@ import isValidUUID from "../Utils/isValidUUID";
 
 gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
-        Conference(
+        conference_Conference(
             where: { _or: [{ name: { _eq: $name } }, { shortName: { _eq: $shortName } }, { slug: { _eq: $slug } }] }
         ) {
             id
@@ -37,32 +37,34 @@ gql`
     }
 
     mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!) {
-        insert_Conference(objects: [{ name: $name, shortName: $shortName, slug: $slug, demoCodeId: $demoCode }]) {
+        insert_conference_Conference(
+            objects: [{ name: $name, shortName: $shortName, slug: $slug, demoCodeId: $demoCode }]
+        ) {
             returning {
                 id
                 slug
             }
         }
 
-        update_ConferenceDemoCode(where: { id: { _eq: $demoCode } }, _set: { note: "Code has been used." }) {
+        update_conference_DemoCode(where: { id: { _eq: $demoCode } }, _set: { note: "Code has been used." }) {
             affected_rows
         }
     }
 
     mutation CreateNewConferenceMetaStructure(
         $conferenceId: uuid!
-        $attendeeDisplayName: String!
+        $registrantDisplayName: String!
         $userId: String!
         $abstractData: jsonb!
-        $contentGroupListData: jsonb!
+        $itemListData: jsonb!
     ) {
-        insert_Attendee(
+        insert_registrant_Registrant(
             objects: [
                 {
-                    displayName: $attendeeDisplayName
+                    displayName: $registrantDisplayName
                     userId: $userId
                     conferenceId: $conferenceId
-                    groupAttendees: {
+                    groupRegistrants: {
                         data: {
                             group: {
                                 data: {
@@ -103,12 +105,12 @@ gql`
             affected_rows
         }
 
-        insert_Group(
+        insert_permissions_Group(
             objects: [
                 {
                     conferenceId: $conferenceId
                     enabled: false
-                    name: "Attendees"
+                    name: "Registrants"
                     includeUnauthenticated: false
                     groupRoles: {
                         data: [
@@ -116,7 +118,7 @@ gql`
                                 role: {
                                     data: {
                                         conferenceId: $conferenceId
-                                        name: "Attendee"
+                                        name: "Registrant"
                                         rolePermissions: {
                                             data: [
                                                 { permissionName: CONFERENCE_VIEW }
@@ -241,15 +243,15 @@ gql`
             }
         }
 
-        insert_ContentGroup(
+        insert_content_Item(
             objects: {
                 conferenceId: $conferenceId
-                contentGroupTypeName: LANDING_PAGE
-                contentItems: {
+                typeName: LANDING_PAGE
+                elements: {
                     data: [
                         {
                             conferenceId: $conferenceId
-                            contentTypeName: ABSTRACT
+                            typeName: ABSTRACT
                             data: $abstractData
                             isHidden: false
                             layoutData: null
@@ -257,8 +259,8 @@ gql`
                         }
                         {
                             conferenceId: $conferenceId
-                            contentTypeName: CONTENT_GROUP_LIST
-                            data: $contentGroupListData
+                            typeName: CONTENT_GROUP_LIST
+                            data: $itemListData
                             isHidden: false
                             layoutData: null
                             name: "Content group list"
@@ -270,7 +272,7 @@ gql`
             }
         ) {
             returning {
-                ...ContentGroupData
+                ...ItemData
             }
         }
     }
@@ -398,7 +400,7 @@ export default function NewConferenceForm(): JSX.Element {
                             await createNewConferenceMetaStructureMutation({
                                 variables: {
                                     conferenceId,
-                                    attendeeDisplayName: `${user.firstName} ${user.lastName}`,
+                                    registrantDisplayName: "Conference Creator",
                                     userId: user.id,
                                     abstractData: [
                                         {
@@ -411,7 +413,7 @@ export default function NewConferenceForm(): JSX.Element {
                                             },
                                         },
                                     ],
-                                    contentGroupListData: [
+                                    itemListData: [
                                         {
                                             createdAt: now,
                                             createdBy: "system",

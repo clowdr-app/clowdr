@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 gql`
-    fragment EventPersonDetails on EventPerson {
+    fragment EventProgramPersonDetails on schedule_EventProgramPerson {
         id
         roleName
         eventId
@@ -9,13 +9,13 @@ gql`
             id
             name
             affiliation
-            attendeeId
-            attendee {
+            registrantId
+            registrant {
                 id
                 userId
                 displayName
                 profile {
-                    attendeeId
+                    registrantId
                     affiliation
                 }
             }

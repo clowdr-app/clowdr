@@ -7,7 +7,7 @@ import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 gql`
     mutation GetRoomChimeData($roomId: uuid!) {
         joinRoomChimeSession(roomId: $roomId) {
-            attendee
+            registrant
             meeting
             message
         }
@@ -31,11 +31,11 @@ export function BreakoutChimeRoom({
 
     const getMeetingData = useCallback(async () => {
         const result = await getRoomChimeData();
-        if (!result.data?.joinRoomChimeSession?.attendee || !result.data.joinRoomChimeSession.meeting) {
+        if (!result.data?.joinRoomChimeSession?.registrant || !result.data.joinRoomChimeSession.meeting) {
             throw new Error(`Could not join meeting: ${result.data?.joinRoomChimeSession?.message}`);
         }
         return {
-            attendeeInfo: result.data.joinRoomChimeSession.attendee,
+            registrantInfo: result.data.joinRoomChimeSession.registrant,
             meetingInfo: result.data.joinRoomChimeSession.meeting,
         };
     }, [getRoomChimeData]);

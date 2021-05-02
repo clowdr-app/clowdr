@@ -42,8 +42,10 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomPage_RoomDeta
 }
 
 gql`
-    mutation AddParticipantToRoom($attendeeId: uuid!, $roomId: uuid!) {
-        insert_RoomPerson_one(object: { attendeeId: $attendeeId, roomId: $roomId, roomPersonRoleName: PARTICIPANT }) {
+    mutation AddParticipantToRoom($registrantId: uuid!, $roomId: uuid!) {
+        insert_room_RoomPerson_one(
+            object: { registrantId: $registrantId, roomId: $roomId, personRoleName: PARTICIPANT }
+        ) {
             id
         }
     }
@@ -87,20 +89,22 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                 {roomMembers ? (
                     roomMembers
                         .sort((x, y) =>
-                            maybeCompare(x.attendee, y.attendee, (a, b) => a.displayName.localeCompare(b.displayName))
+                            maybeCompare(x.registrant, y.registrant, (a, b) =>
+                                a.displayName.localeCompare(b.displayName)
+                            )
                         )
                         .map((person) => (
                             <ListItem key={person.member.id} whiteSpace="normal">
                                 <LinkButton
                                     justifyContent="flex-start"
-                                    to={`/conference/${conference.slug}/profile/view/${person.attendee?.id}`}
+                                    to={`/conference/${conference.slug}/profile/view/${person.registrant?.id}`}
                                     size="sm"
                                     linkProps={{ width: "100%" }}
                                     w="100%"
                                 >
                                     <>
                                         <FAIcon icon="user" iconStyle="s" mr={5} />
-                                        <Text>{person.attendee?.displayName ?? "<Loading name>"}</Text>
+                                        <Text>{person.registrant?.displayName ?? "<Loading name>"}</Text>
                                     </>
                                 </LinkButton>
                             </ListItem>
@@ -123,8 +127,8 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
             {roomMembersList}
             {roomDetails.roomPeople.find(
                 (person) =>
-                    user.user.attendees.find((myAttendee) => myAttendee.id === person.attendeeId) &&
-                    person.roomPersonRoleName === RoomPersonRole_Enum.Admin
+                    user.user.registrants.find((myRegistrant) => myRegistrant.id === person.registrantId) &&
+                    person.personRoleName === RoomPersonRole_Enum.Admin
             ) ? (
                 <Box textAlign="right" mb={2}>
                     <Button

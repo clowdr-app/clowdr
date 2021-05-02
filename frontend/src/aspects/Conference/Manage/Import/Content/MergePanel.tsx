@@ -19,23 +19,23 @@ import { v4 as uuidv4 } from "uuid";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
-import type { ContentGroupDescriptor, ContentPersonDescriptor, HallwayDescriptor } from "../../Content/Types";
+import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "../../Content/Types";
 import { useSaveContentDiff } from "../../Content/useSaveContentDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import { ChangeSummary, Set_toJSON } from "../Merge";
 import mergeContent from "./MergeContent";
 
 function copyAuthorsToUploaders(
-    groups: Map<string, ContentGroupDescriptor>,
-    people: Map<string, ContentPersonDescriptor>
+    groups: Map<string, ItemDescriptor>,
+    people: Map<string, ProgramPersonDescriptor>
 ): void {
     groups.forEach((group) => {
-        group.requiredItems.forEach((requiredItem) => {
+        group.uploadableItems.forEach((uploadableItem) => {
             group.people.forEach((groupPerson) => {
                 const person = people.get(groupPerson.personId);
                 assert(
                     person,
-                    `Person ${groupPerson.personId} not found: ${groupPerson.groupId} / ${groupPerson.priority} / ${
+                    `Person ${groupPerson.personId} not found: ${groupPerson.itemId} / ${groupPerson.priority} / ${
                         groupPerson.roleName
                     }\n${JSON.stringify(groupPerson)}`
                 );
@@ -45,13 +45,13 @@ function copyAuthorsToUploaders(
                         groupPerson.roleName.toLowerCase() === "presenter")
                 ) {
                     const email = person.email.trim().toLowerCase();
-                    if (!requiredItem.uploaders.some((uploader) => uploader.email.trim().toLowerCase() === email)) {
-                        requiredItem.uploaders.push({
+                    if (!uploadableItem.uploaders.some((uploader) => uploader.email.trim().toLowerCase() === email)) {
+                        uploadableItem.uploaders.push({
                             email,
                             emailsSentCount: 0,
                             id: uuidv4(),
                             name: person.name,
-                            requiredContentItemId: requiredItem.id,
+                            uploadableId: uploadableItem.id,
                             isNew: true,
                         });
                     }
@@ -67,16 +67,16 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const {
         errorContent,
         loadingContent,
-        originalContentGroups,
-        originalHallways,
+        originalItems,
+        originalExhibitions,
         originalOriginatingDatas,
         originalPeople,
         originalTags,
     } = saveContentDiff;
 
-    const [mergedGroupsMap, setMergedContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
-    const [mergedPeopleMap, setMergedPeopleMap] = useState<Map<string, ContentPersonDescriptor>>();
-    const [mergedHallwaysMap, setMergedHallwaysMap] = useState<Map<string, HallwayDescriptor>>();
+    const [mergedGroupsMap, setMergedItemsMap] = useState<Map<string, ItemDescriptor>>();
+    const [mergedPeopleMap, setMergedPeopleMap] = useState<Map<string, ProgramPersonDescriptor>>();
+    const [mergedExhibitionsMap, setMergedExhibitionsMap] = useState<Map<string, ExhibitionDescriptor>>();
     const [mergedTagsMap, setMergedTagsMap] = useState<Map<string, TagDescriptor>>();
     const [mergedOriginatingDatasMap, setMergedOriginatingDatasMap] = useState<
         Map<string, OriginatingDataDescriptor>
@@ -87,24 +87,24 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const [shouldCopyAuthorsToUploaders, setShouldCopyAuthorsToUploaders] = useState<boolean>(true);
 
     useEffect(() => {
-        if (originalContentGroups && originalHallways && originalOriginatingDatas && originalPeople && originalTags) {
+        if (originalItems && originalExhibitions && originalOriginatingDatas && originalPeople && originalTags) {
             try {
                 setError(null);
                 const merged = mergeContent(
                     conference.id,
                     data,
-                    originalContentGroups,
-                    originalHallways,
+                    originalItems,
+                    originalExhibitions,
                     originalOriginatingDatas,
                     originalPeople,
                     originalTags
                 );
                 if (shouldCopyAuthorsToUploaders) {
-                    copyAuthorsToUploaders(merged.newContentGroups, merged.newPeople);
+                    copyAuthorsToUploaders(merged.newItems, merged.newPeople);
                 }
-                setMergedContentGroupsMap(merged.newContentGroups);
+                setMergedItemsMap(merged.newItems);
                 setMergedPeopleMap(merged.newPeople);
-                setMergedHallwaysMap(merged.newHallways);
+                setMergedExhibitionsMap(merged.newExhibitions);
                 setMergedTagsMap(merged.newTags);
                 setMergedOriginatingDatasMap(merged.newOriginatingDatas);
                 setChanges(merged.changes);
@@ -113,9 +113,9 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                 // @ts-ignore
                 window.merged = merged;
             } catch (e) {
-                setMergedContentGroupsMap(originalContentGroups);
+                setMergedItemsMap(originalItems);
                 setMergedPeopleMap(originalPeople);
-                setMergedHallwaysMap(originalHallways);
+                setMergedExhibitionsMap(originalExhibitions);
                 setMergedTagsMap(originalTags);
                 setMergedOriginatingDatasMap(originalOriginatingDatas);
                 setChanges([]);
@@ -125,8 +125,8 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     }, [
         conference.id,
         data,
-        originalContentGroups,
-        originalHallways,
+        originalItems,
+        originalExhibitions,
         originalOriginatingDatas,
         originalPeople,
         originalTags,
@@ -136,7 +136,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const finalData = {
         groups: Array.from(mergedGroupsMap?.values() ?? []),
         people: Array.from(mergedPeopleMap?.values() ?? []),
-        hallways: Array.from(mergedHallwaysMap?.values() ?? []),
+        exhibitions: Array.from(mergedExhibitionsMap?.values() ?? []),
         tags: Array.from(mergedTagsMap?.values() ?? []),
         originatingDatas: Array.from(mergedOriginatingDatasMap?.values() ?? []),
     };
@@ -145,7 +145,11 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
     return loadingContent &&
-        (!mergedGroupsMap || !mergedTagsMap || !mergedPeopleMap || !mergedOriginatingDatasMap || !mergedHallwaysMap) ? (
+        (!mergedGroupsMap ||
+            !mergedTagsMap ||
+            !mergedPeopleMap ||
+            !mergedOriginatingDatasMap ||
+            !mergedExhibitionsMap) ? (
         <Spinner />
     ) : errorContent ? (
         <>An error occurred loading in data - please see further information in notifications.</>
@@ -224,7 +228,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                             error ||
                             !mergedGroupsMap ||
                             !mergedPeopleMap ||
-                            !mergedHallwaysMap ||
+                            !mergedExhibitionsMap ||
                             !mergedTagsMap ||
                             !mergedOriginatingDatasMap
                         ) || isSaving
@@ -232,10 +236,10 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                     isLoading={isSaving}
                     onClick={async () => {
                         setIsSaving(true);
-                        assert(saveContentDiff.originalContentGroups);
+                        assert(saveContentDiff.originalItems);
                         assert(mergedGroupsMap);
                         assert(mergedPeopleMap);
-                        assert(mergedHallwaysMap);
+                        assert(mergedExhibitionsMap);
                         assert(mergedTagsMap);
                         assert(mergedOriginatingDatasMap);
                         const newOriginatingDataKeys = new Set(
@@ -246,7 +250,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                         const results = await saveContentDiff.saveContentDiff(
                             {
                                 groupKeys: new Set(mergedGroupsMap.keys()),
-                                hallwayKeys: new Set(mergedHallwaysMap.keys()),
+                                exhibitionKeys: new Set(mergedExhibitionsMap.keys()),
                                 originatingDataKeys: newOriginatingDataKeys,
                                 peopleKeys: new Set(mergedPeopleMap.keys()),
                                 tagKeys: new Set(mergedTagsMap.keys()),
@@ -255,12 +259,12 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                             mergedPeopleMap,
                             mergedOriginatingDatasMap,
                             mergedGroupsMap,
-                            mergedHallwaysMap
+                            mergedExhibitionsMap
                         );
 
                         const failures: { [K: string]: { k: string; v: any }[] } = {
                             groups: [],
-                            hallways: [],
+                            exhibitions: [],
                             originatingDatas: [],
                             people: [],
                             tags: [],
@@ -270,9 +274,9 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                                 failures.groups.push({ k, v: mergedGroupsMap.get(k) });
                             }
                         });
-                        results.hallways.forEach((v, k) => {
+                        results.exhibitions.forEach((v, k) => {
                             if (!v) {
-                                failures.hallways.push({ k, v: mergedHallwaysMap.get(k) });
+                                failures.exhibitions.push({ k, v: mergedExhibitionsMap.get(k) });
                             }
                         });
                         results.originatingDatas.forEach((v, k) => {
@@ -292,7 +296,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                         });
                         const failureCount =
                             failures.groups.length +
-                            failures.hallways.length +
+                            failures.exhibitions.length +
                             failures.originatingDatas.length +
                             failures.people.length +
                             failures.tags.length;

@@ -1,64 +1,64 @@
 import { gql } from "@apollo/client";
 import { Divider, Grid, GridItem, Spinner } from "@chakra-ui/react";
-import { ContentItemDataBlob, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { isLayoutDataBlob, LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import {
-    RoomSponsorContent_ContentItemDataFragment,
-    useRoomSponsorContent_GetContentItemsQuery,
+    RoomSponsorContent_ElementDataFragment,
+    useRoomSponsorContent_GetElementsQuery,
 } from "../../../../../generated/graphql";
-import { ContentItem } from "../../Content/Item/ContentItem";
+import { Element } from "../../Content/Element/Element";
 
 gql`
-    query RoomSponsorContent_GetContentItems($contentGroupId: uuid!) {
-        ContentGroup(where: { id: { _eq: $contentGroupId }, contentGroupTypeName: { _eq: SPONSOR } }) {
-            ...RoomSponsorContent_ContentGroupData
+    query RoomSponsorContent_GetElements($itemId: uuid!) {
+        content_Item(where: { id: { _eq: $itemId }, typeName: { _eq: SPONSOR } }) {
+            ...RoomSponsorContent_ItemData
         }
     }
 
-    fragment RoomSponsorContent_ContentGroupData on ContentGroup {
+    fragment RoomSponsorContent_ItemData on content_Item {
         id
-        contentItems {
-            ...RoomSponsorContent_ContentItemData
+        elements {
+            ...RoomSponsorContent_ElementData
         }
     }
 
-    fragment RoomSponsorContent_ContentItemData on ContentItem {
+    fragment RoomSponsorContent_ElementData on content_Element {
         id
         name
         isHidden
-        contentTypeName
+        typeName
         data
         layoutData
     }
 `;
 
-export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string }): JSX.Element {
-    const { data, error, loading } = useRoomSponsorContent_GetContentItemsQuery({
+export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element {
+    const { data, error, loading } = useRoomSponsorContent_GetElementsQuery({
         variables: {
-            contentGroupId,
+            itemId,
         },
     });
 
-    const contentItems = useMemo(() => {
-        if (!data?.ContentGroup || data.ContentGroup.length === 0) {
+    const elements = useMemo(() => {
+        if (!data?.Item || data.Item.length === 0) {
             return null;
         }
 
-        const contentGroup = data.ContentGroup[0];
+        const item = data.Item[0];
 
         const items: {
-            item: RoomSponsorContent_ContentItemDataFragment;
-            blob: ContentItemDataBlob;
+            item: RoomSponsorContent_ElementDataFragment;
+            blob: ElementDataBlob;
             layoutBlob: LayoutDataBlob;
-        }[] = contentGroup.contentItems
+        }[] = item.elements
             .filter((item) => !item.isHidden)
             .filter((item) => isLayoutDataBlob(item.layoutData))
-            .filter((item) => isContentItemDataBlob(item.data))
+            .filter((item) => isElementDataBlob(item.data))
             .map((item) => {
                 const layoutBlob = item.layoutData as LayoutDataBlob;
-                const blob = item.data as ContentItemDataBlob;
+                const blob = item.data as ElementDataBlob;
                 return { item, layoutBlob, blob };
             });
 
@@ -68,26 +68,26 @@ export function RoomSponsorContent({ contentGroupId }: { contentGroupId: string 
         );
 
         return sortedItems;
-    }, [data?.ContentGroup]);
+    }, [data?.Item]);
 
     return (
         <>
             <Divider mb={6} />
             {loading ? <Spinner /> : error ? <>An error occurred loading in data.</> : undefined}
             <Grid gridTemplateColumns="50% 50%" ml={0} mr={3} gridColumnGap={5}>
-                {contentItems ? (
-                    contentItems.map((contentItem) =>
-                        contentItem.layoutBlob.hidden ? (
+                {elements ? (
+                    elements.map((element) =>
+                        element.layoutBlob.hidden ? (
                             <></>
                         ) : (
                             <GridItem
                                 minW={0}
                                 overflowX="auto"
-                                key={contentItem.item.id}
-                                colSpan={contentItem.layoutBlob.wide ? [2] : [2, 2, 1]}
+                                key={element.item.id}
+                                colSpan={element.layoutBlob.wide ? [2] : [2, 2, 1]}
                                 p={4}
                             >
-                                <ContentItem item={contentItem.item} />
+                                <Element item={element.item} />
                             </GridItem>
                         )
                     )

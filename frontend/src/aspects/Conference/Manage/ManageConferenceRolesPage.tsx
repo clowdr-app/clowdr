@@ -30,14 +30,14 @@ import { useConference } from "../useConference";
 
 gql`
     query SelectAllPermissions {
-        Permission {
+        permissions_Permission {
             name
             description
         }
     }
 
     query SelectAllRoles($conferenceId: uuid!) {
-        Role(where: { conferenceId: { _eq: $conferenceId } }) {
+        permissions_Role(where: { conferenceId: { _eq: $conferenceId } }) {
             conferenceId
             id
             name
@@ -49,13 +49,13 @@ gql`
         }
     }
 
-    mutation CreateDeleteRoles($deleteRoleIds: [uuid!] = [], $insertRoles: [Role_insert_input!]!) {
-        delete_Role(where: { id: { _in: $deleteRoleIds } }) {
+    mutation CreateDeleteRoles($deleteRoleIds: [uuid!] = [], $insertRoles: [permissions_Role_insert_input!]!) {
+        delete_permissions_Role(where: { id: { _in: $deleteRoleIds } }) {
             returning {
                 id
             }
         }
-        insert_Role(objects: $insertRoles) {
+        insert_permissions_Role(objects: $insertRoles) {
             returning {
                 id
                 conferenceId
@@ -72,10 +72,10 @@ gql`
     mutation UpdateRole(
         $roleId: uuid!
         $roleName: String!
-        $insertPermissions: [RolePermission_insert_input!]!
-        $deletePermissionNames: [Permission_enum!] = []
+        $insertPermissions: [permissions_RolePermission_insert_input!]!
+        $deletePermissionNames: [permissions_Permission_enum!] = []
     ) {
-        update_Role(where: { id: { _eq: $roleId } }, _set: { name: $roleName }) {
+        update_permissions_Role(where: { id: { _eq: $roleId } }, _set: { name: $roleName }) {
             returning {
                 id
                 name
@@ -87,14 +87,14 @@ gql`
                 conferenceId
             }
         }
-        insert_RolePermission(objects: $insertPermissions) {
+        insert_permissions_RolePermission(objects: $insertPermissions) {
             returning {
                 id
                 permissionName
                 roleId
             }
         }
-        delete_RolePermission(where: { permissionName: { _in: $deletePermissionNames } }) {
+        delete_permissions_RolePermission(where: { permissionName: { _in: $deletePermissionNames } }) {
             returning {
                 id
             }

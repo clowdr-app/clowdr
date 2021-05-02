@@ -6,14 +6,14 @@ import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 
 gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
-        insert_ConferencePrepareJob_one(object: { conferenceId: $conferenceId }) {
+        insert_conference_PrepareJob_one(object: { conferenceId: $conferenceId }) {
             id
             conferenceId
         }
     }
 
     subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
-        ConferencePrepareJob(
+        conference_PrepareJob(
             where: { conferenceId: { _eq: $conferenceId } }
             order_by: { createdAt: desc }
             limit: 10

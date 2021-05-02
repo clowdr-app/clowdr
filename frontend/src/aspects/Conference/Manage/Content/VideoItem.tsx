@@ -1,25 +1,25 @@
 import { Heading } from "@chakra-ui/react";
-import { ContentBaseType, ContentItemVersionData } from "@clowdr-app/shared-types/build/content";
+import { ContentBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ContentType_Enum } from "../../../../generated/graphql";
-import { ContentItemVideo } from "../../Attend/Content/Item/ContentItemVideo";
+import { ElementType_Enum } from "../../../../generated/graphql";
+import { ElementVideo } from "../../Attend/Content/Element/ElementVideo";
 import { RefreshSubtitles } from "./RefreshSubtitles";
 import type { ItemBaseTemplate, RenderEditorProps } from "./Types";
-import UploadFileForm_ContentItem from "./UploadFileForm_ContentItem";
+import UploadFileForm_Element from "./UploadFileForm_Element";
 import UploadFileForm_Subtitles from "./UploadFileForm_Subtitles";
 
 function createDefaultVideo(
     type:
-        | ContentType_Enum.VideoBroadcast
-        | ContentType_Enum.VideoCountdown
-        | ContentType_Enum.VideoFile
-        | ContentType_Enum.VideoFiller
-        | ContentType_Enum.VideoPrepublish
-        | ContentType_Enum.VideoSponsorsFiller
-        | ContentType_Enum.VideoTitles
-): ContentItemVersionData {
+        | ElementType_Enum.VideoBroadcast
+        | ElementType_Enum.VideoCountdown
+        | ElementType_Enum.VideoFile
+        | ElementType_Enum.VideoFiller
+        | ElementType_Enum.VideoPrepublish
+        | ElementType_Enum.VideoSponsorsFiller
+        | ElementType_Enum.VideoTitles
+): ElementVersionData {
     return {
         createdAt: new Date().getTime(),
         createdBy: "user",
@@ -36,34 +36,34 @@ export const VideoItemTemplate: ItemBaseTemplate = {
     supported: true,
     createDefault: (type, required) => {
         assert(
-            type === ContentType_Enum.VideoBroadcast ||
-                type === ContentType_Enum.VideoCountdown ||
-                type === ContentType_Enum.VideoFile ||
-                type === ContentType_Enum.VideoFiller ||
-                type === ContentType_Enum.VideoPrepublish ||
-                type === ContentType_Enum.VideoSponsorsFiller ||
-                type === ContentType_Enum.VideoTitles,
+            type === ElementType_Enum.VideoBroadcast ||
+                type === ElementType_Enum.VideoCountdown ||
+                type === ElementType_Enum.VideoFile ||
+                type === ElementType_Enum.VideoFiller ||
+                type === ElementType_Enum.VideoPrepublish ||
+                type === ElementType_Enum.VideoSponsorsFiller ||
+                type === ElementType_Enum.VideoTitles,
             `Video Item Template mistakenly used for type ${type}.`
         );
 
         const name =
-            type === ContentType_Enum.VideoBroadcast
+            type === ElementType_Enum.VideoBroadcast
                 ? "Livestream broadcast video"
-                : type === ContentType_Enum.VideoCountdown
+                : type === ElementType_Enum.VideoCountdown
                 ? "Timer countdown video"
-                : type === ContentType_Enum.VideoFile
+                : type === ElementType_Enum.VideoFile
                 ? "Video file"
-                : type === ContentType_Enum.VideoFiller
+                : type === ElementType_Enum.VideoFiller
                 ? "Filler video"
-                : type === ContentType_Enum.VideoPrepublish
+                : type === ElementType_Enum.VideoPrepublish
                 ? "Pre-published video"
-                : type === ContentType_Enum.VideoSponsorsFiller
+                : type === ElementType_Enum.VideoSponsorsFiller
                 ? "Sponsors filler video"
                 : "Titles video";
         if (required) {
             return {
                 type: "required-only",
-                requiredItem: {
+                uploadableItem: {
                     isNew: true,
                     id: uuidv4(),
                     name,
@@ -91,13 +91,13 @@ export const VideoItemTemplate: ItemBaseTemplate = {
         if (data.type === "item-only" || data.type === "required-and-item") {
             if (
                 !(
-                    data.item.typeName === ContentType_Enum.VideoBroadcast ||
-                    data.item.typeName === ContentType_Enum.VideoCountdown ||
-                    data.item.typeName === ContentType_Enum.VideoFile ||
-                    data.item.typeName === ContentType_Enum.VideoFiller ||
-                    data.item.typeName === ContentType_Enum.VideoPrepublish ||
-                    data.item.typeName === ContentType_Enum.VideoSponsorsFiller ||
-                    data.item.typeName === ContentType_Enum.VideoTitles
+                    data.item.typeName === ElementType_Enum.VideoBroadcast ||
+                    data.item.typeName === ElementType_Enum.VideoCountdown ||
+                    data.item.typeName === ElementType_Enum.VideoFile ||
+                    data.item.typeName === ElementType_Enum.VideoFiller ||
+                    data.item.typeName === ElementType_Enum.VideoPrepublish ||
+                    data.item.typeName === ElementType_Enum.VideoSponsorsFiller ||
+                    data.item.typeName === ElementType_Enum.VideoTitles
                 )
             ) {
                 return <>Video Item Template mistakenly used for type {data.type}.</>;
@@ -120,15 +120,15 @@ export const VideoItemTemplate: ItemBaseTemplate = {
             }
             return (
                 <>
-                    <ContentItemVideo
-                        contentItemId={data.item.isNew ? "" : data.item.id}
+                    <ElementVideo
+                        elementId={data.item.isNew ? "" : data.item.id}
                         title={data.item.name}
-                        videoContentItemData={latestVersion.data}
+                        videoElementData={latestVersion.data}
                     />
                     <Heading as="h3" fontSize="lg" mb={4}>
                         Upload new video
                     </Heading>
-                    <UploadFileForm_ContentItem
+                    <UploadFileForm_Element
                         allowedFileTypes={["video/mp4", "video/webm"]}
                         item={data.item}
                         onItemChange={(newItem) => {
@@ -167,6 +167,6 @@ export const VideoItemTemplate: ItemBaseTemplate = {
         return <>No video uploaded yet.</>;
     },
     renderEditorHeading: function VideoItemEditorHeading(data) {
-        return <>{data.type === "item-only" ? data.item.name : data.requiredItem.name}</>;
+        return <>{data.type === "item-only" ? data.item.name : data.uploadableItem.name}</>;
     },
 };

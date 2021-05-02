@@ -9,7 +9,7 @@ type Mutation {
 type Mutation {
   createRoomDm (
     conferenceId: uuid!
-    attendeeIds: [uuid]!
+    registrantIds: [uuid]!
   ): CreateRoomDmOutput
 }
 

@@ -109,7 +109,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     to="registrants"
                     name="Registrants"
                     icon="users"
-                    description="Manage who can log in and access your conference, e.g. attendees, presenters and speakers."
+                    description="Manage who can log in and access your conference, e.g. registrants, presenters and speakers."
                     permissions={[
                         Permission_Enum.ConferenceManageRoles,
                         Permission_Enum.ConferenceManageGroups,

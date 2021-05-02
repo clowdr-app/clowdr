@@ -4,8 +4,8 @@ import type { Maybe } from "../../generated/graphql";
 import type { BadgeData } from "../Badges/ProfileBadge";
 import { useConference } from "./useConference";
 
-export type AttendeeProfile = {
-    readonly attendeeId: string;
+export type Profile = {
+    readonly registrantId: string;
     readonly realName?: Maybe<string>;
     readonly badges?: Maybe<BadgeData[]>;
     readonly affiliation?: Maybe<string>;
@@ -22,39 +22,39 @@ export type AttendeeProfile = {
     readonly hasBeenEdited: boolean;
 };
 
-export type Attendee = {
+export type Registrant = {
     readonly id: any;
     readonly userId?: Maybe<string>;
     readonly displayName: string;
-    readonly profile: AttendeeProfile;
+    readonly profile: Profile;
 };
 
-export type AttendeeContextT = Attendee;
+export type RegistrantContextT = Registrant;
 
-const CurrentAttendeeContext = React.createContext<AttendeeContextT | undefined>(undefined);
+const CurrentRegistrantContext = React.createContext<RegistrantContextT | undefined>(undefined);
 
-export default function useCurrentAttendee(): AttendeeContextT {
-    const ctx = React.useContext(CurrentAttendeeContext);
-    assert(ctx, "useCurrentAttendee: Context not available");
+export default function useCurrentRegistrant(): RegistrantContextT {
+    const ctx = React.useContext(CurrentRegistrantContext);
+    assert(ctx, "useCurrentRegistrant: Context not available");
     return ctx;
 }
 
-export function useMaybeCurrentAttendee(): AttendeeContextT | undefined {
-    return React.useContext(CurrentAttendeeContext);
+export function useMaybeCurrentRegistrant(): RegistrantContextT | undefined {
+    return React.useContext(CurrentRegistrantContext);
 }
 
-export function CurrentAttendeeProvider({ children }: { children: ReactNode | ReactNodeArray }): JSX.Element {
+export function CurrentRegistrantProvider({ children }: { children: ReactNode | ReactNodeArray }): JSX.Element {
     const conference = useConference();
 
     const ctx = useMemo(() => {
-        if (!("attendees" in conference)) {
+        if (!("registrants" in conference)) {
             return undefined;
         }
-        // Annoyingly, GraphQL CodeGen mistakenly types `conference.attendees`
+        // Annoyingly, GraphQL CodeGen mistakenly types `conference.registrants`
         // as a single object rather than an array. Arguably, it is correct, on
         // the basis of the primary key. But Hasura still returns it as an array.
-        return conference.attendees.length > 0 ? (conference.attendees[0] as Attendee) : undefined;
+        return conference.registrants.length > 0 ? (conference.registrants[0] as Registrant) : undefined;
     }, [conference]);
 
-    return <CurrentAttendeeContext.Provider value={ctx}>{children}</CurrentAttendeeContext.Provider>;
+    return <CurrentRegistrantContext.Provider value={ctx}>{children}</CurrentRegistrantContext.Provider>;
 }

@@ -12,8 +12,8 @@ export interface AnswerMessageData {
 export interface PollMessageData {
     options: string[];
 
-    maxVotesPerAttendee: number;
-    canAttendeesCreateOptions: boolean;
+    maxVotesPerRegistrant: number;
+    canRegistrantsCreateOptions: boolean;
     revealBeforeComplete: boolean;
 }
 
@@ -34,7 +34,7 @@ export interface DuplicationMarkerMessageData {
         name: string;
         chatId: string;
     };
-    contentGroup: {
+    item: {
         id: string;
         title: string;
         chatId: string;

@@ -22,9 +22,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import Color from "tinycolor2";
 import {
-    ContentGroupList_ContentGroupDataFragment,
-    ContentGroupList_ContentGroupTagDataFragment,
-    ContentGroupList_TagInfoFragment,
+    ItemList_ItemDataFragment,
+    ItemList_ItemTagDataFragment,
+    ItemList_TagInfoFragment,
     useContentOfTagQuery,
     useTagsQuery,
 } from "../../../../generated/graphql";
@@ -36,7 +36,7 @@ import { useConference } from "../../useConference";
 import { sortAuthors } from "./AuthorList";
 
 gql`
-    fragment ContentGroupList_ContentPersonData on ContentGroupPerson {
+    fragment ItemList_ProgramPersonData on content_ItemProgramPerson {
         id
         person {
             id
@@ -46,21 +46,21 @@ gql`
         priority
     }
 
-    fragment ContentGroupList_ContentGroupData on ContentGroup {
+    fragment ItemList_ItemData on content_Item {
         id
         title
-        people(where: { roleName: { _nilike: "chair" } }) {
-            ...ContentGroupList_ContentPersonData
+        itemPeople(where: { roleName: { _nilike: "chair" } }) {
+            ...ItemList_ProgramPersonData
         }
     }
 
-    fragment ContentGroupList_ContentGroupTagData on ContentGroupTag {
-        contentGroup {
-            ...ContentGroupList_ContentGroupData
+    fragment ItemList_ItemTagData on content_ItemTag {
+        item {
+            ...ItemList_ItemData
         }
     }
 
-    fragment ContentGroupList_TagInfo on Tag {
+    fragment ItemList_TagInfo on collection_Tag {
         id
         colour
         name
@@ -68,14 +68,14 @@ gql`
     }
 
     query ContentOfTag($id: uuid!) {
-        ContentGroupTag(where: { tagId: { _eq: $id } }) {
-            ...ContentGroupList_ContentGroupTagData
+        content_ItemTag(where: { tagId: { _eq: $id } }) {
+            ...ItemList_ItemTagData
         }
     }
 
     query Tags($conferenceId: uuid!) {
-        Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ContentGroupList_TagInfo
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ItemList_TagInfo
         }
     }
 `;
@@ -85,7 +85,7 @@ function TagButton({
     isExpanded,
     setOpenId,
 }: {
-    tag: ContentGroupList_TagInfoFragment;
+    tag: ItemList_TagInfoFragment;
     isExpanded: boolean;
     setOpenId: (id: string) => void;
 }): JSX.Element {
@@ -151,7 +151,7 @@ function TagButton({
     );
 }
 
-function ContentGroupButton({ group }: { group: ContentGroupList_ContentGroupDataFragment }): JSX.Element {
+function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Element {
     const conference = useConference();
     const bgColour = useColorModeValue("gray.200", "gray.700");
     const textColour = useColorModeValue("gray.500", "gray.400");
@@ -179,35 +179,34 @@ function ContentGroupButton({ group }: { group: ContentGroupList_ContentGroupDat
     );
 }
 
-function Panel({ tag, isExpanded }: { tag: ContentGroupList_TagInfoFragment; isExpanded: boolean }): JSX.Element {
+function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded: boolean }): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const contentOfTag = useContentOfTagQuery({
         skip: true,
     });
-    const [content, setContent] = useState<ContentGroupList_ContentGroupTagDataFragment[] | null>(null);
+    const [content, setContent] = useState<ItemList_ItemTagDataFragment[] | null>(null);
     useEffect(() => {
         if (isExpanded && !content) {
             (async () => {
                 const data = await contentOfTag.refetch({
                     id: tag.id,
                 });
-                setContent(data.data?.ContentGroupTag ? [...data.data.ContentGroupTag] : []);
+                setContent(data.data?.ItemTag ? [...data.data.ItemTag] : []);
             })();
         }
     }, [content, contentOfTag, isExpanded, tag.id]);
 
-    const sortedGroups = useMemo(
-        () => content?.map((x) => x.contentGroup).sort((x, y) => x.title.localeCompare(y.title)),
-        [content]
-    );
+    const sortedGroups = useMemo(() => content?.map((x) => x.item).sort((x, y) => x.title.localeCompare(y.title)), [
+        content,
+    ]);
     const groupElements = useMemo(
         () =>
             sortedGroups?.map((group) => ({
                 title: group.title.toLowerCase(),
                 names: group.people.map((person) => person.person.name.toLowerCase()),
                 affiliations: group.people.map((person) => person.person.affiliation?.toLowerCase() ?? ""),
-                el: <ContentGroupButton key={group.id} group={group} />,
+                el: <ItemButton key={group.id} group={group} />,
             })),
         [sortedGroups]
     );
@@ -285,17 +284,17 @@ function Panel({ tag, isExpanded }: { tag: ContentGroupList_TagInfoFragment; isE
     );
 }
 
-export default function ContentGroupList(): JSX.Element {
+export default function ItemList(): JSX.Element {
     const conference = useConference();
     const { loading, data, error } = useTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(error, false, "ContentGroupList.tsx");
+    useQueryErrorToast(error, false, "ItemList.tsx");
 
     const [openPanelId, setOpenPanelId] = useRestorableState<string | null>(
-        "ContentGroupList_OpenPanelId",
+        "ItemList_OpenPanelId",
         null,
         (s) => (s === null ? "null" : s),
         (s) => (s === "null" ? null : s)

@@ -21,7 +21,7 @@ import { LinkButton } from "../Chakra/LinkButton";
 import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
 import { useMaybeConference } from "../Conference/useConference";
 import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
-import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
+import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { MenuState, MenuStateContext, useMainMenu } from "./MainMenuState";
@@ -36,9 +36,9 @@ interface Props {
 export function MenuBar(): JSX.Element {
     const { user } = useMaybeCurrentUser();
     const conference = useMaybeConference();
-    const attendee = useMaybeCurrentAttendee();
+    const registrant = useMaybeCurrentRegistrant();
     const permissions = useConferenceCurrentUserActivePermissions();
-    const isPermittedAccess = attendee && permissions.has(Permission_Enum.ConferenceViewAttendees);
+    const isPermittedAccess = registrant && permissions.has(Permission_Enum.ConferenceViewAttendees);
     const mainMenu = useMainMenu();
 
     const navButton = useMemo(() => (isPermittedAccess && !mainMenu.isLeftBarOpen ? <ToggleNavButton /> : undefined), [
@@ -91,14 +91,14 @@ export function MenuBar(): JSX.Element {
                 <Spacer />
                 <Menu>
                     <MenuButton as={Button} display="inline-block" size="sm" p={0}>
-                        {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
+                        {registrant && registrant.profile && registrant.profile.photoURL_50x50 ? (
                             <Image
                                 borderRadius={5}
                                 w="100%"
                                 h="100%"
                                 objectFit="scale-down"
                                 objectPosition="center"
-                                src={attendee.profile.photoURL_50x50}
+                                src={registrant.profile.photoURL_50x50}
                                 aria-hidden={true}
                                 overflow="hidden"
                             />
@@ -131,20 +131,20 @@ export function MenuBar(): JSX.Element {
                                 <SignupButton asMenuItem />
                             </Route>
                             <Route path="/">
-                                {conference && attendee ? (
+                                {conference && registrant ? (
                                     <MenuItem
                                         as={ReactLink}
                                         to={`/conference/${conference.slug}/profile`}
                                         display="block"
                                     >
-                                        {attendee && attendee.profile && attendee.profile.photoURL_50x50 ? (
+                                        {registrant && registrant.profile && registrant.profile.photoURL_50x50 ? (
                                             <Image
                                                 borderRadius={5}
                                                 w="35px"
                                                 h="35px"
                                                 objectFit="contain"
                                                 objectPosition="center"
-                                                src={attendee.profile.photoURL_50x50}
+                                                src={registrant.profile.photoURL_50x50}
                                                 aria-hidden={true}
                                                 overflow="hidden"
                                                 mr={2}
@@ -209,7 +209,7 @@ export function MenuBar(): JSX.Element {
                                         </chakra.span>
                                     </MenuItem>
                                 ) : undefined}
-                                {user && user.attendees.length > 0 ? (
+                                {user && user.registrants.length > 0 ? (
                                     <MenuItem as={ReactLink} to="/user">
                                         <FAIcon
                                             display="inline"
@@ -232,7 +232,7 @@ export function MenuBar(): JSX.Element {
                 </Menu>
             </>
         ),
-        [attendee, conference, user]
+        [registrant, conference, user]
     );
 
     const borderColour = useColorModeValue("gray.200", "gray.600");

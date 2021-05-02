@@ -1,12 +1,12 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { assertIsContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { assertIsElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
-import { ContentGroupDataFragment, ContentType_Enum } from "../../../../generated/graphql";
+import { ElementType_Enum, ItemDataFragment } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
-import { ContentItemVideo } from "./Item/ContentItemVideo";
+import { ElementVideo } from "./Element/ElementVideo";
 
-export function ContentGroupVideos({ contentGroupData }: { contentGroupData: ContentGroupDataFragment }): JSX.Element {
+export function ItemVideos({ itemData }: { itemData: ItemDataFragment }): JSX.Element {
     const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
     const [slowSelectedVideoId, setSlowSelectedVideoId] = useState<string | null>(null);
 
@@ -16,31 +16,31 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
 
     usePolling(updateSlowSelectedVideoId, 1500, true);
 
-    const videoContentItems = useMemo(() => {
-        return contentGroupData.contentItems
+    const videoElements = useMemo(() => {
+        return itemData.elements
             .filter(
-                (contentItem) =>
-                    contentItem.contentTypeName === ContentType_Enum.VideoBroadcast ||
-                    contentItem.contentTypeName === ContentType_Enum.VideoPrepublish ||
-                    contentItem.contentTypeName === ContentType_Enum.VideoFile
+                (element) =>
+                    element.typeName === ElementType_Enum.VideoBroadcast ||
+                    element.typeName === ElementType_Enum.VideoPrepublish ||
+                    element.typeName === ElementType_Enum.VideoFile
             )
-            .sort((x, y) => x.contentTypeName.localeCompare(y.contentTypeName))
-            .map((contentItem) => {
+            .sort((x, y) => x.typeName.localeCompare(y.typeName))
+            .map((element) => {
                 try {
-                    assertIsContentItemDataBlob(contentItem?.data);
-                    const latestVersion = R.last(contentItem.data);
+                    assertIsElementDataBlob(element?.data);
+                    const latestVersion = R.last(element.data);
 
                     if (latestVersion?.data.baseType === "video") {
                         return (
                             <Box
-                                key={contentItem.id}
+                                key={element.id}
                                 flexGrow={1}
                                 flexShrink={1}
                                 transition="max-width 1s, width 1s, height 1s, margin 1s"
                                 maxWidth={[
                                     "100%",
                                     "100%",
-                                    slowSelectedVideoId === contentItem.id ? "70%" : slowSelectedVideoId ? "0%" : "50%",
+                                    slowSelectedVideoId === element.id ? "70%" : slowSelectedVideoId ? "0%" : "50%",
                                 ]}
                                 flexBasis={0}
                                 mx={5}
@@ -49,17 +49,15 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                                 visibility={[
                                     "visible",
                                     "visible",
-                                    !slowSelectedVideoId || slowSelectedVideoId === contentItem.id
-                                        ? "visible"
-                                        : "hidden",
+                                    !slowSelectedVideoId || slowSelectedVideoId === element.id ? "visible" : "hidden",
                                 ]}
                                 overflow={["visible", "visible", "hidden"]}
                             >
-                                <ContentItemVideo
-                                    contentItemId={contentItem.id}
-                                    title={contentItem.name}
-                                    videoContentItemData={latestVersion.data}
-                                    onPlay={() => setSelectedVideoId(contentItem.id)}
+                                <ElementVideo
+                                    elementId={element.id}
+                                    title={element.name}
+                                    videoElementData={latestVersion.data}
+                                    onPlay={() => setSelectedVideoId(element.id)}
                                     onPause={() => setSelectedVideoId(null)}
                                 />
                             </Box>
@@ -71,8 +69,8 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
                     return <></>;
                 }
             });
-    }, [contentGroupData.contentItems, slowSelectedVideoId]);
-    return videoContentItems.length === 0 ? (
+    }, [itemData.elements, slowSelectedVideoId]);
+    return videoElements.length === 0 ? (
         <></>
     ) : (
         <Flex
@@ -83,7 +81,7 @@ export function ContentGroupVideos({ contentGroupData }: { contentGroupData: Con
             pb={5}
             flexDir={["column", "column", "row"]}
         >
-            {videoContentItems}
+            {videoElements}
         </Flex>
     );
 }

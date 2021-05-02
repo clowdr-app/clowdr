@@ -2,8 +2,11 @@ import {
     BatchUpdateScheduleCommand,
     ChannelState,
     DescribeScheduleCommand,
+    ListChannelsCommand,
     MediaLive,
     ScheduleAction,
+    StartChannelCommand,
+    StopChannelCommand,
 } from "@aws-sdk/client-medialive";
 import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
@@ -65,5 +68,21 @@ export class MediaLiveService {
             ChannelId: channelId,
         });
         await this._mediaLive.send(action);
+    }
+
+    public async channelExists(channelId: string): Promise<boolean> {
+        const command = new ListChannelsCommand({});
+        const result = await this._mediaLive.send(command);
+        return !!result.Channels?.find((channel) => channel.Id === channelId);
+    }
+
+    public async startChannel(channelId: string): Promise<void> {
+        const command = new StartChannelCommand({ ChannelId: channelId });
+        await this._mediaLive.send(command);
+    }
+
+    public async stopChannel(channelId: string): Promise<void> {
+        const command = new StopChannelCommand({ ChannelId: channelId });
+        await this._mediaLive.send(command);
     }
 }

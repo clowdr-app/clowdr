@@ -8,7 +8,7 @@ import assert from "assert";
 import { DeployStackResult } from "aws-cdk/lib/api/deploy-stack";
 import { AwsService } from "../../aws/aws.service";
 import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
-import { MediaLiveChannelService } from "../../hasura-data/media-live-channel/media-live-channel.service";
+import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import { shortId } from "../../utils/id";
 import { ChannelStackCreateJobService } from "../channel-stack-create-job/channel-stack-create-job.service";
 import { ChannelStack, ChannelStackDescription, ChannelStackProps } from "./channelStack";
@@ -22,7 +22,7 @@ export class ChannelStackService {
         private awsService: AwsService,
         private cloudFormationService: CloudFormationService,
         private channelStackCreateJobService: ChannelStackCreateJobService,
-        private mediaLiveChannelService: MediaLiveChannelService
+        private mediaLiveChannelService: ChannelStackDataService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }

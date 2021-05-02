@@ -8,9 +8,11 @@ import {
 } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
-import { add } from "date-fns";
+import { add, addHours, addMinutes } from "date-fns";
 import * as R from "ramda";
 import {
+    LocalSchedule_GetRoomsWithEventsStartingDocument,
+    LocalSchedule_GetRoomsWithoutEventsDocument,
     RoomMode_Enum,
     RtmpInput_Enum,
     ScheduleService_GetRoomsWithBroadcastEventsDocument,
@@ -235,4 +237,94 @@ export class LocalScheduleService {
 
         return scheduleData;
     }
+
+    public async getRoomsWithCurrentOrUpcomingEvents(): Promise<Room[]> {
+        const now = new Date();
+        const from = now.toISOString();
+        const to = addMinutes(now, 30).toISOString();
+
+        gql`
+            query LocalSchedule_GetRoomsWithEventsStarting($from: timestamptz, $to: timestamptz) {
+                Room(
+                    where: {
+                        events: {
+                            _or: [{ startTime: { _gte: $from, _lte: $to } }, { endTime: { _gte: $from, _lte: $to } }]
+                            intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                        }
+                    }
+                ) {
+                    id
+                    conferenceId
+                    mediaLiveChannel {
+                        id
+                        mediaLiveChannelId
+                    }
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: LocalSchedule_GetRoomsWithEventsStartingDocument,
+            variables: {
+                from,
+                to,
+            },
+        });
+
+        return result.data.Room.map((room) => ({
+            roomId: room.id,
+            conferenceId: room.conferenceId,
+            channelStackId: room.mediaLiveChannel?.id ?? null,
+            mediaLiveChannelId: room.mediaLiveChannel?.mediaLiveChannelId ?? null,
+        }));
+    }
+
+    public async getRoomsWithoutCurrentOrUpcomingEvents(): Promise<Room[]> {
+        const now = new Date();
+        const from = now.toISOString();
+        const to = addHours(now, 2).toISOString();
+
+        gql`
+            query LocalSchedule_GetRoomsWithoutEvents($from: timestamptz, $to: timestamptz) {
+                Room(
+                    where: {
+                        _and: [
+                            { _not: { events: { startTime: { _gte: $from, _lte: $to } } } }
+                            { _not: { events: { startTime: { _lte: $from }, endTime: { _gte: $from } } } }
+                            { mediaLiveChannel: {} }
+                        ]
+                    }
+                ) {
+                    id
+                    conferenceId
+                    mediaLiveChannel {
+                        id
+                        mediaLiveChannelId
+                    }
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: LocalSchedule_GetRoomsWithoutEventsDocument,
+            variables: {
+                from,
+                to,
+            },
+        });
+
+        return result.data.Room.map((room) => ({
+            roomId: room.id,
+            conferenceId: room.conferenceId,
+            channelStackId: room.mediaLiveChannel?.id ?? null,
+            mediaLiveChannelId: room.mediaLiveChannel?.mediaLiveChannelId ?? null,
+        }));
+    }
+}
+
+export interface Room {
+    roomId: string;
+    conferenceId: string;
+    channelStackId: string | null;
+    mediaLiveChannelId: string | null;
 }

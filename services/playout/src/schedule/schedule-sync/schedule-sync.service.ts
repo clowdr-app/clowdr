@@ -1,4 +1,4 @@
-import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
+import { ChannelState, FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
 import { VideoBroadcastBlob } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import AmazonS3URI from "amazon-s3-uri";
@@ -6,14 +6,14 @@ import { add } from "date-fns";
 import * as R from "ramda";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { RoomMode_Enum, RtmpInput_Enum } from "../../generated/graphql";
-import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
+import { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
+import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import {
     LocalSchedule,
     LocalScheduleAction,
     LocalScheduleService,
+    Room,
 } from "../../hasura-data/local-schedule/local-schedule.service";
-import { ChannelStackDetails } from "../../hasura-data/media-live-channel/channel-stack-details";
-import { MediaLiveChannelService } from "../../hasura-data/media-live-channel/media-live-channel.service";
 import {
     EventAction,
     InvalidAction,
@@ -26,9 +26,8 @@ export class ScheduleSyncService {
     private readonly logger: Bunyan;
     constructor(
         @RootLogger() logger: Bunyan,
-        private graphQlService: GraphQlService,
         private mediaLiveService: MediaLiveService,
-        private mediaLiveChannelService: MediaLiveChannelService,
+        private channelStackDataService: ChannelStackDataService,
         private localScheduleService: LocalScheduleService,
         private remoteScheduleService: RemoteScheduleService
     ) {
@@ -49,12 +48,32 @@ export class ScheduleSyncService {
                 this.logger.error({ err, roomId }, "Failure while syncing channel schedule");
             }
         }
+
+        const roomsToStart = await this.localScheduleService.getRoomsWithCurrentOrUpcomingEvents();
+
+        for (const room of roomsToStart) {
+            try {
+                await this.startRoomChannel(room);
+            } catch (err) {
+                this.logger.error({ err, room: room }, "Failure while ensuring room channel started");
+            }
+        }
+
+        const roomsToStop = await this.localScheduleService.getRoomsWithoutCurrentOrUpcomingEvents();
+
+        for (const room of roomsToStop) {
+            try {
+                await this.stopRoomChannel(room);
+            } catch (err) {
+                this.logger.error({ err, room: room }, "Failure while ensuring room channel stopped");
+            }
+        }
     }
 
     public async syncChannelSchedule(roomId: string): Promise<void> {
         this.logger.info({ roomId }, "Syncing channel schedule");
 
-        const channelDetails = await this.mediaLiveChannelService.getChannelStackDetails(roomId);
+        const channelDetails = await this.channelStackDataService.getChannelStackDetails(roomId);
 
         if (!channelDetails) {
             this.logger.warn({ roomId }, "No MediaLive channel found for room. Skipping schedule sync.");
@@ -377,5 +396,87 @@ export class ScheduleSyncService {
 
     static isString(value: string | any): value is string {
         return typeof value === "string";
+    }
+
+    public async startRoomChannel(room: Room): Promise<void> {
+        if (room.mediaLiveChannelId && room.channelStackId) {
+            const channelState = await this.getChannelStateOrDetach(room.channelStackId, room.mediaLiveChannelId);
+            this.logger.debug(
+                { roomId: room.roomId, mediaLiveChannelId: room.mediaLiveChannelId, channelState },
+                "Retrieved current MediaLive channel state"
+            );
+            const failStates: (string | null)[] = [
+                ChannelState.CREATE_FAILED,
+                ChannelState.DELETED,
+                ChannelState.DELETING,
+                ChannelState.UPDATE_FAILED,
+            ];
+            if (failStates.includes(channelState)) {
+                try {
+                    await this.channelStackDataService.detachMediaLiveChannel(room.mediaLiveChannelId);
+                } catch (e) {
+                    this.logger.error(
+                        { channelStackId: room.channelStackId, roomId: room.roomId },
+                        "Failed to detach channel stack"
+                    );
+                }
+                return;
+            }
+
+            const stoppedStates: (string | null)[] = [ChannelState.IDLE, ChannelState.STOPPING];
+            if (stoppedStates.includes(channelState)) {
+                await this.mediaLiveService.startChannel(room.mediaLiveChannelId);
+            }
+
+            const startedStates: (string | null)[] = [ChannelState.RUNNING];
+            if (startedStates.includes(channelState)) {
+                this.logger.debug({ room, channelState }, "Channel is already running");
+            }
+
+            const startingStates: (string | null)[] = [
+                ChannelState.STARTING,
+                ChannelState.CREATING,
+                ChannelState.UPDATING,
+            ];
+            if (startingStates.includes(channelState)) {
+                this.logger.debug({ room, channelState }, "Channel is already in startup");
+            }
+
+            if (channelState === ChannelState.RECOVERING) {
+                this.logger.debug({ room, channelState }, "Channel is currently recovering");
+            }
+        } else {
+            this.logger.info({ roomId: room.roomId }, "No channel stack available for room yet, skipping startup");
+        }
+    }
+
+    public async stopRoomChannel(room: Room): Promise<void> {
+        if (room.channelStackId && room.mediaLiveChannelId) {
+            const channelState = await this.getChannelStateOrDetach(room.channelStackId, room.mediaLiveChannelId);
+
+            if (channelState === ChannelState.RUNNING) {
+                this.logger.info({ room }, "Stopping running channel");
+                await this.mediaLiveService.stopChannel(room.mediaLiveChannelId);
+            }
+        }
+    }
+
+    public async getChannelStateOrDetach(channelStackId: string, mediaLiveChannelId: string): Promise<string | null> {
+        let channelState: string | null = null;
+        try {
+            channelState = await this.mediaLiveService.getChannelState(mediaLiveChannelId);
+        } catch (e) {
+            try {
+                const channelExists = await this.mediaLiveService.channelExists(mediaLiveChannelId);
+                if (!channelExists) {
+                    this.logger.info({ channelStackId }, "MediaLive channel does not exist, detaching");
+                    await this.channelStackDataService.detachMediaLiveChannel(channelStackId);
+                }
+            } catch (e) {
+                this.logger.error({ channelStackId }, "Failed to detach channel stack");
+            }
+            return null;
+        }
+        return channelState;
     }
 }

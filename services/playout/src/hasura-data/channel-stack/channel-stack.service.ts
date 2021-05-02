@@ -8,13 +8,14 @@ import {
     DeleteMediaLiveChannelDocument,
     FindMediaLiveChannelsByStackArnDocument,
     GetMediaLiveChannelByRoomDocument,
+    MediaLiveChannelService_DetachDocument,
 } from "../../generated/graphql";
 import { ConferenceConfigurationService } from "../conference-configuration/conference-configuration.service";
 import { GraphQlService } from "../graphql/graphql.service";
 import { ChannelStackDetails } from "./channel-stack-details";
 
 @Injectable()
-export class MediaLiveChannelService {
+export class ChannelStackDataService {
     private logger: Bunyan;
 
     constructor(
@@ -212,5 +213,22 @@ export class MediaLiveChannelService {
         }
 
         return fillerVideoKey;
+    }
+
+    public async detachMediaLiveChannel(channelStackId: string): Promise<void> {
+        gql`
+            mutation MediaLiveChannelService_Detach($id: uuid!) {
+                update_MediaLiveChannel_by_pk(pk_columns: { id: $id }, _set: { roomId: null }) {
+                    id
+                }
+            }
+        `;
+
+        await this.graphQlService.apolloClient.mutate({
+            mutation: MediaLiveChannelService_DetachDocument,
+            variables: {
+                id: channelStackId,
+            },
+        });
     }
 }

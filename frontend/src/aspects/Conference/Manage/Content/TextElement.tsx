@@ -112,7 +112,7 @@ export const TextElementTemplate: ElementBaseTemplate = {
                             const oldElementIdx = data.element.data.indexOf(latestVersion);
                             const newData = {
                                 ...data,
-                                item: {
+                                element: {
                                     ...data.element,
                                     data: data.element.data.map((version, idx) => {
                                         return idx === oldElementIdx

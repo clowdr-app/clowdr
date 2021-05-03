@@ -179,4 +179,4 @@ ALTER TABLE "room"."ShuffleQueueEntry"
 
 ALTER INDEX "room"."ShuffleQueueEntry_attendeeId" RENAME TO "room_ShuffleQueueEntry_registrantId";
 ALTER INDEX "room"."ShuffleQueueEntry_shufflePeriodId" RENAME TO "room_ShuffleQueueEntry_shufflePeriodId";
-ALTER INDEX "room"."index_room_shufflequeueentry_iswaiting" RENAME TO "room_ShuffleQueueEntry_isWaiting";
+ALTER INDEX IF EXISTS "room"."index_room_shufflequeueentry_iswaiting" RENAME TO "room_ShuffleQueueEntry_isWaiting";

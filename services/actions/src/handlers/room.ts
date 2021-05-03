@@ -261,7 +261,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
     };
 }
 
-export async function handleCreateForContentGroup(
+export async function handleCreateForItem(
     params: createContentGroupRoomArgs,
     userId: string
 ): Promise<CreateContentGroupRoomOutput> {

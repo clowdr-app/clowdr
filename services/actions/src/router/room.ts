@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import {
     handleCreateDmRoom,
-    handleCreateForContentGroup,
+    handleCreateForItem,
     handleRemoveOldRoomParticipants,
     handleRoomCreated,
 } from "../handlers/room";
@@ -64,11 +64,11 @@ router.post("/createDm", async (req: Request, res: Response<CreateRoomDmOutput>)
     }
 });
 
-router.post("/createForContentGroup", async (req: Request, res: Response<CreateContentGroupRoomOutput>) => {
+router.post("/createForItem", async (req: Request, res: Response<CreateContentGroupRoomOutput>) => {
     try {
         const params = req.body.input;
         assertType<createContentGroupRoomArgs>(params);
-        const result = await handleCreateForContentGroup(params, req.body.session_variables["x-hasura-user-id"]);
+        const result = await handleCreateForItem(params, req.body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e) {
         console.error(`${req.originalUrl}: invalid request`, req.body, e);

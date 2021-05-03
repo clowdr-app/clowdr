@@ -53,6 +53,7 @@ export default function UploadFileForm_Subtitles({
         async function fn(): Promise<void> {
             if (files.length === 0) {
                 setSrtProblems([]);
+                return;
             }
 
             const srtString = await files[0].data.text();

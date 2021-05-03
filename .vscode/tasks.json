@@ -154,20 +154,6 @@
             },
             "args": ["run", "gql-cdg"]
         },
-        // Shared -- GraphQL Codegen
-        {
-            "label": "Shared -- GraphQL Codegen",
-            "type": "shell",
-            "command": "npm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/shared"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["run", "graphql-codegen"]
-        },
         // Frontend -- GraphQL Codegen
         {
             "label": "Frontend -- GraphQL Codegen",
@@ -270,6 +256,19 @@
                 "Real-time Service -- Local Development",
                 "Playout Service -- Local Development",
                 "Frontend -- Local Development"
+            ],
+            "dependsOrder": "parallel",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        // Generate All - GraphQL Codegen
+        {
+            "label": "Generate All -- GraphQL Codegen",
+            "dependsOn": [
+                "Actions service -- GraphQL Codegen",
+                "Real-time service -- GraphQL Codegen",
+                "Playout service -- GraphQL Codegen",
+                "Frontend -- GraphQL Codegen"
             ],
             "dependsOrder": "parallel",
             "isBackground": true,

@@ -10,7 +10,7 @@ export function RemoteVideos({ participantWidth }: { participantWidth: number })
     return (
         <>
             {tiles.map((tileId) => {
-                const attendee = roster[tileIdToAttendeeId[tileId]] || {};
+                const registrant = roster[tileIdToAttendeeId[tileId]] || {};
                 return <RemoteVideo key={tileId} tileId={tileId} participantWidth={participantWidth} />;
             })}
         </>

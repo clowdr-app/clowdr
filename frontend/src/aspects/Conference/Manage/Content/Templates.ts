@@ -1,138 +1,138 @@
-import { ContentBaseType, ItemBaseTypes } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
-import { ContentGroupType_Enum, ContentType_Enum } from "../../../../generated/graphql";
-import { ComponentItemTemplate } from "./ComponentItem";
-import { FileItemTemplate } from "./FileItem";
-import { LinkItemTemplate } from "./LinkItem";
-import { TextItemTemplate } from "./TextItem";
-import type { ContentGroupDescriptor, ItemBaseTemplate } from "./Types";
-import { URLItemTemplate } from "./URLItem";
-import { VideoItemTemplate } from "./VideoItem";
+import { Content_ElementType_Enum, Content_ItemType_Enum } from "../../../../generated/graphql";
+import { ComponentElementTemplate } from "./ComponentElement";
+import { FileElementTemplate } from "./FileElement";
+import { LinkElementTemplate } from "./LinkElement";
+import { TextElementTemplate } from "./TextElement";
+import type { ElementBaseTemplate, ItemDescriptor } from "./Types";
+import { URLElementTemplate } from "./URLElement";
+import { VideoElementTemplate } from "./VideoElement";
 
-export const ItemBaseTemplates: { [K in ContentBaseType]: ItemBaseTemplate } = {
-    [ContentBaseType.File]: FileItemTemplate,
-    [ContentBaseType.Component]: ComponentItemTemplate,
-    [ContentBaseType.Link]: LinkItemTemplate,
-    [ContentBaseType.Text]: TextItemTemplate,
-    [ContentBaseType.URL]: URLItemTemplate,
-    [ContentBaseType.Video]: VideoItemTemplate,
+export const ElementBaseTemplates: { [K in ElementBaseType]: ElementBaseTemplate } = {
+    [ElementBaseType.File]: FileElementTemplate,
+    [ElementBaseType.Component]: ComponentElementTemplate,
+    [ElementBaseType.Link]: LinkElementTemplate,
+    [ElementBaseType.Text]: TextElementTemplate,
+    [ElementBaseType.URL]: URLElementTemplate,
+    [ElementBaseType.Video]: VideoElementTemplate,
 };
 
-export type GroupTemplate =
+export type ItemTemplate =
     | {
           supported: false;
       }
     | {
           supported: true;
-          requiredItemTypes: ContentType_Enum[];
-          itemTypes: ContentType_Enum[];
+          uploadableElementTypes: Content_ElementType_Enum[];
+          itemTypes: Content_ElementType_Enum[];
       };
 
-export const GroupTemplates: { [K in ContentGroupType_Enum]: GroupTemplate } = {
-    [ContentGroupType_Enum.Keynote]: {
+export const ItemTemplates: { [K in Content_ItemType_Enum]: ItemTemplate } = {
+    [Content_ItemType_Enum.Keynote]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Abstract],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Abstract],
     },
-    [ContentGroupType_Enum.Other]: {
+    [Content_ItemType_Enum.Other]: {
         supported: true,
-        requiredItemTypes: [],
+        uploadableElementTypes: [],
         itemTypes: [],
     },
-    [ContentGroupType_Enum.Paper]: {
+    [Content_ItemType_Enum.Paper]: {
         supported: true,
-        requiredItemTypes: [ContentType_Enum.VideoPrepublish, ContentType_Enum.VideoBroadcast],
-        itemTypes: [ContentType_Enum.Abstract],
+        uploadableElementTypes: [Content_ElementType_Enum.VideoPrepublish, Content_ElementType_Enum.VideoBroadcast],
+        itemTypes: [Content_ElementType_Enum.Abstract],
     },
-    [ContentGroupType_Enum.Poster]: {
+    [Content_ItemType_Enum.Poster]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.PosterFile],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.PosterFile],
     },
-    [ContentGroupType_Enum.Sponsor]: {
+    [Content_ItemType_Enum.Sponsor]: {
         supported: true,
-        requiredItemTypes: [ContentType_Enum.ImageFile],
+        uploadableElementTypes: [Content_ElementType_Enum.ImageFile],
         itemTypes: [],
     },
-    [ContentGroupType_Enum.Symposium]: {
+    [Content_ItemType_Enum.Symposium]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.Zoom],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Zoom],
     },
-    [ContentGroupType_Enum.Workshop]: {
+    [Content_ItemType_Enum.Workshop]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.Zoom],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Zoom],
     },
-    [ContentGroupType_Enum.Tutorial]: {
+    [Content_ItemType_Enum.Tutorial]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.Zoom],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Zoom],
     },
-    [ContentGroupType_Enum.LandingPage]: {
+    [Content_ItemType_Enum.LandingPage]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.ContentGroupList],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.ContentGroupList],
     },
-    [ContentGroupType_Enum.Presentation]: {
+    [Content_ItemType_Enum.Presentation]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Abstract, ContentType_Enum.VideoBroadcast],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.VideoBroadcast],
     },
-    [ContentGroupType_Enum.SessionQAndA]: {
+    [Content_ItemType_Enum.SessionQAndA]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Text],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Text],
     },
-    [ContentGroupType_Enum.Social]: {
+    [Content_ItemType_Enum.Social]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Text],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Text],
     },
-    [ContentGroupType_Enum.Demonstration]: {
+    [Content_ItemType_Enum.Demonstration]: {
         supported: true,
-        requiredItemTypes: [],
-        itemTypes: [ContentType_Enum.Abstract],
+        uploadableElementTypes: [],
+        itemTypes: [Content_ElementType_Enum.Abstract],
     },
 };
 
-export function fitGroupToTemplate(group: ContentGroupDescriptor): void {
+export function fitItemToTemplate(group: ItemDescriptor): void {
     assert(group.typeName);
-    const groupTemplate = GroupTemplates[group.typeName];
+    const groupTemplate = ItemTemplates[group.typeName];
     assert(groupTemplate.supported);
 
-    group.items = [
-        ...group.items,
+    group.elements = [
+        ...group.elements,
         ...groupTemplate.itemTypes
             .filter((itemType) => {
-                const baseType = ItemBaseTypes[itemType];
-                const itemTemplate = ItemBaseTemplates[baseType];
-                return itemTemplate.supported && !group.items.some((x) => x.typeName === itemType);
+                const baseType = ElementBaseTypes[itemType];
+                const itemTemplate = ElementBaseTemplates[baseType];
+                return itemTemplate.supported && !group.elements.some((x) => x.typeName === itemType);
             })
             .map((itemType) => {
-                const baseType = ItemBaseTypes[itemType];
-                const itemTemplate = ItemBaseTemplates[baseType];
+                const baseType = ElementBaseTypes[itemType];
+                const itemTemplate = ElementBaseTemplates[baseType];
                 assert(itemTemplate.supported);
-                const newItemDesc = itemTemplate.createDefault(itemType, false);
-                assert(newItemDesc.type === "item-only");
-                return newItemDesc.item;
+                const newElementDesc = itemTemplate.createDefault(itemType, false);
+                assert(newElementDesc.type === "element-only");
+                return newElementDesc.element;
             }),
     ];
-    group.requiredItems = [
-        ...group.requiredItems,
-        ...groupTemplate.requiredItemTypes
+    group.uploadableElements = [
+        ...group.uploadableElements,
+        ...groupTemplate.uploadableElementTypes
             .filter((itemType) => {
-                const baseType = ItemBaseTypes[itemType];
-                const itemTemplate = ItemBaseTemplates[baseType];
-                return itemTemplate.supported && !group.requiredItems.some((x) => x.typeName === itemType);
+                const baseType = ElementBaseTypes[itemType];
+                const itemTemplate = ElementBaseTemplates[baseType];
+                return itemTemplate.supported && !group.uploadableElements.some((x) => x.typeName === itemType);
             })
             .map((itemType) => {
-                const baseType = ItemBaseTypes[itemType];
-                const itemTemplate = ItemBaseTemplates[baseType];
+                const baseType = ElementBaseTypes[itemType];
+                const itemTemplate = ElementBaseTemplates[baseType];
                 assert(itemTemplate.supported);
-                const newItemDesc = itemTemplate.createDefault(itemType, true);
-                assert(newItemDesc.type === "required-only");
-                return newItemDesc.requiredItem;
+                const newElementDesc = itemTemplate.createDefault(itemType, true);
+                assert(newElementDesc.type === "required-only");
+                return newElementDesc.uploadableElement;
             }),
     ];
 }

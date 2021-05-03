@@ -43,9 +43,9 @@ function areMessageDatasEqual(type: Chat_MessageType_Enum, x: MessageData, y: Me
             const xD = x as PollMessageData;
             const yD = y as PollMessageData;
             return (
-                xD.maxVotesPerAttendee === yD.maxVotesPerAttendee &&
+                xD.maxVotesPerRegistrant === yD.maxVotesPerRegistrant &&
                 xD.revealBeforeComplete === yD.revealBeforeComplete &&
-                xD.canAttendeesCreateOptions === yD.canAttendeesCreateOptions &&
+                xD.canRegistrantsCreateOptions === yD.canRegistrantsCreateOptions &&
                 xD.options instanceof Array &&
                 yD.options instanceof Array &&
                 xD.options.length === yD.options.length &&

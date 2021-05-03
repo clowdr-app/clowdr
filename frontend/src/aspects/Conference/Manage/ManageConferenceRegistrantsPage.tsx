@@ -23,18 +23,18 @@ import Papa from "papaparse";
 import React, { LegacyRef, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    AttendeePartsFragment,
-    AttendeePartsFragmentDoc,
     InvitationPartsFragmentDoc,
-    Permission_Enum,
-    useDeleteAttendeesMutation,
-    useInsertAttendeeMutation,
-    useInsertAttendeeWithoutInviteMutation,
+    Permissions_Permission_Enum,
+    RegistrantPartsFragment,
+    RegistrantPartsFragmentDoc,
+    useDeleteRegistrantsMutation,
     useInsertInvitationEmailJobsMutation,
+    useInsertRegistrantMutation,
+    useInsertRegistrantWithoutInviteMutation,
     useManageConferencePeoplePage_InsertCustomEmailJobMutation,
-    useSelectAllAttendeesQuery,
     useSelectAllGroupsQuery,
-    useUpdateAttendeeMutation,
+    useSelectAllRegistrantsQuery,
+    useUpdateRegistrantMutation,
 } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import MultiSelect from "../../Chakra/MultiSelect";
@@ -60,8 +60,8 @@ import { useConference } from "../useConference";
 import { SendEmailModal } from "./Registrants/SendEmailModal";
 
 gql`
-    fragment InvitationParts on Invitation {
-        attendeeId
+    fragment InvitationParts on registrant_Invitation {
+        registrantId
         id
         inviteCode
         invitedEmailAddress
@@ -71,11 +71,11 @@ gql`
         hash
     }
 
-    fragment AttendeeParts on Attendee {
+    fragment RegistrantParts on registrant_Registrant {
         conferenceId
         id
-        groupAttendees {
-            attendeeId
+        groupRegistrants {
+            registrantId
             id
             groupId
         }
@@ -89,64 +89,69 @@ gql`
         inviteSent
     }
 
-    query SelectAllAttendees($conferenceId: uuid!) {
-        Attendee(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...AttendeeParts
+    query SelectAllRegistrants($conferenceId: uuid!) {
+        registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...RegistrantParts
         }
     }
 
-    mutation InsertAttendee($attendee: Attendee_insert_input!, $invitation: Invitation_insert_input!) {
-        insert_Attendee_one(object: $attendee) {
-            ...AttendeeParts
+    mutation InsertRegistrant(
+        $registrant: registrant_Registrant_insert_input!
+        $invitation: registrant_Invitation_insert_input!
+    ) {
+        insert_registrant_Registrant_one(object: $registrant) {
+            ...RegistrantParts
         }
-        insert_Invitation_one(object: $invitation) {
+        insert_registrant_Invitation_one(object: $invitation) {
             ...InvitationParts
         }
     }
 
-    mutation InsertAttendeeWithoutInvite($attendee: Attendee_insert_input!) {
-        insert_Attendee_one(object: $attendee) {
-            ...AttendeeParts
+    mutation InsertRegistrantWithoutInvite($registrant: registrant_Registrant_insert_input!) {
+        insert_registrant_Registrant_one(object: $registrant) {
+            ...RegistrantParts
         }
     }
 
-    mutation DeleteAttendees($deleteAttendeeIds: [uuid!] = []) {
-        delete_Attendee(where: { id: { _in: $deleteAttendeeIds } }) {
+    mutation DeleteRegistrants($deleteRegistrantIds: [uuid!] = []) {
+        delete_registrant_Registrant(where: { id: { _in: $deleteRegistrantIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation UpdateAttendee(
-        $attendeeId: uuid!
-        $attendeeName: String!
-        $upsertGroups: [GroupAttendee_insert_input!]!
+    mutation UpdateRegistrant(
+        $registrantId: uuid!
+        $registrantName: String!
+        $upsertGroups: [permissions_GroupRegistrant_insert_input!]!
         $remainingGroupIds: [uuid!]
     ) {
-        update_Attendee_by_pk(pk_columns: { id: $attendeeId }, _set: { displayName: $attendeeName }) {
-            ...AttendeeParts
+        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: { displayName: $registrantName }) {
+            ...RegistrantParts
         }
-        insert_GroupAttendee(
+        insert_permissions_GroupRegistrant(
             objects: $upsertGroups
-            on_conflict: { constraint: GroupAttendee_groupId_attendeeId_key, update_columns: [] }
+            on_conflict: { constraint: GroupRegistrant_groupId_registrantId_key, update_columns: [] }
         ) {
             returning {
                 id
-                attendeeId
+                registrantId
                 groupId
             }
         }
-        delete_GroupAttendee(where: { attendeeId: { _eq: $attendeeId }, groupId: { _nin: $remainingGroupIds } }) {
+        delete_permissions_GroupRegistrant(
+            where: { registrantId: { _eq: $registrantId }, groupId: { _nin: $remainingGroupIds } }
+        ) {
             returning {
                 id
             }
         }
     }
 
-    mutation InsertInvitationEmailJobs($attendeeIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
+    mutation InsertInvitationEmailJobs($registrantIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
         insert_job_queues_InvitationEmailJob(
-            objects: [{ attendeeIds: $attendeeIds, conferenceId: $conferenceId, sendRepeat: $sendRepeat }]
+            objects: [{ registrantIds: $registrantIds, conferenceId: $conferenceId, sendRepeat: $sendRepeat }]
         ) {
             affected_rows
         }
@@ -156,10 +161,15 @@ gql`
         $htmlBody: String!
         $subject: String!
         $conferenceId: uuid!
-        $attendeeIds: jsonb!
+        $registrantIds: jsonb!
     ) {
         insert_job_queues_CustomEmailJob(
-            objects: { htmlBody: $htmlBody, subject: $subject, conferenceId: $conferenceId, attendeeIds: $attendeeIds }
+            objects: {
+                htmlBody: $htmlBody
+                subject: $subject
+                conferenceId: $conferenceId
+                registrantIds: $registrantIds
+            }
         ) {
             affected_rows
         }
@@ -168,10 +178,10 @@ gql`
 
 // TODO: Email validation
 
-type AttendeeDescriptor = AttendeePartsFragment & {
+type RegistrantDescriptor = RegistrantPartsFragment & {
     id?: string;
-    groupAttendees?: ReadonlyArray<
-        AttendeePartsFragment["groupAttendees"][0] & {
+    groupRegistrants?: ReadonlyArray<
+        RegistrantPartsFragment["groupRegistrants"][0] & {
             id?: string;
         }
     >;
@@ -190,25 +200,30 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
     useQueryErrorToast(errorAllGroups, false);
 
     const {
-        loading: loadingAllAttendees,
-        error: errorAllAttendees,
-        data: allAttendees,
-        refetch: refetchAllAttendees,
-    } = useSelectAllAttendeesQuery({
+        loading: loadingAllRegistrants,
+        error: errorAllRegistrants,
+        data: allRegistrants,
+        refetch: refetchAllRegistrants,
+    } = useSelectAllRegistrantsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAllAttendees, false);
-    const data = useMemo(() => [...(allAttendees?.Attendee ?? [])], [allAttendees?.Attendee]);
+    useQueryErrorToast(errorAllRegistrants, false);
+    const data = useMemo(() => [...(allRegistrants?.registrant_Registrant ?? [])], [
+        allRegistrants?.registrant_Registrant,
+    ]);
 
-    const [insertAttendee, insertAttendeeResponse] = useInsertAttendeeMutation();
-    const [insertAttendeeWithoutInvite, insertAttendeeWithoutInviteResponse] = useInsertAttendeeWithoutInviteMutation();
-    const [deleteAttendees, deleteAttendeesResponse] = useDeleteAttendeesMutation();
-    const [updateAttendee, updateAttendeeResponse] = useUpdateAttendeeMutation();
+    const [insertRegistrant, insertRegistrantResponse] = useInsertRegistrantMutation();
+    const [
+        insertRegistrantWithoutInvite,
+        insertRegistrantWithoutInviteResponse,
+    ] = useInsertRegistrantWithoutInviteMutation();
+    const [deleteRegistrants, deleteRegistrantsResponse] = useDeleteRegistrantsMutation();
+    const [updateRegistrant, updateRegistrantResponse] = useUpdateRegistrantMutation();
 
-    const row: RowSpecification<AttendeeDescriptor> = useMemo(
+    const row: RowSpecification<RegistrantDescriptor> = useMemo(
         () => ({
             getKey: (record) => record.id,
             canSelect: (_record) => true,
@@ -226,18 +241,18 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         []
     );
 
-    const columns: ColumnSpecification<AttendeeDescriptor>[] = useMemo(() => {
+    const columns: ColumnSpecification<RegistrantDescriptor>[] = useMemo(() => {
         const groupOptions: { value: string; label: string }[] =
-            allGroups?.Group.map((group) => ({
+            allGroups?.permissions_Group.map((group) => ({
                 value: group.id,
                 label: group.name,
             })) ?? [];
 
-        const result: ColumnSpecification<AttendeeDescriptor>[] = [
+        const result: ColumnSpecification<RegistrantDescriptor>[] = [
             {
                 id: "name",
                 defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                header: function NameHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
                     return props.isInCreate ? (
                         <FormLabel>Name</FormLabel>
                     ) : (
@@ -251,11 +266,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     record.displayName = value;
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: string) => {
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
                     return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
                 },
                 filterEl: TextColumnFilter,
-                cell: function NameCell(props: CellProps<Partial<AttendeeDescriptor>>) {
+                cell: function NameCell(props: CellProps<Partial<RegistrantDescriptor>>) {
                     return (
                         <Input
                             type="text"
@@ -271,7 +286,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
             {
                 id: "inviteSent",
-                header: function NameHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                header: function NameHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
                     if (props.isInCreate) {
                         return undefined;
                     } else {
@@ -284,11 +299,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 get: (data) => data.inviteSent,
                 sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
-                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: boolean) => {
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
                     return rows.filter((row) => row.inviteSent === filterValue);
                 },
                 filterEl: CheckBoxColumnFilter,
-                cell: function InviteSentCell(props: CellProps<Partial<AttendeeDescriptor>, boolean>) {
+                cell: function InviteSentCell(props: CellProps<Partial<RegistrantDescriptor>, boolean>) {
                     if (props.isInCreate) {
                         return undefined;
                     } else {
@@ -302,7 +317,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
             {
                 id: "inviteAccepted",
-                header: function NameHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                header: function NameHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
                     if (props.isInCreate) {
                         return undefined;
                     } else {
@@ -315,11 +330,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 get: (data) => !!data.userId,
                 sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
-                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: boolean) => {
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
                     return rows.filter((row) => !!row.userId === filterValue);
                 },
                 filterEl: CheckBoxColumnFilter,
-                cell: function InviteSentCell(props: CellProps<Partial<AttendeeDescriptor>, boolean>) {
+                cell: function InviteSentCell(props: CellProps<Partial<RegistrantDescriptor>, boolean>) {
                     if (props.isInCreate) {
                         return undefined;
                     } else {
@@ -333,7 +348,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
             {
                 id: "invitedEmailAddress",
-                header: function NameHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                header: function NameHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
                     return props.isInCreate ? (
                         <FormLabel>Invitation address</FormLabel>
                     ) : (
@@ -347,7 +362,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     if (!record.invitation) {
                         assert(record.id);
                         record.invitation = {
-                            attendeeId: record.id as DeepWriteable<any>,
+                            registrantId: record.id as DeepWriteable<any>,
                             createdAt: (new Date().toISOString() as any) as DeepWriteable<any>,
                             updatedAt: (new Date().toISOString() as any) as DeepWriteable<any>,
                             invitedEmailAddress: value,
@@ -359,11 +374,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     }
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: string) => {
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
                     return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
                 },
                 filterEl: TextColumnFilter,
-                cell: function InvitedEmailAddressCell(props: CellProps<Partial<AttendeeDescriptor>>) {
+                cell: function InvitedEmailAddressCell(props: CellProps<Partial<RegistrantDescriptor>>) {
                     if (props.isInCreate) {
                         return (
                             <Input
@@ -395,11 +410,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     }
                 },
                 get: (data) => data.invitation?.inviteCode ?? "",
-                filterFn: (rows: Array<AttendeeDescriptor>, filterValue: string) => {
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
                     return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
                 },
                 filterEl: TextColumnFilter,
-                cell: function InviteCodeCell(props: CellProps<Partial<AttendeeDescriptor>>) {
+                cell: function InviteCodeCell(props: CellProps<Partial<RegistrantDescriptor>>) {
                     if (props.isInCreate) {
                         return undefined;
                     } else {
@@ -413,7 +428,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
             {
                 id: "groups",
-                header: function ContentHeader(props: ColumnHeaderProps<AttendeeDescriptor>) {
+                header: function ContentHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
                     return props.isInCreate ? (
                         <FormLabel>Groups</FormLabel>
                     ) : (
@@ -423,7 +438,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     );
                 },
                 get: (data) =>
-                    data.groupAttendees?.map(
+                    data.groupRegistrants?.map(
                         (ga) =>
                             groupOptions.find((group) => group.value === ga.groupId) ?? {
                                 label: "<Unknown>",
@@ -431,26 +446,26 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                             }
                     ) ?? [],
                 set: (record, value: { label: string; value: string }[]) => {
-                    record.groupAttendees = value.map((x) => ({
-                        attendeeId: (record.id as any) as DeepWriteable<any>,
+                    record.groupRegistrants = value.map((x) => ({
+                        registrantId: (record.id as any) as DeepWriteable<any>,
                         groupId: (x.value as any) as DeepWriteable<any>,
                         id: (undefined as any) as DeepWriteable<any>,
                     }));
                 },
                 filterFn: (
-                    rows: Array<AttendeeDescriptor>,
+                    rows: Array<RegistrantDescriptor>,
                     filterValue: ReadonlyArray<{ label: string; value: string }>
                 ) => {
                     return filterValue.length === 0
                         ? rows
                         : rows.filter((row) => {
-                              return row.groupAttendees.some((x) => filterValue.some((y) => y.value === x.groupId));
+                              return row.groupRegistrants.some((x) => filterValue.some((y) => y.value === x.groupId));
                           });
                 },
                 filterEl: MultiSelectColumnFilter(groupOptions),
                 cell: function ContentCell(
                     props: CellProps<
-                        Partial<AttendeeDescriptor>,
+                        Partial<RegistrantDescriptor>,
                         ReadonlyArray<{ label: string; value: string }> | undefined
                     >
                 ) {
@@ -469,58 +484,58 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
         ];
         return result;
-    }, [allGroups?.Group]);
+    }, [allGroups?.permissions_Group]);
 
     const [
         insertInvitationEmailJobsMutation,
         { loading: insertInvitationEmailJobsLoading },
     ] = useInsertInvitationEmailJobsMutation();
     const [insertCustomEmailJobMutation] = useManageConferencePeoplePage_InsertCustomEmailJobMutation();
-    const [sendCustomEmailAttendees, setSendCustomEmailAttendees] = useState<AttendeeDescriptor[]>([]);
+    const [sendCustomEmailRegistrants, setSendCustomEmailRegistrants] = useState<RegistrantDescriptor[]>([]);
     const sendCustomEmailModal = useDisclosure();
 
     const toast = useToast();
 
-    const insert: Insert<AttendeeDescriptor> = useMemo(
+    const insert: Insert<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: insertAttendeeResponse.loading,
+            ongoing: insertRegistrantResponse.loading,
             generateDefaults: () => {
-                const attendeeId = uuidv4();
+                const registrantId = uuidv4();
                 return {
-                    id: attendeeId,
+                    id: registrantId,
                     conferenceId: conference.id,
-                    groupAttendees: [],
+                    groupRegistrants: [],
                 };
             },
-            makeWhole: (d) => (d.displayName?.length ? (d as AttendeeDescriptor) : undefined),
+            makeWhole: (d) => (d.displayName?.length ? (d as RegistrantDescriptor) : undefined),
             start: (record) => {
                 if (record.invitation?.invitedEmailAddress) {
-                    insertAttendee({
+                    insertRegistrant({
                         variables: {
-                            attendee: {
+                            registrant: {
                                 id: record.id,
                                 conferenceId: conference.id,
                                 displayName: record.displayName,
-                                groupAttendees: {
-                                    data: record.groupAttendees.map((x) => ({ groupId: x.groupId })),
+                                groupRegistrants: {
+                                    data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
                                 },
                             },
                             invitation: {
-                                attendeeId: record.id,
+                                registrantId: record.id,
                                 invitedEmailAddress: record.invitation?.invitedEmailAddress,
                             },
                         },
                         update: (cache, { data: _data }) => {
-                            if (_data?.insert_Attendee_one) {
-                                const data = _data.insert_Attendee_one;
+                            if (_data?.insert_registrant_Registrant_one) {
+                                const data = _data.insert_registrant_Registrant_one;
                                 cache.writeFragment({
                                     data,
-                                    fragment: AttendeePartsFragmentDoc,
-                                    fragmentName: "AttendeeParts",
+                                    fragment: RegistrantPartsFragmentDoc,
+                                    fragmentName: "RegistrantParts",
                                 });
                             }
-                            if (_data?.insert_Invitation_one) {
-                                const data = _data.insert_Invitation_one;
+                            if (_data?.insert_registrant_Invitation_one) {
+                                const data = _data.insert_registrant_Invitation_one;
                                 cache.writeFragment({
                                     data,
                                     fragment: InvitationPartsFragmentDoc,
@@ -530,24 +545,24 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                         },
                     });
                 } else {
-                    insertAttendeeWithoutInvite({
+                    insertRegistrantWithoutInvite({
                         variables: {
-                            attendee: {
+                            registrant: {
                                 id: record.id,
                                 conferenceId: conference.id,
                                 displayName: record.displayName,
-                                groupAttendees: {
-                                    data: record.groupAttendees.map((x) => ({ groupId: x.groupId })),
+                                groupRegistrants: {
+                                    data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
                                 },
                             },
                         },
                         update: (cache, { data: _data }) => {
-                            if (_data?.insert_Attendee_one) {
-                                const data = _data.insert_Attendee_one;
+                            if (_data?.insert_registrant_Registrant_one) {
+                                const data = _data.insert_registrant_Registrant_one;
                                 cache.writeFragment({
                                     data,
-                                    fragment: AttendeePartsFragmentDoc,
-                                    fragmentName: "AttendeeParts",
+                                    fragment: RegistrantPartsFragmentDoc,
+                                    fragmentName: "RegistrantParts",
                                 });
                             }
                         },
@@ -555,61 +570,61 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 }
             },
         }),
-        [conference.id, insertAttendee, insertAttendeeResponse.loading, insertAttendeeWithoutInvite]
+        [conference.id, insertRegistrant, insertRegistrantResponse.loading, insertRegistrantWithoutInvite]
     );
 
-    const update: Update<AttendeeDescriptor> = useMemo(
+    const update: Update<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: updateAttendeeResponse.loading,
+            ongoing: updateRegistrantResponse.loading,
             start: (record) => {
-                updateAttendee({
+                updateRegistrant({
                     variables: {
-                        attendeeId: record.id,
-                        attendeeName: record.displayName,
-                        upsertGroups: record.groupAttendees.map((x) => ({
+                        registrantId: record.id,
+                        registrantName: record.displayName,
+                        upsertGroups: record.groupRegistrants.map((x) => ({
                             groupId: x.groupId,
-                            attendeeId: x.attendeeId,
+                            registrantId: x.registrantId,
                         })),
-                        remainingGroupIds: record.groupAttendees.map((x) => x.groupId),
+                        remainingGroupIds: record.groupRegistrants.map((x) => x.groupId),
                     },
                     optimisticResponse: {
-                        update_Attendee_by_pk: record,
+                        update_registrant_Registrant_by_pk: record,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.update_Attendee_by_pk) {
-                            const data = _data.update_Attendee_by_pk;
+                        if (_data?.update_registrant_Registrant_by_pk) {
+                            const data = _data.update_registrant_Registrant_by_pk;
                             cache.writeFragment({
                                 data,
-                                fragment: AttendeePartsFragmentDoc,
-                                fragmentName: "AttendeeParts",
+                                fragment: RegistrantPartsFragmentDoc,
+                                fragmentName: "RegistrantParts",
                             });
                         }
                     },
                 });
             },
         }),
-        [updateAttendee, updateAttendeeResponse.loading]
+        [updateRegistrant, updateRegistrantResponse.loading]
     );
 
-    const deleteP: Delete<AttendeeDescriptor> = useMemo(
+    const deleteP: Delete<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: deleteAttendeesResponse.loading,
+            ongoing: deleteRegistrantsResponse.loading,
             start: (keys) => {
-                deleteAttendees({
+                deleteRegistrants({
                     variables: {
-                        deleteAttendeeIds: keys,
+                        deleteRegistrantIds: keys,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.delete_Attendee) {
-                            const data = _data.delete_Attendee;
+                        if (_data?.delete_registrant_Registrant) {
+                            const data = _data.delete_registrant_Registrant;
                             const deletedIds = data.returning.map((x) => x.id);
                             cache.modify({
                                 fields: {
-                                    Attendee(existingRefs: Reference[] = [], { readField }) {
+                                    registrant_Registrant(existingRefs: Reference[] = [], { readField }) {
                                         deletedIds.forEach((x) => {
                                             cache.evict({
                                                 id: x.id,
-                                                fieldName: "AttendeeParts",
+                                                fieldName: "RegistrantParts",
                                                 broadcast: true,
                                             });
                                         });
@@ -622,13 +637,17 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 });
             },
         }),
-        [deleteAttendees, deleteAttendeesResponse.loading]
+        [deleteRegistrants, deleteRegistrantsResponse.loading]
     );
 
-    const enabledGroups = useMemo(() => allGroups?.Group.filter((x) => x.enabled), [allGroups?.Group]);
-    const disabledGroups = useMemo(() => allGroups?.Group.filter((x) => !x.enabled), [allGroups?.Group]);
+    const enabledGroups = useMemo(() => allGroups?.permissions_Group.filter((x) => x.enabled), [
+        allGroups?.permissions_Group,
+    ]);
+    const disabledGroups = useMemo(() => allGroups?.permissions_Group.filter((x) => !x.enabled), [
+        allGroups?.permissions_Group,
+    ]);
 
-    const buttons: ExtraButton<AttendeeDescriptor>[] = useMemo(
+    const buttons: ExtraButton<RegistrantDescriptor>[] = useMemo(
         () => [
             {
                 render: function ImportButton(_selectedData) {
@@ -641,13 +660,15 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
             {
                 render: (selectedData) => {
-                    function doExport(dataToExport: AttendeeDescriptor[]) {
+                    function doExport(dataToExport: RegistrantDescriptor[]) {
                         const csvText = Papa.unparse(
-                            dataToExport.map((attendee) => ({
-                                name: attendee.displayName,
-                                email: attendee.invitation?.invitedEmailAddress ?? "",
-                                groups: attendee.groupAttendees.map(
-                                    (x) => allGroups?.Group.find((g) => g.id === x.groupId)?.name ?? "<Unrecognised>"
+                            dataToExport.map((registrant) => ({
+                                name: registrant.displayName,
+                                email: registrant.invitation?.invitedEmailAddress ?? "",
+                                groups: registrant.groupRegistrants.map(
+                                    (x) =>
+                                        allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
+                                        "<Unrecognised>"
                                 ),
                             }))
                         );
@@ -699,7 +720,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                     onClick={() => {
                                                         doExport(
                                                             data.filter((a) =>
-                                                                a.groupAttendees.some((ga) => ga.groupId === group.id)
+                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
                                                             )
                                                         );
                                                     }}
@@ -720,7 +741,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                     onClick={() => {
                                                         doExport(
                                                             data.filter((a) =>
-                                                                a.groupAttendees.some((ga) => ga.groupId === group.id)
+                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
                                                             )
                                                         );
                                                     }}
@@ -737,7 +758,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                         );
                     } else {
                         return (
-                            <Tooltip label={tooltip("selected attendees")}>
+                            <Tooltip label={tooltip("selected registrants")}>
                                 <Box>
                                     <Button
                                         colorScheme="green"
@@ -774,9 +795,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                     onClick={async () => {
                                                         const result = await insertInvitationEmailJobsMutation({
                                                             variables: {
-                                                                attendeeIds: data
+                                                                registrantIds: data
                                                                     .filter((a) =>
-                                                                        a.groupAttendees.some(
+                                                                        a.groupRegistrants.some(
                                                                             (ga) => ga.groupId === group.id
                                                                         )
                                                                     )
@@ -800,7 +821,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                             });
                                                         }
 
-                                                        await refetchAllAttendees();
+                                                        await refetchAllRegistrants();
                                                     }}
                                                 >
                                                     {group.name}
@@ -816,7 +837,10 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     } else {
                         return (
                             <Tooltip
-                                label={tooltip("selected attendees", " and are members of at least one enabled group")}
+                                label={tooltip(
+                                    "selected registrants",
+                                    " and are members of at least one enabled group"
+                                )}
                             >
                                 <Box>
                                     <Button
@@ -826,7 +850,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                         onClick={async () => {
                                             const result = await insertInvitationEmailJobsMutation({
                                                 variables: {
-                                                    attendeeIds: selectedData.map((x) => x.id),
+                                                    registrantIds: selectedData.map((x) => x.id),
                                                     conferenceId: conference.id,
                                                     sendRepeat: false,
                                                 },
@@ -846,7 +870,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                 });
                                             }
 
-                                            await refetchAllAttendees();
+                                            await refetchAllRegistrants();
                                         }}
                                     >
                                         Send initial invitations
@@ -878,9 +902,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                     onClick={async () => {
                                                         const result = await insertInvitationEmailJobsMutation({
                                                             variables: {
-                                                                attendeeIds: data
+                                                                registrantIds: data
                                                                     .filter((a) =>
-                                                                        a.groupAttendees.some(
+                                                                        a.groupRegistrants.some(
                                                                             (ga) => ga.groupId === group.id
                                                                         )
                                                                     )
@@ -904,7 +928,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                             });
                                                         }
 
-                                                        await refetchAllAttendees();
+                                                        await refetchAllRegistrants();
                                                     }}
                                                 >
                                                     {group.name}
@@ -920,7 +944,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     } else {
                         return (
                             <Tooltip
-                                label={tooltip("selected attendees who are members of at least one enabled group")}
+                                label={tooltip("selected registrants who are members of at least one enabled group")}
                             >
                                 <Box>
                                     <Button
@@ -930,7 +954,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                         onClick={async () => {
                                             const result = await insertInvitationEmailJobsMutation({
                                                 variables: {
-                                                    attendeeIds: selectedData.map((x) => x.id),
+                                                    registrantIds: selectedData.map((x) => x.id),
                                                     conferenceId: conference.id,
                                                     sendRepeat: true,
                                                 },
@@ -950,7 +974,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                 });
                                             }
 
-                                            await refetchAllAttendees();
+                                            await refetchAllRegistrants();
                                         }}
                                     >
                                         Send repeat invitations
@@ -980,9 +1004,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={() => {
-                                                        setSendCustomEmailAttendees(
+                                                        setSendCustomEmailRegistrants(
                                                             data.filter((a) =>
-                                                                a.groupAttendees.some((ga) => ga.groupId === group.id)
+                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
                                                             )
                                                         );
                                                         sendCustomEmailModal.onOpen();
@@ -1001,9 +1025,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={async () => {
-                                                        setSendCustomEmailAttendees(
+                                                        setSendCustomEmailRegistrants(
                                                             data.filter((a) =>
-                                                                a.groupAttendees.some((ga) => ga.groupId === group.id)
+                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
                                                             )
                                                         );
                                                         sendCustomEmailModal.onOpen();
@@ -1021,13 +1045,13 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                         );
                     } else {
                         return (
-                            <Tooltip label={tooltip("selected attendees")}>
+                            <Tooltip label={tooltip("selected registrants")}>
                                 <Box>
                                     <Button
                                         colorScheme="purple"
                                         isDisabled={selectedData.length === 0}
                                         onClick={async () => {
-                                            setSendCustomEmailAttendees(selectedData);
+                                            setSendCustomEmailRegistrants(selectedData);
                                             sendCustomEmailModal.onOpen();
                                         }}
                                     >
@@ -1041,7 +1065,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             },
         ],
         [
-            allGroups?.Group,
+            allGroups?.permissions_Group,
             conference.id,
             conference.slug,
             data,
@@ -1049,7 +1073,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             enabledGroups,
             insertInvitationEmailJobsLoading,
             insertInvitationEmailJobsMutation,
-            refetchAllAttendees,
+            refetchAllRegistrants,
             sendCustomEmailModal,
             toast,
         ]
@@ -1058,9 +1082,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[
-                Permission_Enum.ConferenceManageAttendees,
-                Permission_Enum.ConferenceManageRoles,
-                Permission_Enum.ConferenceManageGroups,
+                Permissions_Permission_Enum.ConferenceManageAttendees,
+                Permissions_Permission_Enum.ConferenceManageRoles,
+                Permissions_Permission_Enum.ConferenceManageGroups,
             ]}
             componentIfDenied={<PageNotFound />}
         >
@@ -1071,35 +1095,35 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Registrants
             </Heading>
-            {(loadingAllGroups && !allGroups) || (loadingAllAttendees && !allAttendees?.Attendee) ? (
+            {(loadingAllGroups && !allGroups) || (loadingAllRegistrants && !allRegistrants?.registrant_Registrant) ? (
                 <></>
-            ) : errorAllAttendees || errorAllGroups ? (
+            ) : errorAllRegistrants || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
-            <CRUDTable<AttendeeDescriptor>
+            <CRUDTable<RegistrantDescriptor>
                 columns={columns}
                 row={row}
                 data={
                     !loadingAllGroups &&
-                    !loadingAllAttendees &&
-                    (allGroups?.Group && allAttendees?.Attendee ? data : null)
+                    !loadingAllRegistrants &&
+                    (allGroups?.permissions_Group && allRegistrants?.registrant_Registrant ? data : null)
                 }
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={
-                    insertAttendeeResponse.error ||
-                    insertAttendeeWithoutInviteResponse.error ||
-                    updateAttendeeResponse.error ||
-                    deleteAttendeesResponse.error
+                    insertRegistrantResponse.error ||
+                    insertRegistrantWithoutInviteResponse.error ||
+                    updateRegistrantResponse.error ||
+                    deleteRegistrantsResponse.error
                         ? {
                               status: "error",
                               title: "Error saving changes",
                               description:
-                                  insertAttendeeResponse.error?.message ??
-                                  insertAttendeeWithoutInviteResponse.error?.message ??
-                                  updateAttendeeResponse.error?.message ??
-                                  deleteAttendeesResponse.error?.message ??
+                                  insertRegistrantResponse.error?.message ??
+                                  insertRegistrantWithoutInviteResponse.error?.message ??
+                                  updateRegistrantResponse.error?.message ??
+                                  deleteRegistrantsResponse.error?.message ??
                                   "Unknown error",
                           }
                         : undefined
@@ -1112,11 +1136,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             <SendEmailModal
                 isOpen={sendCustomEmailModal.isOpen}
                 onClose={sendCustomEmailModal.onClose}
-                attendees={sendCustomEmailAttendees}
-                send={async (attendeeIds: string[], htmlBody: string, subject: string) => {
+                registrants={sendCustomEmailRegistrants}
+                send={async (registrantIds: string[], htmlBody: string, subject: string) => {
                     const result = await insertCustomEmailJobMutation({
                         variables: {
-                            attendeeIds,
+                            registrantIds,
                             conferenceId: conference.id,
                             htmlBody,
                             subject,

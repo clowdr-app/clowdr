@@ -11,40 +11,39 @@ import { htmlToText } from "html-to-text";
 import Mustache from "mustache";
 import R from "ramda";
 import {
-    ContentItemAddNewVersionDocument,
+    ElementAddNewVersionDocument,
     Email_Insert_Input,
-    GetContentItemByRequiredItemDocument,
-    GetContentItemDetailsDocument,
-    GetRequiredContentItemDocument,
+    GetElementDetailsDocument,
+    GetUploadableElementDocument,
     GetUploadAgreementDocument,
-    GetUploadersForContentItemDocument,
+    GetUploadersForElementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
 import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
-import { ContentItemData, Payload } from "../types/hasura/event";
+import { ElementData, Payload } from "../types/hasura/event";
 import { insertEmails } from "./email";
 
 gql`
-    mutation ContentItemAddNewVersion($id: uuid!, $newVersion: jsonb!) {
-        update_ContentItem_by_pk(pk_columns: { id: $id }, _append: { data: $newVersion }) {
+    mutation ElementAddNewVersion($id: uuid!, $newVersion: jsonb!) {
+        update_content_Element_by_pk(pk_columns: { id: $id }, _append: { data: $newVersion }) {
             id
         }
     }
 `;
 
-export async function handleContentItemUpdated(payload: Payload<ContentItemData>): Promise<void> {
+export async function handleElementUpdated(payload: Payload<ElementData>): Promise<void> {
     const oldRow = payload.event.data.old;
     const newRow = payload.event.data.new;
 
     if (!newRow?.data) {
-        console.error("handleContentItemUpdated: new content was empty", newRow?.id);
+        console.error("handleElementUpdated: new content was empty", newRow?.id);
         return;
     }
 
     if (newRow.data.length === 0) {
-        console.log("handleContentItemUpdated: content item does not have any versions yet, ignoring", newRow.id);
+        console.log("handleElementUpdated: content item does not have any versions yet, ignoring", newRow.id);
         return;
     }
 
@@ -82,14 +81,14 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
         };
 
         const mutateResult = await apolloClient.mutate({
-            mutation: ContentItemAddNewVersionDocument,
+            mutation: ElementAddNewVersionDocument,
             variables: {
                 id: newRow.id,
                 newVersion,
             },
         });
 
-        assert(mutateResult.data?.update_ContentItem_by_pk?.id, "Failed to record transcode initialisation");
+        assert(mutateResult.data?.update_content_Element_by_pk?.id, "Failed to record transcode initialisation");
     } else {
         console.log("Content item video URL has not changed.", newRow.id);
     }
@@ -144,8 +143,8 @@ export async function handleContentItemUpdated(payload: Payload<ContentItemData>
 }
 
 gql`
-    query GetContentItemDetails($contentItemId: uuid!) {
-        ContentItem_by_pk(id: $contentItemId) {
+    query GetElementDetails($elementId: uuid!) {
+        content_Element_by_pk(id: $elementId) {
             id
             name
             conference {
@@ -153,69 +152,69 @@ gql`
                 name
                 shortName
             }
-            contentGroup {
+            item {
                 id
                 title
             }
         }
     }
-    query GetUploadersForContentItem($contentItemId: uuid!) {
-        Uploader(where: { requiredContentItem: { contentItem: { id: { _eq: $contentItemId } } } }) {
+    query GetUploadersForElement($elementId: uuid!) {
+        content_Uploader(where: { uploadableElement: { element: { id: { _eq: $elementId } } } }) {
             name
             id
             email
         }
     }
 
-    query GetRequiredContentItem($contentItemId: uuid!) {
-        RequiredContentItem(where: { contentItem: { id: { _eq: $contentItemId } } }) {
+    query GetUploadableElement($elementId: uuid!) {
+        content_UploadableElement(where: { element: { id: { _eq: $elementId } } }) {
             accessToken
             id
         }
     }
 `;
 
-async function trySendTranscriptionEmail(contentItemId: string) {
+async function trySendTranscriptionEmail(elementId: string) {
     try {
-        const contentItemDetails = await apolloClient.query({
-            query: GetContentItemDetailsDocument,
+        const elementDetails = await apolloClient.query({
+            query: GetElementDetailsDocument,
             variables: {
-                contentItemId,
+                elementId,
             },
         });
 
         const uploaders = await apolloClient.query({
-            query: GetUploadersForContentItemDocument,
+            query: GetUploadersForElementDocument,
             variables: {
-                contentItemId,
+                elementId,
             },
         });
 
-        const requiredContentItemResult = await apolloClient.query({
-            query: GetRequiredContentItemDocument,
+        const uploadableElementResult = await apolloClient.query({
+            query: GetUploadableElementDocument,
             variables: {
-                contentItemId,
+                elementId,
             },
         });
 
-        if (requiredContentItemResult.data.RequiredContentItem.length !== 1) {
+        if (uploadableElementResult.data.content_UploadableElement.length !== 1) {
             // TODO: handle the >1 case
             throw new Error(
-                `Could not find a single required item (found ${requiredContentItemResult.data.RequiredContentItem.length}) for content item`
+                `Could not find a single required item (found ${uploadableElementResult.data.content_UploadableElement.length}) for content item`
             );
         }
 
-        const requiredContentItem = requiredContentItemResult.data.RequiredContentItem[0];
+        const uploadableElement = uploadableElementResult.data.content_UploadableElement[0];
 
-        const contentItem = contentItemDetails.data.ContentItem_by_pk;
-        if (!contentItem) {
-            throw new Error("Could not find ContentItem while sending");
+        const element = elementDetails.data.content_Element_by_pk;
+        if (!element) {
+            throw new Error("Could not find Element while sending");
         }
 
-        const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${requiredContentItem.id}/${requiredContentItem.accessToken}`;
+        const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
         let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
-            contentItem.conference.id,
+            element.conference.id,
             ConferenceConfigurationKey.EmailTemplate_SubtitlesGenerated
         );
 
@@ -223,18 +222,18 @@ async function trySendTranscriptionEmail(contentItemId: string) {
             emailTemplates = null;
         }
 
-        const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
+        const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
             const view: EmailView_SubtitlesGenerated = {
                 uploader,
                 file: {
-                    name: contentItem.name,
+                    name: element.name,
                 },
                 conference: {
-                    name: contentItem.conference.name,
-                    shortName: contentItem.conference.shortName,
+                    name: element.conference.name,
+                    shortName: element.conference.shortName,
                 },
                 item: {
-                    title: contentItem.contentGroup.title,
+                    title: element.item.title,
                 },
                 uploadLink: magicItemLink,
             };
@@ -263,46 +262,46 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
 
         await insertEmails(emails);
     } catch (e) {
-        console.error("Error while sending transcription emails", contentItemId, e);
+        console.error("Error while sending transcription emails", elementId, e);
         return;
     }
 }
 
-async function trySendTranscriptionFailedEmail(contentItemId: string, contentItemName: string) {
-    const contentItemDetails = await apolloClient.query({
-        query: GetContentItemDetailsDocument,
+async function trySendTranscriptionFailedEmail(elementId: string, elementName: string) {
+    const elementDetails = await apolloClient.query({
+        query: GetElementDetailsDocument,
         variables: {
-            contentItemId,
+            elementId,
         },
     });
 
     const uploaders = await apolloClient.query({
-        query: GetUploadersForContentItemDocument,
+        query: GetUploadersForElementDocument,
         variables: {
-            contentItemId,
+            elementId,
         },
     });
 
-    const requiredContentItemResult = await apolloClient.query({
-        query: GetRequiredContentItemDocument,
+    const uploadableElementResult = await apolloClient.query({
+        query: GetUploadableElementDocument,
         variables: {
-            contentItemId,
+            elementId,
         },
     });
 
-    if (requiredContentItemResult.data.RequiredContentItem.length !== 1) {
+    if (uploadableElementResult.data.content_UploadableElement.length !== 1) {
         // TODO: handle the >1 case
-        console.error(`Could not find a single required item for content item ${contentItemId}`);
+        console.error(`Could not find a single required item for content item ${elementId}`);
         return;
     }
 
-    const requiredContentItem = requiredContentItemResult.data.RequiredContentItem[0];
+    const uploadableElement = uploadableElementResult.data.content_UploadableElement[0];
 
-    const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${requiredContentItem.id}/${requiredContentItem.accessToken}`;
+    const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
-    const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
+    const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
-<p>Your item ${contentItemName} (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) at ${contentItemDetails.data.ContentItem_by_pk?.conference.name} <b>has successfully entered our systems</b>. Your video will be included in the conference pre-publications and/or live streams (as appropriate).</p>
+<p>Your item ${elementName} (${elementDetails.data.content_Element_by_pk?.item.title}) at ${elementDetails.data.content_Element_by_pk?.conference.name} <b>has successfully entered our systems</b>. Your video will be included in the conference pre-publications and/or live streams (as appropriate).</p>
 <p>However, we are sorry that unfortunately an error occurred and we were unable to auto-generate subtitles. We appreciate this is a significant inconvenience but we kindly ask that you to manually enter subtitles for your video.</p>
 <p><a href="${magicItemLink}">Please manually add subtitles on this page.</a></p>
 <p><b>The deadline for submitting subtitles is 12:00 UTC on 6th January 2021.</b></p>
@@ -318,7 +317,7 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
         return {
             emailAddress: uploader.email,
             reason: "item_transcription_failed",
-            subject: `Clowdr: Submission ERROR: Failed to generate subtitles for ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            subject: `Clowdr: Submission ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         };
@@ -326,13 +325,13 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
 
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
-<p>Here's the content item id: ${contentItemId}.</p>
+<p>Here's the content item id: ${elementId}.</p>
 <p>Here's the magic link: <a href="${magicItemLink}">${magicItemLink}</a></p>
 <p>Good luck fixing me!</p>`;
         emails.push({
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: "item_transcription_failed",
-            subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         });
@@ -341,41 +340,41 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
     await insertEmails(emails);
 }
 
-async function trySendTranscodeFailedEmail(contentItemId: string, contentItemName: string, message: string) {
-    const contentItemDetails = await apolloClient.query({
-        query: GetContentItemDetailsDocument,
+async function trySendTranscodeFailedEmail(elementId: string, elementName: string, message: string) {
+    const elementDetails = await apolloClient.query({
+        query: GetElementDetailsDocument,
         variables: {
-            contentItemId,
+            elementId,
         },
     });
 
     const uploaders = await apolloClient.query({
-        query: GetUploadersForContentItemDocument,
+        query: GetUploadersForElementDocument,
         variables: {
-            contentItemId,
+            elementId,
         },
     });
 
-    const requiredContentItemResult = await apolloClient.query({
-        query: GetRequiredContentItemDocument,
+    const uploadableElementResult = await apolloClient.query({
+        query: GetUploadableElementDocument,
         variables: {
-            contentItemId,
+            elementId,
         },
     });
 
-    if (requiredContentItemResult.data.RequiredContentItem.length !== 1) {
+    if (uploadableElementResult.data.content_UploadableElement.length !== 1) {
         // TODO: handle the >1 case
-        console.error(`Could not find a single required item for content item ${contentItemId}`);
+        console.error(`Could not find a single required item for content item ${elementId}`);
         return;
     }
 
-    const requiredContentItem = requiredContentItemResult.data.RequiredContentItem[0];
+    const uploadableElement = uploadableElementResult.data.content_UploadableElement[0];
 
-    const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${requiredContentItem.id}/${requiredContentItem.accessToken}`;
+    const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
-    const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
+    const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
-<p>There was a problem processing <b>${contentItemName}</b> (${contentItemDetails.data.ContentItem_by_pk?.contentGroup.title}) for ${contentItemDetails.data.ContentItem_by_pk?.conference.name}. Your video is not currently accepted by Clowdr's systems and currently will not be included in the conference pre-publications or live streams.</p>
+<p>There was a problem processing <b>${elementName}</b> (${elementDetails.data.content_Element_by_pk?.item.title}) for ${elementDetails.data.content_Element_by_pk?.conference.name}. Your video is not currently accepted by Clowdr's systems and currently will not be included in the conference pre-publications or live streams.</p>
 <p>Error details: ${message}</p>
 <p><a href="${magicItemLink}">You may try uploading a new version</a> but we recommend you forward this email to your conference's organisers and ask for technical assistance.</p>
 <p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Clowdr work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>
@@ -389,7 +388,7 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
         return {
             emailAddress: uploader.email,
             reason: "item_transcode_failed",
-            subject: `Clowdr: Submission ERROR: Failed to process ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            subject: `Clowdr: Submission ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         };
@@ -397,13 +396,13 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
 
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
-<p>Here's the content item id: ${contentItemId}.</p>
+<p>Here's the content item id: ${elementId}.</p>
 <p>Here's the magic link: <a href="${magicItemLink}">${magicItemLink}</a></p>
 <p>Good luck fixing me!</p>`;
         emails.push({
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: "item_transcode_failed",
-            subject: `URGENT: SYSTEM ERROR: Failed to process ${contentItemName} at ${contentItemDetails.data.ContentItem_by_pk?.conference.name}`,
+            subject: `URGENT: SYSTEM ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         });
@@ -413,45 +412,8 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
 }
 
 gql`
-    query GetContentItemByRequiredItem($accessToken: String!) {
-        ContentItem(where: { requiredContentItem: { accessToken: { _eq: $accessToken } } }) {
-            id
-            contentTypeName
-            data
-            layoutData
-            name
-            contentGroup {
-                title
-            }
-        }
-    }
-`;
-
-export async function handleGetByRequiredItem(args: getContentItemArgs): Promise<Array<GetContentItemOutput>> {
-    const result = await apolloClient.query({
-        query: GetContentItemByRequiredItemDocument,
-        variables: {
-            accessToken: args.magicToken,
-        },
-    });
-
-    if (result.error) {
-        throw new Error("No item found");
-    }
-
-    return result.data.ContentItem.map((item) => ({
-        id: item.id,
-        name: item.name,
-        layoutData: item.layoutData,
-        data: item.data,
-        contentTypeName: item.contentTypeName,
-        contentGroupTitle: item.contentGroup.title,
-    }));
-}
-
-gql`
     query GetUploadAgreement($accessToken: String!) {
-        RequiredContentItem(where: { accessToken: { _eq: $accessToken } }) {
+        content_UploadableElement(where: { accessToken: { _eq: $accessToken } }) {
             conference {
                 configurations(where: { key: { _eq: "UPLOAD_AGREEMENT" } }) {
                     value
@@ -474,12 +436,12 @@ export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Pr
     }
 
     if (
-        result.data.RequiredContentItem.length === 1 &&
-        result.data.RequiredContentItem[0].conference.configurations.length === 1 &&
-        "text" in result.data.RequiredContentItem[0].conference.configurations[0].value
+        result.data.content_UploadableElement.length === 1 &&
+        result.data.content_UploadableElement[0].conference.configurations.length === 1 &&
+        "text" in result.data.content_UploadableElement[0].conference.configurations[0].value
     ) {
         return {
-            agreementText: result.data.RequiredContentItem[0].conference.configurations[0].value.text,
+            agreementText: result.data.content_UploadableElement[0].conference.configurations[0].value.text,
         };
     }
 

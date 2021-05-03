@@ -11,21 +11,21 @@ import { useConference } from "../../useConference";
 
 gql`
     query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
-        YouTubeUpload(where: { conferenceId: { _eq: $conferenceId } }) {
+        video_YouTubeUpload(where: { conferenceId: { _eq: $conferenceId } }) {
             ...UploadYouTubeVideos_YouTubeUpload
         }
     }
 
-    fragment UploadYouTubeVideos_YouTubeUpload on YouTubeUpload {
+    fragment UploadYouTubeVideos_YouTubeUpload on video_YouTubeUpload {
         id
         videoId
         videoPrivacyStatus
         videoStatus
         videoTitle
-        contentItem {
+        element {
             id
             name
-            contentGroup {
+            item {
                 id
                 title
             }
@@ -46,7 +46,7 @@ export function UploadedYouTubeVideos(): JSX.Element {
                 Uploaded videos
             </Heading>
 
-            <ApolloQueryWrapper queryResult={youtubeUploadsResult} getter={(result) => result.YouTubeUpload}>
+            <ApolloQueryWrapper queryResult={youtubeUploadsResult} getter={(result) => result.video_YouTubeUpload}>
                 {(uploads: readonly UploadYouTubeVideos_YouTubeUploadFragment[]) => (
                     <Table>
                         <Thead>

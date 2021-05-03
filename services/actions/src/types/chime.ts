@@ -1,19 +1,19 @@
-export interface ChimeAttendeeJoinedDetail {
+export interface ChimeRegistrantJoinedDetail {
     version: string;
-    eventType: "chime:AttendeeJoined";
+    eventType: "chime:RegistrantJoined";
     timestamp: number;
     meetingId: string;
-    attendeeId: string;
+    registrantId: string;
     externalUserId: string;
     networkType: string;
 }
 
-export interface ChimeAttendeeLeftDetail {
+export interface ChimeRegistrantLeftDetail {
     version: string;
-    eventType: "chime:AttendeeLeft";
+    eventType: "chime:RegistrantLeft";
     timestamp: number;
     meetingId: string;
-    attendeeId: string;
+    registrantId: string;
     externalUserId: string;
     networkType: string;
 }

@@ -3,17 +3,17 @@ import assert from "assert";
 import { sub } from "date-fns";
 import * as R from "ramda";
 import {
-    AddAttendeeToRoomPeopleDocument,
+    AddRegistrantToRoomPeopleDocument,
     CreateDmRoomDocument,
-    CreateDmRoom_GetAttendeesDocument,
     CreateDmRoom_GetExistingRoomsDocument,
-    GetAttendeesForRoomAndUserDocument,
-    RoomPersonRole_Enum,
+    CreateDmRoom_GetRegistrantsDocument,
+    GetRegistrantsForRoomAndUserDocument,
+    Room_PersonRole_Enum,
     SetRoomVonageSessionIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { getAttendee } from "../lib/authorisation";
-import { createContentGroupBreakoutRoom } from "../lib/room";
+import { getRegistrant } from "../lib/authorisation";
+import { createItemBreakoutRoom } from "../lib/room";
 import { deleteRoomParticipantsCreatedBefore } from "../lib/roomParticipant";
 import Vonage from "../lib/vonage/vonageClient";
 import { Payload, RoomData } from "../types/hasura/event";
@@ -30,7 +30,7 @@ export async function handleRoomCreated(payload: Payload<RoomData>): Promise<voi
         await addUserToRoomPeople(
             payload.event.session_variables["x-hasura-user-id"],
             payload.event.data.new.id,
-            RoomPersonRole_Enum.Admin
+            Room_PersonRole_Enum.Admin
         );
     }
 }
@@ -44,7 +44,7 @@ async function createRoomVonageSession(roomId: string): Promise<string> {
 
     gql`
         mutation SetRoomVonageSessionId($roomId: uuid!, $sessionId: String!) {
-            update_Room_by_pk(pk_columns: { id: $roomId }, _set: { publicVonageSessionId: $sessionId }) {
+            update_room_Room_by_pk(pk_columns: { id: $roomId }, _set: { publicVonageSessionId: $sessionId }) {
                 id
             }
         }
@@ -61,13 +61,13 @@ async function createRoomVonageSession(roomId: string): Promise<string> {
     return sessionResult.sessionId;
 }
 
-export async function addUserToRoomPeople(userId: string, roomId: string, role: RoomPersonRole_Enum): Promise<void> {
+export async function addUserToRoomPeople(userId: string, roomId: string, role: Room_PersonRole_Enum): Promise<void> {
     gql`
-        query GetAttendeesForRoomAndUser($roomId: uuid!, $userId: String!) {
-            Room_by_pk(id: $roomId) {
+        query GetRegistrantsForRoomAndUser($roomId: uuid!, $userId: String!) {
+            room_Room_by_pk(id: $roomId) {
                 id
                 conference {
-                    attendees(where: { userId: { _eq: $userId } }) {
+                    registrants(where: { userId: { _eq: $userId } }) {
                         userId
                         id
                     }
@@ -78,7 +78,7 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
     `;
 
     const result = await apolloClient.query({
-        query: GetAttendeesForRoomAndUserDocument,
+        query: GetRegistrantsForRoomAndUserDocument,
         variables: {
             roomId,
             userId,
@@ -86,29 +86,29 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
     });
 
     if (result.error || result.errors) {
-        console.error("Failed to get attendee to be added to the room people list", userId, roomId);
-        throw new Error("Failed to get attendee to be added to the room people list");
+        console.error("Failed to get registrant to be added to the room people list", userId, roomId);
+        throw new Error("Failed to get registrant to be added to the room people list");
     }
 
     if (
-        !result.data.Room_by_pk?.conference.attendees ||
-        result.data.Room_by_pk.conference.attendees.length === 0 ||
-        !result.data.Room_by_pk.conference.attendees[0].userId
+        !result.data.room_Room_by_pk?.conference.registrants ||
+        result.data.room_Room_by_pk.conference.registrants.length === 0 ||
+        !result.data.room_Room_by_pk.conference.registrants[0].userId
     ) {
-        console.error("Could not find an attendee to be added to the room people list", userId, roomId);
-        throw new Error("Could not find an attendee to be added to the room people list");
+        console.error("Could not find an registrant to be added to the room people list", userId, roomId);
+        throw new Error("Could not find an registrant to be added to the room people list");
     }
 
-    const attendeeId = result.data.Room_by_pk.conference.attendees[0].id;
+    const registrantId = result.data.room_Room_by_pk.conference.registrants[0].id;
 
     gql`
-        mutation AddAttendeeToRoomPeople(
-            $attendeeId: uuid!
+        mutation AddRegistrantToRoomPeople(
+            $registrantId: uuid!
             $roomId: uuid!
-            $roomPersonRoleName: RoomPersonRole_enum!
+            $roomPersonRoleName: room_PersonRole_enum!
         ) {
-            insert_RoomPerson_one(
-                object: { attendeeId: $attendeeId, roomId: $roomId, roomPersonRoleName: $roomPersonRoleName }
+            insert_room_RoomPerson_one(
+                object: { registrantId: $registrantId, roomId: $roomId, personRoleName: $roomPersonRoleName }
             ) {
                 id
             }
@@ -116,9 +116,9 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
     `;
 
     await apolloClient.mutate({
-        mutation: AddAttendeeToRoomPeopleDocument,
+        mutation: AddRegistrantToRoomPeopleDocument,
         variables: {
-            attendeeId,
+            registrantId,
             roomId,
             roomPersonRoleName: role,
         },
@@ -126,53 +126,56 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
 }
 
 export async function handleCreateDmRoom(params: createRoomDmArgs, userId: string): Promise<CreateRoomDmOutput> {
-    const myAttendee = await getAttendee(userId, params.conferenceId);
+    const myRegistrant = await getRegistrant(userId, params.conferenceId);
 
     gql`
-        query CreateDmRoom_GetAttendees($attendeeIds: [uuid!], $conferenceId: uuid!) {
-            Attendee(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $attendeeIds } }) {
+        query CreateDmRoom_GetRegistrants($registrantIds: [uuid!], $conferenceId: uuid!) {
+            registrant_Registrant(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $registrantIds } }) {
                 id
                 displayName
             }
         }
     `;
 
-    const filteredAttendees = R.union(
-        params.attendeeIds.filter((attendeeId) => attendeeId !== myAttendee.id),
+    const filteredRegistrants = R.union(
+        params.registrantIds.filter((registrantId) => registrantId !== myRegistrant.id),
         []
     );
 
-    if (filteredAttendees.length < 1) {
-        throw new Error("Must have at least one other attendee in the DM");
+    if (filteredRegistrants.length < 1) {
+        throw new Error("Must have at least one other registrant in the DM");
     }
 
-    // Check that the other attendees also attend the conference
-    const otherAttendeesResult = await apolloClient.query({
-        query: CreateDmRoom_GetAttendeesDocument,
+    // Check that the other registrants also attend the conference
+    const otherRegistrantsResult = await apolloClient.query({
+        query: CreateDmRoom_GetRegistrantsDocument,
         variables: {
-            attendeeIds: filteredAttendees,
+            registrantIds: filteredRegistrants,
             conferenceId: params.conferenceId,
         },
     });
 
-    if (otherAttendeesResult.data.Attendee.length !== filteredAttendees.length) {
-        throw new Error("Attendees must all be part of the specified conference");
+    if (otherRegistrantsResult.data.registrant_Registrant.length !== filteredRegistrants.length) {
+        throw new Error("Registrants must all be part of the specified conference");
     }
 
     // Check for an existing DM with these participants
     gql`
-        query CreateDmRoom_GetExistingRooms($conferenceId: uuid!, $attendeeIds: [uuid!]) {
-            Room(
+        query CreateDmRoom_GetExistingRooms($conferenceId: uuid!, $registrantIds: [uuid!]) {
+            room_Room(
                 where: {
                     conferenceId: { _eq: $conferenceId }
-                    roomPeople: { attendeeId: { _in: $attendeeIds }, _not: { attendeeId: { _nin: $attendeeIds } } }
-                    roomPrivacyName: { _eq: DM }
+                    roomPeople: {
+                        registrantId: { _in: $registrantIds }
+                        _not: { registrantId: { _nin: $registrantIds } }
+                    }
+                    managementModeName: { _eq: DM }
                 }
             ) {
                 id
                 chatId
                 roomPeople {
-                    attendeeId
+                    registrantId
                     id
                 }
             }
@@ -183,15 +186,15 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
         query: CreateDmRoom_GetExistingRoomsDocument,
         variables: {
             conferenceId: params.conferenceId,
-            attendeeIds: filteredAttendees,
+            registrantIds: filteredRegistrants,
         },
     });
 
-    const fullMatch = existingRoomsResult.data.Room.find((room) =>
+    const fullMatch = existingRoomsResult.data.room_Room.find((room) =>
         R.isEmpty(
             R.symmetricDifference(
-                room.roomPeople.map((person) => person.attendeeId),
-                [...filteredAttendees, myAttendee.id]
+                room.roomPeople.map((person) => person.registrantId),
+                [...filteredRegistrants, myRegistrant.id]
             )
         )
     );
@@ -210,15 +213,15 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
             $capacity: Int!
             $conferenceId: uuid!
             $name: String!
-            $data: [RoomPerson_insert_input!]!
+            $data: [room_RoomPerson_insert_input!]!
         ) {
-            insert_Room_one(
+            insert_room_Room_one(
                 object: {
                     capacity: $capacity
                     conferenceId: $conferenceId
                     currentModeName: BREAKOUT
                     name: $name
-                    roomPrivacyName: DM
+                    managementModeName: DM
                     roomPeople: { data: $data }
                 }
             ) {
@@ -231,49 +234,49 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
     const result = await apolloClient.mutate({
         mutation: CreateDmRoomDocument,
         variables: {
-            capacity: filteredAttendees.length + 1,
+            capacity: filteredRegistrants.length + 1,
             conferenceId: params.conferenceId,
             data: [
-                { attendeeId: myAttendee.id, roomPersonRoleName: RoomPersonRole_Enum.Participant },
-                ...filteredAttendees.map((attendeeId) => ({
-                    attendeeId: attendeeId,
-                    roomPersonRoleName: RoomPersonRole_Enum.Participant,
+                { registrantId: myRegistrant.id, personRoleName: Room_PersonRole_Enum.Participant },
+                ...filteredRegistrants.map((registrantId) => ({
+                    registrantId: registrantId,
+                    personRoleName: Room_PersonRole_Enum.Participant,
                 })),
             ],
             name: [
-                myAttendee.displayName,
-                ...otherAttendeesResult.data.Attendee.map((attendee) => attendee.displayName),
+                myRegistrant.displayName,
+                ...otherRegistrantsResult.data.registrant_Registrant.map((registrant) => registrant.displayName),
             ].join(", "),
         },
     });
 
-    if (!result.data?.insert_Room_one?.id) {
+    if (!result.data?.insert_room_Room_one?.id) {
         throw new Error("Failed to create room");
     }
 
     return {
-        roomId: result.data.insert_Room_one.id,
-        chatId: result.data.insert_Room_one.chatId,
+        roomId: result.data.insert_room_Room_one.id,
+        chatId: result.data.insert_room_Room_one.chatId,
         message: "Created new DM",
     };
 }
 
-export async function handleCreateForContentGroup(
+export async function handleCreateForItem(
     params: createContentGroupRoomArgs,
     userId: string
 ): Promise<CreateContentGroupRoomOutput> {
     try {
         // todo: verify user role here. It's not critically important though.
-        getAttendee(userId, params.conferenceId);
+        getRegistrant(userId, params.conferenceId);
     } catch (e) {
-        console.error("Could not find attendee at conference when creating breakout room", e);
+        console.error("Could not find registrant at conference when creating breakout room", e);
         return {
-            message: "Attendee is not a member of the conference",
+            message: "Registrant is not a member of the conference",
         };
     }
 
     try {
-        const roomId = await createContentGroupBreakoutRoom(params.contentGroupId, params.conferenceId);
+        const roomId = await createItemBreakoutRoom(params.itemId, params.conferenceId);
         return {
             roomId,
         };

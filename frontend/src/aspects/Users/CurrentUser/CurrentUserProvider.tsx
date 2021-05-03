@@ -16,7 +16,7 @@ import FAIcon from "../../Icons/FAIcon";
 import { CurrentUserContext, defaultCurrentUserContext, UserInfo } from "./useMaybeCurrentUser";
 
 gql`
-    fragment AttendeeFields on Attendee {
+    fragment RegistrantFields on registrant_Registrant {
         id
         userId
         conferenceId
@@ -24,7 +24,7 @@ gql`
         createdAt
         updatedAt
         profile {
-            attendeeId
+            registrantId
             photoURL_50x50
         }
         conference {
@@ -33,7 +33,7 @@ gql`
             shortName
             slug
         }
-        groupAttendees {
+        groupRegistrants {
             id
             group {
                 id
@@ -57,12 +57,10 @@ gql`
     fragment UserInfo on User {
         id
         email
-        lastName
-        firstName
         acceptedTermsAt
         acceptedPrivacyPolicyAt
-        attendees {
-            ...AttendeeFields
+        registrants {
+            ...RegistrantFields
         }
     }
 

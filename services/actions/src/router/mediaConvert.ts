@@ -68,7 +68,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                             break;
                         case TranscodeMode.PREVIEW:
                             await completePreviewTranscode(
-                                event.detail.userMetadata.contentItemId,
+                                event.detail.userMetadata.elementId,
                                 transcodeS3Url,
                                 event.detail.jobId,
                                 new Date(event.detail.timestamp)
@@ -80,7 +80,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                                 event.detail.userMetadata.combineVideosJobId,
                                 transcodeS3Url,
                                 subtitleS3Url,
-                                event.detail.userMetadata.contentGroupId
+                                event.detail.userMetadata.itemId
                             );
                         }
                     }
@@ -99,7 +99,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                             break;
                         case TranscodeMode.PREVIEW:
                             await failPreviewTranscode(
-                                event.detail.userMetadata.contentItemId,
+                                event.detail.userMetadata.elementId,
                                 event.detail.jobId,
                                 new Date(event.detail.timestamp),
                                 event.detail.errorMessage

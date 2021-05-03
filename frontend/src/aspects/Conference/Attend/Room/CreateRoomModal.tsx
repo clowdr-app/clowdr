@@ -20,21 +20,25 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
 import {
     RoomListRoomDetailsFragmentDoc,
-    RoomPrivacy_Enum,
-    useAttendeeCreateRoomMutation,
+    Room_ManagementMode_Enum,
+    useRegistrant_RegistrantCreateRoomMutation,
 } from "../../../../generated/graphql";
 import { normaliseName, validateShortName } from "../../NewConferenceForm";
 import { useConference } from "../../useConference";
 
 gql`
-    mutation AttendeeCreateRoom($conferenceId: uuid!, $name: String!, $roomPrivacyName: RoomPrivacy_enum!) {
-        insert_Room_one(
+    mutation registrant_RegistrantCreateRoom(
+        $conferenceId: uuid!
+        $name: String!
+        $managementModeName: room_ManagementMode_enum!
+    ) {
+        insert_room_Room_one(
             object: {
                 capacity: 50
                 conferenceId: $conferenceId
                 currentModeName: BREAKOUT
                 name: $name
-                roomPrivacyName: $roomPrivacyName
+                managementModeName: $managementModeName
             }
         ) {
             ...RoomListRoomDetails
@@ -51,7 +55,7 @@ export function CreateRoomModal({
     onClose: () => void;
     onCreated: (id: string, cb: () => void) => Promise<void>;
 }): JSX.Element {
-    const [createAttendeeRoomMutation] = useAttendeeCreateRoomMutation();
+    const [createRegistrantRoomMutation] = useRegistrant_RegistrantCreateRoomMutation();
     const conference = useConference();
     const toast = useToast();
 
@@ -69,17 +73,17 @@ export function CreateRoomModal({
                     onSubmit={async (values) => {
                         const name = normaliseName(values.new_room_name);
                         try {
-                            const result = await createAttendeeRoomMutation({
+                            const result = await createRegistrantRoomMutation({
                                 variables: {
                                     conferenceId: conference.id,
                                     name,
-                                    roomPrivacyName: values.new_room_private
-                                        ? RoomPrivacy_Enum.Private
-                                        : RoomPrivacy_Enum.Public,
+                                    managementModeName: values.new_room_private
+                                        ? Room_ManagementMode_Enum.Private
+                                        : Room_ManagementMode_Enum.Public,
                                 },
                                 update: (cache, { data: _data }) => {
-                                    if (_data?.insert_Room_one) {
-                                        const data = _data.insert_Room_one;
+                                    if (_data?.insert_room_Room_one) {
+                                        const data = _data.insert_room_Room_one;
                                         cache.writeFragment({
                                             data,
                                             fragment: RoomListRoomDetailsFragmentDoc,
@@ -89,7 +93,7 @@ export function CreateRoomModal({
                                 },
                             });
 
-                            if (!result.data?.insert_Room_one?.id) {
+                            if (!result.data?.insert_room_Room_one?.id) {
                                 throw new Error("Missing return data");
                             }
 
@@ -97,7 +101,7 @@ export function CreateRoomModal({
                                 title: `Created new room '${name}'`,
                                 status: "success",
                             });
-                            const roomId = result.data.insert_Room_one.id;
+                            const roomId = result.data.insert_room_Room_one.id;
                             await new Promise<void>((resolve) => {
                                 onCreated(roomId, () => {
                                     onClose();

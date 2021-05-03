@@ -1,10 +1,10 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import {
-    IntermediaryAttendeeData,
-    JSONataToIntermediaryAttendee,
+    IntermediaryRegistrantData,
+    JSONataToIntermediaryRegistrant,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
-import { Permission_Enum } from "../../../../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
@@ -33,7 +33,7 @@ const presetJSONata_CSV = `
 $.{
     "name": name,
     "email": email,
-    "group": $exists(group) ? group : "Attendees"
+    "group": $exists(group) ? group : "Registrants"
  } 
 `;
 
@@ -42,7 +42,7 @@ export default function ImportRegistrantsPage(): JSX.Element {
     const title = useTitle(`Import registrants to ${conference.shortName}`);
 
     const [data, setData] = useState<ParsedData<any[]>[]>();
-    const [intermediaryData, setIntermediaryData] = useState<Record<string, IntermediaryAttendeeData[]>>({});
+    const [intermediaryData, setIntermediaryData] = useState<Record<string, IntermediaryRegistrantData[]>>({});
 
     const dataPanel = useMemo(() => <DataPanel onData={setData} />, []);
     const configPanel = useMemo(
@@ -51,7 +51,7 @@ export default function ImportRegistrantsPage(): JSX.Element {
                 <ConfigPanel
                     data={data}
                     onChange={setIntermediaryData}
-                    JSONataFunction={JSONataToIntermediaryAttendee}
+                    JSONataFunction={JSONataToIntermediaryRegistrant}
                     presetJSONataXMLQuery={presetJSONata_XML}
                     presetJSONataJSONQuery={presetJSONata_JSON}
                     presetJSONataCSVQuery={presetJSONata_CSV}
@@ -67,7 +67,7 @@ export default function ImportRegistrantsPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageAttendees]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageAttendees]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

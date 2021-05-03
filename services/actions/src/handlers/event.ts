@@ -5,14 +5,14 @@ import {
     Event_GetEventVonageSessionDocument,
     GetEventChatInfoDocument,
     GetEventTimingsDocument,
-    RoomMode_Enum,
+    Room_Mode_Enum,
     StartChatDuplicationDocument,
     StartChatDuplicationMutationVariables,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createEventEndTrigger, createEventStartTrigger } from "../lib/event";
 import { sendFailureEmail } from "../lib/logging/failureEmails";
-import { createContentGroupBreakoutRoom } from "../lib/room";
+import { createItemBreakoutRoom } from "../lib/room";
 import Vonage from "../lib/vonage/vonageClient";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
@@ -53,7 +53,7 @@ export async function handleEventUpdated(payload: Payload<EventData>): Promise<v
 
 gql`
     query GetEventChatInfo($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             id
             startTime
             durationSeconds
@@ -62,7 +62,7 @@ gql`
                 name
                 chatId
             }
-            contentGroup {
+            item {
                 id
                 title
                 chatId
@@ -144,10 +144,10 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
         },
     });
 
-    if (chatInfo.data.Event_by_pk) {
-        if (chatInfo.data.Event_by_pk.contentGroup) {
-            const chatId1 = chatInfo.data.Event_by_pk.contentGroup.chatId;
-            const chatId2 = chatInfo.data.Event_by_pk.room.chatId;
+    if (chatInfo.data.schedule_Event_by_pk) {
+        if (chatInfo.data.schedule_Event_by_pk.item) {
+            const chatId1 = chatInfo.data.schedule_Event_by_pk.item.chatId;
+            const chatId2 = chatInfo.data.schedule_Event_by_pk.room.chatId;
             if (chatId1 && chatId2) {
                 await apolloClient.mutate({
                     mutation: isStart ? StartChatDuplicationDocument : EndChatDuplicationDocument,
@@ -159,33 +159,33 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
                         //     "::" +
                         //     (isStart ? "start" : "end") +
                         //     "::" +
-                        //     (Date.parse(chatInfo.data.Event_by_pk.startTime) +
-                        //         (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds)),
+                        //     (Date.parse(chatInfo.data.schedule_Event_by_pk.startTime) +
+                        //         (isStart ? 0 : chatInfo.data.schedule_Event_by_pk.durationSeconds)),
                         // systemId2: !isStart
                         //     ? chatId2 +
                         //       "::" +
                         //       (isStart ? "start" : "end") +
                         //       "::" +
-                        //       (Date.parse(chatInfo.data.Event_by_pk.startTime) +
-                        //           (isStart ? 0 : chatInfo.data.Event_by_pk.durationSeconds))
+                        //       (Date.parse(chatInfo.data.schedule_Event_by_pk.startTime) +
+                        //           (isStart ? 0 : chatInfo.data.schedule_Event_by_pk.durationSeconds))
                         //     : undefined,
                         // message: "<<<Duplication marker>>>",
                         // data: {
                         //     type: isStart ? "start" : "end",
                         //     event: {
                         //         id: eventId,
-                        //         startTime: Date.parse(chatInfo.data.Event_by_pk.startTime),
-                        //         durationSeconds: chatInfo.data.Event_by_pk.durationSeconds,
+                        //         startTime: Date.parse(chatInfo.data.schedule_Event_by_pk.startTime),
+                        //         durationSeconds: chatInfo.data.schedule_Event_by_pk.durationSeconds,
                         //     },
                         //     room: {
-                        //         id: chatInfo.data.Event_by_pk.room.id,
-                        //         name: chatInfo.data.Event_by_pk.room.name,
-                        //         chatId: chatInfo.data.Event_by_pk.room.chatId,
+                        //         id: chatInfo.data.schedule_Event_by_pk.room.id,
+                        //         name: chatInfo.data.schedule_Event_by_pk.room.name,
+                        //         chatId: chatInfo.data.schedule_Event_by_pk.room.chatId,
                         //     },
-                        //     contentGroup: {
-                        //         id: chatInfo.data.Event_by_pk.contentGroup.id,
-                        //         title: chatInfo.data.Event_by_pk.contentGroup.title,
-                        //         chatId: chatInfo.data.Event_by_pk.contentGroup.chatId,
+                        //     item: {
+                        //         id: chatInfo.data.schedule_Event_by_pk.item.id,
+                        //         title: chatInfo.data.schedule_Event_by_pk.item.title,
+                        //         chatId: chatInfo.data.schedule_Event_by_pk.item.chatId,
                         //     },
                         // },
                     } as StartChatDuplicationMutationVariables | EndChatDuplicationMutationVariables,
@@ -197,7 +197,7 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
 
 gql`
     query GetEventTimings($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             id
             name
             startTime
@@ -208,7 +208,7 @@ gql`
                 id
                 sessionId
             }
-            contentGroup {
+            item {
                 id
                 title
                 chatId
@@ -229,14 +229,14 @@ export async function handleEventStartNotification(eventId: string, startTime: s
             })
     );
 
-    if (result.data.Event_by_pk && result.data.Event_by_pk.startTime === startTime) {
-        console.log("Handling event start: matched expected startTime", result.data.Event_by_pk.id, startTime);
+    if (result.data.schedule_Event_by_pk && result.data.schedule_Event_by_pk.startTime === startTime) {
+        console.log("Handling event start: matched expected startTime", result.data.schedule_Event_by_pk.id, startTime);
         const nowMillis = new Date().getTime();
         const startTimeMillis = Date.parse(startTime);
         const preloadMillis = 0;
         const waitForMillis = Math.max(startTimeMillis - nowMillis - preloadMillis, 0);
-        const eventId = result.data.Event_by_pk.id;
-        const intendedRoomModeName = result.data.Event_by_pk.intendedRoomModeName;
+        const eventId = result.data.schedule_Event_by_pk.id;
+        const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
         setTimeout(async () => {
             try {
@@ -245,7 +245,7 @@ export async function handleEventStartNotification(eventId: string, startTime: s
                 console.error("Failed to insert chat duplication start markers", eventId, e);
             }
 
-            if (![RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
+            if (![Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
                 // No RTMP broadcast to be started
                 return;
             }
@@ -254,13 +254,13 @@ export async function handleEventStartNotification(eventId: string, startTime: s
         }, waitForMillis);
 
         if (
-            [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName) &&
-            result.data.Event_by_pk.contentGroup
+            [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName) &&
+            result.data.schedule_Event_by_pk.item
         ) {
             try {
-                await createContentGroupBreakoutRoom(
-                    result.data.Event_by_pk.contentGroup.id,
-                    result.data.Event_by_pk.conferenceId
+                await createItemBreakoutRoom(
+                    result.data.schedule_Event_by_pk.item.id,
+                    result.data.schedule_Event_by_pk.conferenceId
                 );
             } catch (e) {
                 console.error("Failed to create content group breakout room", eventId, e);
@@ -283,15 +283,15 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
             })
     );
 
-    if (result.data.Event_by_pk && result.data.Event_by_pk.endTime === endTime) {
-        console.log("Handling event end: matched expected endTime", result.data.Event_by_pk.id, endTime);
+    if (result.data.schedule_Event_by_pk && result.data.schedule_Event_by_pk.endTime === endTime) {
+        console.log("Handling event end: matched expected endTime", result.data.schedule_Event_by_pk.id, endTime);
         const nowMillis = new Date().getTime();
         const endTimeMillis = Date.parse(endTime);
         const preloadMillis = 1000;
         const waitForMillis = Math.max(endTimeMillis - nowMillis - preloadMillis, 0);
-        const eventId = result.data.Event_by_pk.id;
-        const conferenceId = result.data.Event_by_pk.conferenceId;
-        const intendedRoomModeName = result.data.Event_by_pk.intendedRoomModeName;
+        const eventId = result.data.schedule_Event_by_pk.id;
+        const conferenceId = result.data.schedule_Event_by_pk.conferenceId;
+        const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
         setTimeout(async () => {
             try {
@@ -301,7 +301,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
             }
 
             try {
-                if ([RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
+                if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
                     await stopEventBroadcasts(eventId);
                 }
             } catch (e) {
@@ -313,7 +313,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
 
         setTimeout(async () => {
             try {
-                if ([RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(intendedRoomModeName)) {
+                if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
                     await createMediaPackageHarvestJob(eventId, conferenceId);
                 }
             } catch (e) {
@@ -327,7 +327,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
 
 gql`
     query Event_GetEventVonageSession($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             id
             eventVonageSession {
                 id
@@ -347,18 +347,18 @@ export async function handleStopEventBroadcasts(params: stopEventBroadcastArgs):
         },
     });
 
-    if (!eventDetails.data.Event_by_pk) {
+    if (!eventDetails.data.schedule_Event_by_pk) {
         console.error("Could not retrieve event", params.eventId);
         throw new Error("Could not retrieve event");
     }
 
-    if (!eventDetails.data.Event_by_pk.eventVonageSession) {
+    if (!eventDetails.data.schedule_Event_by_pk.eventVonageSession) {
         console.log("Event has no associated Vonage session", params.eventId);
         return { broadcastsStopped: 0 };
     }
 
     const broadcasts = await Vonage.listBroadcasts({
-        sessionId: eventDetails.data.Event_by_pk.eventVonageSession.sessionId,
+        sessionId: eventDetails.data.schedule_Event_by_pk.eventVonageSession.sessionId,
     });
 
     if (!broadcasts) {

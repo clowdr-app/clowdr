@@ -90,8 +90,8 @@ export interface ChatConfiguration {
     answerConfig: ChatAnswerConfiguration; // TODO
     pollConfig: ChatPollConfiguration; // TODO
 
-    currentAttendeeId: Maybe<string>;
-    currentAttendeeName: Maybe<string>;
+    currentRegistrantId: Maybe<string>;
+    currentRegistrantName: Maybe<string>;
 
     fontSizeRange: MinMaxWithValue;
     setFontSize: Dispatch<SetStateAction<number>>;
@@ -101,7 +101,7 @@ export interface ChatConfiguration {
 
     messageBatchSize: number | undefined;
 
-    onProfileModalOpened: Maybe<(attendeeId: string, close: () => void) => void>; // TODO
+    onProfileModalOpened: Maybe<(registrantId: string, close: () => void) => void>; // TODO
     onEmoteReceived: Maybe<(emote: EmoteMessageData) => void>; // TODO
 }
 

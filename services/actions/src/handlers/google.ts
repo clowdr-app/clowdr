@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
 import { Credentials } from "google-auth-library";
@@ -11,14 +11,14 @@ import {
     CompleteUploadYouTubeVideoJobDocument,
     CreateYouTubeUploadDocument,
     FailUploadYouTubeVideoJobDocument,
-    Google_CreateAttendeeGoogleAccountDocument,
+    Google_CreateRegistrantGoogleAccountDocument,
     MarkAndSelectNewUploadYouTubeVideoJobsDocument,
     SelectNewUploadYouTubeVideoJobsDocument,
     UnmarkUploadYouTubeVideoJobsDocument,
     UploadYouTubeVideoJobDataFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { attendeeBelongsToUser } from "../lib/authorisation";
+import { registrantBelongsToUser } from "../lib/authorisation";
 import { S3 } from "../lib/aws/awsClient";
 import { createOAuth2Client, GoogleIdToken } from "../lib/googleAuth";
 import { callWithRetry } from "../utils";
@@ -34,7 +34,7 @@ export async function handleGetGoogleOAuthUrl(params: getGoogleOAuthUrlArgs): Pr
         access_type: "offline",
         scope: [...params.scopes, "openid email"],
         include_granted_scopes: true,
-        state: params.attendeeId,
+        state: params.registrantId,
         prompt: "select_account",
         redirect_uri: `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/googleoauth`,
     });
@@ -45,23 +45,20 @@ export async function handleGetGoogleOAuthUrl(params: getGoogleOAuthUrlArgs): Pr
 }
 
 gql`
-    mutation Google_CreateAttendeeGoogleAccount(
-        $attendeeId: uuid!
+    mutation Google_CreateRegistrantGoogleAccount(
+        $registrantId: uuid!
         $conferenceId: uuid!
         $googleAccountEmail: String!
         $tokenData: jsonb!
     ) {
-        insert_AttendeeGoogleAccount_one(
+        insert_registrant_GoogleAccount_one(
             object: {
-                attendeeId: $attendeeId
+                registrantId: $registrantId
                 conferenceId: $conferenceId
                 googleAccountEmail: $googleAccountEmail
                 tokenData: $tokenData
             }
-            on_conflict: {
-                constraint: AttendeeGoogleAccount_attendeeId_googleAccountEmail_key
-                update_columns: tokenData
-            }
+            on_conflict: { constraint: GoogleAccount_registrantId_googleAccountEmail_key, update_columns: tokenData }
         ) {
             id
         }
@@ -74,8 +71,8 @@ export async function handleSubmitGoogleOAuthToken(
 ): Promise<SubmitGoogleOAuthCodeOutput> {
     try {
         console.log("Retrieving Google auth token", userId, params.state);
-        const validAttendee = await attendeeBelongsToUser(params.state, userId);
-        assert(validAttendee, "Attendee does not belong to the user");
+        const validRegistrant = await registrantBelongsToUser(params.state, userId);
+        assert(validRegistrant, "Registrant does not belong to the user");
 
         const oauth2Client = createOAuth2Client();
 
@@ -103,10 +100,10 @@ export async function handleSubmitGoogleOAuthToken(
 
         console.log("Saving Google OAuth tokens", userId, params.state);
         await apolloClient.mutate({
-            mutation: Google_CreateAttendeeGoogleAccountDocument,
+            mutation: Google_CreateRegistrantGoogleAccountDocument,
             variables: {
-                attendeeId: params.state,
-                conferenceId: validAttendee.conferenceId,
+                registrantId: params.state,
+                conferenceId: validRegistrant.conferenceId,
                 googleAccountEmail: tokenData.email,
                 tokenData: token.tokens,
             },
@@ -126,7 +123,7 @@ export async function handleSubmitGoogleOAuthToken(
 
 gql`
     mutation CreateYouTubeUpload(
-        $contentItemId: uuid!
+        $elementId: uuid!
         $videoId: String!
         $videoTitle: String!
         $videoStatus: String!
@@ -134,9 +131,9 @@ gql`
         $conferenceId: uuid!
         $videoPrivacyStatus: String!
     ) {
-        insert_YouTubeUpload_one(
+        insert_video_YouTubeUpload_one(
             object: {
-                contentItemId: $contentItemId
+                elementId: $elementId
                 videoId: $videoId
                 videoStatus: $videoStatus
                 videoTitle: $videoTitle
@@ -152,12 +149,12 @@ gql`
 
 async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment): Promise<void> {
     try {
-        const contentItemDataBlob = assertType<ContentItemDataBlob>(job.contentItem.data);
+        const elementDataBlob = assertType<ElementDataBlob>(job.element.data);
 
-        const latestVersion = R.last(contentItemDataBlob);
+        const latestVersion = R.last(elementDataBlob);
 
         assert(latestVersion, "Could not find any versions of content item");
-        assert(latestVersion.data.baseType === ContentBaseType.Video, "Cannot upload non-video content to YouTube");
+        assert(latestVersion.data.baseType === ElementBaseType.Video, "Cannot upload non-video content to YouTube");
 
         const { bucket, key } = new AmazonS3Uri(latestVersion.data.transcode?.s3Url ?? latestVersion.data.s3Url);
         assert(bucket && key, `Could not parse S3 URI of video item: ${latestVersion.data.s3Url}`);
@@ -166,10 +163,10 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
             Key: key,
         });
 
-        assertType<Credentials>(job.attendeeGoogleAccount.tokenData);
+        assertType<Credentials>(job.registrantGoogleAccount.tokenData);
 
         const client = createOAuth2Client();
-        client.setCredentials(job.attendeeGoogleAccount.tokenData);
+        client.setCredentials(job.registrantGoogleAccount.tokenData);
 
         let bytesRead = 0;
         const totalBytes = object.ContentLength ?? 0;
@@ -253,7 +250,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                         await apolloClient.mutate({
                             mutation: CreateYouTubeUploadDocument,
                             variables: {
-                                contentItemId: job.contentItem.id,
+                                elementId: job.element.id,
                                 videoId: result.data.id,
                                 videoStatus: result.data.status.uploadStatus,
                                 videoTitle: result.data.snippet.title,
@@ -281,7 +278,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                     }
 
                     if (
-                        latestVersion.data.baseType === ContentBaseType.Video &&
+                        latestVersion.data.baseType === ElementBaseType.Video &&
                         latestVersion.data.subtitles["en_US"]
                     ) {
                         console.log("Starting YouTube caption upload", job.id);
@@ -366,15 +363,15 @@ gql`
         conferenceId
         jobStatusName
         retriesCount
-        attendeeGoogleAccount {
+        registrantGoogleAccount {
             id
             tokenData
             googleAccountEmail
         }
-        contentItem {
+        element {
             data
             id
-            contentGroup {
+            item {
                 id
                 title
             }

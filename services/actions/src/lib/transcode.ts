@@ -15,7 +15,7 @@ import {
     VideoCodec,
     VideoDescription,
 } from "@aws-sdk/client-mediaconvert";
-import { AWSJobStatus, TranscodeDetails, VideoContentBlob } from "@clowdr-app/shared-types/build/content";
+import { AWSJobStatus, TranscodeDetails, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
 import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
@@ -23,10 +23,10 @@ import path from "path";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
-import { ContentItemAddNewVersionDocument } from "../generated/graphql";
+import { ElementAddNewVersionDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { ElasticTranscoder, MediaConvert } from "./aws/awsClient";
-import { addNewContentItemVersion, createNewVersionFromPreviewTranscode, getLatestVersion } from "./contentItem";
+import { addNewElementVersion, createNewVersionFromPreviewTranscode, getLatestVersion } from "./element";
 
 interface StartTranscodeOutput {
     jobId: string;
@@ -60,7 +60,7 @@ export const audioDescription: AudioDescription = {
     },
 };
 
-export async function startPreviewTranscode(s3InputUrl: string, contentItemId: string): Promise<StartTranscodeOutput> {
+export async function startPreviewTranscode(s3InputUrl: string, elementId: string): Promise<StartTranscodeOutput> {
     console.log(`Creating preview MediaConvert job for ${s3InputUrl}`);
 
     assert(MediaConvert, "AWS MediaConvert client is not initialised");
@@ -72,7 +72,7 @@ export async function startPreviewTranscode(s3InputUrl: string, contentItemId: s
     const result = await MediaConvert.createJob({
         Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
         UserMetadata: {
-            contentItemId,
+            elementId,
             mode: TranscodeMode.PREVIEW,
             environment: process.env.AWS_PREFIX ?? "unknown",
         },
@@ -314,7 +314,7 @@ export async function startBroadcastTranscode(
 }
 
 export async function completePreviewTranscode(
-    contentItemId: string,
+    elementId: string,
     transcodeS3Url: string,
     transcodeJobId: string,
     timestamp: Date
@@ -325,21 +325,21 @@ export async function completePreviewTranscode(
         updatedTimestamp: timestamp.getTime(),
         s3Url: transcodeS3Url,
     };
-    const newVersion = await createNewVersionFromPreviewTranscode(contentItemId, transcodeDetails);
-    await addNewContentItemVersion(contentItemId, newVersion);
+    const newVersion = await createNewVersionFromPreviewTranscode(elementId, transcodeDetails);
+    await addNewElementVersion(elementId, newVersion);
 }
 
 export async function failPreviewTranscode(
-    contentItemId: string,
+    elementId: string,
     transcodeJobId: string,
     timestamp: Date,
     errorMessage: string
 ): Promise<void> {
-    const { latestVersion } = await getLatestVersion(contentItemId);
-    assert(latestVersion, `Could not find latest version of content item ${contentItemId}`);
+    const { latestVersion } = await getLatestVersion(elementId);
+    assert(latestVersion, `Could not find latest version of content item ${elementId}`);
 
     const newVersion = R.clone(latestVersion);
-    assert(is<VideoContentBlob>(newVersion.data), `Content item ${contentItemId} is not a video`);
+    assert(is<VideoElementBlob>(newVersion.data), `Content item ${elementId} is not a video`);
 
     if (
         latestVersion.data.baseType !== "video" ||
@@ -361,15 +361,15 @@ export async function failPreviewTranscode(
     newVersion.createdBy = "system";
 
     const result = await apolloClient.mutate({
-        mutation: ContentItemAddNewVersionDocument,
+        mutation: ElementAddNewVersionDocument,
         variables: {
-            id: contentItemId,
+            id: elementId,
             newVersion,
         },
     });
 
     if (result.errors) {
-        console.error(`Failed to record transcode failure for ${contentItemId}`, result.errors);
-        throw new Error(`Failed to record transcode failure for ${contentItemId}`);
+        console.error(`Failed to record transcode failure for ${elementId}`, result.errors);
+        throw new Error(`Failed to record transcode failure for ${elementId}`);
     }
 }

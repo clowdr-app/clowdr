@@ -2,18 +2,18 @@ import { json, text } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import {
-    handleChimeAttendeeJoinedNotification,
-    handleChimeAttendeeLeftNotification,
     handleChimeMeetingEndedNotification,
+    handleChimeRegistrantJoinedNotification,
+    handleChimeRegistrantLeftNotification,
     handleJoinRoom,
 } from "../handlers/chime";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import {
-    ChimeAttendeeJoinedDetail,
-    ChimeAttendeeLeftDetail,
     ChimeEventBase,
     ChimeMeetingEndedDetail,
+    ChimeRegistrantJoinedDetail,
+    ChimeRegistrantLeftDetail,
 } from "../types/chime";
 import { ActionPayload } from "../types/hasura/action";
 
@@ -62,13 +62,13 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                 return;
             }
 
-            if (event.detail.eventType === "chime:AttendeeLeft") {
-                const detail: ChimeAttendeeLeftDetail = event.detail;
+            if (event.detail.eventType === "chime:RegistrantLeft") {
+                const detail: ChimeRegistrantLeftDetail = event.detail;
                 try {
-                    assertType<ChimeAttendeeLeftDetail>(event.detail);
+                    assertType<ChimeRegistrantLeftDetail>(event.detail);
                 } catch (err) {
                     console.error("Invalid SNS event detail", {
-                        eventType: "chime:AttendeeLeft",
+                        eventType: "chime:RegistrantLeft",
                         eventDetail: event.detail,
                     });
                     res.status(500).json("Invalid event detail");
@@ -76,22 +76,22 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                 }
 
                 try {
-                    console.log("Received chime:AttendeeLeft notification", detail);
-                    await handleChimeAttendeeLeftNotification(detail);
+                    console.log("Received chime:RegistrantLeft notification", detail);
+                    await handleChimeRegistrantLeftNotification(detail);
                 } catch (err) {
-                    console.error("Failure while handling chime:AttendeeLeft event", { err });
+                    console.error("Failure while handling chime:RegistrantLeft event", { err });
                 }
                 res.status(200).json("OK");
                 return;
             }
 
-            if (event.detail.eventType === "chime:AttendeeJoined") {
-                const detail: ChimeAttendeeJoinedDetail = event.detail;
+            if (event.detail.eventType === "chime:RegistrantJoined") {
+                const detail: ChimeRegistrantJoinedDetail = event.detail;
                 try {
-                    assertType<ChimeAttendeeJoinedDetail>(event.detail);
+                    assertType<ChimeRegistrantJoinedDetail>(event.detail);
                 } catch (err) {
                     console.error("Invalid SNS event detail", {
-                        eventType: "chime:AttendeeJoined",
+                        eventType: "chime:RegistrantJoined",
                         eventDetail: event.detail,
                     });
                     res.status(500).json("Invalid event detail");
@@ -99,10 +99,10 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                 }
 
                 try {
-                    console.log("Received chime:AttendeeJoined notification", detail);
-                    await handleChimeAttendeeJoinedNotification(detail);
+                    console.log("Received chime:RegistrantJoined notification", detail);
+                    await handleChimeRegistrantJoinedNotification(detail);
                 } catch (err) {
-                    console.error("Failure while handling chime:AttendeeJoined event", { err });
+                    console.error("Failure while handling chime:RegistrantJoined event", { err });
                 }
                 res.status(200).json("OK");
                 return;

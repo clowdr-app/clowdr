@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     CreateDeleteRolesMutation,
-    Permission_Enum,
+    Permissions_Permission_Enum,
     UpdateRoleMutation,
     useCreateDeleteRolesMutation,
     useSelectAllPermissionsQuery,
@@ -30,14 +30,14 @@ import { useConference } from "../useConference";
 
 gql`
     query SelectAllPermissions {
-        Permission {
+        permissions_Permission {
             name
             description
         }
     }
 
     query SelectAllRoles($conferenceId: uuid!) {
-        Role(where: { conferenceId: { _eq: $conferenceId } }) {
+        permissions_Role(where: { conferenceId: { _eq: $conferenceId } }) {
             conferenceId
             id
             name
@@ -49,13 +49,13 @@ gql`
         }
     }
 
-    mutation CreateDeleteRoles($deleteRoleIds: [uuid!] = [], $insertRoles: [Role_insert_input!]!) {
-        delete_Role(where: { id: { _in: $deleteRoleIds } }) {
+    mutation CreateDeleteRoles($deleteRoleIds: [uuid!] = [], $insertRoles: [permissions_Role_insert_input!]!) {
+        delete_permissions_Role(where: { id: { _in: $deleteRoleIds } }) {
             returning {
                 id
             }
         }
-        insert_Role(objects: $insertRoles) {
+        insert_permissions_Role(objects: $insertRoles) {
             returning {
                 id
                 conferenceId
@@ -72,10 +72,10 @@ gql`
     mutation UpdateRole(
         $roleId: uuid!
         $roleName: String!
-        $insertPermissions: [RolePermission_insert_input!]!
-        $deletePermissionNames: [Permission_enum!] = []
+        $insertPermissions: [permissions_RolePermission_insert_input!]!
+        $deletePermissionNames: [permissions_Permission_enum!] = []
     ) {
-        update_Role(where: { id: { _eq: $roleId } }, _set: { name: $roleName }) {
+        update_permissions_Role(where: { id: { _eq: $roleId } }, _set: { name: $roleName }) {
             returning {
                 id
                 name
@@ -87,14 +87,16 @@ gql`
                 conferenceId
             }
         }
-        insert_RolePermission(objects: $insertPermissions) {
+        insert_permissions_RolePermission(objects: $insertPermissions) {
             returning {
                 id
                 permissionName
                 roleId
             }
         }
-        delete_RolePermission(where: { permissionName: { _in: $deletePermissionNames } }) {
+        delete_permissions_RolePermission(
+            where: { roleId: { _eq: $roleId }, permissionName: { _in: $deletePermissionNames } }
+        ) {
             returning {
                 id
             }
@@ -147,10 +149,10 @@ export default function ManageConferenceRolesPage(): JSX.Element {
 
         const result = new Map<string, RoleDescriptor>();
 
-        for (const role of allRoles.Role) {
+        for (const role of allRoles.permissions_Role) {
             const permissions: { [K: string]: boolean } = {};
-            for (const key in Permission_Enum) {
-                const value = (Permission_Enum as any)[key] as string;
+            for (const key in Permissions_Permission_Enum) {
+                const value = (Permissions_Permission_Enum as any)[key] as string;
                 permissions[key] = role.rolePermissions.some((x) => x.permissionName === value);
             }
             result.set(role.id, {
@@ -207,8 +209,8 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                 validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
             },
         };
-        for (const permissionEnumKey in Permission_Enum) {
-            const permissionEnumValue = (Permission_Enum as any)[permissionEnumKey] as string;
+        for (const permissionEnumKey in Permissions_Permission_Enum) {
+            const permissionEnumValue = (Permissions_Permission_Enum as any)[permissionEnumKey] as string;
             const name = permissionEnumValue
                 .split("_")
                 .reduce((acc, part) => `${acc} ${part[0].toUpperCase()}${part.toLowerCase().substr(1)}`, "")
@@ -219,12 +221,12 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                 heading: `${name}?`,
                 ariaLabel: `${name} Permission`,
                 description:
-                    allPermissions?.Permission.find((x) => x.name === permissionEnumValue)?.description ??
+                    allPermissions?.permissions_Permission.find((x) => x.name === permissionEnumValue)?.description ??
                     "No description provided.",
                 isHidden: false,
                 defaultValue:
-                    permissionEnumValue === Permission_Enum.ConferenceView ||
-                    permissionEnumValue === Permission_Enum.ConferenceViewAttendees,
+                    permissionEnumValue === Permissions_Permission_Enum.ConferenceView ||
+                    permissionEnumValue === Permissions_Permission_Enum.ConferenceViewAttendees,
                 editorFalseLabel: "Deny",
                 editorTrueLabel: "Allow",
                 isEditable: true,
@@ -242,11 +244,11 @@ export default function ManageConferenceRolesPage(): JSX.Element {
             };
         }
         return result;
-    }, [allPermissions?.Permission, permissionFieldSpec]);
+    }, [allPermissions?.permissions_Permission, permissionFieldSpec]);
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageRoles]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageRoles]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -324,8 +326,8 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                             const updatedKeys = new Map<
                                 string,
                                 {
-                                    added: Set<Permission_Enum>;
-                                    deleted: Set<Permission_Enum>;
+                                    added: Set<Permissions_Permission_Enum>;
+                                    deleted: Set<Permissions_Permission_Enum>;
                                 }
                             >();
                             const deletedKeys = new Set<string>();
@@ -352,12 +354,12 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                         }
 
                                         let changed = item.name !== existing.name;
-                                        const permissionsAdded = new Set<Permission_Enum>();
-                                        const permissionsDeleted = new Set<Permission_Enum>();
-                                        for (const permissionEnumKey in Permission_Enum) {
-                                            const permissionEnumValue = (Permission_Enum as any)[
+                                        const permissionsAdded = new Set<Permissions_Permission_Enum>();
+                                        const permissionsDeleted = new Set<Permissions_Permission_Enum>();
+                                        for (const permissionEnumKey in Permissions_Permission_Enum) {
+                                            const permissionEnumValue = (Permissions_Permission_Enum as any)[
                                                 permissionEnumKey
-                                            ] as Permission_Enum;
+                                            ] as Permissions_Permission_Enum;
                                             if (
                                                 item.permissions[permissionEnumKey] &&
                                                 !existing.permissions[permissionEnumKey]
@@ -403,7 +405,9 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                                 rolePermissions: {
                                                     data: permissionEnumKeys.map((permissionEnumKey) => {
                                                         return {
-                                                            permissionName: (Permission_Enum as any)[permissionEnumKey],
+                                                            permissionName: (Permissions_Permission_Enum as any)[
+                                                                permissionEnumKey
+                                                            ],
                                                         };
                                                     }),
                                                 },

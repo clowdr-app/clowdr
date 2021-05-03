@@ -2,13 +2,13 @@ import { Button, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-u
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
-    AttendeeDataFragment,
     ChatReactionDataFragment,
     Chat_MessageType_Enum,
     Chat_ReactionType_Enum,
+    RegistrantDataFragment,
 } from "../../../generated/graphql";
 import ProfileBadge from "../../Badges/ProfileBadge";
-import { useAttendee } from "../../Conference/AttendeesContext";
+import { useRegistrant } from "../../Conference/RegistrantsContext";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import { Markdown } from "../../Text/Markdown";
 import type { MessageState, Observable } from "../ChatGlobalState";
@@ -65,11 +65,11 @@ import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 function MessageBody({
     message,
-    attendee,
+    registrant,
     subscribeToReactions,
 }: {
     message: MessageState;
-    attendee: AttendeeDataFragment | null;
+    registrant: RegistrantDataFragment | null;
     subscribeToReactions: boolean;
 }): JSX.Element {
     const config = useChatConfiguration();
@@ -124,12 +124,12 @@ function MessageBody({
                 {message.type !== Chat_MessageType_Enum.Message && message.type !== Chat_MessageType_Enum.Emote ? (
                     <MessageTypeIndicator messageType={message.type} fontSize={pictureSize * 0.8} opacity={0.7} />
                 ) : message.senderId ? (
-                    <ProfileBox attendee={attendee} w={pictureSize} />
+                    <ProfileBox registrant={registrant} w={pictureSize} />
                 ) : undefined}
             </VStack>
         ),
         [
-            attendee,
+            registrant,
             config.spacing,
             createdAt,
             message.senderId,
@@ -141,7 +141,7 @@ function MessageBody({
         ]
     );
 
-    const attendeeNameEl = useMemo(
+    const registrantNameEl = useMemo(
         () => (
             <HStack
                 marginTop={
@@ -153,32 +153,32 @@ function MessageBody({
                 }
             >
                 <Text as="span" fontSize={smallFontSize} color={timeColour}>
-                    {attendee?.displayName ?? " "}
+                    {registrant?.displayName ?? " "}
                 </Text>
-                {attendee?.profile?.badges && attendee.profile.badges.length > 0 ? (
-                    <ProfileBadge badge={attendee.profile.badges[0]} fontSize="0.8em" lineHeight="1.2em" py={0} />
+                {registrant?.profile?.badges && registrant.profile.badges.length > 0 ? (
+                    <ProfileBadge badge={registrant.profile.badges[0]} fontSize="0.8em" lineHeight="1.2em" py={0} />
                 ) : undefined}
             </HStack>
         ),
-        [attendee?.displayName, attendee?.profile?.badges, config.spacing, smallFontSize, timeColour]
+        [registrant?.displayName, registrant?.profile?.badges, config.spacing, smallFontSize, timeColour]
     );
 
     const controls = useMemo(
         () => (
             <Flex flexDir="row" w="100%">
-                {attendeeNameEl}
+                {registrantNameEl}
                 {/* TODO: Permissions */}
                 <MessageControls
                     hideReactions={message.type === Chat_MessageType_Enum.Emote}
                     fontSize={smallFontSize}
                     ml="auto"
-                    isOwnMessage={!!config.currentAttendeeId && message.senderId === config.currentAttendeeId}
+                    isOwnMessage={!!config.currentRegistrantId && message.senderId === config.currentRegistrantId}
                     message={message}
                     usedReactions={reactions.reduce((acc, reaction) => {
                         if (
-                            config.currentAttendeeId &&
+                            config.currentRegistrantId &&
                             reaction.type === Chat_ReactionType_Enum.Emoji &&
-                            reaction.senderId === config.currentAttendeeId
+                            reaction.senderId === config.currentRegistrantId
                         ) {
                             return [...acc, reaction.symbol];
                         }
@@ -197,7 +197,7 @@ function MessageBody({
                 />
             </Flex>
         ),
-        [attendeeNameEl, message, smallFontSize, config.currentAttendeeId, reactions]
+        [registrantNameEl, message, smallFontSize, config.currentRegistrantId, reactions]
     );
 
     const emote = useMemo(
@@ -216,13 +216,13 @@ function MessageBody({
         () => (
             <ReactionsList
                 reactions={reactions}
-                currentAttendeeId={config.currentAttendeeId}
+                currentRegistrantId={config.currentRegistrantId}
                 message={message}
                 fontSize={config.fontSizeRange.value}
                 subscribeToReactions={subscribeToReactions}
             />
         ),
-        [config.currentAttendeeId, config.fontSizeRange.value, message, reactions, subscribeToReactions]
+        [config.currentRegistrantId, config.fontSizeRange.value, message, reactions, subscribeToReactions]
     );
 
     const question = useMemo(
@@ -358,7 +358,7 @@ function MessageBody({
         //                 m={0}
         //                 minH={0}
         //                 h="100%"
-        //                 to={`/conference/${conference.slug}/item/${data.contentGroup.id}`}
+        //                 to={`/conference/${conference.slug}/item/${data.item.id}`}
         //                 fontSize="inherit"
         //                 linkProps={{
         //                     p: 0,
@@ -371,7 +371,7 @@ function MessageBody({
         //                 noOfLines={1}
         //                 color="white"
         //             >
-        //                 <chakra.span mx={2}>{data.contentGroup.title}</chakra.span>
+        //                 <chakra.span mx={2}>{data.item.title}</chakra.span>
         //             </LinkButton>
         //         </HStack>
         //         {data.type === "start" ? (
@@ -424,10 +424,10 @@ export default function MessageBox({
         []
     );
 
-    const senderIdObj = useMemo(() => (message.senderId ? { attendee: message.senderId } : undefined), [
+    const senderIdObj = useMemo(() => (message.senderId ? { registrant: message.senderId } : undefined), [
         message.senderId,
     ]);
-    const attendee = useAttendee(senderIdObj);
+    const registrant = useRegistrant(senderIdObj);
 
     const [subscribeToReactions, setSubscribeToReactions] = useState<boolean>(false);
     useEffect(() => {
@@ -454,10 +454,10 @@ export default function MessageBox({
             _hover={{}}
             tabIndex={0}
             aria-label={`Message sent at ${createdAt.toLocaleString(undefined, timeFormat)} by ${
-                attendee?.displayName ?? "<Loading name>"
+                registrant?.displayName ?? "<Loading name>"
             }. ${message.message}`}
         >
-            <MessageBody subscribeToReactions={subscribeToReactions} attendee={attendee} message={message} />
+            <MessageBody subscribeToReactions={subscribeToReactions} registrant={registrant} message={message} />
         </HStack>
     );
 }

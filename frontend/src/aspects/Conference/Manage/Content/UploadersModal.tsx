@@ -31,7 +31,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useInsertSubmissionRequestEmailJobsMutation } from "../../../../generated/graphql";
 import CRUDTable, { CRUDTableProps, defaultStringFilter, FieldType, UpdateResult } from "../../../CRUDTable/CRUDTable";
 import isValidUUID from "../../../Utils/isValidUUID";
-import type { RequiredContentItemDescriptor, UploaderDescriptor } from "./Types";
+import type { UploadableElementDescriptor, UploaderDescriptor } from "./Types";
 
 const UploaderCRUDTable = (props: Readonly<CRUDTableProps<UploaderDescriptor, "id">>) => CRUDTable(props);
 
@@ -49,7 +49,7 @@ interface Props {
     onClose: () => void;
     groupTitle: string;
     isItemDirty: boolean;
-    itemDesc: RequiredContentItemDescriptor;
+    itemDesc: UploadableElementDescriptor;
     setUploadsRemaining: (newUploadsRemaining: number | null) => void;
     insertUploader: (uploader: UploaderDescriptor) => void;
     updateUploader: (uploader: UploaderDescriptor) => void;
@@ -234,7 +234,7 @@ export default function UploadersModal({
                                                 emailsSentCount: 0,
                                                 id: uuidv4(),
                                                 name: partialUploader.name,
-                                                requiredContentItemId: itemDesc.id,
+                                                uploadableId: itemDesc.id,
                                                 isNew: true,
                                             };
                                             insertUploader(newUploader);

@@ -42,7 +42,7 @@ export class MediaLiveChannelService {
                 $channelStackCreateJobId: uuid!
                 $roomId: uuid!
             ) {
-                insert_MediaLiveChannel_one(
+                insert_video_MediaLiveChannel_one(
                     object: {
                         cloudFormationStackArn: $cloudFormationStackArn
                         cloudFrontDistributionId: $cloudFrontDistributionId
@@ -89,7 +89,7 @@ export class MediaLiveChannelService {
 
         this.logger.info(
             {
-                mediaLiveChannelId: result.data?.insert_MediaLiveChannel_one?.id,
+                mediaLiveChannelId: result.data?.insert_video_MediaLiveChannel_one?.id,
             },
             "Created MediaLiveChannel"
         );
@@ -103,7 +103,7 @@ export class MediaLiveChannelService {
     ): Promise<{ cloudFormationStackArn?: string | null }> {
         gql`
             mutation DeleteMediaLiveChannel($id: uuid!) {
-                delete_MediaLiveChannel_by_pk(id: $id) {
+                delete_video_MediaLiveChannel_by_pk(id: $id) {
                     id
                     cloudFormationStackArn
                 }
@@ -117,13 +117,13 @@ export class MediaLiveChannelService {
             },
         });
 
-        return { cloudFormationStackArn: result.data?.delete_MediaLiveChannel_by_pk?.cloudFormationStackArn };
+        return { cloudFormationStackArn: result.data?.delete_video_MediaLiveChannel_by_pk?.cloudFormationStackArn };
     }
 
     public async findMediaLiveChannelsByStackArn(stackArn: string): Promise<string[]> {
         gql`
             query FindMediaLiveChannelsByStackArn($stackArn: String!) {
-                MediaLiveChannel(where: { cloudFormationStackArn: { _eq: $stackArn } }) {
+                video_MediaLiveChannel(where: { cloudFormationStackArn: { _eq: $stackArn } }) {
                     id
                 }
             }
@@ -135,6 +135,6 @@ export class MediaLiveChannelService {
                 stackArn,
             },
         });
-        return result.data.MediaLiveChannel.map((c) => c.id);
+        return result.data.video_MediaLiveChannel.map((c) => c.id);
     }
 }

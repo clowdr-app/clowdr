@@ -1,7 +1,7 @@
 import { Center, HStack, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
-import { Permission_Enum, Schedule_RoomSummaryFragment } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, Schedule_RoomSummaryFragment } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 
@@ -25,25 +25,25 @@ export default function RoomNameBox({
     // let roomIcon: JSX.Element | undefined;
     // if (typeof room !== "string") {
     //     switch (room.currentModeName) {
-    //         case RoomMode_Enum.Zoom:
-    //         case RoomMode_Enum.Breakout:
+    //         case Room_Mode_Enum.Zoom:
+    //         case Room_Mode_Enum.Breakout:
     //             roomIcon = <FAIcon iconStyle="s" icon="users" />;
     //             break;
-    //         case RoomMode_Enum.Prerecorded:
+    //         case Room_Mode_Enum.Prerecorded:
     //             roomIcon = <FAIcon iconStyle="s" icon="film" />;
     //             break;
-    //         case RoomMode_Enum.Presentation:
+    //         case Room_Mode_Enum.Presentation:
     //             roomIcon = <FAIcon iconStyle="s" icon="chalkboard-teacher" />;
     //             break;
-    //         case RoomMode_Enum.QAndA:
+    //         case Room_Mode_Enum.QAndA:
     //             roomIcon = <FAIcon iconStyle="s" icon="comments" />;
     //             break;
     //     }
     // }
 
     const shouldLink = [
-        Permission_Enum.ConferenceViewAttendees,
-        Permission_Enum.ConferenceManageSchedule,
+        Permissions_Permission_Enum.ConferenceViewAttendees,
+        Permissions_Permission_Enum.ConferenceManageSchedule,
     ].some((permission) => activePermissions.has(permission));
 
     return (

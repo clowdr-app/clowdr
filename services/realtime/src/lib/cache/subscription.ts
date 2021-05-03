@@ -7,14 +7,14 @@ gql`
     query Subscriptions($chatId: uuid!) {
         chat_Subscription(where: { chatId: { _eq: $chatId } }) {
             chatId
-            attendeeId
+            registrantId
         }
     }
 `;
 
 export type Subscriptions = {
     chatId: string;
-    attendeeIds: string[];
+    registrantIds: string[];
 };
 
 const SubscriptionsCache = new Cache<Subscriptions>(
@@ -32,7 +32,7 @@ const SubscriptionsCache = new Cache<Subscriptions>(
                 const result: Subscriptions | undefined = response.data.chat_Subscription
                     ? {
                           chatId,
-                          attendeeIds: response.data.chat_Subscription.map((x) => x.attendeeId),
+                          registrantIds: response.data.chat_Subscription.map((x) => x.registrantId),
                       }
                     : undefined;
 
@@ -59,14 +59,14 @@ export async function getSubscriptions(
     return info;
 }
 
-export async function insertSubscription(chatId: string, attendeeId: string): Promise<void> {
+export async function insertSubscription(chatId: string, registrantId: string): Promise<void> {
     await SubscriptionsCache.update(
         chatId,
         (existing) => {
-            if (!existing?.attendeeIds.includes(attendeeId)) {
+            if (!existing?.registrantIds.includes(registrantId)) {
                 return {
                     chatId,
-                    attendeeIds: existing ? [...existing.attendeeIds, attendeeId] : [attendeeId],
+                    registrantIds: existing ? [...existing.registrantIds, registrantId] : [registrantId],
                 };
             } else {
                 return existing;
@@ -74,23 +74,23 @@ export async function insertSubscription(chatId: string, attendeeId: string): Pr
         },
         {
             chatId,
-            attendeeIds: [],
+            registrantIds: [],
         }
     );
 }
 
-export async function deleteSubscription(chatId: string, attendeeId: string): Promise<void> {
+export async function deleteSubscription(chatId: string, registrantId: string): Promise<void> {
     await SubscriptionsCache.update(
         chatId,
         (existing) => {
             return {
                 chatId,
-                attendeeIds: existing ? existing.attendeeIds.filter((x) => x !== attendeeId) : [],
+                registrantIds: existing ? existing.registrantIds.filter((x) => x !== registrantId) : [],
             };
         },
         {
             chatId,
-            attendeeIds: [attendeeId],
+            registrantIds: [registrantId],
         }
     );
 }

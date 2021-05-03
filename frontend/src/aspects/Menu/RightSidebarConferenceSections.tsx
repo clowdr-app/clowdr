@@ -40,17 +40,17 @@ import { Twemoji } from "react-emoji-render";
 import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import {
     useCreateDmMutation,
-    useGetContentGroupChatIdQuery,
+    useGetItemChatIdQuery,
     useGetRoomChatIdQuery,
-    useSearchAttendeesLazyQuery,
+    useSearchRegistrantsLazyQuery,
 } from "../../generated/graphql";
 import { Chat } from "../Chat/Chat";
 import { ChatState } from "../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../Chat/GlobalChatStateProvider";
-import ProfileModal from "../Conference/Attend/Attendee/ProfileModal";
-import { AttendeeIdSpec, useAttendee, useAttendees } from "../Conference/AttendeesContext";
+import ProfileModal from "../Conference/Attend/Registrant/ProfileModal";
+import { RegistrantIdSpec, useRegistrant, useRegistrants } from "../Conference/RegistrantsContext";
 import { useConference, useMaybeConference } from "../Conference/useConference";
-import { Attendee, useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
+import { Registrant, useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../Generic/useRestorableState";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import FAIcon from "../Icons/FAIcon";
@@ -83,7 +83,7 @@ function ChatListItem({ chat, onClick }: { chat: ChatState; onClick: () => void 
     );
 }
 
-function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () => void }): JSX.Element {
+function RegistrantTile({ registrant, onClick }: { registrant: Registrant; onClick: () => void }): JSX.Element {
     return (
         <Button
             variant="ghost"
@@ -96,13 +96,13 @@ function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () =
             onClick={onClick}
             overflow="hidden"
         >
-            {attendee.profile.photoURL_50x50 ? (
+            {registrant.profile.photoURL_50x50 ? (
                 <Image
                     w="25px"
                     h="25px"
                     ml={2}
-                    aria-describedby={`attendee-trigger-${attendee.id}`}
-                    src={attendee.profile.photoURL_50x50}
+                    aria-describedby={`registrant-trigger-${registrant.id}`}
+                    src={registrant.profile.photoURL_50x50}
                 />
             ) : (
                 <Center w="25px" h="25px" flex="0 0 25px" ml={2}>
@@ -113,34 +113,34 @@ function AttendeeTile({ attendee, onClick }: { attendee: Attendee; onClick: () =
                 <Text
                     my={2}
                     as="span"
-                    id={`attendee-trigger-${attendee.id}`}
+                    id={`registrant-trigger-${registrant.id}`}
                     maxW="100%"
                     whiteSpace="normal"
                     overflowWrap="anywhere"
                     fontSize="sm"
                 >
-                    {attendee.displayName}
+                    {registrant.displayName}
                 </Text>
             </Center>
         </Button>
     );
 }
 
-function AttendeesList({
-    searchedAttendees,
+function RegistrantsList({
+    searchedRegistrants,
     action,
 }: {
-    searchedAttendees?: Attendee[];
-    action?: (attendeeId: string, attendeeName: string) => void;
+    searchedRegistrants?: Registrant[];
+    action?: (registrantId: string, registrantName: string) => void;
 }): JSX.Element {
     return (
         <List>
-            {searchedAttendees?.map((attendee, idx) => (
-                <ListItem key={attendee.id + "-search-" + idx}>
-                    <AttendeeTile
-                        attendee={attendee}
+            {searchedRegistrants?.map((registrant, idx) => (
+                <ListItem key={registrant.id + "-search-" + idx}>
+                    <RegistrantTile
+                        registrant={registrant}
                         onClick={() => {
-                            action?.(attendee.id, attendee.displayName);
+                            action?.(registrant.id, registrant.displayName);
                         }}
                     />
                 </ListItem>
@@ -149,22 +149,22 @@ function AttendeesList({
     );
 }
 
-function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }): JSX.Element {
+function PeopleSearch({ createDM }: { createDM: (registrantId: string) => void }): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
-    const attendee = useMaybeCurrentAttendee();
+    const registrant = useMaybeCurrentRegistrant();
 
     const [
         searchQuery,
         { loading: loadingSearch, error: errorSearch, data: dataSearch },
-    ] = useSearchAttendeesLazyQuery();
-    useQueryErrorToast(errorSearch, false, "RightSidebarConferenceSections.tsx -- search attendees");
+    ] = useSearchRegistrantsLazyQuery();
+    useQueryErrorToast(errorSearch, false, "RightSidebarConferenceSections.tsx -- search registrants");
 
     const [loadedCount, setLoadedCount] = useState<number>(30);
 
-    const [searched, setSearched] = useState<Attendee[] | null>(null);
-    const [allSearched, setAllSearched] = useState<Attendee[] | null>(null);
+    const [searched, setSearched] = useState<Registrant[] | null>(null);
+    const [allSearched, setAllSearched] = useState<Registrant[] | null>(null);
 
     useEffect(() => {
         setSearched(allSearched?.slice(0, loadedCount) ?? null);
@@ -180,7 +180,7 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }):
                 return undefined;
             }
 
-            return dataSearch?.Attendee.filter((x) => !!x.profile && !!x.userId) as Attendee[];
+            return dataSearch?.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
         }
 
         setLoadedCount(30);
@@ -213,11 +213,11 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }):
             <FormControl my={2} px={2}>
                 <FormLabel fontSize="sm">Search for people to start a chat</FormLabel>
                 <InputGroup size="sm">
-                    <InputLeftAddon as="label" id="attendees-search">
+                    <InputLeftAddon as="label" id="registrants-search">
                         Search
                     </InputLeftAddon>
                     <Input
-                        aria-labelledby="attendees-search"
+                        aria-labelledby="registrants-search"
                         value={search}
                         onChange={(ev) => setSearch(ev.target.value)}
                         placeholder="Type to search"
@@ -228,10 +228,10 @@ function PeopleSearch({ createDM }: { createDM: (attendeeId: string) => void }):
                 </InputGroup>
                 <FormHelperText>Search badges, names, affiliations and bios. (Min length 3)</FormHelperText>
             </FormControl>
-            <AttendeesList
+            <RegistrantsList
                 action={createDM}
-                searchedAttendees={
-                    searched && search.length > 0 ? searched.filter((x) => x.id !== attendee?.id) : undefined
+                searchedRegistrants={
+                    searched && search.length > 0 ? searched.filter((x) => x.id !== registrant?.id) : undefined
                 }
             />
         </>
@@ -438,12 +438,12 @@ function ChatsPanel({
         () => (
             // TODO: Push createDM through the global chats state class?
             <PeopleSearch
-                createDM={async (attendeeId) => {
+                createDM={async (registrantId) => {
                     if (!createDMMutationResponse.loading) {
                         try {
                             const result = await createDmMutation({
                                 variables: {
-                                    attendeeIds: [attendeeId],
+                                    registrantIds: [registrantId],
                                     conferenceId: conference.id,
                                 },
                             });
@@ -584,7 +584,7 @@ enum RightSidebarTabs {
 
 gql`
     query GetRoomChatId($roomId: uuid!) {
-        Room_by_pk(id: $roomId) {
+        room_Room_by_pk(id: $roomId) {
             id
             chatId
             name
@@ -593,8 +593,8 @@ gql`
 `;
 
 gql`
-    query GetContentGroupChatId($itemId: uuid!) {
-        ContentGroup_by_pk(id: $itemId) {
+    query GetItemChatId($itemId: uuid!) {
+        content_Item_by_pk(id: $itemId) {
             id
             title
             chatId
@@ -622,8 +622,8 @@ function RoomChatPanel({
     useEffect(() => {
         let unsubscribe: undefined | (() => void);
         if (!loading) {
-            if (data?.Room_by_pk?.chatId) {
-                unsubscribe = globalChatState.observeChatId(data?.Room_by_pk?.chatId, setChat);
+            if (data?.room_Room_by_pk?.chatId) {
+                unsubscribe = globalChatState.observeChatId(data?.room_Room_by_pk?.chatId, setChat);
             } else {
                 setChat(null);
             }
@@ -631,7 +631,7 @@ function RoomChatPanel({
         return () => {
             unsubscribe?.();
         };
-    }, [data?.Room_by_pk?.chatId, globalChatState, loading]);
+    }, [data?.room_Room_by_pk?.chatId, globalChatState, loading]);
 
     useEffect(() => {
         if (chat?.Id) {
@@ -704,7 +704,7 @@ function ItemChatPanel({
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
 }): JSX.Element {
-    const { loading, error, data } = useGetContentGroupChatIdQuery({
+    const { loading, error, data } = useGetItemChatIdQuery({
         variables: {
             itemId,
         },
@@ -715,8 +715,8 @@ function ItemChatPanel({
     useEffect(() => {
         let unsubscribe: undefined | (() => void);
         if (!loading) {
-            if (data?.ContentGroup_by_pk?.chatId) {
-                unsubscribe = globalChatState.observeChatId(data.ContentGroup_by_pk.chatId, setChat);
+            if (data?.content_Item_by_pk?.chatId) {
+                unsubscribe = globalChatState.observeChatId(data.content_Item_by_pk.chatId, setChat);
             } else {
                 setChat(null);
             }
@@ -724,7 +724,7 @@ function ItemChatPanel({
         return () => {
             unsubscribe?.();
         };
-    }, [data?.ContentGroup_by_pk?.chatId, globalChatState, loading]);
+    }, [data?.content_Item_by_pk?.chatId, globalChatState, loading]);
 
     useEffect(() => {
         if (chat?.Id) {
@@ -807,16 +807,16 @@ function ItemChatPanel({
 }
 
 function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
-    const [userIds, setUserIds] = useState<AttendeeIdSpec[]>([]);
+    const [userIds, setUserIds] = useState<RegistrantIdSpec[]>([]);
     const presence = usePresenceState();
     const mConference = useMaybeConference();
     const location = useLocation();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(null);
+    const [selectedRegistrant, setSelectedRegistrant] = useState<Registrant | null>(null);
     const openProfileModal = useCallback(
-        (attendee: Attendee) => {
-            setSelectedAttendee(attendee);
+        (registrant: Registrant) => {
+            setSelectedRegistrant(registrant);
             onOpen();
         },
         [onOpen]
@@ -828,41 +828,41 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
         });
     }, [location.pathname, mConference?.slug, presence]);
 
-    const attendees = useAttendees(userIds);
-    const sortedAttendees = useMemo(() => R.sortBy((x) => x.displayName, attendees), [attendees]);
+    const registrants = useRegistrants(userIds);
+    const sortedRegistrants = useMemo(() => R.sortBy((x) => x.displayName, registrants), [registrants]);
 
     return (
         <>
             <Text fontStyle="italic" fontSize="sm" mb={2}>
-                {sortedAttendees.length} users with at least one tab open on this page.
+                {sortedRegistrants.length} users with at least one tab open on this page.
             </Text>
-            <AttendeesList
-                searchedAttendees={sortedAttendees as Attendee[]}
-                action={(attendeeId) => {
-                    const a = attendees.find((x) => x.id === attendeeId);
+            <RegistrantsList
+                searchedRegistrants={sortedRegistrants as Registrant[]}
+                action={(registrantId) => {
+                    const a = registrants.find((x) => x.id === registrantId);
                     if (a) {
-                        openProfileModal(a as Attendee);
+                        openProfileModal(a as Registrant);
                     }
                 }}
             />
-            {sortedAttendees.length !== userIds.length ? <Spinner size="xs" label="Loading users" /> : undefined}
-            <ProfileModal isOpen={isOpen} onClose={onClose} attendee={selectedAttendee} />
+            {sortedRegistrants.length !== userIds.length ? <Spinner size="xs" label="Loading users" /> : undefined}
+            <ProfileModal isOpen={isOpen} onClose={onClose} registrant={selectedRegistrant} />
         </>
     );
 }
 
-function ParticipantListItem({ attendeeId }: { attendeeId: string }): JSX.Element {
-    const idObj = useMemo(() => ({ attendee: attendeeId }), [attendeeId]);
-    const attendee = useAttendee(idObj);
+function ParticipantListItem({ registrantId }: { registrantId: string }): JSX.Element {
+    const idObj = useMemo(() => ({ registrant: registrantId }), [registrantId]);
+    const registrant = useRegistrant(idObj);
     return (
         <ListItem fontWeight="light">
             <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
-            {attendee?.displayName ?? "Loading"}
+            {registrant?.displayName ?? "Loading"}
         </ListItem>
     );
 }
 
-function RoomParticipantsList({ roomId }: { roomId: string }): JSX.Element {
+function ParticipantsList({ roomId }: { roomId: string }): JSX.Element {
     const roomParticipants = useRoomParticipants();
 
     const thisRoomParticipants = useMemo(
@@ -877,7 +877,9 @@ function RoomParticipantsList({ roomId }: { roomId: string }): JSX.Element {
             const newElements: JSX.Element[] = [];
             for (const participant of thisRoomParticipants) {
                 if (!oldElements.some((x) => x.key !== participant.id)) {
-                    newElements.push(<ParticipantListItem key={participant.id} attendeeId={participant.attendeeId} />);
+                    newElements.push(
+                        <ParticipantListItem key={participant.id} registrantId={participant.registrantId} />
+                    );
                 }
             }
 
@@ -912,7 +914,7 @@ function RoomParticipantsList({ roomId }: { roomId: string }): JSX.Element {
 function PresencePanel_WithConnectedParticipants({ roomId }: { roomId: string }): JSX.Element {
     return (
         <>
-            <RoomParticipantsList roomId={roomId} />
+            <ParticipantsList roomId={roomId} />
             <Heading as="h3" fontSize="sm" textAlign="left" mb={2}>
                 Here with you
             </Heading>
@@ -1143,9 +1145,9 @@ export default function RightSidebarConferenceSections({
     onClose: () => void;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
-    if (user.user && user.user.attendees.length > 0) {
-        const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
-        if (attendee) {
+    if (user.user && user.user.registrants.length > 0) {
+        const registrant = user.user.registrants.find((x) => x.conference.slug === confSlug);
+        if (registrant) {
             return <RightSidebarConferenceSections_Inner rootUrl={rootUrl} confSlug={confSlug} />;
         }
     }

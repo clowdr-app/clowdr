@@ -17,40 +17,40 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { IntermediaryAttendeeData } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
 import assert from "assert";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    GroupAttendee_Insert_Input,
-    useImportAttendeesMutation,
-    useSelectAllAttendeesQuery,
+    Permissions_GroupRegistrant_Insert_Input,
+    useImportRegistrantsMutation,
     useSelectAllGroupsQuery,
+    useSelectAllRegistrantsQuery,
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { useConference } from "../../../useConference";
 
 gql`
-    mutation ImportAttendees(
-        $insertAttendees: [Attendee_insert_input!]!
-        $insertInvitations: [Invitation_insert_input!]!
-        $insertGroupAttendees: [GroupAttendee_insert_input!]!
+    mutation ImportRegistrants(
+        $insertRegistrants: [registrant_Registrant_insert_input!]!
+        $insertInvitations: [registrant_Invitation_insert_input!]!
+        $insertGroupRegistrants: [permissions_GroupRegistrant_insert_input!]!
     ) {
-        insert_Attendee(objects: $insertAttendees) {
+        insert_registrant_Registrant(objects: $insertRegistrants) {
             affected_rows
         }
-        insert_Invitation(objects: $insertInvitations) {
+        insert_registrant_Invitation(objects: $insertInvitations) {
             affected_rows
         }
-        insert_GroupAttendee(objects: $insertGroupAttendees) {
+        insert_permissions_GroupRegistrant(objects: $insertGroupRegistrants) {
             affected_rows
         }
     }
 `;
 
-interface AttendeeFinalData {
+interface RegistrantFinalData {
     id: string;
     name: string;
     email: string;
@@ -66,7 +66,7 @@ interface AttendeeFinalData {
 export default function ImportPanel({
     data: inputData,
 }: {
-    data: Record<string, IntermediaryAttendeeData[]>;
+    data: Record<string, IntermediaryRegistrantData[]>;
 }): JSX.Element {
     const conference = useConference();
     const [hasImported, setHasImported] = useState<boolean>(false);
@@ -79,36 +79,36 @@ export default function ImportPanel({
     useQueryErrorToast(groupsError, false);
 
     const {
-        loading: attendeesLoading,
-        data: attendeesData,
-        error: attendeesError,
-        refetch: refetchAttendees,
-    } = useSelectAllAttendeesQuery({
+        loading: registrantsLoading,
+        data: registrantsData,
+        error: registrantsError,
+        refetch: refetchRegistrants,
+    } = useSelectAllRegistrantsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(attendeesError, false);
+    useQueryErrorToast(registrantsError, false);
 
     const [
         importMutation,
         { loading: importLoading, error: importError, data: importData },
-    ] = useImportAttendeesMutation();
+    ] = useImportRegistrantsMutation();
     useQueryErrorToast(importError, false);
 
     const toast = useToast();
     useEffect(() => {
-        if (importData?.insert_Attendee) {
+        if (importData?.insert_registrant_Registrant) {
             toast({
-                title: `Imported ${importData.insert_Attendee.affected_rows / 2} registrants`,
+                title: `Imported ${importData.insert_registrant_Registrant.affected_rows / 2} registrants`,
                 status: "success",
                 duration: 3000,
                 position: "bottom",
             });
-            refetchAttendees();
+            refetchRegistrants();
         }
-    }, [importData?.insert_Attendee, refetchAttendees, toast]);
+    }, [importData?.insert_registrant_Registrant, refetchRegistrants, toast]);
 
     const finalData = useMemo(() => {
         const firstPass = Object.values(inputData).reduce(
@@ -121,23 +121,25 @@ export default function ImportPanel({
                         email: row.email.trim().toLowerCase(),
                     }))
                     // Remove duplicates as compared to the existing data
-                    .reduce<AttendeeFinalData[]>((acc, row) => {
-                        const group = groupsData?.Group.find((g) => g.name.toLowerCase() === row.group.toLowerCase());
+                    .reduce<RegistrantFinalData[]>((acc, row) => {
+                        const group = groupsData?.permissions_Group.find(
+                            (g) => g.name.toLowerCase() === row.group.toLowerCase()
+                        );
 
-                        const existingAttendee =
-                            attendeesData?.Attendee &&
-                            attendeesData.Attendee.find((x) => {
+                        const existingRegistrant =
+                            registrantsData?.registrant_Registrant &&
+                            registrantsData.registrant_Registrant.find((x) => {
                                 return x.invitation && x.invitation.invitedEmailAddress === row.email;
                             });
 
-                        if (existingAttendee) {
-                            if (!existingAttendee.groupAttendees.some((ga) => ga.groupId === group?.id)) {
+                        if (existingRegistrant) {
+                            if (!existingRegistrant.groupRegistrants.some((ga) => ga.groupId === group?.id)) {
                                 return [
                                     ...acc,
                                     {
                                         name: row.name,
                                         email: row.email,
-                                        id: existingAttendee.id,
+                                        id: existingRegistrant.id,
                                         group,
                                         isNew: false,
                                     },
@@ -159,14 +161,14 @@ export default function ImportPanel({
                         }
                     }, []),
             ],
-            [] as AttendeeFinalData[]
+            [] as RegistrantFinalData[]
         );
 
         // Remove duplicates as compared to the provided data
         return firstPass.filter(
             (row1, index1) => !firstPass.some((row2, index2) => index2 < index1 && row2.email === row1.email)
         );
-    }, [attendeesData?.Attendee, groupsData?.Group, inputData]);
+    }, [registrantsData?.registrant_Registrant, groupsData?.permissions_Group, inputData]);
 
     const noGroup = finalData.some((x) => !x.group);
     const noEmail = finalData.some((x) => x.email.length === 0);
@@ -191,7 +193,7 @@ export default function ImportPanel({
                     <AlertTitle fontSize="lg">Please check over the data below, then click Import</AlertTitle>
                 </HStack>
                 <AlertDescription mt={4} mb={1}>
-                    <Text as="b">This does NOT send invitation emails to attendees.</Text>
+                    <Text as="b">This does NOT send invitation emails to registrants.</Text>
                     <Text>
                         All this does is import the list into the system - after importing, you will need to go to
                         Manage Registrants to send invitations.
@@ -201,26 +203,26 @@ export default function ImportPanel({
             <HStack>
                 <Button
                     colorScheme="green"
-                    isDisabled={!!groupsError || !!attendeesError || noName || noEmail || noGroup}
-                    isLoading={groupsLoading || importLoading || attendeesLoading}
+                    isDisabled={!!groupsError || !!registrantsError || noName || noEmail || noGroup}
+                    isLoading={groupsLoading || importLoading || registrantsLoading}
                     onClick={() => {
-                        const newAttendees = finalData.filter((x) => x.isNew);
-                        const newGroupAttendees: GroupAttendee_Insert_Input[] = finalData
+                        const newRegistrants = finalData.filter((x) => x.isNew);
+                        const newGroupRegistrants: Permissions_GroupRegistrant_Insert_Input[] = finalData
                             .filter((x) => !x.isNew)
                             .map((x) => ({
-                                attendeeId: x.id,
+                                registrantId: x.id,
                                 groupId: x.group?.id,
                             }));
 
                         importMutation({
                             variables: {
-                                insertAttendees: newAttendees.map((x) => {
+                                insertRegistrants: newRegistrants.map((x) => {
                                     assert(x.group);
                                     return {
                                         id: x.id,
                                         conferenceId: conference.id,
                                         displayName: x.name,
-                                        groupAttendees: {
+                                        groupRegistrants: {
                                             data: [
                                                 {
                                                     groupId: x.group.id,
@@ -229,11 +231,11 @@ export default function ImportPanel({
                                         },
                                     };
                                 }),
-                                insertInvitations: newAttendees.map((x) => ({
-                                    attendeeId: x.id,
+                                insertInvitations: newRegistrants.map((x) => ({
+                                    registrantId: x.id,
                                     invitedEmailAddress: x.email,
                                 })),
-                                insertGroupAttendees: newGroupAttendees,
+                                insertGroupRegistrants: newGroupRegistrants,
                             },
                         });
                         setHasImported(true);
@@ -292,7 +294,10 @@ export default function ImportPanel({
                             </Text>
                             <Text overflowWrap="normal">
                                 {groupsData
-                                    ? `Currently available groups are: ${R.sortBy((x) => x.name, groupsData.Group)
+                                    ? `Currently available groups are: ${R.sortBy(
+                                          (x) => x.name,
+                                          groupsData.permissions_Group
+                                      )
                                           .reduce<string>((acc, x) => `${acc}, ${x.name}`, "")
                                           .substring(2)}`
                                     : "Unable to load the list of groups - please refresh to try again."}

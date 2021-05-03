@@ -2,7 +2,7 @@ import { Button, HStack, Image, Text, useToast } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useChatProfileModal } from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { useAttendee } from "../../../AttendeesContext";
+import { useRegistrant } from "../../../RegistrantsContext";
 
 export function VonageOverlay({
     connectionData,
@@ -11,17 +11,17 @@ export function VonageOverlay({
     connectionData: string;
     microphoneEnabled?: boolean;
 }): JSX.Element {
-    const attendeeIdObj = useMemo(() => {
+    const registrantIdObj = useMemo(() => {
         try {
             const data = JSON.parse(connectionData);
-            return data["attendeeId"] ? { attendee: data["attendeeId"] } : null;
+            return data["registrantId"] ? { registrant: data["registrantId"] } : null;
         } catch (e) {
-            console.warn("Couldn't parse attendee ID from Vonage subscriber data");
+            console.warn("Couldn't parse registrant ID from Vonage subscriber data");
             return null;
         }
     }, [connectionData]);
 
-    const attendee = useAttendee(attendeeIdObj);
+    const registrant = useRegistrant(registrantIdObj);
     const profileModal = useChatProfileModal();
     const toast = useToast();
 
@@ -38,12 +38,12 @@ export function VonageOverlay({
             borderRadius={5}
             overflow="hidden"
             display="block"
-            aria-label={`View ${attendee?.displayName ?? "<Loading name>"}'s profile`}
+            aria-label={`View ${registrant?.displayName ?? "<Loading name>"}'s profile`}
             onClick={() => {
-                if (attendee && attendee.profile) {
+                if (registrant && registrant.profile) {
                     profileModal.open({
-                        ...attendee,
-                        profile: attendee.profile,
+                        ...registrant,
+                        profile: registrant.profile,
                     });
                 } else {
                     toast({
@@ -55,23 +55,23 @@ export function VonageOverlay({
             }}
         >
             <HStack pr={2} bgColor="rgba(0,0,0,0.6)" borderRadius="sm">
-                {attendee?.profile?.photoURL_50x50 ? (
+                {registrant?.profile?.photoURL_50x50 ? (
                     <Image
                         borderRadius={5}
                         w="2rem"
                         h="auto"
                         objectFit="cover"
                         objectPosition="center"
-                        src={attendee?.profile.photoURL_50x50}
-                        alt={`Profile picture of ${attendee?.displayName}`}
+                        src={registrant?.profile.photoURL_50x50}
+                        alt={`Profile picture of ${registrant?.displayName}`}
                     />
-                ) : attendee ? (
+                ) : registrant ? (
                     <FAIcon ml={1} iconStyle="s" icon="cat" fontSize={"22px"} />
                 ) : (
                     <></>
                 )}
                 <Text display="block" color={"gray.100"} noOfLines={1} width="100%">
-                    {attendee?.displayName ?? "<Loading name>"}
+                    {registrant?.displayName ?? "<Loading name>"}
                 </Text>
                 {microphoneEnabled !== undefined ? (
                     microphoneEnabled ? (

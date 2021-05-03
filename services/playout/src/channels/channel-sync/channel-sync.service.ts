@@ -56,7 +56,7 @@ export class ChannelSyncService {
 
         gql`
             query GetRoomsNeedingChannelStack($now: timestamptz, $future: timestamptz) {
-                Room(
+                room_Room(
                     where: {
                         events: {
                             intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
@@ -88,7 +88,7 @@ export class ChannelSyncService {
             },
         });
 
-        return result.data.Room;
+        return result.data.room_Room;
     }
 
     public async getObsoleteChannelStacks(): Promise<
@@ -96,7 +96,7 @@ export class ChannelSyncService {
     > {
         gql`
             query GetObsoleteChannelStacks($past: timestamptz) {
-                MediaLiveChannel(
+                video_MediaLiveChannel(
                     where: {
                         _or: [
                             {
@@ -129,7 +129,7 @@ export class ChannelSyncService {
             },
         });
 
-        return result.data.MediaLiveChannel;
+        return result.data.video_MediaLiveChannel;
     }
 
     public async ensureChannelStacksCreated(): Promise<void> {

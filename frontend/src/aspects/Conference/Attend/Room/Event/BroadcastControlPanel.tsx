@@ -12,7 +12,10 @@ import { SingleLayoutForm } from "./SingleLayoutForm";
 
 gql`
     mutation UpdateEventVonageSessionLayout($eventVonageSessionId: uuid!, $layoutData: jsonb!) {
-        update_EventVonageSession_by_pk(pk_columns: { id: $eventVonageSessionId }, _set: { layoutData: $layoutData }) {
+        update_video_EventVonageSession_by_pk(
+            pk_columns: { id: $eventVonageSessionId }
+            _set: { layoutData: $layoutData }
+        ) {
             id
         }
     }

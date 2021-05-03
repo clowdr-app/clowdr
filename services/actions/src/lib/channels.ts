@@ -13,7 +13,7 @@ import {
     GetRoomsWithEventsStartingQuery,
     GetRoomsWithNoEventsDocument,
     GetTransitionsByRoomDocument,
-    InputType_Enum,
+    Video_InputType_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { ChannelState, getMediaLiveChannelState } from "../lib/aws/mediaLive";
@@ -23,7 +23,7 @@ import { getConferenceConfiguration } from "./conferenceConfiguration";
 
 gql`
     query GetRoomsWithEventsStarting($from: timestamptz, $to: timestamptz) {
-        Room(
+        room_Room(
             where: {
                 events: {
                     startTime: { _gte: $from, _lte: $to }
@@ -41,7 +41,7 @@ gql`
     }
 
     mutation DetachMediaLiveChannel($id: uuid!) {
-        update_MediaLiveChannel_by_pk(pk_columns: { id: $id }, _set: { roomId: null }) {
+        update_video_MediaLiveChannel_by_pk(pk_columns: { id: $id }, _set: { roomId: null }) {
             id
         }
     }
@@ -71,9 +71,9 @@ export async function ensureUpcomingChannelsStarted(holdOffOnStartingChannel: {
         throw new Error("Failure while retrieving rooms with upcoming events");
     }
 
-    console.log(`Found ${roomsResult.data.Room.length} rooms with upcoming events`);
+    console.log(`Found ${roomsResult.data.room_Room.length} rooms with upcoming events`);
 
-    for (const room of roomsResult.data.Room) {
+    for (const room of roomsResult.data.room_Room) {
         console.log("Syncing channel for room", { roomId: room.id });
 
         if (holdOffOnStartingChannel[room.id]) {
@@ -158,7 +158,7 @@ export async function ensureUpcomingChannelsStarted(holdOffOnStartingChannel: {
 
 gql`
     query GetRoomsWithNoEvents($from: timestamptz, $to: timestamptz) {
-        Room(
+        room_Room(
             where: {
                 _not: {
                     _or: [
@@ -202,13 +202,13 @@ export async function stopChannelsWithoutUpcomingOrCurrentEvents(): Promise<void
         return;
     }
 
-    if (roomsResult.data.Room.length === 0) {
+    if (roomsResult.data.room_Room.length === 0) {
         console.log("No rooms without upcoming or ongoing events");
     }
 
-    console.log(`Found ${roomsResult.data.Room.length} rooms without upcoming or ongoing events`);
+    console.log(`Found ${roomsResult.data.room_Room.length} rooms without upcoming or ongoing events`);
 
-    for (const room of roomsResult.data.Room) {
+    for (const room of roomsResult.data.room_Room) {
         if (room.mediaLiveChannel) {
             console.log("Ensuring channel for room is stopped", room.id);
             const channelState = await getMediaLiveChannelState(room.mediaLiveChannel.mediaLiveChannelId);
@@ -225,7 +225,7 @@ export async function stopChannelsWithoutUpcomingOrCurrentEvents(): Promise<void
 
 gql`
     query GetRoomsWithEvents($now: timestamptz!) {
-        Room(
+        room_Room(
             where: {
                 events: { intendedRoomModeName: { _in: [Q_AND_A, PRERECORDED, PRESENTATION] }, endTime: { _gte: $now } }
                 mediaLiveChannel: {}
@@ -253,10 +253,10 @@ export async function syncChannelSchedules(): Promise<{ [roomId: string]: boolea
         return {};
     }
 
-    console.log(`Found ${rooms.data.Room.length} rooms for channel sync`);
+    console.log(`Found ${rooms.data.room_Room.length} rooms for channel sync`);
 
     const holdOffOnCreatingChannel: { [roomId: string]: boolean } = {};
-    for (const room of rooms.data.Room) {
+    for (const room of rooms.data.room_Room) {
         try {
             holdOffOnCreatingChannel[room.id] = await syncChannelSchedule(room.id);
         } catch (e) {
@@ -270,7 +270,7 @@ export async function syncChannelSchedules(): Promise<{ [roomId: string]: boolea
 
 gql`
     query GetMediaLiveChannelByRoom($roomId: uuid!) {
-        Room_by_pk(id: $roomId) {
+        room_Room_by_pk(id: $roomId) {
             id
             conferenceId
             mediaLiveChannel {
@@ -286,8 +286,8 @@ gql`
 
 gql`
     query GetTransitionsByRoom($roomId: uuid!) {
-        Transitions(where: { roomId: { _eq: $roomId } }) {
-            broadcastContentItem {
+        video_Transitions(where: { roomId: { _eq: $roomId } }) {
+            broadcastElement {
                 id
                 input
                 inputTypeName
@@ -316,12 +316,12 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
         },
     });
 
-    if (!channelResult.data.Room_by_pk?.mediaLiveChannel?.mediaLiveChannelId) {
+    if (!channelResult.data.room_Room_by_pk?.mediaLiveChannel?.mediaLiveChannelId) {
         console.warn("No MediaLive channel details found for room. Skipping schedule sync.", { roomId });
         return false;
     }
 
-    const channel = channelResult.data.Room_by_pk.mediaLiveChannel;
+    const channel = channelResult.data.room_Room_by_pk.mediaLiveChannel;
 
     const mediaLiveChannel = await MediaLive.describeChannel({
         ChannelId: channel.mediaLiveChannelId,
@@ -349,16 +349,16 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
     }
 
     // Generate a simplified representation of what the channel schedule 'ought' to be
-    const transitions = allTransitionsResult.data.Transitions;
+    const transitions = allTransitionsResult.data.video_Transitions;
     let fillerVideoKey;
     try {
-        fillerVideoKey = await getFillerVideo(channelResult.data.Room_by_pk?.conferenceId);
+        fillerVideoKey = await getFillerVideo(channelResult.data.room_Room_by_pk?.conferenceId);
     } catch (e) {
-        console.warn("Could not retrieve filler video", channelResult.data.Room_by_pk.conferenceId);
+        console.warn("Could not retrieve filler video", channelResult.data.room_Room_by_pk.conferenceId);
     }
     const expectedSchedule = R.flatten(
         transitions.map((transition) => {
-            const input: BroadcastContentItemInput = transition.broadcastContentItem.input;
+            const input: BroadcastElementInput = transition.broadcastElement.input;
             if (input.type === "MP4Input") {
                 const { key } = new AmazonS3URI(input.s3Url);
 
@@ -511,14 +511,14 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
 
     console.log("Generating list of new schedule actions", roomId, channel.mediaLiveChannelId);
     const newScheduleActions: ScheduleAction[] = [];
-    for (const transition of allTransitionsResult.data.Transitions) {
+    for (const transition of allTransitionsResult.data.video_Transitions) {
         // Don't try to insert transitions in the next 30s (AWS limit: 15s after present)
         if (Date.parse(transition.time) < earliestInsertionTime) {
             continue;
         }
 
-        const input: BroadcastContentItemInput = transition.broadcastContentItem.input;
-        if (transition.broadcastContentItem.inputTypeName === InputType_Enum.Mp4 && input.type === "MP4Input") {
+        const input: BroadcastElementInput = transition.broadcastElement.input;
+        if (transition.broadcastElement.inputTypeName === Video_InputType_Enum.Mp4 && input.type === "MP4Input") {
             let urlPath;
             try {
                 const { key } = new AmazonS3URI(input.s3Url);
@@ -562,7 +562,7 @@ export async function syncChannelSchedule(roomId: string): Promise<boolean> {
                 }
             }
         } else if (
-            transition.broadcastContentItem.inputTypeName === InputType_Enum.VonageSession &&
+            transition.broadcastElement.inputTypeName === Video_InputType_Enum.VonageSession &&
             input.type === "VonageInput"
         ) {
             if (!trimmedScheduleActionNames.includes(`${transition.id}`)) {
@@ -606,7 +606,7 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
     // Figure out which conference this MediaLive channel belongs to
     gql`
         query GetConferenceIdFromChannelResourceId($channelResourceId: String!) {
-            MediaLiveChannel(where: { mediaLiveChannelId: { _eq: $channelResourceId } }) {
+            video_MediaLiveChannel(where: { mediaLiveChannelId: { _eq: $channelResourceId } }) {
                 id
                 room {
                     id
@@ -633,7 +633,10 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
         return;
     }
 
-    if (conferenceIdResult.data.MediaLiveChannel.length !== 1 || !conferenceIdResult.data.MediaLiveChannel[0].room) {
+    if (
+        conferenceIdResult.data.video_MediaLiveChannel.length !== 1 ||
+        !conferenceIdResult.data.video_MediaLiveChannel[0].room
+    ) {
         console.error(
             "Expected exactly one conference to be associated with MediaLive channel resource",
             channelResourceId
@@ -641,7 +644,7 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
         return;
     }
 
-    const conferenceId = conferenceIdResult.data.MediaLiveChannel[0].room.conferenceId;
+    const conferenceId = conferenceIdResult.data.video_MediaLiveChannel[0].room.conferenceId;
 
     let fillerVideoKey;
     try {

@@ -9,10 +9,12 @@ import {
 
 gql`
     query EventVonageControls_GetEvents($conferenceId: uuid!) {
-        Event(where: { conferenceId: { _eq: $conferenceId }, intendedRoomModeName: { _in: [Q_AND_A, PRESENTATION] } }) {
+        schedule_Event(
+            where: { conferenceId: { _eq: $conferenceId }, intendedRoomModeName: { _in: [Q_AND_A, PRESENTATION] } }
+        ) {
             id
             name
-            contentGroup {
+            item {
                 id
                 title
             }
@@ -37,15 +39,15 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
     const toast = useToast();
 
     const options = useMemo(() => {
-        return data?.Event.map(
+        return data?.schedule_Event.map(
             (event) =>
                 (
                     <option key={event.id} value={event.id}>
-                        {event.contentGroup ? `${event.contentGroup.title} (${event.name})` : event.name}
+                        {event.item ? `${event.item.title} (${event.name})` : event.name}
                     </option>
                 ) ?? []
         );
-    }, [data?.Event]);
+    }, [data?.schedule_Event]);
 
     return (
         <Formik<{ eventId: string | null }>

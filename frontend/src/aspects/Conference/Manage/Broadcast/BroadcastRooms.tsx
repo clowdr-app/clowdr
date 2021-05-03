@@ -28,7 +28,7 @@ import FAIcon from "../../../Icons/FAIcon";
 
 gql`
     query GetMediaLiveChannels($conferenceId: uuid!) {
-        Room(where: { mediaLiveChannel: {}, conferenceId: { _eq: $conferenceId } }) {
+        room_Room(where: { mediaLiveChannel: {}, conferenceId: { _eq: $conferenceId } }) {
             mediaLiveChannel {
                 cloudFrontDomain
                 endpointUri
@@ -73,7 +73,7 @@ export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {data?.Room.map((room) => (
+                    {data?.room_Room.map((room) => (
                         <Tr key={room.id}>
                             <Td>{room.name}</Td>
                             <Td>

@@ -12,7 +12,6 @@ services:
       POSTGRES_PASSWORD: postgrespassword
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin
     depends_on:
       - "postgres"
     ports:
@@ -52,15 +51,15 @@ services:
       HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
       HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
   rabbitmq:
-      image: rabbitmq:3.8.14-management
-      hostname: rabbitmq-1
-      ports:
-          - "5672:5672"
-          - "15672:15672"
-      environment:
-          RABBITMQ_DEFAULT_USER: admin
-          RABBITMQ_DEFAULT_PASS: admin
-      volumes:
-          - ./rabbitmq/enabled-plugins.erl:/etc/rabbitmq/enabled_plugins
+    image: rabbitmq:3.8.14-management
+    hostname: rabbitmq-1
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - ./rabbitmq/enabled-plugins.erl:/etc/rabbitmq/enabled_plugins
 volumes:
   db_data:

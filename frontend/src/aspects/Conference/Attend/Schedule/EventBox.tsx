@@ -14,16 +14,16 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import { ContentBaseType, ContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
 import {
-    ContentType_Enum,
-    Schedule_ContentGroupFragment,
+    Content_ElementType_Enum,
     Schedule_EventSummaryFragment,
-    useSchedule_SelectContentGroupLazyQuery,
+    Schedule_ItemFragment,
+    useSchedule_SelectItemLazyQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
@@ -46,7 +46,7 @@ function EventBoxPopover({
     durationSeconds: number;
     roomName: string;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    content: Schedule_ContentGroupFragment | null | undefined;
+    content: Schedule_ItemFragment | null | undefined;
     isOpen: boolean;
     onClose: () => void;
 }): JSX.Element {
@@ -57,13 +57,13 @@ function EventBoxPopover({
     const now = Date.now();
     const isLive = eventStartMs < now + 10 * 60 * 1000 && now < eventStartMs + durationSeconds * 1000;
 
-    const abstractData: ContentItemDataBlob | undefined = content?.abstractContentItems?.find(
-        (x) => x.contentTypeName === ContentType_Enum.Abstract
+    const abstractData: ElementDataBlob | undefined = content?.abstractElements?.find(
+        (x) => x.typeName === Content_ElementType_Enum.Abstract
     )?.data;
     let abstractText: string | undefined;
     if (abstractData) {
         const innerAbstractData = abstractData[abstractData.length - 1];
-        if (innerAbstractData.data.baseType === ContentBaseType.Text) {
+        if (innerAbstractData.data.baseType === ElementBaseType.Text) {
             abstractText = innerAbstractData.data.text;
         }
     }
@@ -181,9 +181,7 @@ function EventBoxPopover({
                     <Box>
                         <Markdown>{abstractText}</Markdown>
                     </Box>
-                    {content?.people && content?.people.length > 0 ? (
-                        <AuthorList contentPeopleData={content.people} />
-                    ) : undefined}
+                    {content?.itemPeople.length ? <AuthorList programPeopleData={content.itemPeople} /> : undefined}
                 </ModalBody>
             </ModalContent>
         </Modal>
@@ -213,11 +211,7 @@ export default function EventBox({
     const topPc = (100 * offsetSeconds) / timelineParams.fullTimeSpanSeconds;
     const heightPc = (100 * durationSeconds) / timelineParams.fullTimeSpanSeconds;
 
-    const eventTitle = event.contentGroup
-        ? sortedEvents.length > 1
-            ? event.contentGroup.title
-            : `${event.contentGroup.title}`
-        : event.name;
+    const eventTitle = event.item ? (sortedEvents.length > 1 ? event.item.title : `${event.item.title}`) : event.name;
     const buttonContents = useMemo(() => {
         return (
             <Box overflow="hidden" w="100%" textOverflow="ellipsis" maxH="100%" whiteSpace="normal">
@@ -241,16 +235,16 @@ export default function EventBox({
         scrollToEventCbs.set(event.id, scrollToEvent);
     }, [event.id, scrollToEvent, scrollToEventCbs]);
 
-    const [getContent, content] = useSchedule_SelectContentGroupLazyQuery();
+    const [getContent, content] = useSchedule_SelectItemLazyQuery();
     useEffect(() => {
-        if (isOpen && !content.data && event.contentGroupId) {
+        if (isOpen && !content.data && event.itemId) {
             getContent({
                 variables: {
-                    id: event.contentGroupId,
+                    id: event.itemId,
                 },
             });
         }
-    }, [content.data, getContent, isOpen, event.contentGroupId]);
+    }, [content.data, getContent, isOpen, event.itemId]);
 
     const borderColour = useColorModeValue("blue.200", "blue.800");
     return (
@@ -303,7 +297,7 @@ export default function EventBox({
                     durationSeconds={durationSeconds}
                     roomName={roomName}
                     events={sortedEvents}
-                    content={content.data?.ContentGroup_by_pk}
+                    content={content.data?.content_Item_by_pk}
                     isOpen={isOpen}
                     onClose={onClose}
                 />

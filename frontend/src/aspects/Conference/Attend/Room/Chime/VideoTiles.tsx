@@ -6,7 +6,7 @@ import {
     useRemoteVideoTileState,
 } from "amazon-chime-sdk-component-library-react";
 import React from "react";
-import useCurrentAttendee from "../../../useCurrentAttendee";
+import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { LocalVideo } from "./LocalVideo";
 import { RemoteVideos } from "./RemoteVideos";
 
@@ -25,7 +25,7 @@ export function VideoTiles({
     const remoteSize = tiles.length + (contentTileId ? 1 : 0);
     const gridSize = remoteSize > 1 && isVideoEnabled ? remoteSize + 1 : remoteSize;
 
-    const attendee = useCurrentAttendee();
+    const registrant = useCurrentRegistrant();
 
     const resolutionBP = useBreakpointValue<"low" | "normal" | "high">({
         base: "low",

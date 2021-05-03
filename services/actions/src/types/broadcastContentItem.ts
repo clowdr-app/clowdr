@@ -1,4 +1,4 @@
-type BroadcastContentItemInput = PendingCreation | MP4Input | VonageInput;
+type BroadcastElementInput = PendingCreation | MP4Input | VonageInput;
 
 interface PendingCreation {
     type: "PendingCreation";

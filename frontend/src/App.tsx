@@ -6,12 +6,12 @@ import { ThemeProvider } from "styled-components";
 import "./App.css";
 import Routing from "./AppRouting";
 import { GlobalChatStateContext, GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
-import AttendeesContextProvider from "./aspects/Conference/AttendeesContext";
+import AttendeesContextProvider from "./aspects/Conference/RegistrantsContext";
 import ConferenceProvider, { useMaybeConference } from "./aspects/Conference/useConference";
 import ConferenceCurrentUserActivePermissionsProvider, {
     useConferenceCurrentUserActivePermissions,
 } from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
-import { CurrentAttendeeProvider, useMaybeCurrentAttendee } from "./aspects/Conference/useCurrentAttendee";
+import { CurrentRegistrantProvider, useMaybeCurrentRegistrant } from "./aspects/Conference/useCurrentRegistrant";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import DownForMaintenancePage from "./aspects/Maintenance/DownForMaintenancePage";
@@ -21,7 +21,7 @@ import RightSidebar from "./aspects/Menu/RightSidebar";
 import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
-import { Permission_Enum } from "./generated/graphql";
+import { Permissions_Permission_Enum } from "./generated/graphql";
 // import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
 interface AppProps {
@@ -76,7 +76,7 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                     <ConferenceProvider confSlug={confSlug}>
                         <ForceUserRefresh />
                         <ConferenceCurrentUserActivePermissionsProvider>
-                            <CurrentAttendeeProvider>
+                            <CurrentRegistrantProvider>
                                 <GlobalChatStateProvider>
                                     <AttendeesContextProvider>
                                         <RoomParticipantsProvider>
@@ -85,7 +85,7 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                                         </RoomParticipantsProvider>
                                     </AttendeesContextProvider>
                                 </GlobalChatStateProvider>
-                            </CurrentAttendeeProvider>
+                            </CurrentRegistrantProvider>
                         </ConferenceCurrentUserActivePermissionsProvider>
                     </ConferenceProvider>
                 ) : (
@@ -99,9 +99,9 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
 function AppPage({ rootUrl }: AppProps) {
     const conference = useMaybeConference();
     const confSlug = conference?.slug;
-    const attendee = useMaybeCurrentAttendee();
+    const attendee = useMaybeCurrentRegistrant();
     const permissions = useConferenceCurrentUserActivePermissions();
-    const isPermittedAccess = attendee && permissions.has(Permission_Enum.ConferenceViewAttendees);
+    const isPermittedAccess = attendee && permissions.has(Permissions_Permission_Enum.ConferenceViewAttendees);
 
     const leftSidebarWidthPc = 20;
     const rightSidebarWidthPc = 20;

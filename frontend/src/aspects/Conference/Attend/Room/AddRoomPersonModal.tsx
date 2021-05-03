@@ -6,12 +6,12 @@ import {
     GetRoomMembersQueryVariables,
     RoomMemberFragment,
     RoomMemberFragmentDoc,
-    RoomPersonRole_Enum,
+    Room_PersonRole_Enum,
     useAddParticipantToRoomMutation,
 } from "../../../../generated/graphql";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import { maybeCompare } from "../../../Utils/maybeSort";
-import { AttendeeSearch } from "./AttendeeSearch";
+import { RegistrantSearch } from "./RegistrantSearch";
 
 export function AddRoomPersonModal({
     roomId,
@@ -25,32 +25,32 @@ export function AddRoomPersonModal({
     const [addParticipantToRoomMutation] = useAddParticipantToRoomMutation();
     const members = useRoomMembers();
 
-    const selectedAttendeeIds = useMemo(
+    const selectedRegistrantIds = useMemo(
         () =>
             members
                 ? members
                       .sort((x, y) =>
-                          maybeCompare(x.attendee, y.attendee, (a, b) => a.displayName.localeCompare(b.displayName))
+                          maybeCompare(x.registrant, y.registrant, (a, b) => a.displayName.localeCompare(b.displayName))
                       )
-                      .map((person) => person.member.attendeeId)
+                      .map((person) => person.member.registrantId)
                 : [],
         [members]
     );
 
     const addMember = useCallback(
-        async (attendeeId: string) => {
+        async (registrantId: string) => {
             await addParticipantToRoomMutation({
                 variables: {
-                    attendeeId,
+                    registrantId,
                     roomId,
                 },
                 update: (cache, result) => {
-                    if (result.data?.insert_RoomPerson_one) {
+                    if (result.data?.insert_room_RoomPerson_one) {
                         const data: RoomMemberFragment = {
-                            __typename: "RoomPerson",
-                            id: result.data.insert_RoomPerson_one.id,
-                            attendeeId,
-                            roomPersonRoleName: RoomPersonRole_Enum.Participant,
+                            __typename: "room_RoomPerson",
+                            id: result.data.insert_room_RoomPerson_one.id,
+                            registrantId,
+                            personRoleName: Room_PersonRole_Enum.Participant,
                             roomId,
                         };
 
@@ -77,7 +77,7 @@ export function AddRoomPersonModal({
                                 broadcast: true,
                                 data: {
                                     __typename: query.__typename,
-                                    RoomPerson: [...query.RoomPerson, data],
+                                    room_RoomPerson: [...query.room_RoomPerson, data],
                                 },
                             });
                         }
@@ -95,7 +95,7 @@ export function AddRoomPersonModal({
                 <ModalHeader pb={0}>Add person to room</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <AttendeeSearch selectedAttendeeIds={selectedAttendeeIds} onSelect={addMember} />
+                    <RegistrantSearch selectedRegistrantIds={selectedRegistrantIds} onSelect={addMember} />
                 </ModalBody>
             </ModalContent>
         </Modal>

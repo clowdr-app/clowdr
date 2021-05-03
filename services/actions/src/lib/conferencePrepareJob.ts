@@ -5,7 +5,10 @@ import { allVideoRenderJobsCompleted } from "./videoRenderJob";
 
 gql`
     mutation FailConferencePrepareJob($id: uuid!, $message: String!) {
-        update_ConferencePrepareJob_by_pk(pk_columns: { id: $id }, _set: { jobStatusName: FAILED, message: $message }) {
+        update_conference_PrepareJob_by_pk(
+            pk_columns: { id: $id }
+            _set: { jobStatusName: FAILED, message: $message }
+        ) {
             id
         }
     }
@@ -24,7 +27,7 @@ export async function failConferencePrepareJob(id: string, message: string): Pro
 
 gql`
     mutation CompleteConferencePrepareJob($id: uuid!) {
-        update_ConferencePrepareJob_by_pk(pk_columns: { id: $id }, _set: { jobStatusName: COMPLETED }) {
+        update_conference_PrepareJob_by_pk(pk_columns: { id: $id }, _set: { jobStatusName: COMPLETED }) {
             id
         }
     }

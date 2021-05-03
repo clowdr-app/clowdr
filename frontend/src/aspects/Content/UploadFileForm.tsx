@@ -18,18 +18,18 @@ import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { RequiredItemFieldsFragment, useSubmitContentItemMutation } from "../../generated/graphql";
+import { UploadableItemFieldsFragment, useSubmitUploadableElementMutation } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 export default function UploadFileForm({
-    requiredItem,
+    uploadableElement,
     magicToken,
     allowedFileTypes,
     uploadAgreement,
     handleFormSubmitted,
 }: {
-    requiredItem: RequiredItemFieldsFragment;
+    uploadableElement: UploadableItemFieldsFragment;
     magicToken: string;
     allowedFileTypes: string[];
     uploadAgreement?: string;
@@ -37,12 +37,12 @@ export default function UploadFileForm({
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
-    const [submitContentItem] = useSubmitContentItemMutation();
+    const [submitUploadableElement] = useSubmitUploadableElementMutation();
     const uppy = useMemo(() => {
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "required-content-item-upload",
             meta: {
-                requiredContentItemId: requiredItem.id,
+                uploadableId: uploadableElement.id,
             },
             allowMultipleUploads: false,
             restrictions: {
@@ -58,7 +58,7 @@ export default function UploadFileForm({
             companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
         });
         return uppy;
-    }, [allowedFileTypes, requiredItem.id]);
+    }, [allowedFileTypes, uploadableElement.id]);
 
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;
@@ -122,18 +122,18 @@ export default function UploadFileForm({
                     }
 
                     try {
-                        const submitResult = await submitContentItem({
+                        const submitResult = await submitUploadableElement({
                             variables: {
-                                contentItemData: {
+                                elementData: {
                                     s3Url: result.successful[0].uploadURL,
                                 },
                                 magicToken,
                             },
                         });
 
-                        if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
+                        if (submitResult.errors || !submitResult.data?.submitUploadableElement?.success) {
                             throw new Error(
-                                submitResult.data?.submitContentItem?.message ??
+                                submitResult.data?.submitUploadableElement?.message ??
                                     submitResult.errors?.join("; " ?? "Unknown reason for failure.")
                             );
                         }

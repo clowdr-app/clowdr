@@ -60,14 +60,14 @@ interface MediaConvertEventBroadcastUserMetadata {
 
 interface MediaConvertEventPreviewUserMetadata {
     mode: TranscodeMode.PREVIEW;
-    contentItemId: string;
+    elementId: string;
     environment?: string;
 }
 
 interface MediaConvertEventCombineUserMetadata {
     mode: TranscodeMode.COMBINE;
     combineVideosJobId: string;
-    contentGroupId: string;
+    itemId: string;
     environment?: string;
 }
 

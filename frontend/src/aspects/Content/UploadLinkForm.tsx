@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
-import { useSubmitContentItemMutation } from "../../generated/graphql";
+import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 export default function UploadLinkForm({
@@ -24,7 +24,7 @@ export default function UploadLinkForm({
     handleFormSubmitted?: () => Promise<void>;
 }): JSX.Element {
     const toast = useToast();
-    const [submitContentItem] = useSubmitContentItemMutation();
+    const [submitUploadableElement] = useSubmitUploadableElementMutation();
     return (
         <>
             <Formik
@@ -35,9 +35,9 @@ export default function UploadLinkForm({
                 }}
                 onSubmit={async (values) => {
                     try {
-                        const submitResult = await submitContentItem({
+                        const submitResult = await submitUploadableElement({
                             variables: {
-                                contentItemData: {
+                                elementData: {
                                     text: values.text,
                                     url: values.url,
                                 },
@@ -45,9 +45,9 @@ export default function UploadLinkForm({
                             },
                         });
 
-                        if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
+                        if (submitResult.errors || !submitResult.data?.submitUploadableElement?.success) {
                             throw new Error(
-                                submitResult.data?.submitContentItem?.message ??
+                                submitResult.data?.submitUploadableElement?.message ??
                                     submitResult.errors?.join("; " ?? "Unknown reason for failure.")
                             );
                         }

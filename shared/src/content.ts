@@ -6,7 +6,7 @@ export enum ContentRole {
     Chair = "CHAIR",
 }
 
-export enum ContentType_Enum {
+export enum Content_ElementType_Enum {
     /** Abstract Markdown text. */
     Abstract = "ABSTRACT",
     /** List of content groups in the system. */
@@ -55,25 +55,25 @@ export enum ContentType_Enum {
     Zoom = "ZOOM",
 }
 
-export type ContentItemDataBlob = ContentItemVersionData[];
+export type ElementDataBlob = ElementVersionData[];
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function isContentItemDataBlob(data: any): boolean {
-    return is<ContentItemDataBlob>(data);
+export function isElementDataBlob(data: any): boolean {
+    return is<ElementDataBlob>(data);
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function assertIsContentItemDataBlob(data: any): asserts data is ContentItemDataBlob {
-    assertType<ContentItemDataBlob>(data);
+export function assertIsElementDataBlob(data: any): asserts data is ElementDataBlob {
+    assertType<ElementDataBlob>(data);
 }
 
-export interface ContentItemVersionData {
+export interface ElementVersionData {
     createdAt: number;
     createdBy: string;
-    data: ContentBlob;
+    data: ElementBlob;
 }
 
-export type ContentBlob =
+export type ElementBlob =
     | AbstractBlob
     | ContentGroupListBlob
     | TextBlob
@@ -98,101 +98,101 @@ export type ContentBlob =
     | WholeScheduleBlob
     | ZoomBlob;
 
-export interface AbstractBlob extends TextualContentBlob {
-    type: ContentType_Enum.Abstract;
+export interface AbstractBlob extends TextualElementBlob {
+    type: Content_ElementType_Enum.Abstract;
 }
 
 export interface ContentGroupListBlob extends ComponentBlob {
-    type: ContentType_Enum.ContentGroupList;
+    type: Content_ElementType_Enum.ContentGroupList;
 }
 
-export interface TextBlob extends TextualContentBlob {
-    type: ContentType_Enum.Text;
+export interface TextBlob extends TextualElementBlob {
+    type: Content_ElementType_Enum.Text;
 }
 
-export interface ImageFileBlob extends FileContentBlob {
-    type: ContentType_Enum.ImageFile;
+export interface ImageFileBlob extends FileElementBlob {
+    type: Content_ElementType_Enum.ImageFile;
 }
 
-export interface PaperFileBlob extends FileContentBlob {
-    type: ContentType_Enum.PaperFile;
+export interface PaperFileBlob extends FileElementBlob {
+    type: Content_ElementType_Enum.PaperFile;
 }
 
-export interface PosterFileBlob extends FileContentBlob {
-    type: ContentType_Enum.PosterFile;
+export interface PosterFileBlob extends FileElementBlob {
+    type: Content_ElementType_Enum.PosterFile;
 }
 
-export interface ImageUrlBlob extends UrlContentBlob {
-    type: ContentType_Enum.ImageUrl;
+export interface ImageUrlBlob extends UrlElementBlob {
+    type: Content_ElementType_Enum.ImageUrl;
 }
 
-export interface LinkBlob extends LinkContentBlob {
-    type: ContentType_Enum.Link;
+export interface LinkBlob extends LinkElementBlob {
+    type: Content_ElementType_Enum.Link;
 }
 
-export interface PaperUrlBlob extends UrlContentBlob {
-    type: ContentType_Enum.PaperUrl;
+export interface PaperUrlBlob extends UrlElementBlob {
+    type: Content_ElementType_Enum.PaperUrl;
 }
 
-export interface PosterUrlBlob extends UrlContentBlob {
-    type: ContentType_Enum.PosterUrl;
+export interface PosterUrlBlob extends UrlElementBlob {
+    type: Content_ElementType_Enum.PosterUrl;
 }
 
-export interface LinkButtonBlob extends LinkContentBlob {
-    type: ContentType_Enum.LinkButton;
+export interface LinkButtonBlob extends LinkElementBlob {
+    type: Content_ElementType_Enum.LinkButton;
 }
 
-export interface PaperLinkBlob extends LinkContentBlob {
-    type: ContentType_Enum.PaperLink;
+export interface PaperLinkBlob extends LinkElementBlob {
+    type: Content_ElementType_Enum.PaperLink;
 }
 
-export interface VideoBroadcastBlob extends VideoContentBlob {
-    type: ContentType_Enum.VideoBroadcast;
+export interface VideoBroadcastBlob extends VideoElementBlob {
+    type: Content_ElementType_Enum.VideoBroadcast;
 }
 
-export interface VideoCountdownBlob extends VideoContentBlob {
-    type: ContentType_Enum.VideoCountdown;
+export interface VideoCountdownBlob extends VideoElementBlob {
+    type: Content_ElementType_Enum.VideoCountdown;
 }
 
-export interface VideoFileBlob extends VideoContentBlob {
-    type: ContentType_Enum.VideoFile;
+export interface VideoFileBlob extends VideoElementBlob {
+    type: Content_ElementType_Enum.VideoFile;
 }
 
-export interface VideoFillerBlob extends VideoContentBlob {
-    type: ContentType_Enum.VideoFiller;
+export interface VideoFillerBlob extends VideoElementBlob {
+    type: Content_ElementType_Enum.VideoFiller;
 }
 
-export interface VideoLinkBlob extends LinkContentBlob {
-    type: ContentType_Enum.VideoLink;
+export interface VideoLinkBlob extends LinkElementBlob {
+    type: Content_ElementType_Enum.VideoLink;
 }
 
-export interface VideoPrepublishBlob extends VideoContentBlob {
-    type: ContentType_Enum.VideoPrepublish;
+export interface VideoPrepublishBlob extends VideoElementBlob {
+    type: Content_ElementType_Enum.VideoPrepublish;
 }
 
-export interface VideoSponsorsFillerBlob extends VideoContentBlob {
-    type: ContentType_Enum.VideoSponsorsFiller;
+export interface VideoSponsorsFillerBlob extends VideoElementBlob {
+    type: Content_ElementType_Enum.VideoSponsorsFiller;
 }
 
-export interface VideoTitlesBlob extends VideoContentBlob {
-    type: ContentType_Enum.VideoTitles;
+export interface VideoTitlesBlob extends VideoElementBlob {
+    type: Content_ElementType_Enum.VideoTitles;
 }
 
-export interface VideoUrlBlob extends UrlContentBlob {
-    type: ContentType_Enum.VideoUrl;
+export interface VideoUrlBlob extends UrlElementBlob {
+    type: Content_ElementType_Enum.VideoUrl;
 }
 
 export interface WholeScheduleBlob extends ComponentBlob {
-    type: ContentType_Enum.WholeSchedule;
+    type: Content_ElementType_Enum.WholeSchedule;
 }
 
-export interface ZoomBlob extends UrlContentBlob {
-    type: ContentType_Enum.Zoom;
+export interface ZoomBlob extends UrlElementBlob {
+    type: Content_ElementType_Enum.Zoom;
 }
 
 /* Meta content types */
 
-export enum ContentBaseType {
+export enum ElementBaseType {
     Component = "component",
     Text = "text",
     File = "file",
@@ -201,59 +201,59 @@ export enum ContentBaseType {
     Video = "video",
 }
 
-export const ItemBaseTypes: { [K in ContentType_Enum]: ContentBaseType } = {
-    [ContentType_Enum.Abstract]: ContentBaseType.Text,
-    [ContentType_Enum.ContentGroupList]: ContentBaseType.Component,
-    [ContentType_Enum.ImageFile]: ContentBaseType.File,
-    [ContentType_Enum.ImageUrl]: ContentBaseType.URL,
-    [ContentType_Enum.Link]: ContentBaseType.Link,
-    [ContentType_Enum.LinkButton]: ContentBaseType.Link,
-    [ContentType_Enum.PaperFile]: ContentBaseType.File,
-    [ContentType_Enum.PaperLink]: ContentBaseType.Link,
-    [ContentType_Enum.PaperUrl]: ContentBaseType.URL,
-    [ContentType_Enum.PosterFile]: ContentBaseType.File,
-    [ContentType_Enum.PosterUrl]: ContentBaseType.URL,
-    [ContentType_Enum.Text]: ContentBaseType.Text,
-    [ContentType_Enum.VideoBroadcast]: ContentBaseType.Video,
-    [ContentType_Enum.VideoCountdown]: ContentBaseType.Video,
-    [ContentType_Enum.VideoFile]: ContentBaseType.Video,
-    [ContentType_Enum.VideoFiller]: ContentBaseType.Video,
-    [ContentType_Enum.VideoLink]: ContentBaseType.Link,
-    [ContentType_Enum.VideoPrepublish]: ContentBaseType.Video,
-    [ContentType_Enum.VideoSponsorsFiller]: ContentBaseType.Video,
-    [ContentType_Enum.VideoTitles]: ContentBaseType.Video,
-    [ContentType_Enum.VideoUrl]: ContentBaseType.URL,
-    [ContentType_Enum.Zoom]: ContentBaseType.URL,
-    [ContentType_Enum.WholeSchedule]: ContentBaseType.Component,
+export const ElementBaseTypes: { [K in Content_ElementType_Enum]: ElementBaseType } = {
+    [Content_ElementType_Enum.Abstract]: ElementBaseType.Text,
+    [Content_ElementType_Enum.ContentGroupList]: ElementBaseType.Component,
+    [Content_ElementType_Enum.ImageFile]: ElementBaseType.File,
+    [Content_ElementType_Enum.ImageUrl]: ElementBaseType.URL,
+    [Content_ElementType_Enum.Link]: ElementBaseType.Link,
+    [Content_ElementType_Enum.LinkButton]: ElementBaseType.Link,
+    [Content_ElementType_Enum.PaperFile]: ElementBaseType.File,
+    [Content_ElementType_Enum.PaperLink]: ElementBaseType.Link,
+    [Content_ElementType_Enum.PaperUrl]: ElementBaseType.URL,
+    [Content_ElementType_Enum.PosterFile]: ElementBaseType.File,
+    [Content_ElementType_Enum.PosterUrl]: ElementBaseType.URL,
+    [Content_ElementType_Enum.Text]: ElementBaseType.Text,
+    [Content_ElementType_Enum.VideoBroadcast]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoCountdown]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoFile]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoFiller]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoLink]: ElementBaseType.Link,
+    [Content_ElementType_Enum.VideoPrepublish]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoSponsorsFiller]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoTitles]: ElementBaseType.Video,
+    [Content_ElementType_Enum.VideoUrl]: ElementBaseType.URL,
+    [Content_ElementType_Enum.Zoom]: ElementBaseType.URL,
+    [Content_ElementType_Enum.WholeSchedule]: ElementBaseType.Component,
 };
 
-export interface ComponentBlob extends BaseContentBlob {
-    baseType: ContentBaseType.Component;
+export interface ComponentBlob extends BaseElementBlob {
+    baseType: ElementBaseType.Component;
 }
 
-export interface TextualContentBlob extends BaseContentBlob {
-    baseType: ContentBaseType.Text;
+export interface TextualElementBlob extends BaseElementBlob {
+    baseType: ElementBaseType.Text;
     text: string;
 }
 
-export interface FileContentBlob extends BaseContentBlob {
-    baseType: ContentBaseType.File;
+export interface FileElementBlob extends BaseElementBlob {
+    baseType: ElementBaseType.File;
     s3Url: string;
 }
 
-export interface UrlContentBlob extends BaseContentBlob {
-    baseType: ContentBaseType.URL;
+export interface UrlElementBlob extends BaseElementBlob {
+    baseType: ElementBaseType.URL;
     url: string;
 }
 
-export interface LinkContentBlob extends BaseContentBlob {
-    baseType: ContentBaseType.Link;
+export interface LinkElementBlob extends BaseElementBlob {
+    baseType: ElementBaseType.Link;
     text: string;
     url: string;
 }
 
-export interface VideoContentBlob extends BaseContentBlob {
-    baseType: ContentBaseType.Video;
+export interface VideoElementBlob extends BaseElementBlob {
+    baseType: ElementBaseType.Video;
     s3Url: string;
     sourceHasEmbeddedSubtitles?: boolean;
     transcode?: TranscodeDetails;
@@ -292,6 +292,6 @@ export interface VimeoPublishDetails {
     videoUri: string;
 }
 
-interface BaseContentBlob {
+interface BaseElementBlob {
     type: string;
 }

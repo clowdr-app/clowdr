@@ -32,7 +32,7 @@ interface Props {
 
 gql`
     query SelectInvitationForAccept($inviteCode: uuid!) {
-        Invitation(where: { inviteCode: { _eq: $inviteCode } }) {
+        registrant_Invitation(where: { inviteCode: { _eq: $inviteCode } }) {
             id
             invitedEmailAddress
         }
@@ -93,17 +93,17 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
 
     const history = useHistory();
     const errorMsg = data?.invitationConfirmCurrent?.ok ?? error?.message ?? "An unknown error";
-    const duplicateAttendeeError =
+    const duplicateRegistrantError =
         errorMsg ===
         // eslint-disable-next-line quotes
-        'Uniqueness violation. duplicate key value violates unique constraint "Attendee_conferenceId_userId_key"';
+        'Uniqueness violation. duplicate key value violates unique constraint "Registrant_conferenceId_userId_key"';
 
     useEffect(() => {
-        if (errorMsg === "true" || errorMsg.includes("same user") || duplicateAttendeeError) {
+        if (errorMsg === "true" || errorMsg.includes("same user") || duplicateRegistrantError) {
             assert(data?.invitationConfirmCurrent?.confSlug);
             history.push(`/conference/${data?.invitationConfirmCurrent?.confSlug}`);
         }
-    }, [data?.invitationConfirmCurrent?.confSlug, duplicateAttendeeError, errorMsg, history]);
+    }, [data?.invitationConfirmCurrent?.confSlug, duplicateRegistrantError, errorMsg, history]);
 
     return (
         <>
@@ -122,7 +122,7 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
             ) : undefined}
             {loading && !error ? (
                 <Spinner />
-            ) : errorMsg !== "true" && !errorMsg.includes("same user") && !duplicateAttendeeError ? (
+            ) : errorMsg !== "true" && !errorMsg.includes("same user") && !duplicateRegistrantError ? (
                 <Alert
                     status="error"
                     variant="subtle"
@@ -276,14 +276,18 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                         size="lg"
                         isLoading={inviteLoading}
                         emailHint={
-                            inviteData?.Invitation.length ? inviteData.Invitation[0].invitedEmailAddress : undefined
+                            inviteData?.registrant_Invitation.length
+                                ? inviteData.registrant_Invitation[0].invitedEmailAddress
+                                : undefined
                         }
                     />
                     <LoginButton
                         size="lg"
                         isLoading={inviteLoading}
                         emailHint={
-                            inviteData?.Invitation.length ? inviteData.Invitation[0].invitedEmailAddress : undefined
+                            inviteData?.registrant_Invitation.length
+                                ? inviteData.registrant_Invitation[0].invitedEmailAddress
+                                : undefined
                         }
                     />
                 </HStack>
@@ -354,7 +358,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
 //             );
 //         } else if (!data.Invitation.length) {
 //             setCachedInviteCode(null);
-//             if (user.attendees.length > 0) {
+//             if (user.registrants.length > 0) {
 //                 toast({
 //                     description:
 //                         "Invitation code not found - did you already use it? You might see your conference listed below.",

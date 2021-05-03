@@ -10,7 +10,7 @@ import { EventVonageSessionData, Payload } from "../types/hasura/event";
 async function removeInvalidStreams(eventId: string, vonageSessionId: string): Promise<string[]> {
     gql`
         mutation EventVonageSession_RemoveInvalidStreams($validStreamIds: [String!]!, $eventId: uuid) {
-            delete_EventParticipantStream(
+            delete_video_EventParticipantStream(
                 where: { vonageStreamId: { _nin: $validStreamIds }, eventId: { _eq: $eventId } }
             ) {
                 affected_rows

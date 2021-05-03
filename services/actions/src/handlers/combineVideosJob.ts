@@ -11,9 +11,9 @@ import {
 } from "@aws-sdk/client-mediaconvert";
 import {
     AWSJobStatus,
-    ContentBaseType,
-    ContentItemDataBlob,
-    ContentType_Enum,
+    Content_ElementType_Enum,
+    ElementBaseType,
+    ElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
 import assert from "assert";
@@ -22,12 +22,12 @@ import { assertType } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
 import {
     CombineVideosJob_CompleteJobDocument,
-    CombineVideosJob_CreateContentItemDocument,
+    CombineVideosJob_CreateElementDocument,
     CombineVideosJob_FailJobDocument,
-    CombineVideosJob_GetContentItemsDocument,
+    CombineVideosJob_GetElementsDocument,
     CombineVideosJob_StartJobDocument,
-    JobStatus_Enum,
     MediaConvert_GetCombineVideosJobDocument,
+    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { MediaConvert } from "../lib/aws/awsClient";
@@ -36,11 +36,11 @@ import { CombineVideosJobData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`
-    query CombineVideosJob_GetContentItems($conferenceId: uuid!, $contentItemIds: [uuid!]!) {
-        ContentItem(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $contentItemIds } }) {
+    query CombineVideosJob_GetElements($conferenceId: uuid!, $elementIds: [uuid!]!) {
+        content_Element(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $elementIds } }) {
             id
             data
-            contentGroupId
+            itemId
         }
     }
 `;
@@ -49,37 +49,37 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
     assert(payload.event.data.new, "Payload must contain new row data");
     const newRow = payload.event.data.new;
 
-    if (newRow.jobStatusName !== JobStatus_Enum.New) {
+    if (newRow.jobStatusName !== Video_JobStatus_Enum.New) {
         return;
     }
 
     try {
         const result = await apolloClient.query({
-            query: CombineVideosJob_GetContentItemsDocument,
+            query: CombineVideosJob_GetElementsDocument,
             variables: {
                 conferenceId: newRow.conferenceId,
-                contentItemIds: newRow.data.inputContentItems.map((item) => item.contentItemId),
+                elementIds: newRow.data.inputElements.map((item) => item.elementId),
             },
         });
 
-        const contentGroupIds = R.uniq(result.data.ContentItem.map((item) => item.contentGroupId));
+        const itemIds = R.uniq(result.data.content_Element.map((item) => item.itemId));
 
-        if (contentGroupIds.length > 1 || contentGroupIds.length === 0) {
-            console.error("Can only combine content items from exactly one content group", newRow.id, contentGroupIds);
+        if (itemIds.length > 1 || itemIds.length === 0) {
+            console.error("Can only combine content items from exactly one content group", newRow.id, itemIds);
             throw new Error("Can only combine content items from exactly one content group");
         }
 
         const inputs = R.sortBy(
-            (x) => newRow.data.inputContentItems.findIndex((y) => y.contentItemId === x.id),
-            result.data.ContentItem
+            (x) => newRow.data.inputElements.findIndex((y) => y.elementId === x.id),
+            result.data.content_Element
         )
             .sort((a, b) => {
-                const aIndex = newRow.data.inputContentItems.findIndex((x) => x.contentItemId === a.id);
-                const bIndex = newRow.data.inputContentItems.findIndex((x) => x.contentItemId === b.id);
+                const aIndex = newRow.data.inputElements.findIndex((x) => x.elementId === a.id);
+                const bIndex = newRow.data.inputElements.findIndex((x) => x.elementId === b.id);
                 return aIndex - bIndex;
             })
             .map((item) => {
-                const blob = assertType<ContentItemDataBlob>(item.data);
+                const blob = assertType<ElementDataBlob>(item.data);
 
                 const latestVersion = R.last(blob);
 
@@ -87,7 +87,7 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
                     throw new Error(`Missing latest version of content item ${item.id}`);
                 }
 
-                if (latestVersion.data.baseType !== ContentBaseType.Video) {
+                if (latestVersion.data.baseType !== ElementBaseType.Video) {
                     throw new Error(`Content item ${item.id} is not a video`);
                 }
 
@@ -121,7 +121,7 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
             UserMetadata: {
                 mode: TranscodeMode.COMBINE,
                 combineVideosJobId: newRow.id,
-                contentGroupId: contentGroupIds[0],
+                itemId: itemIds[0],
                 environment: process.env.AWS_PREFIX ?? "unknown",
             },
             Settings: {
@@ -246,19 +246,14 @@ gql`
         }
     }
 
-    mutation CombineVideosJob_CreateContentItem(
-        $data: jsonb!
-        $name: String!
-        $contentGroupId: uuid!
-        $conferenceId: uuid!
-    ) {
-        insert_ContentItem_one(
+    mutation CombineVideosJob_CreateElement($data: jsonb!, $name: String!, $itemId: uuid!, $conferenceId: uuid!) {
+        insert_content_Element_one(
             object: {
                 data: $data
                 isHidden: true
                 name: $name
-                contentTypeName: VIDEO_FILE
-                contentGroupId: $contentGroupId
+                typeName: VIDEO_FILE
+                itemId: $itemId
                 conferenceId: $conferenceId
             }
         ) {
@@ -271,7 +266,7 @@ export async function completeCombineVideosJob(
     combineVideosJobId: string,
     transcodeS3Url: string,
     subtitleS3Url: string,
-    contentGroupId: string
+    itemId: string
 ): Promise<void> {
     console.log("Recording CombineVideosJob as completed", combineVideosJobId);
 
@@ -293,12 +288,12 @@ export async function completeCombineVideosJob(
 
         const now = Date.now();
 
-        const data: ContentItemDataBlob = [
+        const data: ElementDataBlob = [
             {
                 createdAt: now,
                 createdBy: "system",
                 data: {
-                    baseType: ContentBaseType.Video,
+                    baseType: ElementBaseType.Video,
                     s3Url: transcodeS3Url,
                     transcode: {
                         jobId: combineVideosJobId,
@@ -313,7 +308,7 @@ export async function completeCombineVideosJob(
                             message: "Generate while combining videos.",
                         },
                     },
-                    type: ContentType_Enum.VideoFile,
+                    type: Content_ElementType_Enum.VideoFile,
                     broadcastTranscode: {
                         updatedTimestamp: now,
                         s3Url: transcodeS3Url,
@@ -325,10 +320,10 @@ export async function completeCombineVideosJob(
         await callWithRetry(
             async () =>
                 await apolloClient.mutate({
-                    mutation: CombineVideosJob_CreateContentItemDocument,
+                    mutation: CombineVideosJob_CreateElementDocument,
                     variables: {
                         conferenceId: combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk?.conferenceId,
-                        contentGroupId,
+                        itemId,
                         data,
                         name:
                             combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk?.outputName ??

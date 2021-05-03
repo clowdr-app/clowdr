@@ -17,11 +17,13 @@ export async function subscriptionChanged(req: Request, res: Response, _next?: N
         assert(sub, "Missing data");
 
         if (data.event.op === "INSERT" || data.event.op === "MANUAL") {
-            await insertSubscription(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("chat.subscribed", sub.chatId);
+            await insertSubscription(sub.chatId, sub.registrantId);
+            emitter.in(generateChatSubscriptionsChangedRoomName(sub.registrantId)).emit("chat.subscribed", sub.chatId);
         } else if (data.event.op === "DELETE") {
-            await deleteSubscription(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatSubscriptionsChangedRoomName(sub.attendeeId)).emit("chat.unsubscribed", sub.chatId);
+            await deleteSubscription(sub.chatId, sub.registrantId);
+            emitter
+                .in(generateChatSubscriptionsChangedRoomName(sub.registrantId))
+                .emit("chat.unsubscribed", sub.chatId);
         }
 
         res.status(200).send("OK");
@@ -42,11 +44,11 @@ export async function pinChanged(req: Request, res: Response, _next?: NextFuncti
         assert(sub, "Missing data");
 
         if (data.event.op === "INSERT" || data.event.op === "MANUAL") {
-            await insertPin(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("chat.pinned", sub.chatId);
+            await insertPin(sub.chatId, sub.registrantId);
+            emitter.in(generateChatPinsChangedRoomName(sub.registrantId)).emit("chat.pinned", sub.chatId);
         } else if (data.event.op === "DELETE") {
-            await deletePin(sub.chatId, sub.attendeeId);
-            emitter.in(generateChatPinsChangedRoomName(sub.attendeeId)).emit("chat.unpinned", sub.chatId);
+            await deletePin(sub.chatId, sub.registrantId);
+            emitter.in(generateChatPinsChangedRoomName(sub.registrantId)).emit("chat.unpinned", sub.chatId);
         }
 
         res.status(200).send("OK");

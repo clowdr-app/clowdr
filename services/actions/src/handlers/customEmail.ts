@@ -3,7 +3,7 @@ import assert from "assert";
 import { htmlToText } from "html-to-text";
 import * as R from "ramda";
 import {
-    CustomEmail_SelectAttendeesDocument,
+    CustomEmail_SelectRegistrantsDocument,
     Email_Insert_Input,
     MarkAndSelectUnprocessedCustomEmailJobsDocument,
     UnmarkCustomEmailJobsDocument,
@@ -13,8 +13,8 @@ import { callWithRetry } from "../utils";
 import { insertEmails } from "./email";
 
 gql`
-    query CustomEmail_SelectAttendees($conferenceId: uuid!, $attendeeIds: [uuid!]!) {
-        Attendee(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $attendeeIds } }) {
+    query CustomEmail_SelectRegistrants($conferenceId: uuid!, $registrantIds: [uuid!]!) {
+        registrant_Registrant(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $registrantIds } }) {
             invitation {
                 invitedEmailAddress
                 id
@@ -38,32 +38,32 @@ gql`
 `;
 
 async function sendCustomEmails(
-    attendeeIds: string[],
+    registrantIds: string[],
     conferenceId: string,
     htmlBody: string,
     subject: string
 ): Promise<void> {
-    const attendees = await apolloClient.query({
-        query: CustomEmail_SelectAttendeesDocument,
+    const registrants = await apolloClient.query({
+        query: CustomEmail_SelectRegistrantsDocument,
         variables: {
-            attendeeIds: R.uniq(attendeeIds),
+            registrantIds: R.uniq(registrantIds),
             conferenceId,
         },
     });
 
-    if (attendees.error) {
-        throw new Error(attendees.error.message);
-    } else if (attendees.errors && attendees.errors.length > 0) {
-        throw new Error(attendees.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
+    if (registrants.error) {
+        throw new Error(registrants.error.message);
+    } else if (registrants.errors && registrants.errors.length > 0) {
+        throw new Error(registrants.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
     }
 
     const emailsToSend: Array<Email_Insert_Input> = [];
 
-    for (const attendee of attendees.data.Attendee) {
-        const email = attendee.user?.email ?? attendee.invitation?.invitedEmailAddress;
+    for (const registrant of registrants.data.registrant_Registrant) {
+        const email = registrant.user?.email ?? registrant.invitation?.invitedEmailAddress;
 
         if (!email) {
-            console.warn("User has no known email address", attendee.id);
+            console.warn("User has no known email address", registrant.id);
             continue;
         }
 
@@ -72,7 +72,7 @@ async function sendCustomEmails(
             htmlContents: htmlBody,
             plainTextContents: htmlToText(htmlBody),
             reason: "custom-email",
-            userId: attendee?.user?.id ?? null,
+            userId: registrant?.user?.id ?? null,
             subject,
         });
     }
@@ -85,7 +85,7 @@ gql`
         update_job_queues_CustomEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
             returning {
                 id
-                attendeeIds
+                registrantIds
                 conferenceId
                 subject
                 htmlBody
@@ -113,7 +113,7 @@ export async function processCustomEmailsJobQueue(): Promise<void> {
     const failedJobIds: string[] = [];
     for (const job of jobs.data.update_job_queues_CustomEmailJob.returning) {
         try {
-            await sendCustomEmails(job.attendeeIds, job.conferenceId, job.htmlBody, job.subject);
+            await sendCustomEmails(job.registrantIds, job.conferenceId, job.htmlBody, job.subject);
         } catch (e) {
             console.error("Failed to process send custom email job", job.id);
             failedJobIds.push(job.id);

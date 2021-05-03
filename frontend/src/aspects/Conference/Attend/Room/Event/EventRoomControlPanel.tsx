@@ -27,14 +27,14 @@ import { LiveIndicator } from "./LiveIndicator";
 export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
     gql`
         subscription GetEventParticipantStreams($eventId: uuid!) {
-            EventParticipantStream(where: { eventId: { _eq: $eventId } }) {
+            video_EventParticipantStream(where: { eventId: { _eq: $eventId } }) {
                 ...EventParticipantStreamDetails
             }
         }
 
-        fragment EventParticipantStreamDetails on EventParticipantStream {
+        fragment EventParticipantStreamDetails on video_EventParticipantStream {
             id
-            attendee {
+            registrant {
                 id
                 displayName
             }
@@ -42,20 +42,20 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
             eventId
             vonageStreamType
             vonageStreamId
-            attendeeId
+            registrantId
         }
 
         subscription UnapprovedEventRoomJoinRequests($conferenceId: uuid!, $eventId: uuid!) {
-            EventRoomJoinRequest(
+            schedule_EventRoomJoinRequest(
                 where: { conferenceId: { _eq: $conferenceId }, eventId: { _eq: $eventId }, approved: { _eq: false } }
             ) {
                 ...EventRoomJoinRequestDetails
             }
         }
 
-        fragment EventRoomJoinRequestDetails on EventRoomJoinRequest {
+        fragment EventRoomJoinRequestDetails on schedule_EventRoomJoinRequest {
             id
-            attendeeId
+            registrantId
         }
     `;
 
@@ -103,7 +103,7 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                                 {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
                                 <BroadcastControlPanel
                                     live={live}
-                                    streams={streamsData?.EventParticipantStream ?? null}
+                                    streams={streamsData?.video_EventParticipantStream ?? null}
                                     eventVonageSessionId={event.eventVonageSession?.id ?? null}
                                 />
                             </PopoverBody>
@@ -112,7 +112,7 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                 </Portal>
             </Popover>
         ),
-        [event.eventVonageSession?.id, live, streamsData?.EventParticipantStream, streamsError, streamsLoading]
+        [event.eventVonageSession?.id, live, streamsData?.video_EventParticipantStream, streamsError, streamsLoading]
     );
 
     const insertSpacer = useBreakpointValue([false, false, true]);

@@ -25,7 +25,7 @@ import {
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import { ConferenceInfoFragment, useConference } from "../Conference/useConference";
-import useCurrentAttendee from "../Conference/useCurrentAttendee";
+import useCurrentRegistrant from "../Conference/useCurrentRegistrant";
 import { useRealTime } from "../Generic/useRealTime";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useTitle } from "../Utils/useTitle";
@@ -35,20 +35,20 @@ gql`
         id
         conferenceId
         endAt
-        maxAttendeesPerRoom
+        maxRegistrantsPerRoom
         name
-        queueEntries(distinct_on: [attendeeId], order_by: { attendeeId: asc, id: desc }) {
+        queueEntries(distinct_on: [registrantId], order_by: { registrantId: asc, id: desc }) {
             ...PrefetchShuffleQueueEntryData
         }
         roomDurationMinutes
         startAt
-        targetAttendeesPerRoom
+        targetRegistrantsPerRoom
         waitRoomMaxDurationSeconds
     }
 
     fragment PrefetchShuffleQueueEntryData on room_ShuffleQueueEntry {
         id
-        attendeeId
+        registrantId
         created_at
         updated_at
         shuffleRoom {
@@ -83,14 +83,14 @@ gql`
         }
     }
 
-    mutation JoinShuffleQueue($shufflePeriodId: uuid!, $attendeeId: uuid!) {
-        insert_room_ShuffleQueueEntry_one(object: { attendeeId: $attendeeId, shufflePeriodId: $shufflePeriodId }) {
+    mutation JoinShuffleQueue($shufflePeriodId: uuid!, $registrantId: uuid!) {
+        insert_room_ShuffleQueueEntry_one(object: { registrantId: $registrantId, shufflePeriodId: $shufflePeriodId }) {
             ...PrefetchShuffleQueueEntryData
         }
     }
 
     query GetShuffleRoomsParticipantsCount($conferenceId: uuid!) {
-        RoomParticipant_aggregate(
+        room_Participant_aggregate(
             where: { conferenceId: { _eq: $conferenceId }, room: { shuffleRooms: { isEnded: { _eq: false } } } }
         ) {
             aggregate {
@@ -259,7 +259,7 @@ function QueuedShufflePeriodBox({
 
 function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JSX.Element {
     const now = useRealTime(1000);
-    const currentAttendee = useCurrentAttendee();
+    const currentRegistrant = useCurrentRegistrant();
     const conference = useConference();
 
     const [joinShuffleQueueMutation, { loading: isJoiningMut, error: joinError }] = useJoinShuffleQueueMutation();
@@ -269,8 +269,8 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
     const [isWaitingForAllocatedRoom, setIsWaitingForAllocatedRoom] = useState<boolean>(false);
 
     const ownQueueEntries = useMemo(
-        () => period.queueEntries.filter((x) => x.attendeeId === currentAttendee.id).sort((x, y) => x.id - y.id),
-        [currentAttendee.id, period.queueEntries]
+        () => period.queueEntries.filter((x) => x.registrantId === currentRegistrant.id).sort((x, y) => x.id - y.id),
+        [currentRegistrant.id, period.queueEntries]
     );
 
     const [lastEntry, setLastEntry] = useState<PrefetchShuffleQueueEntryDataFragment | null>(null);
@@ -282,7 +282,7 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
         setIsJoiningOverride(true);
         const r = await joinShuffleQueueMutation({
             variables: {
-                attendeeId: currentAttendee.id,
+                registrantId: currentRegistrant.id,
                 shufflePeriodId: period.id,
             },
         });
@@ -293,7 +293,7 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
                 setIsJoiningOverride(false);
             }, 500);
         }, 500);
-    }, [currentAttendee.id, joinShuffleQueueMutation, period.id]);
+    }, [currentRegistrant.id, joinShuffleQueueMutation, period.id]);
 
     const numberOfQueued = useMemo(() => {
         return period.queueEntries.reduce((acc, x) => (!x.shuffleRoom ? acc + 1 : acc), 0);

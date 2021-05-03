@@ -1,7 +1,7 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import { Permission_Enum } from "../../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -36,7 +36,10 @@ function InnerManageConferenceImportPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageContent, Permission_Enum.ConferenceManageSchedule]}
+            permissions={[
+                Permissions_Permission_Enum.ConferenceManageContent,
+                Permissions_Permission_Enum.ConferenceManageSchedule,
+            ]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -58,7 +61,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     name="Content"
                     icon="align-left"
                     description="Import content such as papers, posters and authors."
-                    permissions={[Permission_Enum.ConferenceManageContent]}
+                    permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
                     colorScheme="green"
                 />
                 <RestrictedDashboardButton
@@ -66,15 +69,15 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     name="Schedule"
                     icon="calendar"
                     description="Import your schedule including rooms and events."
-                    permissions={[Permission_Enum.ConferenceManageSchedule]}
+                    permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
                     colorScheme="green"
                 />
                 <RestrictedDashboardButton
                     to="import/registrants"
                     name="Registrants"
                     icon="users"
-                    description="Import your attendees, organisers and other users."
-                    permissions={[Permission_Enum.ConferenceManageAttendees]}
+                    description="Import your registrants, organisers and other users."
+                    permissions={[Permissions_Permission_Enum.ConferenceManageAttendees]}
                     colorScheme="red"
                 />
             </Flex>

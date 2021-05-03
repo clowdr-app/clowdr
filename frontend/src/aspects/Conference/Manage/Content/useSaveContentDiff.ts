@@ -3,36 +3,36 @@ import assert from "assert";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    ContentGroupHallway_Insert_Input,
-    ContentGroupPerson_Insert_Input,
-    ContentGroup_Insert_Input,
-    ContentItem_Insert_Input,
-    ContentPerson_Insert_Input,
-    Hallway_Insert_Input,
-    OriginatingData_Insert_Input,
-    RequiredContentItem_Insert_Input,
-    Tag_Insert_Input,
-    Uploader_Constraint,
-    Uploader_Insert_Input,
-    Uploader_Update_Column,
-    useDeleteContentPeopleMutation,
-    useDeleteHallwaysMutation,
+    Collection_Exhibition_Insert_Input,
+    Collection_ProgramPerson_Insert_Input,
+    Collection_Tag_Insert_Input,
+    Conference_OriginatingData_Insert_Input,
+    Content_Element_Insert_Input,
+    Content_ItemExhibition_Insert_Input,
+    Content_ItemProgramPerson_Insert_Input,
+    Content_Item_Insert_Input,
+    Content_UploadableElement_Insert_Input,
+    Content_Uploader_Constraint,
+    Content_Uploader_Insert_Input,
+    Content_Uploader_Update_Column,
+    useDeleteExhibitionsMutation,
     useDeleteOriginatingDatasMutation,
+    useDeleteProgramPeopleMutation,
     useDeleteTagsMutation,
-    useInsertContentPeopleMutation,
-    useInsertDeleteContentGroupsMutation,
-    useInsertHallwaysMutation,
+    useInsertDeleteItemsMutation,
+    useInsertExhibitionsMutation,
     useInsertOriginatingDatasMutation,
+    useInsertProgramPeopleMutation,
     useInsertTagsMutation,
     useSelectAllContentQuery,
-    useUpdateContentGroupMutation,
-    useUpdateContentItemMutation,
-    useUpdateGroupHallwayMutation,
+    useUpdateElementMutation,
+    useUpdateExhibitionMutation,
+    useUpdateGroupExhibitionMutation,
     useUpdateGroupPersonMutation,
-    useUpdateHallwayMutation,
+    useUpdateItemMutation,
     useUpdatePersonMutation,
-    useUpdateRequiredContentItemMutation,
     useUpdateTagMutation,
+    useUpdateUploadableElementMutation,
     useUpdateUploaderMutation,
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
@@ -40,33 +40,33 @@ import { useConference } from "../../useConference";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
 import { convertContentToDescriptors } from "./Functions";
 import type {
-    ContentGroupDescriptor,
-    ContentGroupHallwayDescriptor,
-    ContentGroupPersonDescriptor,
-    ContentItemDescriptor,
-    ContentPersonDescriptor,
-    HallwayDescriptor,
-    RequiredContentItemDescriptor,
+    ElementDescriptor,
+    ExhibitionDescriptor,
+    ItemDescriptor,
+    ItemExhibitionDescriptor,
+    ItemPersonDescriptor,
+    ProgramPersonDescriptor,
+    UploadableElementDescriptor,
     UploaderDescriptor,
 } from "./Types";
 
 gql`
-    fragment UploaderInfo on Uploader {
+    fragment UploaderInfo on content_Uploader {
         id
         conferenceId
         email
         emailsSentCount
         name
-        requiredContentItemId
+        uploadableElementId
     }
 
-    fragment RequiredContentItemInfo on RequiredContentItem {
+    fragment UploadableElementInfo on content_UploadableElement {
         id
         name
         isHidden
-        contentTypeName
+        typeName
         conferenceId
-        contentGroupId
+        itemId
         uploadsRemaining
         uploaders {
             ...UploaderInfo
@@ -74,80 +74,80 @@ gql`
         originatingDataId
     }
 
-    fragment ContentItemInfo on ContentItem {
+    fragment ElementInfo on content_Element {
         conferenceId
-        contentGroupId
-        contentTypeName
+        itemId
+        typeName
         data
         id
         isHidden
         layoutData
         name
-        requiredContentId
+        uploadableId
         originatingDataId
     }
 
-    fragment OriginatingDataInfo on OriginatingData {
+    fragment OriginatingDataInfo on conference_OriginatingData {
         id
         conferenceId
         sourceId
         data
     }
 
-    fragment ContentPersonInfo on ContentPerson {
+    fragment ProgramPersonInfo on collection_ProgramPerson {
         id
         conferenceId
         name
         affiliation
         email
         originatingDataId
-        attendeeId
+        registrantId
     }
 
-    fragment ContentGroupTagInfo on ContentGroupTag {
+    fragment ItemTagInfo on content_ItemTag {
         id
         tagId
-        contentGroupId
+        itemId
     }
 
-    fragment ContentGroupHallwayInfo on ContentGroupHallway {
+    fragment ItemExhibitionInfo on content_ItemExhibition {
         id
-        groupId
-        hallwayId
+        itemId
+        exhibitionId
         conferenceId
         priority
         layout
     }
 
-    fragment ContentGroupPersonInfo on ContentGroupPerson {
+    fragment ItemPersonInfo on content_ItemProgramPerson {
         id
         conferenceId
-        groupId
+        itemId
         personId
         priority
         roleName
     }
 
-    fragment ContentGroupFullNestedInfo on ContentGroup {
+    fragment ItemFullNestedInfo on content_Item {
         id
         conferenceId
-        contentGroupTypeName
+        typeName
         title
         shortTitle
-        requiredContentItems {
-            ...RequiredContentItemInfo
+        uploadableElements {
+            ...UploadableElementInfo
         }
-        contentItems {
-            ...ContentItemInfo
+        elements {
+            ...ElementInfo
         }
-        contentGroupTags {
-            ...ContentGroupTagInfo
+        itemTags {
+            ...ItemTagInfo
         }
-        hallways {
-            ...ContentGroupHallwayInfo
+        itemExhibitions {
+            ...ItemExhibitionInfo
         }
-        people {
-            ...ContentGroupPersonInfo
+        itemPeople {
+            ...ItemPersonInfo
         }
         originatingDataId
         rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
@@ -155,7 +155,7 @@ gql`
         }
     }
 
-    fragment TagInfo on Tag {
+    fragment TagInfo on collection_Tag {
         id
         conferenceId
         colour
@@ -164,7 +164,7 @@ gql`
         priority
     }
 
-    fragment HallwayInfo on Hallway {
+    fragment ExhibitionInfo on collection_Exhibition {
         id
         conferenceId
         colour
@@ -173,38 +173,38 @@ gql`
     }
 
     query SelectAllContent($conferenceId: uuid!) {
-        ContentGroup(where: { conferenceId: { _eq: $conferenceId }, contentGroupTypeName: { _neq: SPONSOR } }) {
-            ...ContentGroupFullNestedInfo
+        content_Item(where: { conferenceId: { _eq: $conferenceId }, typeName: { _neq: SPONSOR } }) {
+            ...ItemFullNestedInfo
         }
-        ContentPerson(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ContentPersonInfo
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ProgramPersonInfo
         }
-        OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
+        conference_OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
             ...OriginatingDataInfo
         }
-        Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...TagInfo
         }
-        Hallway(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...HallwayInfo
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ExhibitionInfo
         }
     }
 
-    mutation InsertDeleteContentGroups($newGroups: [ContentGroup_insert_input!]!, $deleteGroupIds: [uuid!]!) {
-        insert_ContentGroup(objects: $newGroups) {
+    mutation InsertDeleteItems($newGroups: [content_Item_insert_input!]!, $deleteGroupIds: [uuid!]!) {
+        insert_content_Item(objects: $newGroups) {
             returning {
-                ...ContentGroupFullNestedInfo
+                ...ItemFullNestedInfo
             }
         }
-        delete_ContentGroup(where: { id: { _in: $deleteGroupIds } }) {
+        delete_content_Item(where: { id: { _in: $deleteGroupIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation InsertOriginatingDatas($newDatas: [OriginatingData_insert_input!]!) {
-        insert_OriginatingData(objects: $newDatas) {
+    mutation InsertOriginatingDatas($newDatas: [conference_OriginatingData_insert_input!]!) {
+        insert_conference_OriginatingData(objects: $newDatas) {
             returning {
                 ...OriginatingDataInfo
             }
@@ -212,216 +212,214 @@ gql`
     }
 
     mutation DeleteOriginatingDatas($deleteDataIds: [uuid!]!) {
-        delete_OriginatingData(where: { id: { _in: $deleteDataIds } }) {
+        delete_conference_OriginatingData(where: { id: { _in: $deleteDataIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation InsertTags($newTags: [Tag_insert_input!]!) {
-        insert_Tag(objects: $newTags) {
+    mutation InsertTags($newTags: [collection_Tag_insert_input!]!) {
+        insert_collection_Tag(objects: $newTags) {
             returning {
                 ...TagInfo
             }
         }
     }
 
-    mutation InsertHallways($newHallways: [Hallway_insert_input!]!) {
-        insert_Hallway(objects: $newHallways) {
+    mutation InsertExhibitions($newExhibitions: [collection_Exhibition_insert_input!]!) {
+        insert_collection_Exhibition(objects: $newExhibitions) {
             returning {
-                ...HallwayInfo
+                ...ExhibitionInfo
             }
         }
     }
 
     mutation DeleteTags($deleteTagIds: [uuid!]!) {
-        delete_Tag(where: { id: { _in: $deleteTagIds } }) {
+        delete_collection_Tag(where: { id: { _in: $deleteTagIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation DeleteHallways($deleteHallwayIds: [uuid!]!) {
-        delete_Hallway(where: { id: { _in: $deleteHallwayIds } }) {
+    mutation DeleteExhibitions($deleteExhibitionIds: [uuid!]!) {
+        delete_collection_Exhibition(where: { id: { _in: $deleteExhibitionIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation InsertContentPeople($newPeople: [ContentPerson_insert_input!]!) {
-        insert_ContentPerson(objects: $newPeople) {
+    mutation InsertProgramPeople($newPeople: [collection_ProgramPerson_insert_input!]!) {
+        insert_collection_ProgramPerson(objects: $newPeople) {
             returning {
-                ...ContentPersonInfo
+                ...ProgramPersonInfo
             }
         }
     }
 
-    mutation DeleteContentPeople($deletePersonIds: [uuid!]!) {
-        delete_ContentPerson(where: { id: { _in: $deletePersonIds } }) {
+    mutation DeleteProgramPeople($deletePersonIds: [uuid!]!) {
+        delete_collection_ProgramPerson(where: { id: { _in: $deletePersonIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation UpdateContentGroup(
-        $newItems: [ContentItem_insert_input!]!
-        $newRequiredItems: [RequiredContentItem_insert_input!]!
-        $newGroupTags: [ContentGroupTag_insert_input!]!
-        $newGroupHallways: [ContentGroupHallway_insert_input!]!
+    mutation UpdateItem(
+        $newItems: [content_Element_insert_input!]!
+        $newUploadableItems: [content_UploadableElement_insert_input!]!
+        $newGroupTags: [content_ItemTag_insert_input!]!
+        $newGroupExhibitions: [content_ItemExhibition_insert_input!]!
         $groupId: uuid!
-        $contentGroupTypeName: ContentGroupType_enum!
+        $typeName: content_ItemType_enum!
         $originatingDataId: uuid = null
         $shortTitle: String = null
         $title: String!
         $deleteItemIds: [uuid!]!
-        $deleteRequiredItemIds: [uuid!]!
+        $deleteUploadableItemIds: [uuid!]!
         $deleteGroupTagIds: [uuid!]!
-        $deleteGroupHallwayIds: [uuid!]!
-        $newUploaders: [Uploader_insert_input!]!
+        $deleteGroupExhibitionIds: [uuid!]!
+        $newUploaders: [content_Uploader_insert_input!]!
         $deleteUploaderIds: [uuid!]!
-        $newGroupPeople: [ContentGroupPerson_insert_input!]!
+        $newGroupPeople: [content_ItemProgramPerson_insert_input!]!
         $deleteGroupPeopleIds: [uuid!]!
     ) {
-        insert_ContentItem(objects: $newItems) {
+        insert_content_Element(objects: $newItems) {
             returning {
-                ...ContentItemInfo
+                ...ElementInfo
             }
         }
-        insert_RequiredContentItem(objects: $newRequiredItems) {
+        insert_content_UploadableElement(objects: $newUploadableItems) {
             returning {
-                ...RequiredContentItemInfo
+                ...UploadableElementInfo
             }
         }
-        insert_ContentGroupTag(objects: $newGroupTags) {
+        insert_content_ItemTag(objects: $newGroupTags) {
             returning {
-                ...ContentGroupTagInfo
+                ...ItemTagInfo
             }
         }
-        insert_ContentGroupHallway(objects: $newGroupHallways) {
+        insert_content_ItemExhibition(objects: $newGroupExhibitions) {
             returning {
-                ...ContentGroupHallwayInfo
+                ...ItemExhibitionInfo
             }
         }
-        insert_Uploader(objects: $newUploaders) {
+        insert_content_Uploader(objects: $newUploaders) {
             returning {
                 ...UploaderInfo
             }
         }
-        insert_ContentGroupPerson(objects: $newGroupPeople) {
+        insert_content_ItemProgramPerson(objects: $newGroupPeople) {
             returning {
-                ...ContentGroupPersonInfo
+                ...ItemPersonInfo
             }
         }
-        update_ContentGroup_by_pk(
+        update_content_Item_by_pk(
             pk_columns: { id: $groupId }
-            _set: {
-                contentGroupTypeName: $contentGroupTypeName
-                originatingDataId: $originatingDataId
-                shortTitle: $shortTitle
-                title: $title
-            }
+            _set: { typeName: $typeName, originatingDataId: $originatingDataId, shortTitle: $shortTitle, title: $title }
         ) {
-            ...ContentGroupFullNestedInfo
+            ...ItemFullNestedInfo
         }
-        delete_ContentItem(where: { id: { _in: $deleteItemIds } }) {
+        delete_content_Element(where: { id: { _in: $deleteItemIds } }) {
             returning {
                 id
             }
         }
-        delete_RequiredContentItem(where: { id: { _in: $deleteRequiredItemIds } }) {
+        delete_content_UploadableElement(where: { id: { _in: $deleteUploadableItemIds } }) {
             returning {
                 id
             }
         }
-        delete_ContentGroupTag(where: { contentGroupId: { _eq: $groupId }, tagId: { _in: $deleteGroupTagIds } }) {
+        delete_content_ItemTag(where: { itemId: { _eq: $groupId }, tagId: { _in: $deleteGroupTagIds } }) {
             returning {
                 id
             }
         }
-        delete_ContentGroupHallway(where: { id: { _in: $deleteGroupHallwayIds } }) {
+        delete_content_ItemExhibition(where: { id: { _in: $deleteGroupExhibitionIds } }) {
             returning {
                 id
             }
         }
-        delete_Uploader(where: { id: { _in: $deleteUploaderIds } }) {
+        delete_content_Uploader(where: { id: { _in: $deleteUploaderIds } }) {
             returning {
                 id
             }
         }
-        delete_ContentGroupPerson(where: { id: { _in: $deleteGroupPeopleIds } }) {
+        delete_content_ItemProgramPerson(where: { id: { _in: $deleteGroupPeopleIds } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation UpdateContentItem(
+    mutation UpdateElement(
         $id: uuid!
-        $contentTypeName: ContentType_enum!
+        $typeName: content_ElementType_enum!
         $layoutData: jsonb = null
         $name: String!
         $data: jsonb!
         $isHidden: Boolean!
         $originatingDataId: uuid = null
-        $requiredContentId: uuid = null
+        $uploadableId: uuid = null
     ) {
-        update_ContentItem_by_pk(
+        update_content_Element_by_pk(
             pk_columns: { id: $id }
             _set: {
-                contentTypeName: $contentTypeName
+                typeName: $typeName
                 layoutData: $layoutData
                 name: $name
                 data: $data
                 isHidden: $isHidden
                 originatingDataId: $originatingDataId
-                requiredContentId: $requiredContentId
+                uploadableId: $uploadableId
             }
         ) {
-            ...ContentItemInfo
+            ...ElementInfo
         }
     }
 
-    mutation UpdateRequiredContentItem(
+    mutation UpdateUploadableElement(
         $id: uuid!
-        $contentTypeName: ContentType_enum!
+        $typeName: content_ElementType_enum!
         $name: String!
         $isHidden: Boolean!
         $uploadsRemaining: Int = null
         $originatingDataId: uuid = null
     ) {
-        update_RequiredContentItem_by_pk(
+        update_content_UploadableElement_by_pk(
             pk_columns: { id: $id }
             _set: {
-                contentTypeName: $contentTypeName
+                typeName: $typeName
                 name: $name
                 isHidden: $isHidden
                 originatingDataId: $originatingDataId
                 uploadsRemaining: $uploadsRemaining
             }
         ) {
-            ...RequiredContentItemInfo
+            ...UploadableElementInfo
         }
     }
 
     mutation UpdateUploader($id: uuid!, $email: String!, $name: String!) {
-        update_Uploader_by_pk(pk_columns: { id: $id }, _set: { email: $email, name: $name }) {
+        update_content_Uploader_by_pk(pk_columns: { id: $id }, _set: { email: $email, name: $name }) {
             ...UploaderInfo
         }
     }
 
     mutation UpdateGroupPerson($id: uuid!, $roleName: String!, $priority: Int = null) {
-        update_ContentGroupPerson_by_pk(pk_columns: { id: $id }, _set: { roleName: $roleName, priority: $priority }) {
-            ...ContentGroupPersonInfo
+        update_content_ItemProgramPerson_by_pk(
+            pk_columns: { id: $id }
+            _set: { roleName: $roleName, priority: $priority }
+        ) {
+            ...ItemPersonInfo
         }
     }
 
-    mutation UpdateGroupHallway($id: uuid!, $priority: Int = null, $layout: jsonb = null) {
-        update_ContentGroupHallway_by_pk(pk_columns: { id: $id }, _set: { layout: $layout, priority: $priority }) {
-            ...ContentGroupHallwayInfo
+    mutation UpdateGroupExhibition($id: uuid!, $priority: Int = null, $layout: jsonb = null) {
+        update_content_ItemExhibition_by_pk(pk_columns: { id: $id }, _set: { layout: $layout, priority: $priority }) {
+            ...ItemExhibitionInfo
         }
     }
 
@@ -431,19 +429,19 @@ gql`
         $affiliation: String = null
         $email: String = null
         $originatingDataId: uuid = null
-        $attendeeId: uuid = null
+        $registrantId: uuid = null
     ) {
-        update_ContentPerson_by_pk(
+        update_collection_ProgramPerson_by_pk(
             pk_columns: { id: $id }
             _set: {
                 name: $name
                 affiliation: $affiliation
                 email: $email
                 originatingDataId: $originatingDataId
-                attendeeId: $attendeeId
+                registrantId: $registrantId
             }
         ) {
-            ...ContentPersonInfo
+            ...ProgramPersonInfo
         }
     }
 
@@ -454,7 +452,7 @@ gql`
         $originatingDataId: uuid = null
         $priority: Int! = 10
     ) {
-        update_Tag_by_pk(
+        update_collection_Tag_by_pk(
             pk_columns: { id: $id }
             _set: { name: $name, colour: $colour, originatingDataId: $originatingDataId, priority: $priority }
         ) {
@@ -462,19 +460,22 @@ gql`
         }
     }
 
-    mutation UpdateHallway($id: uuid!, $name: String!, $colour: String!, $priority: Int!) {
-        update_Hallway_by_pk(pk_columns: { id: $id }, _set: { name: $name, colour: $colour, priority: $priority }) {
-            ...HallwayInfo
+    mutation UpdateExhibition($id: uuid!, $name: String!, $colour: String!, $priority: Int!) {
+        update_collection_Exhibition_by_pk(
+            pk_columns: { id: $id }
+            _set: { name: $name, colour: $colour, priority: $priority }
+        ) {
+            ...ExhibitionInfo
         }
     }
 `;
 
 export type AllContentStateT =
     | {
-          contentGroups: Map<string, ContentGroupDescriptor>;
-          people: Map<string, ContentPersonDescriptor>;
+          items: Map<string, ItemDescriptor>;
+          people: Map<string, ProgramPersonDescriptor>;
           tags: Map<string, TagDescriptor>;
-          hallways: Map<string, HallwayDescriptor>;
+          exhibitions: Map<string, ExhibitionDescriptor>;
           originatingDatas: Map<string, OriginatingDataDescriptor>;
       }
     | undefined;
@@ -483,80 +484,80 @@ export function useSaveContentDiff():
     | {
           loadingContent: true;
           errorContent: ApolloError | undefined;
-          originalContentGroups: undefined;
+          originalItems: undefined;
           originalPeople: undefined;
           originalTags: undefined;
           originalOriginatingDatas: undefined;
-          originalHallways: undefined;
+          originalExhibitions: undefined;
       }
     | {
           loadingContent: false;
           errorContent: ApolloError;
-          originalContentGroups: undefined;
+          originalItems: undefined;
           originalPeople: undefined;
           originalTags: undefined;
           originalOriginatingDatas: undefined;
-          originalHallways: undefined;
+          originalExhibitions: undefined;
       }
     | {
           loadingContent: false;
           errorContent: undefined;
-          originalContentGroups: undefined;
+          originalItems: undefined;
           originalPeople: undefined;
           originalTags: undefined;
           originalOriginatingDatas: undefined;
-          originalHallways: undefined;
+          originalExhibitions: undefined;
       }
     | {
           loadingContent: boolean;
           errorContent: undefined;
-          originalContentGroups: Map<string, ContentGroupDescriptor>;
-          originalPeople: Map<string, ContentPersonDescriptor>;
+          originalItems: Map<string, ItemDescriptor>;
+          originalPeople: Map<string, ProgramPersonDescriptor>;
           originalTags: Map<string, TagDescriptor>;
           originalOriginatingDatas: Map<string, OriginatingDataDescriptor>;
-          originalHallways: Map<string, HallwayDescriptor>;
+          originalExhibitions: Map<string, ExhibitionDescriptor>;
           saveContentDiff: (
               dirtyKeys: {
                   tagKeys: Set<string>;
                   peopleKeys: Set<string>;
                   originatingDataKeys: Set<string>;
                   groupKeys: Set<string>;
-                  hallwayKeys: Set<string>;
+                  exhibitionKeys: Set<string>;
               },
               tags: Map<string, TagDescriptor>,
-              people: Map<string, ContentPersonDescriptor>,
+              people: Map<string, ProgramPersonDescriptor>,
               originatingDatas: Map<string, OriginatingDataDescriptor>,
-              groups: Map<string, ContentGroupDescriptor>,
-              hallways: Map<string, HallwayDescriptor>
+              groups: Map<string, ItemDescriptor>,
+              exhibitions: Map<string, ExhibitionDescriptor>
           ) => Promise<{
               groups: Map<string, boolean>;
               people: Map<string, boolean>;
               tags: Map<string, boolean>;
               originatingDatas: Map<string, boolean>;
-              hallways: Map<string, boolean>;
+              exhibitions: Map<string, boolean>;
           }>;
       } {
     const conference = useConference();
 
-    const [insertContentPeopleMutation] = useInsertContentPeopleMutation();
-    const [deleteContentPeopleMutation] = useDeleteContentPeopleMutation();
+    const [insertProgramPeopleMutation] = useInsertProgramPeopleMutation();
+    const [deleteProgramPeopleMutation] = useDeleteProgramPeopleMutation();
     const [updatePersonMutation] = useUpdatePersonMutation();
-    const [insertHallwaysMutation] = useInsertHallwaysMutation();
-    const [deleteHallwaysMutation] = useDeleteHallwaysMutation();
-    const [updateHallwayMutation] = useUpdateHallwayMutation();
+    const [insertExhibitionsMutation] = useInsertExhibitionsMutation();
+    const [deleteExhibitionsMutation] = useDeleteExhibitionsMutation();
+    const [updateExhibitionMutation] = useUpdateExhibitionMutation();
     const [insertOriginatingDatasMutation] = useInsertOriginatingDatasMutation();
     const [deleteOriginatingDatasMutation] = useDeleteOriginatingDatasMutation();
     const [insertTagsMutation] = useInsertTagsMutation();
     const [deleteTagsMutation] = useDeleteTagsMutation();
     const [updateTagMutation] = useUpdateTagMutation();
 
-    const [insertDeleteContentGroupsMutation] = useInsertDeleteContentGroupsMutation();
-    const [updateContentGroupMutation] = useUpdateContentGroupMutation();
-    const [updateContentItemMutation] = useUpdateContentItemMutation();
-    const [updateRequiredContentItemMutation] = useUpdateRequiredContentItemMutation();
+    const [insertDeleteItemsMutation] = useInsertDeleteItemsMutation();
+    const [updateItemMutation] = useUpdateItemMutation();
+    const [updateElementMutation] = useUpdateElementMutation();
+    const [updateUploadableElementMutation] = useUpdateUploadableElementMutation();
     const [updateUploaderMutation] = useUpdateUploaderMutation();
     const [updateGroupPersonMutation] = useUpdateGroupPersonMutation();
-    const [updateGroupHallwayMutation] = useUpdateGroupHallwayMutation();
+    const [updateGroupExhibitionMutation] = useUpdateGroupExhibitionMutation();
 
     const { loading: loadingContent, error: errorContent, data: allContent } = useSelectAllContentQuery({
         fetchPolicy: "network-only",
@@ -577,48 +578,48 @@ export function useSaveContentDiff():
         return {
             loadingContent: loadingContent,
             errorContent: errorContent,
-            originalContentGroups: undefined,
+            originalItems: undefined,
             originalPeople: undefined,
             originalTags: undefined,
             originalOriginatingDatas: undefined,
-            originalHallways: undefined,
+            originalExhibitions: undefined,
         };
     } else if (errorContent) {
         return {
             loadingContent: loadingContent,
             errorContent: errorContent,
-            originalContentGroups: undefined,
+            originalItems: undefined,
             originalPeople: undefined,
             originalTags: undefined,
             originalOriginatingDatas: undefined,
-            originalHallways: undefined,
+            originalExhibitions: undefined,
         };
     } else if (!original) {
         return {
             loadingContent: loadingContent,
             errorContent: errorContent,
-            originalContentGroups: undefined,
+            originalItems: undefined,
             originalPeople: undefined,
             originalTags: undefined,
             originalOriginatingDatas: undefined,
-            originalHallways: undefined,
+            originalExhibitions: undefined,
         };
     } else {
         return {
             loadingContent: loadingContent,
             errorContent: errorContent,
-            originalContentGroups: original.contentGroups,
+            originalItems: original.items,
             originalOriginatingDatas: original.originatingDatas,
             originalPeople: original.people,
             originalTags: original.tags,
-            originalHallways: original.hallways,
+            originalExhibitions: original.exhibitions,
             saveContentDiff: async function saveContentDiff(
-                { groupKeys, originatingDataKeys, peopleKeys, tagKeys, hallwayKeys },
+                { groupKeys, originatingDataKeys, peopleKeys, tagKeys, exhibitionKeys },
                 tags,
                 people,
                 originatingDatas,
                 groups,
-                hallways
+                exhibitions
             ) {
                 const tagResults: Map<string, boolean> = new Map();
                 tagKeys.forEach((key) => {
@@ -640,9 +641,9 @@ export function useSaveContentDiff():
                     groupResults.set(key, false);
                 });
 
-                const hallwayResults: Map<string, boolean> = new Map();
-                hallwayKeys.forEach((key) => {
-                    hallwayResults.set(key, false);
+                const exhibitionResults: Map<string, boolean> = new Map();
+                exhibitionKeys.forEach((key) => {
+                    exhibitionResults.set(key, false);
                 });
 
                 const newTags = new Map<string, TagDescriptor>();
@@ -661,8 +662,8 @@ export function useSaveContentDiff():
                     }
                 }
 
-                const newPeople = new Map<string, ContentPersonDescriptor>();
-                const updatedPeople = new Map<string, ContentPersonDescriptor>();
+                const newPeople = new Map<string, ProgramPersonDescriptor>();
+                const updatedPeople = new Map<string, ProgramPersonDescriptor>();
                 const deletedPersonKeys = new Set<string>();
                 for (const key of peopleKeys.values()) {
                     const person = people.get(key);
@@ -693,8 +694,8 @@ export function useSaveContentDiff():
                     }
                 }
 
-                const newGroups = new Map<string, ContentGroupDescriptor>();
-                const updatedGroups = new Map<string, ContentGroupDescriptor>();
+                const newGroups = new Map<string, ItemDescriptor>();
+                const updatedGroups = new Map<string, ItemDescriptor>();
                 const deletedGroupKeys = new Set<string>();
                 for (const key of groupKeys.values()) {
                     const group = groups.get(key);
@@ -709,19 +710,19 @@ export function useSaveContentDiff():
                     }
                 }
 
-                const newHallways = new Map<string, HallwayDescriptor>();
-                const updatedHallways = new Map<string, HallwayDescriptor>();
-                const deletedHallwayKeys = new Set<string>();
-                for (const key of hallwayKeys.values()) {
-                    const hallway = hallways.get(key);
-                    if (hallway) {
-                        if (hallway.isNew) {
-                            newHallways.set(key, hallway);
+                const newExhibitions = new Map<string, ExhibitionDescriptor>();
+                const updatedExhibitions = new Map<string, ExhibitionDescriptor>();
+                const deletedExhibitionKeys = new Set<string>();
+                for (const key of exhibitionKeys.values()) {
+                    const exhibition = exhibitions.get(key);
+                    if (exhibition) {
+                        if (exhibition.isNew) {
+                            newExhibitions.set(key, exhibition);
                         } else {
-                            updatedHallways.set(key, hallway);
+                            updatedExhibitions.set(key, exhibition);
                         }
                     } else {
-                        deletedHallwayKeys.add(key);
+                        deletedExhibitionKeys.add(key);
                     }
                 }
 
@@ -730,7 +731,7 @@ export function useSaveContentDiff():
                         await insertTagsMutation({
                             variables: {
                                 newTags: Array.from(newTags.values()).map(
-                                    (tag): Tag_Insert_Input => ({
+                                    (tag): Collection_Tag_Insert_Input => ({
                                         id: tag.id,
                                         name: tag.name,
                                         colour: tag.colour,
@@ -776,7 +777,7 @@ export function useSaveContentDiff():
                         await insertOriginatingDatasMutation({
                             variables: {
                                 newDatas: Array.from(newOriginatingDatas.values()).map(
-                                    (originatingData): OriginatingData_Insert_Input => ({
+                                    (originatingData): Conference_OriginatingData_Insert_Input => ({
                                         id: originatingData.id,
                                         conferenceId: conference.id,
                                         data: originatingData.data,
@@ -791,17 +792,17 @@ export function useSaveContentDiff():
                     }
 
                     if (newPeople.size > 0) {
-                        await insertContentPeopleMutation({
+                        await insertProgramPeopleMutation({
                             variables: {
                                 newPeople: Array.from(newPeople.values()).map(
-                                    (person): ContentPerson_Insert_Input => ({
+                                    (person): Collection_ProgramPerson_Insert_Input => ({
                                         id: person.id,
                                         conferenceId: conference.id,
                                         affiliation: person.affiliation,
                                         email: person.email,
                                         name: person.name,
                                         originatingDataId: person.originatingDataId,
-                                        attendeeId: person.attendeeId,
+                                        registrantId: person.registrantId,
                                     })
                                 ),
                             },
@@ -811,7 +812,7 @@ export function useSaveContentDiff():
                         }
                     }
 
-                    const updateContentPersonResultsArr: [string, boolean][] = await Promise.all(
+                    const updateProgramPersonResultsArr: [string, boolean][] = await Promise.all(
                         Array.from(updatedPeople.values()).map(
                             async (person): Promise<[string, boolean]> => {
                                 let ok = false;
@@ -823,7 +824,7 @@ export function useSaveContentDiff():
                                             email: person.email,
                                             name: person.name,
                                             originatingDataId: person.originatingDataId,
-                                            attendeeId: person.attendeeId,
+                                            registrantId: person.registrantId,
                                         },
                                     });
                                     ok = true;
@@ -835,98 +836,98 @@ export function useSaveContentDiff():
                             }
                         )
                     );
-                    for (const [key, val] of updateContentPersonResultsArr) {
+                    for (const [key, val] of updateProgramPersonResultsArr) {
                         peopleResults.set(key, val);
                     }
 
-                    if (newHallways.size > 0) {
-                        await insertHallwaysMutation({
+                    if (newExhibitions.size > 0) {
+                        await insertExhibitionsMutation({
                             variables: {
-                                newHallways: Array.from(newHallways.values()).map(
-                                    (hallway): Hallway_Insert_Input => ({
-                                        id: hallway.id,
+                                newExhibitions: Array.from(newExhibitions.values()).map(
+                                    (exhibition): Collection_Exhibition_Insert_Input => ({
+                                        id: exhibition.id,
                                         conferenceId: conference.id,
-                                        name: hallway.name,
-                                        colour: hallway.colour,
-                                        priority: hallway.priority,
+                                        name: exhibition.name,
+                                        colour: exhibition.colour,
+                                        priority: exhibition.priority,
                                     })
                                 ),
                             },
                         });
-                        for (const key of newHallways.keys()) {
-                            hallwayResults.set(key, true);
+                        for (const key of newExhibitions.keys()) {
+                            exhibitionResults.set(key, true);
                         }
                     }
 
-                    const updateHallwayResultsArr: [string, boolean][] = await Promise.all(
-                        Array.from(updatedHallways.values()).map(
-                            async (hallway): Promise<[string, boolean]> => {
+                    const updateExhibitionResultsArr: [string, boolean][] = await Promise.all(
+                        Array.from(updatedExhibitions.values()).map(
+                            async (exhibition): Promise<[string, boolean]> => {
                                 let ok = false;
                                 try {
-                                    await updateHallwayMutation({
+                                    await updateExhibitionMutation({
                                         variables: {
-                                            id: hallway.id,
-                                            name: hallway.name,
-                                            colour: hallway.colour,
-                                            priority: hallway.priority,
+                                            id: exhibition.id,
+                                            name: exhibition.name,
+                                            colour: exhibition.colour,
+                                            priority: exhibition.priority,
                                         },
                                     });
                                     ok = true;
                                 } catch (e) {
-                                    console.error("Error updating hallway", e);
+                                    console.error("Error updating exhibition", e);
                                     ok = false;
                                 }
-                                return [hallway.id, ok];
+                                return [exhibition.id, ok];
                             }
                         )
                     );
-                    for (const [key, val] of updateHallwayResultsArr) {
-                        hallwayResults.set(key, val);
+                    for (const [key, val] of updateExhibitionResultsArr) {
+                        exhibitionResults.set(key, val);
                     }
 
                     if (deletedGroupKeys.size > 0 || newGroups.size > 0) {
-                        await insertDeleteContentGroupsMutation({
+                        await insertDeleteItemsMutation({
                             variables: {
                                 deleteGroupIds: Array.from(deletedGroupKeys.values()),
                                 newGroups: Array.from(newGroups.values()).map((group) => {
-                                    const groupResult: ContentGroup_Insert_Input = {
+                                    const groupResult: Content_Item_Insert_Input = {
                                         id: group.id,
                                         conferenceId: conference.id,
-                                        contentGroupTags: {
+                                        itemTags: {
                                             data: Array.from(group.tagIds.values()).map((tagId) => ({
                                                 tagId,
                                             })),
                                         },
-                                        contentGroupTypeName: group.typeName,
-                                        contentItems: {
-                                            data: group.items.map((item) => {
-                                                const itemResult: ContentItem_Insert_Input = {
+                                        typeName: group.typeName,
+                                        elements: {
+                                            data: group.elements.map((item) => {
+                                                const itemResult: Content_Element_Insert_Input = {
                                                     id: item.id,
                                                     conferenceId: conference.id,
-                                                    contentTypeName: item.typeName,
+                                                    typeName: item.typeName,
                                                     data: item.data,
                                                     layoutData: item.layoutData,
                                                     name: item.name,
                                                     isHidden: item.isHidden,
-                                                    requiredContentId: item.requiredContentId,
+                                                    uploadableId: item.uploadableId,
                                                     originatingDataId: item.originatingDataId,
                                                 };
                                                 return itemResult;
                                             }),
                                         },
-                                        requiredContentItems: {
-                                            data: group.requiredItems.map((item) => {
-                                                const itemResult: RequiredContentItem_Insert_Input = {
+                                        uploadableElements: {
+                                            data: group.uploadableElements.map((item) => {
+                                                const itemResult: Content_UploadableElement_Insert_Input = {
                                                     id: item.id,
                                                     conferenceId: conference.id,
                                                     accessToken: uuidv4(),
                                                     name: item.name,
                                                     isHidden: item.isHidden,
-                                                    contentTypeName: item.typeName,
+                                                    typeName: item.typeName,
                                                     uploadsRemaining: item.uploadsRemaining,
                                                     uploaders: {
                                                         data: item.uploaders.map(
-                                                            (uploader): Uploader_Insert_Input => ({
+                                                            (uploader): Content_Uploader_Insert_Input => ({
                                                                 conferenceId: conference.id,
                                                                 email: uploader.email,
                                                                 id: uploader.id,
@@ -935,8 +936,8 @@ export function useSaveContentDiff():
                                                         ),
                                                         on_conflict: {
                                                             constraint:
-                                                                Uploader_Constraint.UploaderEmailRequiredContentItemIdKey,
-                                                            update_columns: [Uploader_Update_Column.Name],
+                                                                Content_Uploader_Constraint.UploaderEmailUploadableElementIdKey,
+                                                            update_columns: [Content_Uploader_Update_Column.Name],
                                                         },
                                                     },
                                                     originatingDataId: item.originatingDataId,
@@ -944,9 +945,9 @@ export function useSaveContentDiff():
                                                 return itemResult;
                                             }),
                                         },
-                                        people: {
+                                        itemPeople: {
                                             data: group.people.map((personGroup) => {
-                                                const personGroupResult: ContentGroupPerson_Insert_Input = {
+                                                const personGroupResult: Content_ItemProgramPerson_Insert_Input = {
                                                     id: personGroup.id,
                                                     conferenceId: conference.id,
                                                     priority: personGroup.priority,
@@ -956,16 +957,16 @@ export function useSaveContentDiff():
                                                 return personGroupResult;
                                             }),
                                         },
-                                        hallways: {
-                                            data: group.hallways.map((hallwayGroup) => {
-                                                const hallwayGroupResult: ContentGroupHallway_Insert_Input = {
-                                                    id: hallwayGroup.id,
+                                        itemExhibitions: {
+                                            data: group.exhibitions.map((exhibitionGroup) => {
+                                                const exhibitionGroupResult: Content_ItemExhibition_Insert_Input = {
+                                                    id: exhibitionGroup.id,
                                                     conferenceId: conference.id,
-                                                    priority: hallwayGroup.priority,
-                                                    layout: hallwayGroup.layout,
-                                                    hallwayId: hallwayGroup.hallwayId,
+                                                    priority: exhibitionGroup.priority,
+                                                    layout: exhibitionGroup.layout,
+                                                    exhibitionId: exhibitionGroup.exhibitionId,
                                                 };
-                                                return hallwayGroupResult;
+                                                return exhibitionGroupResult;
                                             }),
                                         },
                                         originatingDataId: group.originatingDataId,
@@ -1000,13 +1001,13 @@ export function useSaveContentDiff():
                         async (group): Promise<[string, boolean]> => {
                             let ok = false;
                             try {
-                                const newItems = new Map<string, ContentItemDescriptor>();
-                                const updatedItems = new Map<string, ContentItemDescriptor>();
+                                const newItems = new Map<string, ElementDescriptor>();
+                                const updatedItems = new Map<string, ElementDescriptor>();
                                 const deleteItemKeys = new Set<string>();
 
-                                const newRequiredItems = new Map<string, RequiredContentItemDescriptor>();
-                                const updatedRequiredItems = new Map<string, RequiredContentItemDescriptor>();
-                                const deleteRequiredItemKeys = new Set<string>();
+                                const newUploadableItems = new Map<string, UploadableElementDescriptor>();
+                                const updatedUploadableItems = new Map<string, UploadableElementDescriptor>();
+                                const deleteUploadableItemKeys = new Set<string>();
 
                                 const newGroupTags = new Set<string>();
                                 const deleteGroupTagKeys = new Set<string>();
@@ -1015,34 +1016,34 @@ export function useSaveContentDiff():
                                 const updatedUploaders = new Map<string, UploaderDescriptor>();
                                 const deleteUploaderKeys = new Set<string>();
 
-                                const newGroupPersons = new Map<string, ContentGroupPersonDescriptor>();
-                                const updatedGroupPersons = new Map<string, ContentGroupPersonDescriptor>();
+                                const newGroupPersons = new Map<string, ItemPersonDescriptor>();
+                                const updatedGroupPersons = new Map<string, ItemPersonDescriptor>();
                                 const deleteGroupPersonKeys = new Set<string>();
 
-                                const newGroupHallways = new Map<string, ContentGroupHallwayDescriptor>();
-                                const updatedGroupHallways = new Map<string, ContentGroupHallwayDescriptor>();
-                                const deleteGroupHallwayKeys = new Set<string>();
+                                const newGroupExhibitions = new Map<string, ItemExhibitionDescriptor>();
+                                const updatedGroupExhibitions = new Map<string, ItemExhibitionDescriptor>();
+                                const deleteGroupExhibitionKeys = new Set<string>();
 
-                                const existingGroup = original.contentGroups.get(group.id);
+                                const existingGroup = original.items.get(group.id);
                                 assert(existingGroup);
-                                for (const item of group.items) {
+                                for (const item of group.elements) {
                                     if (item.isNew) {
                                         newItems.set(item.id, item);
                                     } else {
                                         updatedItems.set(item.id, item);
                                     }
                                 }
-                                for (const existingItem of existingGroup.items) {
+                                for (const existingItem of existingGroup.elements) {
                                     if (!updatedItems.has(existingItem.id)) {
                                         deleteItemKeys.add(existingItem.id);
                                     }
                                 }
 
-                                for (const item of group.requiredItems) {
+                                for (const item of group.uploadableElements) {
                                     if (item.isNew) {
-                                        newRequiredItems.set(item.id, item);
+                                        newUploadableItems.set(item.id, item);
                                     } else {
-                                        updatedRequiredItems.set(item.id, item);
+                                        updatedUploadableItems.set(item.id, item);
 
                                         for (const uploader of item.uploaders) {
                                             if (uploader.isNew) {
@@ -1053,9 +1054,9 @@ export function useSaveContentDiff():
                                         }
                                     }
                                 }
-                                for (const existingItem of existingGroup.requiredItems) {
-                                    if (!updatedRequiredItems.has(existingItem.id)) {
-                                        deleteRequiredItemKeys.add(existingItem.id);
+                                for (const existingItem of existingGroup.uploadableElements) {
+                                    if (!updatedUploadableItems.has(existingItem.id)) {
+                                        deleteUploadableItemKeys.add(existingItem.id);
                                     }
 
                                     for (const existingUploader of existingItem.uploaders) {
@@ -1089,31 +1090,31 @@ export function useSaveContentDiff():
                                     }
                                 }
 
-                                for (const groupHallway of group.hallways) {
-                                    if (groupHallway.isNew) {
-                                        newGroupHallways.set(groupHallway.id, groupHallway);
+                                for (const groupExhibition of group.exhibitions) {
+                                    if (groupExhibition.isNew) {
+                                        newGroupExhibitions.set(groupExhibition.id, groupExhibition);
                                     } else {
-                                        updatedGroupHallways.set(groupHallway.id, groupHallway);
+                                        updatedGroupExhibitions.set(groupExhibition.id, groupExhibition);
                                     }
                                 }
-                                for (const existingGroupHallway of existingGroup.hallways) {
-                                    if (!updatedGroupHallways.has(existingGroupHallway.id)) {
-                                        deleteGroupHallwayKeys.add(existingGroupHallway.id);
+                                for (const existingGroupExhibition of existingGroup.exhibitions) {
+                                    if (!updatedGroupExhibitions.has(existingGroupExhibition.id)) {
+                                        deleteGroupExhibitionKeys.add(existingGroupExhibition.id);
                                     }
                                 }
 
                                 if (updatedItems.size > 0) {
                                     await Promise.all(
                                         Array.from(updatedItems.values()).map(async (item) => {
-                                            await updateContentItemMutation({
+                                            await updateElementMutation({
                                                 variables: {
-                                                    contentTypeName: item.typeName,
+                                                    typeName: item.typeName,
                                                     data: item.data,
                                                     id: item.id,
                                                     layoutData: item.layoutData,
                                                     name: item.name,
                                                     isHidden: item.isHidden,
-                                                    requiredContentId: item.requiredContentId,
+                                                    uploadableId: item.uploadableId,
                                                     originatingDataId: item.originatingDataId,
                                                 },
                                             });
@@ -1121,12 +1122,12 @@ export function useSaveContentDiff():
                                     );
                                 }
 
-                                if (updatedRequiredItems.size > 0) {
+                                if (updatedUploadableItems.size > 0) {
                                     await Promise.all(
-                                        Array.from(updatedRequiredItems.values()).map(async (item) => {
-                                            await updateRequiredContentItemMutation({
+                                        Array.from(updatedUploadableItems.values()).map(async (item) => {
+                                            await updateUploadableElementMutation({
                                                 variables: {
-                                                    contentTypeName: item.typeName,
+                                                    typeName: item.typeName,
                                                     id: item.id,
                                                     name: item.name,
                                                     isHidden: item.isHidden,
@@ -1166,51 +1167,51 @@ export function useSaveContentDiff():
                                     );
                                 }
 
-                                if (updatedGroupHallways.size > 0) {
+                                if (updatedGroupExhibitions.size > 0) {
                                     await Promise.all(
-                                        Array.from(updatedGroupHallways.values()).map(async (groupHallway) => {
-                                            await updateGroupHallwayMutation({
+                                        Array.from(updatedGroupExhibitions.values()).map(async (groupExhibition) => {
+                                            await updateGroupExhibitionMutation({
                                                 variables: {
-                                                    id: groupHallway.id,
-                                                    priority: groupHallway.priority,
-                                                    layout: groupHallway.layout,
+                                                    id: groupExhibition.id,
+                                                    priority: groupExhibition.priority,
+                                                    layout: groupExhibition.layout,
                                                 },
                                             });
                                         })
                                     );
                                 }
 
-                                await updateContentGroupMutation({
+                                await updateItemMutation({
                                     variables: {
-                                        contentGroupTypeName: group.typeName,
+                                        typeName: group.typeName,
                                         deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
                                         deleteItemIds: Array.from(deleteItemKeys.values()),
-                                        deleteRequiredItemIds: Array.from(deleteRequiredItemKeys.values()),
+                                        deleteUploadableItemIds: Array.from(deleteUploadableItemKeys.values()),
                                         deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
                                         deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
-                                        deleteGroupHallwayIds: Array.from(deleteGroupHallwayKeys.values()),
+                                        deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
                                         groupId: group.id,
                                         newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
-                                            contentGroupId: group.id,
+                                            itemId: group.id,
                                             tagId,
                                         })),
                                         newItems: Array.from(newItems.values()).map((item) => ({
                                             conferenceId: conference.id,
-                                            contentGroupId: group.id,
-                                            contentTypeName: item.typeName,
+                                            itemId: group.id,
+                                            typeName: item.typeName,
                                             data: item.data,
                                             id: item.id,
                                             layoutData: item.layoutData,
                                             isHidden: item.isHidden,
                                             name: item.name,
-                                            requiredContentId: item.requiredContentId,
+                                            uploadableId: item.uploadableId,
                                             originatingDataId: item.originatingDataId,
                                         })),
-                                        newRequiredItems: Array.from(newRequiredItems.values()).map((item) => ({
+                                        newUploadableItems: Array.from(newUploadableItems.values()).map((item) => ({
                                             accessToken: uuidv4(),
                                             conferenceId: conference.id,
-                                            contentGroupId: group.id,
-                                            contentTypeName: item.typeName,
+                                            itemId: group.id,
+                                            typeName: item.typeName,
                                             id: item.id,
                                             name: item.name,
                                             isHidden: item.isHidden,
@@ -1218,7 +1219,7 @@ export function useSaveContentDiff():
                                             originatingDataId: item.originatingDataId,
                                             uploaders: {
                                                 data: item.uploaders.map(
-                                                    (uploader): Uploader_Insert_Input => ({
+                                                    (uploader): Content_Uploader_Insert_Input => ({
                                                         id: uploader.id,
                                                         email: uploader.email,
                                                         name: uploader.name,
@@ -1232,7 +1233,7 @@ export function useSaveContentDiff():
                                             email: uploader.email,
                                             id: uploader.id,
                                             name: uploader.name,
-                                            requiredContentItemId: uploader.requiredContentItemId,
+                                            uploadableId: uploader.uploadableId,
                                         })),
                                         newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
                                             conferenceId: conference.id,
@@ -1240,16 +1241,18 @@ export function useSaveContentDiff():
                                             personId: groupPerson.personId,
                                             priority: groupPerson.priority,
                                             roleName: groupPerson.roleName,
-                                            groupId: group.id,
+                                            itemId: group.id,
                                         })),
-                                        newGroupHallways: Array.from(newGroupHallways.values()).map((groupHallway) => ({
-                                            conferenceId: conference.id,
-                                            id: groupHallway.id,
-                                            hallwayId: groupHallway.hallwayId,
-                                            priority: groupHallway.priority,
-                                            layout: groupHallway.layout,
-                                            groupId: group.id,
-                                        })),
+                                        newGroupExhibitions: Array.from(newGroupExhibitions.values()).map(
+                                            (groupExhibition) => ({
+                                                conferenceId: conference.id,
+                                                id: groupExhibition.id,
+                                                exhibitionId: groupExhibition.exhibitionId,
+                                                priority: groupExhibition.priority,
+                                                layout: groupExhibition.layout,
+                                                itemId: group.id,
+                                            })
+                                        ),
                                         originatingDataId: group.originatingDataId,
                                         shortTitle: group.shortTitle,
                                         title: group.title,
@@ -1288,26 +1291,26 @@ export function useSaveContentDiff():
                 }
 
                 try {
-                    if (deletedHallwayKeys.size > 0) {
-                        await deleteHallwaysMutation({
+                    if (deletedExhibitionKeys.size > 0) {
+                        await deleteExhibitionsMutation({
                             variables: {
-                                deleteHallwayIds: Array.from(deletedHallwayKeys.values()),
+                                deleteExhibitionIds: Array.from(deletedExhibitionKeys.values()),
                             },
                         });
-                        for (const key of deletedHallwayKeys.keys()) {
-                            hallwayResults.set(key, true);
+                        for (const key of deletedExhibitionKeys.keys()) {
+                            exhibitionResults.set(key, true);
                         }
                     }
                 } catch (e) {
-                    console.error("Error deleting hallways", e, deletedHallwayKeys);
-                    for (const key of deletedHallwayKeys.keys()) {
-                        hallwayResults.set(key, false);
+                    console.error("Error deleting exhibitions", e, deletedExhibitionKeys);
+                    for (const key of deletedExhibitionKeys.keys()) {
+                        exhibitionResults.set(key, false);
                     }
                 }
 
                 try {
                     if (deletedPersonKeys.size > 0) {
-                        await deleteContentPeopleMutation({
+                        await deleteProgramPeopleMutation({
                             variables: {
                                 deletePersonIds: Array.from(deletedPersonKeys.values()),
                             },
@@ -1346,7 +1349,7 @@ export function useSaveContentDiff():
                     originatingDatas: originatingDataResults,
                     people: peopleResults,
                     tags: tagResults,
-                    hallways: hallwayResults,
+                    exhibitions: exhibitionResults,
                 };
             },
         };

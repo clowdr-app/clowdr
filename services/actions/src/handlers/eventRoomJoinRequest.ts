@@ -1,24 +1,24 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
 import {
-    AddAttendeeToEventDocument,
+    AddRegistrantToEventDocument,
     DeleteEventRoomJoinRequestDocument,
-    EventRoomJoinRequest_FindContentPersonDocument,
-    EventRoomJoinRequest_InsertContentPersonDocument,
+    EventRoomJoinRequest_FindProgramPersonDocument,
+    EventRoomJoinRequest_InsertProgramPersonDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { EventRoomJoinRequestData, Payload } from "../types/hasura/event";
 
 gql`
-    query EventRoomJoinRequest_FindContentPerson($attendeeId: uuid!) {
-        ContentPerson(where: { attendeeId: { _eq: $attendeeId } }, limit: 1) {
+    query EventRoomJoinRequest_FindProgramPerson($registrantId: uuid!) {
+        collection_ProgramPerson(where: { registrantId: { _eq: $registrantId } }, limit: 1) {
             id
         }
-        Attendee_by_pk(id: $attendeeId) {
+        registrant_Registrant_by_pk(id: $registrantId) {
             id
             displayName
             profile {
-                attendeeId
+                registrantId
                 affiliation
             }
             user {
@@ -28,20 +28,20 @@ gql`
         }
     }
 
-    mutation EventRoomJoinRequest_InsertContentPerson($data: ContentPerson_insert_input!) {
-        insert_ContentPerson_one(object: $data) {
+    mutation EventRoomJoinRequest_InsertProgramPerson($data: collection_ProgramPerson_insert_input!) {
+        insert_collection_ProgramPerson_one(object: $data) {
             id
         }
     }
 
-    mutation AddAttendeeToEvent($personId: uuid!, $eventId: uuid!) {
-        insert_EventPerson(objects: { personId: $personId, eventId: $eventId, roleName: PARTICIPANT }) {
+    mutation AddRegistrantToEvent($personId: uuid!, $eventId: uuid!) {
+        insert_schedule_EventProgramPerson(objects: { personId: $personId, eventId: $eventId, roleName: PARTICIPANT }) {
             affected_rows
         }
     }
 
     mutation DeleteEventRoomJoinRequest($eventRoomJoinRequestId: uuid!) {
-        delete_EventRoomJoinRequest_by_pk(id: $eventRoomJoinRequestId) {
+        delete_schedule_EventRoomJoinRequest_by_pk(id: $eventRoomJoinRequestId) {
             id
         }
     }
@@ -56,59 +56,59 @@ export async function handleEventRoomJoinUpdated(payload: Payload<EventRoomJoinR
         return;
     }
 
-    console.log("Finding content person for attendee", newRow.attendeeId, newRow.eventId);
+    console.log("Finding content person for registrant", newRow.registrantId, newRow.eventId);
     let personId: string | undefined;
     try {
         const people = await apolloClient.query({
-            query: EventRoomJoinRequest_FindContentPersonDocument,
+            query: EventRoomJoinRequest_FindProgramPersonDocument,
             variables: {
-                attendeeId: newRow.attendeeId,
+                registrantId: newRow.registrantId,
             },
         });
-        if (people.data.ContentPerson.length > 0) {
-            personId = people.data.ContentPerson[0].id;
-        } else if (people.data.Attendee_by_pk && people.data.Attendee_by_pk.profile) {
+        if (people.data.collection_ProgramPerson.length > 0) {
+            personId = people.data.collection_ProgramPerson[0].id;
+        } else if (people.data.registrant_Registrant_by_pk && people.data.registrant_Registrant_by_pk.profile) {
             const newPerson = await apolloClient.mutate({
-                mutation: EventRoomJoinRequest_InsertContentPersonDocument,
+                mutation: EventRoomJoinRequest_InsertProgramPersonDocument,
                 variables: {
                     data: {
-                        affiliation: people.data.Attendee_by_pk.profile.affiliation,
-                        attendeeId: newRow.attendeeId,
+                        affiliation: people.data.registrant_Registrant_by_pk.profile.affiliation,
+                        registrantId: newRow.registrantId,
                         conferenceId: newRow.conferenceId,
-                        email: people.data.Attendee_by_pk.user?.email,
-                        name: people.data.Attendee_by_pk.displayName,
+                        email: people.data.registrant_Registrant_by_pk.user?.email,
+                        name: people.data.registrant_Registrant_by_pk.displayName,
                     },
                 },
             });
-            if (!newPerson.data?.insert_ContentPerson_one) {
-                console.error("Could not insert content person", newRow.attendeeId, newRow.eventId);
+            if (!newPerson.data?.insert_collection_ProgramPerson_one) {
+                console.error("Could not insert content person", newRow.registrantId, newRow.eventId);
                 return;
             }
 
-            personId = newPerson.data.insert_ContentPerson_one.id;
+            personId = newPerson.data.insert_collection_ProgramPerson_one.id;
         } else {
-            console.error("Could check get attendee info", newRow.attendeeId, newRow.eventId);
+            console.error("Could check get registrant info", newRow.registrantId, newRow.eventId);
             return;
         }
     } catch (e) {
-        console.error("Could check content people for a matching attendee", newRow.attendeeId, newRow.eventId, e);
+        console.error("Could check content people for a matching registrant", newRow.registrantId, newRow.eventId, e);
         return;
     }
 
-    console.log("Adding approved attendee to event people", newRow.attendeeId, newRow.eventId);
+    console.log("Adding approved registrant to event people", newRow.registrantId, newRow.eventId);
     try {
         await apolloClient.mutate({
-            mutation: AddAttendeeToEventDocument,
+            mutation: AddRegistrantToEventDocument,
             variables: {
                 personId,
                 eventId: newRow.eventId,
             },
         });
     } catch (e) {
-        console.error("Could not add person to event people", newRow.attendeeId, newRow.eventId, e);
+        console.error("Could not add person to event people", newRow.registrantId, newRow.eventId, e);
     }
 
-    console.log("Removing event room join request", newRow.attendeeId, newRow.eventId);
+    console.log("Removing event room join request", newRow.registrantId, newRow.eventId);
     try {
         await apolloClient.mutate({
             mutation: DeleteEventRoomJoinRequestDocument,
@@ -117,6 +117,6 @@ export async function handleEventRoomJoinUpdated(payload: Payload<EventRoomJoinR
             },
         });
     } catch (e) {
-        console.error("Could not remove event room join request", newRow.attendeeId, newRow.eventId);
+        console.error("Could not remove event room join request", newRow.registrantId, newRow.eventId);
     }
 }

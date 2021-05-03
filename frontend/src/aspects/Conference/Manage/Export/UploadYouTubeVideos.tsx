@@ -29,30 +29,30 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/build/attendeeGoogleAccount";
-import { ContentBaseType, ContentItemDataBlob, isContentItemDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
 import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import {
-    JobStatus_Enum,
     Job_Queues_UploadYouTubeVideoJob_Insert_Input,
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
-    useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery,
-    useUploadYouTubeVideos_GetContentItemsQuery,
+    useUploadYouTubeVideos_GetElementsQuery,
+    useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery,
     useUploadYouTubeVideos_GetTemplateDataQuery,
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
+    Video_JobStatus_Enum,
 } from "../../../../generated/graphql";
 import { useRestorableState } from "../../../Generic/useRestorableState";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
-import useCurrentAttendee from "../../useCurrentAttendee";
-import { ChooseContentItemByTagModal } from "./ChooseContentItemByTagModal";
-import { ChooseContentItemModal } from "./ChooseContentItemModal";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
+import { ChooseElementByTagModal } from "./ChooseElementByTagModal";
+import { ChooseElementModal } from "./ChooseElementModal";
 
 gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
@@ -67,9 +67,9 @@ gql`
     fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
         id
         jobStatusName
-        contentItem {
+        element {
             id
-            contentGroup {
+            item {
                 id
                 title
             }
@@ -77,8 +77,8 @@ gql`
         }
     }
 
-    query UploadYouTubeVideos_GetAttendeeGoogleAccounts($attendeeId: uuid!) {
-        AttendeeGoogleAccount(where: { attendeeId: { _eq: $attendeeId } }) {
+    query UploadYouTubeVideos_GetRegistrantGoogleAccounts($registrantId: uuid!) {
+        registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId } }) {
             id
             googleAccountEmail
             youTubeData
@@ -95,26 +95,26 @@ gql`
         }
     }
 
-    query UploadYouTubeVideos_GetContentItems($contentItemIds: [uuid!]!) {
-        ContentItem(where: { id: { _in: $contentItemIds } }) {
+    query UploadYouTubeVideos_GetElements($elementIds: [uuid!]!) {
+        content_Element(where: { id: { _in: $elementIds } }) {
             id
             name
-            contentGroup {
+            item {
                 id
                 title
             }
         }
     }
 
-    query UploadYouTubeVideos_GetTemplateData($contentItemIds: [uuid!]!) {
-        ContentItem(where: { id: { _in: $contentItemIds } }) {
+    query UploadYouTubeVideos_GetTemplateData($elementIds: [uuid!]!) {
+        content_Element(where: { id: { _in: $elementIds } }) {
             id
             name
-            contentGroup {
+            item {
                 id
                 shortTitle
                 title
-                contentItems {
+                elements {
                     id
                     youTubeUploads {
                         id
@@ -122,20 +122,20 @@ gql`
                         videoId
                     }
                 }
-                abstractContentItems: contentItems(
-                    where: { contentTypeName: { _eq: ABSTRACT } }
+                abstractElements: elements(
+                    where: { typeName: { _eq: ABSTRACT } }
                     order_by: { updatedAt: desc }
                     limit: 1
                 ) {
-                    ...UploadYouTubeVideos_ContentItem
+                    ...UploadYouTubeVideos_Element
                 }
-                paperLinkContentItems: contentItems(where: { contentTypeName: { _eq: PAPER_LINK } }) {
-                    ...UploadYouTubeVideos_ContentItem
+                paperLinkElements: elements(where: { typeName: { _eq: PAPER_LINK } }) {
+                    ...UploadYouTubeVideos_Element
                 }
-                paperUrlContentItems: contentItems(where: { contentTypeName: { _eq: PAPER_URL } }) {
-                    ...UploadYouTubeVideos_ContentItem
+                paperUrlElements: elements(where: { typeName: { _eq: PAPER_URL } }) {
+                    ...UploadYouTubeVideos_Element
                 }
-                authors: people(where: { roleName: { _eq: "AUTHOR" } }) {
+                authors: itemPeople(where: { roleName: { _eq: "AUTHOR" } }) {
                     id
                     person {
                         id
@@ -147,13 +147,13 @@ gql`
         }
     }
 
-    fragment UploadYouTubeVideos_ContentItem on ContentItem {
+    fragment UploadYouTubeVideos_Element on content_Element {
         id
         data
     }
 
-    mutation UploadYouTubeVideos_RefreshYouTubeData($attendeeId: uuid!, $attendeeGoogleAccountId: uuid!) {
-        refreshYouTubeData(attendeeId: $attendeeId, attendeeGoogleAccountId: $attendeeGoogleAccountId) {
+    mutation UploadYouTubeVideos_RefreshYouTubeData($registrantId: uuid!, $registrantGoogleAccountId: uuid!) {
+        refreshYouTubeData(registrantId: $registrantId, registrantGoogleAccountId: $registrantGoogleAccountId) {
             message
             success
         }
@@ -167,7 +167,7 @@ function VideoIcon() {
 export function UploadYouTubeVideos(): JSX.Element {
     const conference = useConference();
     const toast = useToast();
-    const attendee = useCurrentAttendee();
+    const registrant = useCurrentRegistrant();
 
     const existingJobsResult = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
         variables: {
@@ -176,31 +176,31 @@ export function UploadYouTubeVideos(): JSX.Element {
         pollInterval: 10000,
     });
 
-    const googleAccountsResult = useUploadYouTubeVideos_GetAttendeeGoogleAccountsQuery({
+    const googleAccountsResult = useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery({
         variables: {
-            attendeeId: attendee.id,
+            registrantId: registrant.id,
         },
     });
 
     const googleAccountOptions = useMemo(() => {
-        return googleAccountsResult.data?.AttendeeGoogleAccount.map((account) => (
+        return googleAccountsResult.data?.registrant_GoogleAccount.map((account) => (
             <option key={account.id} value={account.id}>
                 {account.googleAccountEmail}
             </option>
         ));
-    }, [googleAccountsResult.data?.AttendeeGoogleAccount]);
+    }, [googleAccountsResult.data?.registrant_GoogleAccount]);
 
-    const [attendeeGoogleAccountId, setAttendeeGoogleAccountId] = useState<string | null>(null);
+    const [registrantGoogleAccountId, setRegistrantGoogleAccountId] = useState<string | null>(null);
     const channelOptions = useMemo(() => {
-        const attendeeGoogleAccount = googleAccountsResult.data?.AttendeeGoogleAccount.find(
-            (a) => a.id === attendeeGoogleAccountId
+        const registrantGoogleAccount = googleAccountsResult.data?.registrant_GoogleAccount.find(
+            (a) => a.id === registrantGoogleAccountId
         );
 
-        if (!isYouTubeDataBlob(attendeeGoogleAccount?.youTubeData)) {
+        if (!isYouTubeDataBlob(registrantGoogleAccount?.youTubeData)) {
             return [];
         }
 
-        const youTubeData = attendeeGoogleAccount?.youTubeData as YouTubeDataBlob;
+        const youTubeData = registrantGoogleAccount?.youTubeData as YouTubeDataBlob;
 
         return (
             youTubeData.channels.map((channel) => (
@@ -209,19 +209,19 @@ export function UploadYouTubeVideos(): JSX.Element {
                 </option>
             )) ?? []
         );
-    }, [attendeeGoogleAccountId, googleAccountsResult.data?.AttendeeGoogleAccount]);
+    }, [registrantGoogleAccountId, googleAccountsResult.data?.registrant_GoogleAccount]);
 
     const [channelId, setChannelId] = useState<string | null>(null);
     const playlistOptions = useMemo(() => {
-        const attendeeGoogleAccount = googleAccountsResult.data?.AttendeeGoogleAccount.find(
-            (a) => a.id === attendeeGoogleAccountId
+        const registrantGoogleAccount = googleAccountsResult.data?.registrant_GoogleAccount.find(
+            (a) => a.id === registrantGoogleAccountId
         );
 
-        if (!isYouTubeDataBlob(attendeeGoogleAccount?.youTubeData)) {
+        if (!isYouTubeDataBlob(registrantGoogleAccount?.youTubeData)) {
             return [];
         }
 
-        const youTubeData = attendeeGoogleAccount?.youTubeData as YouTubeDataBlob;
+        const youTubeData = registrantGoogleAccount?.youTubeData as YouTubeDataBlob;
 
         return (
             youTubeData.channels
@@ -232,25 +232,25 @@ export function UploadYouTubeVideos(): JSX.Element {
                     </option>
                 )) ?? []
         );
-    }, [attendeeGoogleAccountId, channelId, googleAccountsResult.data?.AttendeeGoogleAccount]);
+    }, [registrantGoogleAccountId, channelId, googleAccountsResult.data?.registrant_GoogleAccount]);
 
     const [createJobs] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation();
 
     const chooseVideoDisclosure = useDisclosure();
     const chooseByTagDisclosure = useDisclosure();
 
-    const [contentItemIds, setContentItemIds] = useState<string[]>([]);
-    const { data } = useUploadYouTubeVideos_GetContentItemsQuery({
+    const [elementIds, setElementIds] = useState<string[]>([]);
+    const { data } = useUploadYouTubeVideos_GetElementsQuery({
         variables: {
-            contentItemIds,
+            elementIds,
         },
     });
 
-    const contentItems = useMemo(() => {
-        const pairs: [string, { name: string; contentGroupTitle: string }][] =
-            data?.ContentItem.map((contentItem) => [
-                contentItem.id,
-                { name: contentItem.name, contentGroupTitle: contentItem.contentGroup.title },
+    const elements = useMemo(() => {
+        const pairs: [string, { name: string; itemTitle: string }][] =
+            data?.content_Element.map((element) => [
+                element.id,
+                { name: element.name, itemTitle: element.item.title },
             ]) ?? [];
 
         return R.fromPairs(pairs);
@@ -260,23 +260,23 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const compileTemplates = useCallback(
         async (
-            contentItemIds: string[],
+            elementIds: string[],
             titleTemplateString: string,
             descriptionTemplateString: string
-        ): Promise<{ [contentItemId: string]: { title: string; description: string } }> => {
-            const result = await refetchTemplateData({ contentItemIds });
+        ): Promise<{ [elementId: string]: { title: string; description: string } }> => {
+            const result = await refetchTemplateData({ elementIds });
 
             if (!result || !result.data) {
                 console.error("Could not retrieve data for content item templates", result.error, result.errors);
                 throw new Error("Could not retrieve data for content item templates");
             }
 
-            const pairs = contentItemIds.map((contentItemId): [string, { title: string; description: string }] => {
-                const contentItem = result.data.ContentItem.find((x) => x.id === contentItemId);
+            const pairs = elementIds.map((elementId): [string, { title: string; description: string }] => {
+                const element = result.data.content_Element.find((x) => x.id === elementId);
 
-                if (!contentItem) {
+                if (!element) {
                     return [
-                        contentItemId,
+                        elementId,
                         {
                             title: titleTemplateString,
                             description: descriptionTemplateString,
@@ -284,37 +284,35 @@ export function UploadYouTubeVideos(): JSX.Element {
                     ];
                 }
 
-                const fileName = contentItem.name;
-                const itemTitle = contentItem.contentGroup.title;
-                const itemShortTitle = contentItem.contentGroup.shortTitle;
-                const abstractContentItem = contentItem.contentGroup.abstractContentItems.length
-                    ? contentItem.contentGroup.abstractContentItems[0]
+                const fileName = element.name;
+                const itemTitle = element.item.title;
+                const itemShortTitle = element.item.shortTitle;
+                const abstractElement = element.item.abstractElements.length
+                    ? element.item.abstractElements[0]
                     : undefined;
-                const abstractContentItemData = isContentItemDataBlob(abstractContentItem?.data)
-                    ? (abstractContentItem?.data as ContentItemDataBlob)
+                const abstractElementData = isElementDataBlob(abstractElement?.data)
+                    ? (abstractElement?.data as ElementDataBlob)
                     : undefined;
-                const abstractContentItemDataLatest = abstractContentItemData
-                    ? R.last(abstractContentItemData)
-                    : undefined;
+                const abstractElementDataLatest = abstractElementData ? R.last(abstractElementData) : undefined;
                 const abstract =
-                    abstractContentItemDataLatest?.data.baseType === ContentBaseType.Text
-                        ? abstractContentItemDataLatest.data.text
+                    abstractElementDataLatest?.data.baseType === ElementBaseType.Text
+                        ? abstractElementDataLatest.data.text
                         : "";
 
                 const paperUrls = R.flatten(
-                    contentItem.contentGroup.paperUrlContentItems.map((item) => {
-                        if (!isContentItemDataBlob(item.data)) {
+                    element.item.paperUrlElements.map((item) => {
+                        if (!isElementDataBlob(item.data)) {
                             return [];
                         }
 
-                        const dataBlob = item.data as ContentItemDataBlob;
+                        const dataBlob = item.data as ElementDataBlob;
                         const latest = R.last(dataBlob);
 
                         if (!latest) {
                             return [];
                         }
 
-                        if (latest.data.baseType === ContentBaseType.URL) {
+                        if (latest.data.baseType === ElementBaseType.URL) {
                             return [latest.data.url];
                         } else {
                             return [];
@@ -323,19 +321,19 @@ export function UploadYouTubeVideos(): JSX.Element {
                 );
 
                 const paperLinks = R.flatten(
-                    contentItem.contentGroup.paperLinkContentItems.map((item) => {
-                        if (!isContentItemDataBlob(item.data)) {
+                    element.item.paperLinkElements.map((item) => {
+                        if (!isElementDataBlob(item.data)) {
                             return [];
                         }
 
-                        const dataBlob = item.data as ContentItemDataBlob;
+                        const dataBlob = item.data as ElementDataBlob;
                         const latest = R.last(dataBlob);
 
                         if (!latest) {
                             return [];
                         }
 
-                        if (latest.data.baseType === ContentBaseType.Link) {
+                        if (latest.data.baseType === ElementBaseType.Link) {
                             return [{ url: latest.data.url, text: latest.data.text }];
                         } else {
                             return [];
@@ -344,7 +342,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                 );
 
                 const youTubeUploads = R.flatten(
-                    contentItem.contentGroup.contentItems.map((item) =>
+                    element.item.elements.map((item) =>
                         item.youTubeUploads.map((upload) => ({
                             title: upload.videoTitle,
                             url: `https://www.youtube.com/watch?v=${upload.videoId}`,
@@ -352,15 +350,15 @@ export function UploadYouTubeVideos(): JSX.Element {
                     )
                 );
 
-                const authors = contentItem.contentGroup.authors.map((author) => ({
+                const authors = element.item.authors.map((author) => ({
                     name: author.person.name,
                     affiliation: author.person.affiliation ?? "",
                 }));
 
                 const view = {
-                    fileId: contentItemId,
+                    fileId: elementId,
                     fileName,
-                    itemId: contentItem.contentGroup.id,
+                    itemId: element.item.id,
                     itemTitle,
                     abstract,
                     itemShortTitle,
@@ -371,7 +369,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                 };
 
                 return [
-                    contentItemId,
+                    elementId,
                     {
                         title: Mustache.render(titleTemplateString, view),
                         description: Mustache.render(descriptionTemplateString, view),
@@ -384,23 +382,23 @@ export function UploadYouTubeVideos(): JSX.Element {
         [refetchTemplateData]
     );
 
-    const jobStatus = useCallback((jobStatusName: JobStatus_Enum) => {
+    const jobStatus = useCallback((jobStatusName: Video_JobStatus_Enum) => {
         switch (jobStatusName) {
-            case JobStatus_Enum.Completed:
+            case Video_JobStatus_Enum.Completed:
                 return (
                     <Tooltip label="Upload completed">
                         <FAIcon icon="check-circle" iconStyle="s" aria-label="completed" />
                     </Tooltip>
                 );
-            case JobStatus_Enum.Expired:
-            case JobStatus_Enum.Failed:
+            case Video_JobStatus_Enum.Expired:
+            case Video_JobStatus_Enum.Failed:
                 return (
                     <Tooltip label="Upload failed">
                         <FAIcon icon="exclamation-circle" iconStyle="s" aria-label="error" />
                     </Tooltip>
                 );
-            case JobStatus_Enum.InProgress:
-            case JobStatus_Enum.New:
+            case Video_JobStatus_Enum.InProgress:
+            case Video_JobStatus_Enum.New:
                 return <Spinner size="sm" aria-label="in progress" />;
         }
     }, []);
@@ -435,19 +433,19 @@ export function UploadYouTubeVideos(): JSX.Element {
             <HStack alignItems="flex-start">
                 <VStack alignItems="flex-start" flexGrow={1}>
                     <Formik<{
-                        contentItemIds: string[];
-                        attendeeGoogleAccountId: string | null;
+                        elementIds: string[];
+                        registrantGoogleAccountId: string | null;
                         titleTemplate: string;
                         descriptionTemplate: string;
                         channelId: string | null;
                         playlistId: string | null;
                         videoPrivacyStatus: string;
-                        titleCorrections: { [contentItemId: string]: string };
-                        descriptionCorrections: { [contentItemId: string]: string };
+                        titleCorrections: { [elementId: string]: string };
+                        descriptionCorrections: { [elementId: string]: string };
                     }>
                         initialValues={{
-                            contentItemIds: [],
-                            attendeeGoogleAccountId: null,
+                            elementIds: [],
+                            registrantGoogleAccountId: null,
                             titleTemplate: youTubeTitleTemplate,
                             descriptionTemplate: youTubeDescriptionTemplate,
                             channelId: null,
@@ -459,7 +457,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                         onSubmit={async (values, actions) => {
                             try {
                                 const details = await compileTemplates(
-                                    values.contentItemIds,
+                                    values.elementIds,
                                     values.titleTemplate,
                                     values.descriptionTemplate
                                 );
@@ -476,15 +474,15 @@ export function UploadYouTubeVideos(): JSX.Element {
 
                                 const invalidTitles = R.filter((x) => x.title.length > 100, updatedPairs);
 
-                                R.forEachObjIndexed((value, contentItemId) => {
-                                    const fieldName = `titleCorrections.${contentItemId}`;
+                                R.forEachObjIndexed((value, elementId) => {
+                                    const fieldName = `titleCorrections.${elementId}`;
                                     actions.setFieldValue(fieldName, value.title ?? null);
                                     actions.setFieldError(fieldName, "Title cannot be more than 100 characters");
                                     correctionsNeeded = true;
                                 }, invalidTitles);
 
-                                R.forEachObjIndexed((value, contentItemId) => {
-                                    const fieldName = `descriptionCorrections.${contentItemId}`;
+                                R.forEachObjIndexed((value, elementId) => {
+                                    const fieldName = `descriptionCorrections.${elementId}`;
                                     const error = getDescriptionError(value.description);
                                     if (error) {
                                         actions.setFieldValue(fieldName, value.description ?? null);
@@ -503,10 +501,10 @@ export function UploadYouTubeVideos(): JSX.Element {
 
                                 await createJobs({
                                     variables: {
-                                        objects: values.contentItemIds.map(
+                                        objects: values.elementIds.map(
                                             (id): Job_Queues_UploadYouTubeVideoJob_Insert_Input => ({
-                                                contentItemId: id,
-                                                attendeeGoogleAccountId: values.attendeeGoogleAccountId,
+                                                elementId: id,
+                                                registrantGoogleAccountId: values.registrantGoogleAccountId,
                                                 conferenceId: conference.id,
                                                 videoTitle: updatedPairs[id]?.title ?? id,
                                                 videoDescription: updatedPairs[id]?.description ?? "",
@@ -523,7 +521,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                 actions.resetForm();
                                 actions.setFieldValue("titleTemplate", youTubeTitleTemplate);
                                 actions.setFieldValue("descriptionTemplate", youTubeDescriptionTemplate);
-                                setAttendeeGoogleAccountId(null);
+                                setRegistrantGoogleAccountId(null);
                                 await existingJobsResult.refetch();
                             } catch (e) {
                                 console.error("Error while creating YouTube upload jobs", e);
@@ -536,8 +534,8 @@ export function UploadYouTubeVideos(): JSX.Element {
                         }}
                     >
                         {({ isSubmitting, isValid, values, touched }) => {
-                            if (!R.isEmpty(R.symmetricDifference(values.contentItemIds, contentItemIds))) {
-                                setContentItemIds(values.contentItemIds);
+                            if (!R.isEmpty(R.symmetricDifference(values.elementIds, elementIds))) {
+                                setElementIds(values.elementIds);
                             }
 
                             return (
@@ -546,16 +544,14 @@ export function UploadYouTubeVideos(): JSX.Element {
                                         Choose videos to upload
                                     </Heading>
                                     <Field
-                                        name="contentItemIds"
+                                        name="elementIds"
                                         validate={(ids: string[]) =>
                                             ids.length > 0 ? undefined : "Must choose at least one video"
                                         }
                                     >
                                         {({ field, form }: FieldProps<string[]>) => (
                                             <FormControl
-                                                isInvalid={
-                                                    !!form.errors.contentItemIds && !!form.touched.contentItemIds
-                                                }
+                                                isInvalid={!!form.errors.elementIds && !!form.touched.elementIds}
                                                 isRequired
                                             >
                                                 <Button
@@ -566,11 +562,11 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     <FAIcon icon="plus-square" iconStyle="s" mr={2} />
                                                     Add a video
                                                 </Button>
-                                                <ChooseContentItemModal
-                                                    chooseItem={(contentItemId) =>
+                                                <ChooseElementModal
+                                                    chooseItem={(elementId) =>
                                                         form.setFieldValue(
                                                             field.name,
-                                                            R.union(form.values.contentItemIds, [contentItemId])
+                                                            R.union(form.values.elementIds, [elementId])
                                                         )
                                                     }
                                                     isOpen={chooseVideoDisclosure.isOpen}
@@ -585,11 +581,11 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     <FAIcon icon="plus-square" iconStyle="s" mr={2} />
                                                     Add videos by tag
                                                 </Button>
-                                                <ChooseContentItemByTagModal
-                                                    chooseItems={(contentItemIds) =>
+                                                <ChooseElementByTagModal
+                                                    chooseItems={(elementIds) =>
                                                         form.setFieldValue(
                                                             field.name,
-                                                            R.union(form.values.contentItemIds, contentItemIds)
+                                                            R.union(form.values.elementIds, elementIds)
                                                         )
                                                     }
                                                     isOpen={chooseByTagDisclosure.isOpen}
@@ -601,21 +597,20 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     size="sm"
                                                     ml={4}
                                                     onClick={() => form.setFieldValue(field.name, [])}
-                                                    isDisabled={form.values.contentItemIds.length === 0}
+                                                    isDisabled={form.values.elementIds.length === 0}
                                                 >
                                                     <FAIcon icon="trash-alt" iconStyle="r" mr={2} />
                                                     Clear all
                                                 </Button>
 
                                                 <List mt={4} spacing={2}>
-                                                    {form.values.contentItemIds.map((id: string) => (
+                                                    {form.values.elementIds.map((id: string) => (
                                                         <ListItem key={id}>
                                                             <HStack>
                                                                 <ListIcon as={VideoIcon} />
-                                                                {contentItems[id] ? (
+                                                                {elements[id] ? (
                                                                     <Text pr={4}>
-                                                                        {contentItems[id].name} (
-                                                                        {contentItems[id].contentGroupTitle})
+                                                                        {elements[id].name} ({elements[id].itemTitle})
                                                                     </Text>
                                                                 ) : (
                                                                     <Spinner />
@@ -628,7 +623,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                                     onClick={() => {
                                                                         form.setFieldValue(
                                                                             field.name,
-                                                                            R.without([id], form.values.contentItemIds)
+                                                                            R.without([id], form.values.elementIds)
                                                                         );
                                                                     }}
                                                                 >
@@ -641,16 +636,16 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                             </HStack>
                                                         </ListItem>
                                                     ))}
-                                                    {form.values.contentItemIds.length === 0 ? (
+                                                    {form.values.elementIds.length === 0 ? (
                                                         <Text fontStyle="italic">No videos selected.</Text>
                                                     ) : (
                                                         <Text fontStyle="italic">
-                                                            {form.values.contentItemIds.length} video
-                                                            {form.values.contentItemIds.length > 1 ? "s" : ""} selected
+                                                            {form.values.elementIds.length} video
+                                                            {form.values.elementIds.length > 1 ? "s" : ""} selected
                                                         </Text>
                                                     )}
                                                 </List>
-                                                <FormErrorMessage>{form.errors.contentItemIds}</FormErrorMessage>
+                                                <FormErrorMessage>{form.errors.elementIds}</FormErrorMessage>
                                             </FormControl>
                                         )}
                                     </Field>
@@ -803,33 +798,33 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     <Heading as="h2" size="md" textAlign="left" my={4}>
                                         Choose upload location
                                     </Heading>
-                                    <Field name="attendeeGoogleAccountId">
+                                    <Field name="registrantGoogleAccountId">
                                         {({ field, form }: FieldProps<string>) => (
                                             <>
                                                 <FormControl
                                                     isInvalid={
-                                                        !!form.errors.attendeeGoogleAccountId &&
-                                                        !!form.touched.attendeeGoogleAccountId
+                                                        !!form.errors.registrantGoogleAccountId &&
+                                                        !!form.touched.registrantGoogleAccountId
                                                     }
                                                     isRequired
                                                 >
-                                                    <FormLabel htmlFor="attendeeGoogleAccountId" mt={2}>
+                                                    <FormLabel htmlFor="registrantGoogleAccountId" mt={2}>
                                                         Google Account
                                                     </FormLabel>
                                                     <Select
                                                         {...field}
-                                                        id="attendeeGoogleAccountId"
+                                                        id="registrantGoogleAccountId"
                                                         placeholder="Choose Google account"
                                                         mt={2}
                                                         onChange={(event) => {
-                                                            setAttendeeGoogleAccountId(event.target.value);
+                                                            setRegistrantGoogleAccountId(event.target.value);
                                                             field.onChange(event);
                                                         }}
                                                     >
                                                         {googleAccountOptions}
                                                     </Select>
                                                     <FormErrorMessage>
-                                                        {form.errors.attendeeGoogleAccountId}
+                                                        {form.errors.registrantGoogleAccountId}
                                                     </FormErrorMessage>
                                                 </FormControl>
                                                 <Button
@@ -837,14 +832,14 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                     my={2}
                                                     size="sm"
                                                     aria-label="refresh playlists"
-                                                    isDisabled={!form.values.attendeeGoogleAccountId}
+                                                    isDisabled={!form.values.registrantGoogleAccountId}
                                                     onClick={async () => {
                                                         try {
                                                             const result = await refreshYouTubeData({
                                                                 variables: {
-                                                                    attendeeId: attendee.id,
-                                                                    attendeeGoogleAccountId:
-                                                                        form.values.attendeeGoogleAccountId,
+                                                                    registrantId: registrant.id,
+                                                                    registrantGoogleAccountId:
+                                                                        form.values.registrantGoogleAccountId,
                                                                 },
                                                             });
                                                             if (!result.data?.refreshYouTubeData?.success) {
@@ -855,7 +850,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                             }
 
                                                             await googleAccountsResult.refetch({
-                                                                attendeeId: attendee.id,
+                                                                registrantId: registrant.id,
                                                             });
 
                                                             toast({
@@ -899,7 +894,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         id="channelId"
                                                         placeholder="Choose channel"
                                                         mt={2}
-                                                        isDisabled={!form.values.attendeeGoogleAccountId}
+                                                        isDisabled={!form.values.registrantGoogleAccountId}
                                                         onChange={(event) => {
                                                             setChannelId(event.target.value);
                                                             field.onChange(event);
@@ -926,7 +921,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         {...field}
                                                         id="playlistId"
                                                         placeholder="Choose playlist"
-                                                        isDisabled={!form.values.attendeeGoogleAccountId}
+                                                        isDisabled={!form.values.registrantGoogleAccountId}
                                                         mt={2}
                                                     >
                                                         {playlistOptions}
@@ -947,10 +942,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         Corrected video titles
                                                     </Heading>
                                                     {R.toPairs<string>(values.titleCorrections).map(
-                                                        ([contentItemId, title]) => (
+                                                        ([elementId, title]) => (
                                                             <Field
-                                                                key={contentItemId}
-                                                                name={`titleCorrections.${contentItemId}`}
+                                                                key={elementId}
+                                                                name={`titleCorrections.${elementId}`}
                                                                 validate={(title: string) =>
                                                                     title.length <= 100
                                                                         ? undefined
@@ -962,33 +957,28 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                                     <FormControl
                                                                         isInvalid={
                                                                             !!(form.errors.titleCorrections ??
-                                                                                ({} as any))[contentItemId] &&
+                                                                                ({} as any))[elementId] &&
                                                                             !!(form.touched.titleCorrections ??
-                                                                                ({} as any))[contentItemId]
+                                                                                ({} as any))[elementId]
                                                                         }
                                                                         isRequired
                                                                     >
                                                                         <FormLabel
-                                                                            htmlFor={`titleCorrections.${contentItemId}`}
+                                                                            htmlFor={`titleCorrections.${elementId}`}
                                                                             mt={2}
                                                                         >
-                                                                            Title for {contentItems[contentItemId].name}{" "}
-                                                                            (
-                                                                            {
-                                                                                contentItems[contentItemId]
-                                                                                    .contentGroupTitle
-                                                                            }
-                                                                            )
+                                                                            Title for {elements[elementId].name} (
+                                                                            {elements[elementId].itemTitle})
                                                                         </FormLabel>
                                                                         <Input
                                                                             {...field}
-                                                                            id={`titleCorrections.${contentItemId}`}
+                                                                            id={`titleCorrections.${elementId}`}
                                                                             placeholder="Replacement title"
                                                                         />
                                                                         <FormErrorMessage>
                                                                             {
                                                                                 (form.errors.titleCorrections ??
-                                                                                    ({} as any))[contentItemId]
+                                                                                    ({} as any))[elementId]
                                                                             }
                                                                         </FormErrorMessage>
                                                                     </FormControl>
@@ -1013,10 +1003,10 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         Corrected video descriptions
                                                     </Heading>
                                                     {R.toPairs<string>(values.descriptionCorrections).map(
-                                                        ([contentItemId, _description]) => (
+                                                        ([elementId, _description]) => (
                                                             <Field
-                                                                key={contentItemId}
-                                                                name={`descriptionCorrections.${contentItemId}`}
+                                                                key={elementId}
+                                                                name={`descriptionCorrections.${elementId}`}
                                                                 validate={getDescriptionError}
                                                                 isRequired
                                                             >
@@ -1024,34 +1014,29 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                                     <FormControl
                                                                         isInvalid={
                                                                             !!(form.errors.descriptionCorrections ??
-                                                                                ({} as any))[contentItemId] &&
+                                                                                ({} as any))[elementId] &&
                                                                             !!(form.touched.descriptionCorrections ??
-                                                                                ({} as any))[contentItemId]
+                                                                                ({} as any))[elementId]
                                                                         }
                                                                         isRequired
                                                                     >
                                                                         <FormLabel
-                                                                            htmlFor={`descriptionCorrections.${contentItemId}`}
+                                                                            htmlFor={`descriptionCorrections.${elementId}`}
                                                                             mt={2}
                                                                         >
-                                                                            Description for{" "}
-                                                                            {contentItems[contentItemId].name} (
-                                                                            {
-                                                                                contentItems[contentItemId]
-                                                                                    .contentGroupTitle
-                                                                            }
-                                                                            )
+                                                                            Description for {elements[elementId].name} (
+                                                                            {elements[elementId].itemTitle})
                                                                         </FormLabel>
                                                                         <Textarea
                                                                             {...field}
-                                                                            id={`descriptionCorrections.${contentItemId}`}
+                                                                            id={`descriptionCorrections.${elementId}`}
                                                                             size="sm"
                                                                             placeholder="Replacement description"
                                                                         />
                                                                         <FormErrorMessage>
                                                                             {
                                                                                 (form.errors.descriptionCorrections ??
-                                                                                    ({} as any))[contentItemId]
+                                                                                    ({} as any))[elementId]
                                                                             }
                                                                         </FormErrorMessage>
                                                                     </FormControl>
@@ -1095,7 +1080,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                         <ListItem key={job.id}>
                                             <HStack>
                                                 <Text>
-                                                    {job.contentItem.contentGroup.title} ({job.contentItem.name})
+                                                    {job.element.item.title} ({job.element.name})
                                                 </Text>
                                                 <Box ml={2}>{jobStatus(job.jobStatusName)}</Box>
                                             </HStack>

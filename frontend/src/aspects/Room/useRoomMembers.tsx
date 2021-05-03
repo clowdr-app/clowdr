@@ -1,7 +1,7 @@
 import React from "react";
-import type { AttendeeDataFragment, RoomMemberFragment } from "../../generated/graphql";
+import type { RegistrantDataFragment, RoomMemberFragment } from "../../generated/graphql";
 
-export type RoomMembersInfo = { member: RoomMemberFragment; attendee?: AttendeeDataFragment | null };
+export type RoomMembersInfo = { member: RoomMemberFragment; registrant?: RegistrantDataFragment | null };
 
 export type RoomMembersInfos = RoomMembersInfo[] | false | undefined;
 

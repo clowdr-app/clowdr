@@ -47,7 +47,7 @@ export default function CreatePollOptionsModal({
     onSend: (
         data: Pick<
             PollMessageData,
-            "options" | "canAttendeesCreateOptions" | "revealBeforeComplete" | "maxVotesPerAttendee"
+            "options" | "canRegistrantsCreateOptions" | "revealBeforeComplete" | "maxVotesPerRegistrant"
         >
     ) => void;
     initialData: MessageData;
@@ -58,14 +58,14 @@ export default function CreatePollOptionsModal({
 
     const [options, setOptions] = useState<string[]>("options" in initialData ? initialData.options : []);
     const [focusOnIdx, setFocusOnIdx] = useState<number | null>(null);
-    const [canAttendeesCreateOptions, setCanAttendeesCreateOptions] = useState<boolean>(
-        "canAttendeesCreateOptions" in initialData ? initialData.canAttendeesCreateOptions : false
+    const [canRegistrantsCreateOptions, setCanRegistrantsCreateOptions] = useState<boolean>(
+        "canRegistrantsCreateOptions" in initialData ? initialData.canRegistrantsCreateOptions : false
     );
     const [revealBeforeComplete, setRevealBeforeComplete] = useState<boolean>(
         "revealBeforeComplete" in initialData ? initialData.revealBeforeComplete : false
     );
-    const [maxVotesPerAttendee, setMaxVotesPerAttendee] = useState<number>(
-        "maxVotesPerAttendee" in initialData ? initialData.maxVotesPerAttendee : 1
+    const [maxVotesPerRegistrant, setMaxVotesPerRegistrant] = useState<number>(
+        "maxVotesPerRegistrant" in initialData ? initialData.maxVotesPerRegistrant : 1
     );
 
     const focusRefs = useMemo(
@@ -77,10 +77,10 @@ export default function CreatePollOptionsModal({
     const maxNumOptions = config.pollConfig.numberOfAnswers?.max ?? 20;
 
     useEffect(() => {
-        if (maxVotesPerAttendee > options.length && options.length > 0) {
-            setMaxVotesPerAttendee(options.length);
+        if (maxVotesPerRegistrant > options.length && options.length > 0) {
+            setMaxVotesPerRegistrant(options.length);
         }
-    }, [maxVotesPerAttendee, options.length]);
+    }, [maxVotesPerRegistrant, options.length]);
 
     useEffect(() => {
         if (focusOnIdx !== null) {
@@ -126,7 +126,7 @@ export default function CreatePollOptionsModal({
                                 <FormLabel>Options</FormLabel>
                                 <FormHelperText>
                                     Add or delete options by typing. Press enter when editing any choice to create a new
-                                    option below it. You may also enable attendees to create their own options.
+                                    option below it. You may also enable registrants to create their own options.
                                 </FormHelperText>
                                 <OrderedList mt={4} spacing={4}>
                                     {options.map((option, idx) => (
@@ -257,17 +257,17 @@ export default function CreatePollOptionsModal({
                                 </Text>
                             ) : undefined}
                             <FormControl>
-                                <FormLabel fontWeight="semibold">Allow attendees to create options?</FormLabel>
+                                <FormLabel fontWeight="semibold">Allow registrants to create options?</FormLabel>
                                 <HStack>
                                     <Text as="span">No</Text>
                                     <Switch
-                                        isChecked={canAttendeesCreateOptions}
-                                        onChange={(ev) => setCanAttendeesCreateOptions(ev.target.checked)}
+                                        isChecked={canRegistrantsCreateOptions}
+                                        onChange={(ev) => setCanRegistrantsCreateOptions(ev.target.checked)}
                                     />
                                     <Text as="span">Yes</Text>
                                 </HStack>
                                 <FormHelperText>
-                                    Would you like to allow attendees to create their own options?
+                                    Would you like to allow registrants to create their own options?
                                 </FormHelperText>
                             </FormControl>
                             <FormControl>
@@ -285,11 +285,11 @@ export default function CreatePollOptionsModal({
                                 </FormHelperText>
                             </FormControl>
                             <FormControl>
-                                <FormLabel fontWeight="semibold">Max choices per attendee?</FormLabel>
+                                <FormLabel fontWeight="semibold">Max choices per registrant?</FormLabel>
                                 <NumberInput
-                                    value={maxVotesPerAttendee}
+                                    value={maxVotesPerRegistrant}
                                     onChange={(_, v) =>
-                                        Number.isNaN(v) ? setMaxVotesPerAttendee(1) : setMaxVotesPerAttendee(v)
+                                        Number.isNaN(v) ? setMaxVotesPerRegistrant(1) : setMaxVotesPerRegistrant(v)
                                     }
                                     min={0}
                                     max={options.length > 0 ? options.length : 1}
@@ -301,7 +301,7 @@ export default function CreatePollOptionsModal({
                                     </NumberInputStepper>
                                 </NumberInput>
                                 <FormHelperText>
-                                    How many votes can each attendee cast? Set to 0 for no limit.
+                                    How many votes can each registrant cast? Set to 0 for no limit.
                                 </FormHelperText>
                             </FormControl>
                         </VStack>
@@ -333,8 +333,8 @@ export default function CreatePollOptionsModal({
                                         onClick={() => {
                                             onSend({
                                                 options,
-                                                canAttendeesCreateOptions,
-                                                maxVotesPerAttendee,
+                                                canRegistrantsCreateOptions,
+                                                maxVotesPerRegistrant,
                                                 revealBeforeComplete,
                                             });
                                             setOptions([]);

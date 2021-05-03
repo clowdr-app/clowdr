@@ -2,15 +2,15 @@ import { Box, Heading, HStack, Tag, Text, useColorModeValue } from "@chakra-ui/r
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
 import {
-    ContentGroupType_Enum,
-    RoomMode_Enum,
+    Content_ItemType_Enum,
     RoomPage_RoomDetailsFragment,
     Room_EventSummaryFragment,
+    Room_Mode_Enum,
 } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Generic/useRealTime";
-import useCurrentAttendee from "../../useCurrentAttendee";
-import { ContentGroupItemsWrapper } from "../Content/ContentGroupItems";
-import { HallwayLayoutWrapper } from "../Hallway/HallwayLayout";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
+import { ItemElementsWrapper } from "../Content/ItemElements";
+import { ExhibitionLayoutWrapper } from "../Exhibition/ExhibitionLayout";
 import { RoomTitle } from "./RoomTitle";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 
@@ -26,24 +26,26 @@ export function RoomContent({
     const bgColour = useColorModeValue("green.200", "green.700");
     const nextBgColour = useColorModeValue("gray.200", "gray.700");
 
-    const currentAttendee = useCurrentAttendee();
+    const currentRegistrant = useCurrentRegistrant();
 
     const currentEventRole = useMemo(
         () =>
-            currentRoomEvent?.eventPeople.find((p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id)
-                ?.roleName,
-        [currentAttendee, currentRoomEvent?.eventPeople]
+            currentRoomEvent?.eventPeople.find(
+                (p) => p.person.registrantId && p.person.registrantId === currentRegistrant.id
+            )?.roleName,
+        [currentRegistrant, currentRoomEvent?.eventPeople]
     );
     const nextEventRole = useMemo(
         () =>
-            nextRoomEvent?.eventPeople.find((p) => p.person.attendeeId && p.person.attendeeId === currentAttendee.id)
-                ?.roleName,
-        [currentAttendee, nextRoomEvent?.eventPeople]
+            nextRoomEvent?.eventPeople.find(
+                (p) => p.person.registrantId && p.person.registrantId === currentRegistrant.id
+            )?.roleName,
+        [currentRegistrant, nextRoomEvent?.eventPeople]
     );
 
     const now5s = useRealTime(5000);
 
-    // TODO: Hallway layout if in exhibition mode, else content layout
+    // TODO: Exhibition layout if in exhibition mode, else content layout
     return (
         <Box flexGrow={1}>
             <RoomTitle roomDetails={roomDetails} />
@@ -61,14 +63,16 @@ export function RoomContent({
                     <Heading as="h3" textAlign="left" size="lg" mb={2}>
                         {currentRoomEvent.name}
                     </Heading>
-                    {currentRoomEvent.intendedRoomModeName !== RoomMode_Enum.Exhibition &&
-                    currentRoomEvent.contentGroupId ? (
-                        <ContentGroupItemsWrapper contentGroupId={currentRoomEvent.contentGroupId} linkToItem={true} />
+                    {currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
+                        <ItemElementsWrapper itemId={currentRoomEvent.itemId} linkToItem={true} />
                     ) : (
                         <></>
                     )}
-                    {currentRoomEvent.hallwayId ? (
-                        <HallwayLayoutWrapper hallwayId={currentRoomEvent.hallwayId} hideLiveViewButton={true} />
+                    {currentRoomEvent.exhibitionId ? (
+                        <ExhibitionLayoutWrapper
+                            exhibitionId={currentRoomEvent.exhibitionId}
+                            hideLiveViewButton={true}
+                        />
                     ) : (
                         <></>
                     )}
@@ -89,8 +93,8 @@ export function RoomContent({
                             </Tag>
                         ) : undefined}
                     </HStack>
-                    {nextRoomEvent?.contentGroupId ? (
-                        <ContentGroupItemsWrapper contentGroupId={nextRoomEvent.contentGroupId} linkToItem={true} />
+                    {nextRoomEvent?.itemId ? (
+                        <ItemElementsWrapper itemId={nextRoomEvent.itemId} linkToItem={true} />
                     ) : (
                         <></>
                     )}
@@ -105,23 +109,16 @@ export function RoomContent({
                 <></>
             )}
 
-            {roomDetails.originatingContentGroup?.id &&
-            roomDetails.originatingContentGroup.contentGroupTypeName !== ContentGroupType_Enum.Sponsor ? (
+            {roomDetails.originatingItem?.id &&
+            roomDetails.originatingItem.typeName !== Content_ItemType_Enum.Sponsor ? (
                 <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
-                    <ContentGroupItemsWrapper
-                        contentGroupId={roomDetails.originatingContentGroup.id}
-                        linkToItem={true}
-                    />
+                    <ItemElementsWrapper itemId={roomDetails.originatingItem.id} linkToItem={true} />
                 </Box>
             ) : (
                 <></>
             )}
 
-            {roomDetails.originatingContentGroup ? (
-                <RoomSponsorContent contentGroupId={roomDetails.originatingContentGroup.id} />
-            ) : (
-                <></>
-            )}
+            {roomDetails.originatingItem ? <RoomSponsorContent itemId={roomDetails.originatingItem.id} /> : <></>}
         </Box>
     );
 }

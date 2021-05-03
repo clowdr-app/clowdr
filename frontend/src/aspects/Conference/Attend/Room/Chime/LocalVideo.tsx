@@ -7,7 +7,7 @@ import {
     useToggleLocalMute,
 } from "amazon-chime-sdk-component-library-react";
 import React, { useEffect, useRef } from "react";
-import useCurrentAttendee from "../../../useCurrentAttendee";
+import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import PlaceholderImage from "../PlaceholderImage";
 import { VonageOverlay } from "../Vonage/VonageOverlay";
 
@@ -18,7 +18,7 @@ export function LocalVideo({ participantWidth }: { participantWidth: number }): 
     const audioVideo = useAudioVideo();
     const videoEl = useRef<HTMLVideoElement>(null);
     useApplyVideoObjectFit(videoEl);
-    const attendee = useCurrentAttendee();
+    const registrant = useCurrentRegistrant();
     const { muted } = useToggleLocalMute();
 
     useEffect(() => {
@@ -47,7 +47,7 @@ export function LocalVideo({ participantWidth }: { participantWidth: number }): 
             <video ref={videoEl} style={{ zIndex: 100, position: "relative", height: "100%" }} />
             <Box position="absolute" left="1" bottom="1" zIndex="200" w="100%">
                 <VonageOverlay
-                    connectionData={JSON.stringify({ attendeeId: attendee?.id })}
+                    connectionData={JSON.stringify({ registrantId: registrant?.id })}
                     microphoneEnabled={!muted}
                 />
             </Box>

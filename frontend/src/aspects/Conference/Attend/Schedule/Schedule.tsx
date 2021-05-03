@@ -7,9 +7,9 @@ import React, { useCallback, useMemo } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
 import {
-    Permission_Enum,
-    Schedule_ContentGroupItemsFragment,
+    Permissions_Permission_Enum,
     Schedule_EventSummaryFragment,
+    Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
     useSchedule_SelectSummariesQuery,
@@ -27,80 +27,82 @@ import TimeBar from "./TimeBar";
 import useTimelineParameters, { TimelineParameters } from "./useTimelineParameters";
 
 gql`
-    fragment Schedule_ContentItem on ContentItem {
+    fragment Schedule_Element on content_Element {
         id
-        contentTypeName
+        typeName
         name
         layoutData
         data
     }
 
-    fragment Schedule_ContentPerson on ContentPerson {
+    fragment Schedule_ProgramPerson on collection_ProgramPerson {
         id
         name
         affiliation
-        attendeeId
+        registrantId
     }
 
-    fragment Schedule_ContentGroupPerson on ContentGroupPerson {
+    fragment Schedule_ItemPerson on content_ItemProgramPerson {
         id
         priority
         roleName
         person {
-            ...Schedule_ContentPerson
+            ...Schedule_ProgramPerson
         }
     }
 
-    fragment Schedule_ContentGroupItems on ContentGroup {
+    fragment Schedule_ItemElements on content_Item {
         id
         title
         shortTitle
-        contentGroupTypeName
+        typeName
     }
 
-    fragment Schedule_ContentGroup on ContentGroup {
-        ...Schedule_ContentGroupItems
-        abstractContentItems: contentItems(where: { contentTypeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
-            ...Schedule_ContentItem
+    fragment Schedule_Item on content_Item {
+        ...Schedule_ItemElements
+        abstractElements: elements(where: { typeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
+            ...Schedule_Element
         }
-        people {
-            ...Schedule_ContentGroupPerson
-        }
-    }
-
-    query Schedule_SelectContentGroup($id: uuid!) {
-        ContentGroup_by_pk(id: $id) {
-            ...Schedule_ContentGroup
+        itemPeople {
+            ...Schedule_ItemPerson
         }
     }
 
-    fragment Schedule_EventSummary on Event {
+    query Schedule_SelectItem($id: uuid!) {
+        content_Item_by_pk(id: $id) {
+            ...Schedule_Item
+        }
+    }
+
+    fragment Schedule_EventSummary on schedule_Event {
         id
         roomId
         intendedRoomModeName
         name
         startTime
         durationSeconds
-        contentGroupId
+        itemId
     }
 
-    fragment Schedule_RoomSummary on Room {
+    fragment Schedule_RoomSummary on room_Room {
         id
         name
         currentModeName
         priority
-        roomPrivacyName
+        managementModeName
     }
 
     query Schedule_SelectSummaries($conferenceId: uuid!) {
-        Room(where: { conferenceId: { _eq: $conferenceId }, roomPrivacyName: { _in: [PUBLIC, PRIVATE] }, events: {} }) {
+        room_Room(
+            where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] }, events: {} }
+        ) {
             ...Schedule_RoomSummary
         }
-        Event(where: { conferenceId: { _eq: $conferenceId } }) {
+        schedule_Event(where: { conferenceId: { _eq: $conferenceId } }) {
             ...Schedule_EventSummary
         }
-        ContentGroup(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_ContentGroupItems
+        content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Schedule_ItemElements
         }
     }
 `;
@@ -273,14 +275,14 @@ function ScheduleFrame({
     timeBarWidth,
     scrollToEventCbs,
     scrollToNow,
-    contentGroups,
+    items,
     isNewDay,
 }: {
     frame: Frame;
     alternateBgColor: string;
     borderColour: string;
     maxParallelRooms: number;
-    contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
+    items: ReadonlyArray<Schedule_ItemElementsFragment>;
     roomColWidth: number;
     timeBarWidth: number;
     scrollToEventCbs: Map<string, () => void>;
@@ -330,12 +332,12 @@ function ScheduleFrame({
                             width={roomColWidth}
                             scrollToEventCbs={scrollToEventCbs}
                             events={item.session.events}
-                            contentGroups={contentGroups}
+                            items={items}
                         />
                     </Box>
                 );
             }, [] as (JSX.Element | undefined)[]),
-        [contentGroups, frame.items, roomColWidth, scrollToEventCbs]
+        [items, frame.items, roomColWidth, scrollToEventCbs]
     );
 
     const timelineParams = useTimelineParameters();
@@ -415,11 +417,11 @@ function ScheduleFrame({
 function ScheduleInner({
     rooms,
     events: rawEvents,
-    contentGroups,
+    items,
 }: {
     rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
+    items: ReadonlyArray<Schedule_ItemElementsFragment>;
 }): JSX.Element {
     const eventsByRoom = useMemo(
         () =>
@@ -537,7 +539,7 @@ function ScheduleInner({
                             maxParallelRooms={maxParallelRooms}
                             scrollToEventCbs={scrollToEventCbs}
                             scrollToNow={scrollToNow}
-                            contentGroups={contentGroups}
+                            items={items}
                             roomColWidth={roomColWidth}
                             timeBarWidth={timeBarWidth}
                             isNewDay={isNewDay}
@@ -546,16 +548,7 @@ function ScheduleInner({
                 </TimelineParameters>
             );
         });
-    }, [
-        alternateBgColor,
-        borderColour,
-        contentGroups,
-        frames,
-        maxParallelRooms,
-        roomColWidth,
-        scrollToEventCbs,
-        scrollToNow,
-    ]);
+    }, [alternateBgColor, borderColour, items, frames, maxParallelRooms, roomColWidth, scrollToEventCbs, scrollToNow]);
 
     const conference = useConference();
     const title = useTitle(`Schedule of ${conference.shortName}`);
@@ -623,11 +616,11 @@ function ScheduleFetchWrapper(): JSX.Element {
             {
                 rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
                 events: ReadonlyArray<Schedule_EventSummaryFragment>;
-                contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
+                items: ReadonlyArray<Schedule_ItemElementsFragment>;
             }
         >
             queryResult={roomsResult}
-            getter={(x) => ({ rooms: x.Room, events: x.Event, contentGroups: x.ContentGroup })}
+            getter={(x) => ({ rooms: x.room_Room, events: x.schedule_Event, items: x.content_Item })}
         >
             {(data) => <ScheduleInner {...data} />}
         </ApolloQueryWrapper>
@@ -637,7 +630,10 @@ function ScheduleFetchWrapper(): JSX.Element {
 export default function Schedule(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageSchedule]}
+            permissions={[
+                Permissions_Permission_Enum.ConferenceView,
+                Permissions_Permission_Enum.ConferenceManageSchedule,
+            ]}
         >
             <ScheduleFetchWrapper />
         </RequireAtLeastOnePermissionWrapper>

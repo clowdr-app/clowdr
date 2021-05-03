@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import {
     AWSJobStatus,
-    ContentBaseType,
+    ElementBaseType,
     VideoBroadcastBlob,
     VideoCountdownBlob,
     VideoFileBlob,
@@ -34,16 +34,16 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import srtValidator, { SrtValidationError } from "srt-validator";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
-import type { ContentItemDescriptor } from "./Types";
+import type { ElementDescriptor } from "./Types";
 
 export default function UploadFileForm_Subtitles({
     item,
-    onItemChange,
+    onElementChange,
     contentBaseType,
 }: {
-    item: ContentItemDescriptor;
-    onItemChange?: (newItem: ContentItemDescriptor) => void;
-    contentBaseType: ContentBaseType.Video;
+    item: ElementDescriptor;
+    onElementChange?: (newItem: ElementDescriptor) => void;
+    contentBaseType: ElementBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
@@ -53,6 +53,7 @@ export default function UploadFileForm_Subtitles({
         async function fn(): Promise<void> {
             if (files.length === 0) {
                 setSrtProblems([]);
+                return;
             }
 
             const srtString = await files[0].data.text();
@@ -67,7 +68,7 @@ export default function UploadFileForm_Subtitles({
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "subtitles-upload",
             meta: {
-                contentItemId: item.id,
+                elementId: item.id,
             },
             allowMultipleUploads: false,
             restrictions: {
@@ -124,7 +125,7 @@ export default function UploadFileForm_Subtitles({
         | null
     >(() => {
         const latest = R.last(item.data);
-        if (!latest || latest.data.baseType !== ContentBaseType.Video) {
+        if (!latest || latest.data.baseType !== ElementBaseType.Video) {
             return null;
         }
         // Make sure subtitles are already generated so uploaded ones don't get overwritten later
@@ -180,15 +181,15 @@ export default function UploadFileForm_Subtitles({
                         });
                         uppy.reset();
 
-                        if (onItemChange) {
-                            if (contentBaseType !== ContentBaseType.Video) {
+                        if (onElementChange) {
+                            if (contentBaseType !== ElementBaseType.Video) {
                                 throw new Error(`Content has wrong base type ${contentBaseType}`);
                             }
 
                             if (!latestVersionData) {
                                 throw new Error("Content does not have a valid existing version");
                             }
-                            onItemChange({
+                            onElementChange({
                                 ...item,
                                 data: [
                                     ...item.data,

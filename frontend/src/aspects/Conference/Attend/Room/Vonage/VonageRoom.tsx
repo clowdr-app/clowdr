@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
-import useCurrentAttendee, { useMaybeCurrentAttendee } from "../../../useCurrentAttendee";
+import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
 import { useVonageComputedState } from "./useVonageComputedState";
@@ -25,7 +25,7 @@ export function VonageRoom({
     disable: boolean;
     isBackstageRoom: boolean;
 }): JSX.Element {
-    const mAttendee = useMaybeCurrentAttendee();
+    const mRegistrant = useMaybeCurrentRegistrant();
 
     const location = useLocation();
     const locationParts = (location.pathname.startsWith("/") ? location.pathname.substr(1) : location.pathname).split(
@@ -37,7 +37,7 @@ export function VonageRoom({
     return (
         <VonageRoomStateProvider>
             <ChatProfileModalProvider>
-                {mAttendee ? (
+                {mRegistrant ? (
                     <VonageRoomInner
                         vonageSessionId={vonageSessionId}
                         stop={!roomCouldBeInUse || disable}
@@ -70,7 +70,7 @@ function VonageRoomInner({
     );
 
     const userId = useUserId();
-    const attendee = useCurrentAttendee();
+    const registrant = useCurrentRegistrant();
     const toast = useToast();
 
     const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
@@ -344,11 +344,11 @@ function VonageRoomInner({
                     pointerEvents="none"
                 />
                 <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
-                    <VonageOverlay connectionData={JSON.stringify({ attendeeId: attendee.id })} />
+                    <VonageOverlay connectionData={JSON.stringify({ registrantId: registrant.id })} />
                 </Box>
             </Box>
         ),
-        [attendee.id, screen]
+        [registrant.id, screen]
     );
 
     const fullScreenHandle = useFullScreenHandle();
@@ -403,7 +403,7 @@ function VonageRoomInner({
                 <Box position="relative" flex={`0 0 ${participantWidth}px`} w={participantWidth} h={participantWidth}>
                     <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
                         <VonageOverlay
-                            connectionData={JSON.stringify({ attendeeId: attendee.id })}
+                            connectionData={JSON.stringify({ registrantId: registrant.id })}
                             microphoneEnabled={state.microphoneIntendedEnabled}
                         />
                     </Box>
@@ -412,7 +412,7 @@ function VonageRoomInner({
             ) : (
                 <></>
             ),
-        [attendee.id, camera, connected, participantWidth, state.microphoneIntendedEnabled]
+        [registrant.id, camera, connected, participantWidth, state.microphoneIntendedEnabled]
     );
 
     const viewPublishedCamera = useMemo(
@@ -444,14 +444,14 @@ function VonageRoomInner({
                     />
                     <Box position="absolute" left="0.4rem" bottom="0.2rem" zIndex="200" width="100%" overflow="hidden">
                         <VonageOverlay
-                            connectionData={JSON.stringify({ attendeeId: attendee.id })}
+                            connectionData={JSON.stringify({ registrantId: registrant.id })}
                             microphoneEnabled={state.microphoneIntendedEnabled}
                         />
                     </Box>
                 </Box>
             </Box>
         ),
-        [attendee.id, camera, connected, participantWidth, state.microphoneIntendedEnabled]
+        [registrant.id, camera, connected, participantWidth, state.microphoneIntendedEnabled]
     );
 
     const preJoin = useMemo(

@@ -6,11 +6,14 @@ import {
     useApproveEventRoomJoinRequestMutation,
 } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Icons/FAIcon";
-import { useAttendee } from "../../../AttendeesContext";
+import { useRegistrant } from "../../../RegistrantsContext";
 
 gql`
     mutation ApproveEventRoomJoinRequest($eventRoomJoinRequestId: uuid!) {
-        update_EventRoomJoinRequest_by_pk(pk_columns: { id: $eventRoomJoinRequestId }, _set: { approved: true }) {
+        update_schedule_EventRoomJoinRequest_by_pk(
+            pk_columns: { id: $eventRoomJoinRequestId }
+            _set: { approved: true }
+        ) {
             id
         }
     }
@@ -50,18 +53,18 @@ export function JoinRequest({
         setLoading(false);
     }, [approveJoinRequestMutation, joinRequest.id, toast]);
 
-    const joinRequestIdObj = useMemo(() => ({ attendee: joinRequest.attendeeId }), [joinRequest.attendeeId]);
-    const attendee = useAttendee(joinRequestIdObj);
+    const joinRequestIdObj = useMemo(() => ({ registrant: joinRequest.registrantId }), [joinRequest.registrantId]);
+    const registrant = useRegistrant(joinRequestIdObj);
 
     return (
         <HStack my={2}>
             <FAIcon icon="hand-paper" iconStyle="s" />
-            <Text>{attendee?.displayName ?? "<Loading>"}</Text>
+            <Text>{registrant?.displayName ?? "<Loading>"}</Text>
             {enableApproval ? (
                 <Box flexGrow={1} textAlign="right">
                     <Button
                         onClick={approveJoinRequest}
-                        aria-label={`Add ${attendee?.displayName ?? "<Loading name>"} to the event room`}
+                        aria-label={`Add ${registrant?.displayName ?? "<Loading name>"} to the event room`}
                         isLoading={loading}
                         p={0}
                         colorScheme="green"

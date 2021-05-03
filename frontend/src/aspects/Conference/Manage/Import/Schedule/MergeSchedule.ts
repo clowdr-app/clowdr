@@ -5,7 +5,7 @@ import type {
     IntermediaryTagDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
-import type { ContentGroupDescriptor } from "../../Content/Types";
+import type { ItemDescriptor } from "../../Content/Types";
 import type { EventDescriptor, RoomDescriptor } from "../../Schedule/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import {
@@ -30,7 +30,7 @@ import {
 
 type Context = {
     idMaps: {
-        EventPerson: IdMap;
+        EventProgramPerson: IdMap;
         Event: IdMap;
         Room: IdMap;
         Tag: IdMap;
@@ -41,7 +41,7 @@ type Context = {
     originatingDatas: OriginatingDataDescriptor[];
     tags: TagDescriptor[];
     rooms: RoomDescriptor[];
-    contentGroups: ContentGroupDescriptor[];
+    items: ItemDescriptor[];
 };
 
 function convertTagName(context: Context, tagName: string): string {
@@ -62,7 +62,7 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
 
         roomId: item.roomId,
         intendedRoomModeName: item.intendedRoomModeName,
-        contentGroupId: item.contentGroupId,
+        itemId: item.itemId,
         name: item.name,
         startTime: typeof item.startTime === "number" ? new Date(item.startTime).toISOString() : item.startTime,
         durationSeconds: item.durationSeconds,
@@ -94,9 +94,9 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         }
     }
 
-    if ("contentGroupSourceId" in item && item.contentGroupSourceId && !item.contentGroupId) {
-        const srcId = item.contentGroupSourceId;
-        const groups = context.contentGroups.filter((g) => {
+    if ("itemSourceId" in item && item.itemSourceId && !item.itemId) {
+        const srcId = item.itemSourceId;
+        const groups = context.items.filter((g) => {
             if (g.originatingDataId) {
                 const od = context.originatingDatas.find((x) =>
                     isMatch_Id_Generalised("OriginatingData", "id", "originatingDataId")(context, x, g)
@@ -110,7 +110,7 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
             return false;
         });
         if (groups.length === 1) {
-            result.contentGroupId = groups[0].id;
+            result.itemId = groups[0].id;
         } else if (groups.length > 1) {
             console.error("Multiple possible content groups could match this event", { item, groups });
             throw new Error(
@@ -142,7 +142,7 @@ function mergeEvent(
     mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "roomId", item1, item2);
     mergeFieldInPlace(context, changes, result, "intendedRoomModeName", item1, item2);
-    mergeFieldInPlace(context, changes, result, "contentGroupId", item1, item2);
+    mergeFieldInPlace(context, changes, result, "itemId", item1, item2);
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "startTime", item1, item2);
     mergeFieldInPlace(context, changes, result, "durationSeconds", item1, item2);
@@ -345,7 +345,7 @@ function mergeData(
     originalRooms: RoomDescriptor[],
     originalOriginatingDatas: OriginatingDataDescriptor[],
     originalTags: TagDescriptor[],
-    contentGroups: ContentGroupDescriptor[]
+    items: ItemDescriptor[]
 ): {
     newEvents: EventDescriptor[];
     newTags: TagDescriptor[];
@@ -361,7 +361,7 @@ function mergeData(
 
     const result: {
         idMaps: {
-            EventPerson: IdMap;
+            EventProgramPerson: IdMap;
             Event: IdMap;
             Room: IdMap;
             Tag: IdMap;
@@ -372,10 +372,10 @@ function mergeData(
         tags: TagDescriptor[];
         originatingDatas: OriginatingDataDescriptor[];
         rooms: RoomDescriptor[];
-        contentGroups: ContentGroupDescriptor[];
+        items: ItemDescriptor[];
     } = {
         idMaps: {
-            EventPerson: new Map(),
+            EventProgramPerson: new Map(),
             Event: new Map(),
             Room: new Map(),
             Tag: new Map(),
@@ -386,7 +386,7 @@ function mergeData(
         tags: [...originalTags],
         originatingDatas: [...originalOriginatingDatas],
         rooms: [...originalRooms],
-        contentGroups: [...contentGroups],
+        items: [...items],
     };
     const changes: ChangeSummary[] = [];
 
@@ -470,7 +470,7 @@ export default function mergeSchedule(
     originalRooms: Map<string, RoomDescriptor>,
     originalOriginatingDatas: Map<string, OriginatingDataDescriptor>,
     originalTags: Map<string, TagDescriptor>,
-    contentGroups: ContentGroupDescriptor[]
+    items: ItemDescriptor[]
 ): {
     changes: ChangeSummary[];
     newEvents: Map<string, EventDescriptor>;
@@ -487,7 +487,7 @@ export default function mergeSchedule(
         Array.from(originalRooms.values()),
         Array.from(originalOriginatingDatas.values()),
         Array.from(originalTags.values()),
-        contentGroups
+        items
     );
     changes.push(...result.changes);
 

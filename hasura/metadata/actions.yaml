@@ -1,8 +1,8 @@
 actions:
-- name: createContentGroupRoom
+- name: createItemRoom
   definition:
     kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/room/createForContentGroup'
+    handler: '{{ACTION_BASE_URL}}/room/createForItem'
     forward_client_headers: true
     headers:
     - name: x-hasura-event-secret
@@ -19,27 +19,6 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
-- name: echo
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/echo'
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: unauthenticated
-  - role: user
-- name: getContentItem
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/contentItem/getByRequiredItem'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: unauthenticated
-  - role: user
 - name: getGoogleOAuthUrl
   definition:
     kind: synchronous
@@ -53,7 +32,7 @@ actions:
 - name: getUploadAgreement
   definition:
     kind: ""
-    handler: '{{ACTION_BASE_URL}}/contentItem/getUploadAgreement'
+    handler: '{{ACTION_BASE_URL}}/element/getUploadAgreement'
     forward_client_headers: true
     headers:
     - name: x-hasura-event-secret
@@ -147,20 +126,10 @@ actions:
     headers:
     - name: x-hasura-presence-summary-secret
       value_from_env: PRESENCE_SUMMARY_SECRET
-- name: protectedEcho
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/protectedEcho'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: user
 - name: refreshYouTubeData
   definition:
     kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/attendeeGoogleAccount/refreshYouTubeData'
+    handler: '{{ACTION_BASE_URL}}/registrantGoogleAccount/refreshYouTubeData'
     forward_client_headers: true
     headers:
     - name: x-hasura-event-secret
@@ -177,17 +146,6 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
-- name: submitContentItem
-  definition:
-    kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/contentItem/submit'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: unauthenticated
-  - role: user
 - name: submitGoogleOAuthCode
   definition:
     kind: synchronous
@@ -198,6 +156,14 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
+- name: submitUploadableElement
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/element/submit'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: updateProfilePhoto
   definition:
     kind: synchronous
@@ -211,7 +177,7 @@ actions:
 - name: updateSubtitles
   definition:
     kind: synchronous
-    handler: '{{ACTION_BASE_URL}}/contentItem/updateSubtitles'
+    handler: '{{ACTION_BASE_URL}}/element/updateSubtitles'
     forward_client_headers: true
     headers:
     - name: x-hasura-event-secret
@@ -259,21 +225,14 @@ custom_types:
   - name: CreateRoomDmOutput
     relationships:
     - remote_table:
-        schema: public
+        schema: room
         name: Room
       name: room
+      source: default
       type: object
       field_mapping:
         roomId: id
   - name: CreateContentGroupRoomOutput
-    relationships:
-    - remote_table:
-        schema: public
-        name: Room
-      name: room
-      type: object
-      field_mapping:
-        roomId: id
   - name: StopEventBroadcastOutput
   - name: GetGoogleOAuthUrlOutput
   - name: SubmitGoogleOAuthTokenOutput
@@ -286,4 +245,15 @@ custom_types:
   - name: PresenceFlushOutput
   - name: JoinRoomChimeSessionOutput
   - name: VAPIDPublicKeyOutput
+  - name: CreateItemRoomOutput
+    relationships:
+    - remote_table:
+        schema: room
+        name: Room
+      name: room
+      source: default
+      type: object
+      field_mapping:
+        roomId: id
+  - name: SubmitUploadableElementOutput
   scalars: []

@@ -1,7 +1,7 @@
 import { Button, useToast } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useContentGroup_CreateRoomMutation } from "../../../../generated/graphql";
+import { useItem_CreateRoomMutation } from "../../../../generated/graphql";
 import { useConference } from "../../useConference";
 
 export function CreateRoomButton({
@@ -14,7 +14,7 @@ export function CreateRoomButton({
     const conference = useConference();
     const toast = useToast();
     const history = useHistory();
-    const [createBreakoutMutation] = useContentGroup_CreateRoomMutation();
+    const [createBreakoutMutation] = useItem_CreateRoomMutation();
     const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);
     const createBreakout = useCallback(async () => {
         if (!groupId) {
@@ -26,15 +26,15 @@ export function CreateRoomButton({
             const { data } = await createBreakoutMutation({
                 variables: {
                     conferenceId: conference.id,
-                    contentGroupId: groupId,
+                    itemId: groupId,
                 },
             });
 
-            if (!data?.createContentGroupRoom || !data.createContentGroupRoom.roomId) {
-                throw new Error(`No data returned: ${data?.createContentGroupRoom?.message}`);
+            if (!data?.createItemRoom || !data.createItemRoom.roomId) {
+                throw new Error(`No data returned: ${data?.createItemRoom?.message}`);
             }
 
-            const roomId = data.createContentGroupRoom.roomId;
+            const roomId = data.createItemRoom.roomId;
 
             // Wait so that breakout session has a chance to be created
             setTimeout(() => history.push(`/conference/${conference.slug}/room/${roomId}`), 2000);

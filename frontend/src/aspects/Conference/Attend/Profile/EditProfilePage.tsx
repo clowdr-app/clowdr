@@ -29,9 +29,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-    useAttendeeByIdQuery,
-    useUpdateAttendeeDisplayNameMutation,
-    useUpdateAttendeeProfileMutation,
+    useRegistrantByIdQuery,
+    useUpdateProfileMutation,
+    useUpdateRegistrantDisplayNameMutation,
 } from "../../../../generated/graphql";
 import BadgeInput from "../../../Badges/BadgeInput";
 import type { BadgeData } from "../../../Badges/ProfileBadge";
@@ -42,7 +42,7 @@ import PronounInput from "../../../Pronouns/PronounInput";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
-import { AttendeeContextT, AttendeeProfile, useMaybeCurrentAttendee } from "../../useCurrentAttendee";
+import { Profile, RegistrantContextT, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import EditProfilePitureForm from "./EditProfilePictureForm";
 
 function arraysEqual<T>(
@@ -64,9 +64,8 @@ function arraysEqual<T>(
     return x.length === y.length && [...x].sort(sort).every((v, idx) => compare(v, sortedY[idx]));
 }
 
-function deepProfileIsEqual(x: AttendeeContextT, y: AttendeeContextT): boolean {
+function deepProfileIsEqual(x: RegistrantContextT, y: RegistrantContextT): boolean {
     return (
-        x.profile.realName === y.profile.realName &&
         x.profile.affiliation === y.profile.affiliation &&
         x.profile.affiliationURL === y.profile.affiliationURL &&
         x.profile.country === y.profile.country &&
@@ -91,42 +90,42 @@ function deepProfileIsEqual(x: AttendeeContextT, y: AttendeeContextT): boolean {
 }
 
 gql`
-    query AttendeeById($conferenceId: uuid!, $attendeeId: uuid!) {
-        Attendee(where: { id: { _eq: $attendeeId }, conferenceId: { _eq: $conferenceId } }) {
-            ...AttendeeData
+    query RegistrantById($conferenceId: uuid!, $registrantId: uuid!) {
+        registrant_Registrant(where: { id: { _eq: $registrantId }, conferenceId: { _eq: $conferenceId } }) {
+            ...RegistrantData
         }
     }
 
-    mutation UpdateAttendeeProfile($attendeeId: uuid!, $profile: AttendeeProfile_set_input = {}) {
-        update_AttendeeProfile_by_pk(pk_columns: { attendeeId: $attendeeId }, _set: $profile) {
-            ...AttendeeProfileData
+    mutation UpdateProfile($registrantId: uuid!, $profile: registrant_Profile_set_input = {}) {
+        update_registrant_Profile_by_pk(pk_columns: { registrantId: $registrantId }, _set: $profile) {
+            ...ProfileData
         }
     }
 
-    mutation UpdateAttendeeDisplayName($attendeeId: uuid!, $name: String!) {
-        update_Attendee_by_pk(pk_columns: { id: $attendeeId }, _set: { displayName: $name }) {
-            ...AttendeeData
+    mutation UpdateRegistrantDisplayName($registrantId: uuid!, $name: String!) {
+        update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: { displayName: $name }) {
+            ...RegistrantData
         }
     }
 `;
 
-function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX.Element {
+function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }): JSX.Element {
     const conference = useConference();
     const currentUser = useCurrentUser();
 
-    const [editingAttendee, setEditingAttendee] = useState<AttendeeContextT>(attendee);
+    const [editingRegistrant, setEditingRegistrant] = useState<RegistrantContextT>(registrant);
 
-    const isDirty = useMemo(() => !deepProfileIsEqual(attendee, editingAttendee), [attendee, editingAttendee]);
-    const displayNameIsDirty = editingAttendee.displayName !== attendee.displayName;
+    const isDirty = useMemo(() => !deepProfileIsEqual(registrant, editingRegistrant), [registrant, editingRegistrant]);
+    const displayNameIsDirty = editingRegistrant.displayName !== registrant.displayName;
 
     const [
-        updateAttendeeProfile,
-        { loading: loadingUpdateAttendeProfile, error: errorUpdateAttendeeProfile },
-    ] = useUpdateAttendeeProfileMutation();
+        updateProfile,
+        { loading: loadingUpdateAttendeProfile, error: errorUpdateProfile },
+    ] = useUpdateProfileMutation();
     const [
-        updateAttendeeDisplayName,
-        { loading: loadingUpdateAttendeDisplayName, error: errorUpdateAttendeeDisplayName },
-    ] = useUpdateAttendeeDisplayNameMutation();
+        updateRegistrantDisplayName,
+        { loading: loadingUpdateAttendeDisplayName, error: errorUpdateRegistrantDisplayName },
+    ] = useUpdateRegistrantDisplayNameMutation();
 
     const toast = useToast();
     const savingToastIdRef = useRef<string | number | undefined>();
@@ -173,21 +172,20 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
             tId = setTimeout(
                 (async () => {
                     try {
-                        await updateAttendeeProfile({
+                        await updateProfile({
                             variables: {
-                                attendeeId: attendee.id,
+                                registrantId: registrant.id,
                                 profile: {
-                                    realName: editingAttendee.profile.realName,
-                                    affiliation: editingAttendee.profile.affiliation,
-                                    affiliationURL: editingAttendee.profile.affiliationURL,
-                                    country: editingAttendee.profile.country,
-                                    timezoneUTCOffset: editingAttendee.profile.timezoneUTCOffset,
-                                    bio: editingAttendee.profile.bio,
-                                    website: editingAttendee.profile.website,
-                                    github: editingAttendee.profile.github,
-                                    twitter: editingAttendee.profile.twitter,
-                                    badges: editingAttendee.profile.badges,
-                                    pronouns: editingAttendee.profile.pronouns,
+                                    affiliation: editingRegistrant.profile.affiliation,
+                                    affiliationURL: editingRegistrant.profile.affiliationURL,
+                                    country: editingRegistrant.profile.country,
+                                    timezoneUTCOffset: editingRegistrant.profile.timezoneUTCOffset,
+                                    bio: editingRegistrant.profile.bio,
+                                    website: editingRegistrant.profile.website,
+                                    github: editingRegistrant.profile.github,
+                                    twitter: editingRegistrant.profile.twitter,
+                                    badges: editingRegistrant.profile.badges,
+                                    pronouns: editingRegistrant.profile.pronouns,
                                     hasBeenEdited: true,
                                 },
                             },
@@ -205,25 +203,25 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
             }
         };
     }, [
-        attendee,
-        editingAttendee.displayName,
-        editingAttendee.profile,
+        registrant,
+        editingRegistrant.displayName,
+        editingRegistrant.profile,
         isDirty,
-        updateAttendeeDisplayName,
-        updateAttendeeProfile,
+        updateRegistrantDisplayName,
+        updateProfile,
     ]);
 
     const textField = useCallback(
         (
             fieldName: keyof {
-                [K in keyof AttendeeProfile]: AttendeeProfile[K] extends string | number ? AttendeeProfile[K] : never;
+                [K in keyof Profile]: Profile[K] extends string | number ? Profile[K] : never;
             },
             title: string,
             type?: string,
             leftAddon?: string,
             stripPrefixes?: string[]
         ) => {
-            const v = editingAttendee.profile[fieldName] as string | number | undefined;
+            const v = editingRegistrant.profile[fieldName] as string | number | undefined;
             return (
                 <FormControl>
                     <FormLabel fontWeight="bold" fontSize="1.2rem">
@@ -241,10 +239,10 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                                 step={0.5}
                                 onChange={(vvv, v) => {
                                     if (vvv !== "") {
-                                        setEditingAttendee({
-                                            ...editingAttendee,
+                                        setEditingRegistrant({
+                                            ...editingRegistrant,
                                             profile: {
-                                                ...editingAttendee.profile,
+                                                ...editingRegistrant.profile,
                                                 [fieldName]: type === "timezone" ? Math.round(v * 2) / 2 : v,
                                             },
                                         });
@@ -265,10 +263,10 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                                 transition="none"
                                 value={v ?? ""}
                                 onChange={(ev) => {
-                                    setEditingAttendee({
-                                        ...editingAttendee,
+                                    setEditingRegistrant({
+                                        ...editingRegistrant,
                                         profile: {
-                                            ...editingAttendee.profile,
+                                            ...editingRegistrant.profile,
                                             [fieldName]: ev.target.value,
                                         },
                                     });
@@ -301,10 +299,10 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                                             }
                                         }
                                     }
-                                    setEditingAttendee({
-                                        ...editingAttendee,
+                                    setEditingRegistrant({
+                                        ...editingRegistrant,
                                         profile: {
-                                            ...editingAttendee.profile,
+                                            ...editingRegistrant.profile,
                                             [fieldName]: newV,
                                         },
                                     });
@@ -315,7 +313,7 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 </FormControl>
             );
         },
-        [editingAttendee]
+        [editingRegistrant]
     );
 
     const bioField = useMemo(() => textField("bio", "Bio", "textarea"), [textField]);
@@ -375,12 +373,12 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
     const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
     useEffect(() => {
-        if (editingAttendee.displayName !== attendee.displayName && !isEditingName) {
+        if (editingRegistrant.displayName !== registrant.displayName && !isEditingName) {
             (async () => {
-                await updateAttendeeDisplayName({
+                await updateRegistrantDisplayName({
                     variables: {
-                        attendeeId: attendee.id,
-                        name: editingAttendee.displayName,
+                        registrantId: registrant.id,
+                        name: editingRegistrant.displayName,
                     },
                 });
                 toast({
@@ -391,10 +389,10 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 });
             })();
         }
-    }, [attendee, editingAttendee.displayName, isEditingName, toast, updateAttendeeDisplayName]);
+    }, [registrant, editingRegistrant.displayName, isEditingName, toast, updateRegistrantDisplayName]);
 
     const title = useTitle(
-        currentUser.user.id === attendee.userId ? "Edit your profile" : `Edit ${attendee.displayName}`
+        currentUser.user.id === registrant.userId ? "Edit your profile" : `Edit ${registrant.displayName}`
     );
 
     return (
@@ -402,7 +400,7 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
             {title}
             <VStack maxW={450} spacing={6} m={2}>
                 <UnsavedChangesWarning hasUnsavedChanges={isDirty || displayNameIsDirty} />
-                {attendee.userId === currentUser.user.id && !attendee.profile.hasBeenEdited ? (
+                {registrant.userId === currentUser.user.id && !registrant.profile.hasBeenEdited ? (
                     <Alert status="warning" variant="top-accent" flexWrap="wrap">
                         <AlertIcon />
                         <AlertTitle>Edit required</AlertTitle>
@@ -418,9 +416,9 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                         </LinkButton>
                         <LinkButton
                             to={
-                                attendee.userId === currentUser.user.id
+                                registrant.userId === currentUser.user.id
                                     ? `/conference/${conference.slug}/profile/view`
-                                    : `/conference/${conference.slug}/profile/view/${attendee.id}`
+                                    : `/conference/${conference.slug}/profile/view/${registrant.id}`
                             }
                             colorScheme="gray"
                         >
@@ -436,10 +434,10 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                             </FormLabel>
                             <Input
                                 minLength={2}
-                                value={editingAttendee.displayName}
+                                value={editingRegistrant.displayName}
                                 onChange={(ev) => {
-                                    setEditingAttendee({
-                                        ...editingAttendee,
+                                    setEditingRegistrant({
+                                        ...editingRegistrant,
                                         displayName: ev.target.value,
                                     });
                                 }}
@@ -452,7 +450,7 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 ) : (
                     <Heading as="h1">
                         <Text as="span" mr={2}>
-                            {editingAttendee.displayName}
+                            {editingRegistrant.displayName}
                         </Text>
                         <IconButton
                             verticalAlign="top"
@@ -465,23 +463,21 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                         />
                     </Heading>
                 )}
-                {errorUpdateAttendeeDisplayName || errorUpdateAttendeeProfile ? (
+                {errorUpdateRegistrantDisplayName || errorUpdateProfile ? (
                     <Alert status="error">
                         <AlertIcon />
                         <AlertTitle mr={2}>Error saving changes</AlertTitle>
-                        <AlertDescription>
-                            {errorUpdateAttendeeProfile || errorUpdateAttendeeDisplayName}
-                        </AlertDescription>
+                        <AlertDescription>{errorUpdateProfile || errorUpdateRegistrantDisplayName}</AlertDescription>
                     </Alert>
                 ) : undefined}
-                <EditProfilePitureForm attendee={attendee} />
+                <EditProfilePitureForm registrant={registrant} />
                 {bioField}
                 <BadgeInput
-                    badges={editingAttendee.profile.badges ?? []}
+                    badges={editingRegistrant.profile.badges ?? []}
                     onChange={(newBadges) => {
-                        setEditingAttendee({
-                            ...editingAttendee,
-                            profile: { ...editingAttendee.profile, badges: newBadges },
+                        setEditingRegistrant({
+                            ...editingRegistrant,
+                            profile: { ...editingRegistrant.profile, badges: newBadges },
                         });
                     }}
                 />
@@ -489,11 +485,11 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 {affiliationURLField}
                 {timezoneField}
                 <PronounInput
-                    pronouns={editingAttendee.profile.pronouns ?? []}
+                    pronouns={editingRegistrant.profile.pronouns ?? []}
                     onChange={(newPronouns) => {
-                        setEditingAttendee({
-                            ...editingAttendee,
-                            profile: { ...editingAttendee.profile, pronouns: newPronouns },
+                        setEditingRegistrant({
+                            ...editingRegistrant,
+                            profile: { ...editingRegistrant.profile, pronouns: newPronouns },
                         });
                     }}
                 />
@@ -501,16 +497,16 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
                 {webPageField}
                 {twitterField}
                 {githubField}
-                {attendee.profile.hasBeenEdited ? (
+                {registrant.profile.hasBeenEdited ? (
                     <ButtonGroup variant="solid">
                         <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
                             to={
-                                attendee.userId === currentUser.user.id
+                                registrant.userId === currentUser.user.id
                                     ? `/conference/${conference.slug}/profile/view`
-                                    : `/conference/${conference.slug}/profile/view/${attendee.id}`
+                                    : `/conference/${conference.slug}/profile/view/${registrant.id}`
                             }
                             colorScheme="gray"
                         >
@@ -524,20 +520,20 @@ function EditProfilePageInner({ attendee }: { attendee: AttendeeContextT }): JSX
 }
 
 function EditCurrentProfilePage(): JSX.Element {
-    const maybeCurrentAttendee = useMaybeCurrentAttendee();
-    if (maybeCurrentAttendee) {
-        return <EditProfilePageInner attendee={maybeCurrentAttendee} />;
+    const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
+    if (maybeCurrentRegistrant) {
+        return <EditProfilePageInner registrant={maybeCurrentRegistrant} />;
     } else {
         return <PageNotFound />;
     }
 }
 
-function EditProfilePage_FetchWrapper({ attendeeId }: { attendeeId: string }): JSX.Element {
+function EditProfilePage_FetchWrapper({ registrantId }: { registrantId: string }): JSX.Element {
     const conference = useConference();
-    const { loading, error, data } = useAttendeeByIdQuery({
+    const { loading, error, data } = useRegistrantByIdQuery({
         variables: {
             conferenceId: conference.id,
-            attendeeId,
+            registrantId,
         },
     });
 
@@ -553,11 +549,11 @@ function EditProfilePage_FetchWrapper({ attendeeId }: { attendeeId: string }): J
         return <PageNotFound />;
     }
 
-    return data && data.Attendee[0].profile ? (
+    return data && data.registrant_Registrant[0].profile ? (
         <EditProfilePageInner
-            attendee={{
-                ...data.Attendee[0],
-                profile: data.Attendee[0].profile,
+            registrant={{
+                ...data.registrant_Registrant[0],
+                profile: data.registrant_Registrant[0].profile,
             }}
         />
     ) : (
@@ -565,9 +561,9 @@ function EditProfilePage_FetchWrapper({ attendeeId }: { attendeeId: string }): J
     );
 }
 
-export default function EditProfilePage({ attendeeId }: { attendeeId?: string }): JSX.Element {
-    if (attendeeId) {
-        return <EditProfilePage_FetchWrapper attendeeId={attendeeId} />;
+export default function EditProfilePage({ registrantId }: { registrantId?: string }): JSX.Element {
+    if (registrantId) {
+        return <EditProfilePage_FetchWrapper registrantId={registrantId} />;
     } else {
         return <EditCurrentProfilePage />;
     }

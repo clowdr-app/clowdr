@@ -1,14 +1,14 @@
 import { gql } from "@apollo/client/core";
-import { ContentItemDataBlob, ContentType_Enum } from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import {
     CompleteConferencePrepareJobDocument,
-    CreateBroadcastContentItemDocument,
+    CreateBroadcastElementDocument,
     CreateVideoRenderJobDocument,
-    CreateVonageBroadcastContentItemDocument,
+    CreateVonageBroadcastElementDocument,
     GetEventsDocument,
     GetEventsWithoutVonageSessionDocument,
-    GetVideoBroadcastContentItemsDocument,
+    GetVideoBroadcastElementsDocument,
     OtherConferencePrepareJobsDocument,
     SetEventVonageSessionIdDocument,
 } from "../generated/graphql";
@@ -21,7 +21,7 @@ import { callWithRetry } from "../utils";
 
 gql`
     query OtherConferencePrepareJobs($conferenceId: uuid!, $conferencePrepareJobId: uuid!) {
-        ConferencePrepareJob(
+        conference_PrepareJob(
             where: {
                 jobStatusName: { _eq: IN_PROGRESS }
                 conferenceId: { _eq: $conferenceId }
@@ -33,8 +33,8 @@ gql`
         }
     }
 
-    query GetVideoBroadcastContentItems($conferenceId: uuid) {
-        ContentItem(where: { conferenceId: { _eq: $conferenceId }, contentTypeName: { _eq: VIDEO_BROADCAST } }) {
+    query GetVideoBroadcastElements($conferenceId: uuid) {
+        content_Element(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: VIDEO_BROADCAST } }) {
             id
             data
         }
@@ -58,14 +58,14 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
             },
         });
 
-        if (otherJobs.data.ConferencePrepareJob.length > 0) {
+        if (otherJobs.data.conference_PrepareJob.length > 0) {
             console.log(
                 "Conference prepare: another job in progress, aborting.",
-                otherJobs.data.ConferencePrepareJob[0].id,
+                otherJobs.data.conference_PrepareJob[0].id,
                 newRow.id
             );
             throw new Error(
-                `Another conference prepare job (${otherJobs.data.ConferencePrepareJob[0].id}) is already in progress`
+                `Another conference prepare job (${otherJobs.data.conference_PrepareJob[0].id}) is already in progress`
             );
         }
 
@@ -96,13 +96,13 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
 
 async function createVideoBroadcastItems(conferencePrepareJobId: string, conferenceId: string): Promise<boolean> {
     const videoBroadcastItems = await apolloClient.query({
-        query: GetVideoBroadcastContentItemsDocument,
+        query: GetVideoBroadcastElementsDocument,
         variables: {
             conferenceId,
         },
     });
     console.log(
-        `Conference prepare: found ${videoBroadcastItems.data.ContentItem.length} video broadcast items`,
+        `Conference prepare: found ${videoBroadcastItems.data.content_Element.length} video broadcast items`,
         conferencePrepareJobId
     );
 
@@ -110,9 +110,9 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
 
     // For each video broadcast, add a broadcast content item if the item
     // has already been transcoded for broadcast. Else fire off a transcoding job.
-    for (const videoBroadcastItem of videoBroadcastItems.data.ContentItem) {
+    for (const videoBroadcastItem of videoBroadcastItems.data.content_Element) {
         console.log("Conference prepare: prepare broadcast item", videoBroadcastItem.id, conferencePrepareJobId);
-        const content: ContentItemDataBlob = videoBroadcastItem.data;
+        const content: ElementDataBlob = videoBroadcastItem.data;
 
         if (content.length < 1) {
             console.warn("Conference prepare: no content item versions", videoBroadcastItem.id, conferencePrepareJobId);
@@ -121,7 +121,7 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
 
         const latestVersion = content[content.length - 1];
 
-        if (latestVersion.data.type !== ContentType_Enum.VideoBroadcast) {
+        if (latestVersion.data.type !== Content_ElementType_Enum.VideoBroadcast) {
             console.warn(
                 "Conference prepare: invalid content item data (not a video broadcast)",
                 videoBroadcastItem.id,
@@ -142,10 +142,10 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
             };
 
             await apolloClient.mutate({
-                mutation: CreateBroadcastContentItemDocument,
+                mutation: CreateBroadcastElementDocument,
                 variables: {
                     conferenceId,
-                    contentItemId: videoBroadcastItem.id,
+                    elementId: videoBroadcastItem.id,
                     input: broadcastItemInput,
                 },
             });
@@ -170,11 +170,11 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
                     conferencePrepareJobId
                 );
             } else {
-                let broadcastContentItemId;
+                let broadcastElementId;
                 try {
-                    broadcastContentItemId = await callWithRetry(
+                    broadcastElementId = await callWithRetry(
                         async () =>
-                            await upsertPendingMP4BroadcastContentItem(
+                            await upsertPendingMP4BroadcastElement(
                                 conferencePrepareJobId,
                                 conferenceId,
                                 videoBroadcastItem.id
@@ -202,7 +202,7 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
                         conferenceId,
                         conferencePrepareJobId,
                         data: broadcastRenderJobData,
-                        broadcastContentItemId,
+                        broadcastElementId,
                     },
                 });
                 createdJob = true;
@@ -213,22 +213,17 @@ async function createVideoBroadcastItems(conferencePrepareJobId: string, confere
     return createdJob;
 }
 
-async function upsertPendingMP4BroadcastContentItem(
+async function upsertPendingMP4BroadcastElement(
     conferencePrepareJobId: string,
     conferenceId: string,
-    contentItemId: string
+    elementId: string
 ): Promise<string> {
     gql`
-        mutation CreateBroadcastContentItem($conferenceId: uuid!, $contentItemId: uuid!, $input: jsonb!) {
-            insert_BroadcastContentItem_one(
-                object: {
-                    conferenceId: $conferenceId
-                    contentItemId: $contentItemId
-                    inputTypeName: MP4
-                    input: $input
-                }
+        mutation CreateBroadcastElement($conferenceId: uuid!, $elementId: uuid!, $input: jsonb!) {
+            insert_video_BroadcastElement_one(
+                object: { conferenceId: $conferenceId, elementId: $elementId, inputTypeName: MP4, input: $input }
                 on_conflict: {
-                    constraint: BroadcastContentItem_contentItemId_key
+                    constraint: BroadcastElement_elementId_key
                     update_columns: [conferenceId, input, inputTypeName]
                 }
             ) {
@@ -242,40 +237,40 @@ async function upsertPendingMP4BroadcastContentItem(
         type: "PendingCreation",
     };
 
-    const broadcastContentItemResult = await apolloClient.mutate({
-        mutation: CreateBroadcastContentItemDocument,
+    const broadcastElementResult = await apolloClient.mutate({
+        mutation: CreateBroadcastElementDocument,
         variables: {
             conferenceId: conferenceId,
-            contentItemId: contentItemId,
+            elementId: elementId,
             input: broadcastItemInput,
         },
     });
 
-    if (!broadcastContentItemResult.data?.insert_BroadcastContentItem_one?.id) {
+    if (!broadcastElementResult.data?.insert_video_BroadcastElement_one?.id) {
         console.error(
             "Conference prepare: failed to create broadcast content item",
-            broadcastContentItemResult.errors,
-            contentItemId,
+            broadcastElementResult.errors,
+            elementId,
             conferencePrepareJobId
         );
         throw new Error("Failed to create pending broadcast content item");
     }
 
-    return broadcastContentItemResult.data.insert_BroadcastContentItem_one.id;
+    return broadcastElementResult.data.insert_video_BroadcastElement_one.id;
 }
 
 gql`
     mutation CreateVideoRenderJob(
         $conferenceId: uuid!
         $conferencePrepareJobId: uuid!
-        $broadcastContentItemId: uuid!
+        $broadcastElementId: uuid!
         $data: jsonb!
     ) {
-        insert_VideoRenderJob_one(
+        insert_video_VideoRenderJob_one(
             object: {
                 conferenceId: $conferenceId
                 conferencePrepareJobId: $conferencePrepareJobId
-                broadcastContentItemId: $broadcastContentItemId
+                broadcastElementId: $broadcastElementId
                 data: $data
                 jobStatusName: NEW
             }
@@ -311,12 +306,12 @@ gql`
 //             Event(
 //                 where: {
 //                     conferenceId: { _eq: $conferenceId }
-//                     contentGroup: { contentItems: { contentTypeName: { _in: [VIDEO_BROADCAST] } } }
+//                     item: { elements: { typeName: { _in: [VIDEO_BROADCAST] } } }
 //                     intendedRoomModeName: { _eq: PRERECORDED }
 //                 }
 //             ) {
 //                 id
-//                 contentGroup {
+//                 item {
 //                     id
 //                     title
 //                     people(distinct_on: id) {
@@ -326,15 +321,15 @@ gql`
 //                         }
 //                         id
 //                     }
-//                     contentItems(
-//                         distinct_on: contentTypeName
-//                         where: { contentTypeName: { _eq: VIDEO_BROADCAST } }
-//                         order_by: { contentTypeName: asc }
+//                     elements(
+//                         distinct_on: typeName
+//                         where: { typeName: { _eq: VIDEO_BROADCAST } }
+//                         order_by: { typeName: asc }
 //                         limit: 1
 //                     ) {
-//                         contentTypeName
+//                         typeName
 //                         id
-//                         contentGroupId
+//                         itemId
 //                     }
 //                 }
 //                 intendedRoomModeName
@@ -356,7 +351,7 @@ gql`
 //     );
 //     for (const event of eventsResult.data.Event) {
 //         console.log("Conference prepare: rendering title slides for event", conferencePrepareJobId, event.id);
-//         if (!event.contentGroup || event.contentGroup.contentItems.length < 1) {
+//         if (!event.item || event.item.elements.length < 1) {
 //             console.warn(
 //                 "Conference prepare: event does not contain a video broadcast",
 //                 conferencePrepareJobId,
@@ -365,9 +360,9 @@ gql`
 //             continue;
 //         }
 
-//         const contentItem = event.contentGroup?.contentItems[0];
+//         const element = event.item?.elements[0];
 
-//         const names = event.contentGroup.people.map((person) => person.person.name);
+//         const names = event.item.people.map((person) => person.person.name);
 //         const eventTitle = event.name;
 //         const name = uuidv4();
 
@@ -437,12 +432,12 @@ gql`
 //         };
 
 //         gql`
-//             mutation CreateVideoTitlesContentItem($conferenceId: uuid!, $contentGroupId: uuid!, $title: String!) {
-//                 insert_ContentItem_one(
+//             mutation CreateVideoTitlesElement($conferenceId: uuid!, $itemId: uuid!, $title: String!) {
+//                 insert_Element_one(
 //                     object: {
 //                         conferenceId: $conferenceId
-//                         contentGroupId: $contentGroupId
-//                         contentTypeName: VIDEO_TITLES
+//                         itemId: $itemId
+//                         typeName: VIDEO_TITLES
 //                         data: []
 //                         name: $title
 //                     }
@@ -451,11 +446,11 @@ gql`
 //                 }
 //             }
 
-//             query GetVideoTitlesContentItem($contentGroupId: uuid!, $title: String!) {
-//                 ContentItem(
+//             query GetVideoTitlesElement($itemId: uuid!, $title: String!) {
+//                 Element(
 //                     where: {
-//                         contentGroupId: { _eq: $contentGroupId }
-//                         contentTypeName: { _eq: VIDEO_TITLES }
+//                         itemId: { _eq: $itemId }
+//                         typeName: { _eq: VIDEO_TITLES }
 //                         name: { _eq: $title }
 //                     }
 //                     limit: 1
@@ -468,45 +463,45 @@ gql`
 
 //         // Check whether there is an existing title slide content item for this event name.
 //         // If not, create it.
-//         const existingTitlesContentItemResult = await apolloClient.query({
-//             query: GetVideoTitlesContentItemDocument,
+//         const existingTitlesElementResult = await apolloClient.query({
+//             query: GetVideoTitlesElementDocument,
 //             variables: {
-//                 contentGroupId: contentItem.contentGroupId,
+//                 itemId: element.itemId,
 //                 title: event.name,
 //             },
 //         });
 
-//         let titleContentItemId;
-//         if (existingTitlesContentItemResult.data.ContentItem.length > 0) {
-//             titleContentItemId = existingTitlesContentItemResult.data.ContentItem[0].id;
+//         let titleElementId;
+//         if (existingTitlesElementResult.data.Element.length > 0) {
+//             titleElementId = existingTitlesElementResult.data.Element[0].id;
 //         } else {
-//             const createTitlesContentItemResult = await apolloClient.mutate({
-//                 mutation: CreateVideoTitlesContentItemDocument,
+//             const createTitlesElementResult = await apolloClient.mutate({
+//                 mutation: CreateVideoTitlesElementDocument,
 //                 variables: {
 //                     conferenceId: conferenceId,
-//                     contentGroupId: contentItem.contentGroupId,
+//                     itemId: element.itemId,
 //                     title: event.name,
 //                 },
 //             });
 
-//             if (!createTitlesContentItemResult.data?.insert_ContentItem_one?.id) {
+//             if (!createTitlesElementResult.data?.insert_Element_one?.id) {
 //                 console.error(
 //                     "Conference prepare: could not create new content item for titles",
-//                     createTitlesContentItemResult.errors,
+//                     createTitlesElementResult.errors,
 //                     conferencePrepareJobId,
 //                     event.id
 //                 );
 //                 throw new Error(`Could not create new titles content item for event (${event.id})`);
 //             }
-//             titleContentItemId = createTitlesContentItemResult.data.insert_ContentItem_one.id;
+//             titleElementId = createTitlesElementResult.data.insert_Element_one.id;
 //         }
 
-//         let broadcastContentItemId;
+//         let broadcastElementId;
 //         try {
-//             broadcastContentItemId = await upsertPendingMP4BroadcastContentItem(
+//             broadcastElementId = await upsertPendingMP4BroadcastElement(
 //                 conferencePrepareJobId,
 //                 conferenceId,
-//                 titleContentItemId
+//                 titleElementId
 //             );
 //         } catch (e) {
 //             console.error(
@@ -524,7 +519,7 @@ gql`
 //                 conferenceId,
 //                 conferencePrepareJobId,
 //                 data: titleRenderJobData,
-//                 broadcastContentItemId,
+//                 broadcastElementId,
 //             },
 //         });
 //     }
@@ -534,7 +529,9 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
     console.log("Creating broadcast content items for presenter Vonage rooms", conferenceId);
     gql`
         query GetEventsWithoutVonageSession($conferenceId: uuid!) {
-            Event(where: { conferenceId: { _eq: $conferenceId }, _and: { _not: { eventVonageSession: {} } } }) {
+            schedule_Event(
+                where: { conferenceId: { _eq: $conferenceId }, _and: { _not: { eventVonageSession: {} } } }
+            ) {
                 id
             }
         }
@@ -555,7 +552,7 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
         throw new Error("Failed to retrieve list of events without presenter Vonage sessions");
     }
 
-    for (const room of eventsWithoutSessionResult.data.Event) {
+    for (const room of eventsWithoutSessionResult.data.schedule_Event) {
         console.log("Creating Vonage session for event", room.id);
         try {
             const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
@@ -566,7 +563,7 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
 
             gql`
                 mutation SetEventVonageSessionId($eventId: uuid!, $conferenceId: uuid!, $sessionId: String!) {
-                    insert_EventVonageSession_one(
+                    insert_video_EventVonageSession_one(
                         object: { eventId: $eventId, conferenceId: $conferenceId, sessionId: $sessionId }
                         on_conflict: { constraint: EventVonageSession_eventId_key, update_columns: sessionId }
                     ) {
@@ -591,7 +588,7 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
 
     gql`
         query GetEvents($conferenceId: uuid!) {
-            Event(where: { conferenceId: { _eq: $conferenceId } }) {
+            schedule_Event(where: { conferenceId: { _eq: $conferenceId } }) {
                 id
                 eventVonageSession {
                     sessionId
@@ -616,11 +613,11 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
     }
 
     gql`
-        mutation CreateVonageBroadcastContentItem($conferenceId: uuid!, $eventId: uuid!, $input: jsonb!) {
-            insert_BroadcastContentItem_one(
+        mutation CreateVonageBroadcastElement($conferenceId: uuid!, $eventId: uuid!, $input: jsonb!) {
+            insert_video_BroadcastElement_one(
                 object: { conferenceId: $conferenceId, eventId: $eventId, inputTypeName: VONAGE_SESSION, input: $input }
                 on_conflict: {
-                    constraint: BroadcastContentItem_eventId_key
+                    constraint: BroadcastElement_eventId_key
                     update_columns: [conferenceId, input, inputTypeName]
                 }
             ) {
@@ -629,7 +626,7 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
         }
     `;
 
-    for (const event of eventsResult.data.Event) {
+    for (const event of eventsResult.data.schedule_Event) {
         console.log("Creating Vonage broadcast content item for event", event.id);
         if (!event.eventVonageSession?.sessionId) {
             console.warn("Missing Vonage session id for event, skipping.", event.id);
@@ -642,7 +639,7 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
         };
 
         await apolloClient.mutate({
-            mutation: CreateVonageBroadcastContentItemDocument,
+            mutation: CreateVonageBroadcastElementDocument,
             variables: {
                 conferenceId,
                 input,

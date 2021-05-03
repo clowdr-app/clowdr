@@ -33,7 +33,7 @@ import { FAIcon } from "../Icons/FAIcon";
 
 gql`
     query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
-        Event(
+        schedule_Event(
             where: {
                 startTime: { _lte: $inOneHour }
                 endTime: { _gte: $now }
@@ -46,18 +46,18 @@ gql`
     }
 
     query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
-        Event(
+        schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 room: {}
                 _or: [
                     { name: { _ilike: $search } }
                     {
-                        contentGroup: {
+                        item: {
                             _or: [
                                 { title: { _ilike: $search } }
                                 {
-                                    people: {
+                                    itemPeople: {
                                         person: {
                                             _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }]
                                         }
@@ -81,7 +81,7 @@ gql`
         }
     }
 
-    fragment MenuSchedule_Event on Event {
+    fragment MenuSchedule_Event on schedule_Event {
         id
         name
         startTime
@@ -96,7 +96,7 @@ gql`
                 name
             }
         }
-        contentGroup {
+        item {
             id
             title
         }
@@ -166,7 +166,7 @@ export function MainMenuProgram(): JSX.Element {
     }, [debouncedSearch, performSearch]);
 
     const resultCountStr = `Showing ${
-        debouncedSearch.length > 0 ? searchResult.data?.Event.length ?? 0 : "upcoming"
+        debouncedSearch.length > 0 ? searchResult.data?.schedule_Event.length ?? 0 : "upcoming"
     } events`;
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
     useEffect(() => {
@@ -203,7 +203,7 @@ export function MainMenuProgram(): JSX.Element {
             </FormControl>
             {debouncedSearch.length > 0 ? (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={searchResult}>
+                    <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={searchResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <MainMenuProgramInner
                                 linkToRoom={false}
@@ -218,7 +218,7 @@ export function MainMenuProgram(): JSX.Element {
                 </>
             ) : (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.Event} queryResult={scheduleResult}>
+                    <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <>
                                 <MainMenuProgramInner
@@ -286,10 +286,10 @@ export function MainMenuProgramInner({
                 <List>
                     {filteredEvents.map((event) => {
                         const eventName =
-                            event.name.length > 0 && event.contentGroup
-                                ? event.name + ": " + event.contentGroup.title
-                                : event.contentGroup
-                                ? event.contentGroup.title
+                            event.name.length > 0 && event.item
+                                ? event.name + ": " + event.item.title
+                                : event.item
+                                ? event.item.title
                                 : event.name;
                         return (
                             <ListItem key={event.id} width="100%" my={2}>
@@ -302,8 +302,8 @@ export function MainMenuProgramInner({
                                     to={
                                         linkToRoom
                                             ? `/conference/${conference.slug}/room/${event.room.id}`
-                                            : event.contentGroup
-                                            ? `/conference/${conference.slug}/item/${event.contentGroup.id}`
+                                            : event.item
+                                            ? `/conference/${conference.slug}/item/${event.item.id}`
                                             : `/conference/${conference.slug}/room/${event.room.id}`
                                     }
                                     width="100%"

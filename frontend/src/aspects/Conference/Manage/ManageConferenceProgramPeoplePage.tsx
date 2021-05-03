@@ -16,15 +16,15 @@ import {
 import React, { LegacyRef, useCallback, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    ManageContentPeople_AttendeeFragment,
-    ManageContentPeople_ContentPersonFragment,
-    ManageContentPeople_ContentPersonFragmentDoc,
-    Permission_Enum,
-    useManageContentPeople_DeleteContentPersonsMutation,
-    useManageContentPeople_InsertContentPersonMutation,
-    useManageContentPeople_SelectAllAttendeesQuery,
-    useManageContentPeople_SelectAllPeopleQuery,
-    useManageContentPeople_UpdateContentPersonMutation,
+    ManageProgramPeople_ProgramPersonFragment,
+    ManageProgramPeople_ProgramPersonFragmentDoc,
+    ManageProgramPeople_RegistrantFragment,
+    Permissions_Permission_Enum,
+    useManageProgramPeople_DeleteProgramPersonsMutation,
+    useManageProgramPeople_InsertProgramPersonMutation,
+    useManageProgramPeople_SelectAllPeopleQuery,
+    useManageProgramPeople_SelectAllRegistrantsQuery,
+    useManageProgramPeople_UpdateProgramPersonMutation,
 } from "../../../generated/graphql";
 import { TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
@@ -48,7 +48,7 @@ import { useConference } from "../useConference";
 // TODO: Handle duplicate name+affiliation (edit/create)
 
 gql`
-    fragment ManageContentPeople_Attendee on Attendee {
+    fragment ManageProgramPeople_Registrant on registrant_Registrant {
         id
         displayName
         invitation {
@@ -56,59 +56,59 @@ gql`
             invitedEmailAddress
         }
         profile {
-            attendeeId
+            registrantId
             affiliation
         }
     }
 
-    fragment ManageContentPeople_ContentPerson on ContentPerson {
+    fragment ManageProgramPeople_ProgramPerson on collection_ProgramPerson {
         id
         conferenceId
         name
         affiliation
         email
         originatingDataId
-        attendeeId
+        registrantId
     }
 
-    query ManageContentPeople_SelectAllPeople($conferenceId: uuid!) {
-        ContentPerson(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ManageContentPeople_ContentPerson
+    query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ManageProgramPeople_ProgramPerson
         }
     }
 
-    query ManageContentPeople_SelectAllAttendees($conferenceId: uuid!) {
-        Attendee(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ManageContentPeople_Attendee
+    query ManageProgramPeople_SelectAllRegistrants($conferenceId: uuid!) {
+        registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ManageProgramPeople_Registrant
         }
     }
 
-    mutation ManageContentPeople_InsertContentPerson($person: ContentPerson_insert_input!) {
-        insert_ContentPerson_one(object: $person) {
-            ...ManageContentPeople_ContentPerson
+    mutation ManageProgramPeople_InsertProgramPerson($person: collection_ProgramPerson_insert_input!) {
+        insert_collection_ProgramPerson_one(object: $person) {
+            ...ManageProgramPeople_ProgramPerson
         }
     }
 
-    mutation ManageContentPeople_DeleteContentPersons($ids: [uuid!] = []) {
-        delete_ContentPerson(where: { id: { _in: $ids } }) {
+    mutation ManageProgramPeople_DeleteProgramPersons($ids: [uuid!] = []) {
+        delete_collection_ProgramPerson(where: { id: { _in: $ids } }) {
             returning {
                 id
             }
         }
     }
 
-    mutation ManageContentPeople_UpdateContentPerson(
+    mutation ManageProgramPeople_UpdateProgramPerson(
         $id: uuid!
         $name: String!
         $affiliation: String
         $email: String
-        $attendeeId: uuid
+        $registrantId: uuid
     ) {
-        update_ContentPerson_by_pk(
+        update_collection_ProgramPerson_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, affiliation: $affiliation, email: $email, attendeeId: $attendeeId }
+            _set: { name: $name, affiliation: $affiliation, email: $email, registrantId: $registrantId }
         ) {
-            ...ManageContentPeople_ContentPerson
+            ...ManageProgramPeople_ProgramPerson
         }
     }
 `;
@@ -117,15 +117,17 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage program people at ${conference.shortName}`);
 
-    const { data: attendeesData } = useManageContentPeople_SelectAllAttendeesQuery({
+    const { data: registrantsData } = useManageProgramPeople_SelectAllRegistrantsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
 
-    const attendees = useMemo(() => (attendeesData ? [...attendeesData.Attendee] : []), [attendeesData]);
-    const attendeeOptions = useMemo(() => {
-        return attendees
+    const registrants = useMemo(() => (registrantsData ? [...registrantsData.registrant_Registrant] : []), [
+        registrantsData,
+    ]);
+    const registrantOptions = useMemo(() => {
+        return registrants
             .sort((x, y) => x.displayName.localeCompare(y.displayName))
             .map((person) => (
                 <option key={person.id} value={person.id}>
@@ -134,12 +136,12 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                     {person.invitation?.invitedEmailAddress ? ` <${person.invitation.invitedEmailAddress}>` : ""}
                 </option>
             ));
-    }, [attendees]);
+    }, [registrants]);
     const forceReloadRef = useRef<() => void>(() => {
         /* EMPTY */
     });
 
-    const row: RowSpecification<ManageContentPeople_ContentPersonFragment> = useMemo(
+    const row: RowSpecification<ManageProgramPeople_ProgramPersonFragment> = useMemo(
         () => ({
             getKey: (record) => record.id,
             canSelect: (_record) => true,
@@ -157,12 +159,12 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
         []
     );
 
-    const columns: ColumnSpecification<ManageContentPeople_ContentPersonFragment>[] = useMemo(
+    const columns: ColumnSpecification<ManageProgramPeople_ProgramPersonFragment>[] = useMemo(
         () => [
             {
                 id: "name",
                 defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader(props: ColumnHeaderProps<ManageContentPeople_ContentPersonFragment>) {
+                header: function NameHeader(props: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>) {
                     return props.isInCreate ? (
                         <FormLabel>Name</FormLabel>
                     ) : (
@@ -175,14 +177,14 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 set: (record, value: string | undefined) => {
                     record.name = value;
                 },
-                filterFn: (rows: Array<ManageContentPeople_ContentPersonFragment>, filterValue: string) => {
+                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonFragment>, filterValue: string) => {
                     return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
                 },
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
-                cell: function ContentPersonCell(
-                    props: CellProps<Partial<ManageContentPeople_ContentPersonFragment>, string | undefined>
+                cell: function ProgramPersonCell(
+                    props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
                 ) {
                     return (
                         <Input
@@ -201,7 +203,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 id: "affiliation",
                 defaultSortDirection: SortDirection.Asc,
                 header: function AffiliationHeader(
-                    props: ColumnHeaderProps<ManageContentPeople_ContentPersonFragment>
+                    props: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>
                 ) {
                     return props.isInCreate ? (
                         <FormLabel>Affiliation</FormLabel>
@@ -215,7 +217,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 set: (record, value: string | undefined) => {
                     record.affiliation = value;
                 },
-                filterFn: (rows: Array<ManageContentPeople_ContentPersonFragment>, filterValue: string) => {
+                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonFragment>, filterValue: string) => {
                     return rows.filter((row) =>
                         row.affiliation
                             ? row.affiliation.toLowerCase().includes(filterValue.toLowerCase())
@@ -225,8 +227,8 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
-                cell: function ContentPersonCell(
-                    props: CellProps<Partial<ManageContentPeople_ContentPersonFragment>, string | undefined>
+                cell: function ProgramPersonCell(
+                    props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
                 ) {
                     return (
                         <Input
@@ -244,7 +246,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
             {
                 id: "email",
                 header: function AffiliationHeader(
-                    props: ColumnHeaderProps<ManageContentPeople_ContentPersonFragment>
+                    props: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>
                 ) {
                     return props.isInCreate ? (
                         <FormLabel>Email</FormLabel>
@@ -258,7 +260,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 set: (record, value: string | undefined) => {
                     record.email = value;
                 },
-                filterFn: (rows: Array<ManageContentPeople_ContentPersonFragment>, filterValue: string) => {
+                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonFragment>, filterValue: string) => {
                     return rows.filter((row) =>
                         row.email ? row.email.toLowerCase().includes(filterValue.toLowerCase()) : filterValue === ""
                     );
@@ -266,8 +268,8 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
-                cell: function ContentPersonCell(
-                    props: CellProps<Partial<ManageContentPeople_ContentPersonFragment>, string | undefined>
+                cell: function ProgramPersonCell(
+                    props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
                 ) {
                     return (
                         <Input
@@ -284,7 +286,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
             },
             {
                 id: "Registrant",
-                header: function RegistrantHeader(props: ColumnHeaderProps<ManageContentPeople_ContentPersonFragment>) {
+                header: function RegistrantHeader(props: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>) {
                     return props.isInCreate ? (
                         <FormLabel>Registrant</FormLabel>
                     ) : (
@@ -293,13 +295,13 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                         </Button>
                     );
                 },
-                get: (data) => attendees.find((x) => x.id === data.attendeeId),
-                set: (record, value: ManageContentPeople_AttendeeFragment | undefined) => {
-                    record.attendeeId = value?.id;
+                get: (data) => registrants.find((x) => x.id === data.registrantId),
+                set: (record, value: ManageProgramPeople_RegistrantFragment | undefined) => {
+                    record.registrantId = value?.id;
                 },
                 sort: (
-                    x: ManageContentPeople_AttendeeFragment | undefined,
-                    y: ManageContentPeople_AttendeeFragment | undefined
+                    x: ManageProgramPeople_RegistrantFragment | undefined,
+                    y: ManageProgramPeople_RegistrantFragment | undefined
                 ) =>
                     x && y
                         ? x.displayName.localeCompare(y.displayName) ||
@@ -309,144 +311,146 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                         : y
                         ? -1
                         : 0,
-                cell: function ContentPersonCell({
+                cell: function ProgramPersonCell({
                     value,
                     onChange,
                     onBlur,
                     ref,
                 }: CellProps<
-                    Partial<ManageContentPeople_ContentPersonFragment>,
-                    ManageContentPeople_AttendeeFragment | undefined
+                    Partial<ManageProgramPeople_ProgramPersonFragment>,
+                    ManageProgramPeople_RegistrantFragment | undefined
                 >) {
                     return (
                         <Select
                             value={value?.id ?? ""}
-                            onChange={(ev) => onChange?.(attendees.find((x) => x.id === ev.target.value))}
+                            onChange={(ev) => onChange?.(registrants.find((x) => x.id === ev.target.value))}
                             onBlur={onBlur}
                             ref={ref as LegacyRef<HTMLSelectElement>}
                         >
                             <option value="">Select a registrant</option>
-                            {attendeeOptions}
+                            {registrantOptions}
                         </Select>
                     );
                 },
             },
         ],
-        [attendeeOptions, attendees]
+        [registrantOptions, registrants]
     );
 
     const {
-        loading: loadingAllContentPersons,
-        error: errorAllContentPersons,
-        data: allContentPersons,
+        loading: loadingAllProgramPersons,
+        error: errorAllProgramPersons,
+        data: allProgramPersons,
         refetch,
-    } = useManageContentPeople_SelectAllPeopleQuery({
+    } = useManageProgramPeople_SelectAllPeopleQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(errorAllContentPersons, false);
-    const data = useMemo(() => [...(allContentPersons?.ContentPerson ?? [])], [allContentPersons?.ContentPerson]);
+    useQueryErrorToast(errorAllProgramPersons, false);
+    const data = useMemo(() => [...(allProgramPersons?.collection_ProgramPerson ?? [])], [
+        allProgramPersons?.collection_ProgramPerson,
+    ]);
 
-    const [insertContentPerson, insertContentPersonResponse] = useManageContentPeople_InsertContentPersonMutation();
-    const [deleteContentPersons, deleteContentPersonsResponse] = useManageContentPeople_DeleteContentPersonsMutation();
-    const [updateContentPerson, updateContentPersonResponse] = useManageContentPeople_UpdateContentPersonMutation();
+    const [insertProgramPerson, insertProgramPersonResponse] = useManageProgramPeople_InsertProgramPersonMutation();
+    const [deleteProgramPersons, deleteProgramPersonsResponse] = useManageProgramPeople_DeleteProgramPersonsMutation();
+    const [updateProgramPerson, updateProgramPersonResponse] = useManageProgramPeople_UpdateProgramPersonMutation();
 
-    const insert: Insert<ManageContentPeople_ContentPersonFragment> = useMemo(
+    const insert: Insert<ManageProgramPeople_ProgramPersonFragment> = useMemo(
         () => ({
-            ongoing: insertContentPersonResponse.loading,
+            ongoing: insertProgramPersonResponse.loading,
             generateDefaults: () => {
-                const contentpersonId = uuidv4();
+                const programpersonId = uuidv4();
                 return {
-                    id: contentpersonId,
+                    id: programpersonId,
                     conferenceId: conference.id,
                 };
             },
-            makeWhole: (d) => (d.name?.length ? (d as ManageContentPeople_ContentPersonFragment) : undefined),
+            makeWhole: (d) => (d.name?.length ? (d as ManageProgramPeople_ProgramPersonFragment) : undefined),
             start: (record) => {
-                insertContentPerson({
+                insertProgramPerson({
                     variables: {
                         person: {
                             id: record.id,
                             conferenceId: conference.id,
                             affiliation: record.affiliation,
-                            attendeeId: record.attendeeId,
+                            registrantId: record.registrantId,
                             email: record.email,
                             name: record.name,
                         },
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.insert_ContentPerson_one) {
-                            const data = _data.insert_ContentPerson_one;
+                        if (_data?.insert_collection_ProgramPerson_one) {
+                            const data = _data.insert_collection_ProgramPerson_one;
                             cache.writeFragment({
                                 data,
-                                fragment: ManageContentPeople_ContentPersonFragmentDoc,
-                                fragmentName: "ManageContentPeople_ContentPerson",
+                                fragment: ManageProgramPeople_ProgramPersonFragmentDoc,
+                                fragmentName: "ManageProgramPeople_ProgramPerson",
                             });
                         }
                     },
                 });
             },
         }),
-        [conference.id, insertContentPerson, insertContentPersonResponse.loading]
+        [conference.id, insertProgramPerson, insertProgramPersonResponse.loading]
     );
 
     const startUpdate = useCallback(
-        async (record: ManageContentPeople_ContentPersonFragment) => {
-            return updateContentPerson({
+        async (record: ManageProgramPeople_ProgramPersonFragment) => {
+            return updateProgramPerson({
                 variables: {
                     id: record.id,
                     name: record.name,
                     affiliation: record.affiliation !== "" ? record.affiliation ?? null : null,
-                    attendeeId: record.attendeeId ?? null,
+                    registrantId: record.registrantId ?? null,
                     email: record.email !== "" ? record.email ?? null : null,
                 },
                 optimisticResponse: {
-                    update_ContentPerson_by_pk: record,
+                    update_collection_ProgramPerson_by_pk: record,
                 },
                 update: (cache, { data: _data }) => {
-                    if (_data?.update_ContentPerson_by_pk) {
-                        const data = _data.update_ContentPerson_by_pk;
+                    if (_data?.update_collection_ProgramPerson_by_pk) {
+                        const data = _data.update_collection_ProgramPerson_by_pk;
                         cache.writeFragment({
                             data,
-                            fragment: ManageContentPeople_ContentPersonFragmentDoc,
-                            fragmentName: "ManageContentPeople_ContentPerson",
+                            fragment: ManageProgramPeople_ProgramPersonFragmentDoc,
+                            fragmentName: "ManageProgramPeople_ProgramPerson",
                         });
                     }
                 },
             });
         },
-        [updateContentPerson]
+        [updateProgramPerson]
     );
 
-    const update: Update<ManageContentPeople_ContentPersonFragment> = useMemo(
+    const update: Update<ManageProgramPeople_ProgramPersonFragment> = useMemo(
         () => ({
-            ongoing: updateContentPersonResponse.loading,
+            ongoing: updateProgramPersonResponse.loading,
             start: startUpdate,
         }),
-        [updateContentPersonResponse.loading, startUpdate]
+        [updateProgramPersonResponse.loading, startUpdate]
     );
 
-    const deleteP: Delete<ManageContentPeople_ContentPersonFragment> = useMemo(
+    const deleteP: Delete<ManageProgramPeople_ProgramPersonFragment> = useMemo(
         () => ({
-            ongoing: deleteContentPersonsResponse.loading,
+            ongoing: deleteProgramPersonsResponse.loading,
             start: (keys) => {
-                deleteContentPersons({
+                deleteProgramPersons({
                     variables: {
                         ids: keys,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.delete_ContentPerson) {
-                            const data = _data.delete_ContentPerson;
+                        if (_data?.delete_collection_ProgramPerson) {
+                            const data = _data.delete_collection_ProgramPerson;
                             const deletedIds = data.returning.map((x) => x.id);
                             cache.modify({
                                 fields: {
-                                    ContentPerson(existingRefs: Reference[] = [], { readField }) {
+                                    collection_ProgramPerson(existingRefs: Reference[] = [], { readField }) {
                                         deletedIds.forEach((x) => {
                                             cache.evict({
                                                 id: x.id,
-                                                fieldName: "ManageContentPeople_ContentPerson",
+                                                fieldName: "ManageProgramPeople_ProgramPerson",
                                                 broadcast: true,
                                             });
                                         });
@@ -459,29 +463,31 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 });
             },
         }),
-        [deleteContentPersons, deleteContentPersonsResponse.loading]
+        [deleteProgramPersons, deleteProgramPersonsResponse.loading]
     );
 
     const toast = useToast();
     const autoLink = useCallback(
         async (mode: "email" | "name_affiliation" | "name_only") => {
-            const allUnmatched = data.filter((x) => !x.attendeeId);
+            const allUnmatched = data.filter((x) => !x.registrantId);
             let matchCount = 0;
             await Promise.all(
                 allUnmatched.map(async (unmatched) => {
-                    let attendee: ManageContentPeople_AttendeeFragment | undefined;
+                    let registrant: ManageProgramPeople_RegistrantFragment | undefined;
 
                     switch (mode) {
                         case "email":
                             if (unmatched.email) {
-                                attendee = attendees.find((x) => x.invitation?.invitedEmailAddress === unmatched.email);
+                                registrant = registrants.find(
+                                    (x) => x.invitation?.invitedEmailAddress === unmatched.email
+                                );
                             }
                             break;
                         case "name_affiliation":
                             if (unmatched.name && unmatched.affiliation) {
                                 const name = unmatched.name.toLowerCase().trim();
                                 const affil = unmatched.affiliation.toLowerCase().trim();
-                                attendee = attendees.find(
+                                registrant = registrants.find(
                                     (x) =>
                                         x.displayName.toLowerCase().trim() === name &&
                                         x.profile?.affiliation &&
@@ -492,16 +498,16 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                         case "name_only":
                             if (unmatched.name) {
                                 const name = unmatched.name.toLowerCase().trim();
-                                attendee = attendees.find((x) => x.displayName.toLowerCase().trim() === name);
+                                registrant = registrants.find((x) => x.displayName.toLowerCase().trim() === name);
                             }
                             break;
                     }
 
-                    if (attendee) {
+                    if (registrant) {
                         matchCount++;
                         await startUpdate({
                             ...unmatched,
-                            attendeeId: attendee.id,
+                            registrantId: registrant.id,
                         });
                     }
                 })
@@ -523,7 +529,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 forceReloadRef.current();
             }, 100);
         },
-        [refetch, data, toast, attendees, startUpdate]
+        [refetch, data, toast, registrants, startUpdate]
     );
 
     const green = useColorModeValue("green.100", "green.700");
@@ -570,9 +576,9 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[
-                Permission_Enum.ConferenceManageAttendees,
-                Permission_Enum.ConferenceManageRoles,
-                Permission_Enum.ConferenceManageGroups,
+                Permissions_Permission_Enum.ConferenceManageAttendees,
+                Permissions_Permission_Enum.ConferenceManageRoles,
+                Permissions_Permission_Enum.ConferenceManageGroups,
             ]}
             componentIfDenied={<PageNotFound />}
         >
@@ -583,15 +589,15 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Program People
             </Heading>
-            {loadingAllContentPersons && !allContentPersons?.ContentPerson ? (
+            {loadingAllProgramPersons && !allProgramPersons?.collection_ProgramPerson ? (
                 <></>
-            ) : errorAllContentPersons ? (
+            ) : errorAllProgramPersons ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
             <CRUDTable
-                data={!loadingAllContentPersons && (allContentPersons?.ContentPerson ? data : null)}
+                data={!loadingAllProgramPersons && (allProgramPersons?.collection_ProgramPerson ? data : null)}
                 tableUniqueName="ManageConferenceProgramPeople"
                 row={row}
                 columns={columns}

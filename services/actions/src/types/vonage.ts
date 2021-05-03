@@ -45,5 +45,5 @@ export interface StreamData {
 
 export interface CustomConnectionData {
     userId: string;
-    attendeeId: string;
+    registrantId: string;
 }

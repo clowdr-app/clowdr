@@ -2,35 +2,35 @@ import { Badge, BadgeProps, Text, Tooltip, useColorModeValue } from "@chakra-ui/
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
-import { useAttendees } from "../../Conference/AttendeesContext";
+import { useRegistrants } from "../../Conference/RegistrantsContext";
 
 export default function ReactionBadge({
     reaction,
     senderIds,
-    currentAttendeeId,
+    currentRegistrantId,
     onClick,
     ...rest
 }: {
     reaction: string;
     senderIds: string[];
     onClick?: () => void;
-    currentAttendeeId?: string;
+    currentRegistrantId?: string;
 } & BadgeProps): JSX.Element {
     const color = useColorModeValue("gray.900", "gray.50");
     const borderColor = useColorModeValue("gray.400", "gray.500");
-    const senderIdObjs = useMemo(() => senderIds.map((x) => ({ attendee: x })), [senderIds]);
-    const attendees = useAttendees(senderIdObjs);
+    const senderIdObjs = useMemo(() => senderIds.map((x) => ({ registrant: x })), [senderIds]);
+    const registrants = useRegistrants(senderIdObjs);
     const names = useMemo(() => {
-        return R.sortBy((x) => x.displayName, attendees)
-            .reduce((acc, attendee) => acc + ", " + attendee.displayName, "")
+        return R.sortBy((x) => x.displayName, registrants)
+            .reduce((acc, registrant) => acc + ", " + registrant.displayName, "")
             .slice(2);
-    }, [attendees]);
+    }, [registrants]);
     const grey = useColorModeValue("gray.300", "gray.500");
     return (
         <Tooltip label={names} fontSize="xs" whiteSpace="normal" overflow="auto">
             <Badge
                 color={color}
-                backgroundColor={currentAttendeeId && senderIds.includes(currentAttendeeId) ? grey : "none"}
+                backgroundColor={currentRegistrantId && senderIds.includes(currentRegistrantId) ? grey : "none"}
                 border="1px solid"
                 borderColor={borderColor}
                 variant="subtle"
@@ -52,7 +52,7 @@ export default function ReactionBadge({
                 userSelect="none"
                 _hover={{
                     backgroundColor:
-                        currentAttendeeId && senderIds.includes(currentAttendeeId) ? "red.400" : "green.400",
+                        currentRegistrantId && senderIds.includes(currentRegistrantId) ? "red.400" : "green.400",
                 }}
                 _focus={
                     onClick
@@ -62,7 +62,9 @@ export default function ReactionBadge({
                               outlineOffset: "0 0 0",
                               outlineColor: "focus.400",
                               backgroundColor:
-                                  currentAttendeeId && senderIds.includes(currentAttendeeId) ? "red.400" : "green.400",
+                                  currentRegistrantId && senderIds.includes(currentRegistrantId)
+                                      ? "red.400"
+                                      : "green.400",
                           } as any)
                         : undefined
                 }

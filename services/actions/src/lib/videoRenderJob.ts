@@ -5,20 +5,20 @@ import {
     ExpireVideoRenderJobDocument,
     FailVideoRenderJobDocument,
     GetBroadcastVideoRenderJobDetailsDocument,
-    JobStatus_Enum,
     UpdateVideoRenderJobDocument,
+    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
 gql`
     mutation CompleteVideoRenderJob($videoRenderJobId: uuid!, $data: jsonb!) {
-        update_VideoRenderJob_by_pk(
+        update_video_VideoRenderJob_by_pk(
             pk_columns: { id: $videoRenderJobId }
             _set: { jobStatusName: COMPLETED }
             _append: { data: $data }
         ) {
             id
-            broadcastContentItemId
+            broadcastElementId
         }
     }
 `;
@@ -45,16 +45,16 @@ export async function completeVideoRenderJob(
         },
     });
 
-    if (!broadcastRenderJobResult.data.VideoRenderJob_by_pk) {
+    if (!broadcastRenderJobResult.data.video_VideoRenderJob_by_pk) {
         console.warn("Could not complete video render job: video render job not found", videoRenderJobId);
         return {
             status: "CouldNotFindVideoRenderJob",
         };
     }
 
-    const videoRenderJob = broadcastRenderJobResult.data.VideoRenderJob_by_pk;
+    const videoRenderJob = broadcastRenderJobResult.data.video_VideoRenderJob_by_pk;
 
-    if (videoRenderJob.conferencePrepareJob.jobStatusName !== JobStatus_Enum.InProgress) {
+    if (videoRenderJob.conferencePrepareJob.jobStatusName !== Video_JobStatus_Enum.InProgress) {
         console.warn(
             "Could not complete video render job: conference prepare job not in progress",
             videoRenderJobId,
@@ -69,13 +69,13 @@ export async function completeVideoRenderJob(
         };
     }
 
-    if (videoRenderJob.jobStatusName !== JobStatus_Enum.InProgress) {
+    if (videoRenderJob.jobStatusName !== Video_JobStatus_Enum.InProgress) {
         console.warn(
             "Could not complete video render job: video render job not in progress",
             videoRenderJobId,
             videoRenderJob.jobStatusName
         );
-        if (videoRenderJob.jobStatusName === JobStatus_Enum.New) {
+        if (videoRenderJob.jobStatusName === Video_JobStatus_Enum.New) {
             await failVideoRenderJob(videoRenderJobId, "Tried to complete job before it started.");
         }
         return {
@@ -83,7 +83,7 @@ export async function completeVideoRenderJob(
         };
     }
 
-    const mp4BroadcastContentItemData: MP4Input = {
+    const mp4BroadcastElementData: MP4Input = {
         s3Url,
         type: "MP4Input",
         durationSeconds,
@@ -93,7 +93,7 @@ export async function completeVideoRenderJob(
         mutation: CompleteVideoRenderJobDocument,
         variables: {
             videoRenderJobId,
-            data: { broadcastContentItemData: mp4BroadcastContentItemData },
+            data: { broadcastElementData: mp4BroadcastElementData },
         },
     });
 
@@ -104,7 +104,7 @@ export async function completeVideoRenderJob(
 
 gql`
     mutation FailVideoRenderJob($videoRenderJobId: uuid!, $message: String!) {
-        update_VideoRenderJob_by_pk(
+        update_video_VideoRenderJob_by_pk(
             pk_columns: { id: $videoRenderJobId }
             _set: { jobStatusName: FAILED, message: $message }
         ) {
@@ -126,7 +126,7 @@ export async function failVideoRenderJob(videoRenderJobId: string, message: stri
 
 gql`
     mutation ExpireVideoRenderJob($videoRenderJobId: uuid!, $message: String!) {
-        update_VideoRenderJob_by_pk(
+        update_video_VideoRenderJob_by_pk(
             pk_columns: { id: $videoRenderJobId }
             _set: { jobStatusName: EXPIRED, message: $message }
         ) {
@@ -147,7 +147,7 @@ export async function expireVideoRenderJob(videoRenderJobId: string, message: st
 
 gql`
     mutation UpdateVideoRenderJob($videoRenderJobId: uuid!, $data: jsonb!) {
-        update_VideoRenderJob_by_pk(pk_columns: { id: $videoRenderJobId }, _append: { data: $data }) {
+        update_video_VideoRenderJob_by_pk(pk_columns: { id: $videoRenderJobId }, _append: { data: $data }) {
             id
         }
     }
@@ -198,7 +198,7 @@ export async function updateVideoRenderJob(videoRenderJobId: string, data: Video
 
 gql`
     query CountUnfinishedVideoRenderJobs($conferencePrepareJobId: uuid!) {
-        VideoRenderJob_aggregate(
+        video_VideoRenderJob_aggregate(
             where: {
                 conferencePrepareJobId: { _eq: $conferencePrepareJobId }
                 _and: { jobStatusName: { _nin: [COMPLETED] } }
@@ -219,21 +219,21 @@ export async function allVideoRenderJobsCompleted(conferencePrepareJobId: string
         },
     });
 
-    if (result.data.VideoRenderJob_aggregate.aggregate?.count) {
+    if (result.data.video_VideoRenderJob_aggregate.aggregate?.count) {
         console.log(
-            `Conference prepare job ${conferencePrepareJobId}: ${result.data.VideoRenderJob_aggregate.aggregate.count} jobs remaining`
+            `Conference prepare job ${conferencePrepareJobId}: ${result.data.video_VideoRenderJob_aggregate.aggregate.count} jobs remaining`
         );
     }
 
-    return !result.data.VideoRenderJob_aggregate.aggregate?.count;
+    return !result.data.video_VideoRenderJob_aggregate.aggregate?.count;
 }
 
 gql`
     query GetBroadcastVideoRenderJobDetails($videoRenderJobId: uuid!) {
-        VideoRenderJob_by_pk(id: $videoRenderJobId) {
-            broadcastContentItem {
+        video_VideoRenderJob_by_pk(id: $videoRenderJobId) {
+            broadcastElement {
                 id
-                contentItemId
+                elementId
             }
             id
             conferencePrepareJob {

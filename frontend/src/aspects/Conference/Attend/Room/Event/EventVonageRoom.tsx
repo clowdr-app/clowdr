@@ -19,12 +19,12 @@ gql`
     }
 
     query GetEventDetails($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             ...RoomEventDetails
         }
     }
 
-    fragment RoomEventDetails on Event {
+    fragment RoomEventDetails on schedule_Event {
         id
         conferenceId
         startTime
@@ -64,7 +64,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
     return (
-        <ApolloQueryWrapper queryResult={result} getter={(data) => data.Event_by_pk}>
+        <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
                 <VStack justifyContent="stretch" w="100%">
                     <EventRoomControlPanel event={event} />

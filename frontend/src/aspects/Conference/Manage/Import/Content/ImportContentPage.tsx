@@ -4,7 +4,7 @@ import {
     JSONataToIntermediaryContent,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
-import { Permission_Enum } from "../../../../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 import { useTitle } from "../../../../Utils/useTitle";
@@ -21,13 +21,13 @@ const presetJSONata_UnknownQuery = `
 {
     "originatingDatas": [],
     "groups": [],
-    "hallways": [],
+    "exhibitions": [],
     "tags": [],
     "people": []
 }
 `;
 
-const presetJSONata_CSVQuery_ContentPeople = `
+const presetJSONata_CSVQuery_ProgramPeople = `
 (
     $all := $[$not($."Content Id" = "")];
     $distinctIds := $distinct($all."Content Id");
@@ -54,7 +54,7 @@ const presetJSONata_CSVQuery_ContentPeople = `
                 }]
             }
         )],
-        "hallways": [],
+        "exhibitions": [],
         "tags": [],
         "people": [$all.{
             "name": $."First Name" & ' ' & $."Last Name",
@@ -142,7 +142,7 @@ const presetJSONata_CSVQuery_Content = `
                     }
                 }]
             }] : []),
-            "requiredItems": ($."Uploadable video for pre-publication" != "" ? [{
+            "uploadableElements": ($."Uploadable video for pre-publication" != "" ? [{
                 "typeName": "VIDEO_PREPUBLISH",
                 "name": $."Uploadable video for pre-publication",
                 "uploadsRemaining": 3
@@ -166,7 +166,7 @@ const presetJSONata_CSVQuery_Content = `
             ~> $append($."Tag 2" != "" ? [$."Tag 2"] : [])
             ~> $append($."Tag 3" != "" ? [$."Tag 3"] : [])
         }],
-        "hallways": [],
+        "exhibitions": [],
         "tags": [],
         "people": []
     }
@@ -177,7 +177,7 @@ const presetJSONata_CSVQuery_Tags = `
 {
     "originatingDatas": [],
     "groups": [],
-    "hallways": [],
+    "exhibitions": [],
     "tags": [$.{
         "name": $.Name,
         "colour": $.Colour
@@ -203,7 +203,7 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
     "groups": $.{
         "originatingDataSourceId": $string(pid),
         "title": title,
-        "requiredItems": [
+        "uploadableElements": [
             {
                 "typeName": "VIDEO_PREPUBLISH",
                 "name": "Pre-published video",
@@ -267,7 +267,7 @@ export default function ImportContentPage(): JSX.Element {
                     presetJSONataJSONQuery={presetJSONata_HotCRPQuery_POPL2021}
                     presetJSONataCSVQuery={(name) => {
                         if (name.endsWith("People.csv")) {
-                            return presetJSONata_CSVQuery_ContentPeople;
+                            return presetJSONata_CSVQuery_ProgramPeople;
                         } else if (name.endsWith("Content.csv")) {
                             return presetJSONata_CSVQuery_Content;
                         } else if (name.endsWith("Tags.csv")) {
@@ -287,7 +287,7 @@ export default function ImportContentPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageContent]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

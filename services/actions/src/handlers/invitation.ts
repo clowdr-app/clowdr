@@ -4,15 +4,15 @@ import crypto from "crypto";
 import { htmlToText } from "html-to-text";
 import { v4 as uuidv4 } from "uuid";
 import {
-    AttendeeWithInvitePartsFragment,
     Email_Insert_Input,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
     MarkAndSelectUnprocessedInvitationEmailJobsDocument,
-    SelectAttendeesWithInvitationDocument,
+    RegistrantWithInvitePartsFragment,
     SelectInvitationAndUserDocument,
+    SelectRegistrantsWithInvitationDocument,
     SendFreshInviteConfirmationEmailDocument,
-    SetAttendeeUserIdDocument,
+    SetRegistrantUserIdDocument,
     UnmarkInvitationEmailJobsDocument,
     UpdateInvitationDocument,
 } from "../generated/graphql";
@@ -20,9 +20,9 @@ import { apolloClient } from "../graphqlClient";
 import { insertEmails } from "./email";
 
 gql`
-    fragment InvitationParts on Invitation {
-        attendeeId
-        attendee {
+    fragment InvitationParts on registrant_Invitation {
+        registrantId
+        registrant {
             displayName
             userId
             conference {
@@ -48,7 +48,7 @@ gql`
     }
 
     query SelectInvitationAndUser($inviteCode: uuid!, $userId: String!) {
-        Invitation(where: { inviteCode: { _eq: $inviteCode } }) {
+        registrant_Invitation(where: { inviteCode: { _eq: $inviteCode } }) {
             ...InvitationParts
         }
 
@@ -63,7 +63,7 @@ gql`
         $userId: String!
         $updatedAt: timestamptz!
     ) {
-        update_Invitation(
+        update_registrant_Invitation(
             where: { id: { _eq: $invitationId }, updatedAt: { _eq: $updatedAt } }
             _set: { confirmationCode: $confirmationCode, linkToUserId: $userId }
         ) {
@@ -94,13 +94,13 @@ gql`
         }
     }
 
-    mutation SetAttendeeUserId($attendeeId: uuid!, $userId: String!) {
-        update_Attendee(where: { id: { _eq: $attendeeId } }, _set: { userId: $userId }) {
+    mutation SetRegistrantUserId($registrantId: uuid!, $userId: String!) {
+        update_registrant_Registrant(where: { id: { _eq: $registrantId } }, _set: { userId: $userId }) {
             affected_rows
         }
     }
 
-    fragment AttendeeWithInviteParts on Attendee {
+    fragment RegistrantWithInviteParts on registrant_Registrant {
         id
         conference {
             id
@@ -120,14 +120,14 @@ gql`
         userId
     }
 
-    query SelectAttendeesWithInvitation($attendeeIds: [uuid!]!) {
-        Attendee(
+    query SelectRegistrantsWithInvitation($registrantIds: [uuid!]!) {
+        registrant_Registrant(
             where: {
                 _and: [
-                    { id: { _in: $attendeeIds } }
+                    { id: { _in: $registrantIds } }
                     { userId: { _is_null: true } }
                     {
-                        groupAttendees: {
+                        groupRegistrants: {
                             group: {
                                 enabled: { _eq: true }
                                 groupRoles: { role: { rolePermissions: { permissionName: { _eq: CONFERENCE_VIEW } } } }
@@ -137,7 +137,7 @@ gql`
                 ]
             }
         ) {
-            ...AttendeeWithInviteParts
+            ...RegistrantWithInviteParts
         }
     }
 
@@ -145,7 +145,7 @@ gql`
         update_job_queues_InvitationEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
             returning {
                 id
-                attendeeIds
+                registrantIds
                 sendRepeat
             }
         }
@@ -159,38 +159,38 @@ gql`
 `;
 
 async function sendInviteEmails(
-    attendeeIds: Array<string>,
-    shouldSend: (attendee: AttendeeWithInvitePartsFragment) => "INITIAL" | "REPEAT" | false
+    registrantIds: Array<string>,
+    shouldSend: (registrant: RegistrantWithInvitePartsFragment) => "INITIAL" | "REPEAT" | false
 ): Promise<void> {
-    const attendees = await apolloClient.query({
-        query: SelectAttendeesWithInvitationDocument,
+    const registrants = await apolloClient.query({
+        query: SelectRegistrantsWithInvitationDocument,
         variables: {
-            attendeeIds,
+            registrantIds,
         },
     });
 
-    if (attendees.error) {
-        throw new Error(attendees.error.message);
-    } else if (attendees.errors && attendees.errors.length > 0) {
-        throw new Error(attendees.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
+    if (registrants.error) {
+        throw new Error(registrants.error.message);
+    } else if (registrants.errors && registrants.errors.length > 0) {
+        throw new Error(registrants.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
     }
 
     const emailsToSend: Map<string, Email_Insert_Input> = new Map();
 
-    for (const attendee of attendees.data.Attendee) {
-        if (!attendee.userId && attendee.invitation) {
-            const sendType = shouldSend(attendee);
+    for (const registrant of registrants.data.registrant_Registrant) {
+        if (!registrant.userId && registrant.invitation) {
+            const sendType = shouldSend(registrant);
             if (sendType) {
-                const htmlContents = `<p>Dear ${attendee.displayName},</p>
+                const htmlContents = `<p>Dear ${registrant.displayName},</p>
 
-<p>You are invited to attend ${attendee.conference.name} on Clowdr: the virtual
+<p>You are invited to attend ${registrant.conference.name} on Clowdr: the virtual
 conferencing platform. Please use the link and invite code below to create
 your profile and access the conference.</p>
 
 <p>
-<a href="${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${attendee.invitation.inviteCode}">Click here to accept your invitation</a></p>
+<a href="${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${registrant.invitation.inviteCode}">Click here to accept your invitation</a></p>
 
-<p>If you are asked for an invitation code, enter ${attendee.invitation.inviteCode}</p>
+<p>If you are asked for an invitation code, enter ${registrant.invitation.inviteCode}</p>
 
 <p>We hope you enjoy your conference,<br />
 The Clowdr team</p>
@@ -201,12 +201,12 @@ received this email in error, please contact us via ${process.env.STOP_EMAILS_CO
 
                 const plainTextContents = htmlToText(htmlContents);
 
-                emailsToSend.set(attendee.id, {
-                    emailAddress: attendee.invitation.invitedEmailAddress,
-                    invitationId: attendee.invitation.id,
+                emailsToSend.set(registrant.id, {
+                    emailAddress: registrant.invitation.invitedEmailAddress,
+                    invitationId: registrant.invitation.id,
                     reason: "invite",
                     subject: `Clowdr: ${sendType === "REPEAT" ? "[Reminder] " : ""}Your invitation to ${
-                        attendee.conference.shortName
+                        registrant.conference.shortName
                     }`,
                     htmlContents,
                     plainTextContents,
@@ -228,10 +228,10 @@ export async function processInvitationEmailsQueue(): Promise<void> {
     const failedJobIds: string[] = [];
     for (const job of jobs.data.update_job_queues_InvitationEmailJob.returning) {
         try {
-            await sendInviteEmails(job.attendeeIds, (attendee) => {
+            await sendInviteEmails(job.registrantIds, (registrant) => {
                 if (
-                    !!attendee.invitation &&
-                    attendee.invitation.emails.filter((x) => x.reason === "invite").length === 0
+                    !!registrant.invitation &&
+                    registrant.invitation.emails.filter((x) => x.reason === "invite").length === 0
                 ) {
                     return "INITIAL";
                 } else if (job.sendRepeat) {
@@ -267,13 +267,13 @@ async function getInvitationAndUser(
             userId,
         },
     });
-    if (!invitationQ.data.Invitation[0]) {
+    if (!invitationQ.data.registrant_Invitation[0]) {
         throw new Error("Invitation not found");
     }
     if (!invitationQ.data.User_by_pk) {
         throw new Error("User not found");
     }
-    const invitation = invitationQ.data.Invitation[0];
+    const invitation = invitationQ.data.registrant_Invitation[0];
     const user = invitationQ.data.User_by_pk;
     return {
         invitation,
@@ -294,9 +294,9 @@ async function confirmUser(
         if (ok === true) {
             try {
                 await apolloClient.mutate({
-                    mutation: SetAttendeeUserIdDocument,
+                    mutation: SetRegistrantUserIdDocument,
                     variables: {
-                        attendeeId: invitation.attendeeId,
+                        registrantId: invitation.registrantId,
                         userId,
                     },
                 });
@@ -308,7 +308,7 @@ async function confirmUser(
 
         return {
             ok: ok === true ? "true" : ok,
-            confSlug: invitation.attendee.conference.slug,
+            confSlug: invitation.registrant.conference.slug,
         };
     } catch (e) {
         return {
@@ -330,8 +330,8 @@ export async function invitationConfirmCurrentHandler(
                 ? "No invited email address"
                 : !user.email
                 ? "User does not have an email address"
-                : invitation.attendee.userId
-                ? `Invitation already used${invitation.attendee.userId === user.id ? " (same user)" : ""}`
+                : invitation.registrant.userId
+                ? `Invitation already used${invitation.registrant.userId === user.id ? " (same user)" : ""}`
                 : true;
             // Dead code
             // TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
@@ -361,7 +361,7 @@ export async function invitationConfirmWithCodeHandler(
 ): Promise<ConfirmInvitationOutput> {
     return confirmUser(args.inviteInput.inviteCode, userId, async (invitation, user) => {
         if (
-            !invitation.attendee.userId &&
+            !invitation.registrant.userId &&
             invitation.confirmationCode &&
             invitation.linkToUserId &&
             user.email &&
@@ -390,9 +390,9 @@ function generateEmailContents(
         invitedEmailAddress: invitation.invitedEmailAddress,
     });
 
-    const htmlContents = `<p>Dear ${invitation.attendee.displayName},</p>
+    const htmlContents = `<p>Dear ${invitation.registrant.displayName},</p>
 
-<p>A user is trying to accept your invitation to ${invitation.attendee.conference.name}
+<p>A user is trying to accept your invitation to ${invitation.registrant.conference.name}
 using the email address ${user.email}. If this was you, and you would like to use the
 email address shown (instead of your invitation address: ${invitation.invitedEmailAddress}),
 please enter the confirmation code shown below. If this was not you, please
@@ -431,7 +431,7 @@ export async function invitationConfirmSendInitialEmailHandler(
         };
     }
 
-    if (!invitation.attendee.userId && (!invitation.linkToUserId || invitation.linkToUserId !== user.id)) {
+    if (!invitation.registrant.userId && (!invitation.linkToUserId || invitation.linkToUserId !== user.id)) {
         const newConfirmationCodeForDB = uuidv4();
         const sendEmailTo = invitation.invitedEmailAddress;
         const { htmlContents, plainTextContents } = generateEmailContents(newConfirmationCodeForDB, invitation, user);
@@ -445,7 +445,10 @@ export async function invitationConfirmSendInitialEmailHandler(
                 updatedAt: invitation.updatedAt,
             },
         });
-        if (result.data?.update_Invitation?.affected_rows && result.data?.update_Invitation?.affected_rows > 0) {
+        if (
+            result.data?.update_registrant_Invitation?.affected_rows &&
+            result.data?.update_registrant_Invitation?.affected_rows > 0
+        ) {
             await apolloClient.mutate({
                 mutation: SendFreshInviteConfirmationEmailDocument,
                 variables: {
@@ -472,7 +475,7 @@ export async function invitationConfirmSendRepeatEmailHandler(
 ): Promise<InvitationConfirmationEmailOutput> {
     const { invitation, user } = await getInvitationAndUser(args.inviteInput.inviteCode, userId);
     if (
-        !invitation.attendee.userId &&
+        !invitation.registrant.userId &&
         invitation.linkToUserId &&
         invitation.linkToUserId === user.id &&
         invitation.confirmationCode

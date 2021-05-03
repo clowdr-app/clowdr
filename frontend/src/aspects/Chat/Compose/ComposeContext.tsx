@@ -185,7 +185,7 @@ export function ComposeContextProvider({
     const send = useCallback(
         (data?: MessageData) => {
             (async () => {
-                if (!config.currentAttendeeId) {
+                if (!config.currentRegistrantId) {
                     throw new Error("Not authorized.");
                 }
 
@@ -215,7 +215,7 @@ export function ComposeContextProvider({
                 }
             })();
         },
-        [config.currentAttendeeId, newMessage, newMessageData, newMessageType, config.state.Id, sendQueries]
+        [config.currentRegistrantId, newMessage, newMessageData, newMessageType, config.state.Id, sendQueries]
     );
     const messageLengthRange = useMemo(
         () => ({

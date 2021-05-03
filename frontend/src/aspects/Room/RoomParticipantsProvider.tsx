@@ -2,31 +2,31 @@ import { gql } from "@apollo/client";
 import React from "react";
 import { useGetAllRoomParticipantsQuery, useGetRoomParticipantsSubscription } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
-import { useMaybeCurrentAttendee } from "../Conference/useCurrentAttendee";
+import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { RoomParticipantsContext } from "./useRoomParticipants";
 
 gql`
     subscription GetRoomParticipants($conferenceId: uuid!, $roomId: uuid!) {
-        RoomParticipant(where: { conferenceId: { _eq: $conferenceId }, roomId: { _eq: $roomId } }) {
+        room_Participant(where: { conferenceId: { _eq: $conferenceId }, roomId: { _eq: $roomId } }) {
             ...RoomParticipantDetails
         }
     }
 
     query GetAllRoomParticipants($conferenceId: uuid!) {
-        RoomParticipant(where: { conferenceId: { _eq: $conferenceId } }) {
+        room_Participant(where: { conferenceId: { _eq: $conferenceId } }) {
             ...RoomParticipantDetails
         }
     }
 
-    fragment RoomParticipantDetails on RoomParticipant {
+    fragment RoomParticipantDetails on room_Participant {
         conferenceId
         id
         roomId
-        attendeeId
+        registrantId
     }
 `;
 
-function RoomParticipantsProvider_Subd({
+function ParticipantsProvider_Subd({
     children,
     roomId,
 }: {
@@ -41,12 +41,12 @@ function RoomParticipantsProvider_Subd({
         },
     });
 
-    const value = loading ? undefined : error ? false : data?.RoomParticipant ?? false;
+    const value = loading ? undefined : error ? false : data?.room_Participant ?? false;
 
     return <RoomParticipantsContext.Provider value={value}>{children}</RoomParticipantsContext.Provider>;
 }
 
-function RoomParticipantsProvider_Polling({
+function ParticipantsProvider_Polling({
     children,
 }: {
     children: string | React.ReactNode | React.ReactNodeArray;
@@ -60,26 +60,26 @@ function RoomParticipantsProvider_Polling({
         fetchPolicy: "network-only",
     });
 
-    const value = loading ? undefined : error ? false : data?.RoomParticipant ?? false;
+    const value = loading ? undefined : error ? false : data?.room_Participant ?? false;
 
     return <RoomParticipantsContext.Provider value={value}>{children}</RoomParticipantsContext.Provider>;
 }
 
-export default function RoomParticipantsProvider({
+export default function ParticipantsProvider({
     children,
     roomId,
 }: {
     children: string | React.ReactNode | React.ReactNodeArray;
     roomId?: string;
 }): JSX.Element {
-    const mAttendee = useMaybeCurrentAttendee();
-    if (!mAttendee) {
+    const mRegistrant = useMaybeCurrentRegistrant();
+    if (!mRegistrant) {
         return <RoomParticipantsContext.Provider value={[]}>{children}</RoomParticipantsContext.Provider>;
     }
 
     if (roomId) {
-        return <RoomParticipantsProvider_Subd roomId={roomId}>{children}</RoomParticipantsProvider_Subd>;
+        return <ParticipantsProvider_Subd roomId={roomId}>{children}</ParticipantsProvider_Subd>;
     } else {
-        return <RoomParticipantsProvider_Polling>{children}</RoomParticipantsProvider_Polling>;
+        return <ParticipantsProvider_Polling>{children}</ParticipantsProvider_Polling>;
     }
 }

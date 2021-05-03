@@ -28,7 +28,7 @@ interface TokenCacheEntry {
 }
 
 class AuthTokenCache {
-    static readonly CacheVersion = "1.1";
+    static readonly CacheVersion = "1.2";
     static readonly CacheKey = "CLOWDR_AUTH_CACHE";
     static readonly TokenExpiryTime = (36000 - 60) * 1000;
 
@@ -231,22 +231,22 @@ async function createApolloClient(
     const cache = new InMemoryCache({
         typePolicies: {
             chat_Pin: {
-                keyFields: ["chatId", "attendeeId"],
+                keyFields: ["chatId", "registrantId"],
             },
             chat_Subscription: {
-                keyFields: ["chatId", "attendeeId"],
+                keyFields: ["chatId", "registrantId"],
             },
             chat_Typer: {
-                keyFields: ["chatId", "attendeeId"],
+                keyFields: ["chatId", "registrantId"],
             },
             chat_ReadUpToIndex: {
                 keyFields: ["chatId"],
             },
             chat_PinnedOrSubscribed: {
-                keyFields: ["chatId", "attendeeId"],
+                keyFields: ["chatId", "registrantId"],
             },
-            AttendeeProfile: {
-                keyFields: ["attendeeId"],
+            registrant_Profile: {
+                keyFields: ["registrantId"],
             },
         },
     });

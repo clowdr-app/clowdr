@@ -1,8 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type {
-    Schedule_ContentGroupItemsFragment,
     Schedule_EventSummaryFragment,
+    Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
 } from "../../../../generated/graphql";
 import type { TimelineEvent, TimelineRoom } from "./DayList";
@@ -54,8 +54,8 @@ function RoomTimelineInner({
                 currentEventsGroup.length > 0 ? currentEventsGroup[currentEventsGroup.length - 1] : undefined;
             if (
                 !compareEvent ||
-                (compareEvent.contentGroup &&
-                    compareEvent.contentGroup.id === event.contentGroup?.id &&
+                (compareEvent.item &&
+                    compareEvent.item.id === event.item?.id &&
                     Math.abs(
                         Date.parse(event.startTime) -
                             (Date.parse(compareEvent.startTime) + compareEvent.durationSeconds * 1000)
@@ -95,7 +95,7 @@ function RoomTimelineWrapper({
     backgroundColor,
     scrollToEventCbs,
     events,
-    contentGroups,
+    items,
 }: {
     room: Schedule_RoomSummaryFragment;
     hideTimeZoomButtons?: boolean;
@@ -104,25 +104,23 @@ function RoomTimelineWrapper({
     backgroundColor?: string;
     scrollToEventCbs: Map<string, () => void>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
+    items: ReadonlyArray<Schedule_ItemElementsFragment>;
 }): JSX.Element {
     const roomEvents = useMemo(() => {
         const result: TimelineEvent[] = [];
 
         events.forEach((event) => {
             if (event.roomId === room.id) {
-                const contentGroup = event.contentGroupId
-                    ? contentGroups.find((x) => x.id === event.contentGroupId)
-                    : undefined;
+                const item = event.itemId ? items.find((x) => x.id === event.itemId) : undefined;
                 result.push({
                     ...event,
-                    contentGroup,
+                    item,
                 });
             }
         });
 
         return result;
-    }, [contentGroups, events, room.id]);
+    }, [items, events, room.id]);
 
     return room ? (
         <RoomTimelineInner
@@ -147,7 +145,7 @@ type Props = {
     width?: number;
     scrollToEventCbs: Map<string, () => void>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    contentGroups: ReadonlyArray<Schedule_ContentGroupItemsFragment>;
+    items: ReadonlyArray<Schedule_ItemElementsFragment>;
 };
 
 export default function RoomTimeline({ ...props }: Props): JSX.Element {

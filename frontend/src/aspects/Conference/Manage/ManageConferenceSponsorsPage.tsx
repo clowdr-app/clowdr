@@ -1,6 +1,6 @@
 import { Heading } from "@chakra-ui/react";
 import React from "react";
-import { Permission_Enum } from "../../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -13,7 +13,7 @@ export function ManageConferenceSponsorsPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageSchedule]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

@@ -16,7 +16,7 @@ import { DateTime } from "luxon";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import {
-    AttendeeFieldsFragment,
+    RegistrantFieldsFragment,
     RoomListRoomDetailsFragment,
     useGetAllTodaysRoomsQuery,
 } from "../../generated/graphql";
@@ -129,7 +129,7 @@ export function LeftSidebarConferenceSections_Inner({
 }: {
     rootUrl: string;
     confSlug: string;
-    attendee: AttendeeFieldsFragment;
+    registrant: RegistrantFieldsFragment;
     onClose: () => void;
 }): JSX.Element {
     return (
@@ -148,11 +148,11 @@ export function LeftSidebarConferenceSections_Inner({
                     <LinkButton
                         linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
                         size="sm"
-                        to={`/conference/${confSlug}/attendees`}
+                        to={`/conference/${confSlug}/registrants`}
                         width="100%"
                     >
                         <FAIcon icon="cat" iconStyle="s" mr={3} />
-                        Attendees
+                        Registrants
                     </LinkButton>
                     <LinkButton
                         linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
@@ -175,7 +175,7 @@ export function LeftSidebarConferenceSections_Inner({
                     <LinkButton
                         linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
                         size="sm"
-                        to={`/conference/${confSlug}/hallways`}
+                        to={`/conference/${confSlug}/exhibitions`}
                         width="100%"
                     >
                         <FAIcon icon="images" iconStyle="r" mr={3} />
@@ -250,14 +250,14 @@ export default function LeftSidebarConferenceSections({
     onClose: () => void;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
-    if (user.user && user.user.attendees.length > 0) {
-        const attendee = user.user.attendees.find((x) => x.conference.slug === confSlug);
-        if (attendee) {
+    if (user.user && user.user.registrants.length > 0) {
+        const registrant = user.user.registrants.find((x) => x.conference.slug === confSlug);
+        if (registrant) {
             return (
                 <LeftSidebarConferenceSections_Inner
                     rootUrl={rootUrl}
                     confSlug={confSlug}
-                    attendee={attendee}
+                    registrant={registrant}
                     onClose={onClose}
                 />
             );

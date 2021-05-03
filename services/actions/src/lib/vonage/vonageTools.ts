@@ -15,7 +15,7 @@ import Vonage from "./vonageClient";
 
 gql`
     query GetEventBroadcastDetails($eventId: uuid!) {
-        Event_by_pk(id: $eventId) {
+        schedule_Event_by_pk(id: $eventId) {
             id
             startTime
             durationSeconds
@@ -50,15 +50,15 @@ export async function getEventBroadcastDetails(eventId: string): Promise<EventBr
         },
     });
 
-    if (!eventResult.data.Event_by_pk) {
+    if (!eventResult.data.schedule_Event_by_pk) {
         throw new Error("Could not find event");
     }
 
-    if (!eventResult.data.Event_by_pk.room.mediaLiveChannel?.rtmpInputUri) {
+    if (!eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel?.rtmpInputUri) {
         throw new Error("No RTMP Push URI available for event room.");
     }
 
-    const rtmpUri = eventResult.data.Event_by_pk.room.mediaLiveChannel.rtmpInputUri;
+    const rtmpUri = eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.rtmpInputUri;
     const rtmpUriParts = rtmpUri.split("/");
     if (rtmpUriParts.length < 2) {
         throw new Error("RTMP Push URI has unexpected format");
@@ -66,14 +66,14 @@ export async function getEventBroadcastDetails(eventId: string): Promise<EventBr
     const streamName = rtmpUriParts[rtmpUriParts.length - 1];
     const serverUrl = rtmpUri.substring(0, rtmpUri.length - streamName.length);
 
-    if (!eventResult.data.Event_by_pk.eventVonageSession?.sessionId) {
+    if (!eventResult.data.schedule_Event_by_pk.eventVonageSession?.sessionId) {
         throw new Error("Could not find Vonage session ID for event");
     }
 
     return {
         rtmpServerUrl: serverUrl,
         rtmpStreamName: streamName,
-        vonageSessionId: eventResult.data.Event_by_pk.eventVonageSession.sessionId,
+        vonageSessionId: eventResult.data.schedule_Event_by_pk.eventVonageSession.sessionId,
     };
 }
 
@@ -204,11 +204,11 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
     }
 }
 
-export async function kickAttendeeFromRoom(roomId: string, attendeeId: string): Promise<void> {
-    const roomParticipants = await getRoomParticipantDetails(roomId, attendeeId);
+export async function kickRegistrantFromRoom(roomId: string, registrantId: string): Promise<void> {
+    const roomParticipants = await getRoomParticipantDetails(roomId, registrantId);
 
     if (roomParticipants.length !== 1) {
-        console.error("Could not find a room participant to kick", roomId, attendeeId);
+        console.error("Could not find a room participant to kick", roomId, registrantId);
         throw new Error("Could not find a room participant to kick");
     }
 
@@ -216,62 +216,62 @@ export async function kickAttendeeFromRoom(roomId: string, attendeeId: string): 
 
     if (roomParticipant.vonageConnectionId) {
         if (!roomParticipant.room.publicVonageSessionId) {
-            console.warn("Could not find Vonage session to kick participant from", { roomId, attendeeId });
+            console.warn("Could not find Vonage session to kick participant from", { roomId, registrantId });
         } else {
-            console.log("Forcing Vonage disconnection of attendee", { roomId, attendeeId });
+            console.log("Forcing Vonage disconnection of registrant", { roomId, registrantId });
             try {
                 await Vonage.forceDisconnect(
                     roomParticipant.room.publicVonageSessionId,
                     roomParticipant.vonageConnectionId
                 );
             } catch (err) {
-                console.error("Failed to force Vonage disconnection of attendee", { roomId, attendeeId, err });
-                throw new Error("Failed to force Vonage disconnection of attendee");
+                console.error("Failed to force Vonage disconnection of registrant", { roomId, registrantId, err });
+                throw new Error("Failed to force Vonage disconnection of registrant");
             }
         }
 
-        await removeRoomParticipant(roomId, roomParticipant.room.conferenceId, attendeeId);
-    } else if (roomParticipant.chimeAttendeeId) {
-        if (!roomParticipant.room.roomChimeMeeting) {
-            console.warn("Could not find Chime session to kick participant from", { roomId, attendeeId });
+        await removeRoomParticipant(roomId, roomParticipant.room.conferenceId, registrantId);
+    } else if (roomParticipant.chimeRegistrantId) {
+        if (!roomParticipant.room.chimeMeeting) {
+            console.warn("Could not find Chime session to kick participant from", { roomId, registrantId });
         } else {
-            console.log("Forcing Chime disconnection of attendee", { roomId, attendeeId });
+            console.log("Forcing Chime disconnection of registrant", { roomId, registrantId });
             try {
                 await Chime.send(
                     new DeleteAttendeeCommand({
-                        AttendeeId: roomParticipant.chimeAttendeeId,
-                        MeetingId: roomParticipant.room.roomChimeMeeting.chimeMeetingId,
+                        AttendeeId: roomParticipant.chimeRegistrantId,
+                        MeetingId: roomParticipant.room.chimeMeeting.chimeMeetingId,
                     })
                 );
             } catch (err) {
-                console.error("Failed to force Chime disconnection of attendee", { roomId, attendeeId, err });
-                throw new Error("Failed to force Chime disconnection of attendee");
+                console.error("Failed to force Chime disconnection of registrant", { roomId, registrantId, err });
+                throw new Error("Failed to force Chime disconnection of registrant");
             }
         }
 
-        await removeRoomParticipant(roomId, roomParticipant.room.conferenceId, attendeeId);
+        await removeRoomParticipant(roomId, roomParticipant.room.conferenceId, registrantId);
     }
 }
 
 gql`
     query GetEventByVonageSessionId($sessionId: String!) {
-        Event(where: { eventVonageSession: { sessionId: { _eq: $sessionId } } }) {
+        schedule_Event(where: { eventVonageSession: { sessionId: { _eq: $sessionId } } }) {
             id
             conferenceId
         }
     }
 
     mutation CreateEventParticipantStream(
-        $attendeeId: uuid!
+        $registrantId: uuid!
         $conferenceId: uuid!
         $eventId: uuid!
         $vonageConnectionId: String!
         $vonageStreamId: String!
         $vonageStreamType: String!
     ) {
-        insert_EventParticipantStream_one(
+        insert_video_EventParticipantStream_one(
             object: {
-                attendeeId: $attendeeId
+                registrantId: $registrantId
                 conferenceId: $conferenceId
                 eventId: $eventId
                 vonageConnectionId: $vonageConnectionId
@@ -286,7 +286,7 @@ gql`
 
 export async function addEventParticipantStream(
     sessionId: string,
-    attendeeId: string,
+    registrantId: string,
     stream: StreamData
 ): Promise<void> {
     const eventResult = await apolloClient.query({
@@ -297,12 +297,12 @@ export async function addEventParticipantStream(
     });
 
     if (eventResult.error || eventResult.errors) {
-        console.error("Error while retrieving event from Vonage session ID", sessionId, attendeeId);
+        console.error("Error while retrieving event from Vonage session ID", sessionId, registrantId);
         throw new Error("Error while retrieving event from Vonage session ID");
     }
 
-    if (eventResult.data.Event.length !== 1) {
-        console.log("No event matching this session, skipping participant addition.", sessionId, attendeeId);
+    if (eventResult.data.schedule_Event.length !== 1) {
+        console.log("No event matching this session, skipping participant addition.", sessionId, registrantId);
         return;
     }
 
@@ -310,9 +310,9 @@ export async function addEventParticipantStream(
         await apolloClient.mutate({
             mutation: CreateEventParticipantStreamDocument,
             variables: {
-                attendeeId,
-                conferenceId: eventResult.data.Event[0].conferenceId,
-                eventId: eventResult.data.Event[0].id,
+                registrantId,
+                conferenceId: eventResult.data.schedule_Event[0].conferenceId,
+                eventId: eventResult.data.schedule_Event[0].id,
                 vonageConnectionId: stream.connection.id,
                 vonageStreamId: stream.id,
                 vonageStreamType: stream.videoType ?? "camera",
@@ -322,8 +322,8 @@ export async function addEventParticipantStream(
         // If there is already a row for this event, kick the previous connection before recording the new one
         console.error(
             "Error while adding event participant stream",
-            eventResult.data.Event[0].id,
-            attendeeId,
+            eventResult.data.schedule_Event[0].id,
+            registrantId,
             stream.id,
             e
         );
@@ -333,15 +333,15 @@ export async function addEventParticipantStream(
 
 gql`
     mutation RemoveEventParticipantStream(
-        $attendeeId: uuid!
+        $registrantId: uuid!
         $conferenceId: uuid!
         $eventId: uuid!
         $vonageConnectionId: String!
         $vonageStreamId: String!
     ) {
-        delete_EventParticipantStream(
+        delete_video_EventParticipantStream(
             where: {
-                attendeeId: { _eq: $attendeeId }
+                registrantId: { _eq: $registrantId }
                 conferenceId: { _eq: $conferenceId }
                 eventId: { _eq: $eventId }
                 vonageConnectionId: { _eq: $vonageConnectionId }
@@ -355,7 +355,7 @@ gql`
 
 export async function removeEventParticipantStream(
     sessionId: string,
-    attendeeId: string,
+    registrantId: string,
     stream: StreamData
 ): Promise<void> {
     const eventResult = await apolloClient.query({
@@ -366,30 +366,30 @@ export async function removeEventParticipantStream(
     });
 
     if (eventResult.error || eventResult.errors) {
-        console.log("Could not retrieve event from Vonage session ID", sessionId, attendeeId);
+        console.log("Could not retrieve event from Vonage session ID", sessionId, registrantId);
         throw new Error("Could not retrieve event from Vonage session ID");
     }
 
-    if (eventResult.data.Event.length !== 1) {
-        console.log("No event matching this session, skipping participant stream removal.", sessionId, attendeeId);
+    if (eventResult.data.schedule_Event.length !== 1) {
+        console.log("No event matching this session, skipping participant stream removal.", sessionId, registrantId);
         return;
     }
 
     const removeResult = await apolloClient.mutate({
         mutation: RemoveEventParticipantStreamDocument,
         variables: {
-            attendeeId,
-            conferenceId: eventResult.data.Event[0].conferenceId,
-            eventId: eventResult.data.Event[0].id,
+            registrantId,
+            conferenceId: eventResult.data.schedule_Event[0].conferenceId,
+            eventId: eventResult.data.schedule_Event[0].id,
             vonageConnectionId: stream.connection.id,
             vonageStreamId: stream.id,
         },
     });
 
     if (
-        !removeResult.data?.delete_EventParticipantStream?.affected_rows ||
-        removeResult.data.delete_EventParticipantStream.affected_rows === 0
+        !removeResult.data?.delete_video_EventParticipantStream?.affected_rows ||
+        removeResult.data.delete_video_EventParticipantStream.affected_rows === 0
     ) {
-        console.warn("Could not find participant stream to remove for event", sessionId, attendeeId, stream.id);
+        console.warn("Could not find participant stream to remove for event", sessionId, registrantId, stream.id);
     }
 }

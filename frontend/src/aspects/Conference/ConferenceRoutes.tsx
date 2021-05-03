@@ -1,20 +1,20 @@
 import React from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
-import { Permission_Enum } from "../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../generated/graphql";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import ConferencePageNotFound from "../Errors/ConferencePageNotFound";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
 import WaitingPage from "../ShuffleRooms/WaitingPage";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
-import AttendeeListPage from "./Attend/Attendee/AttendeeListPage";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
-import ContentGroupPage from "./Attend/Content/ContentGroupPage";
-import HallwayPage from "./Attend/Hallway/HallwayPage";
-import HallwaysPage from "./Attend/Hallway/HallwaysPage";
+import ItemPage from "./Attend/Content/ItemPage";
+import ExhibitionPage from "./Attend/Exhibition/ExhibitionPage";
+import ExhibitionsPage from "./Attend/Exhibition/ExhibitionsPage";
 import EditProfilePage from "./Attend/Profile/EditProfilePage";
 import MyBackstages from "./Attend/Profile/MyBackstages";
 import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
+import RegistrantListPage from "./Attend/Registrant/RegistrantListPage";
 import RoomListPage from "./Attend/Room/RoomListPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import Schedule from "./Attend/Schedule/Schedule";
@@ -35,12 +35,12 @@ import { ManageConferenceSponsorsPage } from "./Manage/ManageConferenceSponsorsP
 import ManagerLandingPage from "./Manage/ManagerLandingPage";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
 import { useConference } from "./useConference";
-import { useMaybeCurrentAttendee } from "./useCurrentAttendee";
+import { useMaybeCurrentRegistrant } from "./useCurrentRegistrant";
 
 export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.Element {
     const conference = useConference();
     const mUser = useMaybeCurrentUser();
-    const mAttendee = useMaybeCurrentAttendee();
+    const mRegistrant = useMaybeCurrentRegistrant();
 
     return (
         <Switch>
@@ -54,13 +54,13 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 </Route>
             ) : undefined}
 
-            {mAttendee && mAttendee.profile && !mAttendee.profile.hasBeenEdited ? (
+            {mRegistrant && mRegistrant.profile && !mRegistrant.profile.hasBeenEdited ? (
                 <Route path={rootUrl}>
                     <Redirect to={`/conference/${conference.slug}/profile/edit`} />
                 </Route>
             ) : undefined}
 
-            {mAttendee && <Route exact path={`${rootUrl}/profile/backstages`} component={MyBackstages} />}
+            {mRegistrant && <Route exact path={`${rootUrl}/profile/backstages`} component={MyBackstages} />}
 
             <Route exact path={`${rootUrl}`}>
                 <ConferenceLandingPage />
@@ -69,14 +69,14 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             <Route exact path={`${rootUrl}/manage`}>
                 <RequireAtLeastOnePermissionWrapper
                     permissions={[
-                        Permission_Enum.ConferenceManageAttendees,
-                        Permission_Enum.ConferenceManageContent,
-                        Permission_Enum.ConferenceManageGroups,
-                        Permission_Enum.ConferenceManageName,
-                        Permission_Enum.ConferenceManageRoles,
-                        Permission_Enum.ConferenceManageSchedule,
-                        Permission_Enum.ConferenceManageShuffle,
-                        Permission_Enum.ConferenceModerateAttendees,
+                        Permissions_Permission_Enum.ConferenceManageAttendees,
+                        Permissions_Permission_Enum.ConferenceManageContent,
+                        Permissions_Permission_Enum.ConferenceManageGroups,
+                        Permissions_Permission_Enum.ConferenceManageName,
+                        Permissions_Permission_Enum.ConferenceManageRoles,
+                        Permissions_Permission_Enum.ConferenceManageSchedule,
+                        Permissions_Permission_Enum.ConferenceManageShuffle,
+                        Permissions_Permission_Enum.ConferenceModerateAttendees,
                     ]}
                     componentIfDenied={<PageNotFound />}
                 >
@@ -140,18 +140,18 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             </Route>
 
             <Route
-                path={`${rootUrl}/item/:contentGroupId`}
-                component={(props: RouteComponentProps<{ contentGroupId: string }>) => (
-                    <ContentGroupPage contentGroupId={props.match.params.contentGroupId} />
+                path={`${rootUrl}/item/:itemId`}
+                component={(props: RouteComponentProps<{ itemId: string }>) => (
+                    <ItemPage itemId={props.match.params.itemId} />
                 )}
             />
-            <Route path={`${rootUrl}/hallways`}>
-                <HallwaysPage />
+            <Route path={`${rootUrl}/exhibitions`}>
+                <ExhibitionsPage />
             </Route>
             <Route
-                path={`${rootUrl}/hallway/:hallwayId`}
-                component={(props: RouteComponentProps<{ hallwayId: string }>) => (
-                    <HallwayPage hallwayId={props.match.params.hallwayId} />
+                path={`${rootUrl}/exhibition/:exhibitionId`}
+                component={(props: RouteComponentProps<{ exhibitionId: string }>) => (
+                    <ExhibitionPage exhibitionId={props.match.params.exhibitionId} />
                 )}
             />
 
@@ -159,17 +159,17 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 <RoomListPage />
             </Route>
 
-            <Route path={`${rootUrl}/attendees`}>
+            <Route path={`${rootUrl}/registrants`}>
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
                     permissions={[
-                        Permission_Enum.ConferenceViewAttendees,
-                        Permission_Enum.ConferenceManageAttendees,
-                        Permission_Enum.ConferenceManageGroups,
-                        Permission_Enum.ConferenceManageRoles,
+                        Permissions_Permission_Enum.ConferenceViewAttendees,
+                        Permissions_Permission_Enum.ConferenceManageAttendees,
+                        Permissions_Permission_Enum.ConferenceManageGroups,
+                        Permissions_Permission_Enum.ConferenceManageRoles,
                     ]}
                 >
-                    <AttendeeListPage />
+                    <RegistrantListPage />
                 </RequireAtLeastOnePermissionWrapper>
             </Route>
 
@@ -186,19 +186,22 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             <Route path={`${rootUrl}/schedule`}>
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
-                    permissions={[Permission_Enum.ConferenceView, Permission_Enum.ConferenceManageSchedule]}
+                    permissions={[
+                        Permissions_Permission_Enum.ConferenceView,
+                        Permissions_Permission_Enum.ConferenceManageSchedule,
+                    ]}
                 >
                     <Schedule />
                 </RequireAtLeastOnePermissionWrapper>
             </Route>
 
-            <Route exact path={`${rootUrl}/profile/edit/:attendeeId`}>
+            <Route exact path={`${rootUrl}/profile/edit/:registrantId`}>
                 {(props) =>
-                    props.match?.params.attendeeId ? (
+                    props.match?.params.registrantId ? (
                         <EditProfilePage
-                            attendeeId={
-                                props.match?.params.attendeeId && props.match?.params.attendeeId.length > 0
-                                    ? props.match?.params.attendeeId
+                            registrantId={
+                                props.match?.params.registrantId && props.match?.params.registrantId.length > 0
+                                    ? props.match?.params.registrantId
                                     : undefined
                             }
                         />
@@ -208,13 +211,13 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 }
             </Route>
 
-            <Route exact path={`${rootUrl}/profile/view/:attendeeId`}>
+            <Route exact path={`${rootUrl}/profile/view/:registrantId`}>
                 {(props) =>
-                    props.match?.params.attendeeId ? (
+                    props.match?.params.registrantId ? (
                         <ViewProfilePage
-                            attendeeId={
-                                props.match?.params.attendeeId && props.match?.params.attendeeId.length > 0
-                                    ? props.match?.params.attendeeId
+                            registrantId={
+                                props.match?.params.registrantId && props.match?.params.registrantId.length > 0
+                                    ? props.match?.params.registrantId
                                     : undefined
                             }
                         />
@@ -237,10 +240,10 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
                     permissions={[
-                        Permission_Enum.ConferenceViewAttendees,
-                        Permission_Enum.ConferenceManageAttendees,
-                        Permission_Enum.ConferenceModerateAttendees,
-                        Permission_Enum.ConferenceManageSchedule,
+                        Permissions_Permission_Enum.ConferenceViewAttendees,
+                        Permissions_Permission_Enum.ConferenceManageAttendees,
+                        Permissions_Permission_Enum.ConferenceModerateAttendees,
+                        Permissions_Permission_Enum.ConferenceManageSchedule,
                     ]}
                 >
                     <WaitingPage />
@@ -253,44 +256,3 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
         </Switch>
     );
 }
-
-// gql`
-//     query SelectActiveShufflePeriods(
-//         $conferenceId: uuid!
-//         $start: timestamptz!
-//         $end: timestamptz!
-//         $attendeeId: uuid!
-//     ) {
-//         room_ShufflePeriod(
-//             where: { conferenceId: { _eq: $conferenceId }, startAt: { _lte: $start }, endAt: { _gte: $end } }
-//         ) {
-//             ...ShufflePeriodData
-//         }
-//     }
-// `;
-
-// function ShuffleRoomsQueueMonitor(): JSX.Element {
-//     const conference = useConference();
-//     const periods = useSelectActiveShufflePeriodsQuery({
-//         skip: true,
-//     });
-//     const fetchShuffleRooms = useCallback(() => {
-//         periods.refetch({
-//             conferenceId: conference.id,
-//             start: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-//             end: new Date().toISOString(),
-//         });
-//     }, [conference.id, periods]);
-//     usePolling(fetchShuffleRooms, 15000, true);
-
-//     // const [seenAllocatedRooms, setSeenAllocatedRooms] = useState<Set<number>>();
-//     // useEffect(() => {
-//     //     if (periods.data?.room_ShufflePeriod) {
-//     //         for (const period of periods.data.room_ShufflePeriod) {
-//     //             // period.queueEntries
-//     //         }
-//     //     }
-//     // }, [periods.data.room_ShufflePeriod]);
-
-//     return <></>;
-// }

@@ -9,7 +9,7 @@ import {
     FindChannelStackCreateJobByLogicalResourceIdDocument,
     FindPotentiallyStuckChannelStackCreateJobsDocument,
     GetChannelStackCreateJobDocument,
-    JobStatus_Enum,
+    Video_JobStatus_Enum,
 } from "../../generated/graphql";
 import { GraphQlService } from "../../hasura/graphql.service";
 
@@ -83,7 +83,7 @@ export class ChannelStackCreateJobService {
             },
         });
 
-        if (result.data.job_queues_ChannelStackCreateJob_by_pk?.jobStatusName !== JobStatus_Enum.Failed) {
+        if (result.data.job_queues_ChannelStackCreateJob_by_pk?.jobStatusName !== Video_JobStatus_Enum.Failed) {
             await this.graphQlService.apolloClient.mutate({
                 mutation: FailChannelStackCreateJobDocument,
                 variables: {

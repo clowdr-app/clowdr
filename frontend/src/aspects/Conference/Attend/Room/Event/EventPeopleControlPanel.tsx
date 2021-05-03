@@ -1,12 +1,12 @@
 import { Heading, List, ListItem, useToast } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-    EventPersonDetailsFragment,
-    EventPersonRole_Enum,
+    EventProgramPersonDetailsFragment,
     EventRoomJoinRequestDetailsFragment,
+    Schedule_EventProgramPersonRole_Enum,
 } from "../../../../../generated/graphql";
 import useUserId from "../../../../Auth/useUserId";
-import { EventPerson } from "./EventPerson";
+import { EventProgramPerson } from "./EventProgramPerson";
 import { JoinRequest } from "./JoinRequest";
 
 export function EventPeopleControlPanel({
@@ -15,11 +15,13 @@ export function EventPeopleControlPanel({
     myRoles,
 }: {
     unapprovedJoinRequests: readonly EventRoomJoinRequestDetailsFragment[];
-    eventPeople: readonly EventPersonDetailsFragment[];
-    myRoles: EventPersonRole_Enum[];
+    eventPeople: readonly EventProgramPersonDetailsFragment[];
+    myRoles: Schedule_EventProgramPersonRole_Enum[];
 }): JSX.Element {
     const canControlEventPeople = useMemo(
-        () => myRoles.includes(EventPersonRole_Enum.Chair) || myRoles.includes(EventPersonRole_Enum.Presenter),
+        () =>
+            myRoles.includes(Schedule_EventProgramPersonRole_Enum.Chair) ||
+            myRoles.includes(Schedule_EventProgramPersonRole_Enum.Presenter),
         [myRoles]
     );
     const userId = useUserId();
@@ -58,7 +60,7 @@ export function EventPeopleControlPanel({
             </Heading>
             <List>
                 {eventPeople.map((person) => (
-                    <EventPersonListItem
+                    <EventProgramPersonListItem
                         key={person.id}
                         person={person}
                         canControlEventPeople={canControlEventPeople}
@@ -70,18 +72,18 @@ export function EventPeopleControlPanel({
     );
 }
 
-function EventPersonListItem({
+function EventProgramPersonListItem({
     person,
     canControlEventPeople,
     userId,
 }: {
     userId: string | null;
-    person: EventPersonDetailsFragment;
+    person: EventProgramPersonDetailsFragment;
     canControlEventPeople: boolean;
 }): JSX.Element {
     return (
         <ListItem mt={2}>
-            <EventPerson eventPerson={person} enableDelete={canControlEventPeople} userId={userId} />
+            <EventProgramPerson eventProgramPerson={person} enableDelete={canControlEventPeople} userId={userId} />
         </ListItem>
     );
 }

@@ -40,23 +40,23 @@ export async function doesChimeMeetingExist(chimeMeetingId: string): Promise<boo
 }
 
 /**
- * Add an attendee to a Chime meeting and get the secret join token.
- * @param attendeeId Clowdr attendee ID to be added to the meeting.
+ * Add an registrant to a Chime meeting and get the secret join token.
+ * @param registrantId Clowdr registrant ID to be added to the meeting.
  * @param chimeMeetingId External ID of the Chime meeting.
- * @returns Join token for the attendee.
+ * @returns Join token for the registrant.
  */
-export async function addAttendeeToChimeMeeting(attendeeId: string, chimeMeetingId: string): Promise<Attendee> {
+export async function addRegistrantToChimeMeeting(registrantId: string, chimeMeetingId: string): Promise<Attendee> {
     const result = await callWithRetry(async () =>
         Chime.send(
             new CreateAttendeeCommand({
-                ExternalUserId: attendeeId,
+                ExternalUserId: registrantId,
                 MeetingId: chimeMeetingId,
             })
         )
     );
 
     if (!result.Attendee) {
-        throw new Error("Could not add attendee to Chime meeting");
+        throw new Error("Could not add registrant to Chime meeting");
     }
 
     return result.Attendee;

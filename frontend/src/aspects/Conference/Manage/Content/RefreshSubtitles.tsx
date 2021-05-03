@@ -1,15 +1,15 @@
 import { Button } from "@chakra-ui/react";
-import { ContentBaseType } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React from "react";
-import type { ContentItemDescriptor } from "./Types";
+import type { ElementDescriptor } from "./Types";
 
 export function RefreshSubtitles({
     item,
-    onItemChange,
+    onElementChange,
 }: {
-    item: ContentItemDescriptor;
-    onItemChange: (_newItem: ContentItemDescriptor) => void;
+    item: ElementDescriptor;
+    onElementChange: (_newItem: ElementDescriptor) => void;
 }): JSX.Element {
     return (
         <Button
@@ -17,8 +17,8 @@ export function RefreshSubtitles({
             size="sm"
             onClick={() => {
                 const latestVersion = R.last(item.data);
-                if (latestVersion?.data.baseType === ContentBaseType.Video) {
-                    onItemChange({
+                if (latestVersion?.data.baseType === ElementBaseType.Video) {
+                    onElementChange({
                         ...item,
                         data: [
                             ...item.data,

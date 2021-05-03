@@ -631,7 +631,7 @@ export interface CRUDTableProps<T, PK extends keyof T> {
 
     /**
      * Buttons to show in the controls bar - e.g. "send emails to selected
-     * attendees."
+     * registrants."
      */
     customButtons?: Array<CustomButton<T, PK>>;
 

@@ -1,6 +1,6 @@
 import type { SelectWholeScheduleQuery } from "../../../../generated/graphql";
-import { convertContentGroupToDescriptor } from "../Content/Functions";
-import type { ContentGroupDescriptor, ContentPersonDescriptor } from "../Content/Types";
+import { convertItemToDescriptor } from "../Content/Functions";
+import type { ItemDescriptor, ProgramPersonDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
 import type { EventDescriptor, RoomDescriptor } from "./Types";
 
@@ -11,18 +11,18 @@ export function convertScheduleToDescriptors(
     events: Map<string, EventDescriptor>;
     tags: Map<string, TagDescriptor>;
     originatingDatas: Map<string, OriginatingDataDescriptor>;
-    people: Map<string, ContentPersonDescriptor>;
-    contentGroups: ContentGroupDescriptor[];
+    people: Map<string, ProgramPersonDescriptor>;
+    items: ItemDescriptor[];
 } {
     return {
-        contentGroups: schedule.ContentGroup.map((group) => convertContentGroupToDescriptor(group)),
+        items: schedule.content_Item.map((group) => convertItemToDescriptor(group)),
         events: new Map(
-            schedule.Event.map((event): [string, EventDescriptor] => [
+            schedule.schedule_Event.map((event): [string, EventDescriptor] => [
                 event.id,
                 {
                     id: event.id,
-                    contentGroupId: event.contentGroupId,
-                    hallwayId: event.hallwayId,
+                    itemId: event.itemId,
+                    exhibitionId: event.exhibitionId,
                     durationSeconds: event.durationSeconds,
                     intendedRoomModeName: event.intendedRoomModeName,
                     name: event.name,
@@ -34,7 +34,7 @@ export function convertScheduleToDescriptors(
             ])
         ),
         tags: new Map(
-            schedule.Tag.map((tag): [string, TagDescriptor] => [
+            schedule.collection_Tag.map((tag): [string, TagDescriptor] => [
                 tag.id,
                 {
                     id: tag.id,
@@ -46,7 +46,7 @@ export function convertScheduleToDescriptors(
             ])
         ),
         originatingDatas: new Map(
-            schedule.OriginatingData.map((data): [string, OriginatingDataDescriptor] => [
+            schedule.conference_OriginatingData.map((data): [string, OriginatingDataDescriptor] => [
                 data.id,
                 {
                     id: data.id,
@@ -56,7 +56,7 @@ export function convertScheduleToDescriptors(
             ])
         ),
         rooms: new Map(
-            schedule.Room.map((data): [string, RoomDescriptor] => [
+            schedule.room_Room.map((data): [string, RoomDescriptor] => [
                 data.id,
                 {
                     capacity: data.capacity,
@@ -65,12 +65,12 @@ export function convertScheduleToDescriptors(
                     id: data.id,
                     name: data.name,
                     originatingDataId: data.originatingDataId,
-                    participants: new Set(data.participants.map((x) => x.attendeeId)),
+                    participants: new Set(data.participants.map((x) => x.registrantId)),
                 },
             ])
         ),
         people: new Map(
-            schedule.ContentPerson.map((person): [string, ContentPersonDescriptor] => [
+            schedule.collection_ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
                 person.id,
                 {
                     id: person.id,
@@ -79,7 +79,7 @@ export function convertScheduleToDescriptors(
                     affiliation: person.affiliation,
                     email: person.email,
                     originatingDataId: person.originatingDataId,
-                    attendeeId: person.attendeeId,
+                    registrantId: person.registrantId,
                 },
             ])
         ),
@@ -89,8 +89,8 @@ export function convertScheduleToDescriptors(
 export function deepCloneEventDescriptor(event: EventDescriptor): EventDescriptor {
     return {
         id: event.id,
-        contentGroupId: event.contentGroupId,
-        hallwayId: event.hallwayId,
+        itemId: event.itemId,
+        exhibitionId: event.exhibitionId,
         durationSeconds: event.durationSeconds,
         intendedRoomModeName: event.intendedRoomModeName,
         name: event.name,

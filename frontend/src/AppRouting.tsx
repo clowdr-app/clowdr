@@ -140,12 +140,7 @@ export default function Routing({ rootUrl }: { rootUrl?: string }): JSX.Element 
                         token: string;
                         id: string;
                     }>
-                ) => (
-                    <SubmitItemPage
-                        magicToken={props.match.params.token}
-                        requiredContentItemId={props.match.params.id}
-                    />
-                )}
+                ) => <SubmitItemPage magicToken={props.match.params.token} uploadableId={props.match.params.id} />}
             />
 
             <Route exact path="/googleoauth" component={GoogleOAuthRedirect} />

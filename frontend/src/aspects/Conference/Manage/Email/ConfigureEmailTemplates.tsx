@@ -38,12 +38,12 @@ import { useConference } from "../../useConference";
 
 gql`
     query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
-        ConferenceConfiguration(where: { conferenceId: { _eq: $conferenceId } }) {
+        conference_Configuration(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ConfigureEmailTemplates_ConferenceConfiguration
         }
     }
 
-    fragment ConfigureEmailTemplates_ConferenceConfiguration on ConferenceConfiguration {
+    fragment ConfigureEmailTemplates_ConferenceConfiguration on conference_Configuration {
         id
         conferenceId
         key
@@ -55,9 +55,9 @@ gql`
         $conferenceId: uuid!
         $key: String!
     ) {
-        insert_ConferenceConfiguration_one(
+        insert_conference_Configuration_one(
             object: { value: $value, conferenceId: $conferenceId, key: $key }
-            on_conflict: { constraint: ConferenceConfiguration_conferenceId_key_key, update_columns: value }
+            on_conflict: { constraint: Configuration_conferenceId_key_key, update_columns: value }
         ) {
             id
         }
@@ -75,7 +75,7 @@ export function ConfigureEmailTemplates(): JSX.Element {
 
     return (
         <ApolloQueryWrapper
-            getter={(result) => result.ConferenceConfiguration}
+            getter={(result) => result.conference_Configuration}
             queryResult={conferenceConfigurationResult}
         >
             {(conferenceConfigurations: readonly ConfigureEmailTemplates_ConferenceConfigurationFragment[]) => (
@@ -128,13 +128,13 @@ export function ConfigureEmailTemplatesInner({
                     value: newValue,
                 },
                 update: (cache, { data: _data }) => {
-                    if (_data?.insert_ConferenceConfiguration_one) {
-                        const data = _data.insert_ConferenceConfiguration_one;
+                    if (_data?.insert_conference_Configuration_one) {
+                        const data = _data.insert_conference_Configuration_one;
                         const item: ConfigureEmailTemplates_ConferenceConfigurationFragment = {
                             id: data.id,
                             conferenceId: conference.id,
                             key,
-                            __typename: "ConferenceConfiguration",
+                            __typename: "conference_Configuration",
                             value: newValue,
                         };
                         cache.writeFragment({

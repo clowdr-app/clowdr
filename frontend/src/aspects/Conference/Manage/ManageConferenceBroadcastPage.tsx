@@ -12,14 +12,14 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import React from "react";
-import { Permission_Enum, useCreateConferencePrepareJobMutation } from "../../../generated/graphql";
+import { Permissions_Permission_Enum, useCreateConferencePrepareJobMutation } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { BroadcastRooms } from "./Broadcast/BroadcastRooms";
-import { ConferenceConfiguration } from "./Broadcast/ConferenceConfiguration";
+import { Configuration as ConferenceConfiguration } from "./Broadcast/ConferenceConfiguration";
 import { EventVonageControls } from "./Broadcast/EventVonageControls";
 import { PrepareJobsList } from "./Broadcast/PrepareJobsList";
 
@@ -33,7 +33,7 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageContent]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
             {title}

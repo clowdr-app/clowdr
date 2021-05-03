@@ -1,4 +1,4 @@
-export type AttendeeDescriptor = {
+export type RegistrantDescriptor = {
     isNew: boolean;
     id: string;
     userId?: string | null;

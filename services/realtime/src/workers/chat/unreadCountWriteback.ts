@@ -4,16 +4,16 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
 import {
-    AttendeeIdsFromChatsAndUsersDocument,
     Chat_ReadUpToIndex_Insert_Input,
     InsertReadUpToIndexDocument,
+    RegistrantIdsFromChatsAndUsersDocument,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { getAndClearModified } from "../../lib/cache/readUpToIndex";
 
 gql`
-    query AttendeeIdsFromChatsAndUsers($chatIds: [uuid!]!, $userIds: [String!]!) {
-        Attendee(where: { userId: { _in: $userIds }, conference: { chats: { id: { _in: $chatIds } } } }) {
+    query RegistrantIdsFromChatsAndUsers($chatIds: [uuid!]!, $userIds: [String!]!) {
+        registrant_Registrant(where: { userId: { _in: $userIds }, conference: { chats: { id: { _in: $chatIds } } } }) {
             id
             userId
         }
@@ -35,8 +35,8 @@ async function Main(continueExecuting = false) {
 
         console.info("Writing back read up to indices");
         const indicesToWriteBack = await getAndClearModified();
-        const attendeeIds = await apolloClient.query({
-            query: AttendeeIdsFromChatsAndUsersDocument,
+        const registrantIds = await apolloClient.query({
+            query: RegistrantIdsFromChatsAndUsersDocument,
             variables: {
                 chatIds: indicesToWriteBack.map((x) => x.chatId),
                 userIds: indicesToWriteBack.map((x) => x.userId),
@@ -54,17 +54,19 @@ async function Main(continueExecuting = false) {
                     variables: {
                         objects: indicesToWriteBack
                             .map((x) => {
-                                const attendeeId = attendeeIds.data.Attendee.find((y) => y.userId === x.userId)?.id;
-                                if (attendeeId) {
+                                const registrantId = registrantIds.data.registrant_Registrant.find(
+                                    (y) => y.userId === x.userId
+                                )?.id;
+                                if (registrantId) {
                                     const r: Chat_ReadUpToIndex_Insert_Input = {
-                                        attendeeId,
+                                        registrantId,
                                         chatId: x.chatId,
                                         messageSId: x.messageSId,
                                     };
                                     return r;
                                 } else {
                                     console.warn(
-                                        `Unable to find attendee id for user: ${x.userId}. Cannot write back their unread index for ${x.chatId} (Read up to message sId: ${x.messageSId})`
+                                        `Unable to find registrant id for user: ${x.userId}. Cannot write back their unread index for ${x.chatId} (Read up to message sId: ${x.messageSId})`
                                     );
                                 }
                                 return undefined;

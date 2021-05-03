@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
-import { useSubmitContentItemMutation } from "../../generated/graphql";
+import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 export default function UploadTextForm({
@@ -22,7 +22,7 @@ export default function UploadTextForm({
     uploadAgreement?: string;
 }): JSX.Element {
     const toast = useToast();
-    const [submitContentItem] = useSubmitContentItemMutation();
+    const [submitUploadableElement] = useSubmitUploadableElementMutation();
     return (
         <>
             <Formik
@@ -31,18 +31,18 @@ export default function UploadTextForm({
                 }}
                 onSubmit={async (values) => {
                     try {
-                        const submitResult = await submitContentItem({
+                        const submitResult = await submitUploadableElement({
                             variables: {
-                                contentItemData: {
+                                elementData: {
                                     text: values.text,
                                 },
                                 magicToken,
                             },
                         });
 
-                        if (submitResult.errors || !submitResult.data?.submitContentItem?.success) {
+                        if (submitResult.errors || !submitResult.data?.submitUploadableElement?.success) {
                             throw new Error(
-                                submitResult.data?.submitContentItem?.message ??
+                                submitResult.data?.submitUploadableElement?.message ??
                                     submitResult.errors?.join("; " ?? "Unknown reason for failure.")
                             );
                         }

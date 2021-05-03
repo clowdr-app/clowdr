@@ -1,29 +1,26 @@
 import { gql } from "@apollo/client";
 import { Badge, Button, HStack, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import type {
-    ContentGroupList_ContentPersonDataFragment,
-    ContentPersonDataFragment,
-} from "../../../../generated/graphql";
+import type { ItemList_ProgramPersonDataFragment, ProgramPersonDataFragment } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
-import { useAttendee } from "../../AttendeesContext";
-import ProfileModal from "../Attendee/ProfileModal";
+import { useRegistrant } from "../../RegistrantsContext";
+import ProfileModal from "../Registrant/ProfileModal";
 
 gql`
-    fragment ContentPersonData on ContentGroupPerson {
+    fragment ProgramPersonData on content_ItemProgramPerson {
         id
         person {
             id
             name
             affiliation
-            attendeeId
+            registrantId
         }
         roleName
         priority
     }
 `;
 
-export function sortAuthors<T extends ContentGroupList_ContentPersonDataFragment>(x: T, y: T): number {
+export function sortAuthors<T extends ItemList_ProgramPersonDataFragment>(x: T, y: T): number {
     if (typeof x.priority === "number") {
         if (typeof y.priority === "number") {
             return x.priority - y.priority;
@@ -37,19 +34,19 @@ export function sortAuthors<T extends ContentGroupList_ContentPersonDataFragment
 }
 
 export function AuthorList({
-    contentPeopleData,
+    programPeopleData,
     hideRole,
     hiddenRoles,
 }: {
-    contentPeopleData: readonly ContentPersonDataFragment[];
+    programPeopleData: readonly ProgramPersonDataFragment[];
     hideRole?: boolean;
     hiddenRoles?: string[];
 }): JSX.Element {
     const [authorEls, presenterEls, chairEls, othersEls] = useMemo(() => {
         const data =
             hiddenRoles && hiddenRoles.length > 0
-                ? contentPeopleData.filter((x) => !hiddenRoles.includes(x.roleName.toLowerCase()))
-                : [...contentPeopleData];
+                ? programPeopleData.filter((x) => !hiddenRoles.includes(x.roleName.toLowerCase()))
+                : [...programPeopleData];
         const authors = data.filter((x) => x.roleName.toUpperCase() === "AUTHOR");
         const presenters = data.filter((x) => x.roleName.toUpperCase() === "PRESENTER");
         const chairs = data.filter((x) => x.roleName.toUpperCase() === "CHAIR");
@@ -60,8 +57,8 @@ export function AuthorList({
                 x.roleName.toUpperCase() !== "CHAIR"
         );
 
-        const createEl = (contentPersonData: ContentPersonDataFragment) => {
-            return <Author contentPersonData={contentPersonData} key={contentPersonData.id} hideRole={hideRole} />;
+        const createEl = (programPersonData: ProgramPersonDataFragment) => {
+            return <Author programPersonData={programPersonData} key={programPersonData.id} hideRole={hideRole} />;
         };
 
         return [
@@ -70,7 +67,7 @@ export function AuthorList({
             chairs.sort(sortAuthors).map(createEl),
             others.sort(sortAuthors).map(createEl),
         ];
-    }, [contentPeopleData, hiddenRoles, hideRole]);
+    }, [programPeopleData, hiddenRoles, hideRole]);
 
     return (
         <>
@@ -117,21 +114,21 @@ export function AuthorList({
 }
 
 export function Author({
-    contentPersonData,
+    programPersonData,
     hideRole,
     badgeColour,
 }: {
-    contentPersonData: ContentPersonDataFragment;
+    programPersonData: ProgramPersonDataFragment;
     hideRole?: boolean;
     badgeColour?: string;
 }): JSX.Element {
-    const attendee = useAttendee(
-        contentPersonData.person.attendeeId && { attendee: contentPersonData.person.attendeeId }
+    const registrant = useRegistrant(
+        programPersonData.person.registrantId && { registrant: programPersonData.person.registrantId }
     );
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
-            {contentPersonData.person.attendeeId ? (
+            {programPersonData.person.registrantId ? (
                 <Button
                     onClick={() => onOpen()}
                     variant="ghost"
@@ -143,40 +140,40 @@ export function Author({
                     overflowWrap="normal"
                 >
                     <FAIcon iconStyle="s" icon="user" mr={2} fontSize="xs" />
-                    {contentPersonData.person.name}
+                    {programPersonData.person.name}
                 </Button>
             ) : (
-                <Text fontWeight="bold">{contentPersonData.person.name}</Text>
+                <Text fontWeight="bold">{programPersonData.person.name}</Text>
             )}
             {!hideRole ? (
                 <Badge
                     ml="2"
                     colorScheme={
-                        badgeColour ?? contentPersonData.roleName.toUpperCase() === "AUTHOR"
+                        badgeColour ?? programPersonData.roleName.toUpperCase() === "AUTHOR"
                             ? "green"
-                            : contentPersonData.roleName.toUpperCase() === "CHAIR"
+                            : programPersonData.roleName.toUpperCase() === "CHAIR"
                             ? "yellow"
                             : "red"
                     }
                     verticalAlign="initial"
                 >
-                    {contentPersonData.roleName}
+                    {programPersonData.roleName}
                 </Badge>
             ) : undefined}
             <Text fontSize="sm" maxW={180}>
-                {contentPersonData.person.affiliation &&
-                contentPersonData.person.affiliation !== "None" &&
-                contentPersonData.person.affiliation !== "undefined" ? (
-                    contentPersonData.person.affiliation
+                {programPersonData.person.affiliation &&
+                programPersonData.person.affiliation !== "None" &&
+                programPersonData.person.affiliation !== "undefined" ? (
+                    programPersonData.person.affiliation
                 ) : (
                     <>&nbsp;</>
                 )}
             </Text>
-            {attendee && attendee.profile ? (
+            {registrant && registrant.profile ? (
                 <ProfileModal
-                    attendee={{
-                        ...attendee,
-                        profile: attendee.profile,
+                    registrant={{
+                        ...registrant,
+                        profile: registrant.profile,
                     }}
                     isOpen={isOpen}
                     onClose={onClose}

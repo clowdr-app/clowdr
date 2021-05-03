@@ -38,7 +38,7 @@ import {
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { roundUpToNearest } from "../../../Generic/MathUtils";
 import { useConference } from "../../useConference";
-import useCurrentAttendee from "../../useCurrentAttendee";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
 
 gql`
     mutation InsertShufflePeriod($object: room_ShufflePeriod_insert_input!) {
@@ -50,8 +50,8 @@ gql`
             startAt
             endAt
             roomDurationMinutes
-            targetAttendeesPerRoom
-            maxAttendeesPerRoom
+            targetRegistrantsPerRoom
+            maxRegistrantsPerRoom
             waitRoomMaxDurationSeconds
             name
             organiserId
@@ -63,7 +63,7 @@ gql`
 export default function CreateQueueModal(): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const conference = useConference();
-    const attendee = useCurrentAttendee();
+    const registrant = useCurrentRegistrant();
 
     const [insert, insertResponse] = useInsertShufflePeriodMutation({
         update: (cache, result) => {
@@ -128,8 +128,8 @@ export default function CreateQueueModal(): JSX.Element {
     const [startAt, setStartAt] = useState<Date>(new Date(roundUpToNearest(Date.now(), 5 * 60 * 1000)));
     const [endAt, setEndAt] = useState<Date>(new Date(startAt.getTime() + 30 * 60 * 1000));
     const [roomDurationMinutes, setRoomDurationMinutes] = useState<number>(6);
-    const [targetAttendees, setTargetAttendees] = useState<number>(3);
-    const [maxAttendees, setMaxAttendees] = useState<number>(5);
+    const [targetRegistrants, setTargetRegistrants] = useState<number>(3);
+    const [maxRegistrants, setMaxRegistrants] = useState<number>(5);
     const [maxWait, setMaxWait] = useState<number>(90);
 
     const onStartAtChange = useCallback(
@@ -157,26 +157,26 @@ export default function CreateQueueModal(): JSX.Element {
             setRoomDurationMinutes(v);
         }
     }, []);
-    const onTargetAttendeesChange = useCallback(
+    const onTargetRegistrantsChange = useCallback(
         (_valStr: string, valueAsNumber: number) => {
             const v = Math.round(valueAsNumber);
             if (v >= 2) {
-                setTargetAttendees(v);
-                if (maxAttendees < v) {
-                    setMaxAttendees(v + 1);
+                setTargetRegistrants(v);
+                if (maxRegistrants < v) {
+                    setMaxRegistrants(v + 1);
                 }
             }
         },
-        [maxAttendees]
+        [maxRegistrants]
     );
-    const onMaxAttendeesChange = useCallback(
+    const onMaxRegistrantsChange = useCallback(
         (_valStr: string, valueAsNumber: number) => {
             const v = Math.round(valueAsNumber);
-            if (v >= targetAttendees) {
-                setMaxAttendees(v);
+            if (v >= targetRegistrants) {
+                setMaxRegistrants(v);
             }
         },
-        [targetAttendees]
+        [targetRegistrants]
     );
     const onMaxWaitChange = useCallback((_valStr: string, valueAsNumber: number) => {
         const v = Math.round(valueAsNumber);
@@ -192,8 +192,8 @@ export default function CreateQueueModal(): JSX.Element {
         setStartAt(startAt);
         setEndAt(new Date(startAt.getTime() + 30 * 60 * 1000));
         setRoomDurationMinutes(6);
-        setTargetAttendees(3);
-        setMaxAttendees(5);
+        setTargetRegistrants(3);
+        setMaxRegistrants(5);
         setMaxWait(90);
     }, []);
 
@@ -207,12 +207,12 @@ export default function CreateQueueModal(): JSX.Element {
                         algorithm,
                         conferenceId: conference.id,
                         endAt: endAt.toISOString(),
-                        maxAttendeesPerRoom: maxAttendees,
+                        maxRegistrantsPerRoom: maxRegistrants,
                         roomDurationMinutes,
                         startAt: startAt.toISOString(),
-                        targetAttendeesPerRoom: targetAttendees,
+                        targetRegistrantsPerRoom: targetRegistrants,
                         waitRoomMaxDurationSeconds: maxWait,
-                        organiserId: attendee.id,
+                        organiserId: registrant.id,
                     },
                 },
             });
@@ -231,18 +231,18 @@ export default function CreateQueueModal(): JSX.Element {
         }
     }, [
         algorithm,
-        attendee.id,
+        registrant.id,
         conference.id,
         endAt,
         insert,
-        maxAttendees,
+        maxRegistrants,
         maxWait,
         name,
         onClose,
         reset,
         roomDurationMinutes,
         startAt,
-        targetAttendees,
+        targetRegistrants,
         toast,
     ]);
 
@@ -267,7 +267,7 @@ export default function CreateQueueModal(): JSX.Element {
                                     onChange={(ev) => setName(ev.target.value)}
                                 />
                                 <FormHelperText>
-                                    Name of the queue, shown to attendees. For example, a topic or theme.
+                                    Name of the queue, shown to registrants. For example, a topic or theme.
                                 </FormHelperText>
                             </FormControl>
                             <FormControl>
@@ -301,7 +301,7 @@ export default function CreateQueueModal(): JSX.Element {
                                     onChange={onStartAtChange}
                                 />
                                 <FormHelperText>
-                                    Start time of the queue. Attendees can join the queue up to 5 mins in advance but
+                                    Start time of the queue. Registrants can join the queue up to 5 mins in advance but
                                     automatic allocation only starts at this time.
                                 </FormHelperText>
                             </FormControl>
@@ -334,20 +334,20 @@ export default function CreateQueueModal(): JSX.Element {
                                 </NumberInput>
                                 <FormHelperText>
                                     Each room generated by the queue runs for exactly this duration. When time runs out,
-                                    attendees are returned to the waiting page where they can choose to rejoin the queue
-                                    for a new room.
+                                    registrants are returned to the waiting page where they can choose to rejoin the
+                                    queue for a new room.
                                 </FormHelperText>
                             </FormControl>
                             {algorithm === Room_ShuffleAlgorithm_Enum.Fcfs ||
                             algorithm === Room_ShuffleAlgorithm_Enum.FcfsFixedRooms ? (
                                 <>
                                     <FormControl>
-                                        <FormLabel>Target attendees per room</FormLabel>
+                                        <FormLabel>Target registrants per room</FormLabel>
                                         <NumberInput
                                             isDisabled={insertResponse.loading}
                                             min={2}
-                                            value={targetAttendees}
-                                            onChange={onTargetAttendeesChange}
+                                            value={targetRegistrants}
+                                            onChange={onTargetRegistrantsChange}
                                         >
                                             <NumberInputField />
                                             <NumberInputStepper>
@@ -356,16 +356,16 @@ export default function CreateQueueModal(): JSX.Element {
                                             </NumberInputStepper>
                                         </NumberInput>
                                         <FormHelperText>
-                                            The target number of attendees per room, typically 3 to 5 works well.
+                                            The target number of registrants per room, typically 3 to 5 works well.
                                         </FormHelperText>
                                     </FormControl>
                                     <FormControl>
-                                        <FormLabel>Maximum attendees per room</FormLabel>
+                                        <FormLabel>Maximum registrants per room</FormLabel>
                                         <NumberInput
                                             isDisabled={insertResponse.loading}
                                             min={2}
-                                            value={maxAttendees}
-                                            onChange={onMaxAttendeesChange}
+                                            value={maxRegistrants}
+                                            onChange={onMaxRegistrantsChange}
                                         >
                                             <NumberInputField />
                                             <NumberInputStepper>
@@ -374,7 +374,7 @@ export default function CreateQueueModal(): JSX.Element {
                                             </NumberInputStepper>
                                         </NumberInput>
                                         <FormHelperText>
-                                            The maximum number of attendees per room, typically up to 8 works well.
+                                            The maximum number of registrants per room, typically up to 8 works well.
                                         </FormHelperText>
                                     </FormControl>
                                     <FormControl>
@@ -393,10 +393,10 @@ export default function CreateQueueModal(): JSX.Element {
                                             </NumberInputStepper>
                                         </NumberInput>
                                         <FormHelperText>
-                                            When existing rooms reach their Target number of attendees, new queuers wait
-                                            for others to form a new room. This field defines the maximum wait time. If
-                                            someone waits longer than this, the algorithm attempts to find an existing
-                                            room with less than the maximum number of attendees.
+                                            When existing rooms reach their Target number of registrants, new queuers
+                                            wait for others to form a new room. This field defines the maximum wait
+                                            time. If someone waits longer than this, the algorithm attempts to find an
+                                            existing room with less than the maximum number of registrants.
                                         </FormHelperText>
                                     </FormControl>
                                 </>

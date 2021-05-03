@@ -6,12 +6,12 @@ import {
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import {
     AWSJobStatus,
-    ContentBaseType,
-    ContentBlob,
-    ContentItemDataBlob,
-    ContentItemVersionData,
-    ContentType_Enum,
-    VideoContentBlob,
+    Content_ElementType_Enum,
+    ElementBaseType,
+    ElementBlob,
+    ElementDataBlob,
+    ElementVersionData,
+    VideoElementBlob,
 } from "@clowdr-app/shared-types/build/content";
 import { EmailView_SubmissionRequest, EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
 import AmazonS3URI from "amazon-s3-uri";
@@ -22,28 +22,28 @@ import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
 import {
-    ContentItemAddNewVersionDocument,
-    CreateContentItemDocument,
+    CreateElementDocument,
+    ElementAddNewVersionDocument,
     Email_Insert_Input,
     GetUploadersDocument,
     InsertSubmissionRequestEmailsDocument,
     MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
-    RequiredItemDocument,
-    RequiredItemFieldsFragment,
-    SetRequiredContentItemUploadsRemainingDocument,
+    SetUploadableElementUploadsRemainingDocument,
     UnmarkSubmissionRequestEmailJobsDocument,
+    UploadableElementDocument,
+    UploadableElementFieldsFragment,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
 import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
-import { getLatestVersion } from "../lib/contentItem";
+import { getLatestVersion } from "../lib/element";
 import { callWithRetry } from "../utils";
 import { insertEmails } from "./email";
 
 gql`
-    query RequiredItem($accessToken: String!) {
-        RequiredContentItem(where: { accessToken: { _eq: $accessToken } }) {
-            ...RequiredItemFields
+    query UploadableElement($accessToken: String!) {
+        content_UploadableElement(where: { accessToken: { _eq: $accessToken } }) {
+            ...UploadableElementFields
             conference {
                 configurations(where: { key: { _eq: "UPLOAD_CUTOFF_TIMESTAMP" } }) {
                     id
@@ -53,9 +53,9 @@ gql`
         }
     }
 
-    fragment RequiredItemFields on RequiredContentItem {
+    fragment UploadableElementFields on content_UploadableElement {
         id
-        contentTypeName
+        typeName
         accessToken
         name
         uploadsRemaining
@@ -64,39 +64,39 @@ gql`
             id
             name
         }
-        contentItem {
+        element {
             id
             data
-            contentTypeName
+            typeName
         }
-        contentGroup {
+        item {
             id
             title
         }
     }
 
-    mutation CreateContentItem(
+    mutation CreateElement(
         $conferenceId: uuid!
-        $contentGroupId: uuid!
-        $contentTypeName: ContentType_enum!
+        $itemId: uuid!
+        $typeName: content_ElementType_enum!
         $data: jsonb!
         $isHidden: Boolean!
         $layoutData: jsonb = null
         $name: String!
-        $requiredContentId: uuid!
+        $uploadableElementId: uuid!
     ) {
-        insert_ContentItem_one(
+        insert_content_Element_one(
             object: {
                 conferenceId: $conferenceId
-                contentGroupId: $contentGroupId
-                contentTypeName: $contentTypeName
+                itemId: $itemId
+                typeName: $typeName
                 data: $data
                 isHidden: $isHidden
                 layoutData: $layoutData
                 name: $name
-                requiredContentId: $requiredContentId
+                uploadableId: $uploadableElementId
             }
-            on_conflict: { constraint: ContentItem_requiredContentId_key, update_columns: data }
+            on_conflict: { constraint: Element_requiredContentId_key, update_columns: data }
         ) {
             id
         }
@@ -132,21 +132,24 @@ async function checkS3Url(
     return { result: "success", url: `s3://${bucket}/${key}` };
 }
 
-async function createBlob(inputData: any, contentTypeName: ContentType_Enum): Promise<ContentBlob | { error: string }> {
-    switch (contentTypeName) {
-        case ContentType_Enum.Abstract:
-        case ContentType_Enum.Text:
+async function createBlob(
+    inputData: any,
+    typeName: Content_ElementType_Enum
+): Promise<ElementBlob | { error: string }> {
+    switch (typeName) {
+        case Content_ElementType_Enum.Abstract:
+        case Content_ElementType_Enum.Text:
             if (!inputData.text) {
                 return { error: "No text supplied" };
             }
             return {
-                baseType: ContentBaseType.Text,
-                type: contentTypeName,
+                baseType: ElementBaseType.Text,
+                type: typeName,
                 text: inputData.text,
             };
-        case ContentType_Enum.ImageFile:
-        case ContentType_Enum.PaperFile:
-        case ContentType_Enum.PosterFile: {
+        case Content_ElementType_Enum.ImageFile:
+        case Content_ElementType_Enum.PaperFile:
+        case Content_ElementType_Enum.PosterFile: {
             if (!inputData.s3Url) {
                 return { error: "No S3 URL supplied" };
             }
@@ -155,44 +158,44 @@ async function createBlob(inputData: any, contentTypeName: ContentType_Enum): Pr
                 return { error: result.message };
             }
             return {
-                baseType: ContentBaseType.File,
-                type: contentTypeName,
+                baseType: ElementBaseType.File,
+                type: typeName,
                 s3Url: result.url,
             };
         }
-        case ContentType_Enum.ImageUrl:
-        case ContentType_Enum.PaperUrl:
-        case ContentType_Enum.PosterUrl:
-        case ContentType_Enum.VideoUrl:
-        case ContentType_Enum.Zoom:
+        case Content_ElementType_Enum.ImageUrl:
+        case Content_ElementType_Enum.PaperUrl:
+        case Content_ElementType_Enum.PosterUrl:
+        case Content_ElementType_Enum.VideoUrl:
+        case Content_ElementType_Enum.Zoom:
             if (!inputData.url) {
                 return { error: "No URL supplied" };
             }
             return {
-                baseType: ContentBaseType.URL,
-                type: contentTypeName,
+                baseType: ElementBaseType.URL,
+                type: typeName,
                 url: inputData.url,
             };
-        case ContentType_Enum.Link:
-        case ContentType_Enum.LinkButton:
-        case ContentType_Enum.PaperLink:
-        case ContentType_Enum.VideoLink:
+        case Content_ElementType_Enum.Link:
+        case Content_ElementType_Enum.LinkButton:
+        case Content_ElementType_Enum.PaperLink:
+        case Content_ElementType_Enum.VideoLink:
             if (!inputData.url || !inputData.text) {
                 return { error: "Text or URL not supplied" };
             }
             return {
-                baseType: ContentBaseType.Link,
-                type: contentTypeName,
+                baseType: ElementBaseType.Link,
+                type: typeName,
                 text: inputData.text,
                 url: inputData.url,
             };
-        case ContentType_Enum.VideoBroadcast:
-        case ContentType_Enum.VideoCountdown:
-        case ContentType_Enum.VideoFile:
-        case ContentType_Enum.VideoFiller:
-        case ContentType_Enum.VideoPrepublish:
-        case ContentType_Enum.VideoSponsorsFiller:
-        case ContentType_Enum.VideoTitles: {
+        case Content_ElementType_Enum.VideoBroadcast:
+        case Content_ElementType_Enum.VideoCountdown:
+        case Content_ElementType_Enum.VideoFile:
+        case Content_ElementType_Enum.VideoFiller:
+        case Content_ElementType_Enum.VideoPrepublish:
+        case Content_ElementType_Enum.VideoSponsorsFiller:
+        case Content_ElementType_Enum.VideoTitles: {
             if (!inputData.s3Url) {
                 return { error: "No S3 URL supplied" };
             }
@@ -201,20 +204,20 @@ async function createBlob(inputData: any, contentTypeName: ContentType_Enum): Pr
                 return { error: result.message };
             }
             return {
-                baseType: ContentBaseType.Video,
-                type: contentTypeName,
+                baseType: ElementBaseType.Video,
+                type: typeName,
                 s3Url: result.url,
                 subtitles: {},
             };
         }
-        case ContentType_Enum.ContentGroupList:
-        case ContentType_Enum.WholeSchedule:
-            return { error: "Component content item types cannot be uploaded." };
+        case Content_ElementType_Enum.ContentGroupList:
+        case Content_ElementType_Enum.WholeSchedule:
+            return { error: "Component elements cannot be uploaded." };
     }
 }
 
 interface ItemByToken {
-    requiredContentItem: RequiredItemFieldsFragment;
+    uploadableElement: UploadableElementFieldsFragment;
     uploadCutoffTimestamp?: Date;
 }
 
@@ -226,33 +229,33 @@ async function getItemByToken(magicToken: string): Promise<ItemByToken | { error
     }
 
     const response = await apolloClient.query({
-        query: RequiredItemDocument,
+        query: UploadableElementDocument,
         variables: {
             accessToken: magicToken,
         },
     });
 
-    if (response.data.RequiredContentItem.length !== 1) {
+    if (response.data.content_UploadableElement.length !== 1) {
         return {
             error: "Could not find a required item that matched the request.",
         };
     }
 
-    const requiredContentItem = response.data.RequiredContentItem[0];
+    const uploadableElement = response.data.content_UploadableElement[0];
 
-    const result: ItemByToken = { requiredContentItem };
+    const result: ItemByToken = { uploadableElement };
 
-    if (requiredContentItem.conference.configurations.length === 1) {
+    if (uploadableElement.conference.configurations.length === 1) {
         // UPLOAD_CUTOFF_TIMESTAMP is specified in epoch milliseconds
-        result.uploadCutoffTimestamp = new Date(parseInt(requiredContentItem.conference.configurations[0].value));
+        result.uploadCutoffTimestamp = new Date(parseInt(uploadableElement.conference.configurations[0].value));
     }
 
     return result;
 }
 
 gql`
-    query GetUploaders($requiredContentItemId: uuid!) {
-        Uploader(where: { requiredContentItem: { id: { _eq: $requiredContentItemId } } }) {
+    query GetUploaders($uploadableElementId: uuid!) {
+        content_Uploader(where: { uploadableElement: { id: { _eq: $uploadableElementId } } }) {
             name
             id
             email
@@ -261,21 +264,21 @@ gql`
 `;
 
 async function sendSubmittedEmail(
-    requiredContentItemId: string,
-    requiredContentItemName: string,
-    contentGroupTitle: string,
+    uploadableElementId: string,
+    uploadableElementName: string,
+    itemTitle: string,
     conferenceName: string
 ) {
     const uploaders = await apolloClient.query({
         query: GetUploadersDocument,
         variables: {
-            requiredContentItemId,
+            uploadableElementId,
         },
     });
 
-    const emails: Email_Insert_Input[] = uploaders.data.Uploader.map((uploader) => {
+    const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
-<p>A new version of <em>${requiredContentItemName}</em> (${contentGroupTitle}) was uploaded to ${conferenceName}.</p>
+<p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName}.</p>
 <p>Our systems will now start processing your content. For videos, we will process your video and then auto-generate subtitles.</p>
 <p>For video submissions, you will receive two further emails:</p>
 <ol>
@@ -295,7 +298,7 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
         return {
             emailAddress: uploader.email,
             reason: "item_submitted",
-            subject: `Clowdr: Submission RECEIVED: ${requiredContentItemName} to ${conferenceName}`,
+            subject: `Clowdr: Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
             htmlContents,
             plainTextContents: htmlToText(htmlContents),
         };
@@ -304,7 +307,7 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
     await insertEmails(emails);
 }
 
-export async function handleContentItemSubmitted(args: submitContentItemArgs): Promise<SubmitContentItemOutput> {
+export async function handleElementSubmitted(args: submitElementArgs): Promise<SubmitElementOutput> {
     const itemByToken = await getItemByToken(args.magicToken);
     if ("error" in itemByToken) {
         return {
@@ -313,9 +316,9 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
         };
     }
 
-    const requiredContentItem = itemByToken.requiredContentItem;
+    const uploadableElement = itemByToken.uploadableElement;
 
-    if (requiredContentItem.uploadsRemaining === 0) {
+    if (uploadableElement.uploadsRemaining === 0) {
         return {
             success: false,
             message: "No upload attempts remaining",
@@ -329,7 +332,7 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
         };
     }
 
-    const newVersionData = await createBlob(args.data, requiredContentItem.contentTypeName);
+    const newVersionData = await createBlob(args.data, uploadableElement.typeName);
     if ("error" in newVersionData) {
         return {
             success: false,
@@ -337,9 +340,9 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
         };
     }
 
-    if (!requiredContentItem.contentItem) {
+    if (!uploadableElement.element) {
         try {
-            const data: ContentItemDataBlob = [
+            const data: ElementDataBlob = [
                 {
                     createdAt: Date.now(),
                     createdBy: "user",
@@ -347,24 +350,24 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
                 },
             ];
             await apolloClient.mutate({
-                mutation: CreateContentItemDocument,
+                mutation: CreateElementDocument,
                 variables: {
-                    conferenceId: requiredContentItem.conference.id,
-                    contentGroupId: requiredContentItem.contentGroup.id,
-                    contentTypeName: requiredContentItem.contentTypeName,
+                    conferenceId: uploadableElement.conference.id,
+                    itemId: uploadableElement.item.id,
+                    typeName: uploadableElement.typeName,
                     data,
-                    isHidden: requiredContentItem.isHidden,
+                    isHidden: uploadableElement.isHidden,
                     layoutData: null,
-                    name: requiredContentItem.name,
-                    requiredContentId: requiredContentItem.id,
+                    name: uploadableElement.name,
+                    uploadableElementId: uploadableElement.id,
                 },
             });
 
             await sendSubmittedEmail(
-                requiredContentItem.id,
-                requiredContentItem.name,
-                requiredContentItem.contentGroup.title,
-                requiredContentItem.conference.name
+                uploadableElement.id,
+                uploadableElement.name,
+                uploadableElement.item.title,
+                uploadableElement.conference.name
             );
         } catch (e) {
             console.error("Failed to save new content item", e);
@@ -373,13 +376,13 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
                 message: "Failed to save new item.",
             };
         }
-    } else if (requiredContentItem.contentItem.contentTypeName !== requiredContentItem.contentTypeName) {
+    } else if (uploadableElement.element.typeName !== uploadableElement.typeName) {
         return {
             success: false,
             message: "An item of a different type has already been uploaded.",
         };
     } else {
-        const { latestVersion } = await getLatestVersion(requiredContentItem.contentItem.id);
+        const { latestVersion } = await getLatestVersion(uploadableElement.element.id);
 
         if (newVersionData.type !== latestVersion?.data.type) {
             return {
@@ -388,24 +391,24 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
             };
         } else {
             try {
-                const newVersion: ContentItemVersionData = {
+                const newVersion: ElementVersionData = {
                     createdAt: Date.now(),
                     createdBy: "user",
                     data: newVersionData,
                 };
 
                 await apolloClient.mutate({
-                    mutation: ContentItemAddNewVersionDocument,
+                    mutation: ElementAddNewVersionDocument,
                     variables: {
-                        id: requiredContentItem.contentItem.id,
+                        id: uploadableElement.element.id,
                         newVersion,
                     },
                 });
                 await sendSubmittedEmail(
-                    requiredContentItem.id,
-                    requiredContentItem.name,
-                    requiredContentItem.contentGroup.title,
-                    requiredContentItem.conference.name
+                    uploadableElement.id,
+                    uploadableElement.name,
+                    uploadableElement.item.title,
+                    uploadableElement.conference.name
                 );
             } catch (e) {
                 console.error("Failed to save new version of content item", e);
@@ -418,19 +421,22 @@ export async function handleContentItemSubmitted(args: submitContentItemArgs): P
     }
 
     gql`
-        mutation SetRequiredContentItemUploadsRemaining($id: uuid!, $uploadsRemaining: Int!) {
-            update_RequiredContentItem_by_pk(pk_columns: { id: $id }, _set: { uploadsRemaining: $uploadsRemaining }) {
+        mutation SetUploadableElementUploadsRemaining($id: uuid!, $uploadsRemaining: Int!) {
+            update_content_UploadableElement_by_pk(
+                pk_columns: { id: $id }
+                _set: { uploadsRemaining: $uploadsRemaining }
+            ) {
                 id
             }
         }
     `;
 
-    if (requiredContentItem.uploadsRemaining) {
+    if (uploadableElement.uploadsRemaining) {
         await apolloClient.mutate({
-            mutation: SetRequiredContentItemUploadsRemainingDocument,
+            mutation: SetUploadableElementUploadsRemainingDocument,
             variables: {
-                id: requiredContentItem.id,
-                uploadsRemaining: R.max(requiredContentItem.uploadsRemaining - 1, 0),
+                id: uploadableElement.id,
+                uploadsRemaining: R.max(uploadableElement.uploadsRemaining - 1, 0),
             },
         });
     }
@@ -450,16 +456,16 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
         };
     }
 
-    const requiredContentItem = itemByToken.requiredContentItem;
+    const uploadableElement = itemByToken.uploadableElement;
 
-    if (!requiredContentItem.contentItem) {
+    if (!uploadableElement.element) {
         return {
             message: "No matching content item",
             success: false,
         };
     }
 
-    const { latestVersion } = await getLatestVersion(requiredContentItem.contentItem.id);
+    const { latestVersion } = await getLatestVersion(uploadableElement.element.id);
 
     if (!latestVersion) {
         return {
@@ -471,7 +477,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
     const newVersion = R.clone(latestVersion);
     newVersion.createdAt = new Date().getTime();
     newVersion.createdBy = "user";
-    assert(is<VideoContentBlob>(newVersion.data), "Content item is not a video");
+    assert(is<VideoElementBlob>(newVersion.data), "Content item is not a video");
 
     const bucket = process.env.AWS_CONTENT_BUCKET_ID;
     const key = `${uuidv4()}.srt`;
@@ -501,9 +507,9 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
 
     try {
         await apolloClient.mutate({
-            mutation: ContentItemAddNewVersionDocument,
+            mutation: ElementAddNewVersionDocument,
             variables: {
-                id: requiredContentItem.contentItem.id,
+                id: uploadableElement.element.id,
                 newVersion,
             },
         });
@@ -522,7 +528,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
 }
 
 gql`
-    fragment UploaderParts on Uploader {
+    fragment UploaderParts on content_Uploader {
         id
         conference {
             id
@@ -532,8 +538,8 @@ gql`
         email
         emailsSentCount
         name
-        requiredContentItem {
-            ...RequiredItemFields
+        uploadableElement {
+            ...UploadableElementFields
         }
     }
 
@@ -541,59 +547,59 @@ gql`
         insert_Email(objects: $emails) {
             affected_rows
         }
-        update_Uploader(where: { id: { _in: $uploaderIds } }, _inc: { emailsSentCount: 1 }) {
+        update_content_Uploader(where: { id: { _in: $uploaderIds } }, _inc: { emailsSentCount: 1 }) {
             affected_rows
         }
     }
 `;
 
-function generateContentTypeFriendlyName(type: ContentType_Enum) {
+function generateContentTypeFriendlyName(type: Content_ElementType_Enum) {
     switch (type) {
-        case ContentType_Enum.Abstract:
+        case Content_ElementType_Enum.Abstract:
             return "Abstract";
-        case ContentType_Enum.ContentGroupList:
+        case Content_ElementType_Enum.ContentGroupList:
             return "Content group list";
-        case ContentType_Enum.ImageFile:
+        case Content_ElementType_Enum.ImageFile:
             return "Image file";
-        case ContentType_Enum.ImageUrl:
+        case Content_ElementType_Enum.ImageUrl:
             return "Image URL";
-        case ContentType_Enum.Link:
+        case Content_ElementType_Enum.Link:
             return "Link";
-        case ContentType_Enum.LinkButton:
+        case Content_ElementType_Enum.LinkButton:
             return "Link button";
-        case ContentType_Enum.PaperFile:
+        case Content_ElementType_Enum.PaperFile:
             return "Paper file";
-        case ContentType_Enum.PaperLink:
+        case Content_ElementType_Enum.PaperLink:
             return "Paper link";
-        case ContentType_Enum.PaperUrl:
+        case Content_ElementType_Enum.PaperUrl:
             return "Paper URL";
-        case ContentType_Enum.PosterFile:
+        case Content_ElementType_Enum.PosterFile:
             return "Poster file";
-        case ContentType_Enum.PosterUrl:
+        case Content_ElementType_Enum.PosterUrl:
             return "Poster URL";
-        case ContentType_Enum.Text:
+        case Content_ElementType_Enum.Text:
             return "Text";
-        case ContentType_Enum.VideoBroadcast:
+        case Content_ElementType_Enum.VideoBroadcast:
             return "Video for broadcast";
-        case ContentType_Enum.VideoCountdown:
+        case Content_ElementType_Enum.VideoCountdown:
             return "Video countdown";
-        case ContentType_Enum.VideoFile:
+        case Content_ElementType_Enum.VideoFile:
             return "Video file";
-        case ContentType_Enum.VideoFiller:
+        case Content_ElementType_Enum.VideoFiller:
             return "Filler video";
-        case ContentType_Enum.VideoLink:
+        case Content_ElementType_Enum.VideoLink:
             return "Link to video";
-        case ContentType_Enum.VideoPrepublish:
+        case Content_ElementType_Enum.VideoPrepublish:
             return "Video for pre-publication";
-        case ContentType_Enum.VideoSponsorsFiller:
+        case Content_ElementType_Enum.VideoSponsorsFiller:
             return "Sponsors filler video";
-        case ContentType_Enum.VideoTitles:
+        case Content_ElementType_Enum.VideoTitles:
             return "Pre-roll titles video";
-        case ContentType_Enum.VideoUrl:
+        case Content_ElementType_Enum.VideoUrl:
             return "Video URL";
-        case ContentType_Enum.WholeSchedule:
+        case Content_ElementType_Enum.WholeSchedule:
             return "Whole schedule";
-        case ContentType_Enum.Zoom:
+        case Content_ElementType_Enum.Zoom:
             return "Zoom Meeting URL";
     }
 }
@@ -628,9 +634,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
     const emails: Email_Insert_Input[] = [];
     const uploaderIds: string[] = [];
     for (const job of jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning) {
-        const contentTypeFriendlyName = generateContentTypeFriendlyName(
-            job.uploader.requiredContentItem.contentTypeName
-        );
+        const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.uploadableElement.typeName);
 
         let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
             job.uploader.conference.id,
@@ -641,14 +645,14 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
             emailTemplates = null;
         }
 
-        const uploadLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${job.uploader.requiredContentItem.id}/${job.uploader.requiredContentItem.accessToken}`;
+        const uploadLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${job.uploader.uploadableElement.id}/${job.uploader.uploadableElement.accessToken}`;
 
         const view: EmailView_SubmissionRequest = {
             uploader: {
                 name: job.uploader.name,
             },
             file: {
-                name: job.uploader.requiredContentItem.name,
+                name: job.uploader.uploadableElement.name,
                 typeName: contentTypeFriendlyName,
             },
             conference: {
@@ -656,7 +660,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                 shortName: job.uploader.conference.shortName,
             },
             item: {
-                title: job.uploader.requiredContentItem.contentGroup.title,
+                title: job.uploader.uploadableElement.item.title,
             },
             uploadLink,
         };

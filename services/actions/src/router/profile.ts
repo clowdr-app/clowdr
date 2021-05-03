@@ -32,7 +32,7 @@ router.use(checkUserScopes);
 
 gql`
     mutation UpdateProfilePhoto(
-        $attendeeId: uuid!
+        $registrantId: uuid!
         $userId: String!
         $objectName: String = null
         $bucket: String = null
@@ -40,12 +40,12 @@ gql`
         $photoURL_50x50: String = null
         $photoURL_350x350: String = null
     ) {
-        update_AttendeeProfile(
+        update_registrant_Profile(
             where: {
                 _and: [
-                    { attendeeId: { _eq: $attendeeId } }
+                    { registrantId: { _eq: $registrantId } }
                     {
-                        attendee: {
+                        registrant: {
                             _or: [{ userId: { _eq: $userId } }, { conference: { createdBy: { _eq: $userId } } }]
                         }
                     }
@@ -96,7 +96,7 @@ async function checkS3Url(
 
 async function handleUpdateProfilePhoto(
     userId: string,
-    attendeeId: string,
+    registrantId: string,
     s3URL: Maybe<string> | undefined
 ): Promise<UpdateProfilePhotoResponse> {
     let photoURL_350x350: string | undefined;
@@ -105,7 +105,7 @@ async function handleUpdateProfilePhoto(
         await apolloClient.mutate({
             mutation: UpdateProfilePhotoDocument,
             variables: {
-                attendeeId,
+                registrantId,
                 userId,
                 bucket: null,
                 objectName: null,
@@ -128,7 +128,7 @@ async function handleUpdateProfilePhoto(
         await apolloClient.mutate({
             mutation: UpdateProfilePhotoDocument,
             variables: {
-                attendeeId,
+                registrantId,
                 userId,
                 bucket: process.env.AWS_CONTENT_BUCKET_ID,
                 objectName: validatedS3URL.key,
@@ -160,7 +160,7 @@ router.post("/photo/update", async (req: Request, res: Response) => {
     try {
         console.log(`${req.originalUrl}: profile photo upload requested`);
         const userId = req.body.session_variables["x-hasura-user-id"];
-        const result = await handleUpdateProfilePhoto(userId, params.attendeeId, params.s3URL);
+        const result = await handleUpdateProfilePhoto(userId, params.registrantId, params.s3URL);
         return res.status(200).json(result);
     } catch (e) {
         console.error(`${req.originalUrl}: profile photo upload failed`);

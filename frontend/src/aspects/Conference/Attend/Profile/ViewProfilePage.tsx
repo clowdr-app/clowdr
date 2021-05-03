@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
-import { Permission_Enum, useAttendeeByIdQuery } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageFailedToLoad from "../../../Errors/PageFailedToLoad";
@@ -28,25 +28,25 @@ import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser"
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
-import { Attendee, useMaybeCurrentAttendee } from "../../useCurrentAttendee";
-import AttendeeExtraInfo from "./AttendeeExtraInfo";
+import { Registrant, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import RegistrantExtraInfo from "./RegistrantExtraInfo";
 
-function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element {
+function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.Element {
     const conference = useConference();
     const activePermissions = useConferenceCurrentUserActivePermissions();
     const maybeCurrentUser = useMaybeCurrentUser();
 
-    const title = useTitle(`${attendee.displayName} at ${conference.shortName}`);
+    const title = useTitle(`${registrant.displayName} at ${conference.shortName}`);
 
     return (
         <>
             {title}
             <VStack spacing={0} maxW={1100} w="100%" m={2}>
-                {(maybeCurrentUser.user && attendee.userId === maybeCurrentUser.user.id) ||
+                {(maybeCurrentUser.user && registrant.userId === maybeCurrentUser.user.id) ||
                 [
-                    Permission_Enum.ConferenceManageAttendees,
-                    Permission_Enum.ConferenceManageGroups,
-                    Permission_Enum.ConferenceManageRoles,
+                    Permissions_Permission_Enum.ConferenceManageAttendees,
+                    Permissions_Permission_Enum.ConferenceManageGroups,
+                    Permissions_Permission_Enum.ConferenceManageRoles,
                 ].some((permission) => activePermissions.has(permission)) ? (
                     <ButtonGroup variant="outline">
                         <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
@@ -54,9 +54,9 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                         </LinkButton>
                         <LinkButton
                             to={`/conference/${conference.slug}/profile/edit${
-                                maybeCurrentUser.user && attendee.userId === maybeCurrentUser.user.id
+                                maybeCurrentUser.user && registrant.userId === maybeCurrentUser.user.id
                                     ? ""
-                                    : `/${attendee.id}`
+                                    : `/${registrant.id}`
                             }`}
                             colorScheme="blue"
                         >
@@ -78,11 +78,11 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                         borderRadius={10}
                         flex="0 1 350px"
                     >
-                        {attendee.profile.photoURL_350x350 ? (
+                        {registrant.profile.photoURL_350x350 ? (
                             <Image
                                 w="100%"
                                 h="100%"
-                                src={attendee.profile.photoURL_350x350}
+                                src={registrant.profile.photoURL_350x350}
                                 fallbackSrc="https://via.placeholder.com/350"
                             />
                         ) : (
@@ -97,16 +97,16 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                         spacing={4}
                         flex="1 1 50%"
                     >
-                        <Heading as="h1">{attendee.displayName}</Heading>
-                        {attendee.profile.pronouns ? (
+                        <Heading as="h1">{registrant.displayName}</Heading>
+                        {registrant.profile.pronouns ? (
                             <Box>
-                                <PronounList pronouns={attendee.profile.pronouns} />
+                                <PronounList pronouns={registrant.profile.pronouns} />
                             </Box>
                         ) : undefined}
-                        {attendee.profile.affiliation || attendee.profile.affiliationURL ? (
+                        {registrant.profile.affiliation || registrant.profile.affiliationURL ? (
                             <Box m={0}>
-                                {attendee.profile.affiliation && attendee.profile.affiliationURL ? (
-                                    <Link h="auto" isExternal href={`https://${attendee.profile.affiliationURL}`}>
+                                {registrant.profile.affiliation && registrant.profile.affiliationURL ? (
+                                    <Link h="auto" isExternal href={`https://${registrant.profile.affiliationURL}`}>
                                         <Badge
                                             colorScheme="blue"
                                             variant="outline"
@@ -117,13 +117,13 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                                             pr={2}
                                         >
                                             <FAIcon iconStyle="s" icon="link" fontSize="0.8rem" mb={1} />{" "}
-                                            {attendee.profile.affiliation}{" "}
+                                            {registrant.profile.affiliation}{" "}
                                             <chakra.sup>
                                                 <ExternalLinkIcon />
                                             </chakra.sup>
                                         </Badge>
                                     </Link>
-                                ) : attendee.profile.affiliation ? (
+                                ) : registrant.profile.affiliation ? (
                                     <Badge
                                         colorScheme="blue"
                                         variant="outline"
@@ -133,35 +133,35 @@ function ViewProfilePageInner({ attendee }: { attendee: Attendee }): JSX.Element
                                         pl={2}
                                         pr={2}
                                     >
-                                        {attendee.profile.affiliation}
+                                        {registrant.profile.affiliation}
                                     </Badge>
                                 ) : undefined}
                             </Box>
                         ) : undefined}
-                        {attendee.profile.badges ? <BadgeList badges={attendee.profile.badges} /> : undefined}
+                        {registrant.profile.badges ? <BadgeList badges={registrant.profile.badges} /> : undefined}
                         <Box alignSelf="flex-start" pb={4}>
-                            {attendee.profile.bio ? (
-                                <Markdown restrictHeadingSize>{attendee.profile.bio}</Markdown>
+                            {registrant.profile.bio ? (
+                                <Markdown restrictHeadingSize>{registrant.profile.bio}</Markdown>
                             ) : undefined}
                         </Box>
                     </VStack>
                 </HStack>
                 <Divider pt={4} />
-                <AttendeeExtraInfo pt={4} attendee={attendee} />
+                <RegistrantExtraInfo pt={4} registrant={registrant} />
             </VStack>
         </>
     );
 }
 
-function ViewProfilePage_FetchAttendee({ attendeeId }: { attendeeId: string }): JSX.Element {
+function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: string }): JSX.Element {
     const conference = useConference();
-    const { loading, error, data } = useAttendeeByIdQuery({
+    const { loading, error, data } = useRegistrantByIdQuery({
         variables: {
-            attendeeId,
+            registrantId,
             conferenceId: conference.id,
         },
     });
-    useQueryErrorToast(error, false, "ViewProfilePage_FetchAttendee");
+    useQueryErrorToast(error, false, "ViewProfilePage_FetchRegistrant");
 
     if (loading && !data) {
         return (
@@ -180,7 +180,7 @@ function ViewProfilePage_FetchAttendee({ attendeeId }: { attendeeId: string }): 
         );
     }
 
-    if (!data?.Attendee[0] || !data.Attendee[0].profile) {
+    if (!data?.registrant_Registrant[0] || !data.registrant_Registrant[0].profile) {
         return (
             <div>
                 <Spinner />
@@ -190,39 +190,39 @@ function ViewProfilePage_FetchAttendee({ attendeeId }: { attendeeId: string }): 
 
     return (
         <ViewProfilePageInner
-            attendee={{
-                ...data.Attendee[0],
-                profile: data.Attendee[0].profile,
+            registrant={{
+                ...data.registrant_Registrant[0],
+                profile: data.registrant_Registrant[0].profile,
             }}
         />
     );
 }
 
-export default function ViewProfilePage({ attendeeId }: { attendeeId?: string }): JSX.Element {
+export default function ViewProfilePage({ registrantId }: { registrantId?: string }): JSX.Element {
     const conference = useConference();
     const activePermissions = useConferenceCurrentUserActivePermissions();
-    const maybeCurrentAttendee = useMaybeCurrentAttendee();
+    const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
     const maybeCurrentUser = useMaybeCurrentUser();
 
     if (
         (!maybeCurrentUser.user ||
-            !maybeCurrentAttendee ||
-            maybeCurrentAttendee.userId !== maybeCurrentUser.user.id ||
-            maybeCurrentAttendee?.id !== attendeeId) &&
+            !maybeCurrentRegistrant ||
+            maybeCurrentRegistrant.userId !== maybeCurrentUser.user.id ||
+            maybeCurrentRegistrant?.id !== registrantId) &&
         ![
-            Permission_Enum.ConferenceViewAttendees,
-            Permission_Enum.ConferenceManageAttendees,
-            Permission_Enum.ConferenceManageGroups,
-            Permission_Enum.ConferenceManageRoles,
+            Permissions_Permission_Enum.ConferenceViewAttendees,
+            Permissions_Permission_Enum.ConferenceManageAttendees,
+            Permissions_Permission_Enum.ConferenceManageGroups,
+            Permissions_Permission_Enum.ConferenceManageRoles,
         ].some((permission) => activePermissions.has(permission))
     ) {
         return <Redirect to={`/conference/${conference.slug}`} />;
     }
 
-    if (attendeeId) {
-        return <ViewProfilePage_FetchAttendee attendeeId={attendeeId} />;
-    } else if (maybeCurrentAttendee) {
-        return <ViewProfilePageInner attendee={maybeCurrentAttendee} />;
+    if (registrantId) {
+        return <ViewProfilePage_FetchRegistrant registrantId={registrantId} />;
+    } else if (maybeCurrentRegistrant) {
+        return <ViewProfilePageInner registrant={maybeCurrentRegistrant} />;
     } else {
         return <PageNotFound />;
     }

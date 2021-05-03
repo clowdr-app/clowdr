@@ -4,8 +4,8 @@ import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    ContentGroupType_Enum,
-    Permission_Enum,
+    Content_ItemType_Enum,
+    Permissions_Permission_Enum,
     useInsertSubmissionRequestEmailJobsMutation,
 } from "../../../generated/graphql";
 import CRUDTable, {
@@ -23,29 +23,29 @@ import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import { CombineVideosModal } from "./Content/CombineVideosModal";
-import ContentGroupHallwaysModal from "./Content/ContentGroupHallwaysModal";
-import ContentGroupPersonsModal from "./Content/ContentGroupPersonsModal";
-import { ContentGroupSecondaryEditor } from "./Content/ContentGroupSecondaryEditor";
-import { deepCloneContentGroupDescriptor } from "./Content/Functions";
-import ManageHallwaysModal from "./Content/ManageHallwaysModal";
+import { deepCloneItemDescriptor } from "./Content/Functions";
+import ItemExhibitionsModal from "./Content/ItemExhibitionsModal";
+import ItemPersonsModal from "./Content/ItemPersonsModal";
+import { ItemSecondaryEditor } from "./Content/ItemSecondaryEditor";
+import ManageExhibitionsModal from "./Content/ManageExhibitionsModal";
 import ManageTagsModal from "./Content/ManageTagsModal";
 import { SendSubmissionRequestsModal } from "./Content/SubmissionRequestsModal";
 import { SubmissionReviewModal } from "./Content/SubmissionReviewModal";
 // import PublishVideosModal from "./Content/PublishVideosModal";
-import { fitGroupToTemplate, GroupTemplates } from "./Content/Templates";
+import { fitItemToTemplate, ItemTemplates } from "./Content/Templates";
 import type {
-    ContentGroupDescriptor,
-    ContentItemDescriptor,
-    ContentPersonDescriptor,
-    HallwayDescriptor,
-    RequiredContentItemDescriptor,
-    SupportedItemBaseTemplate,
+    ElementDescriptor,
+    ExhibitionDescriptor,
+    ItemDescriptor,
+    ProgramPersonDescriptor,
+    SupportedElementBaseTemplate,
+    UploadableElementDescriptor,
 } from "./Content/Types";
 import UploadersModal from "./Content/UploadersModal";
 import { useSaveContentDiff } from "./Content/useSaveContentDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "./Shared/Types";
 
-const ContentGroupCRUDTable = (props: Readonly<CRUDTableProps<ContentGroupDescriptor, "id">>) => CRUDTable(props);
+const ItemCRUDTable = (props: Readonly<CRUDTableProps<ItemDescriptor, "id">>) => CRUDTable(props);
 
 export default function ManageConferenceContentPage(): JSX.Element {
     const conference = useConference();
@@ -54,14 +54,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const saveContentDiff = useSaveContentDiff();
 
     const groupTypeOptions: SelectOption[] = useMemo(() => {
-        return Object.keys(ContentGroupType_Enum)
+        return Object.keys(Content_ItemType_Enum)
             .filter(
                 (key) =>
-                    typeof (ContentGroupType_Enum as any)[key] === "string" &&
-                    GroupTemplates[(ContentGroupType_Enum as any)[key] as ContentGroupType_Enum].supported
+                    typeof (Content_ItemType_Enum as any)[key] === "string" &&
+                    ItemTemplates[(Content_ItemType_Enum as any)[key] as Content_ItemType_Enum].supported
             )
             .map((key) => {
-                const v = (ContentGroupType_Enum as any)[key] as string;
+                const v = (Content_ItemType_Enum as any)[key] as string;
                 return {
                     label: v
                         .split("_")
@@ -72,9 +72,9 @@ export default function ManageConferenceContentPage(): JSX.Element {
             });
     }, []);
 
-    const [allGroupsMap, setAllContentGroupsMap] = useState<Map<string, ContentGroupDescriptor>>();
-    const [allPeopleMap, setAllPeopleMap] = useState<Map<string, ContentPersonDescriptor>>();
-    const [allHallwaysMap, setAllHallwaysMap] = useState<Map<string, HallwayDescriptor>>();
+    const [allGroupsMap, setAllItemsMap] = useState<Map<string, ItemDescriptor>>();
+    const [allPeopleMap, setAllPeopleMap] = useState<Map<string, ProgramPersonDescriptor>>();
+    const [allExhibitionsMap, setAllExhibitionsMap] = useState<Map<string, ExhibitionDescriptor>>();
     const [allTagsMap, setAllTagsMap] = useState<Map<string, TagDescriptor>>();
     const [allOriginatingDatasMap, setAllOriginatingDatasMap] = useState<Map<string, OriginatingDataDescriptor>>();
 
@@ -95,7 +95,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
             <CombineVideosModal
                 isOpen={isCombineVideosOpen}
                 onClose={onCombineVideosClose}
-                contentGroupId={key}
+                itemId={key}
                 allGroupsMap={allGroupsMap}
             />
         ),
@@ -114,7 +114,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     const fields = useMemo(() => {
         const result: {
-            [K: string]: Readonly<PrimaryField<ContentGroupDescriptor, any>>;
+            [K: string]: Readonly<PrimaryField<ItemDescriptor, any>>;
         } = {
             title: {
                 heading: "Title",
@@ -169,7 +169,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 isEditableAtCreate: true,
                 defaultValue: {
                     label: "Paper",
-                    value: ContentGroupType_Enum.Paper,
+                    value: Content_ItemType_Enum.Paper,
                 },
                 insert: (item, v) => {
                     return {
@@ -249,17 +249,17 @@ export default function ManageConferenceContentPage(): JSX.Element {
     }, [groupTypeOptions, tagOptions]);
 
     useEffect(() => {
-        if (!saveContentDiff.loadingContent && !saveContentDiff.errorContent && saveContentDiff.originalContentGroups) {
-            const newGroupsMap = new Map<string, ContentGroupDescriptor>();
-            const newPeopleMap = new Map<string, ContentPersonDescriptor>();
+        if (!saveContentDiff.loadingContent && !saveContentDiff.errorContent && saveContentDiff.originalItems) {
+            const newGroupsMap = new Map<string, ItemDescriptor>();
+            const newPeopleMap = new Map<string, ProgramPersonDescriptor>();
             const newTagsMap = new Map<string, TagDescriptor>();
-            const newHallwaysMap = new Map<string, HallwayDescriptor>();
+            const newExhibitionsMap = new Map<string, ExhibitionDescriptor>();
             const newOriginatingDatasMap = new Map<string, OriginatingDataDescriptor>();
-            for (const [key, group] of saveContentDiff.originalContentGroups) {
+            for (const [key, group] of saveContentDiff.originalItems) {
                 // Deep clone so that when we manipulate stuff later it doesn't
                 // accidentally screw up the query data
-                const newGroup: ContentGroupDescriptor = deepCloneContentGroupDescriptor(group);
-                // fitGroupToTemplate(newGroup);
+                const newGroup: ItemDescriptor = deepCloneItemDescriptor(group);
+                // fitItemToTemplate(newGroup);
                 newGroupsMap.set(key, newGroup);
             }
             for (const [key, value] of saveContentDiff.originalPeople) {
@@ -271,20 +271,20 @@ export default function ManageConferenceContentPage(): JSX.Element {
             for (const [key, value] of saveContentDiff.originalOriginatingDatas) {
                 newOriginatingDatasMap.set(key, { ...value });
             }
-            for (const [key, value] of saveContentDiff.originalHallways) {
-                newHallwaysMap.set(key, { ...value });
+            for (const [key, value] of saveContentDiff.originalExhibitions) {
+                newExhibitionsMap.set(key, { ...value });
             }
-            setAllContentGroupsMap(newGroupsMap);
+            setAllItemsMap(newGroupsMap);
             setAllPeopleMap(newPeopleMap);
             setAllTagsMap(newTagsMap);
             setAllOriginatingDatasMap(newOriginatingDatasMap);
-            setAllHallwaysMap(newHallwaysMap);
+            setAllExhibitionsMap(newExhibitionsMap);
         }
     }, [
         saveContentDiff.errorContent,
         saveContentDiff.loadingContent,
-        saveContentDiff.originalContentGroups,
-        saveContentDiff.originalHallways,
+        saveContentDiff.originalItems,
+        saveContentDiff.originalExhibitions,
         saveContentDiff.originalOriginatingDatas,
         saveContentDiff.originalPeople,
         saveContentDiff.originalTags,
@@ -295,13 +295,17 @@ export default function ManageConferenceContentPage(): JSX.Element {
     const { isOpen: tagsModalOpen, onOpen: onTagsModalOpen, onClose: onTagsModalClose } = useDisclosure();
     const [dirtyTagIds, setDirtyTagIds] = useState<Set<string>>(new Set());
 
-    const { isOpen: hallwaysModalOpen, onOpen: onHallwaysModalOpen, onClose: onHallwaysModalClose } = useDisclosure();
-    const [editedHallwaysIds, setEditedHallwaysIds] = useState<Set<string>>(new Set());
+    const {
+        isOpen: exhibitionsModalOpen,
+        onOpen: onExhibitionsModalOpen,
+        onClose: onExhibitionsModalClose,
+    } = useDisclosure();
+    const [editedExhibitionsIds, setEditedExhibitionsIds] = useState<Set<string>>(new Set());
 
     const sendSubmissionRequestsModal = useDisclosure();
     const reviewSubmissionsModal = useDisclosure();
-    const [submissionRequestContentGroups, setSubmissionRequestContentGroups] = useState<ContentGroupDescriptor[]>([]);
-    const [submissionReviewContentGroups, setSubmissionReviewContentGroups] = useState<ContentGroupDescriptor[]>([]);
+    const [submissionRequestItems, setSubmissionRequestItems] = useState<ItemDescriptor[]>([]);
+    const [submissionReviewItems, setSubmissionReviewItems] = useState<ItemDescriptor[]>([]);
 
     // const {
     //     isOpen: publishVideosModalOpen,
@@ -314,7 +318,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permission_Enum.ConferenceManageContent]}
+            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -325,17 +329,17 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 Content
             </Heading>
             {saveContentDiff.loadingContent &&
-            (!allGroupsMap || !allTagsMap || !allPeopleMap || !allOriginatingDatasMap || !allHallwaysMap) ? (
+            (!allGroupsMap || !allTagsMap || !allPeopleMap || !allOriginatingDatasMap || !allExhibitionsMap) ? (
                 <Spinner />
             ) : saveContentDiff.errorContent ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
-            <ContentGroupCRUDTable
+            <ItemCRUDTable
                 key="crud-table"
                 data={allGroupsMap ?? new Map()}
-                externalUnsavedChanges={dirtyTagIds.size > 0 || editedHallwaysIds.size > 0}
+                externalUnsavedChanges={dirtyTagIds.size > 0 || editedExhibitionsIds.size > 0}
                 csud={{
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),
@@ -344,15 +348,15 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 ...group,
                                 isNew: true,
                                 id: tempKey,
-                                items: [],
-                                requiredItems: [],
-                                hallways: [],
+                                elements: [],
+                                uploadableElements: [],
+                                exhibitions: [],
                                 people: [],
                                 tagIds: group.tagIds ?? new Set(),
                                 rooms: [],
-                            } as ContentGroupDescriptor;
-                            fitGroupToTemplate(newGroup);
-                            setAllContentGroupsMap((oldData) => {
+                            } as ItemDescriptor;
+                            fitItemToTemplate(newGroup);
+                            setAllItemsMap((oldData) => {
                                 const newData = new Map(oldData ? oldData.entries() : []);
                                 newData.set(tempKey, newGroup);
                                 return newData;
@@ -365,7 +369,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 results.set(key, true);
                             });
 
-                            setAllContentGroupsMap((oldData) => {
+                            setAllItemsMap((oldData) => {
                                 if (oldData) {
                                     const newData = new Map(oldData.entries());
                                     groups.forEach((item, key) => {
@@ -384,7 +388,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 results.set(key, true);
                             });
 
-                            setAllContentGroupsMap((oldData) => {
+                            setAllItemsMap((oldData) => {
                                 const newData = new Map(oldData ? oldData.entries() : []);
                                 keys.forEach((key) => {
                                     newData.delete(key);
@@ -398,24 +402,24 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             assert(allGroupsMap);
                             assert(allTagsMap);
                             assert(allPeopleMap);
-                            assert(allHallwaysMap);
+                            assert(allExhibitionsMap);
                             assert(allOriginatingDatasMap);
                             assert(!saveContentDiff.loadingContent);
                             assert(!saveContentDiff.errorContent);
-                            assert(saveContentDiff.originalContentGroups);
+                            assert(saveContentDiff.originalItems);
                             const results = await saveContentDiff.saveContentDiff(
                                 {
                                     groupKeys: keys,
                                     originatingDataKeys: new Set(),
                                     peopleKeys: new Set(),
                                     tagKeys: dirtyTagIds,
-                                    hallwayKeys: editedHallwaysIds,
+                                    exhibitionKeys: editedExhibitionsIds,
                                 },
                                 allTagsMap,
                                 allPeopleMap,
                                 allOriginatingDatasMap,
                                 allGroupsMap,
-                                allHallwaysMap
+                                allExhibitionsMap
                             );
 
                             setDirtyTagIds((oldTagIds) => {
@@ -428,14 +432,14 @@ export default function ManageConferenceContentPage(): JSX.Element {
                                 return newTagIds;
                             });
 
-                            setEditedHallwaysIds((oldHallwayIds) => {
-                                const newHallwayIds = new Set(oldHallwayIds);
-                                for (const [hallwayId, result] of results.hallways) {
+                            setEditedExhibitionsIds((oldExhibitionIds) => {
+                                const newExhibitionIds = new Set(oldExhibitionIds);
+                                for (const [exhibitionId, result] of results.exhibitions) {
                                     if (result) {
-                                        newHallwayIds.delete(hallwayId);
+                                        newExhibitionIds.delete(exhibitionId);
                                     }
                                 }
-                                return newHallwayIds;
+                                return newExhibitionIds;
                             });
 
                             return results.groups;
@@ -469,16 +473,16 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     editSingle: (key, onClose, isDirty, markDirty) => {
                         assert(allGroupsMap);
                         assert(allPeopleMap);
-                        assert(allHallwaysMap);
+                        assert(allExhibitionsMap);
                         assert(allOriginatingDatasMap);
-                        return ContentGroupSecondaryEditor(
+                        return ItemSecondaryEditor(
                             allGroupsMap,
                             allPeopleMap,
                             allOriginatingDatasMap,
-                            allHallwaysMap,
+                            allExhibitionsMap,
                             key,
                             markDirty,
-                            setAllContentGroupsMap,
+                            setAllItemsMap,
                             isDirty,
                             conference.slug,
                             onCombineVideosOpen,
@@ -502,7 +506,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     },
                     {
                         action: async (_groupKeys) => {
-                            onHallwaysModalOpen();
+                            onExhibitionsModalOpen();
                         },
                         enabledWhenNothingSelected: true,
                         enabledWhenDirty: true,
@@ -518,10 +522,10 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             if (!allGroupsMap) {
                                 return;
                             }
-                            const contentGroups = Array.from(allGroupsMap.entries())
+                            const items = Array.from(allGroupsMap.entries())
                                 .filter((entry) => groupKeys.has(entry[0]))
                                 .map((entry) => entry[1]);
-                            setSubmissionRequestContentGroups(contentGroups);
+                            setSubmissionRequestItems(items);
                             sendSubmissionRequestsModal.onOpen();
                         },
                         enabledWhenNothingSelected: false,
@@ -538,10 +542,10 @@ export default function ManageConferenceContentPage(): JSX.Element {
                             if (!allGroupsMap) {
                                 return;
                             }
-                            const contentGroups = Array.from(allGroupsMap.entries())
+                            const items = Array.from(allGroupsMap.entries())
                                 .filter((entry) => groupKeys.has(entry[0]))
                                 .map((entry) => entry[1]);
-                            setSubmissionReviewContentGroups(contentGroups);
+                            setSubmissionReviewItems(items);
                             reviewSubmissionsModal.onOpen();
                         },
                         enabledWhenNothingSelected: false,
@@ -570,7 +574,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 ]}
             />
             <SendSubmissionRequestsModal
-                contentGroups={submissionRequestContentGroups}
+                items={submissionRequestItems}
                 isOpen={sendSubmissionRequestsModal.isOpen}
                 onClose={sendSubmissionRequestsModal.onClose}
                 send={async (uploaderIds: string[], emailTemplate: EmailTemplate_BaseConfig) => {
@@ -586,7 +590,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 }}
             />
             <SubmissionReviewModal
-                contentGroups={submissionReviewContentGroups}
+                items={submissionReviewItems}
                 isOpen={reviewSubmissionsModal.isOpen}
                 onClose={reviewSubmissionsModal.onClose}
             />
@@ -644,64 +648,64 @@ export default function ManageConferenceContentPage(): JSX.Element {
                     }
                 }}
             />
-            <ManageHallwaysModal
-                hallways={allHallwaysMap ?? new Map()}
-                areHallwaysDirty={editedHallwaysIds.size > 0}
-                isOpen={hallwaysModalOpen}
-                onOpen={onHallwaysModalOpen}
-                onClose={onHallwaysModalClose}
-                insertHallway={(hallway) => {
-                    setEditedHallwaysIds((oldHallwayIds) => {
-                        const newHallwayIds = new Set(oldHallwayIds);
-                        newHallwayIds.add(hallway.id);
-                        return newHallwayIds;
+            <ManageExhibitionsModal
+                exhibitions={allExhibitionsMap ?? new Map()}
+                areExhibitionsDirty={editedExhibitionsIds.size > 0}
+                isOpen={exhibitionsModalOpen}
+                onOpen={onExhibitionsModalOpen}
+                onClose={onExhibitionsModalClose}
+                insertExhibition={(exhibition) => {
+                    setEditedExhibitionsIds((oldExhibitionIds) => {
+                        const newExhibitionIds = new Set(oldExhibitionIds);
+                        newExhibitionIds.add(exhibition.id);
+                        return newExhibitionIds;
                     });
-                    setAllHallwaysMap((oldHallways) => {
-                        const newHallways: Map<string, HallwayDescriptor> = oldHallways
-                            ? new Map(oldHallways)
+                    setAllExhibitionsMap((oldExhibitions) => {
+                        const newExhibitions: Map<string, ExhibitionDescriptor> = oldExhibitions
+                            ? new Map(oldExhibitions)
                             : new Map();
-                        newHallways.set(hallway.id, hallway);
-                        return newHallways;
+                        newExhibitions.set(exhibition.id, exhibition);
+                        return newExhibitions;
                     });
                 }}
-                updateHallway={(hallway) => {
-                    setEditedHallwaysIds((oldHallwayIds) => {
-                        const newHallwayIds = new Set(oldHallwayIds);
-                        newHallwayIds.add(hallway.id);
-                        return newHallwayIds;
+                updateExhibition={(exhibition) => {
+                    setEditedExhibitionsIds((oldExhibitionIds) => {
+                        const newExhibitionIds = new Set(oldExhibitionIds);
+                        newExhibitionIds.add(exhibition.id);
+                        return newExhibitionIds;
                     });
-                    setAllHallwaysMap((oldHallways) => {
-                        const newHallways: Map<string, HallwayDescriptor> = oldHallways
-                            ? new Map(oldHallways)
+                    setAllExhibitionsMap((oldExhibitions) => {
+                        const newExhibitions: Map<string, ExhibitionDescriptor> = oldExhibitions
+                            ? new Map(oldExhibitions)
                             : new Map();
-                        newHallways.set(hallway.id, hallway);
-                        return newHallways;
+                        newExhibitions.set(exhibition.id, exhibition);
+                        return newExhibitions;
                     });
                 }}
-                deleteHallway={(hallwayId) => {
+                deleteExhibition={(exhibitionId) => {
                     const isInUse = Array.from(allGroupsMap?.values() ?? []).some((group) =>
-                        group.hallways.some((x) => x.hallwayId === hallwayId)
+                        group.exhibitions.some((x) => x.exhibitionId === exhibitionId)
                     );
                     if (isInUse) {
                         toast({
                             description:
-                                "Cannot delete a hallway while they are associated with some content. Please dissociate the hallway from all content then try again.",
+                                "Cannot delete a exhibition while they are associated with some content. Please dissociate the exhibition from all content then try again.",
                             isClosable: true,
                             status: "error",
-                            title: "Cannot delete hallway",
+                            title: "Cannot delete exhibition",
                         });
                     } else {
-                        setEditedHallwaysIds((oldHallwayIds) => {
-                            const newHallwayIds = new Set(oldHallwayIds);
-                            newHallwayIds.add(hallwayId);
-                            return newHallwayIds;
+                        setEditedExhibitionsIds((oldExhibitionIds) => {
+                            const newExhibitionIds = new Set(oldExhibitionIds);
+                            newExhibitionIds.add(exhibitionId);
+                            return newExhibitionIds;
                         });
-                        setAllHallwaysMap((oldHallways) => {
-                            const newHallways: Map<string, HallwayDescriptor> = oldHallways
-                                ? new Map(oldHallways)
+                        setAllExhibitionsMap((oldExhibitions) => {
+                            const newExhibitions: Map<string, ExhibitionDescriptor> = oldExhibitions
+                                ? new Map(oldExhibitions)
                                 : new Map();
-                            newHallways.delete(hallwayId);
-                            return newHallways;
+                            newExhibitions.delete(exhibitionId);
+                            return newExhibitions;
                         });
                     }
                 }}
@@ -710,7 +714,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 isOpen={publishVideosModalOpen}
                 onOpen={onPublishVideosModalOpen}
                 onClose={onPublishVideosModalClose}
-                contentGroupIds={publishVideosIds}
+                itemIds={publishVideosIds}
             /> */}
         </RequireAtLeastOnePermissionWrapper>
     );
@@ -721,70 +725,62 @@ export function GroupPeopleEditorModal({
     peopleMap,
     isDirty,
     markDirty,
-    setAllContentGroupsMap,
+    setAllItemsMap,
 }: {
-    group: ContentGroupDescriptor;
-    peopleMap: Map<string, ContentPersonDescriptor>;
+    group: ItemDescriptor;
+    peopleMap: Map<string, ProgramPersonDescriptor>;
     isDirty: boolean;
     markDirty: () => void;
-    setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
+    setAllItemsMap: React.Dispatch<React.SetStateAction<Map<string, ItemDescriptor> | undefined>>;
 }): JSX.Element {
     const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
     const accordianContents = (
         <>
-            <ContentGroupPersonsModal
+            <ItemPersonsModal
                 isGroupDirty={isDirty}
                 isOpen={isUploadersOpen}
                 onOpen={onUploadersOpen}
                 onClose={onUploadersClose}
                 group={group}
                 peopleMap={peopleMap}
-                insertContentGroupPerson={(contentGroupPerson) => {
+                insertItemPerson={(itemPerson) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            people: [...existingGroup.people, contentGroupPerson],
+                            people: [...existingGroup.people, itemPerson],
                         });
                         return newGroups;
                     });
                 }}
-                updateContentGroupPerson={(contentGroupPerson) => {
+                updateItemPerson={(itemPerson) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            people: existingGroup.people.map((existingContentGroupPerson) =>
-                                existingContentGroupPerson.id === contentGroupPerson.id
-                                    ? contentGroupPerson
-                                    : existingContentGroupPerson
+                            people: existingGroup.people.map((existingItemPerson) =>
+                                existingItemPerson.id === itemPerson.id ? itemPerson : existingItemPerson
                             ),
                         });
                         return newGroups;
                     });
                 }}
-                deleteContentGroupPerson={(contentGroupPersonId) => {
+                deleteItemPerson={(itemPersonId) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
                             people: existingGroup.people.filter(
-                                (existingContentGroupPerson) => existingContentGroupPerson.id !== contentGroupPersonId
+                                (existingItemPerson) => existingItemPerson.id !== itemPersonId
                             ),
                         });
                         return newGroups;
@@ -796,76 +792,69 @@ export function GroupPeopleEditorModal({
     return accordianContents;
 }
 
-export function GroupHallwaysEditorModal({
+export function GroupExhibitionsEditorModal({
     group,
-    hallwaysMap,
+    exhibitionsMap,
     isDirty,
     markDirty,
-    setAllContentGroupsMap,
+    setAllItemsMap,
 }: {
-    group: ContentGroupDescriptor;
-    hallwaysMap: Map<string, HallwayDescriptor>;
+    group: ItemDescriptor;
+    exhibitionsMap: Map<string, ExhibitionDescriptor>;
     isDirty: boolean;
     markDirty: () => void;
-    setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
+    setAllItemsMap: React.Dispatch<React.SetStateAction<Map<string, ItemDescriptor> | undefined>>;
 }): JSX.Element {
     const { isOpen: isUploadersOpen, onOpen: onUploadersOpen, onClose: onUploadersClose } = useDisclosure();
     const accordianContents = (
         <>
-            <ContentGroupHallwaysModal
+            <ItemExhibitionsModal
                 isGroupDirty={isDirty}
                 isOpen={isUploadersOpen}
                 onOpen={onUploadersOpen}
                 onClose={onUploadersClose}
                 group={group}
-                hallwaysMap={hallwaysMap}
-                insertContentGroupHallway={(contentGroupHallway) => {
+                exhibitionsMap={exhibitionsMap}
+                insertItemExhibition={(itemExhibition) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            hallways: [...existingGroup.hallways, contentGroupHallway],
+                            exhibitions: [...existingGroup.exhibitions, itemExhibition],
                         });
                         return newGroups;
                     });
                 }}
-                updateContentGroupHallway={(contentGroupHallway) => {
+                updateItemExhibition={(itemExhibition) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            hallways: existingGroup.hallways.map((existingContentGroupHallway) =>
-                                existingContentGroupHallway.id === contentGroupHallway.id
-                                    ? contentGroupHallway
-                                    : existingContentGroupHallway
+                            exhibitions: existingGroup.exhibitions.map((existingItemExhibition) =>
+                                existingItemExhibition.id === itemExhibition.id
+                                    ? itemExhibition
+                                    : existingItemExhibition
                             ),
                         });
                         return newGroups;
                     });
                 }}
-                deleteContentGroupHallway={(contentGroupHallwayId) => {
+                deleteItemExhibition={(itemExhibitionId) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            hallways: existingGroup.hallways.filter(
-                                (existingContentGroupHallway) =>
-                                    existingContentGroupHallway.id !== contentGroupHallwayId
+                            exhibitions: existingGroup.exhibitions.filter(
+                                (existingItemExhibition) => existingItemExhibition.id !== itemExhibitionId
                             ),
                         });
                         return newGroups;
@@ -877,38 +866,38 @@ export function GroupHallwaysEditorModal({
     return accordianContents;
 }
 
-export function RequiredItemEditorModal({
+export function UploadableItemEditorModal({
     group,
     itemTemplate,
     isDirty,
     markDirty,
-    setAllContentGroupsMap,
+    setAllItemsMap,
     itemDesc,
 }: {
-    group: ContentGroupDescriptor;
-    itemTemplate: SupportedItemBaseTemplate;
+    group: ItemDescriptor;
+    itemTemplate: SupportedElementBaseTemplate;
     isDirty: boolean;
     markDirty: () => void;
-    setAllContentGroupsMap: React.Dispatch<React.SetStateAction<Map<string, ContentGroupDescriptor> | undefined>>;
+    setAllItemsMap: React.Dispatch<React.SetStateAction<Map<string, ItemDescriptor> | undefined>>;
     itemDesc:
         | {
               type: "required-only";
-              requiredItem: RequiredContentItemDescriptor;
+              uploadableElement: UploadableElementDescriptor;
           }
         | {
-              type: "required-and-item";
-              requiredItem: RequiredContentItemDescriptor;
-              item: ContentItemDescriptor;
+              type: "required-and-element";
+              uploadableElement: UploadableElementDescriptor;
+              element: ElementDescriptor;
           };
 }): JSX.Element {
     const reqItemEditorContents = (
         <itemTemplate.renderEditor
             data={itemDesc}
             update={(updatedDesc) => {
-                assert(updatedDesc.type !== "item-only");
+                assert(updatedDesc.type !== "element-only");
                 markDirty();
 
-                setAllContentGroupsMap((oldGroups) => {
+                setAllItemsMap((oldGroups) => {
                     assert(oldGroups);
                     const newGroups = new Map(oldGroups);
 
@@ -916,18 +905,18 @@ export function RequiredItemEditorModal({
                     assert(existingGroup);
                     newGroups.set(group.id, {
                         ...existingGroup,
-                        items:
-                            itemDesc.type === "required-and-item" && updatedDesc.type === "required-and-item"
-                                ? existingGroup.items.map((cItem) => {
-                                      return itemDesc.item.id === cItem.id ? updatedDesc.item : cItem;
+                        elements:
+                            itemDesc.type === "required-and-element" && updatedDesc.type === "required-and-element"
+                                ? existingGroup.elements.map((cItem) => {
+                                      return itemDesc.element.id === cItem.id ? updatedDesc.element : cItem;
                                   })
-                                : itemDesc.type === "required-only" && updatedDesc.type === "required-and-item"
-                                ? [...existingGroup.items, updatedDesc.item]
-                                : itemDesc.type === "required-and-item" && updatedDesc.type === "required-only"
-                                ? existingGroup.items.filter((x) => x.id !== itemDesc.item.id)
-                                : existingGroup.items,
-                        requiredItems: existingGroup.requiredItems.map((x) =>
-                            x.id === itemDesc.requiredItem.id ? updatedDesc.requiredItem : x
+                                : itemDesc.type === "required-only" && updatedDesc.type === "required-and-element"
+                                ? [...existingGroup.elements, updatedDesc.element]
+                                : itemDesc.type === "required-and-element" && updatedDesc.type === "required-only"
+                                ? existingGroup.elements.filter((x) => x.id !== itemDesc.element.id)
+                                : existingGroup.elements,
+                        uploadableElements: existingGroup.uploadableElements.map((x) =>
+                            x.id === itemDesc.uploadableElement.id ? updatedDesc.uploadableElement : x
                         ),
                     });
 
@@ -947,19 +936,17 @@ export function RequiredItemEditorModal({
                 onOpen={onUploadersOpen}
                 onClose={onUploadersClose}
                 groupTitle={group.title}
-                itemDesc={itemDesc.requiredItem}
+                itemDesc={itemDesc.uploadableElement}
                 setUploadsRemaining={(newUploadsRemaining) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            requiredItems: existingGroup.requiredItems.map((existingItem) => {
-                                if (existingItem.id === itemDesc.requiredItem.id) {
+                            uploadableElements: existingGroup.uploadableElements.map((existingItem) => {
+                                if (existingItem.id === itemDesc.uploadableElement.id) {
                                     return {
                                         ...existingItem,
                                         uploadsRemaining: newUploadsRemaining,
@@ -974,16 +961,14 @@ export function RequiredItemEditorModal({
                 }}
                 insertUploader={(uploader) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            requiredItems: existingGroup.requiredItems.map((existingItem) => {
-                                if (existingItem.id === itemDesc.requiredItem.id) {
+                            uploadableElements: existingGroup.uploadableElements.map((existingItem) => {
+                                if (existingItem.id === itemDesc.uploadableElement.id) {
                                     return {
                                         ...existingItem,
                                         uploaders: [...existingItem.uploaders, uploader],
@@ -998,16 +983,14 @@ export function RequiredItemEditorModal({
                 }}
                 updateUploader={(uploader) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            requiredItems: existingGroup.requiredItems.map((existingItem) => {
-                                if (existingItem.id === itemDesc.requiredItem.id) {
+                            uploadableElements: existingGroup.uploadableElements.map((existingItem) => {
+                                if (existingItem.id === itemDesc.uploadableElement.id) {
                                     return {
                                         ...existingItem,
                                         uploaders: existingItem.uploaders.map((existingUploader) =>
@@ -1024,16 +1007,14 @@ export function RequiredItemEditorModal({
                 }}
                 deleteUploader={(uploaderId) => {
                     markDirty();
-                    setAllContentGroupsMap((oldGroups) => {
-                        const newGroups: Map<string, ContentGroupDescriptor> = oldGroups
-                            ? new Map(oldGroups)
-                            : new Map();
+                    setAllItemsMap((oldGroups) => {
+                        const newGroups: Map<string, ItemDescriptor> = oldGroups ? new Map(oldGroups) : new Map();
                         const existingGroup = newGroups.get(group.id);
                         assert(existingGroup);
                         newGroups.set(group.id, {
                             ...existingGroup,
-                            requiredItems: existingGroup.requiredItems.map((existingItem) => {
-                                if (existingItem.id === itemDesc.requiredItem.id) {
+                            uploadableElements: existingGroup.uploadableElements.map((existingItem) => {
+                                if (existingItem.id === itemDesc.uploadableElement.id) {
                                     return {
                                         ...existingItem,
                                         uploaders: existingItem.uploaders.filter(

@@ -16,7 +16,7 @@ export function BreakoutRoom({
     enable: boolean;
 }): JSX.Element {
     const backend = useMemo(() => {
-        switch (roomDetails.videoRoomBackendName) {
+        switch (roomDetails.backendName) {
             case "CHIME":
                 return "CHIME";
             case "VONAGE":
@@ -31,7 +31,7 @@ export function BreakoutRoom({
                 return "VONAGE";
         }
         return null;
-    }, [defaultVideoBackendName, roomDetails.videoRoomBackendName]);
+    }, [defaultVideoBackendName, roomDetails.backendName]);
 
     const enableChime = backend === "CHIME" && enable;
     const enableVonage = backend === "VONAGE" && enable;
@@ -48,7 +48,7 @@ export function BreakoutRoom({
                 {!backend && enable ? <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} /> : undefined}
             </>
         );
-    }, [backend, enable, roomDetails]);
+    }, [backend, enable, enableChime, enableVonage, roomDetails]);
 
     return breakoutRoomEl;
 }

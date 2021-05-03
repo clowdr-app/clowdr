@@ -94,7 +94,9 @@ gql`
                 roleId
             }
         }
-        delete_permissions_RolePermission(where: { permissionName: { _in: $deletePermissionNames } }) {
+        delete_permissions_RolePermission(
+            where: { roleId: { _eq: $roleId }, permissionName: { _in: $deletePermissionNames } }
+        ) {
             returning {
                 id
             }

@@ -101,7 +101,7 @@ gql`
                 roleId
             }
         }
-        delete_permissions_GroupRole(where: { roleId: { _in: $deleteRoleIds } }) {
+        delete_permissions_GroupRole(where: { groupId: { _eq: $groupId }, roleId: { _in: $deleteRoleIds } }) {
             returning {
                 id
             }

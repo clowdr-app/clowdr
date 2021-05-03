@@ -189,7 +189,7 @@ gql`
         ) {
             ...EventInfo
         }
-        delete_schedule_EventTag(where: { tag: { id: { _in: $deleteEventTagIds } } }) {
+        delete_schedule_EventTag(where: { eventId: { _eq: $eventId }, tagId: { _in: $deleteEventTagIds } }) {
             returning {
                 id
             }

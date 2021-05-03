@@ -60,7 +60,7 @@ interface MediaConvertEventBroadcastUserMetadata {
 
 interface MediaConvertEventPreviewUserMetadata {
     mode: TranscodeMode.PREVIEW;
-    contentItemId: string;
+    elementId: string;
     environment?: string;
 }
 

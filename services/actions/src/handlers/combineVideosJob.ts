@@ -58,7 +58,7 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
             query: CombineVideosJob_GetElementsDocument,
             variables: {
                 conferenceId: newRow.conferenceId,
-                elementIds: newRow.data.inputContentItems.map((item) => item.contentItemId),
+                elementIds: newRow.data.inputElements.map((item) => item.elementId),
             },
         });
 
@@ -70,12 +70,12 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
         }
 
         const inputs = R.sortBy(
-            (x) => newRow.data.inputContentItems.findIndex((y) => y.contentItemId === x.id),
+            (x) => newRow.data.inputElements.findIndex((y) => y.elementId === x.id),
             result.data.content_Element
         )
             .sort((a, b) => {
-                const aIndex = newRow.data.inputContentItems.findIndex((x) => x.contentItemId === a.id);
-                const bIndex = newRow.data.inputContentItems.findIndex((x) => x.contentItemId === b.id);
+                const aIndex = newRow.data.inputElements.findIndex((x) => x.elementId === a.id);
+                const bIndex = newRow.data.inputElements.findIndex((x) => x.elementId === b.id);
                 return aIndex - bIndex;
             })
             .map((item) => {

@@ -1,8 +1,8 @@
 export interface CombineVideosJobDataBlob {
-    inputContentItems: InputElement[];
+    inputElements: InputElement[];
 }
 
 export interface InputElement {
-    contentItemId: string;
+    elementId: string;
     includeSubtitles: boolean;
 }

@@ -121,11 +121,11 @@ export function CombineVideosModal({
                 onSubmit={async (values, actions) => {
                     console.log(values.elementIds);
                     const items: InputElement[] = values.elementIds.map((id) => ({
-                        contentItemId: id,
+                        elementId: id,
                         includeSubtitles: false,
                     }));
                     const data: CombineVideosJobDataBlob = {
-                        inputContentItems: items,
+                        inputElements: items,
                     };
 
                     try {

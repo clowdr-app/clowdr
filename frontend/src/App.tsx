@@ -14,7 +14,6 @@ import ConferenceCurrentUserActivePermissionsProvider, {
 import { CurrentRegistrantProvider, useMaybeCurrentRegistrant } from "./aspects/Conference/useCurrentRegistrant";
 import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
-import DownForMaintenancePage from "./aspects/Maintenance/DownForMaintenancePage";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu, { MenuBar } from "./aspects/Menu/MainMenu";
 import RightSidebar from "./aspects/Menu/RightSidebar";
@@ -36,13 +35,13 @@ function useQuery() {
 export default function App(): JSX.Element {
     const chimeTheme = useColorModeValue(lightTheme, darkTheme);
 
-    const query = useQuery();
-    const bypassDfmMatch = query.get("bypassMaintenance");
-    console.info("bypassDfmMatch", bypassDfmMatch);
+    // const query = useQuery();
+    // const bypassDfmMatch = query.get("bypassMaintenance");
+    // console.info("bypassDfmMatch", bypassDfmMatch);
 
-    if (!bypassDfmMatch) {
-        return <DownForMaintenancePage />;
-    }
+    // if (!bypassDfmMatch) {
+    //     return <DownForMaintenancePage />;
+    // }
 
     return (
         <ThemeProvider theme={chimeTheme}>

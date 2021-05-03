@@ -240,7 +240,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
                 { registrantId: myRegistrant.id, personRoleName: Room_PersonRole_Enum.Participant },
                 ...filteredRegistrants.map((registrantId) => ({
                     registrantId: registrantId,
-                    roomPersonRoleName: Room_PersonRole_Enum.Participant,
+                    personRoleName: Room_PersonRole_Enum.Participant,
                 })),
             ],
             name: [

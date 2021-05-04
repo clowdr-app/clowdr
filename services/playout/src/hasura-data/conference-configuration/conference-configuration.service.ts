@@ -14,7 +14,7 @@ export class ConferenceConfigurationService {
     public async getConferenceConfiguration(conferenceId: string, key: string): Promise<any> {
         gql`
             query ConferenceConfiguration_GetConfigurationValue($key: String!, $conferenceId: uuid!) {
-                ConferenceConfiguration(where: { key: { _eq: $key }, conferenceId: { _eq: $conferenceId } }) {
+                conference_Configuration(where: { key: { _eq: $key }, conferenceId: { _eq: $conferenceId } }) {
                     id
                     value
                 }

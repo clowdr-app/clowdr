@@ -5,7 +5,7 @@ import {
     GetEventBroadcastDetailsDocument,
     GetEventByVonageSessionIdDocument,
     RemoveEventParticipantStreamDocument,
-    RtmpInput_Enum,
+    Video_RtmpInput_Enum,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { StreamData } from "../../types/vonage";
@@ -66,7 +66,7 @@ export async function getEventBroadcastDetails(eventId: string): Promise<EventBr
     }
 
     const rtmpUri =
-        eventResult.data.schedule_Event_by_pk.eventVonageSession.rtmpInputName === RtmpInput_Enum.RtmpB
+        eventResult.data.schedule_Event_by_pk.eventVonageSession.rtmpInputName === Video_RtmpInput_Enum.RtmpB
             ? eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel?.rtmpBInputUri ??
               eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.rtmpAInputUri
             : eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.rtmpAInputUri;

@@ -12581,6 +12581,10 @@ export type Mutation_Root = {
   readonly delete_video_MediaLiveChannel?: Maybe<Video_MediaLiveChannel_Mutation_Response>;
   /** delete single row from the table: "video.MediaLiveChannel" */
   readonly delete_video_MediaLiveChannel_by_pk?: Maybe<Video_MediaLiveChannel>;
+  /** delete data from the table: "video.RtmpInput" */
+  readonly delete_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
+  /** delete single row from the table: "video.RtmpInput" */
+  readonly delete_video_RtmpInput_by_pk?: Maybe<Video_RtmpInput>;
   /** delete data from the table: "video.TranscriptionJob" */
   readonly delete_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
   /** delete single row from the table: "video.TranscriptionJob" */
@@ -12906,6 +12910,10 @@ export type Mutation_Root = {
   readonly insert_video_MediaLiveChannel?: Maybe<Video_MediaLiveChannel_Mutation_Response>;
   /** insert a single row into the table: "video.MediaLiveChannel" */
   readonly insert_video_MediaLiveChannel_one?: Maybe<Video_MediaLiveChannel>;
+  /** insert data into the table: "video.RtmpInput" */
+  readonly insert_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
+  /** insert a single row into the table: "video.RtmpInput" */
+  readonly insert_video_RtmpInput_one?: Maybe<Video_RtmpInput>;
   /** insert data into the table: "video.TranscriptionJob" */
   readonly insert_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
   /** insert a single row into the table: "video.TranscriptionJob" */
@@ -13244,6 +13252,10 @@ export type Mutation_Root = {
   readonly update_video_MediaLiveChannel?: Maybe<Video_MediaLiveChannel_Mutation_Response>;
   /** update single row of the table: "video.MediaLiveChannel" */
   readonly update_video_MediaLiveChannel_by_pk?: Maybe<Video_MediaLiveChannel>;
+  /** update data of the table: "video.RtmpInput" */
+  readonly update_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
+  /** update single row of the table: "video.RtmpInput" */
+  readonly update_video_RtmpInput_by_pk?: Maybe<Video_RtmpInput>;
   /** update data of the table: "video.TranscriptionJob" */
   readonly update_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
   /** update single row of the table: "video.TranscriptionJob" */
@@ -14201,6 +14213,18 @@ export type Mutation_RootDelete_Video_MediaLiveChannelArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Video_MediaLiveChannel_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RtmpInputArgs = {
+  where: Video_RtmpInput_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RtmpInput_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -15334,6 +15358,20 @@ export type Mutation_RootInsert_Video_MediaLiveChannelArgs = {
 export type Mutation_RootInsert_Video_MediaLiveChannel_OneArgs = {
   object: Video_MediaLiveChannel_Insert_Input;
   on_conflict?: Maybe<Video_MediaLiveChannel_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RtmpInputArgs = {
+  objects: ReadonlyArray<Video_RtmpInput_Insert_Input>;
+  on_conflict?: Maybe<Video_RtmpInput_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RtmpInput_OneArgs = {
+  object: Video_RtmpInput_Insert_Input;
+  on_conflict?: Maybe<Video_RtmpInput_On_Conflict>;
 };
 
 
@@ -16762,6 +16800,20 @@ export type Mutation_RootUpdate_Video_MediaLiveChannelArgs = {
 export type Mutation_RootUpdate_Video_MediaLiveChannel_By_PkArgs = {
   _set?: Maybe<Video_MediaLiveChannel_Set_Input>;
   pk_columns: Video_MediaLiveChannel_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RtmpInputArgs = {
+  _set?: Maybe<Video_RtmpInput_Set_Input>;
+  where: Video_RtmpInput_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RtmpInput_By_PkArgs = {
+  _set?: Maybe<Video_RtmpInput_Set_Input>;
+  pk_columns: Video_RtmpInput_Pk_Columns_Input;
 };
 
 
@@ -18586,6 +18638,12 @@ export type Query_Root = {
   readonly video_MediaLiveChannel_aggregate: Video_MediaLiveChannel_Aggregate;
   /** fetch data from the table: "video.MediaLiveChannel" using primary key columns */
   readonly video_MediaLiveChannel_by_pk?: Maybe<Video_MediaLiveChannel>;
+  /** fetch data from the table: "video.RtmpInput" */
+  readonly video_RtmpInput: ReadonlyArray<Video_RtmpInput>;
+  /** fetch aggregated fields from the table: "video.RtmpInput" */
+  readonly video_RtmpInput_aggregate: Video_RtmpInput_Aggregate;
+  /** fetch data from the table: "video.RtmpInput" using primary key columns */
+  readonly video_RtmpInput_by_pk?: Maybe<Video_RtmpInput>;
   /** fetch data from the table: "video.TranscriptionJob" */
   readonly video_TranscriptionJob: ReadonlyArray<Video_TranscriptionJob>;
   /** fetch aggregated fields from the table: "video.TranscriptionJob" */
@@ -20461,6 +20519,29 @@ export type Query_RootVideo_MediaLiveChannel_AggregateArgs = {
 
 export type Query_RootVideo_MediaLiveChannel_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Query_RootVideo_RtmpInputArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_RtmpInput_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_RtmpInput_Order_By>>;
+  where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_RtmpInput_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_RtmpInput_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_RtmpInput_Order_By>>;
+  where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_RtmpInput_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -27051,6 +27132,12 @@ export type Subscription_Root = {
   readonly video_MediaLiveChannel_aggregate: Video_MediaLiveChannel_Aggregate;
   /** fetch data from the table: "video.MediaLiveChannel" using primary key columns */
   readonly video_MediaLiveChannel_by_pk?: Maybe<Video_MediaLiveChannel>;
+  /** fetch data from the table: "video.RtmpInput" */
+  readonly video_RtmpInput: ReadonlyArray<Video_RtmpInput>;
+  /** fetch aggregated fields from the table: "video.RtmpInput" */
+  readonly video_RtmpInput_aggregate: Video_RtmpInput_Aggregate;
+  /** fetch data from the table: "video.RtmpInput" using primary key columns */
+  readonly video_RtmpInput_by_pk?: Maybe<Video_RtmpInput>;
   /** fetch data from the table: "video.TranscriptionJob" */
   readonly video_TranscriptionJob: ReadonlyArray<Video_TranscriptionJob>;
   /** fetch aggregated fields from the table: "video.TranscriptionJob" */
@@ -28924,6 +29011,29 @@ export type Subscription_RootVideo_MediaLiveChannel_By_PkArgs = {
 };
 
 
+export type Subscription_RootVideo_RtmpInputArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_RtmpInput_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_RtmpInput_Order_By>>;
+  where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_RtmpInput_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_RtmpInput_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_RtmpInput_Order_By>>;
+  where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_RtmpInput_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
 export type Subscription_RootVideo_TranscriptionJobArgs = {
   distinct_on?: Maybe<ReadonlyArray<Video_TranscriptionJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -29939,6 +30049,7 @@ export type Video_EventVonageSession = {
   readonly eventId: Scalars['uuid'];
   readonly id: Scalars['uuid'];
   readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly rtmpInputName: Scalars['String'];
   readonly sessionId: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
 };
@@ -29988,6 +30099,7 @@ export type Video_EventVonageSession_Bool_Exp = {
   readonly eventId?: Maybe<Uuid_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly layoutData?: Maybe<Jsonb_Comparison_Exp>;
+  readonly rtmpInputName?: Maybe<String_Comparison_Exp>;
   readonly sessionId?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -30026,6 +30138,7 @@ export type Video_EventVonageSession_Insert_Input = {
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly rtmpInputName?: Maybe<Scalars['String']>;
   readonly sessionId?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -30037,6 +30150,7 @@ export type Video_EventVonageSession_Max_Fields = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly rtmpInputName?: Maybe<Scalars['String']>;
   readonly sessionId?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -30048,6 +30162,7 @@ export type Video_EventVonageSession_Min_Fields = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly rtmpInputName?: Maybe<Scalars['String']>;
   readonly sessionId?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -30084,6 +30199,7 @@ export type Video_EventVonageSession_Order_By = {
   readonly eventId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly layoutData?: Maybe<Order_By>;
+  readonly rtmpInputName?: Maybe<Order_By>;
   readonly sessionId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -30111,6 +30227,8 @@ export enum Video_EventVonageSession_Select_Column {
   /** column name */
   LayoutData = 'layoutData',
   /** column name */
+  RtmpInputName = 'rtmpInputName',
+  /** column name */
   SessionId = 'sessionId',
   /** column name */
   UpdatedAt = 'updatedAt'
@@ -30123,6 +30241,7 @@ export type Video_EventVonageSession_Set_Input = {
   readonly eventId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly rtmpInputName?: Maybe<Scalars['String']>;
   readonly sessionId?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -30139,6 +30258,8 @@ export enum Video_EventVonageSession_Update_Column {
   Id = 'id',
   /** column name */
   LayoutData = 'layoutData',
+  /** column name */
+  RtmpInputName = 'rtmpInputName',
   /** column name */
   SessionId = 'sessionId',
   /** column name */
@@ -30481,10 +30602,13 @@ export type Video_MediaLiveChannel = {
   /** An object relationship */
   readonly room?: Maybe<Room_Room>;
   readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly rtmpInputId: Scalars['String'];
-  readonly rtmpInputUri: Scalars['String'];
+  readonly rtmpAInputAttachmentName: Scalars['String'];
+  readonly rtmpAInputId: Scalars['String'];
+  readonly rtmpAInputUri: Scalars['String'];
+  readonly rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpBInputId?: Maybe<Scalars['String']>;
+  readonly rtmpBInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt: Scalars['timestamptz'];
-  readonly vonageInputAttachmentName: Scalars['String'];
 };
 
 /** aggregated selection of "video.MediaLiveChannel" */
@@ -30531,10 +30655,13 @@ export type Video_MediaLiveChannel_Bool_Exp = {
   readonly mp4InputId?: Maybe<String_Comparison_Exp>;
   readonly room?: Maybe<Room_Room_Bool_Exp>;
   readonly roomId?: Maybe<Uuid_Comparison_Exp>;
-  readonly rtmpInputId?: Maybe<String_Comparison_Exp>;
-  readonly rtmpInputUri?: Maybe<String_Comparison_Exp>;
+  readonly rtmpAInputAttachmentName?: Maybe<String_Comparison_Exp>;
+  readonly rtmpAInputId?: Maybe<String_Comparison_Exp>;
+  readonly rtmpAInputUri?: Maybe<String_Comparison_Exp>;
+  readonly rtmpBInputAttachmentName?: Maybe<String_Comparison_Exp>;
+  readonly rtmpBInputId?: Maybe<String_Comparison_Exp>;
+  readonly rtmpBInputUri?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly vonageInputAttachmentName?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "video.MediaLiveChannel" */
@@ -30564,10 +30691,13 @@ export type Video_MediaLiveChannel_Insert_Input = {
   readonly mp4InputId?: Maybe<Scalars['String']>;
   readonly room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
   readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly rtmpInputId?: Maybe<Scalars['String']>;
-  readonly rtmpInputUri?: Maybe<Scalars['String']>;
+  readonly rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpAInputId?: Maybe<Scalars['String']>;
+  readonly rtmpAInputUri?: Maybe<Scalars['String']>;
+  readonly rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpBInputId?: Maybe<Scalars['String']>;
+  readonly rtmpBInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly vonageInputAttachmentName?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -30587,10 +30717,13 @@ export type Video_MediaLiveChannel_Max_Fields = {
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mp4InputId?: Maybe<Scalars['String']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly rtmpInputId?: Maybe<Scalars['String']>;
-  readonly rtmpInputUri?: Maybe<Scalars['String']>;
+  readonly rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpAInputId?: Maybe<Scalars['String']>;
+  readonly rtmpAInputUri?: Maybe<Scalars['String']>;
+  readonly rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpBInputId?: Maybe<Scalars['String']>;
+  readonly rtmpBInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly vonageInputAttachmentName?: Maybe<Scalars['String']>;
 };
 
 /** aggregate min on columns */
@@ -30610,10 +30743,13 @@ export type Video_MediaLiveChannel_Min_Fields = {
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mp4InputId?: Maybe<Scalars['String']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly rtmpInputId?: Maybe<Scalars['String']>;
-  readonly rtmpInputUri?: Maybe<Scalars['String']>;
+  readonly rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpAInputId?: Maybe<Scalars['String']>;
+  readonly rtmpAInputUri?: Maybe<Scalars['String']>;
+  readonly rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpBInputId?: Maybe<Scalars['String']>;
+  readonly rtmpBInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly vonageInputAttachmentName?: Maybe<Scalars['String']>;
 };
 
 /** response of any mutation on the table "video.MediaLiveChannel" */
@@ -30658,10 +30794,13 @@ export type Video_MediaLiveChannel_Order_By = {
   readonly mp4InputId?: Maybe<Order_By>;
   readonly room?: Maybe<Room_Room_Order_By>;
   readonly roomId?: Maybe<Order_By>;
-  readonly rtmpInputId?: Maybe<Order_By>;
-  readonly rtmpInputUri?: Maybe<Order_By>;
+  readonly rtmpAInputAttachmentName?: Maybe<Order_By>;
+  readonly rtmpAInputId?: Maybe<Order_By>;
+  readonly rtmpAInputUri?: Maybe<Order_By>;
+  readonly rtmpBInputAttachmentName?: Maybe<Order_By>;
+  readonly rtmpBInputId?: Maybe<Order_By>;
+  readonly rtmpBInputUri?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly vonageInputAttachmentName?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: video_MediaLiveChannel */
@@ -30700,13 +30839,19 @@ export enum Video_MediaLiveChannel_Select_Column {
   /** column name */
   RoomId = 'roomId',
   /** column name */
-  RtmpInputId = 'rtmpInputId',
+  RtmpAInputAttachmentName = 'rtmpAInputAttachmentName',
   /** column name */
-  RtmpInputUri = 'rtmpInputUri',
+  RtmpAInputId = 'rtmpAInputId',
   /** column name */
-  UpdatedAt = 'updatedAt',
+  RtmpAInputUri = 'rtmpAInputUri',
   /** column name */
-  VonageInputAttachmentName = 'vonageInputAttachmentName'
+  RtmpBInputAttachmentName = 'rtmpBInputAttachmentName',
+  /** column name */
+  RtmpBInputId = 'rtmpBInputId',
+  /** column name */
+  RtmpBInputUri = 'rtmpBInputUri',
+  /** column name */
+  UpdatedAt = 'updatedAt'
 }
 
 /** input type for updating data in table "video.MediaLiveChannel" */
@@ -30725,10 +30870,13 @@ export type Video_MediaLiveChannel_Set_Input = {
   readonly mp4InputAttachmentName?: Maybe<Scalars['String']>;
   readonly mp4InputId?: Maybe<Scalars['String']>;
   readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly rtmpInputId?: Maybe<Scalars['String']>;
-  readonly rtmpInputUri?: Maybe<Scalars['String']>;
+  readonly rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpAInputId?: Maybe<Scalars['String']>;
+  readonly rtmpAInputUri?: Maybe<Scalars['String']>;
+  readonly rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  readonly rtmpBInputId?: Maybe<Scalars['String']>;
+  readonly rtmpBInputUri?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly vonageInputAttachmentName?: Maybe<Scalars['String']>;
 };
 
 /** update columns of table "video.MediaLiveChannel" */
@@ -30762,13 +30910,132 @@ export enum Video_MediaLiveChannel_Update_Column {
   /** column name */
   RoomId = 'roomId',
   /** column name */
-  RtmpInputId = 'rtmpInputId',
+  RtmpAInputAttachmentName = 'rtmpAInputAttachmentName',
   /** column name */
-  RtmpInputUri = 'rtmpInputUri',
+  RtmpAInputId = 'rtmpAInputId',
   /** column name */
-  UpdatedAt = 'updatedAt',
+  RtmpAInputUri = 'rtmpAInputUri',
   /** column name */
-  VonageInputAttachmentName = 'vonageInputAttachmentName'
+  RtmpBInputAttachmentName = 'rtmpBInputAttachmentName',
+  /** column name */
+  RtmpBInputId = 'rtmpBInputId',
+  /** column name */
+  RtmpBInputUri = 'rtmpBInputUri',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** columns and relationships of "video.RtmpInput" */
+export type Video_RtmpInput = {
+  readonly __typename?: 'video_RtmpInput';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "video.RtmpInput" */
+export type Video_RtmpInput_Aggregate = {
+  readonly __typename?: 'video_RtmpInput_aggregate';
+  readonly aggregate?: Maybe<Video_RtmpInput_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Video_RtmpInput>;
+};
+
+/** aggregate fields of "video.RtmpInput" */
+export type Video_RtmpInput_Aggregate_Fields = {
+  readonly __typename?: 'video_RtmpInput_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Video_RtmpInput_Max_Fields>;
+  readonly min?: Maybe<Video_RtmpInput_Min_Fields>;
+};
+
+
+/** aggregate fields of "video.RtmpInput" */
+export type Video_RtmpInput_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Video_RtmpInput_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "video.RtmpInput". All fields are combined with a logical 'AND'. */
+export type Video_RtmpInput_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Video_RtmpInput_Bool_Exp>>;
+  readonly _not?: Maybe<Video_RtmpInput_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Video_RtmpInput_Bool_Exp>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.RtmpInput" */
+export enum Video_RtmpInput_Constraint {
+  /** unique or primary key constraint */
+  RtmpInputPkey = 'RtmpInput_pkey'
+}
+
+/** input type for inserting data into table "video.RtmpInput" */
+export type Video_RtmpInput_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Video_RtmpInput_Max_Fields = {
+  readonly __typename?: 'video_RtmpInput_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Video_RtmpInput_Min_Fields = {
+  readonly __typename?: 'video_RtmpInput_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "video.RtmpInput" */
+export type Video_RtmpInput_Mutation_Response = {
+  readonly __typename?: 'video_RtmpInput_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Video_RtmpInput>;
+};
+
+/** on conflict condition type for table "video.RtmpInput" */
+export type Video_RtmpInput_On_Conflict = {
+  readonly constraint: Video_RtmpInput_Constraint;
+  readonly update_columns: ReadonlyArray<Video_RtmpInput_Update_Column>;
+  readonly where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.RtmpInput". */
+export type Video_RtmpInput_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: video_RtmpInput */
+export type Video_RtmpInput_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "video.RtmpInput" */
+export enum Video_RtmpInput_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "video.RtmpInput" */
+export type Video_RtmpInput_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "video.RtmpInput" */
+export enum Video_RtmpInput_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
 }
 
 /** columns and relationships of "video.TranscriptionJob" */

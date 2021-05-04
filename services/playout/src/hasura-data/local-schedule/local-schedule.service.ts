@@ -46,7 +46,7 @@ export class LocalScheduleService {
     public async getRoomsWithBroadcastEvents(): Promise<string[]> {
         gql`
             query ScheduleService_GetRoomsWithBroadcastEvents($now: timestamptz!) {
-                Room(
+                room_Room(
                     where: {
                         events: {
                             intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A, PRERECORDED] }
@@ -65,18 +65,18 @@ export class LocalScheduleService {
                 now: new Date().toISOString(),
             },
         });
-        return result.data.Room.map((room) => room.id);
+        return result.data.room_Room.map((room) => room.id);
     }
 
     public async getScheduleData(roomId: string): Promise<LocalSchedule> {
         gql`
             query ScheduleService_GetSchedule($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
-                Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now, _lt: $cutoff } }) {
+                schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now, _lt: $cutoff } }) {
                     id
-                    contentGroup {
+                    item {
                         id
-                        contentItems(
-                            where: { contentTypeName: { _eq: VIDEO_BROADCAST } }
+                        elements(
+                            where: { typeName: { _eq: VIDEO_BROADCAST } }
                             limit: 1
                             order_by: { createdAt: desc_nulls_last }
                         ) {
@@ -194,16 +194,16 @@ export class LocalScheduleService {
             mutation ScheduleService_UpdateRtmpInputs(
                 $evenIds: [uuid!]!
                 $oddIds: [uuid!]!
-                $evenInput: RtmpInput_enum!
-                $oddInput: RtmpInput_enum!
+                $evenInput: video_RtmpInput_enum!
+                $oddInput: video_RtmpInput_enum!
             ) {
-                update_EvenEventVonageSessions: update_EventVonageSession(
+                update_EvenEventVonageSessions: update_video_EventVonageSession(
                     where: { eventId: { _in: $evenIds } }
                     _set: { rtmpInputName: $evenInput }
                 ) {
                     affected_rows
                 }
-                update_OddEventVonageSessions: update_EventVonageSession(
+                update_OddEventVonageSessions: update_video_EventVonageSession(
                     where: { eventId: { _in: $oddIds } }
                     _set: { rtmpInputName: $oddInput }
                 ) {
@@ -245,7 +245,7 @@ export class LocalScheduleService {
 
         gql`
             query LocalSchedule_GetRoomsWithEventsStarting($from: timestamptz, $to: timestamptz) {
-                Room(
+                room_Room(
                     where: {
                         events: {
                             _or: [{ startTime: { _gte: $from, _lte: $to } }, { endTime: { _gte: $from, _lte: $to } }]
@@ -271,7 +271,7 @@ export class LocalScheduleService {
             },
         });
 
-        return result.data.Room.map((room) => ({
+        return result.data.room_Room.map((room) => ({
             roomId: room.id,
             conferenceId: room.conferenceId,
             channelStackId: room.mediaLiveChannel?.id ?? null,
@@ -286,7 +286,7 @@ export class LocalScheduleService {
 
         gql`
             query LocalSchedule_GetRoomsWithoutEvents($from: timestamptz, $to: timestamptz) {
-                Room(
+                room_Room(
                     where: {
                         _and: [
                             { _not: { events: { startTime: { _gte: $from, _lte: $to } } } }
@@ -313,7 +313,7 @@ export class LocalScheduleService {
             },
         });
 
-        return result.data.Room.map((room) => ({
+        return result.data.room_Room.map((room) => ({
             roomId: room.id,
             conferenceId: room.conferenceId,
             channelStackId: room.mediaLiveChannel?.id ?? null,

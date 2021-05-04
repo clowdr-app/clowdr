@@ -164,6 +164,9 @@ actions:
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
+  permissions:
+  - role: unauthenticated
+  - role: user
 - name: updateProfilePhoto
   definition:
     kind: synchronous
@@ -228,7 +231,6 @@ custom_types:
         schema: room
         name: Room
       name: room
-      source: default
       type: object
       field_mapping:
         roomId: id
@@ -251,7 +253,6 @@ custom_types:
         schema: room
         name: Room
       name: room
-      source: default
       type: object
       field_mapping:
         roomId: id

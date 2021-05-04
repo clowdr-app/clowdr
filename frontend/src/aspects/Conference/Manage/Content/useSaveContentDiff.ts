@@ -1233,7 +1233,7 @@ export function useSaveContentDiff():
                                             email: uploader.email,
                                             id: uploader.id,
                                             name: uploader.name,
-                                            uploadableId: uploader.uploadableId,
+                                            uploadableElementId: uploader.uploadableId,
                                         })),
                                         newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
                                             conferenceId: conference.id,

@@ -1,9 +1,8 @@
 import { gql } from "@apollo/client/core";
 import {
-    ContentBaseType,
-    ContentItemDataBlob,
-    ContentType_Enum,
-    isContentItemDataBlob,
+    ElementBaseType,
+    ElementDataBlob,
+    isElementDataBlob,
     VideoBroadcastBlob,
 } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
@@ -11,13 +10,14 @@ import { Injectable } from "@nestjs/common";
 import { add, addHours, addMinutes } from "date-fns";
 import * as R from "ramda";
 import {
+    Content_ElementType_Enum,
     LocalSchedule_GetRoomsWithEventsStartingDocument,
     LocalSchedule_GetRoomsWithoutEventsDocument,
-    RoomMode_Enum,
-    RtmpInput_Enum,
+    Room_Mode_Enum,
     ScheduleService_GetRoomsWithBroadcastEventsDocument,
     ScheduleService_GetScheduleDocument,
     ScheduleService_UpdateRtmpInputsDocument,
+    Video_RtmpInput_Enum,
 } from "../../generated/graphql";
 import { GraphQlService } from "../graphql/graphql.service";
 
@@ -28,8 +28,8 @@ export interface LocalSchedule {
 
 export interface LocalScheduleAction {
     eventId: string;
-    roomModeName: RoomMode_Enum;
-    rtmpInputName: RtmpInput_Enum | null;
+    roomModeName: Room_Mode_Enum;
+    rtmpInputName: Video_RtmpInput_Enum | null;
     videoData: VideoBroadcastBlob | null;
     startTime: number;
     endTime: number;
@@ -107,9 +107,9 @@ export class LocalScheduleService {
             },
         });
 
-        const scheduleItems = scheduleResult.data.Event.map((event) => {
-            const videoData = event.contentGroup?.contentItems.length
-                ? this.getLatestBroadcastVideoData(event.contentGroup.contentItems[0].data)
+        const scheduleItems = scheduleResult.data.schedule_Event.map((event) => {
+            const videoData = event.item?.elements.length
+                ? this.getLatestBroadcastVideoData(event.item.elements[0].data)
                 : null;
 
             const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;
@@ -134,15 +134,15 @@ export class LocalScheduleService {
         };
     }
 
-    isLive(roomMode: RoomMode_Enum): boolean {
-        return [RoomMode_Enum.QAndA, RoomMode_Enum.Presentation].includes(roomMode);
+    isLive(roomMode: Room_Mode_Enum): boolean {
+        return [Room_Mode_Enum.QAndA, Room_Mode_Enum.Presentation].includes(roomMode);
     }
 
     getLatestBroadcastVideoData(contentItemData: unknown): VideoBroadcastBlob | null {
-        if (!isContentItemDataBlob(contentItemData)) {
+        if (!isElementDataBlob(contentItemData)) {
             return null;
         }
-        const contentItemDataBlob: ContentItemDataBlob = contentItemData as any;
+        const contentItemDataBlob: ElementDataBlob = contentItemData as any;
 
         const latestVersion = R.last(contentItemDataBlob);
 
@@ -151,8 +151,8 @@ export class LocalScheduleService {
         }
 
         if (
-            latestVersion.data.baseType === ContentBaseType.Video &&
-            latestVersion.data.type === ContentType_Enum.VideoBroadcast
+            latestVersion.data.baseType === ElementBaseType.Video &&
+            latestVersion.data.type === Content_ElementType_Enum.VideoBroadcast
         ) {
             return latestVersion.data;
         }
@@ -176,18 +176,19 @@ export class LocalScheduleService {
         const groupedEvenEvents = R.groupBy((e) => e.rtmpInputName ?? "none", evenEvents);
         const groupedOddEvents = R.groupBy((e) => e.rtmpInputName ?? "none", oddEvents);
 
-        const allEvenAreA = groupedEvenEvents[RtmpInput_Enum.RtmpA]?.length === evenEvents.length;
-        const allEvenAreB = groupedEvenEvents[RtmpInput_Enum.RtmpB]?.length === evenEvents.length;
-        const allOddAreA = groupedOddEvents[RtmpInput_Enum.RtmpA]?.length === oddEvents.length;
-        const allOddAreB = groupedOddEvents[RtmpInput_Enum.RtmpB]?.length === oddEvents.length;
+        const allEvenAreA = groupedEvenEvents[Video_RtmpInput_Enum.RtmpA]?.length === evenEvents.length;
+        const allEvenAreB = groupedEvenEvents[Video_RtmpInput_Enum.RtmpB]?.length === evenEvents.length;
+        const allOddAreA = groupedOddEvents[Video_RtmpInput_Enum.RtmpA]?.length === oddEvents.length;
+        const allOddAreB = groupedOddEvents[Video_RtmpInput_Enum.RtmpB]?.length === oddEvents.length;
 
         // If the inputs already alternate correctly, we can no-op.
         if ((allEvenAreA && allOddAreB) || (allEvenAreB && allOddAreA)) {
             return scheduleData;
         }
 
-        const evenInput = liveEvents[0].rtmpInputName ?? RtmpInput_Enum.RtmpA;
-        const oddInput = evenInput === RtmpInput_Enum.RtmpA ? RtmpInput_Enum.RtmpB : RtmpInput_Enum.RtmpA;
+        const evenInput = liveEvents[0].rtmpInputName ?? Video_RtmpInput_Enum.RtmpA;
+        const oddInput =
+            evenInput === Video_RtmpInput_Enum.RtmpA ? Video_RtmpInput_Enum.RtmpB : Video_RtmpInput_Enum.RtmpA;
 
         this.logger.info({ roomId: scheduleData.roomId }, "Updating selected RTMP inputs for events.");
         gql`

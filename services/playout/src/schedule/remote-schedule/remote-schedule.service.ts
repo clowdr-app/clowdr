@@ -3,7 +3,7 @@ import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import { validate } from "uuid";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
-import { RtmpInput_Enum } from "../../generated/graphql";
+import { Video_RtmpInput_Enum } from "../../generated/graphql";
 
 @Injectable()
 export class RemoteScheduleService {
@@ -218,9 +218,9 @@ export class RemoteScheduleService {
         const rtmpInputName = action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference?.endsWith(
             "-rtmpA"
         )
-            ? RtmpInput_Enum.RtmpA
+            ? Video_RtmpInput_Enum.RtmpA
             : action.ScheduleActionSettings?.InputSwitchSettings?.InputAttachmentNameReference?.endsWith("-rtmpB")
-            ? RtmpInput_Enum.RtmpB
+            ? Video_RtmpInput_Enum.RtmpB
             : null;
 
         if (!actionName || !startTime || !rtmpInputName) {
@@ -351,7 +351,7 @@ export type EventAction = {
     actionName: string;
     eventId: string;
     mode: "prerecorded" | "live";
-    rtmpInputName: RtmpInput_Enum | null;
+    rtmpInputName: Video_RtmpInput_Enum | null;
     s3Key: string | null;
     startTime: number;
 } & ActionChain;

@@ -30,7 +30,7 @@ export class VonageService {
                 $conferenceId: uuid!
                 $sessionId: String!
             ) {
-                insert_EventVonageSession_one(
+                insert_video_EventVonageSession_one(
                     object: { eventId: $eventId, conferenceId: $conferenceId, sessionId: $sessionId }
                     on_conflict: { constraint: EventVonageSession_eventId_key, update_columns: sessionId }
                 ) {

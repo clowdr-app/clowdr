@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { GetEventVonageSessionDocument, RoomMode_Enum, SetEventVonageSessionIdDocument } from "../generated/graphql";
+import { GetEventVonageSessionDocument, Room_Mode_Enum, SetEventVonageSessionIdDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import Vonage from "../lib/vonage/vonageClient";
 import { hasura } from "./hasura/hasuraMetadata";
@@ -49,7 +49,7 @@ export async function createEventEndTrigger(eventId: string, endTime: string, up
 export async function eventHasVonageSession(eventId: string): Promise<boolean> {
     gql`
         query GetEventVonageSession($eventId: uuid!) {
-            EventVonageSession(where: { eventId: { _eq: $eventId } }) {
+            video_EventVonageSession(where: { eventId: { _eq: $eventId } }) {
                 id
             }
         }
@@ -62,7 +62,7 @@ export async function eventHasVonageSession(eventId: string): Promise<boolean> {
         },
     });
 
-    return !!result.data.EventVonageSession.length;
+    return !!result.data.video_EventVonageSession.length;
 }
 
 export async function createEventVonageSession(eventId: string, conferenceId: string): Promise<void> {
@@ -75,7 +75,7 @@ export async function createEventVonageSession(eventId: string, conferenceId: st
 
     gql`
         mutation SetEventVonageSessionId($eventId: uuid!, $conferenceId: uuid!, $sessionId: String!) {
-            insert_EventVonageSession_one(
+            insert_video_EventVonageSession_one(
                 object: { eventId: $eventId, conferenceId: $conferenceId, sessionId: $sessionId }
                 on_conflict: { constraint: EventVonageSession_eventId_key, update_columns: sessionId }
             ) {
@@ -94,6 +94,6 @@ export async function createEventVonageSession(eventId: string, conferenceId: st
     });
 }
 
-export function isLive(roomModeName: RoomMode_Enum): boolean {
-    return [RoomMode_Enum.Presentation, RoomMode_Enum.QAndA].includes(roomModeName);
+export function isLive(roomModeName: Room_Mode_Enum): boolean {
+    return [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(roomModeName);
 }

@@ -551,7 +551,7 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
         throw new Error("Failed to retrieve list of events without presenter Vonage sessions");
     }
 
-    for (const event of eventsWithoutSessionResult.data.Event) {
+    for (const event of eventsWithoutSessionResult.data.schedule_Event) {
         console.log("Creating Vonage session for event", { eventId: event.id });
         try {
             await createEventVonageSession(event.id, conferenceId);

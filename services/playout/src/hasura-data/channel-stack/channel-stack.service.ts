@@ -29,7 +29,7 @@ export class ChannelStackDataService {
     public async getChannelStackDetails(roomId: string): Promise<ChannelStackDetails | null> {
         gql`
             query GetMediaLiveChannelByRoom($roomId: uuid!) {
-                Room_by_pk(id: $roomId) {
+                room_Room_by_pk(id: $roomId) {
                     id
                     conferenceId
                     mediaLiveChannel {
@@ -50,21 +50,23 @@ export class ChannelStackDataService {
             },
         });
 
-        if (!channelResult.data.Room_by_pk?.mediaLiveChannel) {
+        if (!channelResult.data.room_Room_by_pk?.mediaLiveChannel) {
             return null;
         }
 
-        const fillerVideoKey = await this.getFillerVideoKey(channelResult.data.Room_by_pk.conferenceId);
+        const fillerVideoKey = await this.getFillerVideoKey(channelResult.data.room_Room_by_pk.conferenceId);
 
         return {
-            id: channelResult.data.Room_by_pk.mediaLiveChannel.id,
+            id: channelResult.data.room_Room_by_pk.mediaLiveChannel.id,
             roomId,
-            conferenceId: channelResult.data.Room_by_pk.conferenceId,
-            mediaLiveChannelId: channelResult.data.Room_by_pk.mediaLiveChannel.mediaLiveChannelId,
-            mp4InputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.mp4InputAttachmentName,
-            rtmpAInputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.rtmpAInputAttachmentName,
-            rtmpBInputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.rtmpBInputAttachmentName ?? null,
-            loopingMp4InputAttachmentName: channelResult.data.Room_by_pk.mediaLiveChannel.loopingMp4InputAttachmentName,
+            conferenceId: channelResult.data.room_Room_by_pk.conferenceId,
+            mediaLiveChannelId: channelResult.data.room_Room_by_pk.mediaLiveChannel.mediaLiveChannelId,
+            mp4InputAttachmentName: channelResult.data.room_Room_by_pk.mediaLiveChannel.mp4InputAttachmentName,
+            rtmpAInputAttachmentName: channelResult.data.room_Room_by_pk.mediaLiveChannel.rtmpAInputAttachmentName,
+            rtmpBInputAttachmentName:
+                channelResult.data.room_Room_by_pk.mediaLiveChannel.rtmpBInputAttachmentName ?? null,
+            loopingMp4InputAttachmentName:
+                channelResult.data.room_Room_by_pk.mediaLiveChannel.loopingMp4InputAttachmentName,
             fillerVideoKey,
         };
     }
@@ -218,7 +220,7 @@ export class ChannelStackDataService {
     public async detachMediaLiveChannel(channelStackId: string): Promise<void> {
         gql`
             mutation MediaLiveChannelService_Detach($id: uuid!) {
-                update_MediaLiveChannel_by_pk(pk_columns: { id: $id }, _set: { roomId: null }) {
+                update_video_MediaLiveChannel_by_pk(pk_columns: { id: $id }, _set: { roomId: null }) {
                     id
                 }
             }

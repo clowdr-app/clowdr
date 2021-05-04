@@ -5,7 +5,7 @@ import AmazonS3URI from "amazon-s3-uri";
 import { add } from "date-fns";
 import * as R from "ramda";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
-import { RoomMode_Enum, RtmpInput_Enum } from "../../generated/graphql";
+import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
 import { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import {
@@ -234,7 +234,7 @@ export class ScheduleSyncService {
                     ScheduleActionSettings: {
                         InputSwitchSettings: {
                             InputAttachmentNameReference:
-                                localAction.rtmpInputName === RtmpInput_Enum.RtmpB
+                                localAction.rtmpInputName === Video_RtmpInput_Enum.RtmpB
                                     ? channelStackDetails.rtmpBInputAttachmentName ??
                                       channelStackDetails.rtmpAInputAttachmentName
                                     : channelStackDetails.rtmpAInputAttachmentName,
@@ -244,7 +244,7 @@ export class ScheduleSyncService {
             ];
         }
 
-        if (localAction.roomModeName === RoomMode_Enum.Prerecorded) {
+        if (localAction.roomModeName === Room_Mode_Enum.Prerecorded) {
             const videoKey = localAction.videoData ? this.getVideoKey(localAction.videoData) : null;
             if (!videoKey) {
                 this.logger.warn(

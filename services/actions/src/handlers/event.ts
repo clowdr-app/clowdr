@@ -259,7 +259,7 @@ export async function handleEventStartNotification(
         console.log("Handling event start: matched expected startTime", result.data.schedule_Event_by_pk.id, startTime);
         const nowMillis = new Date().getTime();
         const startTimeMillis = Date.parse(startTime);
-        const preloadMillis = 0;
+        const preloadMillis = 10000;
         const waitForMillis = Math.max(startTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;

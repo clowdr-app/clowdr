@@ -1,7 +1,10 @@
 import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
-import { VonageService_CreateEventVonageSessionDocument } from "../../generated/graphql";
+import {
+    VonageService_CreateEventVonageSessionDocument,
+    VonageService_FindEventsWithMissingVonageSessionDocument,
+} from "../../generated/graphql";
 import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
 import { VonageClientService } from "../../vonage/vonage/vonage-client.service";
 
@@ -15,6 +18,33 @@ export class VonageService {
         private vonageClientService: VonageClientService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
+    }
+
+    public async createMissingEventVonageSessions(): Promise<void> {
+        gql`
+            query VonageService_FindEventsWithMissingVonageSession {
+                schedule_Event(
+                    where: { _not: { eventVonageSession: {} }, intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] } }
+                ) {
+                    id
+                    conferenceId
+                }
+            }
+        `;
+
+        this.logger.info("Looking for missing event Vonage sessions");
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: VonageService_FindEventsWithMissingVonageSessionDocument,
+        });
+
+        this.logger.info({ count: result.data.schedule_Event.length }, "Creating event Vonage sessions where missing");
+
+        await Promise.all(
+            result.data.schedule_Event.map(
+                async (event) => await this.createEventVonageSession(event.id, event.conferenceId)
+            )
+        );
     }
 
     public async createEventVonageSession(eventId: string, conferenceId: string): Promise<void> {

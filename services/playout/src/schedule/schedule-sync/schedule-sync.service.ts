@@ -21,6 +21,7 @@ import {
     RemoteScheduleAction,
     RemoteScheduleService,
 } from "../remote-schedule/remote-schedule.service";
+import { VonageService } from "../vonage/vonage.service";
 
 export class ScheduleSyncService {
     private readonly logger: Bunyan;
@@ -29,7 +30,8 @@ export class ScheduleSyncService {
         private mediaLiveService: MediaLiveService,
         private channelStackDataService: ChannelStackDataService,
         private localScheduleService: LocalScheduleService,
-        private remoteScheduleService: RemoteScheduleService
+        private remoteScheduleService: RemoteScheduleService,
+        private vonageService: VonageService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
@@ -67,6 +69,12 @@ export class ScheduleSyncService {
             } catch (err) {
                 this.logger.error({ err, room: room }, "Failure while ensuring room channel stopped");
             }
+        }
+
+        try {
+            await this.vonageService.createMissingEventVonageSessions();
+        } catch (err) {
+            this.logger.error({ err }, "Failed to create missing event Vonage sessions");
         }
     }
 

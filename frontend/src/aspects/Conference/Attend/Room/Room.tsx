@@ -14,6 +14,7 @@ import {
 import type { ElementDataBlob, VideoElementBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { OutPortal } from "react-reverse-portal";
 import { Redirect, useHistory } from "react-router-dom";
 import {
     RoomPage_RoomDetailsFragment,
@@ -25,6 +26,7 @@ import {
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
+import { useEmojiFloat } from "../../../Emoji/EmojiFloat";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
@@ -194,6 +196,7 @@ function RoomInner({
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
     const currentRegistrant = useCurrentRegistrant();
+    const emojiFloat = useEmojiFloat();
 
     const now5s = useRealTime(5000);
     const now30s = useRealTime(30000);
@@ -563,21 +566,33 @@ function RoomInner({
         return !showBackstage ? (
             currentEventIsVideoPlayer ? (
                 maybeVideoDetails ? (
-                    <VideoElement elementId={maybeVideoDetails.elementId} videoElementData={maybeVideoDetails.data} />
+                    <Box>
+                        {/* TODO: Emoji float: Set extents */}
+                        <OutPortal node={emojiFloat.portalNode} />
+                        <VideoElement
+                            elementId={maybeVideoDetails.elementId}
+                            videoElementData={maybeVideoDetails.data}
+                        />
+                    </Box>
                 ) : (
                     <>Could not find video.</>
                 )
             ) : shouldShowLivePlayer && hlsUri ? (
-                <HlsPlayer
-                    roomId={roomDetails.id}
-                    canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                    hlsUri={hlsUri}
-                />
+                <Box>
+                    {/* TODO: Emoji float: Set extents */}
+                    <OutPortal node={emojiFloat.portalNode} />
+                    <HlsPlayer
+                        roomId={roomDetails.id}
+                        canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
+                        hlsUri={hlsUri}
+                    />
+                </Box>
             ) : undefined
         ) : undefined;
     }, [
         currentEventModeIsNone,
         currentRoomEvent,
+        emojiFloat.portalNode,
         hlsUri,
         maybeVideoDetails,
         roomDetails.id,

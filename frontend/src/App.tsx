@@ -12,6 +12,7 @@ import ConferenceCurrentUserActivePermissionsProvider, {
     useConferenceCurrentUserActivePermissions,
 } from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
 import { CurrentRegistrantProvider, useMaybeCurrentRegistrant } from "./aspects/Conference/useCurrentRegistrant";
+import { EmojiFloatProvider } from "./aspects/Emoji/EmojiFloat";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu, { MenuBar } from "./aspects/Menu/MainMenu";
@@ -66,27 +67,29 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
     const page = <AppPage confSlug={confSlug} rootUrl={rootUrl} />;
 
     return (
-        <CurrentUserProvider>
-            {confSlug ? (
-                <ConferenceProvider confSlug={confSlug}>
-                    <ForceUserRefresh />
-                    <ConferenceCurrentUserActivePermissionsProvider>
-                        <CurrentRegistrantProvider>
-                            <GlobalChatStateProvider>
-                                <AttendeesContextProvider>
-                                    <RoomParticipantsProvider>
-                                        {/* <ShuffleRoomsQueueMonitor /> */}
-                                        <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
-                                    </RoomParticipantsProvider>
-                                </AttendeesContextProvider>
-                            </GlobalChatStateProvider>
-                        </CurrentRegistrantProvider>
-                    </ConferenceCurrentUserActivePermissionsProvider>
-                </ConferenceProvider>
-            ) : (
-                page
-            )}
-        </CurrentUserProvider>
+        <EmojiFloatProvider>
+            <CurrentUserProvider>
+                {confSlug ? (
+                    <ConferenceProvider confSlug={confSlug}>
+                        <ForceUserRefresh />
+                        <ConferenceCurrentUserActivePermissionsProvider>
+                            <CurrentRegistrantProvider>
+                                <GlobalChatStateProvider>
+                                    <AttendeesContextProvider>
+                                        <RoomParticipantsProvider>
+                                            {/* <ShuffleRoomsQueueMonitor /> */}
+                                            <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                        </RoomParticipantsProvider>
+                                    </AttendeesContextProvider>
+                                </GlobalChatStateProvider>
+                            </CurrentRegistrantProvider>
+                        </ConferenceCurrentUserActivePermissionsProvider>
+                    </ConferenceProvider>
+                ) : (
+                    page
+                )}
+            </CurrentUserProvider>
+        </EmojiFloatProvider>
     );
 }
 

@@ -9,6 +9,7 @@ import {
 } from "../../../generated/graphql";
 import ProfileBadge from "../../Badges/ProfileBadge";
 import { useRegistrant } from "../../Conference/RegistrantsContext";
+import { useEmojiFloat } from "../../Emoji/EmojiFloat";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import { Markdown } from "../../Text/Markdown";
 import type { MessageState, Observable } from "../ChatGlobalState";
@@ -413,7 +414,17 @@ export default function MessageBox({
         isQuestion ? "blue.900" : isAnswer ? "green.900" : "gray.900"
     );
 
+    const emojiFloat = useEmojiFloat();
     const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);
+    const [isEmoteNow] = useState(
+        message.type === Chat_MessageType_Enum.Emote && message.created_at >= Date.now() - 10000
+    );
+    useEffect(() => {
+        if (message.type === Chat_MessageType_Enum.Emote && message.created_at >= Date.now() - 10000) {
+            emojiFloat.addFloater(message.message);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const timeFormat: Intl.DateTimeFormatOptions = useMemo(
         () => ({
             weekday: "short",
@@ -437,6 +448,8 @@ export default function MessageBox({
     }, [positionObservable]);
 
     return message.type === Chat_MessageType_Enum.DuplicationMarker ? (
+        <></>
+    ) : isEmoteNow ? (
         <></>
     ) : (
         <HStack

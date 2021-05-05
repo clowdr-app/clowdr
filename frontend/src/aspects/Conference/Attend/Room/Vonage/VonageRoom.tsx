@@ -2,9 +2,11 @@ import { Alert, AlertIcon, AlertTitle, Box, Flex, useBreakpointValue, useToast, 
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import { OutPortal } from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
+import { useEmojiFloat } from "../../../../Emoji/EmojiFloat";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import PlaceholderImage from "../PlaceholderImage";
@@ -63,6 +65,8 @@ function VonageRoomInner({
     isBackstageRoom: boolean;
     onRoomJoined?: (_joined: boolean) => void;
 }): JSX.Element {
+    const emojiFloat = useEmojiFloat();
+
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
         getAccessToken,
@@ -526,6 +530,8 @@ function VonageRoomInner({
 
     return (
         <Box width="100%">
+            {/* TODO: Emoji float: Set extents */}
+            <OutPortal node={emojiFloat.portalNode} />
             {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
             <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} joining={joining} />
             <Box position="relative" mb={8} width="100%">

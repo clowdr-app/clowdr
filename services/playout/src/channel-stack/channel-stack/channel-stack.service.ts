@@ -186,9 +186,8 @@ export class ChannelStackService {
     public async startChannelStackDeletion(channelStackId: string, mediaLiveChannelId: string): Promise<void> {
         this.logger.info({ channelStackId }, "Deleting channel stack");
 
-        this.channelStackDataService.createChannelStackDeleteJob(channelStackId, mediaLiveChannelId);
-
-        const { cloudFormationStackArn } = await this.channelStackDataService.deleteChannelStackRecord(channelStackId);
+        await this.channelStackDataService.createChannelStackDeleteJob(channelStackId, mediaLiveChannelId);
+        await this.channelStackDataService.deleteChannelStackRecord(channelStackId);
     }
 
     /**

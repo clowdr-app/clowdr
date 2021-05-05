@@ -4,6 +4,8 @@ import { Injectable } from "@nestjs/common";
 import AmazonS3URI from "amazon-s3-uri";
 import { ChannelStackDescription } from "../../channel-stack/channel-stack/channelStack";
 import {
+    ChannelStack_CreateChannelStackDeleteJobDocument,
+    ChannelStack_GetChannelStackCloudFormationStackArnDocument,
     CreateMediaLiveChannelDocument,
     DeleteMediaLiveChannelDocument,
     FindMediaLiveChannelsByStackArnDocument,
@@ -161,12 +163,10 @@ export class ChannelStackDataService {
     /**
      * @summary Deletes the database entry for a MediaLive channel stack
      */
-    public async deleteMediaLiveChannel(
-        mediaLiveChannelId: string
-    ): Promise<{ cloudFormationStackArn?: string | null }> {
+    public async deleteChannelStackRecord(channelStackId: string): Promise<{ cloudFormationStackArn?: string | null }> {
         gql`
-            mutation DeleteMediaLiveChannel($id: uuid!) {
-                delete_video_MediaLiveChannel_by_pk(id: $id) {
+            mutation DeleteMediaLiveChannel($channelStackId: uuid!) {
+                delete_video_MediaLiveChannel_by_pk(id: $channelStackId) {
                     id
                     cloudFormationStackArn
                 }
@@ -176,7 +176,7 @@ export class ChannelStackDataService {
         const result = await this.graphQlService.apolloClient.mutate({
             mutation: DeleteMediaLiveChannelDocument,
             variables: {
-                id: mediaLiveChannelId,
+                channelStackId,
             },
         });
 
@@ -230,6 +230,65 @@ export class ChannelStackDataService {
             mutation: MediaLiveChannelService_DetachDocument,
             variables: {
                 id: channelStackId,
+            },
+        });
+    }
+
+    public async createChannelStackDeleteJob(channelStackId: string, mediaLiveChannelId: string): Promise<void> {
+        gql`
+            query ChannelStack_GetChannelStackCloudFormationStackArn($channelStackId: uuid!) {
+                video_MediaLiveChannel_by_pk(id: $channelStackId) {
+                    id
+                    cloudFormationStackArn
+                }
+            }
+
+            mutation ChannelStack_CreateChannelStackDeleteJob(
+                $cloudFormationStackArn: String!
+                $mediaLiveChannelId: String!
+            ) {
+                insert_job_queues_ChannelStackDeleteJob_one(
+                    object: {
+                        cloudFormationStackArn: $cloudFormationStackArn
+                        jobStatusName: NEW
+                        mediaLiveChannelId: $mediaLiveChannelId
+                    }
+                ) {
+                    id
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: ChannelStack_GetChannelStackCloudFormationStackArnDocument,
+            variables: {
+                channelStackId,
+            },
+        });
+
+        if (!result.data.video_MediaLiveChannel_by_pk) {
+            this.logger.warn({ channelStackId }, "Could not find channel stack to be deleted");
+            return;
+        }
+
+        if (!result.data.video_MediaLiveChannel_by_pk.cloudFormationStackArn) {
+            this.logger.warn(
+                { channelStackId },
+                "Found channel stack to be deleted, but it does not have a CloudFormation stack Arn"
+            );
+            await this.deleteChannelStackRecord(channelStackId);
+            return;
+        }
+
+        this.logger.info(
+            { channelStackId, cloudFormationStackArn: result.data.video_MediaLiveChannel_by_pk.cloudFormationStackArn },
+            "Creating channel stack delete job"
+        );
+        await this.graphQlService.apolloClient.mutate({
+            mutation: ChannelStack_CreateChannelStackDeleteJobDocument,
+            variables: {
+                cloudFormationStackArn: result.data.video_MediaLiveChannel_by_pk.cloudFormationStackArn,
+                mediaLiveChannelId,
             },
         });
     }

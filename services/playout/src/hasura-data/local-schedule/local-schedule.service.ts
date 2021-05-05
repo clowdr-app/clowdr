@@ -290,8 +290,23 @@ export class LocalScheduleService {
                 room_Room(
                     where: {
                         _and: [
-                            { _not: { events: { startTime: { _gte: $from, _lte: $to } } } }
-                            { _not: { events: { startTime: { _lte: $from }, endTime: { _gte: $from } } } }
+                            {
+                                _not: {
+                                    events: {
+                                        startTime: { _gte: $from, _lte: $to }
+                                        intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                    }
+                                }
+                            }
+                            {
+                                _not: {
+                                    events: {
+                                        startTime: { _lte: $from }
+                                        endTime: { _gte: $from }
+                                        intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                    }
+                                }
+                            }
                             { mediaLiveChannel: {} }
                         ]
                     }

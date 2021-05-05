@@ -3,7 +3,7 @@ import React from "react";
 import { Chat_ReactionType_Enum } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
 import type { MessageState } from "../ChatGlobalState";
-import { useEmojiPickerContext } from "./EmojiPickerProvider";
+import { useEmojiPicker } from "../EmojiPickerProvider";
 import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 export default function MessageControls({
@@ -28,7 +28,7 @@ export default function MessageControls({
     hideReactions: boolean;
     usedReactions: string[];
 }): JSX.Element {
-    const emojiPicker = useEmojiPickerContext();
+    const emojiPicker = useEmojiPicker();
     const messages = useReceiveMessageQueries();
     const toast = useToast();
 

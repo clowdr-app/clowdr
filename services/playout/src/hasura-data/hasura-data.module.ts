@@ -1,5 +1,7 @@
 import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "@nestjs/common";
 import { HASURA_MODULE_OPTIONS } from "../constants";
+import { ChannelStackCreateJobService } from "./channel-stack-create-job/channel-stack-create-job.service";
+import { ChannelStackDeleteJobService } from "./channel-stack-delete-job/channel-stack-delete-job.service";
 import { ChannelStackDataService } from "./channel-stack/channel-stack.service";
 import { ConferenceConfigurationService } from "./conference-configuration/conference-configuration.service";
 import { GraphQlService } from "./graphql/graphql.service";
@@ -13,8 +15,22 @@ export type HasuraDataModuleOptions = {
 
 @Global()
 @Module({
-    providers: [GraphQlService, ChannelStackDataService, LocalScheduleService, ConferenceConfigurationService],
-    exports: [GraphQlService, ChannelStackDataService, LocalScheduleService, ConferenceConfigurationService],
+    providers: [
+        GraphQlService,
+        ChannelStackDataService,
+        ChannelStackCreateJobService,
+        ChannelStackDeleteJobService,
+        LocalScheduleService,
+        ConferenceConfigurationService,
+    ],
+    exports: [
+        GraphQlService,
+        ChannelStackDataService,
+        ChannelStackCreateJobService,
+        ChannelStackDeleteJobService,
+        LocalScheduleService,
+        ConferenceConfigurationService,
+    ],
 })
 export class HasuraDataModule {
     static forRootAsync(

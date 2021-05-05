@@ -11,7 +11,7 @@ import {
     GetChannelStackCreateJobDocument,
     Video_JobStatus_Enum,
 } from "../../generated/graphql";
-import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
+import { GraphQlService } from "../graphql/graphql.service";
 
 @Injectable()
 export class ChannelStackCreateJobService {

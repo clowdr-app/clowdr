@@ -3254,6 +3254,14 @@
       foreign_key_constraint_on: roomId
 - table:
     schema: job_queues
+    name: ChannelStackDeleteJob
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+- table:
+    schema: job_queues
     name: CombineVideosJob
   object_relationships:
   - name: conference

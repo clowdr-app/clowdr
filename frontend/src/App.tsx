@@ -12,7 +12,6 @@ import ConferenceCurrentUserActivePermissionsProvider, {
     useConferenceCurrentUserActivePermissions,
 } from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
 import { CurrentRegistrantProvider, useMaybeCurrentRegistrant } from "./aspects/Conference/useCurrentRegistrant";
-import EmojiMartProvider from "./aspects/Emoji/EmojiMartContext";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu, { MenuBar } from "./aspects/Menu/MainMenu";
@@ -21,7 +20,6 @@ import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import { Permissions_Permission_Enum } from "./generated/graphql";
-// import LastSeenProvider from "./aspects/Users/CurrentUser/OnlineStatus/LastSeenProvider";
 
 interface AppProps {
     confSlug: string | undefined;
@@ -68,30 +66,27 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
     const page = <AppPage confSlug={confSlug} rootUrl={rootUrl} />;
 
     return (
-        <EmojiMartProvider>
-            {/* <LastSeenProvider /> */}
-            <CurrentUserProvider>
-                {confSlug ? (
-                    <ConferenceProvider confSlug={confSlug}>
-                        <ForceUserRefresh />
-                        <ConferenceCurrentUserActivePermissionsProvider>
-                            <CurrentRegistrantProvider>
-                                <GlobalChatStateProvider>
-                                    <AttendeesContextProvider>
-                                        <RoomParticipantsProvider>
-                                            {/* <ShuffleRoomsQueueMonitor /> */}
-                                            <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
-                                        </RoomParticipantsProvider>
-                                    </AttendeesContextProvider>
-                                </GlobalChatStateProvider>
-                            </CurrentRegistrantProvider>
-                        </ConferenceCurrentUserActivePermissionsProvider>
-                    </ConferenceProvider>
-                ) : (
-                    page
-                )}
-            </CurrentUserProvider>
-        </EmojiMartProvider>
+        <CurrentUserProvider>
+            {confSlug ? (
+                <ConferenceProvider confSlug={confSlug}>
+                    <ForceUserRefresh />
+                    <ConferenceCurrentUserActivePermissionsProvider>
+                        <CurrentRegistrantProvider>
+                            <GlobalChatStateProvider>
+                                <AttendeesContextProvider>
+                                    <RoomParticipantsProvider>
+                                        {/* <ShuffleRoomsQueueMonitor /> */}
+                                        <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                    </RoomParticipantsProvider>
+                                </AttendeesContextProvider>
+                            </GlobalChatStateProvider>
+                        </CurrentRegistrantProvider>
+                    </ConferenceCurrentUserActivePermissionsProvider>
+                </ConferenceProvider>
+            ) : (
+                page
+            )}
+        </CurrentUserProvider>
     );
 }
 
@@ -221,8 +216,8 @@ function AppPage({ rootUrl }: AppProps) {
             width={contentWidthPc + "%"}
             flex="1 0 300px"
             mb="auto"
-            position={centerVisible ? "relative" : "fixed"}
-            top={centerVisible ? undefined : "100%"}
+            position={centerVisible ? "relative" : "absolute"}
+            top={centerVisible ? undefined : "-100%"}
             bgColor={centerBgColour}
             borderX="1px solid"
             borderLeftColor={borderColour}

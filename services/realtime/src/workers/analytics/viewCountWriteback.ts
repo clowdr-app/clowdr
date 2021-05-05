@@ -10,14 +10,17 @@ import { redisClientP } from "../../redis";
 gql`
     query SelectViewCounts($cutoff: timestamptz!, $itemIds: [uuid!]!, $elementIds: [uuid!]!, $roomIds: [uuid!]!) {
         analytics_ContentItemStats(where: { itemId: { _in: $itemIds }, created_at: { _gt: $cutoff } }) {
+            id
             itemId
             viewCount
         }
         analytics_ContentElementStats(where: { elementId: { _in: $elementIds }, created_at: { _gt: $cutoff } }) {
+            id
             elementId
             viewCount
         }
         analytics_RoomStats(where: { roomId: { _in: $roomIds }, created_at: { _gt: $cutoff } }) {
+            id
             roomId
             hlsViewCount
         }
@@ -157,6 +160,7 @@ async function Main(continueExecuting = false) {
                         (x) => x.itemId === result.identifier
                     );
                     return {
+                        id: existing?.id,
                         itemId: result.identifier,
                         viewCount: (existing?.viewCount ?? 0) + result.count,
                     };
@@ -166,6 +170,7 @@ async function Main(continueExecuting = false) {
                         (x) => x.elementId === result.identifier
                     );
                     return {
+                        id: existing?.id,
                         elementId: result.identifier,
                         viewCount: (existing?.viewCount ?? 0) + result.count,
                     };
@@ -175,6 +180,7 @@ async function Main(continueExecuting = false) {
                         (x) => x.roomId === result.identifier
                     );
                     return {
+                        id: existing?.id,
                         roomId: result.identifier,
                         hlsViewCount: (existing?.hlsViewCount ?? 0) + result.count,
                     };

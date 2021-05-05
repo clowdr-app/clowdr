@@ -61,7 +61,8 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
 
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
-    const now = useRealTime(1000);
+    const realNow = useRealTime(1000);
+    const now = realNow + 2000; // adjust for expected RTMP delay
     const live = now >= startTime && now <= endTime;
     const secondsUntilLive = (startTime - now) / 1000;
     const secondsUntilOffAir = (endTime - now) / 1000;

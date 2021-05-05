@@ -89,11 +89,15 @@ export async function completeVideoRenderJob(
         durationSeconds,
     };
 
+    const updatedData: Partial<BroadcastRenderJobDataBlob> = {
+        broadcastContentItemData: mp4BroadcastElementData,
+    };
+
     await apolloClient.mutate({
         mutation: CompleteVideoRenderJobDocument,
         variables: {
             videoRenderJobId,
-            data: { broadcastElementData: mp4BroadcastElementData },
+            data: updatedData,
         },
     });
 

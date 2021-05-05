@@ -114,7 +114,7 @@
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
 - name: SyncChannels
-  webhook: '{{ACTION_BASE_URL}}/channels/sync'
+  webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
   schedule: '*/2 * * * *'
   include_in_metadata: true
   payload: {}

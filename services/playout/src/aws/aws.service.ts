@@ -70,7 +70,7 @@ export class AwsService implements OnModuleInit {
         });
         const cloudFormation = new CloudFormationDeployments({ sdkProvider });
         return cloudFormation.deployStack({
-            stack: stackArtifact,
+            stack: (stackArtifact as unknown) as any, // hack required due to weird type exports from CDK
             notificationArns: [notificationTopicArn],
             quiet: true,
         });

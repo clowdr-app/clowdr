@@ -16,7 +16,6 @@ import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
 import { router as analyticsRouter } from "./router/analytics";
 import { router as broadcastElementRouter } from "./router/broadcastElement";
-import { router as channelsRouter } from "./router/channels";
 import { router as chimeRouter } from "./router/chime";
 import { router as combineVideosJobRouter } from "./router/combineVideosJob";
 import { router as companionRouter } from "./router/companion";
@@ -92,8 +91,6 @@ app.use("/eventProgramPerson", eventProgramPersonRouter);
 app.use("/mediaPackageHarvestJob", mediaPackageHarvestJobRouter);
 app.use("/combineVideosJob", combineVideosJobRouter);
 app.use("/registrantGoogleAccount", registrantGoogleAccountRouter);
-
-app.use("/channels", channelsRouter);
 
 app.use("/profile", profileRouter);
 app.use("/shuffle", shuffleRoomsRouter);

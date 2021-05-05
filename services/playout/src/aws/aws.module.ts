@@ -5,6 +5,7 @@ import assert from "assert";
 import { AWS_MODULE_OPTIONS } from "../constants";
 import { AwsService } from "./aws.service";
 import { CloudFormationService } from "./cloud-formation/cloud-formation.service";
+import { MediaLiveService } from "./medialive/medialive.service";
 
 export type AwsModuleOptions = {
     credentials: {
@@ -18,8 +19,8 @@ export type AwsModuleOptions = {
 
 @Global()
 @Module({
-    providers: [AwsService, CloudFormationService],
-    exports: [AwsService, CloudFormationService],
+    providers: [AwsService, CloudFormationService, MediaLiveService],
+    exports: [AwsService, CloudFormationService, MediaLiveService],
 })
 export class AwsModule {
     static forRoot(config: AwsModuleOptions): DynamicModule {

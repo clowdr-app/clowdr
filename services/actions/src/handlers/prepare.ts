@@ -10,12 +10,11 @@ import {
     GetEventsWithoutVonageSessionDocument,
     GetVideoBroadcastElementsDocument,
     OtherConferencePrepareJobsDocument,
-    SetEventVonageSessionIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
+import { createEventVonageSession } from "../lib/event";
 import { createTransitions } from "../lib/transitions";
-import Vonage from "../lib/vonage/vonageClient";
 import { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
@@ -280,251 +279,6 @@ gql`
     }
 `;
 
-// async function createEventTitleSlideBroadcastItems(
-//     conferencePrepareJobId: string,
-//     conferenceId: string
-// ): Promise<void> {
-//     // Render event title slides
-//     console.log("Conference prepare: rendering title slides", conferencePrepareJobId);
-
-//     let backgroundVideo, bucket, key;
-//     try {
-//         const backgroundVideos = await getConferenceConfiguration<string[]>(conferenceId, "BACKGROUND_VIDEOS");
-//         if (!backgroundVideos) {
-//             throw new Error("No BACKGROUND_VIDEOS configuration found");
-//         }
-//         backgroundVideo = backgroundVideos[0];
-//         const parsedUri = AmazonS3URI(backgroundVideo);
-//         bucket = parsedUri.bucket;
-//         key = parsedUri.key;
-//     } catch (e) {
-//         console.error("Conference prepare: could not load video filler", conferencePrepareJobId, e);
-//     }
-
-//     gql`
-//         query GetEventTitleDetails($conferenceId: uuid!) {
-//             Event(
-//                 where: {
-//                     conferenceId: { _eq: $conferenceId }
-//                     item: { elements: { typeName: { _in: [VIDEO_BROADCAST] } } }
-//                     intendedRoomModeName: { _eq: PRERECORDED }
-//                 }
-//             ) {
-//                 id
-//                 item {
-//                     id
-//                     title
-//                     people(distinct_on: id) {
-//                         person {
-//                             name
-//                             id
-//                         }
-//                         id
-//                     }
-//                     elements(
-//                         distinct_on: typeName
-//                         where: { typeName: { _eq: VIDEO_BROADCAST } }
-//                         order_by: { typeName: asc }
-//                         limit: 1
-//                     ) {
-//                         typeName
-//                         id
-//                         itemId
-//                     }
-//                 }
-//                 intendedRoomModeName
-//                 name
-//             }
-//         }
-//     `;
-
-//     const eventsResult = await apolloClient.query({
-//         query: GetEventTitleDetailsDocument,
-//         variables: {
-//             conferenceId: conferenceId,
-//         },
-//     });
-
-//     console.log(
-//         `Conference prepare: rendering title slides for ${eventsResult.data.Event.length} events`,
-//         conferencePrepareJobId
-//     );
-//     for (const event of eventsResult.data.Event) {
-//         console.log("Conference prepare: rendering title slides for event", conferencePrepareJobId, event.id);
-//         if (!event.item || event.item.elements.length < 1) {
-//             console.warn(
-//                 "Conference prepare: event does not contain a video broadcast",
-//                 conferencePrepareJobId,
-//                 event.id
-//             );
-//             continue;
-//         }
-
-//         const element = event.item?.elements[0];
-
-//         const names = event.item.people.map((person) => person.person.name);
-//         const eventTitle = event.name;
-//         const name = uuidv4();
-
-//         const project = await OpenShotClient.projects.createProject({
-//             channel_layout: ChannelLayout.STEREO,
-//             channels: 2,
-//             fps_den: 1,
-//             fps_num: 30,
-//             height: 1080,
-//             width: 1920,
-//             name,
-//             sample_rate: 44100,
-//             json: {},
-//         });
-
-//         let duration = 10.0;
-
-//         if (bucket && key) {
-//             const videoFile = await OpenShotClient.files.uploadS3Url(project.id, bucket, key, key);
-
-//             duration = videoFile.json.duration;
-
-//             await OpenShotClient.clips.createClip({
-//                 project: OpenShotClient.projects.toUrl(project.id),
-//                 file: OpenShotClient.files.toUrl(videoFile.id),
-//                 start: 0.0,
-//                 end: duration,
-//                 layer: 0,
-//                 json: {},
-//                 position: 0.0,
-//             });
-//         }
-
-//         const titleFile = await OpenShotClient.projects.createTitle(project.id, {
-//             template: "Center-Text.svg",
-//             text: wrap(eventTitle, { width: 30 })
-//                 .split("\n")
-//                 .map((line) => `<tspan x="960" dy="1em">${line.trim()}</tspan>`)
-//                 .join(""),
-//             font_size: 100.0,
-//             font_name: "Bitstream Vera Sans",
-//             fill_color: "#ffcc00",
-//             fill_opacity: 1.0,
-//             stroke_color: "#000000",
-//             stroke_size: 3.0,
-//             stroke_opacity: 1.0,
-//             drop_shadow: true,
-//             background_color: "#000000",
-//             background_opacity: 0.4,
-//         });
-
-//         await OpenShotClient.clips.createClip({
-//             project: OpenShotClient.projects.toUrl(project.id),
-//             file: OpenShotClient.files.toUrl(titleFile.id),
-//             start: 0.0,
-//             end: duration,
-//             layer: 1,
-//             json: {},
-//             position: 0.0,
-//         });
-
-//         const titleRenderJobData: TitleRenderJobDataBlob = {
-//             type: "TitleRenderJob",
-//             authors: names,
-//             openShotProjectId: project.id,
-//             name,
-//         };
-
-//         gql`
-//             mutation CreateVideoTitlesElement($conferenceId: uuid!, $itemId: uuid!, $title: String!) {
-//                 insert_Element_one(
-//                     object: {
-//                         conferenceId: $conferenceId
-//                         itemId: $itemId
-//                         typeName: VIDEO_TITLES
-//                         data: []
-//                         name: $title
-//                     }
-//                 ) {
-//                     id
-//                 }
-//             }
-
-//             query GetVideoTitlesElement($itemId: uuid!, $title: String!) {
-//                 Element(
-//                     where: {
-//                         itemId: { _eq: $itemId }
-//                         typeName: { _eq: VIDEO_TITLES }
-//                         name: { _eq: $title }
-//                     }
-//                     limit: 1
-//                     order_by: { createdAt: desc }
-//                 ) {
-//                     id
-//                 }
-//             }
-//         `;
-
-//         // Check whether there is an existing title slide content item for this event name.
-//         // If not, create it.
-//         const existingTitlesElementResult = await apolloClient.query({
-//             query: GetVideoTitlesElementDocument,
-//             variables: {
-//                 itemId: element.itemId,
-//                 title: event.name,
-//             },
-//         });
-
-//         let titleElementId;
-//         if (existingTitlesElementResult.data.Element.length > 0) {
-//             titleElementId = existingTitlesElementResult.data.Element[0].id;
-//         } else {
-//             const createTitlesElementResult = await apolloClient.mutate({
-//                 mutation: CreateVideoTitlesElementDocument,
-//                 variables: {
-//                     conferenceId: conferenceId,
-//                     itemId: element.itemId,
-//                     title: event.name,
-//                 },
-//             });
-
-//             if (!createTitlesElementResult.data?.insert_Element_one?.id) {
-//                 console.error(
-//                     "Conference prepare: could not create new content item for titles",
-//                     createTitlesElementResult.errors,
-//                     conferencePrepareJobId,
-//                     event.id
-//                 );
-//                 throw new Error(`Could not create new titles content item for event (${event.id})`);
-//             }
-//             titleElementId = createTitlesElementResult.data.insert_Element_one.id;
-//         }
-
-//         let broadcastElementId;
-//         try {
-//             broadcastElementId = await upsertPendingMP4BroadcastElement(
-//                 conferencePrepareJobId,
-//                 conferenceId,
-//                 titleElementId
-//             );
-//         } catch (e) {
-//             console.error(
-//                 "Conference prepare: failed to create broadcast content item",
-//                 e,
-//                 event.id,
-//                 conferencePrepareJobId
-//             );
-//             throw new Error(`Failed to create broadcast content item for event (${event.id})`);
-//         }
-
-//         await apolloClient.mutate({
-//             mutation: CreateVideoRenderJobDocument,
-//             variables: {
-//                 conferenceId,
-//                 conferencePrepareJobId,
-//                 data: titleRenderJobData,
-//                 broadcastElementId,
-//             },
-//         });
-//     }
-// }
-
 async function createEventVonageSessionsBroadcastItems(conferenceId: string): Promise<void> {
     console.log("Creating broadcast content items for presenter Vonage rooms", conferenceId);
     gql`
@@ -552,36 +306,12 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
         throw new Error("Failed to retrieve list of events without presenter Vonage sessions");
     }
 
-    for (const room of eventsWithoutSessionResult.data.schedule_Event) {
-        console.log("Creating Vonage session for event", room.id);
+    for (const event of eventsWithoutSessionResult.data.schedule_Event) {
+        console.log("Creating Vonage session for event", { eventId: event.id });
         try {
-            const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
-
-            if (!sessionResult) {
-                throw new Error("No session ID returned from Vonage");
-            }
-
-            gql`
-                mutation SetEventVonageSessionId($eventId: uuid!, $conferenceId: uuid!, $sessionId: String!) {
-                    insert_video_EventVonageSession_one(
-                        object: { eventId: $eventId, conferenceId: $conferenceId, sessionId: $sessionId }
-                        on_conflict: { constraint: EventVonageSession_eventId_key, update_columns: sessionId }
-                    ) {
-                        id
-                    }
-                }
-            `;
-
-            await apolloClient.mutate({
-                mutation: SetEventVonageSessionIdDocument,
-                variables: {
-                    eventId: room.id,
-                    conferenceId,
-                    sessionId: sessionResult.sessionId,
-                },
-            });
+            await createEventVonageSession(event.id, conferenceId);
         } catch (e) {
-            console.error("Failed to create Vonage session", room.id, e);
+            console.error("Failed to create Vonage session", event.id, e);
             throw new Error(`Failed to create Vonage session: ${e.message}`);
         }
     }

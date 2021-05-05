@@ -6,14 +6,19 @@ import {
 } from "@golevelup/nestjs-hasura";
 import { Injectable } from "@nestjs/common";
 import * as Bunyan from "bunyan";
-import { ChannelSyncService } from "./channels/channel-sync/channel-sync.service";
+import { ChannelStackSyncService } from "./channel-stack/channel-stack-sync/channel-stack-sync.service";
 import { Room_Mode_Enum } from "./generated/graphql";
+import { ScheduleSyncService } from "./schedule/schedule-sync/schedule-sync.service";
 
 @Injectable()
 export class AppService {
     private readonly logger: Bunyan;
 
-    constructor(@RootLogger() logger: Bunyan, private channelSync: ChannelSyncService) {
+    constructor(
+        @RootLogger() logger: Bunyan,
+        private channelStackSync: ChannelStackSyncService,
+        private scheduleSync: ScheduleSyncService
+    ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
@@ -41,7 +46,18 @@ export class AppService {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannelStacks(_evt: any): void {
         this.logger.info({ event: "SyncChannelStacks", data: _evt });
-        this.channelSync.syncChannelStacks().catch((err) => this.logger.error(err));
+        this.channelStackSync.syncChannelStacks().catch((err) => this.logger.error(err));
+    }
+
+    @TrackedHasuraScheduledEventHandler({
+        cronSchedule: "*/2 * * * *",
+        name: "SyncChannels",
+        payload: {},
+    })
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    handleSyncChannels(_evt: any): void {
+        this.logger.info({ event: "SyncChannels", data: _evt });
+        this.scheduleSync.fullScheduleSync().catch((err) => this.logger.error(err));
     }
 }
 

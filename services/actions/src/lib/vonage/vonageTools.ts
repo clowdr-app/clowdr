@@ -5,6 +5,7 @@ import {
     GetEventBroadcastDetailsDocument,
     GetEventByVonageSessionIdDocument,
     RemoveEventParticipantStreamDocument,
+    Video_RtmpInput_Enum,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { StreamData } from "../../types/vonage";
@@ -24,13 +25,15 @@ gql`
             room {
                 id
                 mediaLiveChannel {
-                    rtmpInputUri
+                    rtmpAInputUri
+                    rtmpBInputUri
                     id
                 }
             }
             eventVonageSession {
                 sessionId
                 id
+                rtmpInputName
             }
         }
     }
@@ -54,11 +57,20 @@ export async function getEventBroadcastDetails(eventId: string): Promise<EventBr
         throw new Error("Could not find event");
     }
 
-    if (!eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel?.rtmpInputUri) {
-        throw new Error("No RTMP Push URI available for event room.");
+    if (!eventResult.data.schedule_Event_by_pk.eventVonageSession) {
+        throw new Error("Could not find event Vonage session");
     }
 
-    const rtmpUri = eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.rtmpInputUri;
+    if (!eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel) {
+        throw new Error("Could not find MediaLive channel for event");
+    }
+
+    const rtmpUri =
+        eventResult.data.schedule_Event_by_pk.eventVonageSession.rtmpInputName === Video_RtmpInput_Enum.RtmpB
+            ? eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel?.rtmpBInputUri ??
+              eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.rtmpAInputUri
+            : eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.rtmpAInputUri;
+
     const rtmpUriParts = rtmpUri.split("/");
     if (rtmpUriParts.length < 2) {
         throw new Error("RTMP Push URI has unexpected format");

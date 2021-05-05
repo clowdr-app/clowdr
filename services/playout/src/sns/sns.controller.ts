@@ -3,7 +3,10 @@ import { Body, Controller, Post } from "@nestjs/common";
 import axios from "axios";
 import * as Bunyan from "bunyan";
 import { CloudFormationService } from "../aws/cloud-formation/cloud-formation.service";
-import { ChannelsService } from "../channels/channels/channels.service";
+import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
+import { Video_JobStatus_Enum } from "../generated/graphql";
+import { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
+import { ChannelStackDataService } from "../hasura-data/channel-stack/channel-stack.service";
 import { SNSNotificationDto } from "./sns-notification.dto";
 
 @Controller("aws")
@@ -13,7 +16,9 @@ export class SnsController {
     constructor(
         @Logger() requestLogger: Bunyan,
         private cloudformationService: CloudFormationService,
-        private channelsService: ChannelsService
+        private channelsService: ChannelStackService,
+        private channelStackDataService: ChannelStackDataService,
+        private channelStackDeleteJobService: ChannelStackDeleteJobService
     ) {
         this.logger = requestLogger.child({ component: this.constructor.name });
     }
@@ -81,12 +86,36 @@ export class SnsController {
                 case "DELETE_COMPLETE": {
                     try {
                         if (parsedMessage["StackId"]) {
-                            await this.channelsService.deleteChannelStacksByArn(parsedMessage["StackId"]);
+                            await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
+                                parsedMessage["StackId"],
+                                Video_JobStatus_Enum.Completed,
+                                null
+                            );
                         }
-                    } catch (e) {
+                    } catch (err) {
                         this.logger.error(
                             {
-                                err: e,
+                                err,
+                                message,
+                            },
+                            "Failed to handle deletion of channel stack"
+                        );
+                    }
+                    break;
+                }
+                case "DELETE_FAILED": {
+                    try {
+                        if (parsedMessage["StackId"]) {
+                            await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
+                                parsedMessage["StackId"],
+                                Video_JobStatus_Enum.Failed,
+                                parsedMessage["ResourceStatusReason"] ?? "Unknown reason"
+                            );
+                        }
+                    } catch (err) {
+                        this.logger.error(
+                            {
+                                err,
                                 message,
                             },
                             "Failed to handle deletion of channel stack"

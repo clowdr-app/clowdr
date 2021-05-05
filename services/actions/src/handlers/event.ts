@@ -10,7 +10,13 @@ import {
     StartChatDuplicationMutationVariables,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { createEventEndTrigger, createEventStartTrigger } from "../lib/event";
+import {
+    createEventEndTrigger,
+    createEventStartTrigger,
+    createEventVonageSession,
+    eventHasVonageSession,
+    isLive,
+} from "../lib/event";
 import { sendFailureEmail } from "../lib/logging/failureEmails";
 import { createItemBreakoutRoom } from "../lib/room";
 import Vonage from "../lib/vonage/vonageClient";
@@ -32,22 +38,33 @@ export async function handleEventUpdated(payload: Payload<EventData>): Promise<v
         if (oldRow) {
             // Event was updated
             if (oldRow.startTime !== newRow.startTime) {
-                await createEventStartTrigger(newRow.id, newRow.startTime);
+                await createEventStartTrigger(newRow.id, newRow.startTime, Date.parse(newRow.updated_at));
             }
 
             if (oldRow.endTime !== newRow.endTime && newRow.endTime) {
-                await createEventEndTrigger(newRow.id, newRow.endTime);
+                await createEventEndTrigger(newRow.id, newRow.endTime, Date.parse(newRow.updated_at));
             }
         } else {
             // Event was inserted
-            await createEventStartTrigger(newRow.id, newRow.startTime);
+            await createEventStartTrigger(newRow.id, newRow.startTime, Date.parse(newRow.updated_at));
             if (newRow.endTime) {
-                await createEventEndTrigger(newRow.id, newRow.endTime);
+                await createEventEndTrigger(newRow.id, newRow.endTime, Date.parse(newRow.updated_at));
             }
         }
-    } catch (e) {
-        await sendFailureEmail("Could not insert event start/end triggers", e);
-        throw e;
+    } catch (err) {
+        console.error("Could not insert event start/end triggers", { eventId: newRow.id, err });
+        await sendFailureEmail("Could not insert event start/end triggers", err);
+        throw err;
+    }
+
+    try {
+        const hasVonageSession = await eventHasVonageSession(newRow.id);
+        if (!hasVonageSession && isLive(newRow.intendedRoomModeName)) {
+            await createEventVonageSession(newRow.id, newRow.conferenceId);
+        }
+    } catch (err) {
+        console.error("Could not create Vonage session for event", { eventId: newRow.id, err });
+        throw err;
     }
 }
 
@@ -200,6 +217,7 @@ gql`
         schedule_Event_by_pk(id: $eventId) {
             id
             name
+            updatedAt
             startTime
             endTime
             conferenceId
@@ -217,7 +235,11 @@ gql`
     }
 `;
 
-export async function handleEventStartNotification(eventId: string, startTime: string): Promise<void> {
+export async function handleEventStartNotification(
+    eventId: string,
+    startTime: string,
+    updatedAt: number | null
+): Promise<void> {
     console.log("Handling event start", eventId, startTime);
     const result = await callWithRetry(
         async () =>
@@ -229,11 +251,15 @@ export async function handleEventStartNotification(eventId: string, startTime: s
             })
     );
 
-    if (result.data.schedule_Event_by_pk && result.data.schedule_Event_by_pk.startTime === startTime) {
+    if (
+        result.data.schedule_Event_by_pk &&
+        result.data.schedule_Event_by_pk.startTime === startTime &&
+        (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.updatedAt) === updatedAt)
+    ) {
         console.log("Handling event start: matched expected startTime", result.data.schedule_Event_by_pk.id, startTime);
         const nowMillis = new Date().getTime();
         const startTimeMillis = Date.parse(startTime);
-        const preloadMillis = 0;
+        const preloadMillis = 10000;
         const waitForMillis = Math.max(startTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
@@ -267,11 +293,19 @@ export async function handleEventStartNotification(eventId: string, startTime: s
             }
         }
     } else {
-        console.log("Event start notification did not match current event start time, skipping.", eventId, startTime);
+        console.log("Event start notification did not match current event start time, skipping.", {
+            eventId,
+            startTime,
+            updatedAt,
+        });
     }
 }
 
-export async function handleEventEndNotification(eventId: string, endTime: string): Promise<void> {
+export async function handleEventEndNotification(
+    eventId: string,
+    endTime: string,
+    updatedAt: number | null
+): Promise<void> {
     console.log("Handling event end", eventId, endTime);
     const result = await callWithRetry(
         async () =>
@@ -283,7 +317,11 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
             })
     );
 
-    if (result.data.schedule_Event_by_pk && result.data.schedule_Event_by_pk.endTime === endTime) {
+    if (
+        result.data.schedule_Event_by_pk &&
+        result.data.schedule_Event_by_pk.endTime === endTime &&
+        (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.updatedAt) === updatedAt)
+    ) {
         console.log("Handling event end: matched expected endTime", result.data.schedule_Event_by_pk.id, endTime);
         const nowMillis = new Date().getTime();
         const endTimeMillis = Date.parse(endTime);
@@ -321,7 +359,7 @@ export async function handleEventEndNotification(eventId: string, endTime: strin
             }
         }, harvestJobWaitForMillis);
     } else {
-        console.log("Event stop notification did not match current event end time, skipping.", eventId, endTime);
+        console.log("Event stop notification did not match current event, skipping.", { eventId, endTime, updatedAt });
     }
 }
 

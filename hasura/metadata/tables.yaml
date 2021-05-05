@@ -522,6 +522,7 @@
         remote_table:
           schema: chat
           name: Message
+        insertion_order: null
         column_mapping:
           sId: duplicatedMessageSId
   - name: duplicateOutgoing
@@ -1413,6 +1414,7 @@
         remote_table:
           schema: public
           name: FlatUnauthPermission
+        insertion_order: null
         column_mapping:
           slug: slug
   - name: registrants
@@ -1456,6 +1458,7 @@
         remote_table:
           schema: public
           name: FlatUserPermission
+        insertion_order: null
         column_mapping:
           slug: slug
   insert_permissions:
@@ -1674,6 +1677,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           id: demoCodeId
   - name: usedBy
@@ -1946,6 +1950,7 @@
         remote_table:
           schema: video
           name: BroadcastElement
+        insertion_order: null
         column_mapping:
           id: elementId
   - name: conference
@@ -1963,6 +1968,7 @@
         remote_table:
           schema: analytics
           name: ContentElementStats
+        insertion_order: null
         column_mapping:
           id: elementId
   - name: type
@@ -2272,6 +2278,7 @@
         remote_table:
           schema: room
           name: Room
+        insertion_order: null
         column_mapping:
           id: originatingItemId
   - name: stats
@@ -2280,6 +2287,7 @@
         remote_table:
           schema: analytics
           name: ContentItemStats
+        insertion_order: null
         column_mapping:
           id: itemId
   - name: type
@@ -2932,6 +2940,7 @@
         remote_table:
           schema: content
           name: Element
+        insertion_order: null
         column_mapping:
           id: uploadableId
   - name: item
@@ -3243,6 +3252,14 @@
   - name: room
     using:
       foreign_key_constraint_on: roomId
+- table:
+    schema: job_queues
+    name: ChannelStackDeleteJob
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
 - table:
     schema: job_queues
     name: CombineVideosJob
@@ -4416,6 +4433,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           slug: slug
   - name: permission
@@ -4424,6 +4442,7 @@
         remote_table:
           schema: permissions
           name: Permission
+        insertion_order: null
         column_mapping:
           permission_name: name
   - name: user
@@ -4432,6 +4451,7 @@
         remote_table:
           schema: public
           name: User
+        insertion_order: null
         column_mapping:
           user_id: id
   select_permissions:
@@ -5037,6 +5057,7 @@
         remote_table:
           schema: registrant
           name: Invitation
+        insertion_order: null
         column_mapping:
           id: registrantId
   - name: profile
@@ -5045,6 +5066,7 @@
         remote_table:
           schema: registrant
           name: Profile
+        insertion_order: null
         column_mapping:
           id: registrantId
   - name: user
@@ -5057,6 +5079,7 @@
         remote_table:
           schema: registrant
           name: ProfileBadges
+        insertion_order: null
         column_mapping:
           id: registrantId
   - name: groupRegistrants
@@ -5259,6 +5282,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: room
@@ -5267,6 +5291,7 @@
         remote_table:
           schema: room
           name: Room
+        insertion_order: null
         column_mapping:
           roomId: id
   select_permissions:
@@ -5467,6 +5492,7 @@
         remote_table:
           schema: room
           name: ChimeMeeting
+        insertion_order: null
         column_mapping:
           id: roomId
   - name: conference
@@ -5484,6 +5510,7 @@
         remote_table:
           schema: video
           name: MediaLiveChannel
+        insertion_order: null
         column_mapping:
           id: roomId
   - name: originatingData
@@ -6381,6 +6408,7 @@
         remote_table:
           schema: video
           name: BroadcastElement
+        insertion_order: null
         column_mapping:
           id: eventId
   - name: conference
@@ -6392,6 +6420,7 @@
         remote_table:
           schema: video
           name: EventVonageSession
+        insertion_order: null
         column_mapping:
           id: eventId
   - name: exhibition
@@ -7569,6 +7598,10 @@
                     registrant:
                       userId:
                         _eq: X-Hasura-User-Id
+- table:
+    schema: video
+    name: RtmpInput
+  is_enum: true
 - table:
     schema: video
     name: TranscriptionJob

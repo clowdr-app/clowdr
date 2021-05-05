@@ -11159,6 +11159,210 @@ export enum Job_Queues_ChannelStackCreateJob_Update_Column {
     UpdatedAt = "updated_at",
 }
 
+/** columns and relationships of "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob = {
+    __typename?: "job_queues_ChannelStackDeleteJob";
+    cloudFormationStackArn: Scalars["String"];
+    createdAt: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    jobStatusName: Video_JobStatus_Enum;
+    mediaLiveChannelId: Scalars["String"];
+    message?: Maybe<Scalars["String"]>;
+    updatedAt: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Aggregate = {
+    __typename?: "job_queues_ChannelStackDeleteJob_aggregate";
+    aggregate?: Maybe<Job_Queues_ChannelStackDeleteJob_Aggregate_Fields>;
+    nodes: Array<Job_Queues_ChannelStackDeleteJob>;
+};
+
+/** aggregate fields of "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Aggregate_Fields = {
+    __typename?: "job_queues_ChannelStackDeleteJob_aggregate_fields";
+    count?: Maybe<Scalars["Int"]>;
+    max?: Maybe<Job_Queues_ChannelStackDeleteJob_Max_Fields>;
+    min?: Maybe<Job_Queues_ChannelStackDeleteJob_Min_Fields>;
+};
+
+/** aggregate fields of "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Aggregate_Order_By = {
+    count?: Maybe<Order_By>;
+    max?: Maybe<Job_Queues_ChannelStackDeleteJob_Max_Order_By>;
+    min?: Maybe<Job_Queues_ChannelStackDeleteJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Arr_Rel_Insert_Input = {
+    data: Array<Job_Queues_ChannelStackDeleteJob_Insert_Input>;
+    on_conflict?: Maybe<Job_Queues_ChannelStackDeleteJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ChannelStackDeleteJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ChannelStackDeleteJob_Bool_Exp = {
+    _and?: Maybe<Array<Maybe<Job_Queues_ChannelStackDeleteJob_Bool_Exp>>>;
+    _not?: Maybe<Job_Queues_ChannelStackDeleteJob_Bool_Exp>;
+    _or?: Maybe<Array<Maybe<Job_Queues_ChannelStackDeleteJob_Bool_Exp>>>;
+    cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
+    createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum_Comparison_Exp>;
+    mediaLiveChannelId?: Maybe<String_Comparison_Exp>;
+    message?: Maybe<String_Comparison_Exp>;
+    updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ChannelStackDeleteJob" */
+export enum Job_Queues_ChannelStackDeleteJob_Constraint {
+    /** unique or primary key constraint */
+    ChannelStackDeleteJobPkey = "ChannelStackDeleteJob_pkey",
+}
+
+/** input type for inserting data into table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Insert_Input = {
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ChannelStackDeleteJob_Max_Fields = {
+    __typename?: "job_queues_ChannelStackDeleteJob_max_fields";
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Max_Order_By = {
+    cloudFormationStackArn?: Maybe<Order_By>;
+    createdAt?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ChannelStackDeleteJob_Min_Fields = {
+    __typename?: "job_queues_ChannelStackDeleteJob_min_fields";
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Min_Order_By = {
+    cloudFormationStackArn?: Maybe<Order_By>;
+    createdAt?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Mutation_Response = {
+    __typename?: "job_queues_ChannelStackDeleteJob_mutation_response";
+    /** number of affected rows by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data of the affected rows by the mutation */
+    returning: Array<Job_Queues_ChannelStackDeleteJob>;
+};
+
+/** input type for inserting object relation for remote table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Obj_Rel_Insert_Input = {
+    data: Job_Queues_ChannelStackDeleteJob_Insert_Input;
+    on_conflict?: Maybe<Job_Queues_ChannelStackDeleteJob_On_Conflict>;
+};
+
+/** on conflict condition type for table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_On_Conflict = {
+    constraint: Job_Queues_ChannelStackDeleteJob_Constraint;
+    update_columns: Array<Job_Queues_ChannelStackDeleteJob_Update_Column>;
+    where?: Maybe<Job_Queues_ChannelStackDeleteJob_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Order_By = {
+    cloudFormationStackArn?: Maybe<Order_By>;
+    createdAt?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    jobStatusName?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "job_queues.ChannelStackDeleteJob" */
+export enum Job_Queues_ChannelStackDeleteJob_Select_Column {
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
+    /** column name */
+    CreatedAt = "createdAt",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobStatusName = "jobStatusName",
+    /** column name */
+    MediaLiveChannelId = "mediaLiveChannelId",
+    /** column name */
+    Message = "message",
+    /** column name */
+    UpdatedAt = "updatedAt",
+}
+
+/** input type for updating data in table "job_queues.ChannelStackDeleteJob" */
+export type Job_Queues_ChannelStackDeleteJob_Set_Input = {
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "job_queues.ChannelStackDeleteJob" */
+export enum Job_Queues_ChannelStackDeleteJob_Update_Column {
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
+    /** column name */
+    CreatedAt = "createdAt",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobStatusName = "jobStatusName",
+    /** column name */
+    MediaLiveChannelId = "mediaLiveChannelId",
+    /** column name */
+    Message = "message",
+    /** column name */
+    UpdatedAt = "updatedAt",
+}
+
 /** columns and relationships of "job_queues.CombineVideosJob" */
 export type Job_Queues_CombineVideosJob = {
     __typename?: "job_queues_CombineVideosJob";
@@ -13190,6 +13394,10 @@ export type Mutation_Root = {
     delete_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.ChannelStackCreateJob" */
     delete_job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
+    /** delete data from the table: "job_queues.ChannelStackDeleteJob" */
+    delete_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
+    /** delete single row from the table: "job_queues.ChannelStackDeleteJob" */
+    delete_job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
     /** delete data from the table: "job_queues.CombineVideosJob" */
     delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.CombineVideosJob" */
@@ -13358,6 +13566,10 @@ export type Mutation_Root = {
     delete_video_MediaLiveChannel?: Maybe<Video_MediaLiveChannel_Mutation_Response>;
     /** delete single row from the table: "video.MediaLiveChannel" */
     delete_video_MediaLiveChannel_by_pk?: Maybe<Video_MediaLiveChannel>;
+    /** delete data from the table: "video.RtmpInput" */
+    delete_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
+    /** delete single row from the table: "video.RtmpInput" */
+    delete_video_RtmpInput_by_pk?: Maybe<Video_RtmpInput>;
     /** delete data from the table: "video.TranscriptionJob" */
     delete_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
     /** delete single row from the table: "video.TranscriptionJob" */
@@ -13516,6 +13728,10 @@ export type Mutation_Root = {
     insert_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.ChannelStackCreateJob" */
     insert_job_queues_ChannelStackCreateJob_one?: Maybe<Job_Queues_ChannelStackCreateJob>;
+    /** insert data into the table: "job_queues.ChannelStackDeleteJob" */
+    insert_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
+    /** insert a single row into the table: "job_queues.ChannelStackDeleteJob" */
+    insert_job_queues_ChannelStackDeleteJob_one?: Maybe<Job_Queues_ChannelStackDeleteJob>;
     /** insert data into the table: "job_queues.CombineVideosJob" */
     insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.CombineVideosJob" */
@@ -13684,6 +13900,10 @@ export type Mutation_Root = {
     insert_video_MediaLiveChannel?: Maybe<Video_MediaLiveChannel_Mutation_Response>;
     /** insert a single row into the table: "video.MediaLiveChannel" */
     insert_video_MediaLiveChannel_one?: Maybe<Video_MediaLiveChannel>;
+    /** insert data into the table: "video.RtmpInput" */
+    insert_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
+    /** insert a single row into the table: "video.RtmpInput" */
+    insert_video_RtmpInput_one?: Maybe<Video_RtmpInput>;
     /** insert data into the table: "video.TranscriptionJob" */
     insert_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
     /** insert a single row into the table: "video.TranscriptionJob" */
@@ -13868,6 +14088,10 @@ export type Mutation_Root = {
     update_job_queues_ChannelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Mutation_Response>;
     /** update single row of the table: "job_queues.ChannelStackCreateJob" */
     update_job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
+    /** update data of the table: "job_queues.ChannelStackDeleteJob" */
+    update_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
+    /** update single row of the table: "job_queues.ChannelStackDeleteJob" */
+    update_job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
     /** update data of the table: "job_queues.CombineVideosJob" */
     update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** update single row of the table: "job_queues.CombineVideosJob" */
@@ -14036,6 +14260,10 @@ export type Mutation_Root = {
     update_video_MediaLiveChannel?: Maybe<Video_MediaLiveChannel_Mutation_Response>;
     /** update single row of the table: "video.MediaLiveChannel" */
     update_video_MediaLiveChannel_by_pk?: Maybe<Video_MediaLiveChannel>;
+    /** update data of the table: "video.RtmpInput" */
+    update_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
+    /** update single row of the table: "video.RtmpInput" */
+    update_video_RtmpInput_by_pk?: Maybe<Video_RtmpInput>;
     /** update data of the table: "video.TranscriptionJob" */
     update_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
     /** update single row of the table: "video.TranscriptionJob" */
@@ -14416,6 +14644,16 @@ export type Mutation_RootDelete_Job_Queues_ChannelStackCreateJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_ChannelStackCreateJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackDeleteJobArgs = {
+    where: Job_Queues_ChannelStackDeleteJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackDeleteJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -14837,6 +15075,16 @@ export type Mutation_RootDelete_Video_MediaLiveChannelArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Video_MediaLiveChannel_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RtmpInputArgs = {
+    where: Video_RtmpInput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RtmpInput_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 /** mutation root */
@@ -15303,6 +15551,18 @@ export type Mutation_RootInsert_Job_Queues_ChannelStackCreateJobArgs = {
 export type Mutation_RootInsert_Job_Queues_ChannelStackCreateJob_OneArgs = {
     object: Job_Queues_ChannelStackCreateJob_Insert_Input;
     on_conflict?: Maybe<Job_Queues_ChannelStackCreateJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackDeleteJobArgs = {
+    objects: Array<Job_Queues_ChannelStackDeleteJob_Insert_Input>;
+    on_conflict?: Maybe<Job_Queues_ChannelStackDeleteJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackDeleteJob_OneArgs = {
+    object: Job_Queues_ChannelStackDeleteJob_Insert_Input;
+    on_conflict?: Maybe<Job_Queues_ChannelStackDeleteJob_On_Conflict>;
 };
 
 /** mutation root */
@@ -15807,6 +16067,18 @@ export type Mutation_RootInsert_Video_MediaLiveChannelArgs = {
 export type Mutation_RootInsert_Video_MediaLiveChannel_OneArgs = {
     object: Video_MediaLiveChannel_Insert_Input;
     on_conflict?: Maybe<Video_MediaLiveChannel_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RtmpInputArgs = {
+    objects: Array<Video_RtmpInput_Insert_Input>;
+    on_conflict?: Maybe<Video_RtmpInput_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RtmpInput_OneArgs = {
+    object: Video_RtmpInput_Insert_Input;
+    on_conflict?: Maybe<Video_RtmpInput_On_Conflict>;
 };
 
 /** mutation root */
@@ -16445,6 +16717,18 @@ export type Mutation_RootUpdate_Job_Queues_ChannelStackCreateJob_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJobArgs = {
+    _set?: Maybe<Job_Queues_ChannelStackDeleteJob_Set_Input>;
+    where: Job_Queues_ChannelStackDeleteJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJob_By_PkArgs = {
+    _set?: Maybe<Job_Queues_ChannelStackDeleteJob_Set_Input>;
+    pk_columns: Job_Queues_ChannelStackDeleteJob_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_CombineVideosJobArgs = {
     _append?: Maybe<Job_Queues_CombineVideosJob_Append_Input>;
     _delete_at_path?: Maybe<Job_Queues_CombineVideosJob_Delete_At_Path_Input>;
@@ -17060,6 +17344,18 @@ export type Mutation_RootUpdate_Video_MediaLiveChannelArgs = {
 export type Mutation_RootUpdate_Video_MediaLiveChannel_By_PkArgs = {
     _set?: Maybe<Video_MediaLiveChannel_Set_Input>;
     pk_columns: Video_MediaLiveChannel_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RtmpInputArgs = {
+    _set?: Maybe<Video_RtmpInput_Set_Input>;
+    where: Video_RtmpInput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RtmpInput_By_PkArgs = {
+    _set?: Maybe<Video_RtmpInput_Set_Input>;
+    pk_columns: Video_RtmpInput_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -18639,6 +18935,12 @@ export type Query_Root = {
     job_queues_ChannelStackCreateJob_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
     /** fetch data from the table: "job_queues.ChannelStackCreateJob" using primary key columns */
     job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
+    /** fetch data from the table: "job_queues.ChannelStackDeleteJob" */
+    job_queues_ChannelStackDeleteJob: Array<Job_Queues_ChannelStackDeleteJob>;
+    /** fetch aggregated fields from the table: "job_queues.ChannelStackDeleteJob" */
+    job_queues_ChannelStackDeleteJob_aggregate: Job_Queues_ChannelStackDeleteJob_Aggregate;
+    /** fetch data from the table: "job_queues.ChannelStackDeleteJob" using primary key columns */
+    job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
     /** fetch data from the table: "job_queues.CombineVideosJob" */
     job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
     /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -18899,6 +19201,12 @@ export type Query_Root = {
     video_MediaLiveChannel_aggregate: Video_MediaLiveChannel_Aggregate;
     /** fetch data from the table: "video.MediaLiveChannel" using primary key columns */
     video_MediaLiveChannel_by_pk?: Maybe<Video_MediaLiveChannel>;
+    /** fetch data from the table: "video.RtmpInput" */
+    video_RtmpInput: Array<Video_RtmpInput>;
+    /** fetch aggregated fields from the table: "video.RtmpInput" */
+    video_RtmpInput_aggregate: Video_RtmpInput_Aggregate;
+    /** fetch data from the table: "video.RtmpInput" using primary key columns */
+    video_RtmpInput_by_pk?: Maybe<Video_RtmpInput>;
     /** fetch data from the table: "video.TranscriptionJob" */
     video_TranscriptionJob: Array<Video_TranscriptionJob>;
     /** fetch aggregated fields from the table: "video.TranscriptionJob" */
@@ -19789,6 +20097,29 @@ export type Query_RootJob_Queues_ChannelStackCreateJob_AggregateArgs = {
 
 /** query root */
 export type Query_RootJob_Queues_ChannelStackCreateJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackDeleteJobArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackDeleteJob_Bool_Exp>;
+};
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackDeleteJob_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackDeleteJob_Bool_Exp>;
+};
+
+/** query root */
+export type Query_RootJob_Queues_ChannelStackDeleteJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -20777,6 +21108,29 @@ export type Query_RootVideo_MediaLiveChannel_By_PkArgs = {
 };
 
 /** query root */
+export type Query_RootVideo_RtmpInputArgs = {
+    distinct_on?: Maybe<Array<Video_RtmpInput_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_RtmpInput_Order_By>>;
+    where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+/** query root */
+export type Query_RootVideo_RtmpInput_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_RtmpInput_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_RtmpInput_Order_By>>;
+    where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+/** query root */
+export type Query_RootVideo_RtmpInput_By_PkArgs = {
+    name: Scalars["String"];
+};
+
+/** query root */
 export type Query_RootVideo_TranscriptionJobArgs = {
     distinct_on?: Maybe<Array<Video_TranscriptionJob_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -21453,6 +21807,8 @@ export type Registrant_ProfileBadges = {
     __typename?: "registrant_ProfileBadges";
     colour?: Maybe<Scalars["String"]>;
     name?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    registrant?: Maybe<Registrant_Registrant>;
     registrantId?: Maybe<Scalars["uuid"]>;
 };
 
@@ -21491,6 +21847,7 @@ export type Registrant_ProfileBadges_Bool_Exp = {
     _or?: Maybe<Array<Maybe<Registrant_ProfileBadges_Bool_Exp>>>;
     colour?: Maybe<String_Comparison_Exp>;
     name?: Maybe<String_Comparison_Exp>;
+    registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: Maybe<Uuid_Comparison_Exp>;
 };
 
@@ -21528,6 +21885,7 @@ export type Registrant_ProfileBadges_Min_Order_By = {
 export type Registrant_ProfileBadges_Order_By = {
     colour?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
+    registrant?: Maybe<Registrant_Registrant_Order_By>;
     registrantId?: Maybe<Order_By>;
 };
 
@@ -27374,6 +27732,12 @@ export type Subscription_Root = {
     job_queues_ChannelStackCreateJob_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
     /** fetch data from the table: "job_queues.ChannelStackCreateJob" using primary key columns */
     job_queues_ChannelStackCreateJob_by_pk?: Maybe<Job_Queues_ChannelStackCreateJob>;
+    /** fetch data from the table: "job_queues.ChannelStackDeleteJob" */
+    job_queues_ChannelStackDeleteJob: Array<Job_Queues_ChannelStackDeleteJob>;
+    /** fetch aggregated fields from the table: "job_queues.ChannelStackDeleteJob" */
+    job_queues_ChannelStackDeleteJob_aggregate: Job_Queues_ChannelStackDeleteJob_Aggregate;
+    /** fetch data from the table: "job_queues.ChannelStackDeleteJob" using primary key columns */
+    job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
     /** fetch data from the table: "job_queues.CombineVideosJob" */
     job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
     /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -27634,6 +27998,12 @@ export type Subscription_Root = {
     video_MediaLiveChannel_aggregate: Video_MediaLiveChannel_Aggregate;
     /** fetch data from the table: "video.MediaLiveChannel" using primary key columns */
     video_MediaLiveChannel_by_pk?: Maybe<Video_MediaLiveChannel>;
+    /** fetch data from the table: "video.RtmpInput" */
+    video_RtmpInput: Array<Video_RtmpInput>;
+    /** fetch aggregated fields from the table: "video.RtmpInput" */
+    video_RtmpInput_aggregate: Video_RtmpInput_Aggregate;
+    /** fetch data from the table: "video.RtmpInput" using primary key columns */
+    video_RtmpInput_by_pk?: Maybe<Video_RtmpInput>;
     /** fetch data from the table: "video.TranscriptionJob" */
     video_TranscriptionJob: Array<Video_TranscriptionJob>;
     /** fetch aggregated fields from the table: "video.TranscriptionJob" */
@@ -28524,6 +28894,29 @@ export type Subscription_RootJob_Queues_ChannelStackCreateJob_AggregateArgs = {
 
 /** subscription root */
 export type Subscription_RootJob_Queues_ChannelStackCreateJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackDeleteJobArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackDeleteJob_Bool_Exp>;
+};
+
+/** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackDeleteJob_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackDeleteJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackDeleteJob_Bool_Exp>;
+};
+
+/** subscription root */
+export type Subscription_RootJob_Queues_ChannelStackDeleteJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -29509,6 +29902,29 @@ export type Subscription_RootVideo_MediaLiveChannel_AggregateArgs = {
 /** subscription root */
 export type Subscription_RootVideo_MediaLiveChannel_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+/** subscription root */
+export type Subscription_RootVideo_RtmpInputArgs = {
+    distinct_on?: Maybe<Array<Video_RtmpInput_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_RtmpInput_Order_By>>;
+    where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+/** subscription root */
+export type Subscription_RootVideo_RtmpInput_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_RtmpInput_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_RtmpInput_Order_By>>;
+    where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+/** subscription root */
+export type Subscription_RootVideo_RtmpInput_By_PkArgs = {
+    name: Scalars["String"];
 };
 
 /** subscription root */
@@ -30580,6 +30996,7 @@ export type Video_EventVonageSession = {
     eventId: Scalars["uuid"];
     id: Scalars["uuid"];
     layoutData?: Maybe<Scalars["jsonb"]>;
+    rtmpInputName: Video_RtmpInput_Enum;
     sessionId: Scalars["String"];
     updatedAt: Scalars["timestamptz"];
 };
@@ -30640,6 +31057,7 @@ export type Video_EventVonageSession_Bool_Exp = {
     eventId?: Maybe<Uuid_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     layoutData?: Maybe<Jsonb_Comparison_Exp>;
+    rtmpInputName?: Maybe<Video_RtmpInput_Enum_Comparison_Exp>;
     sessionId?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -30678,6 +31096,7 @@ export type Video_EventVonageSession_Insert_Input = {
     eventId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     layoutData?: Maybe<Scalars["jsonb"]>;
+    rtmpInputName?: Maybe<Video_RtmpInput_Enum>;
     sessionId?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
@@ -30755,6 +31174,7 @@ export type Video_EventVonageSession_Order_By = {
     eventId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     layoutData?: Maybe<Order_By>;
+    rtmpInputName?: Maybe<Order_By>;
     sessionId?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
@@ -30782,6 +31202,8 @@ export enum Video_EventVonageSession_Select_Column {
     /** column name */
     LayoutData = "layoutData",
     /** column name */
+    RtmpInputName = "rtmpInputName",
+    /** column name */
     SessionId = "sessionId",
     /** column name */
     UpdatedAt = "updatedAt",
@@ -30794,6 +31216,7 @@ export type Video_EventVonageSession_Set_Input = {
     eventId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     layoutData?: Maybe<Scalars["jsonb"]>;
+    rtmpInputName?: Maybe<Video_RtmpInput_Enum>;
     sessionId?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
@@ -30810,6 +31233,8 @@ export enum Video_EventVonageSession_Update_Column {
     Id = "id",
     /** column name */
     LayoutData = "layoutData",
+    /** column name */
+    RtmpInputName = "rtmpInputName",
     /** column name */
     SessionId = "sessionId",
     /** column name */
@@ -31196,10 +31621,13 @@ export type Video_MediaLiveChannel = {
     /** An object relationship */
     room?: Maybe<Room_Room>;
     roomId?: Maybe<Scalars["uuid"]>;
-    rtmpInputId: Scalars["String"];
-    rtmpInputUri: Scalars["String"];
+    rtmpAInputAttachmentName: Scalars["String"];
+    rtmpAInputId: Scalars["String"];
+    rtmpAInputUri: Scalars["String"];
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
     updatedAt: Scalars["timestamptz"];
-    vonageInputAttachmentName: Scalars["String"];
 };
 
 /** aggregated selection of "video.MediaLiveChannel" */
@@ -31258,10 +31686,13 @@ export type Video_MediaLiveChannel_Bool_Exp = {
     mp4InputId?: Maybe<String_Comparison_Exp>;
     room?: Maybe<Room_Room_Bool_Exp>;
     roomId?: Maybe<Uuid_Comparison_Exp>;
-    rtmpInputId?: Maybe<String_Comparison_Exp>;
-    rtmpInputUri?: Maybe<String_Comparison_Exp>;
+    rtmpAInputAttachmentName?: Maybe<String_Comparison_Exp>;
+    rtmpAInputId?: Maybe<String_Comparison_Exp>;
+    rtmpAInputUri?: Maybe<String_Comparison_Exp>;
+    rtmpBInputAttachmentName?: Maybe<String_Comparison_Exp>;
+    rtmpBInputId?: Maybe<String_Comparison_Exp>;
+    rtmpBInputUri?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-    vonageInputAttachmentName?: Maybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "video.MediaLiveChannel" */
@@ -31291,10 +31722,13 @@ export type Video_MediaLiveChannel_Insert_Input = {
     mp4InputId?: Maybe<Scalars["String"]>;
     room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
     roomId?: Maybe<Scalars["uuid"]>;
-    rtmpInputId?: Maybe<Scalars["String"]>;
-    rtmpInputUri?: Maybe<Scalars["String"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    vonageInputAttachmentName?: Maybe<Scalars["String"]>;
 };
 
 /** aggregate max on columns */
@@ -31314,10 +31748,13 @@ export type Video_MediaLiveChannel_Max_Fields = {
     mp4InputAttachmentName?: Maybe<Scalars["String"]>;
     mp4InputId?: Maybe<Scalars["String"]>;
     roomId?: Maybe<Scalars["uuid"]>;
-    rtmpInputId?: Maybe<Scalars["String"]>;
-    rtmpInputUri?: Maybe<Scalars["String"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    vonageInputAttachmentName?: Maybe<Scalars["String"]>;
 };
 
 /** order by max() on columns of table "video.MediaLiveChannel" */
@@ -31336,10 +31773,13 @@ export type Video_MediaLiveChannel_Max_Order_By = {
     mp4InputAttachmentName?: Maybe<Order_By>;
     mp4InputId?: Maybe<Order_By>;
     roomId?: Maybe<Order_By>;
-    rtmpInputId?: Maybe<Order_By>;
-    rtmpInputUri?: Maybe<Order_By>;
+    rtmpAInputAttachmentName?: Maybe<Order_By>;
+    rtmpAInputId?: Maybe<Order_By>;
+    rtmpAInputUri?: Maybe<Order_By>;
+    rtmpBInputAttachmentName?: Maybe<Order_By>;
+    rtmpBInputId?: Maybe<Order_By>;
+    rtmpBInputUri?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    vonageInputAttachmentName?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -31359,10 +31799,13 @@ export type Video_MediaLiveChannel_Min_Fields = {
     mp4InputAttachmentName?: Maybe<Scalars["String"]>;
     mp4InputId?: Maybe<Scalars["String"]>;
     roomId?: Maybe<Scalars["uuid"]>;
-    rtmpInputId?: Maybe<Scalars["String"]>;
-    rtmpInputUri?: Maybe<Scalars["String"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    vonageInputAttachmentName?: Maybe<Scalars["String"]>;
 };
 
 /** order by min() on columns of table "video.MediaLiveChannel" */
@@ -31381,10 +31824,13 @@ export type Video_MediaLiveChannel_Min_Order_By = {
     mp4InputAttachmentName?: Maybe<Order_By>;
     mp4InputId?: Maybe<Order_By>;
     roomId?: Maybe<Order_By>;
-    rtmpInputId?: Maybe<Order_By>;
-    rtmpInputUri?: Maybe<Order_By>;
+    rtmpAInputAttachmentName?: Maybe<Order_By>;
+    rtmpAInputId?: Maybe<Order_By>;
+    rtmpAInputUri?: Maybe<Order_By>;
+    rtmpBInputAttachmentName?: Maybe<Order_By>;
+    rtmpBInputId?: Maybe<Order_By>;
+    rtmpBInputUri?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    vonageInputAttachmentName?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "video.MediaLiveChannel" */
@@ -31428,10 +31874,13 @@ export type Video_MediaLiveChannel_Order_By = {
     mp4InputId?: Maybe<Order_By>;
     room?: Maybe<Room_Room_Order_By>;
     roomId?: Maybe<Order_By>;
-    rtmpInputId?: Maybe<Order_By>;
-    rtmpInputUri?: Maybe<Order_By>;
+    rtmpAInputAttachmentName?: Maybe<Order_By>;
+    rtmpAInputId?: Maybe<Order_By>;
+    rtmpAInputUri?: Maybe<Order_By>;
+    rtmpBInputAttachmentName?: Maybe<Order_By>;
+    rtmpBInputId?: Maybe<Order_By>;
+    rtmpBInputUri?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    vonageInputAttachmentName?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: "video.MediaLiveChannel" */
@@ -31470,13 +31919,19 @@ export enum Video_MediaLiveChannel_Select_Column {
     /** column name */
     RoomId = "roomId",
     /** column name */
-    RtmpInputId = "rtmpInputId",
+    RtmpAInputAttachmentName = "rtmpAInputAttachmentName",
     /** column name */
-    RtmpInputUri = "rtmpInputUri",
+    RtmpAInputId = "rtmpAInputId",
+    /** column name */
+    RtmpAInputUri = "rtmpAInputUri",
+    /** column name */
+    RtmpBInputAttachmentName = "rtmpBInputAttachmentName",
+    /** column name */
+    RtmpBInputId = "rtmpBInputId",
+    /** column name */
+    RtmpBInputUri = "rtmpBInputUri",
     /** column name */
     UpdatedAt = "updatedAt",
-    /** column name */
-    VonageInputAttachmentName = "vonageInputAttachmentName",
 }
 
 /** input type for updating data in table "video.MediaLiveChannel" */
@@ -31495,10 +31950,13 @@ export type Video_MediaLiveChannel_Set_Input = {
     mp4InputAttachmentName?: Maybe<Scalars["String"]>;
     mp4InputId?: Maybe<Scalars["String"]>;
     roomId?: Maybe<Scalars["uuid"]>;
-    rtmpInputId?: Maybe<Scalars["String"]>;
-    rtmpInputUri?: Maybe<Scalars["String"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    vonageInputAttachmentName?: Maybe<Scalars["String"]>;
 };
 
 /** update columns of table "video.MediaLiveChannel" */
@@ -31532,13 +31990,178 @@ export enum Video_MediaLiveChannel_Update_Column {
     /** column name */
     RoomId = "roomId",
     /** column name */
-    RtmpInputId = "rtmpInputId",
+    RtmpAInputAttachmentName = "rtmpAInputAttachmentName",
     /** column name */
-    RtmpInputUri = "rtmpInputUri",
+    RtmpAInputId = "rtmpAInputId",
+    /** column name */
+    RtmpAInputUri = "rtmpAInputUri",
+    /** column name */
+    RtmpBInputAttachmentName = "rtmpBInputAttachmentName",
+    /** column name */
+    RtmpBInputId = "rtmpBInputId",
+    /** column name */
+    RtmpBInputUri = "rtmpBInputUri",
     /** column name */
     UpdatedAt = "updatedAt",
+}
+
+/** columns and relationships of "video.RtmpInput" */
+export type Video_RtmpInput = {
+    __typename?: "video_RtmpInput";
+    description: Scalars["String"];
+    name: Scalars["String"];
+};
+
+/** aggregated selection of "video.RtmpInput" */
+export type Video_RtmpInput_Aggregate = {
+    __typename?: "video_RtmpInput_aggregate";
+    aggregate?: Maybe<Video_RtmpInput_Aggregate_Fields>;
+    nodes: Array<Video_RtmpInput>;
+};
+
+/** aggregate fields of "video.RtmpInput" */
+export type Video_RtmpInput_Aggregate_Fields = {
+    __typename?: "video_RtmpInput_aggregate_fields";
+    count?: Maybe<Scalars["Int"]>;
+    max?: Maybe<Video_RtmpInput_Max_Fields>;
+    min?: Maybe<Video_RtmpInput_Min_Fields>;
+};
+
+/** aggregate fields of "video.RtmpInput" */
+export type Video_RtmpInput_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Video_RtmpInput_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "video.RtmpInput" */
+export type Video_RtmpInput_Aggregate_Order_By = {
+    count?: Maybe<Order_By>;
+    max?: Maybe<Video_RtmpInput_Max_Order_By>;
+    min?: Maybe<Video_RtmpInput_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "video.RtmpInput" */
+export type Video_RtmpInput_Arr_Rel_Insert_Input = {
+    data: Array<Video_RtmpInput_Insert_Input>;
+    on_conflict?: Maybe<Video_RtmpInput_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "video.RtmpInput". All fields are combined with a logical 'AND'. */
+export type Video_RtmpInput_Bool_Exp = {
+    _and?: Maybe<Array<Maybe<Video_RtmpInput_Bool_Exp>>>;
+    _not?: Maybe<Video_RtmpInput_Bool_Exp>;
+    _or?: Maybe<Array<Maybe<Video_RtmpInput_Bool_Exp>>>;
+    description?: Maybe<String_Comparison_Exp>;
+    name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.RtmpInput" */
+export enum Video_RtmpInput_Constraint {
+    /** unique or primary key constraint */
+    RtmpInputPkey = "RtmpInput_pkey",
+}
+
+export enum Video_RtmpInput_Enum {
+    /** The A RTMP input. */
+    RtmpA = "RTMP_A",
+    /** The B RTMP input. */
+    RtmpB = "RTMP_B",
+}
+
+/** expression to compare columns of type video_RtmpInput_enum. All fields are combined with logical 'AND'. */
+export type Video_RtmpInput_Enum_Comparison_Exp = {
+    _eq?: Maybe<Video_RtmpInput_Enum>;
+    _in?: Maybe<Array<Video_RtmpInput_Enum>>;
+    _is_null?: Maybe<Scalars["Boolean"]>;
+    _neq?: Maybe<Video_RtmpInput_Enum>;
+    _nin?: Maybe<Array<Video_RtmpInput_Enum>>;
+};
+
+/** input type for inserting data into table "video.RtmpInput" */
+export type Video_RtmpInput_Insert_Input = {
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Video_RtmpInput_Max_Fields = {
+    __typename?: "video_RtmpInput_max_fields";
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** order by max() on columns of table "video.RtmpInput" */
+export type Video_RtmpInput_Max_Order_By = {
+    description?: Maybe<Order_By>;
+    name?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Video_RtmpInput_Min_Fields = {
+    __typename?: "video_RtmpInput_min_fields";
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** order by min() on columns of table "video.RtmpInput" */
+export type Video_RtmpInput_Min_Order_By = {
+    description?: Maybe<Order_By>;
+    name?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "video.RtmpInput" */
+export type Video_RtmpInput_Mutation_Response = {
+    __typename?: "video_RtmpInput_mutation_response";
+    /** number of affected rows by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data of the affected rows by the mutation */
+    returning: Array<Video_RtmpInput>;
+};
+
+/** input type for inserting object relation for remote table "video.RtmpInput" */
+export type Video_RtmpInput_Obj_Rel_Insert_Input = {
+    data: Video_RtmpInput_Insert_Input;
+    on_conflict?: Maybe<Video_RtmpInput_On_Conflict>;
+};
+
+/** on conflict condition type for table "video.RtmpInput" */
+export type Video_RtmpInput_On_Conflict = {
+    constraint: Video_RtmpInput_Constraint;
+    update_columns: Array<Video_RtmpInput_Update_Column>;
+    where?: Maybe<Video_RtmpInput_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "video.RtmpInput" */
+export type Video_RtmpInput_Order_By = {
+    description?: Maybe<Order_By>;
+    name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "video.RtmpInput" */
+export type Video_RtmpInput_Pk_Columns_Input = {
+    name: Scalars["String"];
+};
+
+/** select columns of table "video.RtmpInput" */
+export enum Video_RtmpInput_Select_Column {
     /** column name */
-    VonageInputAttachmentName = "vonageInputAttachmentName",
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
+
+/** input type for updating data in table "video.RtmpInput" */
+export type Video_RtmpInput_Set_Input = {
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** update columns of table "video.RtmpInput" */
+export enum Video_RtmpInput_Update_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
 }
 
 /** columns and relationships of "video.TranscriptionJob" */
@@ -32811,16 +33434,16 @@ export type SelectViewCountsQueryVariables = Exact<{
 
 export type SelectViewCountsQuery = { __typename?: "query_root" } & {
     analytics_ContentItemStats: Array<
-        { __typename?: "analytics_ContentItemStats" } & Pick<Analytics_ContentItemStats, "itemId" | "viewCount">
+        { __typename?: "analytics_ContentItemStats" } & Pick<Analytics_ContentItemStats, "id" | "itemId" | "viewCount">
     >;
     analytics_ContentElementStats: Array<
         { __typename?: "analytics_ContentElementStats" } & Pick<
             Analytics_ContentElementStats,
-            "elementId" | "viewCount"
+            "id" | "elementId" | "viewCount"
         >
     >;
     analytics_RoomStats: Array<
-        { __typename?: "analytics_RoomStats" } & Pick<Analytics_RoomStats, "roomId" | "hlsViewCount">
+        { __typename?: "analytics_RoomStats" } & Pick<Analytics_RoomStats, "id" | "roomId" | "hlsViewCount">
     >;
 };
 
@@ -33768,6 +34391,7 @@ export const SelectViewCountsDocument: DocumentNode<SelectViewCountsQuery, Selec
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "itemId" } },
                                 { kind: "Field", name: { kind: "Name", value: "viewCount" } },
                             ],
@@ -33824,6 +34448,7 @@ export const SelectViewCountsDocument: DocumentNode<SelectViewCountsQuery, Selec
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "elementId" } },
                                 { kind: "Field", name: { kind: "Name", value: "viewCount" } },
                             ],
@@ -33880,6 +34505,7 @@ export const SelectViewCountsDocument: DocumentNode<SelectViewCountsQuery, Selec
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "roomId" } },
                                 { kind: "Field", name: { kind: "Name", value: "hlsViewCount" } },
                             ],

@@ -229,14 +229,14 @@ export function MainMenuProgram(): JSX.Element {
                                     title="Happening now"
                                 />
                                 <MainMenuProgramInner
-                                    linkToRoom={false}
+                                    linkToRoom={true}
                                     fromMillis={filterTimes.inThreeMinutes.getTime()}
                                     toMillis={filterTimes.in30Minutes.getTime()}
                                     events={events}
                                     title="Starting in the next 30 minutes"
                                 />
                                 <MainMenuProgramInner
-                                    linkToRoom={false}
+                                    linkToRoom={true}
                                     fromMillis={filterTimes.in30Minutes.getTime()}
                                     toMillis={filterTimes.inOneHour.getTime()}
                                     events={events}

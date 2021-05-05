@@ -5,20 +5,20 @@ import { Injectable } from "@nestjs/common";
 import { add, sub } from "date-fns";
 import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
 import { GetObsoleteChannelStacksDocument, GetRoomsNeedingChannelStackDocument } from "../../generated/graphql";
-import { GraphQlService } from "../../hasura/graphql.service";
+import { ChannelStackCreateJobService } from "../../hasura-data/channel-stack-create-job/channel-stack-create-job.service";
+import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
 import { shortId } from "../../utils/id";
-import { ChannelStackCreateJobService } from "../channel-stack-create-job/channel-stack-create-job.service";
-import { ChannelsService } from "../channels/channels.service";
+import { ChannelStackService } from "../channel-stack/channel-stack.service";
 
 @Injectable()
-export class ChannelSyncService {
+export class ChannelStackSyncService {
     private readonly logger: Bunyan;
     constructor(
         @RootLogger() logger: Bunyan,
         private cloudFormationService: CloudFormationService,
         private graphQlService: GraphQlService,
         private channelStackCreateJobService: ChannelStackCreateJobService,
-        private channelsService: ChannelsService
+        private channelsService: ChannelStackService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
@@ -92,7 +92,7 @@ export class ChannelSyncService {
     }
 
     public async getObsoleteChannelStacks(): Promise<
-        { mediaLiveChannelId: string; cloudFormationStackArn?: string | null }[]
+        { channelStackId: string; cloudFormationStackArn?: string | null; mediaLiveChannelId: string }[]
     > {
         gql`
             query GetObsoleteChannelStacks($past: timestamptz) {
@@ -113,8 +113,9 @@ export class ChannelSyncService {
                         ]
                     }
                 ) {
-                    mediaLiveChannelId: id
+                    channelStackId: id
                     cloudFormationStackArn
+                    mediaLiveChannelId
                 }
             }
         `;
@@ -189,11 +190,16 @@ export class ChannelSyncService {
         for (const obsoleteChannelStack of obsoleteChannelStacks) {
             try {
                 this.logger.info({ obsoleteChannelStack }, "Deleting obsolete channel stack");
-                await this.channelsService.deleteChannelStack(obsoleteChannelStack.mediaLiveChannelId);
+                await this.channelsService.startChannelStackDeletion(
+                    obsoleteChannelStack.channelStackId,
+                    obsoleteChannelStack.mediaLiveChannelId
+                );
             } catch (e) {
                 this.logger.error({ obsoleteChannelStack, err: e }, "Failed to clean up an obsolete channel stack");
             }
         }
+
+        await this.channelsService.processChannelStackDeleteJobs();
     }
 
     public async pollOldChannelStackCreateJobs(): Promise<void> {

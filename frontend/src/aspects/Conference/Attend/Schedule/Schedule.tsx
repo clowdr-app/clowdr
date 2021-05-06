@@ -82,6 +82,8 @@ gql`
         startTime
         durationSeconds
         itemId
+        exhibitionId
+        shufflePeriodId
     }
 
     fragment Schedule_RoomSummary on room_Room {

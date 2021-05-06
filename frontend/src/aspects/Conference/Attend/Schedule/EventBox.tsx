@@ -52,7 +52,7 @@ function EventBoxPopover({
 }): JSX.Element {
     const conference = useConference();
     const event0 = events[0];
-    const eventTitle = content ? (events.length > 1 ? content.title : `${content.title}`) : event0.name;
+    const eventTitle = content ? content.title : event0.name;
 
     const now = Date.now();
     const isLive = eventStartMs < now + 10 * 60 * 1000 && now < eventStartMs + durationSeconds * 1000;
@@ -69,6 +69,8 @@ function EventBoxPopover({
     }
     const roomUrl = `/conference/${conference.slug}/room/${event0.roomId}`;
     const itemUrl = content ? `/conference/${conference.slug}/item/${content.id}` : roomUrl;
+    const exhibitionId = useMemo(() => events.reduce((id, x) => id || x.exhibitionId, null), [events]);
+    const exhibitionUrl = exhibitionId ? `/conference/${conference.slug}/exhibition/${exhibitionId}` : null;
 
     const ref = useRef<HTMLAnchorElement>(null);
     useEffect(() => {
@@ -134,7 +136,7 @@ function EventBoxPopover({
                             })}
                     </Text>
                     <Flex direction="row">
-                        {content ? (
+                        {eventTitle ? (
                             <Text>
                                 <Link ref={ref} as={ReactLink} to={itemUrl} textDecoration="none">
                                     <Twemoji className="twemoji" text={eventTitle} />
@@ -178,6 +180,20 @@ function EventBoxPopover({
                     </Flex>
                 </ModalHeader>
                 <ModalBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
+                    {exhibitionUrl ? (
+                        <>
+                            <Text>This event is an exhibition of multiple items.</Text>
+                            <LinkButton
+                                colorScheme="green"
+                                size="lg"
+                                to={exhibitionUrl}
+                                title="View the exhibition"
+                                textDecoration="none"
+                            >
+                                View the exhibition
+                            </LinkButton>
+                        </>
+                    ) : undefined}
                     <Box>
                         <Markdown>{abstractText}</Markdown>
                     </Box>

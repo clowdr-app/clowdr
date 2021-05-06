@@ -17,8 +17,8 @@ import type { AnswerMessageData } from "../Types/Messages";
 import { useComposeContext } from "./ComposeContext";
 import { InsertEmojiButton } from "./InsertEmojiButton";
 import { MessageTypeButtons } from "./MessageTypeButtons";
-import { MessageTypeIndicator } from "./MessageTypeIndicator";
 import { CreatePollOptionsButton } from "./Poll/CreatePollOptionsButton";
+import QuickSendEmote from "./QuickSendEmote";
 import { SendMessageButton } from "./SendMessageButton";
 
 export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
@@ -92,7 +92,8 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
         setWasSending(composeCtx.isSending);
     }, [composeCtx.isSending, wasSending]);
 
-    const borderColour = useColorModeValue("black", "white");
+    const borderColour = useColorModeValue("gray.700", "gray.300");
+    const borderColourFaded = useColorModeValue("gray.300", "gray.500");
     return (
         <VStack
             spacing={0}
@@ -101,10 +102,11 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
             pos="relative"
             p="1px"
             borderTop="1px solid"
-            borderColor={borderColour}
+            borderTopColor={borderColour}
             {...rest}
         >
-            <Box pos="relative" w="100%" h="auto">
+            <QuickSendEmote />
+            <Box pos="relative" w="100%" h="auto" borderTop="1px solid" borderTopColor={borderColourFaded} pt="1px">
                 <Textarea
                     ref={composeBoxRef}
                     fontSize={config.fontSizeRange.value}
@@ -147,14 +149,14 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                     }}
                     transition="none"
                 />
-                <MessageTypeIndicator
+                {/* <MessageTypeIndicator
                     messageType={composeCtx.newMessageType}
                     pos="absolute"
                     top={0}
                     right={cappedSpacing}
                     transform="translate(0, calc(-100% - 3px))"
                     opacity={0.7}
-                />
+                /> */}
             </Box>
             <Flex w="100%" minH="2.4em">
                 <MessageTypeButtons isDisabled={composeCtx.isSending} />

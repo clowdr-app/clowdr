@@ -417,10 +417,14 @@ export default function MessageBox({
     const emojiFloat = useEmojiFloat();
     const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);
     const [isEmoteNow] = useState(
-        message.type === Chat_MessageType_Enum.Emote && message.created_at >= Date.now() - 10000
+        emojiFloat.isActive && message.type === Chat_MessageType_Enum.Emote && message.created_at >= Date.now() - 10000
     );
     useEffect(() => {
-        if (message.type === Chat_MessageType_Enum.Emote && message.created_at >= Date.now() - 10000) {
+        if (
+            emojiFloat.isActive &&
+            message.type === Chat_MessageType_Enum.Emote &&
+            message.created_at >= Date.now() - 10000
+        ) {
             emojiFloat.addFloater(message.message);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

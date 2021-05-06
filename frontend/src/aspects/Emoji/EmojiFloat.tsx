@@ -13,6 +13,9 @@ interface EmojiFloatContext {
         yDurationMs: number
     ): void;
 
+    isActive: boolean;
+    setIsActive(active: boolean): void;
+
     portalNode: HtmlPortalNode<Component<any>>;
 }
 
@@ -29,6 +32,7 @@ export function useEmojiFloat(): EmojiFloatContext {
 export function EmojiFloatProvider({ children }: { children: React.ReactNode | React.ReactNodeArray }): JSX.Element {
     const portalNode = React.useMemo(() => createHtmlPortalNode(), []);
 
+    const [isActive, setIsActive] = useState<boolean>(false);
     const [floaters, setFloaters] = useState<JSX.Element[]>([]);
     const [extents, setExtents] = useState<{
         xStartPc: number;
@@ -48,6 +52,8 @@ export function EmojiFloatProvider({ children }: { children: React.ReactNode | R
     const ctx: EmojiFloatContext = useMemo(
         () => ({
             portalNode,
+            isActive,
+            setIsActive,
             setExtents: (xStartPc, xEndPc, xDurationMs, yStartPc, yEndPc, yDurationMs) =>
                 setExtents({
                     xStartPc,
@@ -72,7 +78,7 @@ export function EmojiFloatProvider({ children }: { children: React.ReactNode | R
                 ]);
             },
         }),
-        [extents, portalNode]
+        [extents, isActive, portalNode]
     );
 
     return (

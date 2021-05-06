@@ -5,12 +5,10 @@ import { ComposeContextProvider } from "../Compose/ComposeContext";
 import SendMessageQueriesProvider from "../Compose/SendMessageQueries";
 import { useChatConfiguration } from "../Configuration";
 import EmojiPickerProvider from "../EmojiPickerProvider";
-import { ChatConfigurationControls } from "../Heading/ChatConfigurationControl";
 import { ChatHeading } from "../Heading/ChatHeading";
 import { ChatMessageList } from "../Messages/ChatMessageList";
 import ReceiveMessageQueriesProvider from "../Messages/ReceiveMessageQueries";
 import ChatProfileModalProvider from "./ChatProfileModalProvider";
-import { ChatTypingIndicators } from "./ChatTypingIndicators";
 
 export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
     const config = useChatConfiguration();
@@ -41,9 +39,15 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                     {/* <ChatSelector flex="0 0 auto" /> */}
                     <ChatProfileModalProvider>
                         <ReceiveMessageQueriesProvider setAnsweringQuestionSId={setAnsweringQuestionSIdRef}>
-                            <Box role="region" aria-label="Messages" flex="0 1 100%" pos="relative" overflow="hidden">
+                            <Box
+                                pb={2}
+                                role="region"
+                                aria-label="Messages"
+                                flex="0 1 100%"
+                                pos="relative"
+                                overflow="hidden"
+                            >
                                 <ChatMessageList pos="relative" h="100%" zIndex={1} />
-                                <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
                             </Box>
                         </ReceiveMessageQueriesProvider>
                     </ChatProfileModalProvider>
@@ -55,7 +59,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                         config.permissions.canAnswer ||
                         config.permissions.canPoll) ? (
                         <>
-                            <ChatTypingIndicators flex="0 0 auto" />
+                            {/* <ChatTypingIndicators flex="0 0 auto" /> */}
                             <SendMessageQueriesProvider>
                                 <ComposeContextProvider setAnsweringQuestionSIdRef={setAnsweringQuestionSIdRef}>
                                     <ChatCompose role="region" aria-label="Compose message" flex="0 0 auto" />

@@ -5,6 +5,7 @@ import { PinnedButton } from "../Pin/PinnedButton";
 import { ChatPinnedQueryProvider } from "../Pin/PinnedQuery";
 import { SubscribedButton } from "../Subscribe/SubscribedButton";
 import { ChatSubscribedQueryProvider } from "../Subscribe/SubscribedQuery";
+import { ChatConfigurationControls } from "./ChatConfigurationControl";
 import { HeadingText } from "./HeadingText";
 
 export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
@@ -17,6 +18,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                 <HeadingText />
                 {/* <Spacer /> */}
                 {/* <PageCountBox /> */}
+                <ChatConfigurationControls pos="absolute" top="0" left="0" w="100%" zIndex={2} />
                 {config.currentRegistrantId ? (
                     <>
                         <ButtonGroup isAttached borderRadius={5} overflow="hidden">

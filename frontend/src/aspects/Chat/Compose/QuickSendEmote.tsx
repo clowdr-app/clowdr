@@ -10,6 +10,7 @@ export default function QuickSendEmote(): JSX.Element {
         <Tooltip label="Send an emote">
             <HStack spacing="3px" overflowX="auto" w="100%" justifyContent="center" alignItems="center">
                 <QuickSendEmojiButton emoji="👏" />
+                <QuickSendEmojiButton emoji="👋" />
                 <QuickSendEmojiButton emoji="👍" />
                 <QuickSendEmojiButton emoji="❔" />
                 <QuickSendEmojiButton emoji="✔" />

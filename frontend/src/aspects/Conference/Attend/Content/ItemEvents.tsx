@@ -1,8 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import {
     chakra,
-    Flex,
-    Heading,
     Spinner,
     Tab,
     Table,
@@ -22,7 +20,7 @@ import { formatDistanceStrict } from "date-fns";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
-import type { ItemEventFragment, ItemEventsFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
+import type { ItemEventFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
@@ -35,6 +33,7 @@ gql`
             id
             title
         }
+        exhibitionId
         id
         durationSeconds
         endTime
@@ -43,14 +42,12 @@ gql`
     }
 `;
 
-export function ItemEvents({ itemId, itemEvents }: { itemId: string; itemEvents: ItemEventsFragment }): JSX.Element {
-    const thisPaperTable = useMemo(() => <EventsTable events={itemEvents.events} includeRoom={true} />, [
-        itemEvents.events,
-    ]);
+export function ItemEvents({ itemId, events }: { itemId: string; events: readonly ItemEventFragment[] }): JSX.Element {
+    // const thisPaperTable = useMemo(() => <EventsTable events={events} includeRoom={true} />, [events]);
 
     const rooms = useMemo(
         () => [
-            ...itemEvents.events
+            ...events
                 .reduce((acc, event) => {
                     const existing = acc.get(event.room.id);
                     if (!existing) {
@@ -62,23 +59,24 @@ export function ItemEvents({ itemId, itemEvents }: { itemId: string; itemEvents:
                 }, new Map<string, { roomName: string; events: ItemEventFragment[] }>())
                 .entries(),
         ],
-        [itemEvents.events]
+        [events]
     );
 
     return (
         <>
-            <Text mt={3} w="auto" textAlign="left" p={0}>
+            <Text my={3} w="auto" textAlign="left" p={0}>
                 Times are shown in your local timezone.
             </Text>
-            <Flex pt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
+            {/* <Flex pt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
                 <VStack mt={2} mb={4} flex="1 1 49%" alignItems="flex-start" maxW="max-content">
                     <Heading as="h4" fontSize="md" textAlign="left" w="100%">
                         All times for this item
                     </Heading>
                     {thisPaperTable}
-                </VStack>
-                <VStack flex="1 1 49%" alignItems="flex-start" maxW="max-content">
-                    <Tabs variant="solid-rounded" isLazy>
+                </VStack> */}
+            <VStack w="100%" alignItems="flex-start" maxW="max-content">
+                {rooms.length > 1 ? (
+                    <Tabs variant="enclosed" isLazy>
                         <TabList>
                             {rooms.map(([roomId, { roomName }]) => (
                                 <Tab key={roomId}>{roomName}</Tab>
@@ -93,8 +91,13 @@ export function ItemEvents({ itemId, itemEvents }: { itemId: string; itemEvents:
                             ))}
                         </TabPanels>
                     </Tabs>
-                </VStack>
-            </Flex>
+                ) : rooms.length > 0 ? (
+                    <RoomEventsSummary roomId={rooms[0][0]} events={rooms[0][1].events} thisItemId={itemId} />
+                ) : (
+                    <Text>No events for this item</Text>
+                )}
+            </VStack>
+            {/* </Flex> */}
         </>
     );
 }
@@ -116,6 +119,7 @@ fragment ItemRoomEvent on schedule_Event {
         id
         title
     }
+    exhibitionId
     id
     durationSeconds
     endTime
@@ -188,40 +192,51 @@ query ItemEvent_RoomNearbyEvents {
         [events, query.data, query.loading, thisItemId]
     );
 
-    const table = useMemo(() => <EventsTable events={fullEventsList} includeRoom={false} />, [fullEventsList]);
+    const table = useMemo(() => <EventsTable events={fullEventsList} includeRoom={false} roomId={roomId} />, [
+        fullEventsList,
+        roomId,
+    ]);
 
     return query.loading ? <Spinner label="Loading room schedule" /> : table;
 }
 
 function EventsTable({
+    roomId,
     events,
     includeRoom,
 }: {
+    roomId: string;
     events: readonly (ItemEventFragment | ItemRoomEventFragment)[];
     includeRoom: boolean;
 }): JSX.Element {
+    const conference = useConference();
     return (
-        <Table m={0} textAlign="left" variant="striped" w="auto" size="sm" colorScheme="blue">
-            <Thead>
-                <Tr>
-                    <Th>Date</Th>
-                    <Th>Time</Th>
-                    <Th>Duration</Th>
-                    {includeRoom ? <Th>Room</Th> : undefined}
-                    {!includeRoom ? <Th>Item</Th> : undefined}
-                    <Th>Event name</Th>
-                </Tr>
-            </Thead>
-            <Tbody>
-                {events.length > 0 ? (
-                    R.sort((a, b) => Date.parse(a.startTime) - Date.parse(b.startTime), events).map((event) => (
-                        <Event key={event.id} itemEvent={event} includeRoom={includeRoom} />
-                    ))
-                ) : (
-                    <>No events.</>
-                )}
-            </Tbody>
-        </Table>
+        <VStack spacing={2} alignItems="flex-start">
+            <LinkButton colorScheme="blue" to={`/conference/${conference.slug}/room/${roomId}`}>
+                Go to room
+            </LinkButton>
+            <Table m={0} textAlign="left" variant="striped" w="auto" size="sm" colorScheme="blue">
+                <Thead>
+                    <Tr>
+                        <Th>Date</Th>
+                        <Th>Time</Th>
+                        <Th>Duration</Th>
+                        {includeRoom ? <Th>Room</Th> : undefined}
+                        {!includeRoom ? <Th>Item</Th> : undefined}
+                        <Th>Event name</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {events.length > 0 ? (
+                        R.sort((a, b) => Date.parse(a.startTime) - Date.parse(b.startTime), events).map((event) => (
+                            <Event key={event.id} itemEvent={event} includeRoom={includeRoom} />
+                        ))
+                    ) : (
+                        <>No events.</>
+                    )}
+                </Tbody>
+            </Table>
+        </VStack>
     );
 }
 
@@ -311,12 +326,47 @@ function Event({
                             >
                                 <Twemoji className="twemoji" text={itemEvent.item.title} />
                             </LinkButton>
+                        ) : "exhibitionId" in itemEvent && itemEvent.exhibitionId ? (
+                            <>
+                                <Text mr={2} pb={2}>
+                                    {itemEvent.item.title} is part of the exhibition at this event.
+                                </Text>
+                                <LinkButton
+                                    to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
+                                    aria-label={"Go to exhibition"}
+                                    whiteSpace="normal"
+                                    variant="outline"
+                                    size="sm"
+                                    maxH="unset"
+                                    h="auto"
+                                    py={1}
+                                    colorScheme="blue"
+                                    linkProps={{ maxH: "unset" }}
+                                >
+                                    View exhibition
+                                </LinkButton>
+                            </>
                         ) : (
                             <chakra.span fontWeight="bold" fontStyle="italic">
                                 <Twemoji className="twemoji" text={itemEvent.item.title} />
                             </chakra.span>
                         )}
                     </Td>
+                ) : "exhibitionId" in itemEvent && itemEvent.exhibitionId ? (
+                    <LinkButton
+                        to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
+                        aria-label={"Go to exhibition"}
+                        whiteSpace="normal"
+                        variant="outline"
+                        size="sm"
+                        maxH="unset"
+                        h="auto"
+                        py={1}
+                        colorScheme="blue"
+                        linkProps={{ maxH: "unset" }}
+                    >
+                        View exhibition
+                    </LinkButton>
                 ) : (
                     <Td>No item</Td>
                 )

@@ -3,7 +3,7 @@ import { Box, Flex, Heading, HStack, useBreakpointValue, VStack } from "@chakra-
 import React from "react";
 import {
     ItemDataFragment,
-    ItemEventsFragment,
+    ItemEventFragment,
     ItemPage_ItemRoomsFragment,
     Permissions_Permission_Enum,
     useGetItemQuery,
@@ -21,8 +21,12 @@ gql`
     query GetItem($itemId: uuid!) {
         content_Item_by_pk(id: $itemId) {
             ...ItemData
-            ...ItemEvents
             ...ItemPage_ItemRooms
+        }
+        schedule_Event(
+            where: { _or: [{ itemId: { _eq: $itemId } }, { exhibition: { items: { itemId: { _eq: $itemId } } } }] }
+        ) {
+            ...ItemEvent
         }
     }
 
@@ -44,18 +48,13 @@ gql`
         }
     }
 
-    fragment ItemEvents on content_Item {
-        events {
-            ...ItemEvent
-        }
-    }
-
     fragment ItemEvent on schedule_Event {
         startTime
         room {
             name
             id
         }
+        exhibitionId
         id
         durationSeconds
         endTime
@@ -78,8 +77,20 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
             componentIfDenied={<ConferencePageNotFound />}
             permissions={[Permissions_Permission_Enum.ConferenceView]}
         >
-            <ApolloQueryWrapper queryResult={result} getter={(data) => data.content_Item_by_pk}>
-                {(itemData: ItemDataFragment & ItemEventsFragment & ItemPage_ItemRoomsFragment) => {
+            <ApolloQueryWrapper
+                queryResult={result}
+                getter={(data) =>
+                    ({
+                        ...data.content_Item_by_pk,
+                        events: data.schedule_Event,
+                    } as any)
+                }
+            >
+                {(
+                    itemData: ItemDataFragment & {
+                        events: readonly ItemEventFragment[];
+                    } & ItemPage_ItemRoomsFragment
+                ) => {
                     return (
                         <HStack w="100%" flexWrap="wrap" alignItems="stretch">
                             <VStack
@@ -114,7 +125,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                             <Heading as="h3" size="lg" textAlign="left">
                                                 Events
                                             </Heading>
-                                            <ItemEvents itemEvents={itemData} itemId={itemId} />
+                                            <ItemEvents events={itemData.events} itemId={itemId} />
                                         </Box>
                                     </Box>
                                 </Flex>

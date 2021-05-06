@@ -82,7 +82,7 @@ export function AuthorList({
                     gridGap="8"
                     wrap="wrap"
                     alignItems="flex-start"
-                    mt={authorEls.length > 0 ? 8 : undefined}
+                    mt={authorEls.length > 0 ? 4 : undefined}
                 >
                     {presenterEls}
                 </HStack>
@@ -93,7 +93,7 @@ export function AuthorList({
                     gridGap="8"
                     wrap="wrap"
                     alignItems="flex-start"
-                    mt={authorEls.length > 0 || presenterEls.length > 0 ? 8 : undefined}
+                    mt={authorEls.length > 0 || presenterEls.length > 0 ? 4 : undefined}
                 >
                     {chairEls}
                 </HStack>
@@ -104,7 +104,7 @@ export function AuthorList({
                     gridGap="8"
                     wrap="wrap"
                     alignItems="flex-start"
-                    mt={chairEls.length > 0 || authorEls.length > 0 || presenterEls.length > 0 ? 8 : undefined}
+                    mt={chairEls.length > 0 || authorEls.length > 0 || presenterEls.length > 0 ? 4 : undefined}
                 >
                     {othersEls}
                 </HStack>

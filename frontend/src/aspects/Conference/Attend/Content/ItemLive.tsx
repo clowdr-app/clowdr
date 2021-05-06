@@ -4,7 +4,6 @@ import {
     Content_ItemType_Enum,
     ItemDataFragment,
     ItemEventFragment,
-    ItemEventsFragment,
     ItemPage_ItemRoomsFragment,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -16,7 +15,7 @@ import { useConference } from "../../useConference";
 export function ItemLive({
     itemData,
 }: {
-    itemData: ItemDataFragment & ItemEventsFragment & ItemPage_ItemRoomsFragment;
+    itemData: ItemDataFragment & { events: readonly ItemEventFragment[] } & ItemPage_ItemRoomsFragment;
 }): JSX.Element {
     const [liveEvents, setLiveEvents] = useState<ItemEventFragment[] | null>(null);
     // const [nextEvent, setNextEvent] = useState<ItemEventFragment | null>(null);

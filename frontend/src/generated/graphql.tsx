@@ -38399,7 +38399,7 @@ export const SelectMessagesPageDocument = gql`
     query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
   chat_Message(
     order_by: {id: desc}
-    where: {chatId: {_eq: $chatId}, id: {_lte: $startAtIndex}}
+    where: {chatId: {_eq: $chatId}, id: {_lte: $startAtIndex}, type: {_neq: EMOTE}}
     limit: $maxCount
   ) {
     ...ChatMessageData

@@ -11,6 +11,7 @@ import { useConference } from "../Conference/useConference";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import FAIcon from "../Icons/FAIcon";
 import PageCountText from "../Realtime/PageCountText";
+import { maybeCompare } from "../Utils/maybeSort";
 
 gql`
     query MainMenuSponsors_GetSponsors($conferenceId: uuid!) {
@@ -26,6 +27,7 @@ gql`
         id
         rooms(limit: 1, order_by: { created_at: asc }, where: { conferenceId: { _eq: $conferenceId } }) {
             id
+            priority
         }
         logo: elements(
             where: { typeName: { _in: [IMAGE_URL, IMAGE_FILE] }, layoutData: { _contains: { isLogo: true } } }
@@ -87,7 +89,25 @@ export function MainMenuSponsors(): JSX.Element {
             {(sponsorItems: readonly MainMenuSponsors_ItemDataFragment[]) => (
                 <AccordionPanel pb={4} px={"3px"}>
                     <List>
-                        {sponsorItems.map((sponsorItem) => {
+                        {R.sortWith(
+                            [
+                                (x: MainMenuSponsors_ItemDataFragment, y: MainMenuSponsors_ItemDataFragment) =>
+                                    maybeCompare(
+                                        x.rooms.reduce<number | null>(
+                                            (acc, i) => (acc !== null ? Math.min(i.priority, acc) : i.priority),
+                                            null
+                                        ),
+                                        y.rooms.reduce<number | null>(
+                                            (acc, i) => (acc !== null ? Math.min(i.priority, acc) : i.priority),
+                                            null
+                                        ),
+                                        (a, b) => a - b
+                                    ),
+                                (x: MainMenuSponsors_ItemDataFragment, y: MainMenuSponsors_ItemDataFragment) =>
+                                    x.title.localeCompare(y.title),
+                            ],
+                            sponsorItems
+                        ).map((sponsorItem) => {
                             const url = sponsorItem.rooms.length
                                 ? `/conference/${conference.slug}/room/${sponsorItem.rooms[0].id}`
                                 : `/conference/${conference.slug}/item/${sponsorItem.id}`;

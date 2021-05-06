@@ -7,8 +7,8 @@ import {
 import { Injectable } from "@nestjs/common";
 import * as Bunyan from "bunyan";
 import { ChannelStackSyncService } from "./channel-stack/channel-stack-sync/channel-stack-sync.service";
-import { ScheduleSyncService } from "./schedule/schedule-sync/schedule-sync.service";
 import { Room_Mode_Enum } from "./generated/graphql";
+import { ScheduleSyncService } from "./schedule/schedule-sync/schedule-sync.service";
 
 @Injectable()
 export class AppService {

@@ -25,6 +25,7 @@ import {
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
+import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
@@ -563,16 +564,25 @@ function RoomInner({
         return !showBackstage ? (
             currentEventIsVideoPlayer ? (
                 maybeVideoDetails ? (
-                    <VideoElement elementId={maybeVideoDetails.elementId} videoElementData={maybeVideoDetails.data} />
+                    <Box pos="relative">
+                        <VideoElement
+                            elementId={maybeVideoDetails.elementId}
+                            videoElementData={maybeVideoDetails.data}
+                        />
+                        <EmojiFloatContainer />
+                    </Box>
                 ) : (
                     <>Could not find video.</>
                 )
             ) : shouldShowLivePlayer && hlsUri ? (
-                <HlsPlayer
-                    roomId={roomDetails.id}
-                    canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                    hlsUri={hlsUri}
-                />
+                <Box pos="relative">
+                    <HlsPlayer
+                        roomId={roomDetails.id}
+                        canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
+                        hlsUri={hlsUri}
+                    />
+                    <EmojiFloatContainer />
+                </Box>
             ) : undefined
         ) : undefined;
     }, [

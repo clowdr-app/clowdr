@@ -2,6 +2,7 @@ import { Box } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
+import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
 import { BreakoutChimeRoom } from "./BreakoutChimeRoom";
 import { BreakoutVonageRoom } from "./BreakoutVonageRoom";
 
@@ -39,11 +40,13 @@ export function BreakoutRoom({
     const breakoutRoomEl = useMemo(() => {
         return (
             <>
-                <Box display={enableChime ? "block" : "none"}>
+                <Box pos="relative" display={enableChime ? "block" : "none"}>
                     <BreakoutChimeRoom room={roomDetails} enable={enableChime} />
+                    {enableChime ? <EmojiFloatContainer /> : undefined}
                 </Box>
-                <Box display={enableVonage ? "block" : "none"}>
+                <Box pos="relative" display={enableVonage ? "block" : "none"}>
                     <BreakoutVonageRoom room={roomDetails} enable={enableVonage} />
+                    {enableVonage ? <EmojiFloatContainer /> : undefined}
                 </Box>
                 {!backend && enable ? <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} /> : undefined}
             </>

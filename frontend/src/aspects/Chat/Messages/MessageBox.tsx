@@ -9,7 +9,7 @@ import {
 } from "../../../generated/graphql";
 import ProfileBadge from "../../Badges/ProfileBadge";
 import { useRegistrant } from "../../Conference/RegistrantsContext";
-import { useEmojiFloat } from "../../Emoji/EmojiFloat";
+import { useAddEmojiFloat, useEmojiFloat } from "../../Emoji/EmojiFloat";
 import { roundUpToNearest } from "../../Generic/MathUtils";
 import { Markdown } from "../../Text/Markdown";
 import type { MessageState, Observable } from "../ChatGlobalState";
@@ -415,6 +415,7 @@ export default function MessageBox({
     );
 
     const emojiFloat = useEmojiFloat();
+    const addEmojiFloat = useAddEmojiFloat();
     const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);
     const [isEmoteNow] = useState(
         emojiFloat.isActive && message.type === Chat_MessageType_Enum.Emote && message.created_at >= Date.now() - 10000
@@ -425,7 +426,7 @@ export default function MessageBox({
             message.type === Chat_MessageType_Enum.Emote &&
             message.created_at >= Date.now() - 10000
         ) {
-            emojiFloat.addFloater(message.message);
+            addEmojiFloat.addFloater(message.message);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

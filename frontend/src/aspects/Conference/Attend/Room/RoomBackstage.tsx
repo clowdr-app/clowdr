@@ -26,6 +26,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
 import { Room_EventSummaryFragment, Room_Mode_Enum } from "../../../../generated/graphql";
+import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
@@ -115,6 +116,7 @@ function EventBackstage({
                         Once this event ends, you will be automatically taken to a breakout room to continue the
                         conversation.
                     </Alert>
+                    <EmojiFloatContainer xDurationMs={4000} yDurationMs={10000} />
                 </Box>
             ) : !isActive ? (
                 <Alert status="warning" mb={8}>
@@ -328,7 +330,7 @@ export function RoomBackstage({
     return useMemo(
         () =>
             showBackstage ? (
-                <Box display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
+                <Box pos="relative" display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
                     {heading}
                     {welcomeAlert}
                     {eventRooms}

@@ -176,7 +176,11 @@ export function SendSubmissionRequestsModalInner({
             R.flatten(
                 items.map((item) =>
                     item.uploadableElements
-                        .filter((element) => !selectedType || element.typeName === selectedType)
+                        .filter(
+                            (element) =>
+                                (!selectedType || element.typeName === selectedType) &&
+                                !item.elements.some((e2) => e2.uploadableId === element.id)
+                        )
                         .map((element) => ({
                             item,
                             uploadableElement: element,
@@ -263,7 +267,12 @@ export function SendSubmissionRequestsModalInner({
                     <Form>
                         <ModalOverlay />
                         <ModalContent>
-                            <ModalHeader>Send submission requests</ModalHeader>
+                            <ModalHeader>
+                                <Text>Send submission requests</Text>
+                                <Text fontSize="sm" fontWeight="normal">
+                                    This form sends emails only for elements that have not been submitted.
+                                </Text>
+                            </ModalHeader>
                             <ModalCloseButton />
                             <ModalBody>
                                 <FormControl>

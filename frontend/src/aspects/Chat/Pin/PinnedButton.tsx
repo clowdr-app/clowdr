@@ -1,4 +1,4 @@
-import { Box, Button, ButtonProps, Tooltip } from "@chakra-ui/react";
+import { Button, ButtonProps, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../Icons/FAIcon";
 import { useChatConfiguration } from "../Configuration";
@@ -18,28 +18,26 @@ export function PinnedButton(props: ButtonProps): JSX.Element {
     return pinnedQ.data?.allowedToUnpin &&
         ((config.permissions.canPin && !isPinned) || (config.permissions.canUnpin && isPinned)) ? (
         <Tooltip label={label} fontSize={config.fontSizeRange.value}>
-            <Box>
-                <Button
-                    aria-label={label}
-                    onClick={() => {
-                        pinnedQ.mutate?.(!isPinned);
-                    }}
-                    isLoading={isLoading}
-                    h="100%"
-                    {...props}
-                    _disabled={{
-                        opacity: 0.4,
-                        cursor: "progress",
-                    }}
-                >
-                    <FAIcon
-                        iconStyle="s"
-                        icon="thumbtack"
-                        transform={isPinned ? "" : "rotate(180deg)"}
-                        transition="transform 0.3s linear"
-                    />
-                </Button>
-            </Box>
+            <Button
+                aria-label={label}
+                onClick={() => {
+                    pinnedQ.mutate?.(!isPinned);
+                }}
+                isLoading={isLoading}
+                h="100%"
+                {...props}
+                _disabled={{
+                    opacity: 0.4,
+                    cursor: "progress",
+                }}
+            >
+                <FAIcon
+                    iconStyle="s"
+                    icon="thumbtack"
+                    transform={isPinned ? "" : "rotate(180deg)"}
+                    transition="transform 0.3s linear"
+                />
+            </Button>
         </Tooltip>
     ) : (
         <></>

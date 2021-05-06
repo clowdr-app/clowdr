@@ -1,4 +1,4 @@
-import { Box, Button, ButtonProps, Tooltip } from "@chakra-ui/react";
+import { Button, ButtonProps, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../Icons/FAIcon";
 import { useChatConfiguration } from "../Configuration";
@@ -18,22 +18,20 @@ export function SubscribedButton(props: ButtonProps): JSX.Element {
     return subscribedQ.data?.allowedToUnsubscribe &&
         ((config.permissions.canSubscribe && !isSubscribed) || (config.permissions.canUnsubscribe && isSubscribed)) ? (
         <Tooltip label={label} fontSize={config.fontSizeRange.value}>
-            <Box>
-                <Button
-                    {...props}
-                    aria-label={label}
-                    onClick={() => {
-                        subscribedQ.mutate?.(!isSubscribed);
-                    }}
-                    isLoading={isLoading}
-                    _disabled={{
-                        opacity: 0.4,
-                        cursor: "progress",
-                    }}
-                >
-                    <FAIcon iconStyle={isSubscribed ? "s" : "r"} icon="bell" />
-                </Button>
-            </Box>
+            <Button
+                {...props}
+                aria-label={label}
+                onClick={() => {
+                    subscribedQ.mutate?.(!isSubscribed);
+                }}
+                isLoading={isLoading}
+                _disabled={{
+                    opacity: 0.4,
+                    cursor: "progress",
+                }}
+            >
+                <FAIcon iconStyle={isSubscribed ? "s" : "r"} icon="bell" />
+            </Button>
         </Tooltip>
     ) : (
         <></>

@@ -1103,11 +1103,11 @@ function RightSidebarConferenceSections_Inner({
         >
             <TabList py={2}>
                 <ToggleChatsButton ml={2} mr="auto" size="xs" />
-                {roomId && <Tab ml={2}>Room{pageChatUnread !== "" ? ` (${pageChatUnread})` : ""}</Tab>}
+                {roomId && <Tab ml={2}>Room Chat{pageChatUnread !== "" ? ` (${pageChatUnread})` : ""}</Tab>}
                 {itemId && (
                     <Tab ml={roomId ? undefined : 2}>Item{pageChatUnread !== "" ? ` (${pageChatUnread})` : ""}</Tab>
                 )}
-                <Tab ml={roomId || itemId ? undefined : 2}>Chats{chatsUnread !== "" ? ` (${chatsUnread})` : ""}</Tab>
+                <Tab ml={roomId || itemId ? undefined : 2}>My Chats{chatsUnread !== "" ? ` (${chatsUnread})` : ""}</Tab>
                 <Tab mr="auto">
                     <chakra.span mr={1}>Who&apos;s here</chakra.span>
                     <PageCountText fontSize="inherit" lineHeight="inherit" path={location.pathname} noIcon={true} />

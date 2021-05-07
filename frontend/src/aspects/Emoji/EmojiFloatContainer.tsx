@@ -10,7 +10,7 @@ export default function EmojiFloatContainer(
 
     useEffect(() => {
         emojiFloat.setIsActive(true);
-        emojiFloat.setExtents(70, 90, props.xDurationMs ?? 1000, 100, 0, props.yDurationMs ?? 2000);
+        emojiFloat.setExtents(70, 90, props.xDurationMs ?? 1500, 100, 0, props.yDurationMs ?? 4000);
 
         return () => {
             emojiFloat.setIsActive(false);

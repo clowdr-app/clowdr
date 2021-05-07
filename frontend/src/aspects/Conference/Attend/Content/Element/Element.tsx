@@ -11,9 +11,8 @@ import Schedule from "../../Schedule/Schedule";
 import ItemList from "../ItemList";
 
 export function Element({ item }: { item: ElementDataFragment }): JSX.Element {
-    if (isElementDataBlob(item.data)) {
+    if (item.data && isElementDataBlob(item.data)) {
         const blob = item.data;
-
         return <ElementInner blob={blob} type={item.typeName} />;
     }
     return <></>;

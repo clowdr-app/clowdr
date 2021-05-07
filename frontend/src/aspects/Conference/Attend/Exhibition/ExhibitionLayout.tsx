@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import {
     Content_ElementType_Enum,
+    ElementDataFragment,
     ExhibitionItemFragment,
     ExhibitionWithContentFragment,
     useSelectExhibitionQuery,
@@ -48,7 +49,7 @@ function ItemTile({
     const bgColour_IsDark = useMemo(() => bgColour.isDark(), [bgColour]);
     const textColour = bgColour_IsDark ? "white" : "black";
 
-    const primaryItem = useMemo(() => {
+    const primaryItem: ElementDataFragment | undefined = useMemo(() => {
         const sortOrder = [
             Content_ElementType_Enum.VideoBroadcast,
             Content_ElementType_Enum.VideoFile,
@@ -119,7 +120,7 @@ function ItemTile({
                     <PageCountText path={itemUrl} fontSize="inherit" />
                 </LinkButton>
             </HStack>
-            <Element item={primaryItem} />
+            {primaryItem && <Element item={primaryItem} />}
             {/* <Text>TODO: A marker to show if any of the authors are present</Text> */}
         </VStack>
     );

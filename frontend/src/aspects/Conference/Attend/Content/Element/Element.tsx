@@ -13,12 +13,20 @@ import ItemList from "../ItemList";
 export function Element({ item }: { item: ElementDataFragment }): JSX.Element {
     if (item.data && isElementDataBlob(item.data)) {
         const blob = item.data;
-        return <ElementInner blob={blob} type={item.typeName} />;
+        return <ElementInner name={item.name} blob={blob} type={item.typeName} />;
     }
     return <></>;
 }
 
-function ElementInner({ blob, type }: { blob: ElementDataBlob; type: Content_ElementType_Enum }): JSX.Element {
+function ElementInner({
+    blob,
+    type,
+    name,
+}: {
+    name: string;
+    blob: ElementDataBlob;
+    type: Content_ElementType_Enum;
+}): JSX.Element {
     const el = useMemo(() => {
         const latestVersion = R.last(blob);
 
@@ -43,7 +51,7 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: Content_Ele
             case Content_ElementType_Enum.Zoom:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="green">
-                        Go to Zoom
+                        Go to {name}
                     </ExternalLinkButton>
                 );
             case Content_ElementType_Enum.Text:
@@ -128,7 +136,7 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: Content_Ele
             case Content_ElementType_Enum.PaperUrl:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="red">
-                        Read the PDF
+                        Open {name}
                     </ExternalLinkButton>
                 );
             case Content_ElementType_Enum.PaperLink:
@@ -148,7 +156,7 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: Content_Ele
                     }.amazonaws.com/${bucket}/${key}`;
                     return (
                         <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
-                            Open the Paper File
+                            Open {name}
                         </ExternalLinkButton>
                     );
                 } catch (e) {
@@ -158,7 +166,7 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: Content_Ele
             case Content_ElementType_Enum.PosterUrl:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="red">
-                        Read the PDF
+                        Open {name}
                     </ExternalLinkButton>
                 );
             case Content_ElementType_Enum.PosterFile: {
@@ -181,7 +189,7 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: Content_Ele
                     } else {
                         return (
                             <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
-                                Open the Poster File
+                                Open {name}
                             </ExternalLinkButton>
                         );
                     }
@@ -198,8 +206,8 @@ function ElementInner({ blob, type }: { blob: ElementDataBlob; type: Content_Ele
                 );
         }
 
-        return <Box>Cannot render this content.</Box>;
-    }, [blob, type]);
+        return <Box>Cannot {name} content.</Box>;
+    }, [blob, type, name]);
 
     return el;
 }

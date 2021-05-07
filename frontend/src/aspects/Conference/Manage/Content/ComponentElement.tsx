@@ -12,12 +12,16 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
             `Component Element Template mistakenly used for type ${type}.`
         );
 
+        const nameStr = type
+            .toLowerCase()
+            .split("_")
+            .reduce((acc, x) => `${acc} ${x}`);
         return {
             type: "element-only",
             element: {
                 isNew: true,
                 id: uuidv4(),
-                name: type,
+                name: nameStr[0].toUpperCase() + nameStr.substr(1),
                 typeName: type,
                 isHidden: false,
                 data: [],

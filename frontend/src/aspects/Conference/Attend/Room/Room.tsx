@@ -61,6 +61,7 @@ gql`
             zoomItems: elements(where: { typeName: { _eq: ZOOM } }, limit: 1) {
                 id
                 data
+                name
             }
             videoItems: elements(
                 where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, isHidden: { _eq: false } }
@@ -273,7 +274,7 @@ function RoomInner({
                 if (currentZoomItems?.length) {
                     const versions = currentZoomItems[0].data as ElementDataBlob;
                     const latest = R.last(versions)?.data as ZoomBlob;
-                    return latest.url;
+                    return { url: latest.url, name: currentZoomItems[0].name };
                 }
             }
 
@@ -282,7 +283,7 @@ function RoomInner({
                 if (nextZoomItems?.length && now30s > Date.parse(nextRoomEvent.startTime) - 20 * 60 * 1000) {
                     const versions = nextZoomItems[0].data as ElementDataBlob;
                     const latest = R.last(versions)?.data as ZoomBlob;
-                    return latest.url;
+                    return { url: latest.url, name: nextZoomItems[0].name };
                 }
             }
 
@@ -620,14 +621,14 @@ function RoomInner({
                         ) : undefined}
                         {maybeZoomUrl && !currentEventModeIsNone ? (
                             <ExternalLinkButton
-                                to={maybeZoomUrl}
+                                to={maybeZoomUrl.url}
                                 isExternal={true}
                                 colorScheme="green"
                                 size="lg"
                                 w="100%"
                                 mt={4}
                             >
-                                Go to Zoom
+                                Go to {maybeZoomUrl.name}
                             </ExternalLinkButton>
                         ) : undefined}
                     </>

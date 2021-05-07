@@ -35,11 +35,11 @@ export const FileElementTemplate: ElementBaseTemplate = {
 
         const name =
             type === Content_ElementType_Enum.ImageFile
-                ? "Image (PNG/JPEG/GIF/WebP)"
+                ? "Image"
                 : type === Content_ElementType_Enum.PaperFile
-                ? "Document (PDF)"
+                ? "Document"
                 : type === Content_ElementType_Enum.PosterFile
-                ? "Poster (PNG/JPEG/WebP)"
+                ? "Poster"
                 : "File";
         if (required) {
             return {

@@ -53,14 +53,14 @@ export const URLElementTemplate: ElementBaseTemplate = {
 
         const name =
             type === Content_ElementType_Enum.ImageUrl
-                ? "URL to an image file (PNG, JPG/JPEG, GIF or SVG only)"
+                ? "Image"
                 : type === Content_ElementType_Enum.PaperUrl
-                ? "URL to a paper file (PDF, Text or Markdown only)"
+                ? "Paper"
                 : type === Content_ElementType_Enum.VideoUrl
-                ? "URL to a video file (MP4 or OGG only)"
+                ? "Video"
                 : type === Content_ElementType_Enum.Zoom
-                ? "URL to a Zoom Meeting"
-                : "URL to a poster image or file (PNG, JPG/JPEG, GIF, SVG or PDF only)";
+                ? "Zoom"
+                : "Poster";
         if (required) {
             return {
                 type: "required-only",

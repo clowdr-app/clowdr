@@ -48,17 +48,17 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
 
         const name =
             type === Content_ElementType_Enum.VideoBroadcast
-                ? "Livestream broadcast video"
+                ? "Livestream video"
                 : type === Content_ElementType_Enum.VideoCountdown
                 ? "Timer countdown video"
                 : type === Content_ElementType_Enum.VideoFile
-                ? "Video file"
+                ? "Video"
                 : type === Content_ElementType_Enum.VideoFiller
                 ? "Filler video"
                 : type === Content_ElementType_Enum.VideoPrepublish
                 ? "Pre-published video"
                 : type === Content_ElementType_Enum.VideoSponsorsFiller
-                ? "Sponsors filler video"
+                ? "Sponsors video"
                 : "Titles video";
         if (required) {
             return {

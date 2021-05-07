@@ -90,7 +90,7 @@ function generateElementTypeFriendlyName(type: Content_ElementType_Enum) {
         case Content_ElementType_Enum.WholeSchedule:
             return "Whole schedule";
         case Content_ElementType_Enum.Zoom:
-            return "Zoom Meeting URL";
+            return "Zoom";
     }
 }
 

@@ -11,10 +11,12 @@ export function VonageRoomControlBar({
     onJoinRoom,
     onLeaveRoom,
     joining,
+    joinRoomButtonText = "Join Room",
 }: {
     onJoinRoom: () => void;
     onLeaveRoom: () => void;
     joining: boolean;
+    joinRoomButtonText?: string;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const vonage = useVonageGlobalState();
@@ -219,7 +221,7 @@ export function VonageRoomControlBar({
                                     onClick={onJoinRoom}
                                     isLoading={joining}
                                 >
-                                    Join Room
+                                    {joinRoomButtonText}
                                 </Button>
                             )}
                         </Box>

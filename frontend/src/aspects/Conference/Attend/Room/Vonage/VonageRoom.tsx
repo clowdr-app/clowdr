@@ -43,6 +43,7 @@ export function VonageRoom({
                         stop={!roomCouldBeInUse || disable}
                         getAccessToken={getAccessToken}
                         isBackstageRoom={isBackstageRoom}
+                        joinRoomButtonText={isBackstageRoom ? "Join the backstage" : undefined}
                     />
                 ) : undefined}
             </ChatProfileModalProvider>
@@ -56,12 +57,14 @@ function VonageRoomInner({
     stop,
     isBackstageRoom,
     onRoomJoined,
+    joinRoomButtonText,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
     stop: boolean;
     isBackstageRoom: boolean;
     onRoomJoined?: (_joined: boolean) => void;
+    joinRoomButtonText?: string;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
@@ -527,7 +530,12 @@ function VonageRoomInner({
     return (
         <Box width="100%">
             {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
-            <VonageRoomControlBar onJoinRoom={joinRoom} onLeaveRoom={leaveRoom} joining={joining} />
+            <VonageRoomControlBar
+                onJoinRoom={joinRoom}
+                onLeaveRoom={leaveRoom}
+                joining={joining}
+                joinRoomButtonText={joinRoomButtonText}
+            />
             <Box position="relative" mb={8} width="100%">
                 {viewPublishedScreenShareEl}
 

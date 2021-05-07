@@ -203,11 +203,7 @@ export function ComposeContextProvider({
 
                     setNewMessage("");
                     setNewMessageData({});
-                    setNewMessageType((old) =>
-                        old === Chat_MessageType_Enum.Message || old === Chat_MessageType_Enum.Answer
-                            ? old
-                            : Chat_MessageType_Enum.Message
-                    );
+                    setNewMessageType(Chat_MessageType_Enum.Message);
                 } catch (e) {
                     console.error(`${new Date().toLocaleString()}: Failed to send message`, e);
                 } finally {

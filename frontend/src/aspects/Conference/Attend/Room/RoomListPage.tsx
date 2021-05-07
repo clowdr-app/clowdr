@@ -36,6 +36,7 @@ gql`
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
                 _or: [{ originatingItemId: { _is_null: false } }, { originatingEventId: { _is_null: false } }]
+                originatingItem: { typeName: { _neq: SPONSOR } }
                 managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
@@ -43,7 +44,12 @@ gql`
             ...RoomListRoomDetails
         }
         programRooms: room_Room(
-            where: { conferenceId: { _eq: $conferenceId }, events: {}, managementModeName: { _in: [PUBLIC, PRIVATE] } }
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                events: {}
+                managementModeName: { _in: [PUBLIC, PRIVATE] }
+                _or: [{ originatingItemId: { _is_null: true } }, { originatingItem: { typeName: { _neq: SPONSOR } } }]
+            }
             order_by: { name: asc }
         ) {
             ...RoomListRoomDetails
@@ -54,7 +60,8 @@ gql`
         socialOrDiscussionRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
+                _not: { _or: [{ events: {} }, { chat: { enableMandatorySubscribe: { _eq: true } } }] }
+                _or: [{ originatingItemId: { _is_null: true } }, { originatingItem: { typeName: { _neq: SPONSOR } } }]
                 managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
@@ -65,6 +72,7 @@ gql`
             where: {
                 conferenceId: { _eq: $conferenceId }
                 events: { startTime: { _lte: $todayEnd }, endTime: { _gte: $todayStart } }
+                _or: [{ originatingItemId: { _is_null: true } }, { originatingItem: { typeName: { _neq: SPONSOR } } }]
                 managementModeName: { _in: [PUBLIC, PRIVATE] }
             }
             order_by: { name: asc }
@@ -78,7 +86,17 @@ gql`
         name
         priority
         managementModeName
-        originatingItemId
+        originatingItem {
+            id
+            itemPeople {
+                id
+                roleName
+                person {
+                    id
+                    registrantId
+                }
+            }
+        }
         originatingEventId
     }
 `;

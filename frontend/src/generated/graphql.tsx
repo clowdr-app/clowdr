@@ -35106,7 +35106,7 @@ export type GetAllTodaysRoomsQuery = { readonly __typename?: 'query_root', reado
     & RoomListRoomDetailsFragment
   )> };
 
-export type RoomListRoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingItemId?: Maybe<any>, readonly originatingEventId?: Maybe<any> };
+export type RoomListRoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
 
 export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -36686,7 +36686,7 @@ export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_r
     & MainMenuSponsors_ItemDataFragment
   )> };
 
-export type MainMenuSponsors_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> };
+export type MainMenuSponsors_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
 
 export type GetRoomChatIdQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -37228,7 +37228,17 @@ export const RoomListRoomDetailsFragmentDoc = gql`
   name
   priority
   managementModeName
-  originatingItemId
+  originatingItem {
+    id
+    itemPeople {
+      id
+      roleName
+      person {
+        id
+        registrantId
+      }
+    }
+  }
   originatingEventId
 }
     `;
@@ -38027,6 +38037,14 @@ export const MainMenuSponsors_ItemDataFragmentDoc = gql`
   }
   title
   shortTitle
+  itemPeople {
+    id
+    person {
+      id
+      registrantId
+    }
+    roleName
+  }
 }
     `;
 export const RoomMemberFragmentDoc = gql`
@@ -39637,13 +39655,13 @@ export const GetAllRoomsDocument = gql`
     ...RoomListRoomDetails
   }
   discussionRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, _or: [{originatingItemId: {_is_null: false}}, {originatingEventId: {_is_null: false}}], managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, _or: [{originatingItemId: {_is_null: false}}, {originatingEventId: {_is_null: false}}], originatingItem: {typeName: {_neq: SPONSOR}}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
   }
   programRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, events: {}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, events: {}, managementModeName: {_in: [PUBLIC, PRIVATE]}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}]}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
@@ -39681,13 +39699,13 @@ export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAll
 export const GetAllTodaysRoomsDocument = gql`
     query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
   socialOrDiscussionRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatorySubscribe: {_eq: true}}}]}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}], managementModeName: {_in: [PUBLIC, PRIVATE]}}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
   }
   programRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, events: {startTime: {_lte: $todayEnd}, endTime: {_gte: $todayStart}}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, events: {startTime: {_lte: $todayEnd}, endTime: {_gte: $todayStart}}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}], managementModeName: {_in: [PUBLIC, PRIVATE]}}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails

@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { AccordionPanel, Grid, GridItem, Image, List, ListItem, Text, useToken } from "@chakra-ui/react";
+import { AccordionPanel, Grid, GridItem, Image, List, ListItem, Text, useToken, VStack } from "@chakra-ui/react";
 import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -7,6 +7,7 @@ import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import { MainMenuSponsors_ItemDataFragment, useMainMenuSponsors_GetSponsorsQuery } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
+import { Participants } from "../Conference/Attend/Room/RoomParticipants";
 import { useConference } from "../Conference/useConference";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import FAIcon from "../Icons/FAIcon";
@@ -39,6 +40,14 @@ gql`
         }
         title
         shortTitle
+        itemPeople {
+            id
+            person {
+                id
+                registrantId
+            }
+            roleName
+        }
     }
 `;
 
@@ -112,49 +121,63 @@ export function MainMenuSponsors(): JSX.Element {
                                 ? `/conference/${conference.slug}/room/${sponsorItem.rooms[0].id}`
                                 : `/conference/${conference.slug}/item/${sponsorItem.id}`;
                             return (
-                                <ListItem key={sponsorItem.id} mb={2} h={12} width="100%">
+                                <ListItem key={sponsorItem.id} mb={2} h="auto" width="100%">
                                     <LinkButton
                                         to={url}
-                                        h="100%"
+                                        h="auto"
                                         width="100%"
-                                        pl={0}
+                                        px={0}
                                         overflow="hidden"
                                         linkProps={{ h: "100%", w: "100%" }}
                                         border={`1px solid ${borderColour}`}
                                     >
-                                        <Grid templateColumns="25% 75%" gridColumnGap={4} h="100%" w="100%" pr={4}>
-                                            <GridItem minH="0" py={2} px={4} bgColor="white">
-                                                {sponsorLogos[sponsorItem.id] ? (
-                                                    <Image
-                                                        src={sponsorLogos[sponsorItem.id] ?? undefined}
-                                                        w="100%"
-                                                        h="100%"
-                                                        maxH="100%"
-                                                        objectFit="contain"
-                                                    />
-                                                ) : (
-                                                    <FAIcon icon="cat" iconStyle="s" />
-                                                )}
-                                            </GridItem>
-                                            <GridItem
-                                                minH="0"
-                                                display="flex"
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                            >
-                                                <Text fontSize="lg">
-                                                    <Twemoji
-                                                        className="twemoji"
-                                                        text={
-                                                            sponsorItem.shortTitle
-                                                                ? sponsorItem.shortTitle
-                                                                : sponsorItem.title
-                                                        }
-                                                    />
-                                                </Text>
-                                                <PageCountText width="10%" path={url} />
-                                            </GridItem>
-                                        </Grid>
+                                        <VStack w="100%">
+                                            <Grid templateColumns="25% 75%" h="100%" w="100%">
+                                                <GridItem minH="0" py={2} px={4} bgColor="white">
+                                                    {sponsorLogos[sponsorItem.id] ? (
+                                                        <Image
+                                                            src={sponsorLogos[sponsorItem.id] ?? undefined}
+                                                            w="100%"
+                                                            h="100%"
+                                                            maxH="100%"
+                                                            objectFit="contain"
+                                                        />
+                                                    ) : (
+                                                        <FAIcon icon="cat" iconStyle="s" />
+                                                    )}
+                                                </GridItem>
+                                                <GridItem
+                                                    minH="0"
+                                                    display="flex"
+                                                    alignItems="center"
+                                                    justifyContent="space-between"
+                                                    px={2}
+                                                >
+                                                    <Text fontSize="lg">
+                                                        <Twemoji
+                                                            className="twemoji"
+                                                            text={
+                                                                sponsorItem.shortTitle
+                                                                    ? sponsorItem.shortTitle
+                                                                    : sponsorItem.title
+                                                            }
+                                                        />
+                                                    </Text>
+                                                    <PageCountText path={url} />
+                                                </GridItem>
+                                            </Grid>
+                                            {sponsorItem.rooms.length ? (
+                                                <Participants
+                                                    px={2}
+                                                    pb={2}
+                                                    roomId={sponsorItem.rooms[0].id}
+                                                    higlightPeople={sponsorItem.itemPeople.map((x) => ({
+                                                        registrantId: x.person.registrantId,
+                                                        role: x.roleName,
+                                                    }))}
+                                                />
+                                            ) : undefined}
+                                        </VStack>
                                     </LinkButton>
                                 </ListItem>
                             );

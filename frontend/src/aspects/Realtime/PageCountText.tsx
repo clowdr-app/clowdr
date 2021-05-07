@@ -1,4 +1,4 @@
-import { chakra, TextProps, Tooltip } from "@chakra-ui/react";
+import { Box, chakra, TextProps, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useMaybeConference } from "../Conference/useConference";
 import FAIcon from "../Icons/FAIcon";
@@ -25,7 +25,7 @@ export default function PageCountText({
 
     return pageCountLabel ? (
         <Tooltip label={pageCountLabel}>
-            <chakra.span fontSize="1rem" {...props}>
+            <Box fontSize="1rem" {...props}>
                 {!noIcon ? (
                     <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="eye" verticalAlign="middle" />
                 ) : undefined}
@@ -38,7 +38,7 @@ export default function PageCountText({
                     {pageCount}
                     {noIcon ? ")" : ""}
                 </chakra.span>
-            </chakra.span>
+            </Box>
         </Tooltip>
     ) : (
         <></>

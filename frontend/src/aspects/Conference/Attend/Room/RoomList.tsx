@@ -79,7 +79,15 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                             </Text>
                             <PageCountText path={`/conference/${conference.slug}/room/${room.id}`} />
                         </Center>
-                        <Participants roomId={room.id} />
+                        <Participants
+                            roomId={room.id}
+                            higlightPeople={
+                                room.originatingItem?.itemPeople.map((x) => ({
+                                    registrantId: x.person.registrantId,
+                                    role: x.roleName,
+                                })) ?? []
+                            }
+                        />
                     </>
                 );
             } else {
@@ -105,7 +113,15 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                             <Spacer />
                             <PageCountText path={`/conference/${conference.slug}/room/${room.id}`} />
                         </HStack>
-                        <Participants roomId={room.id} />
+                        <Participants
+                            roomId={room.id}
+                            higlightPeople={
+                                room.originatingItem?.itemPeople.map((x) => ({
+                                    registrantId: x.person.registrantId,
+                                    role: x.roleName,
+                                })) ?? []
+                            }
+                        />
                     </VStack>
                 );
             }

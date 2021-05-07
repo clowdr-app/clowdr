@@ -281,28 +281,32 @@ function AddSponsorRepBody({
     const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
     const [insertItemPerson, insertItemPersonResponse] = useSponsorSecondaryEditor_InsertItemProgramPersonMutation();
 
+    const sortedPeople = useMemo(
+        () =>
+            peopleResponse.data?.collection_ProgramPerson
+                .filter((person) => !existingPeopleIds.includes(person.id))
+                .sort((x, y) => x.name.localeCompare(y.name)),
+        [existingPeopleIds, peopleResponse.data?.collection_ProgramPerson]
+    );
+
     const toast = useToast();
     return (
         <>
             <PopoverHeader>Link program person as representative</PopoverHeader>
             <PopoverBody>
-                {peopleResponse.loading && !peopleResponse.data ? (
-                    <Spinner label="Loading program people" />
-                ) : undefined}
-                {peopleResponse.data ? (
+                {peopleResponse.loading && !sortedPeople ? <Spinner label="Loading program people" /> : undefined}
+                {sortedPeople ? (
                     <Select
                         value={selectedPersonId ?? ""}
                         onChange={(ev) => setSelectedPersonId(ev.target.value === "" ? null : ev.target.value)}
                     >
                         <option value="">Select a program person</option>
-                        {peopleResponse.data.collection_ProgramPerson
-                            .filter((person) => !existingPeopleIds.includes(person.id))
-                            .map((person) => (
-                                <option key={person.id} value={person.id}>
-                                    {person.name} {person.affiliation?.length ? `(${person.affiliation})` : ""} &lt;
-                                    {person.email?.length ? person.email : "No email"}&gt;
-                                </option>
-                            ))}
+                        {sortedPeople.map((person) => (
+                            <option key={person.id} value={person.id}>
+                                {person.name} {person.affiliation?.length ? `(${person.affiliation})` : ""} &lt;
+                                {person.email?.length ? person.email : "No email"}&gt;
+                            </option>
+                        ))}
                     </Select>
                 ) : undefined}
             </PopoverBody>

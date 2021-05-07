@@ -11,6 +11,7 @@ import {
     AlertIcon,
     AlertTitle,
     Box,
+    Button,
     chakra,
     Divider,
     Drawer,
@@ -26,23 +27,40 @@ import {
     IconButton,
     ListItem,
     OrderedList,
+    Popover,
+    PopoverBody,
+    PopoverContent,
+    PopoverFooter,
+    PopoverHeader,
+    PopoverTrigger,
+    Select,
     Spinner,
     Switch,
     Text,
+    UnorderedList,
+    useDisclosure,
     useToast,
+    VStack,
 } from "@chakra-ui/react";
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
-import React, { useMemo } from "react";
+import * as R from "ramda";
+import React, { useMemo, useState } from "react";
 import {
     SponsorSecondaryEditor_ElementFragment,
     SponsorSecondaryEditor_ElementFragmentDoc,
+    SponsorSecondaryEditor_ItemProgramPersonFragment,
+    SponsorSecondaryEditor_ItemProgramPersonFragmentDoc,
     useSponsorElementInner_UpdateElementMutation,
     useSponsorElement_DeleteElementMutation,
     useSponsorElement_SetElementIsHiddenMutation,
-    useSponsorSecondaryEditor_GetSponsorElementsQuery,
+    useSponsorSecondaryEditor_DeleteItemProgramPersonMutation,
+    useSponsorSecondaryEditor_GetSponsorSecondaryInfoQuery,
+    useSponsorSecondaryEditor_InsertItemProgramPersonMutation,
+    useSponsorSecondaryEditor_SelectProgramPeopleQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import FAIcon from "../../../Icons/FAIcon";
+import { FAIcon } from "../../../Icons/FAIcon";
+import { useConference } from "../../useConference";
 import { ElementBaseTemplates } from "../Content/Templates";
 import type { ElementDescriptor } from "../Content/Types";
 import { AddSponsorContentMenu } from "./AddSponsorContentMenu";
@@ -50,9 +68,12 @@ import { LayoutEditor } from "./LayoutEditor";
 import type { SponsorInfoFragment } from "./Types";
 
 gql`
-    query SponsorSecondaryEditor_GetSponsorElements($itemId: uuid!) {
+    query SponsorSecondaryEditor_GetSponsorSecondaryInfo($itemId: uuid!) {
         content_Element(where: { itemId: { _eq: $itemId } }) {
             ...SponsorSecondaryEditor_Element
+        }
+        content_ItemProgramPerson(where: { itemId: { _eq: $itemId } }) {
+            ...SponsorSecondaryEditor_ItemProgramPerson
         }
     }
 
@@ -64,6 +85,17 @@ gql`
         layoutData
         isHidden
         updatedAt
+    }
+
+    fragment SponsorSecondaryEditor_ItemProgramPerson on content_ItemProgramPerson {
+        id
+        itemId
+        person {
+            id
+            name
+            affiliation
+            email
+        }
     }
 `;
 
@@ -78,9 +110,11 @@ export function SponsorSecondaryEditor({
     onSecondaryPanelClose: () => void;
     index: number | null;
 }): JSX.Element {
-    const elementsResult = useSponsorSecondaryEditor_GetSponsorElementsQuery({
+    const itemId = index !== null && index < sponsors.length ? sponsors[index].id : undefined;
+    const roomId = index !== null && index < sponsors.length ? sponsors[index].room?.id : undefined;
+    const infoResult = useSponsorSecondaryEditor_GetSponsorSecondaryInfoQuery({
         variables: {
-            itemId: index !== null && index < sponsors.length ? sponsors[index].id : "",
+            itemId: itemId ?? "",
         },
         skip: index === null || index >= sponsors.length,
     });
@@ -92,20 +126,29 @@ export function SponsorSecondaryEditor({
                     <DrawerCloseButton />
                     <DrawerHeader>Edit</DrawerHeader>
                     <DrawerBody>
-                        {index !== null ? (
+                        {itemId ? (
                             <AddSponsorContentMenu
-                                itemId={sponsors[index].id}
-                                roomId={sponsors[index].room?.id ?? null}
+                                itemId={itemId}
+                                roomId={roomId ?? null}
                                 refetch={async () => {
-                                    await elementsResult.refetch();
+                                    await infoResult.refetch();
                                 }}
                             />
                         ) : undefined}
-                        <ApolloQueryWrapper getter={(result) => result.content_Element} queryResult={elementsResult}>
-                            {(elements: readonly SponsorSecondaryEditor_ElementFragment[]) => (
-                                <SponsorElements elements={elements} />
-                            )}
-                        </ApolloQueryWrapper>
+                        {itemId ? (
+                            <ApolloQueryWrapper
+                                getter={(result) => ({
+                                    elements: result.content_Element,
+                                    representatives: result.content_ItemProgramPerson,
+                                })}
+                                queryResult={infoResult}
+                            >
+                                {(result: {
+                                    elements: readonly SponsorSecondaryEditor_ElementFragment[];
+                                    representatives: readonly SponsorSecondaryEditor_ItemProgramPersonFragment[];
+                                }) => <SponsorElements itemId={itemId} {...result} />}
+                            </ApolloQueryWrapper>
+                        ) : undefined}
                     </DrawerBody>
                 </DrawerContent>
             </DrawerOverlay>
@@ -114,9 +157,13 @@ export function SponsorSecondaryEditor({
 }
 
 export function SponsorElements({
+    itemId,
     elements,
+    representatives,
 }: {
+    itemId: string;
     elements: readonly SponsorSecondaryEditor_ElementFragment[];
+    representatives: readonly SponsorSecondaryEditor_ItemProgramPersonFragment[];
 }): JSX.Element {
     const sortedElements = useMemo(() => {
         const sortedElements = [...elements];
@@ -139,6 +186,8 @@ export function SponsorElements({
         return sortedElements;
     }, [elements]);
 
+    const repIds = useMemo(() => representatives.map((x) => x.id), [representatives]);
+
     return (
         <Accordion allowToggle allowMultiple>
             <AccordionItem>
@@ -158,10 +207,249 @@ export function SponsorElements({
                     </OrderedList>
                 </AccordionPanel>
             </AccordionItem>
+            <AccordionItem>
+                <AccordionButton>Representatives</AccordionButton>
+                <AccordionPanel pb={4}>
+                    <VStack spacing={2} alignItems="flex-start">
+                        <Text>Add or remove Program People as representatives of this sponsor.</Text>
+                        <Text fontSize="sm" pb={2}>
+                            Please add representatives to the Program People table and link them to their Registrant,
+                            then link them to this sponsor booth.
+                        </Text>
+                        <AddSponsorRep itemId={itemId} existingPeopleIds={repIds} />
+                        <SponsorRepsList representatives={representatives} />
+                    </VStack>
+                </AccordionPanel>
+            </AccordionItem>
             {sortedElements.map((item) => (
                 <SponsorElement key={item.id} element={item} />
             ))}
         </Accordion>
+    );
+}
+
+gql`
+    query SponsorSecondaryEditor_SelectProgramPeople($conferenceId: uuid!) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, registrantId: { _is_null: false } }) {
+            ...SponsorSecondaryEditor_ProgramPerson
+        }
+    }
+
+    fragment SponsorSecondaryEditor_ProgramPerson on collection_ProgramPerson {
+        id
+        name
+        affiliation
+        email
+    }
+
+    mutation SponsorSecondaryEditor_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $itemId: uuid!) {
+        insert_content_ItemProgramPerson_one(
+            object: {
+                conferenceId: $conferenceId
+                personId: $personId
+                itemId: $itemId
+                priority: 1
+                roleName: "AUTHOR"
+            }
+        ) {
+            ...SponsorSecondaryEditor_ItemProgramPerson
+        }
+    }
+
+    mutation SponsorSecondaryEditor_DeleteItemProgramPerson($itemPersonId: uuid!) {
+        delete_content_ItemProgramPerson_by_pk(id: $itemPersonId) {
+            id
+        }
+    }
+`;
+
+function AddSponsorRepBody({
+    itemId,
+    existingPeopleIds,
+    onClose,
+}: {
+    itemId: string;
+    existingPeopleIds: string[];
+    onClose: () => void;
+}): JSX.Element {
+    const conference = useConference();
+    const peopleResponse = useSponsorSecondaryEditor_SelectProgramPeopleQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
+    const [insertItemPerson, insertItemPersonResponse] = useSponsorSecondaryEditor_InsertItemProgramPersonMutation();
+
+    const toast = useToast();
+    return (
+        <>
+            <PopoverHeader>Link program person as representative</PopoverHeader>
+            <PopoverBody>
+                {peopleResponse.loading && !peopleResponse.data ? (
+                    <Spinner label="Loading program people" />
+                ) : undefined}
+                {peopleResponse.data ? (
+                    <Select
+                        value={selectedPersonId ?? ""}
+                        onChange={(ev) => setSelectedPersonId(ev.target.value === "" ? null : ev.target.value)}
+                    >
+                        <option value="">Select a program person</option>
+                        {peopleResponse.data.collection_ProgramPerson
+                            .filter((person) => !existingPeopleIds.includes(person.id))
+                            .map((person) => (
+                                <option key={person.id} value={person.id}>
+                                    {person.name} {person.affiliation?.length ? `(${person.affiliation})` : ""} &lt;
+                                    {person.email?.length ? person.email : "No email"}&gt;
+                                </option>
+                            ))}
+                    </Select>
+                ) : undefined}
+            </PopoverBody>
+            <PopoverFooter>
+                <Button
+                    colorScheme="green"
+                    isDisabled={!selectedPersonId}
+                    isLoading={insertItemPersonResponse.loading}
+                    onClick={async () => {
+                        try {
+                            await insertItemPerson({
+                                variables: {
+                                    conferenceId: conference.id,
+                                    itemId,
+                                    personId: selectedPersonId,
+                                },
+                                update: (cache, response) => {
+                                    if (response.data) {
+                                        const data = response.data.insert_content_ItemProgramPerson_one;
+                                        cache.modify({
+                                            fields: {
+                                                content_ItemProgramPerson(existingRefs: Reference[] = []) {
+                                                    const newRef = cache.writeFragment({
+                                                        data,
+                                                        fragment: SponsorSecondaryEditor_ItemProgramPersonFragmentDoc,
+                                                        fragmentName: "SponsorSecondaryEditor_ItemProgramPerson",
+                                                    });
+                                                    return [...existingRefs, newRef];
+                                                },
+                                            },
+                                        });
+                                    }
+                                },
+                            });
+
+                            onClose();
+                        } catch (e) {
+                            toast({
+                                title: "Error linking representative",
+                                description: e.message ?? e.toString(),
+                                isClosable: true,
+                                duration: 10000,
+                                position: "bottom",
+                                status: "error",
+                            });
+                        }
+                    }}
+                >
+                    Add link
+                </Button>
+            </PopoverFooter>
+        </>
+    );
+}
+
+function AddSponsorRep(props: { itemId: string; existingPeopleIds: string[] }): JSX.Element {
+    const { onOpen, onClose, isOpen } = useDisclosure();
+
+    return (
+        <Popover placement="bottom-start" isLazy isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+            <PopoverTrigger>
+                <Button size="sm" colorScheme="green">
+                    <FAIcon iconStyle="s" icon="plus-square" mr={2} />
+                    <chakra.span>Link representative</chakra.span>
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+                <AddSponsorRepBody onClose={onClose} {...props} />
+            </PopoverContent>
+        </Popover>
+    );
+}
+
+function SponsorRepsList({
+    representatives,
+}: {
+    representatives: readonly SponsorSecondaryEditor_ItemProgramPersonFragment[];
+}): JSX.Element {
+    const sortedReps = useMemo(() => R.sortBy((x) => x.person.name, representatives), [representatives]);
+    const toast = useToast();
+    const [deleteItemPerson, deleteItemPersonResponse] = useSponsorSecondaryEditor_DeleteItemProgramPersonMutation();
+
+    return sortedReps.length > 0 ? (
+        <>
+            <Text>Representatives:</Text>
+            <UnorderedList listStylePosition="inside">
+                {sortedReps.map((rep) => (
+                    <ListItem key={rep.id}>
+                        <chakra.span>
+                            {rep.person.name} &lt;{rep.person.email?.length ? rep.person.email : "No email"}&gt;
+                        </chakra.span>
+                        <Button
+                            aria-label="Delete"
+                            colorScheme="red"
+                            size="xs"
+                            ml={4}
+                            isDisabled={deleteItemPersonResponse.loading}
+                            onClick={async () => {
+                                try {
+                                    deleteItemPerson({
+                                        variables: {
+                                            itemPersonId: rep.id,
+                                        },
+                                        update: (cache, response) => {
+                                            if (response.data?.delete_content_ItemProgramPerson_by_pk) {
+                                                const deletedId =
+                                                    response.data.delete_content_ItemProgramPerson_by_pk.id;
+                                                cache.modify({
+                                                    fields: {
+                                                        content_ItemProgramPerson(
+                                                            existingRefs: Reference[] = [],
+                                                            { readField }
+                                                        ) {
+                                                            cache.evict({
+                                                                id: deletedId,
+                                                                fieldName: "SponsorSecondaryEditor_ItemProgramPerson",
+                                                                broadcast: true,
+                                                            });
+                                                            return existingRefs.filter(
+                                                                (ref) => readField("id", ref) !== deletedId
+                                                            );
+                                                        },
+                                                    },
+                                                });
+                                            }
+                                        },
+                                    });
+                                } catch (e) {
+                                    toast({
+                                        title: "Error unlinking representative",
+                                        description: e.message ?? e.toString(),
+                                        isClosable: true,
+                                        duration: 10000,
+                                        position: "bottom",
+                                        status: "error",
+                                    });
+                                }
+                            }}
+                        >
+                            <FAIcon iconStyle="s" icon="trash-alt" />
+                        </Button>
+                    </ListItem>
+                ))}
+            </UnorderedList>
+        </>
+    ) : (
+        <Text>No representatives linked to this sponsor.</Text>
     );
 }
 

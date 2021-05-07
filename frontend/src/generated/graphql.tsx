@@ -36421,17 +36421,53 @@ export type EditableSponsorsTable_DeleteSponsorMutation = { readonly __typename?
 
 export type EditableSponsorsTable_ItemInfoFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly room?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any }> };
 
-export type SponsorSecondaryEditor_GetSponsorElementsQueryVariables = Exact<{
+export type SponsorSecondaryEditor_GetSponsorSecondaryInfoQueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
 
 
-export type SponsorSecondaryEditor_GetSponsorElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<(
+export type SponsorSecondaryEditor_GetSponsorSecondaryInfoQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
     & SponsorSecondaryEditor_ElementFragment
+  )>, readonly content_ItemProgramPerson: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & SponsorSecondaryEditor_ItemProgramPersonFragment
   )> };
 
 export type SponsorSecondaryEditor_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
+
+export type SponsorSecondaryEditor_ItemProgramPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> } };
+
+export type SponsorSecondaryEditor_SelectProgramPeopleQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SponsorSecondaryEditor_SelectProgramPeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<(
+    { readonly __typename?: 'collection_ProgramPerson' }
+    & SponsorSecondaryEditor_ProgramPersonFragment
+  )> };
+
+export type SponsorSecondaryEditor_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> };
+
+export type SponsorSecondaryEditor_InsertItemProgramPersonMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  personId: Scalars['uuid'];
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type SponsorSecondaryEditor_InsertItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemProgramPerson_one?: Maybe<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & SponsorSecondaryEditor_ItemProgramPersonFragment
+  )> };
+
+export type SponsorSecondaryEditor_DeleteItemProgramPersonMutationVariables = Exact<{
+  itemPersonId: Scalars['uuid'];
+}>;
+
+
+export type SponsorSecondaryEditor_DeleteItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ItemProgramPerson_by_pk?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any }> };
 
 export type SponsorElement_DeleteElementMutationVariables = Exact<{
   elementId: Scalars['uuid'];
@@ -37875,6 +37911,26 @@ export const SponsorSecondaryEditor_ElementFragmentDoc = gql`
   layoutData
   isHidden
   updatedAt
+}
+    `;
+export const SponsorSecondaryEditor_ItemProgramPersonFragmentDoc = gql`
+    fragment SponsorSecondaryEditor_ItemProgramPerson on content_ItemProgramPerson {
+  id
+  itemId
+  person {
+    id
+    name
+    affiliation
+    email
+  }
+}
+    `;
+export const SponsorSecondaryEditor_ProgramPersonFragmentDoc = gql`
+    fragment SponsorSecondaryEditor_ProgramPerson on collection_ProgramPerson {
+  id
+  name
+  affiliation
+  email
 }
     `;
 export const ProfileDataFragmentDoc = gql`
@@ -44154,41 +44210,152 @@ export function useEditableSponsorsTable_DeleteSponsorMutation(baseOptions?: Apo
 export type EditableSponsorsTable_DeleteSponsorMutationHookResult = ReturnType<typeof useEditableSponsorsTable_DeleteSponsorMutation>;
 export type EditableSponsorsTable_DeleteSponsorMutationResult = Apollo.MutationResult<EditableSponsorsTable_DeleteSponsorMutation>;
 export type EditableSponsorsTable_DeleteSponsorMutationOptions = Apollo.BaseMutationOptions<EditableSponsorsTable_DeleteSponsorMutation, EditableSponsorsTable_DeleteSponsorMutationVariables>;
-export const SponsorSecondaryEditor_GetSponsorElementsDocument = gql`
-    query SponsorSecondaryEditor_GetSponsorElements($itemId: uuid!) {
+export const SponsorSecondaryEditor_GetSponsorSecondaryInfoDocument = gql`
+    query SponsorSecondaryEditor_GetSponsorSecondaryInfo($itemId: uuid!) {
   content_Element(where: {itemId: {_eq: $itemId}}) {
     ...SponsorSecondaryEditor_Element
   }
+  content_ItemProgramPerson(where: {itemId: {_eq: $itemId}}) {
+    ...SponsorSecondaryEditor_ItemProgramPerson
+  }
 }
-    ${SponsorSecondaryEditor_ElementFragmentDoc}`;
+    ${SponsorSecondaryEditor_ElementFragmentDoc}
+${SponsorSecondaryEditor_ItemProgramPersonFragmentDoc}`;
 
 /**
- * __useSponsorSecondaryEditor_GetSponsorElementsQuery__
+ * __useSponsorSecondaryEditor_GetSponsorSecondaryInfoQuery__
  *
- * To run a query within a React component, call `useSponsorSecondaryEditor_GetSponsorElementsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSponsorSecondaryEditor_GetSponsorElementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSponsorSecondaryEditor_GetSponsorSecondaryInfoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSponsorSecondaryEditor_GetSponsorSecondaryInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSponsorSecondaryEditor_GetSponsorElementsQuery({
+ * const { data, loading, error } = useSponsorSecondaryEditor_GetSponsorSecondaryInfoQuery({
  *   variables: {
  *      itemId: // value for 'itemId'
  *   },
  * });
  */
-export function useSponsorSecondaryEditor_GetSponsorElementsQuery(baseOptions: Apollo.QueryHookOptions<SponsorSecondaryEditor_GetSponsorElementsQuery, SponsorSecondaryEditor_GetSponsorElementsQueryVariables>) {
+export function useSponsorSecondaryEditor_GetSponsorSecondaryInfoQuery(baseOptions: Apollo.QueryHookOptions<SponsorSecondaryEditor_GetSponsorSecondaryInfoQuery, SponsorSecondaryEditor_GetSponsorSecondaryInfoQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SponsorSecondaryEditor_GetSponsorElementsQuery, SponsorSecondaryEditor_GetSponsorElementsQueryVariables>(SponsorSecondaryEditor_GetSponsorElementsDocument, options);
+        return Apollo.useQuery<SponsorSecondaryEditor_GetSponsorSecondaryInfoQuery, SponsorSecondaryEditor_GetSponsorSecondaryInfoQueryVariables>(SponsorSecondaryEditor_GetSponsorSecondaryInfoDocument, options);
       }
-export function useSponsorSecondaryEditor_GetSponsorElementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SponsorSecondaryEditor_GetSponsorElementsQuery, SponsorSecondaryEditor_GetSponsorElementsQueryVariables>) {
+export function useSponsorSecondaryEditor_GetSponsorSecondaryInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SponsorSecondaryEditor_GetSponsorSecondaryInfoQuery, SponsorSecondaryEditor_GetSponsorSecondaryInfoQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SponsorSecondaryEditor_GetSponsorElementsQuery, SponsorSecondaryEditor_GetSponsorElementsQueryVariables>(SponsorSecondaryEditor_GetSponsorElementsDocument, options);
+          return Apollo.useLazyQuery<SponsorSecondaryEditor_GetSponsorSecondaryInfoQuery, SponsorSecondaryEditor_GetSponsorSecondaryInfoQueryVariables>(SponsorSecondaryEditor_GetSponsorSecondaryInfoDocument, options);
         }
-export type SponsorSecondaryEditor_GetSponsorElementsQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorElementsQuery>;
-export type SponsorSecondaryEditor_GetSponsorElementsLazyQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorElementsLazyQuery>;
-export type SponsorSecondaryEditor_GetSponsorElementsQueryResult = Apollo.QueryResult<SponsorSecondaryEditor_GetSponsorElementsQuery, SponsorSecondaryEditor_GetSponsorElementsQueryVariables>;
+export type SponsorSecondaryEditor_GetSponsorSecondaryInfoQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorSecondaryInfoQuery>;
+export type SponsorSecondaryEditor_GetSponsorSecondaryInfoLazyQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_GetSponsorSecondaryInfoLazyQuery>;
+export type SponsorSecondaryEditor_GetSponsorSecondaryInfoQueryResult = Apollo.QueryResult<SponsorSecondaryEditor_GetSponsorSecondaryInfoQuery, SponsorSecondaryEditor_GetSponsorSecondaryInfoQueryVariables>;
+export const SponsorSecondaryEditor_SelectProgramPeopleDocument = gql`
+    query SponsorSecondaryEditor_SelectProgramPeople($conferenceId: uuid!) {
+  collection_ProgramPerson(
+    where: {conferenceId: {_eq: $conferenceId}, registrantId: {_is_null: false}}
+  ) {
+    ...SponsorSecondaryEditor_ProgramPerson
+  }
+}
+    ${SponsorSecondaryEditor_ProgramPersonFragmentDoc}`;
+
+/**
+ * __useSponsorSecondaryEditor_SelectProgramPeopleQuery__
+ *
+ * To run a query within a React component, call `useSponsorSecondaryEditor_SelectProgramPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSponsorSecondaryEditor_SelectProgramPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSponsorSecondaryEditor_SelectProgramPeopleQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSponsorSecondaryEditor_SelectProgramPeopleQuery(baseOptions: Apollo.QueryHookOptions<SponsorSecondaryEditor_SelectProgramPeopleQuery, SponsorSecondaryEditor_SelectProgramPeopleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SponsorSecondaryEditor_SelectProgramPeopleQuery, SponsorSecondaryEditor_SelectProgramPeopleQueryVariables>(SponsorSecondaryEditor_SelectProgramPeopleDocument, options);
+      }
+export function useSponsorSecondaryEditor_SelectProgramPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SponsorSecondaryEditor_SelectProgramPeopleQuery, SponsorSecondaryEditor_SelectProgramPeopleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SponsorSecondaryEditor_SelectProgramPeopleQuery, SponsorSecondaryEditor_SelectProgramPeopleQueryVariables>(SponsorSecondaryEditor_SelectProgramPeopleDocument, options);
+        }
+export type SponsorSecondaryEditor_SelectProgramPeopleQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_SelectProgramPeopleQuery>;
+export type SponsorSecondaryEditor_SelectProgramPeopleLazyQueryHookResult = ReturnType<typeof useSponsorSecondaryEditor_SelectProgramPeopleLazyQuery>;
+export type SponsorSecondaryEditor_SelectProgramPeopleQueryResult = Apollo.QueryResult<SponsorSecondaryEditor_SelectProgramPeopleQuery, SponsorSecondaryEditor_SelectProgramPeopleQueryVariables>;
+export const SponsorSecondaryEditor_InsertItemProgramPersonDocument = gql`
+    mutation SponsorSecondaryEditor_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $itemId: uuid!) {
+  insert_content_ItemProgramPerson_one(
+    object: {conferenceId: $conferenceId, personId: $personId, itemId: $itemId, priority: 1, roleName: "AUTHOR"}
+  ) {
+    ...SponsorSecondaryEditor_ItemProgramPerson
+  }
+}
+    ${SponsorSecondaryEditor_ItemProgramPersonFragmentDoc}`;
+export type SponsorSecondaryEditor_InsertItemProgramPersonMutationFn = Apollo.MutationFunction<SponsorSecondaryEditor_InsertItemProgramPersonMutation, SponsorSecondaryEditor_InsertItemProgramPersonMutationVariables>;
+
+/**
+ * __useSponsorSecondaryEditor_InsertItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useSponsorSecondaryEditor_InsertItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSponsorSecondaryEditor_InsertItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sponsorSecondaryEditorInsertItemProgramPersonMutation, { data, loading, error }] = useSponsorSecondaryEditor_InsertItemProgramPersonMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      personId: // value for 'personId'
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useSponsorSecondaryEditor_InsertItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<SponsorSecondaryEditor_InsertItemProgramPersonMutation, SponsorSecondaryEditor_InsertItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SponsorSecondaryEditor_InsertItemProgramPersonMutation, SponsorSecondaryEditor_InsertItemProgramPersonMutationVariables>(SponsorSecondaryEditor_InsertItemProgramPersonDocument, options);
+      }
+export type SponsorSecondaryEditor_InsertItemProgramPersonMutationHookResult = ReturnType<typeof useSponsorSecondaryEditor_InsertItemProgramPersonMutation>;
+export type SponsorSecondaryEditor_InsertItemProgramPersonMutationResult = Apollo.MutationResult<SponsorSecondaryEditor_InsertItemProgramPersonMutation>;
+export type SponsorSecondaryEditor_InsertItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<SponsorSecondaryEditor_InsertItemProgramPersonMutation, SponsorSecondaryEditor_InsertItemProgramPersonMutationVariables>;
+export const SponsorSecondaryEditor_DeleteItemProgramPersonDocument = gql`
+    mutation SponsorSecondaryEditor_DeleteItemProgramPerson($itemPersonId: uuid!) {
+  delete_content_ItemProgramPerson_by_pk(id: $itemPersonId) {
+    id
+  }
+}
+    `;
+export type SponsorSecondaryEditor_DeleteItemProgramPersonMutationFn = Apollo.MutationFunction<SponsorSecondaryEditor_DeleteItemProgramPersonMutation, SponsorSecondaryEditor_DeleteItemProgramPersonMutationVariables>;
+
+/**
+ * __useSponsorSecondaryEditor_DeleteItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useSponsorSecondaryEditor_DeleteItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSponsorSecondaryEditor_DeleteItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sponsorSecondaryEditorDeleteItemProgramPersonMutation, { data, loading, error }] = useSponsorSecondaryEditor_DeleteItemProgramPersonMutation({
+ *   variables: {
+ *      itemPersonId: // value for 'itemPersonId'
+ *   },
+ * });
+ */
+export function useSponsorSecondaryEditor_DeleteItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<SponsorSecondaryEditor_DeleteItemProgramPersonMutation, SponsorSecondaryEditor_DeleteItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SponsorSecondaryEditor_DeleteItemProgramPersonMutation, SponsorSecondaryEditor_DeleteItemProgramPersonMutationVariables>(SponsorSecondaryEditor_DeleteItemProgramPersonDocument, options);
+      }
+export type SponsorSecondaryEditor_DeleteItemProgramPersonMutationHookResult = ReturnType<typeof useSponsorSecondaryEditor_DeleteItemProgramPersonMutation>;
+export type SponsorSecondaryEditor_DeleteItemProgramPersonMutationResult = Apollo.MutationResult<SponsorSecondaryEditor_DeleteItemProgramPersonMutation>;
+export type SponsorSecondaryEditor_DeleteItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<SponsorSecondaryEditor_DeleteItemProgramPersonMutation, SponsorSecondaryEditor_DeleteItemProgramPersonMutationVariables>;
 export const SponsorElement_DeleteElementDocument = gql`
     mutation SponsorElement_DeleteElement($elementId: uuid!) {
   delete_content_Element_by_pk(id: $elementId) {

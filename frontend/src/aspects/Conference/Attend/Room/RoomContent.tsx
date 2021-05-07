@@ -103,7 +103,10 @@ export function RoomContent({
                 <></>
             )}
 
-            {!currentRoomEvent && !nextRoomEvent && roomDetails.isProgramRoom ? (
+            {!currentRoomEvent &&
+            !nextRoomEvent &&
+            roomDetails.isProgramRoom &&
+            roomDetails.originatingItem?.typeName !== Content_ItemType_Enum.Sponsor ? (
                 <Text p={5}>No events in this room in the near future.</Text>
             ) : (
                 <></>
@@ -118,7 +121,11 @@ export function RoomContent({
                 <></>
             )}
 
-            {roomDetails.originatingItem ? <RoomSponsorContent itemId={roomDetails.originatingItem.id} /> : <></>}
+            {roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor ? (
+                <RoomSponsorContent itemId={roomDetails.originatingItem.id} />
+            ) : (
+                <></>
+            )}
         </Box>
     );
 }

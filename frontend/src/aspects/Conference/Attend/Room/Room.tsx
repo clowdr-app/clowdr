@@ -16,6 +16,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import {
+    Content_ItemType_Enum,
     RoomPage_RoomDetailsFragment,
     Room_EventSummaryFragment,
     Room_ManagementMode_Enum,
@@ -261,7 +262,9 @@ function RoomInner({
 
     const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.None;
     const showDefaultBreakoutRoom =
-        !roomDetails.isProgramRoom || currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout;
+        !roomDetails.isProgramRoom ||
+        currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout ||
+        (!currentRoomEvent && roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor);
 
     const maybeZoomUrl = useMemo(() => {
         try {

@@ -1,5 +1,5 @@
 import { Box, keyframes } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 
 export default function FloatingEmoji({
@@ -8,11 +8,10 @@ export default function FloatingEmoji({
     yInitial,
     xStartPc,
     xEndPc,
-    yStartPc,
     yEndPc,
     xDurationMs,
     yDurationMs,
-    createdAt,
+    name,
 }: {
     emoji: string;
     xInitial: number;
@@ -24,6 +23,7 @@ export default function FloatingEmoji({
     xDurationMs: number;
     yDurationMs: number;
     createdAt: number;
+    name: string;
 }): JSX.Element {
     const yKeyframesStr = keyframes`
         0% {
@@ -48,9 +48,10 @@ export default function FloatingEmoji({
         }
     `;
 
+    const shortName = useMemo(() => name.split(" ")[0], [name]);
+
     return (
         <Box
-            fontSize="3xl"
             pos="absolute"
             w="auto"
             h="auto"
@@ -59,10 +60,19 @@ export default function FloatingEmoji({
             minW="unset"
             minH="unset"
             animation={`
-${yKeyframesStr} ${yDurationMs}ms ease-out forwards,
-${xKeyframesStr} ${xDurationMs}ms ease-in-out infinite alternate both`}
+            ${yKeyframesStr} ${yDurationMs}ms ease-out forwards,
+            ${xKeyframesStr} ${xDurationMs}ms ease-in-out infinite alternate both`}
+            display="flex"
+            flexDir="column"
+            justifyContent="center"
+            textAlign="center"
         >
-            <Twemoji className="twemoji" text={emoji} />
+            <Box fontSize="3xl">
+                <Twemoji className="twemoji" text={emoji} />
+            </Box>
+            <Box fontSize="xs" maxW="7em" overflowWrap="normal" noOfLines={2}>
+                {shortName}
+            </Box>
         </Box>
     );
 }

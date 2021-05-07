@@ -22,7 +22,7 @@ interface EmojiFloatContext {
 }
 
 interface AddEmojiFloatContext {
-    addFloater(emoji: string): void;
+    addFloater(emoji: string, name: string): void;
 }
 
 const EmojiFloatCtx = React.createContext<EmojiFloatContext | undefined>(undefined);
@@ -86,7 +86,7 @@ export function EmojiFloatProvider({ children }: { children: React.ReactNode | R
     );
     const ctx2: AddEmojiFloatContext = useMemo(
         () => ({
-            addFloater: (emoji) => {
+            addFloater: (emoji, name) => {
                 const xInitial = extents.xStartPc + Math.random() * (extents.xEndPc - extents.xStartPc);
                 const yInitial = extents.yStartPc + Math.random() * 0.05 * (extents.yEndPc - extents.yStartPc);
                 setFloaters((old) => {
@@ -97,6 +97,7 @@ export function EmojiFloatProvider({ children }: { children: React.ReactNode | R
                             xInitial={xInitial}
                             yInitial={yInitial}
                             createdAt={Date.now()}
+                            name={name}
                             {...extents}
                         />
                     );

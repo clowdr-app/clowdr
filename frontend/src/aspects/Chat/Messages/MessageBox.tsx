@@ -414,22 +414,8 @@ export default function MessageBox({
         isQuestion ? "blue.900" : isAnswer ? "green.900" : "gray.900"
     );
 
-    const emojiFloat = useEmojiFloat();
-    const addEmojiFloat = useAddEmojiFloat();
     const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);
-    const isEmoteNow = emojiFloat.isActive && message.type === Chat_MessageType_Enum.Emote;
-    // useState
-    // && message.created_at >= Date.now() - 10000
-    useEffect(() => {
-        if (
-            emojiFloat.isActive &&
-            message.type === Chat_MessageType_Enum.Emote &&
-            message.created_at >= Date.now() - 10000
-        ) {
-            addEmojiFloat.addFloater(message.message);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+
     const timeFormat: Intl.DateTimeFormatOptions = useMemo(
         () => ({
             weekday: "short",
@@ -444,6 +430,23 @@ export default function MessageBox({
         message.senderId,
     ]);
     const registrant = useRegistrant(senderIdObj);
+
+    const emojiFloat = useEmojiFloat();
+    const addEmojiFloat = useAddEmojiFloat();
+    const isEmoteNow = emojiFloat.isActive && message.type === Chat_MessageType_Enum.Emote;
+    // useState
+    // && message.created_at >= Date.now() - 10000
+    useEffect(() => {
+        if (
+            emojiFloat.isActive &&
+            message.type === Chat_MessageType_Enum.Emote &&
+            message.created_at >= Date.now() - 10000 &&
+            registrant
+        ) {
+            addEmojiFloat.addFloater(message.message, registrant.displayName);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [registrant?.displayName]);
 
     const [subscribeToReactions, setSubscribeToReactions] = useState<boolean>(false);
     useEffect(() => {

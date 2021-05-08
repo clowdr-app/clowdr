@@ -9,6 +9,7 @@ import {
     useGetItemQuery,
 } from "../../../../generated/graphql";
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
+import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
@@ -91,6 +92,10 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                         events: readonly ItemEventFragment[];
                     } & ItemPage_ItemRoomsFragment
                 ) => {
+                    if (!itemData.title) {
+                        return <PageNotFound />;
+                    }
+
                     return (
                         <HStack w="100%" flexWrap="wrap" alignItems="stretch">
                             <VStack

@@ -870,6 +870,9 @@ function RenderedCRUDTable<T>({
         return buttons.map((button) => button.render(selectedData));
     }, [buttons, data, row, selectedKeys]);
 
+    const bgColour = useColorModeValue("gray.50", "gray.900");
+    const headerBottomColour = useColorModeValue("gray.500", "gray.400");
+
     return (
         <>
             <HStack flexWrap="wrap" justifyContent="center" w="100%">
@@ -878,8 +881,18 @@ function RenderedCRUDTable<T>({
             <Center flexDir="column">
                 Filtered to {filteredDataLength} out of {fullDataLength} ({selectedKeys.size} selected)
             </Center>
-            <Table display="block" maxWidth="100%" width="auto" size="sm" variant="striped" overflow="auto">
-                <Thead>
+            <Table
+                bgColor={bgColour}
+                display="block"
+                maxWidth="100%"
+                width="auto"
+                size="sm"
+                variant="striped"
+                overflow="auto"
+                pt={1}
+                colorScheme="gray"
+            >
+                <Thead borderBottom="2px solid" borderBottomColor={headerBottomColour}>
                     <Tr>
                         {selectColumnEl}
                         {editColumnEl}

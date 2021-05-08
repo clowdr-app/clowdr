@@ -24,7 +24,7 @@ gql`
             intendedRoomModeName
             room {
                 id
-                mediaLiveChannel {
+                channelStack {
                     rtmpAInputUri
                     rtmpBInputUri
                     id
@@ -61,15 +61,15 @@ export async function getEventBroadcastDetails(eventId: string): Promise<EventBr
         throw new Error("Could not find event Vonage session");
     }
 
-    if (!eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel) {
+    if (!eventResult.data.schedule_Event_by_pk.room.channelStack) {
         throw new Error("Could not find MediaLive channel for event");
     }
 
     const rtmpUri =
         eventResult.data.schedule_Event_by_pk.eventVonageSession.rtmpInputName === Video_RtmpInput_Enum.RtmpB
-            ? eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel?.rtmpBInputUri ??
-              eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.rtmpAInputUri
-            : eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.rtmpAInputUri;
+            ? eventResult.data.schedule_Event_by_pk.room.channelStack?.rtmpBInputUri ??
+              eventResult.data.schedule_Event_by_pk.room.channelStack.rtmpAInputUri
+            : eventResult.data.schedule_Event_by_pk.room.channelStack.rtmpAInputUri;
 
     const rtmpUriParts = rtmpUri.split("/");
     if (rtmpUriParts.length < 2) {

@@ -1,6 +1,8 @@
 import {
     BatchUpdateScheduleCommand,
     ChannelState,
+    DescribeChannelCommand,
+    DescribeChannelResponse,
     DescribeScheduleCommand,
     ListChannelsCommand,
     MediaLive,
@@ -84,5 +86,11 @@ export class MediaLiveService {
     public async stopChannel(channelId: string): Promise<void> {
         const command = new StopChannelCommand({ ChannelId: channelId });
         await this._mediaLive.send(command);
+    }
+
+    public async describeChannel(channelId: string): Promise<DescribeChannelResponse> {
+        const command = new DescribeChannelCommand({ ChannelId: channelId });
+        const result = await this._mediaLive.send(command);
+        return result;
     }
 }

@@ -25,7 +25,7 @@ gql`
             endTime
             room {
                 id
-                mediaLiveChannel {
+                channelStack {
                     id
                     mediaPackageChannelId
                 }
@@ -65,12 +65,12 @@ export async function handleMediaPackageHarvestJobUpdated(payload: Payload<Media
                 throw new Error("Could not retrieve event associated with MediaPackageHarvestJob");
             }
 
-            if (!eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel) {
+            if (!eventResult.data.schedule_Event_by_pk.room.channelStack) {
                 throw new Error("Could not retrieve broadcast channel details for the event room");
             }
 
             const harvestJobId = await createHarvestJob(
-                eventResult.data.schedule_Event_by_pk.room.mediaLiveChannel.mediaPackageChannelId,
+                eventResult.data.schedule_Event_by_pk.room.channelStack.mediaPackageChannelId,
                 eventResult.data.schedule_Event_by_pk.startTime,
                 eventResult.data.schedule_Event_by_pk.endTime
             );

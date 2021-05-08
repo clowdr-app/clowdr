@@ -24,7 +24,7 @@ gql`
         name
         currentModeName
         isProgramRoom
-        mediaLiveChannel {
+        channelStack {
             cloudFrontDomain
             endpointUri
             id

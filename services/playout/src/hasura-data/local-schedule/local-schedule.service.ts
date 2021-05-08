@@ -256,7 +256,7 @@ export class LocalScheduleService {
                 ) {
                     id
                     conferenceId
-                    mediaLiveChannel {
+                    channelStack {
                         id
                         mediaLiveChannelId
                     }
@@ -275,8 +275,8 @@ export class LocalScheduleService {
         return result.data.room_Room.map((room) => ({
             roomId: room.id,
             conferenceId: room.conferenceId,
-            channelStackId: room.mediaLiveChannel?.id ?? null,
-            mediaLiveChannelId: room.mediaLiveChannel?.mediaLiveChannelId ?? null,
+            channelStackId: room.channelStack?.id ?? null,
+            mediaLiveChannelId: room.channelStack?.mediaLiveChannelId ?? null,
         }));
     }
 
@@ -307,13 +307,13 @@ export class LocalScheduleService {
                                     }
                                 }
                             }
-                            { mediaLiveChannel: {} }
+                            { channelStack: {} }
                         ]
                     }
                 ) {
                     id
                     conferenceId
-                    mediaLiveChannel {
+                    channelStack {
                         id
                         mediaLiveChannelId
                     }
@@ -332,8 +332,8 @@ export class LocalScheduleService {
         return result.data.room_Room.map((room) => ({
             roomId: room.id,
             conferenceId: room.conferenceId,
-            channelStackId: room.mediaLiveChannel?.id ?? null,
-            mediaLiveChannelId: room.mediaLiveChannel?.mediaLiveChannelId ?? null,
+            channelStackId: room.channelStack?.id ?? null,
+            mediaLiveChannelId: room.channelStack?.mediaLiveChannelId ?? null,
         }));
     }
 }

@@ -11,7 +11,7 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
     // Figure out which conference this MediaLive channel belongs to
     gql`
         query GetConferenceIdFromChannelResourceId($channelResourceId: String!) {
-            video_MediaLiveChannel(where: { mediaLiveChannelId: { _eq: $channelResourceId } }) {
+            video_ChannelStack(where: { mediaLiveChannelId: { _eq: $channelResourceId } }) {
                 id
                 room {
                     id
@@ -39,8 +39,8 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
     }
 
     if (
-        conferenceIdResult.data.video_MediaLiveChannel.length !== 1 ||
-        !conferenceIdResult.data.video_MediaLiveChannel[0].room
+        conferenceIdResult.data.video_ChannelStack.length !== 1 ||
+        !conferenceIdResult.data.video_ChannelStack[0].room
     ) {
         console.error(
             "Expected exactly one conference to be associated with MediaLive channel resource",
@@ -49,7 +49,7 @@ export async function switchToFillerVideo(channelResourceId: string): Promise<vo
         return;
     }
 
-    const conferenceId = conferenceIdResult.data.video_MediaLiveChannel[0].room.conferenceId;
+    const conferenceId = conferenceIdResult.data.video_ChannelStack[0].room.conferenceId;
 
     let fillerVideoKey;
     try {

@@ -36027,6 +36027,103 @@ export type AddContentMenu_CreateElementMutationVariables = Exact<{
 
 export type AddContentMenu_CreateElementMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element_one?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any }> };
 
+export type ManageContent_SelectItemExhibitionsQueryVariables = Exact<{
+  exhibitionId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectItemExhibitionsQuery = { readonly __typename?: 'query_root', readonly content_ItemExhibition: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemExhibition' }
+    & ManageContent_ItemExhibitionFragment
+  )> };
+
+export type ManageContent_InsertItemExhibitionMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  exhibitionId: Scalars['uuid'];
+  itemId: Scalars['uuid'];
+  priority: Scalars['Int'];
+}>;
+
+
+export type ManageContent_InsertItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemExhibition_one?: Maybe<(
+    { readonly __typename?: 'content_ItemExhibition' }
+    & ManageContent_ItemExhibitionFragment
+  )> };
+
+export type ManageContent_UpdateItemExhibitionMutationVariables = Exact<{
+  itemExhibitionId: Scalars['uuid'];
+  priority: Scalars['Int'];
+}>;
+
+
+export type ManageContent_UpdateItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemExhibition_by_pk?: Maybe<(
+    { readonly __typename?: 'content_ItemExhibition' }
+    & ManageContent_ItemExhibitionFragment
+  )> };
+
+export type ManageContent_DeleteItemExhibitionMutationVariables = Exact<{
+  itemExhibitionId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ItemExhibition_by_pk?: Maybe<{ readonly __typename?: 'content_ItemExhibition', readonly id: any }> };
+
+export type ManageContent_InsertExhibitionMutationVariables = Exact<{
+  exhibition: Collection_Exhibition_Insert_Input;
+}>;
+
+
+export type ManageContent_InsertExhibitionMutation = { readonly __typename?: 'mutation_root', readonly insert_collection_Exhibition_one?: Maybe<(
+    { readonly __typename?: 'collection_Exhibition' }
+    & ManageContent_ExhibitionFragment
+  )> };
+
+export type ManageContent_UpdateExhibitionMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  update: Collection_Exhibition_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateExhibitionMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Exhibition_by_pk?: Maybe<(
+    { readonly __typename?: 'collection_Exhibition' }
+    & ManageContent_ExhibitionFragment
+  )> };
+
+export type ManageContent_DeleteExhibitionsMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteExhibitionsMutation = { readonly __typename?: 'mutation_root', readonly delete_collection_Exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any }> }> };
+
+export type ManageContent_InsertTagMutationVariables = Exact<{
+  tag: Collection_Tag_Insert_Input;
+}>;
+
+
+export type ManageContent_InsertTagMutation = { readonly __typename?: 'mutation_root', readonly insert_collection_Tag_one?: Maybe<(
+    { readonly __typename?: 'collection_Tag' }
+    & ManageContent_TagFragment
+  )> };
+
+export type ManageContent_UpdateTagMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  update: Collection_Tag_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateTagMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Tag_by_pk?: Maybe<(
+    { readonly __typename?: 'collection_Tag' }
+    & ManageContent_TagFragment
+  )> };
+
+export type ManageContent_DeleteTagsMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteTagsMutation = { readonly __typename?: 'mutation_root', readonly delete_collection_Tag?: Maybe<{ readonly __typename?: 'collection_Tag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any }> }> };
+
 export type ManageContent_SelectProgramPeopleQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -36040,11 +36137,25 @@ export type ManageContent_SelectProgramPeopleQuery = { readonly __typename?: 'qu
 export type ManageContent_InsertItemProgramPersonMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   personId: Scalars['uuid'];
+  roleName: Scalars['String'];
+  priority: Scalars['Int'];
   itemId: Scalars['uuid'];
 }>;
 
 
 export type ManageContent_InsertItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemProgramPerson_one?: Maybe<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ManageContent_ItemProgramPersonFragment
+  )> };
+
+export type ManageContent_UpdateItemProgramPersonMutationVariables = Exact<{
+  itemPersonId: Scalars['uuid'];
+  priority: Scalars['Int'];
+  roleName: Scalars['String'];
+}>;
+
+
+export type ManageContent_UpdateItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemProgramPerson_by_pk?: Maybe<(
     { readonly __typename?: 'content_ItemProgramPerson' }
     & ManageContent_ItemProgramPersonFragment
   )> };
@@ -36238,7 +36349,7 @@ export type ImportRegistrantsMutation = { readonly __typename?: 'mutation_root',
 
 export type ManageContent_ItemTagFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any };
 
-export type ManageContent_ItemExhibitionFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly conferenceId: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> };
+export type ManageContent_ItemExhibitionFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly conferenceId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
 
 export type ManageContent_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<(
     { readonly __typename?: 'content_ItemTag' }
@@ -36251,23 +36362,14 @@ export type ManageContent_RoomFragment = { readonly __typename?: 'room_Room', re
 
 export type ManageContent_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
 
-export type ManageContent_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> };
+export type ManageContent_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> };
 
 export type ManageContent_ItemProgramPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
     { readonly __typename?: 'collection_ProgramPerson' }
     & ManageContent_ProgramPersonFragment
   ) };
 
-export type ManageContent_ItemSecondaryFragment = { readonly __typename?: 'content_Item', readonly chatId?: Maybe<any>, readonly elements: ReadonlyArray<(
-    { readonly __typename?: 'content_Element' }
-    & ManageContent_ElementFragment
-  )>, readonly itemPeople: ReadonlyArray<(
-    { readonly __typename?: 'content_ItemProgramPerson' }
-    & ManageContent_ItemProgramPersonFragment
-  )>, readonly itemExhibitions: ReadonlyArray<(
-    { readonly __typename?: 'content_ItemExhibition' }
-    & ManageContent_ItemExhibitionFragment
-  )>, readonly rooms: ReadonlyArray<(
+export type ManageContent_ItemSecondaryFragment = { readonly __typename?: 'content_Item', readonly chatId?: Maybe<any>, readonly rooms: ReadonlyArray<(
     { readonly __typename?: 'room_Room' }
     & ManageContent_RoomFragment
   )>, readonly originatingData?: Maybe<(
@@ -36293,10 +36395,23 @@ export type ManageContent_SelectItemQueryVariables = Exact<{
 export type ManageContent_SelectItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<(
     { readonly __typename?: 'content_Item' }
     & ManageContent_ItemSecondaryFragment
+  )>, readonly content_Element: ReadonlyArray<(
+    { readonly __typename?: 'content_Element' }
+    & ManageContent_ElementFragment
+  )> };
+
+export type ManageContent_SelectItemPeopleQueryVariables = Exact<{
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectItemPeopleQuery = { readonly __typename?: 'query_root', readonly content_ItemProgramPerson: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ManageContent_ItemProgramPersonFragment
   )> };
 
 export type ManageContent_InsertItemMutationVariables = Exact<{
-  group: Content_Item_Insert_Input;
+  item: Content_Item_Insert_Input;
 }>;
 
 
@@ -36307,11 +36422,19 @@ export type ManageContent_InsertItemMutation = { readonly __typename?: 'mutation
 
 export type ManageContent_UpdateItemMutationVariables = Exact<{
   id: Scalars['uuid'];
-  update: Content_Item_Set_Input;
+  item: Content_Item_Set_Input;
+  tags: ReadonlyArray<Content_ItemTag_Insert_Input> | Content_ItemTag_Insert_Input;
+  tagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type ManageContent_UpdateItemMutation = { readonly __typename?: 'mutation_root', readonly update_content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any }> };
+export type ManageContent_UpdateItemMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_ItemTag' }
+      & ManageContent_ItemTagFragment
+    )> }>, readonly delete_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any }> }>, readonly update_content_Item_by_pk?: Maybe<(
+    { readonly __typename?: 'content_Item' }
+    & ManageContent_ItemFragment
+  )> };
 
 export type ManageContent_DeleteItemsMutationVariables = Exact<{
   ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -36332,34 +36455,6 @@ export type ManageContent_SelectAllTagsQuery = { readonly __typename?: 'query_ro
     & ManageContent_TagFragment
   )> };
 
-export type ManageContent_InsertTagMutationVariables = Exact<{
-  tag: Collection_Tag_Insert_Input;
-}>;
-
-
-export type ManageContent_InsertTagMutation = { readonly __typename?: 'mutation_root', readonly insert_collection_Tag_one?: Maybe<(
-    { readonly __typename?: 'collection_Tag' }
-    & ManageContent_TagFragment
-  )> };
-
-export type ManageContent_UpdateTagMutationVariables = Exact<{
-  id: Scalars['uuid'];
-  update: Collection_Tag_Set_Input;
-}>;
-
-
-export type ManageContent_UpdateTagMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Tag_by_pk?: Maybe<(
-    { readonly __typename?: 'collection_Tag' }
-    & ManageContent_TagFragment
-  )> };
-
-export type ManageContent_DeleteTagsMutationVariables = Exact<{
-  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-}>;
-
-
-export type ManageContent_DeleteTagsMutation = { readonly __typename?: 'mutation_root', readonly delete_collection_Tag?: Maybe<{ readonly __typename?: 'collection_Tag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any }> }> };
-
 export type ManageContent_ExhibitionFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly name: string, readonly colour: string, readonly priority: number };
 
 export type ManageContent_SelectAllExhibitionsQueryVariables = Exact<{
@@ -36371,34 +36466,6 @@ export type ManageContent_SelectAllExhibitionsQuery = { readonly __typename?: 'q
     { readonly __typename?: 'collection_Exhibition' }
     & ManageContent_ExhibitionFragment
   )> };
-
-export type ManageContent_InsertExhibitionMutationVariables = Exact<{
-  exhibition: Collection_Exhibition_Insert_Input;
-}>;
-
-
-export type ManageContent_InsertExhibitionMutation = { readonly __typename?: 'mutation_root', readonly insert_collection_Exhibition_one?: Maybe<(
-    { readonly __typename?: 'collection_Exhibition' }
-    & ManageContent_ExhibitionFragment
-  )> };
-
-export type ManageContent_UpdateExhibitionMutationVariables = Exact<{
-  id: Scalars['uuid'];
-  update: Collection_Exhibition_Set_Input;
-}>;
-
-
-export type ManageContent_UpdateExhibitionMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Exhibition_by_pk?: Maybe<(
-    { readonly __typename?: 'collection_Exhibition' }
-    & ManageContent_ExhibitionFragment
-  )> };
-
-export type ManageContent_DeleteExhibitionsMutationVariables = Exact<{
-  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-}>;
-
-
-export type ManageContent_DeleteExhibitionsMutation = { readonly __typename?: 'mutation_root', readonly delete_collection_Exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any }> }> };
 
 export type ManageGroups_GroupFragment = { readonly __typename?: 'permissions_Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> };
 
@@ -38270,6 +38337,19 @@ export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
   }
 }
     `;
+export const ManageContent_ItemExhibitionFragmentDoc = gql`
+    fragment ManageContent_ItemExhibition on content_ItemExhibition {
+  id
+  conferenceId
+  item {
+    id
+    title
+  }
+  exhibitionId
+  priority
+  layout
+}
+    `;
 export const ManageContent_ItemTagFragmentDoc = gql`
     fragment ManageContent_ItemTag on content_ItemTag {
   id
@@ -38306,6 +38386,7 @@ export const ManageContent_ProgramPersonFragmentDoc = gql`
   name
   affiliation
   email
+  registrantId
 }
     `;
 export const ManageContent_ItemProgramPersonFragmentDoc = gql`
@@ -38319,16 +38400,6 @@ export const ManageContent_ItemProgramPersonFragmentDoc = gql`
   }
 }
     ${ManageContent_ProgramPersonFragmentDoc}`;
-export const ManageContent_ItemExhibitionFragmentDoc = gql`
-    fragment ManageContent_ItemExhibition on content_ItemExhibition {
-  id
-  conferenceId
-  itemId
-  exhibitionId
-  priority
-  layout
-}
-    `;
 export const ManageContent_RoomFragmentDoc = gql`
     fragment ManageContent_Room on room_Room {
   id
@@ -38345,15 +38416,6 @@ export const ManageContent_OriginatingDataFragmentDoc = gql`
     `;
 export const ManageContent_ItemSecondaryFragmentDoc = gql`
     fragment ManageContent_ItemSecondary on content_Item {
-  elements {
-    ...ManageContent_Element
-  }
-  itemPeople {
-    ...ManageContent_ItemProgramPerson
-  }
-  itemExhibitions {
-    ...ManageContent_ItemExhibition
-  }
   rooms {
     ...ManageContent_Room
   }
@@ -38362,10 +38424,7 @@ export const ManageContent_ItemSecondaryFragmentDoc = gql`
     ...ManageContent_OriginatingData
   }
 }
-    ${ManageContent_ElementFragmentDoc}
-${ManageContent_ItemProgramPersonFragmentDoc}
-${ManageContent_ItemExhibitionFragmentDoc}
-${ManageContent_RoomFragmentDoc}
+    ${ManageContent_RoomFragmentDoc}
 ${ManageContent_OriginatingDataFragmentDoc}`;
 export const ManageContent_TagFragmentDoc = gql`
     fragment ManageContent_Tag on collection_Tag {
@@ -42033,11 +42092,356 @@ export function useAddContentMenu_CreateElementMutation(baseOptions?: Apollo.Mut
 export type AddContentMenu_CreateElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateElementMutation>;
 export type AddContentMenu_CreateElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateElementMutation>;
 export type AddContentMenu_CreateElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
+export const ManageContent_SelectItemExhibitionsDocument = gql`
+    query ManageContent_SelectItemExhibitions($exhibitionId: uuid!) {
+  content_ItemExhibition(where: {exhibitionId: {_eq: $exhibitionId}}) {
+    ...ManageContent_ItemExhibition
+  }
+}
+    ${ManageContent_ItemExhibitionFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectItemExhibitionsQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectItemExhibitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectItemExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectItemExhibitionsQuery({
+ *   variables: {
+ *      exhibitionId: // value for 'exhibitionId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectItemExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>(ManageContent_SelectItemExhibitionsDocument, options);
+      }
+export function useManageContent_SelectItemExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>(ManageContent_SelectItemExhibitionsDocument, options);
+        }
+export type ManageContent_SelectItemExhibitionsQueryHookResult = ReturnType<typeof useManageContent_SelectItemExhibitionsQuery>;
+export type ManageContent_SelectItemExhibitionsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemExhibitionsLazyQuery>;
+export type ManageContent_SelectItemExhibitionsQueryResult = Apollo.QueryResult<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>;
+export const ManageContent_InsertItemExhibitionDocument = gql`
+    mutation ManageContent_InsertItemExhibition($conferenceId: uuid!, $exhibitionId: uuid!, $itemId: uuid!, $priority: Int!) {
+  insert_content_ItemExhibition_one(
+    object: {conferenceId: $conferenceId, exhibitionId: $exhibitionId, itemId: $itemId, priority: $priority}
+  ) {
+    ...ManageContent_ItemExhibition
+  }
+}
+    ${ManageContent_ItemExhibitionFragmentDoc}`;
+export type ManageContent_InsertItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_InsertItemExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertItemExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertItemExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertItemExhibitionMutation, { data, loading, error }] = useManageContent_InsertItemExhibitionMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      exhibitionId: // value for 'exhibitionId'
+ *      itemId: // value for 'itemId'
+ *      priority: // value for 'priority'
+ *   },
+ * });
+ */
+export function useManageContent_InsertItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>(ManageContent_InsertItemExhibitionDocument, options);
+      }
+export type ManageContent_InsertItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_InsertItemExhibitionMutation>;
+export type ManageContent_InsertItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_InsertItemExhibitionMutation>;
+export type ManageContent_InsertItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>;
+export const ManageContent_UpdateItemExhibitionDocument = gql`
+    mutation ManageContent_UpdateItemExhibition($itemExhibitionId: uuid!, $priority: Int!) {
+  update_content_ItemExhibition_by_pk(
+    pk_columns: {id: $itemExhibitionId}
+    _set: {priority: $priority}
+  ) {
+    ...ManageContent_ItemExhibition
+  }
+}
+    ${ManageContent_ItemExhibitionFragmentDoc}`;
+export type ManageContent_UpdateItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_UpdateItemExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateItemExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateItemExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateItemExhibitionMutation, { data, loading, error }] = useManageContent_UpdateItemExhibitionMutation({
+ *   variables: {
+ *      itemExhibitionId: // value for 'itemExhibitionId'
+ *      priority: // value for 'priority'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>(ManageContent_UpdateItemExhibitionDocument, options);
+      }
+export type ManageContent_UpdateItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_UpdateItemExhibitionMutation>;
+export type ManageContent_UpdateItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_UpdateItemExhibitionMutation>;
+export type ManageContent_UpdateItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>;
+export const ManageContent_DeleteItemExhibitionDocument = gql`
+    mutation ManageContent_DeleteItemExhibition($itemExhibitionId: uuid!) {
+  delete_content_ItemExhibition_by_pk(id: $itemExhibitionId) {
+    id
+  }
+}
+    `;
+export type ManageContent_DeleteItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_DeleteItemExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteItemExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteItemExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteItemExhibitionMutation, { data, loading, error }] = useManageContent_DeleteItemExhibitionMutation({
+ *   variables: {
+ *      itemExhibitionId: // value for 'itemExhibitionId'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>(ManageContent_DeleteItemExhibitionDocument, options);
+      }
+export type ManageContent_DeleteItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_DeleteItemExhibitionMutation>;
+export type ManageContent_DeleteItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_DeleteItemExhibitionMutation>;
+export type ManageContent_DeleteItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>;
+export const ManageContent_InsertExhibitionDocument = gql`
+    mutation ManageContent_InsertExhibition($exhibition: collection_Exhibition_insert_input!) {
+  insert_collection_Exhibition_one(object: $exhibition) {
+    ...ManageContent_Exhibition
+  }
+}
+    ${ManageContent_ExhibitionFragmentDoc}`;
+export type ManageContent_InsertExhibitionMutationFn = Apollo.MutationFunction<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_InsertExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertExhibitionMutation, { data, loading, error }] = useManageContent_InsertExhibitionMutation({
+ *   variables: {
+ *      exhibition: // value for 'exhibition'
+ *   },
+ * });
+ */
+export function useManageContent_InsertExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>(ManageContent_InsertExhibitionDocument, options);
+      }
+export type ManageContent_InsertExhibitionMutationHookResult = ReturnType<typeof useManageContent_InsertExhibitionMutation>;
+export type ManageContent_InsertExhibitionMutationResult = Apollo.MutationResult<ManageContent_InsertExhibitionMutation>;
+export type ManageContent_InsertExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>;
+export const ManageContent_UpdateExhibitionDocument = gql`
+    mutation ManageContent_UpdateExhibition($id: uuid!, $update: collection_Exhibition_set_input!) {
+  update_collection_Exhibition_by_pk(pk_columns: {id: $id}, _set: $update) {
+    ...ManageContent_Exhibition
+  }
+}
+    ${ManageContent_ExhibitionFragmentDoc}`;
+export type ManageContent_UpdateExhibitionMutationFn = Apollo.MutationFunction<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_UpdateExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateExhibitionMutation, { data, loading, error }] = useManageContent_UpdateExhibitionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      update: // value for 'update'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>(ManageContent_UpdateExhibitionDocument, options);
+      }
+export type ManageContent_UpdateExhibitionMutationHookResult = ReturnType<typeof useManageContent_UpdateExhibitionMutation>;
+export type ManageContent_UpdateExhibitionMutationResult = Apollo.MutationResult<ManageContent_UpdateExhibitionMutation>;
+export type ManageContent_UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>;
+export const ManageContent_DeleteExhibitionsDocument = gql`
+    mutation ManageContent_DeleteExhibitions($ids: [uuid!]!) {
+  delete_collection_Exhibition(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ManageContent_DeleteExhibitionsMutationFn = Apollo.MutationFunction<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
+
+/**
+ * __useManageContent_DeleteExhibitionsMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteExhibitionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteExhibitionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteExhibitionsMutation, { data, loading, error }] = useManageContent_DeleteExhibitionsMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteExhibitionsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>(ManageContent_DeleteExhibitionsDocument, options);
+      }
+export type ManageContent_DeleteExhibitionsMutationHookResult = ReturnType<typeof useManageContent_DeleteExhibitionsMutation>;
+export type ManageContent_DeleteExhibitionsMutationResult = Apollo.MutationResult<ManageContent_DeleteExhibitionsMutation>;
+export type ManageContent_DeleteExhibitionsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
+export const ManageContent_InsertTagDocument = gql`
+    mutation ManageContent_InsertTag($tag: collection_Tag_insert_input!) {
+  insert_collection_Tag_one(object: $tag) {
+    ...ManageContent_Tag
+  }
+}
+    ${ManageContent_TagFragmentDoc}`;
+export type ManageContent_InsertTagMutationFn = Apollo.MutationFunction<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
+
+/**
+ * __useManageContent_InsertTagMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertTagMutation, { data, loading, error }] = useManageContent_InsertTagMutation({
+ *   variables: {
+ *      tag: // value for 'tag'
+ *   },
+ * });
+ */
+export function useManageContent_InsertTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>(ManageContent_InsertTagDocument, options);
+      }
+export type ManageContent_InsertTagMutationHookResult = ReturnType<typeof useManageContent_InsertTagMutation>;
+export type ManageContent_InsertTagMutationResult = Apollo.MutationResult<ManageContent_InsertTagMutation>;
+export type ManageContent_InsertTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
+export const ManageContent_UpdateTagDocument = gql`
+    mutation ManageContent_UpdateTag($id: uuid!, $update: collection_Tag_set_input!) {
+  update_collection_Tag_by_pk(pk_columns: {id: $id}, _set: $update) {
+    ...ManageContent_Tag
+  }
+}
+    ${ManageContent_TagFragmentDoc}`;
+export type ManageContent_UpdateTagMutationFn = Apollo.MutationFunction<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
+
+/**
+ * __useManageContent_UpdateTagMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateTagMutation, { data, loading, error }] = useManageContent_UpdateTagMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      update: // value for 'update'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>(ManageContent_UpdateTagDocument, options);
+      }
+export type ManageContent_UpdateTagMutationHookResult = ReturnType<typeof useManageContent_UpdateTagMutation>;
+export type ManageContent_UpdateTagMutationResult = Apollo.MutationResult<ManageContent_UpdateTagMutation>;
+export type ManageContent_UpdateTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
+export const ManageContent_DeleteTagsDocument = gql`
+    mutation ManageContent_DeleteTags($ids: [uuid!]!) {
+  delete_collection_Tag(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ManageContent_DeleteTagsMutationFn = Apollo.MutationFunction<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
+
+/**
+ * __useManageContent_DeleteTagsMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteTagsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteTagsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteTagsMutation, { data, loading, error }] = useManageContent_DeleteTagsMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteTagsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>(ManageContent_DeleteTagsDocument, options);
+      }
+export type ManageContent_DeleteTagsMutationHookResult = ReturnType<typeof useManageContent_DeleteTagsMutation>;
+export type ManageContent_DeleteTagsMutationResult = Apollo.MutationResult<ManageContent_DeleteTagsMutation>;
+export type ManageContent_DeleteTagsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
 export const ManageContent_SelectProgramPeopleDocument = gql`
     query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
-  collection_ProgramPerson(
-    where: {conferenceId: {_eq: $conferenceId}, registrantId: {_is_null: false}}
-  ) {
+  collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ManageContent_ProgramPerson
   }
 }
@@ -42071,9 +42475,9 @@ export type ManageContent_SelectProgramPeopleQueryHookResult = ReturnType<typeof
 export type ManageContent_SelectProgramPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleLazyQuery>;
 export type ManageContent_SelectProgramPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>;
 export const ManageContent_InsertItemProgramPersonDocument = gql`
-    mutation ManageContent_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $itemId: uuid!) {
+    mutation ManageContent_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $roleName: String!, $priority: Int!, $itemId: uuid!) {
   insert_content_ItemProgramPerson_one(
-    object: {conferenceId: $conferenceId, personId: $personId, itemId: $itemId, priority: 1, roleName: "AUTHOR"}
+    object: {conferenceId: $conferenceId, personId: $personId, itemId: $itemId, priority: $priority, roleName: $roleName}
   ) {
     ...ManageContent_ItemProgramPerson
   }
@@ -42096,6 +42500,8 @@ export type ManageContent_InsertItemProgramPersonMutationFn = Apollo.MutationFun
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *      personId: // value for 'personId'
+ *      roleName: // value for 'roleName'
+ *      priority: // value for 'priority'
  *      itemId: // value for 'itemId'
  *   },
  * });
@@ -42107,6 +42513,44 @@ export function useManageContent_InsertItemProgramPersonMutation(baseOptions?: A
 export type ManageContent_InsertItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_InsertItemProgramPersonMutation>;
 export type ManageContent_InsertItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_InsertItemProgramPersonMutation>;
 export type ManageContent_InsertItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
+export const ManageContent_UpdateItemProgramPersonDocument = gql`
+    mutation ManageContent_UpdateItemProgramPerson($itemPersonId: uuid!, $priority: Int!, $roleName: String!) {
+  update_content_ItemProgramPerson_by_pk(
+    pk_columns: {id: $itemPersonId}
+    _set: {priority: $priority, roleName: $roleName}
+  ) {
+    ...ManageContent_ItemProgramPerson
+  }
+}
+    ${ManageContent_ItemProgramPersonFragmentDoc}`;
+export type ManageContent_UpdateItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
+
+/**
+ * __useManageContent_UpdateItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateItemProgramPersonMutation, { data, loading, error }] = useManageContent_UpdateItemProgramPersonMutation({
+ *   variables: {
+ *      itemPersonId: // value for 'itemPersonId'
+ *      priority: // value for 'priority'
+ *      roleName: // value for 'roleName'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>(ManageContent_UpdateItemProgramPersonDocument, options);
+      }
+export type ManageContent_UpdateItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_UpdateItemProgramPersonMutation>;
+export type ManageContent_UpdateItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_UpdateItemProgramPersonMutation>;
+export type ManageContent_UpdateItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
 export const ManageContent_DeleteItemProgramPersonDocument = gql`
     mutation ManageContent_DeleteItemProgramPerson($itemPersonId: uuid!) {
   delete_content_ItemProgramPerson_by_pk(id: $itemPersonId) {
@@ -42954,8 +43398,12 @@ export const ManageContent_SelectItemDocument = gql`
   content_Item_by_pk(id: $itemId) {
     ...ManageContent_ItemSecondary
   }
+  content_Element(where: {itemId: {_eq: $itemId}}) {
+    ...ManageContent_Element
+  }
 }
-    ${ManageContent_ItemSecondaryFragmentDoc}`;
+    ${ManageContent_ItemSecondaryFragmentDoc}
+${ManageContent_ElementFragmentDoc}`;
 
 /**
  * __useManageContent_SelectItemQuery__
@@ -42984,9 +43432,44 @@ export function useManageContent_SelectItemLazyQuery(baseOptions?: Apollo.LazyQu
 export type ManageContent_SelectItemQueryHookResult = ReturnType<typeof useManageContent_SelectItemQuery>;
 export type ManageContent_SelectItemLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemLazyQuery>;
 export type ManageContent_SelectItemQueryResult = Apollo.QueryResult<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>;
+export const ManageContent_SelectItemPeopleDocument = gql`
+    query ManageContent_SelectItemPeople($itemId: uuid!) {
+  content_ItemProgramPerson(where: {itemId: {_eq: $itemId}}) {
+    ...ManageContent_ItemProgramPerson
+  }
+}
+    ${ManageContent_ItemProgramPersonFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectItemPeopleQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectItemPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectItemPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectItemPeopleQuery({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectItemPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>(ManageContent_SelectItemPeopleDocument, options);
+      }
+export function useManageContent_SelectItemPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>(ManageContent_SelectItemPeopleDocument, options);
+        }
+export type ManageContent_SelectItemPeopleQueryHookResult = ReturnType<typeof useManageContent_SelectItemPeopleQuery>;
+export type ManageContent_SelectItemPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemPeopleLazyQuery>;
+export type ManageContent_SelectItemPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>;
 export const ManageContent_InsertItemDocument = gql`
-    mutation ManageContent_InsertItem($group: content_Item_insert_input!) {
-  insert_content_Item_one(object: $group) {
+    mutation ManageContent_InsertItem($item: content_Item_insert_input!) {
+  insert_content_Item_one(object: $item) {
     ...ManageContent_Item
   }
 }
@@ -43006,7 +43489,7 @@ export type ManageContent_InsertItemMutationFn = Apollo.MutationFunction<ManageC
  * @example
  * const [manageContentInsertItemMutation, { data, loading, error }] = useManageContent_InsertItemMutation({
  *   variables: {
- *      group: // value for 'group'
+ *      item: // value for 'item'
  *   },
  * });
  */
@@ -43018,12 +43501,26 @@ export type ManageContent_InsertItemMutationHookResult = ReturnType<typeof useMa
 export type ManageContent_InsertItemMutationResult = Apollo.MutationResult<ManageContent_InsertItemMutation>;
 export type ManageContent_InsertItemMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>;
 export const ManageContent_UpdateItemDocument = gql`
-    mutation ManageContent_UpdateItem($id: uuid!, $update: content_Item_set_input!) {
-  update_content_Item_by_pk(pk_columns: {id: $id}, _set: $update) {
-    id
+    mutation ManageContent_UpdateItem($id: uuid!, $item: content_Item_set_input!, $tags: [content_ItemTag_insert_input!]!, $tagIds: [uuid!]!) {
+  insert_content_ItemTag(
+    objects: $tags
+    on_conflict: {constraint: ItemTag_itemId_tagId_key, update_columns: []}
+  ) {
+    returning {
+      ...ManageContent_ItemTag
+    }
+  }
+  delete_content_ItemTag(where: {tagId: {_nin: $tagIds}, itemId: {_eq: $id}}) {
+    returning {
+      id
+    }
+  }
+  update_content_Item_by_pk(pk_columns: {id: $id}, _set: $item) {
+    ...ManageContent_Item
   }
 }
-    `;
+    ${ManageContent_ItemTagFragmentDoc}
+${ManageContent_ItemFragmentDoc}`;
 export type ManageContent_UpdateItemMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>;
 
 /**
@@ -43040,7 +43537,9 @@ export type ManageContent_UpdateItemMutationFn = Apollo.MutationFunction<ManageC
  * const [manageContentUpdateItemMutation, { data, loading, error }] = useManageContent_UpdateItemMutation({
  *   variables: {
  *      id: // value for 'id'
- *      update: // value for 'update'
+ *      item: // value for 'item'
+ *      tags: // value for 'tags'
+ *      tagIds: // value for 'tagIds'
  *   },
  * });
  */
@@ -43121,108 +43620,6 @@ export function useManageContent_SelectAllTagsLazyQuery(baseOptions?: Apollo.Laz
 export type ManageContent_SelectAllTagsQueryHookResult = ReturnType<typeof useManageContent_SelectAllTagsQuery>;
 export type ManageContent_SelectAllTagsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllTagsLazyQuery>;
 export type ManageContent_SelectAllTagsQueryResult = Apollo.QueryResult<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>;
-export const ManageContent_InsertTagDocument = gql`
-    mutation ManageContent_InsertTag($tag: collection_Tag_insert_input!) {
-  insert_collection_Tag_one(object: $tag) {
-    ...ManageContent_Tag
-  }
-}
-    ${ManageContent_TagFragmentDoc}`;
-export type ManageContent_InsertTagMutationFn = Apollo.MutationFunction<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
-
-/**
- * __useManageContent_InsertTagMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertTagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertTagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertTagMutation, { data, loading, error }] = useManageContent_InsertTagMutation({
- *   variables: {
- *      tag: // value for 'tag'
- *   },
- * });
- */
-export function useManageContent_InsertTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>(ManageContent_InsertTagDocument, options);
-      }
-export type ManageContent_InsertTagMutationHookResult = ReturnType<typeof useManageContent_InsertTagMutation>;
-export type ManageContent_InsertTagMutationResult = Apollo.MutationResult<ManageContent_InsertTagMutation>;
-export type ManageContent_InsertTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
-export const ManageContent_UpdateTagDocument = gql`
-    mutation ManageContent_UpdateTag($id: uuid!, $update: collection_Tag_set_input!) {
-  update_collection_Tag_by_pk(pk_columns: {id: $id}, _set: $update) {
-    ...ManageContent_Tag
-  }
-}
-    ${ManageContent_TagFragmentDoc}`;
-export type ManageContent_UpdateTagMutationFn = Apollo.MutationFunction<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
-
-/**
- * __useManageContent_UpdateTagMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateTagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateTagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateTagMutation, { data, loading, error }] = useManageContent_UpdateTagMutation({
- *   variables: {
- *      id: // value for 'id'
- *      update: // value for 'update'
- *   },
- * });
- */
-export function useManageContent_UpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>(ManageContent_UpdateTagDocument, options);
-      }
-export type ManageContent_UpdateTagMutationHookResult = ReturnType<typeof useManageContent_UpdateTagMutation>;
-export type ManageContent_UpdateTagMutationResult = Apollo.MutationResult<ManageContent_UpdateTagMutation>;
-export type ManageContent_UpdateTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
-export const ManageContent_DeleteTagsDocument = gql`
-    mutation ManageContent_DeleteTags($ids: [uuid!]!) {
-  delete_collection_Tag(where: {id: {_in: $ids}}) {
-    returning {
-      id
-    }
-  }
-}
-    `;
-export type ManageContent_DeleteTagsMutationFn = Apollo.MutationFunction<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
-
-/**
- * __useManageContent_DeleteTagsMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteTagsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteTagsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteTagsMutation, { data, loading, error }] = useManageContent_DeleteTagsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageContent_DeleteTagsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>(ManageContent_DeleteTagsDocument, options);
-      }
-export type ManageContent_DeleteTagsMutationHookResult = ReturnType<typeof useManageContent_DeleteTagsMutation>;
-export type ManageContent_DeleteTagsMutationResult = Apollo.MutationResult<ManageContent_DeleteTagsMutation>;
-export type ManageContent_DeleteTagsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
 export const ManageContent_SelectAllExhibitionsDocument = gql`
     query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {
   collection_Exhibition(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -43258,108 +43655,6 @@ export function useManageContent_SelectAllExhibitionsLazyQuery(baseOptions?: Apo
 export type ManageContent_SelectAllExhibitionsQueryHookResult = ReturnType<typeof useManageContent_SelectAllExhibitionsQuery>;
 export type ManageContent_SelectAllExhibitionsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllExhibitionsLazyQuery>;
 export type ManageContent_SelectAllExhibitionsQueryResult = Apollo.QueryResult<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>;
-export const ManageContent_InsertExhibitionDocument = gql`
-    mutation ManageContent_InsertExhibition($exhibition: collection_Exhibition_insert_input!) {
-  insert_collection_Exhibition_one(object: $exhibition) {
-    ...ManageContent_Exhibition
-  }
-}
-    ${ManageContent_ExhibitionFragmentDoc}`;
-export type ManageContent_InsertExhibitionMutationFn = Apollo.MutationFunction<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>;
-
-/**
- * __useManageContent_InsertExhibitionMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertExhibitionMutation, { data, loading, error }] = useManageContent_InsertExhibitionMutation({
- *   variables: {
- *      exhibition: // value for 'exhibition'
- *   },
- * });
- */
-export function useManageContent_InsertExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>(ManageContent_InsertExhibitionDocument, options);
-      }
-export type ManageContent_InsertExhibitionMutationHookResult = ReturnType<typeof useManageContent_InsertExhibitionMutation>;
-export type ManageContent_InsertExhibitionMutationResult = Apollo.MutationResult<ManageContent_InsertExhibitionMutation>;
-export type ManageContent_InsertExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>;
-export const ManageContent_UpdateExhibitionDocument = gql`
-    mutation ManageContent_UpdateExhibition($id: uuid!, $update: collection_Exhibition_set_input!) {
-  update_collection_Exhibition_by_pk(pk_columns: {id: $id}, _set: $update) {
-    ...ManageContent_Exhibition
-  }
-}
-    ${ManageContent_ExhibitionFragmentDoc}`;
-export type ManageContent_UpdateExhibitionMutationFn = Apollo.MutationFunction<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>;
-
-/**
- * __useManageContent_UpdateExhibitionMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateExhibitionMutation, { data, loading, error }] = useManageContent_UpdateExhibitionMutation({
- *   variables: {
- *      id: // value for 'id'
- *      update: // value for 'update'
- *   },
- * });
- */
-export function useManageContent_UpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>(ManageContent_UpdateExhibitionDocument, options);
-      }
-export type ManageContent_UpdateExhibitionMutationHookResult = ReturnType<typeof useManageContent_UpdateExhibitionMutation>;
-export type ManageContent_UpdateExhibitionMutationResult = Apollo.MutationResult<ManageContent_UpdateExhibitionMutation>;
-export type ManageContent_UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>;
-export const ManageContent_DeleteExhibitionsDocument = gql`
-    mutation ManageContent_DeleteExhibitions($ids: [uuid!]!) {
-  delete_collection_Exhibition(where: {id: {_in: $ids}}) {
-    returning {
-      id
-    }
-  }
-}
-    `;
-export type ManageContent_DeleteExhibitionsMutationFn = Apollo.MutationFunction<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
-
-/**
- * __useManageContent_DeleteExhibitionsMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteExhibitionsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteExhibitionsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteExhibitionsMutation, { data, loading, error }] = useManageContent_DeleteExhibitionsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageContent_DeleteExhibitionsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>(ManageContent_DeleteExhibitionsDocument, options);
-      }
-export type ManageContent_DeleteExhibitionsMutationHookResult = ReturnType<typeof useManageContent_DeleteExhibitionsMutation>;
-export type ManageContent_DeleteExhibitionsMutationResult = Apollo.MutationResult<ManageContent_DeleteExhibitionsMutation>;
-export type ManageContent_DeleteExhibitionsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   permissions_Group(where: {conferenceId: {_eq: $conferenceId}}) {

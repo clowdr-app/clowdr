@@ -3084,6 +3084,29 @@
                 _table:
                   schema: public
                   name: FlatUnauthPermission
+  update_permissions:
+  - role: user
+    permission:
+      columns: []
+      filter:
+        item:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_CONTENT
+              _table:
+                schema: public
+                name: FlatUserPermission
+      check: null
   delete_permissions:
   - role: user
     permission:

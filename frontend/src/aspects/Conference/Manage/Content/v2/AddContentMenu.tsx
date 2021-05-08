@@ -62,7 +62,7 @@ export function AddContentMenu({
     const menu = useMemo(
         () => (
             <Menu size="sm">
-                <MenuButton size="sm" m={1} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
+                <MenuButton size="sm" m={1} mb={2} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
                     Add content
                 </MenuButton>
                 <MenuList maxH="20vh" overflowY="auto">

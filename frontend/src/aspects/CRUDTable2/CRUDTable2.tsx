@@ -1450,12 +1450,11 @@ export default function CRUDTable<T>({
 
     // TODO: Undo stack for handling Ctrl+Z from the window-level onKeyUp
 
-    // TODO: Insert modal (use: insertRecord)
     const cancelDeleteRef = useRef<HTMLButtonElement | null>(null);
     return (
         <>
             {alertEl}
-            <Center w="100%" h="100%" minH="1.4rem" flexWrap="wrap">
+            <Center w="100%" minH="1.5rem" flexWrap="wrap">
                 {insertProps?.ongoing || updateProps?.ongoing || deleteProps?.ongoing ? (
                     <HStack>
                         <div>

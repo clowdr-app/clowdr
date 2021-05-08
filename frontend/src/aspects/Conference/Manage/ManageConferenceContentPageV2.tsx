@@ -1,9 +1,12 @@
-import { gql } from "@apollo/client";
-import { Button, FormLabel, Heading, Input, Select, Text, useDisclosure } from "@chakra-ui/react";
-import React, { LegacyRef, useMemo, useState } from "react";
+import { gql, Reference } from "@apollo/client";
+import { Button, FormLabel, Heading, HStack, Input, Select, Text, useDisclosure } from "@chakra-ui/react";
+import React, { LegacyRef, useMemo, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
     Content_ItemType_Enum,
+    Content_Item_Set_Input,
     ManageContent_ItemFragment,
+    ManageContent_ItemFragmentDoc,
     Permissions_Permission_Enum,
     useManageContent_DeleteItemsMutation,
     useManageContent_InsertItemMutation,
@@ -28,6 +31,8 @@ import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import ManageExhibitionsModal from "./Content/v2/ManageExhibitionsModal";
+import ManageTagsModal from "./Content/v2/ManageTagsModal";
 import { SecondaryEditor } from "./Content/v2/SecondaryEditor";
 
 gql`
@@ -42,7 +47,10 @@ gql`
     fragment ManageContent_ItemExhibition on content_ItemExhibition {
         id
         conferenceId
-        itemId
+        item {
+            id
+            title
+        }
         exhibitionId
         priority
         layout
@@ -86,6 +94,7 @@ gql`
         name
         affiliation
         email
+        registrantId
     }
 
     fragment ManageContent_ItemProgramPerson on content_ItemProgramPerson {
@@ -99,15 +108,6 @@ gql`
     }
 
     fragment ManageContent_ItemSecondary on content_Item {
-        elements {
-            ...ManageContent_Element
-        }
-        itemPeople {
-            ...ManageContent_ItemProgramPerson
-        }
-        itemExhibitions {
-            ...ManageContent_ItemExhibition
-        }
         rooms {
             ...ManageContent_Room
         }
@@ -127,17 +127,44 @@ gql`
         content_Item_by_pk(id: $itemId) {
             ...ManageContent_ItemSecondary
         }
+        content_Element(where: { itemId: { _eq: $itemId } }) {
+            ...ManageContent_Element
+        }
     }
 
-    mutation ManageContent_InsertItem($group: content_Item_insert_input!) {
-        insert_content_Item_one(object: $group) {
+    query ManageContent_SelectItemPeople($itemId: uuid!) {
+        content_ItemProgramPerson(where: { itemId: { _eq: $itemId } }) {
+            ...ManageContent_ItemProgramPerson
+        }
+    }
+
+    mutation ManageContent_InsertItem($item: content_Item_insert_input!) {
+        insert_content_Item_one(object: $item) {
             ...ManageContent_Item
         }
     }
 
-    mutation ManageContent_UpdateItem($id: uuid!, $update: content_Item_set_input!) {
-        update_content_Item_by_pk(pk_columns: { id: $id }, _set: $update) {
-            id
+    mutation ManageContent_UpdateItem(
+        $id: uuid!
+        $item: content_Item_set_input!
+        $tags: [content_ItemTag_insert_input!]!
+        $tagIds: [uuid!]!
+    ) {
+        insert_content_ItemTag(
+            objects: $tags
+            on_conflict: { constraint: ItemTag_itemId_tagId_key, update_columns: [] }
+        ) {
+            returning {
+                ...ManageContent_ItemTag
+            }
+        }
+        delete_content_ItemTag(where: { tagId: { _nin: $tagIds }, itemId: { _eq: $id } }) {
+            returning {
+                id
+            }
+        }
+        update_content_Item_by_pk(pk_columns: { id: $id }, _set: $item) {
+            ...ManageContent_Item
         }
     }
 
@@ -165,26 +192,6 @@ gql`
         }
     }
 
-    mutation ManageContent_InsertTag($tag: collection_Tag_insert_input!) {
-        insert_collection_Tag_one(object: $tag) {
-            ...ManageContent_Tag
-        }
-    }
-
-    mutation ManageContent_UpdateTag($id: uuid!, $update: collection_Tag_set_input!) {
-        update_collection_Tag_by_pk(pk_columns: { id: $id }, _set: $update) {
-            ...ManageContent_Tag
-        }
-    }
-
-    mutation ManageContent_DeleteTags($ids: [uuid!]!) {
-        delete_collection_Tag(where: { id: { _in: $ids } }) {
-            returning {
-                id
-            }
-        }
-    }
-
     ## Exhibitions
 
     fragment ManageContent_Exhibition on collection_Exhibition {
@@ -200,26 +207,6 @@ gql`
             ...ManageContent_Exhibition
         }
     }
-
-    mutation ManageContent_InsertExhibition($exhibition: collection_Exhibition_insert_input!) {
-        insert_collection_Exhibition_one(object: $exhibition) {
-            ...ManageContent_Exhibition
-        }
-    }
-
-    mutation ManageContent_UpdateExhibition($id: uuid!, $update: collection_Exhibition_set_input!) {
-        update_collection_Exhibition_by_pk(pk_columns: { id: $id }, _set: $update) {
-            ...ManageContent_Exhibition
-        }
-    }
-
-    mutation ManageContent_DeleteExhibitions($ids: [uuid!]!) {
-        delete_collection_Exhibition(where: { id: { _in: $ids } }) {
-            returning {
-                id
-            }
-        }
-    }
 `;
 
 function formatEnumValueForLabel(value: string): string {
@@ -231,7 +218,12 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage content at ${conference.shortName}`);
 
-    const { loading: loadingAllTags, error: errorAllTags, data: allTags } = useManageContent_SelectAllTagsQuery({
+    const {
+        loading: loadingAllTags,
+        error: errorAllTags,
+        data: allTags,
+        refetch: refetchAllTags,
+    } = useManageContent_SelectAllTagsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -251,7 +243,12 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
     });
     useQueryErrorToast(errorAllExhibitions, false);
 
-    const { loading: loadingAllItems, error: errorAllItems, data: allItems } = useManageContent_SelectAllItemsQuery({
+    const {
+        loading: loadingAllItems,
+        error: errorAllItems,
+        data: allItems,
+        refetch: refetchAllItems,
+    } = useManageContent_SelectAllItemsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -259,10 +256,6 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
     });
     useQueryErrorToast(errorAllItems, false);
     const data = useMemo(() => [...(allItems?.content_Item ?? [])], [allItems?.content_Item]);
-
-    const [insertItem, insertItemResponse] = useManageContent_InsertItemMutation();
-    const [deleteItems, deleteItemsResponse] = useManageContent_DeleteItemsMutation();
-    const [updateItem, updateItemResponse] = useManageContent_UpdateItemMutation();
 
     const row: RowSpecification<ManageContent_ItemFragment> = useMemo(
         () => ({
@@ -282,21 +275,28 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
         []
     );
 
-    const columns: ColumnSpecification<ManageContent_ItemFragment>[] = useMemo(() => {
-        const tagOptions: { value: string; label: string }[] =
+    const tagOptions: { value: string; label: string }[] = useMemo(
+        () =>
             allTags?.collection_Tag.map((tag) => ({
                 value: tag.id,
                 label: tag.name,
-            })) ?? [];
+            })) ?? [],
+        [allTags?.collection_Tag]
+    );
 
-        const typeOptions = Object.keys(Content_ItemType_Enum).map((key) => {
-            const value = (Content_ItemType_Enum as any)[key] as string;
-            return {
-                value,
-                label: formatEnumValueForLabel(value),
-            };
-        });
+    const typeOptions = useMemo(
+        () =>
+            Object.keys(Content_ItemType_Enum).map((key) => {
+                const value = (Content_ItemType_Enum as any)[key] as string;
+                return {
+                    value,
+                    label: formatEnumValueForLabel(value),
+                };
+            }),
+        []
+    );
 
+    const columns: ColumnSpecification<ManageContent_ItemFragment>[] = useMemo(() => {
         const result: ColumnSpecification<ManageContent_ItemFragment>[] = [
             {
                 id: "title",
@@ -484,7 +484,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
             // }
         ];
         return result;
-    }, [allTags?.collection_Tag]);
+    }, [tagOptions, typeOptions]);
 
     const {
         isOpen: isSecondaryPanelOpen,
@@ -492,7 +492,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
         onClose: onSecondaryPanelClose,
     } = useDisclosure();
     const [editingId, setEditingId] = useState<string | null>(null);
-
+    const [editingTitle, setEditingTitle] = useState<string | null>(null);
     const edit:
         | {
               open: (key: string) => void;
@@ -501,6 +501,12 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
         () => ({
             open: (key) => {
                 setEditingId(key);
+                if (data && key) {
+                    const item = data.find((x) => x.id === key);
+                    if (item) {
+                        setEditingTitle(item.title);
+                    }
+                }
                 if (key !== null) {
                     onSecondaryPanelOpen();
                 } else {
@@ -508,8 +514,162 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 }
             },
         }),
-        [onSecondaryPanelClose, onSecondaryPanelOpen]
+        [data, onSecondaryPanelClose, onSecondaryPanelOpen]
     );
+
+    const [insertItem, insertItemResponse] = useManageContent_InsertItemMutation();
+    const insert:
+        | {
+              generateDefaults: () => Partial<ManageContent_ItemFragment>;
+              makeWhole: (partialRecord: Partial<ManageContent_ItemFragment>) => ManageContent_ItemFragment | undefined;
+              start: (record: ManageContent_ItemFragment) => void;
+              ongoing: boolean;
+          }
+        | undefined = useMemo(
+        () =>
+            tagOptions && tagOptions.length > 0
+                ? {
+                      ongoing: insertItemResponse.loading,
+                      generateDefaults: () =>
+                          ({
+                              id: uuidv4(),
+                              conferenceId: conference.id,
+                              itemTags: [],
+                              title: "",
+                              typeName: Content_ItemType_Enum.Paper,
+                          } as ManageContent_ItemFragment),
+                      makeWhole: (d) => d as ManageContent_ItemFragment,
+                      start: (record) => {
+                          insertItem({
+                              variables: {
+                                  item: {
+                                      conferenceId: record.conferenceId,
+                                      id: record.id,
+                                      title: record.title,
+                                      shortTitle: record.shortTitle,
+                                      typeName: record.typeName,
+                                      itemTags: {
+                                          data: record.itemTags,
+                                      },
+                                  },
+                              },
+                              update: (cache, response) => {
+                                  if (response.data?.insert_content_Item_one) {
+                                      const data = response.data?.insert_content_Item_one;
+                                      cache.modify({
+                                          fields: {
+                                              content_Item(existingRefs: Reference[] = [], { readField }) {
+                                                  const newRef = cache.writeFragment({
+                                                      data,
+                                                      fragment: ManageContent_ItemFragmentDoc,
+                                                      fragmentName: "ManageContent_Item",
+                                                  });
+                                                  if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                                      return existingRefs;
+                                                  }
+                                                  return [...existingRefs, newRef];
+                                              },
+                                          },
+                                      });
+                                  }
+                              },
+                          });
+                      },
+                  }
+                : undefined,
+        [conference.id, insertItem, insertItemResponse.loading, tagOptions]
+    );
+
+    const [updateItem, updateItemResponse] = useManageContent_UpdateItemMutation();
+    const update:
+        | {
+              start: (record: ManageContent_ItemFragment) => void;
+              ongoing: boolean;
+          }
+        | undefined = useMemo(
+        () => ({
+            ongoing: updateItemResponse.loading,
+            start: (record) => {
+                const itemUpdateInput: Content_Item_Set_Input = {
+                    title: record.title,
+                    shortTitle: record.shortTitle,
+                    typeName: record.typeName,
+                };
+                updateItem({
+                    variables: {
+                        id: record.id,
+                        item: itemUpdateInput,
+                        tags: record.itemTags.map((x) => ({
+                            itemId: x.itemId,
+                            tagId: x.tagId,
+                        })),
+                        tagIds: record.itemTags.map((x) => x.tagId),
+                    },
+                    optimisticResponse: {
+                        update_content_Item_by_pk: record,
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.update_content_Item_by_pk) {
+                            const data = _data.update_content_Item_by_pk;
+                            cache.modify({
+                                fields: {
+                                    content_Item(existingRefs: Reference[] = [], { readField }) {
+                                        const newRef = cache.writeFragment({
+                                            data,
+                                            fragment: ManageContent_ItemFragmentDoc,
+                                            fragmentName: "ManageContent_Item",
+                                        });
+                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                            return existingRefs;
+                                        }
+                                        return [...existingRefs, newRef];
+                                    },
+                                },
+                            });
+                        }
+                    },
+                });
+            },
+        }),
+        [updateItem, updateItemResponse.loading]
+    );
+
+    const [deleteItems, deleteItemsResponse] = useManageContent_DeleteItemsMutation();
+    const deleteProps:
+        | {
+              start: (keys: string[]) => void;
+              ongoing: boolean;
+          }
+        | undefined = useMemo(
+        () => ({
+            ongoing: deleteItemsResponse.loading,
+            start: (keys) => {
+                deleteItems({
+                    variables: {
+                        ids: keys,
+                    },
+                    update: (cache, { data: _data }) => {
+                        if (_data?.delete_content_Item) {
+                            const data = _data.delete_content_Item;
+                            const deletedIds = data.returning.map((x) => x.id);
+                            deletedIds.forEach((x) => {
+                                cache.evict({
+                                    id: x.id,
+                                    fieldName: "ManageContent_Item",
+                                    broadcast: true,
+                                });
+                            });
+                        }
+                    },
+                });
+            },
+        }),
+        [deleteItems, deleteItemsResponse.loading]
+    );
+
+    const forceReloadRef = useRef<() => void>(() => {
+        /* EMPTY */
+    });
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -532,6 +692,20 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
             ) : (
                 <></>
             )}
+            <HStack spacing={2}>
+                <ManageTagsModal
+                    onClose={async () => {
+                        await Promise.all([refetchAllItems(), refetchAllTags()]);
+                        forceReloadRef.current();
+                    }}
+                />
+                <ManageExhibitionsModal
+                    onClose={async () => {
+                        await Promise.all([refetchAllItems(), refetchAllTags()]);
+                        forceReloadRef.current();
+                    }}
+                />
+            </HStack>
             <CRUDTable<ManageContent_ItemFragment>
                 columns={columns}
                 row={row}
@@ -558,12 +732,18 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                         : undefined
                 }
                 edit={edit}
-                // insert={insert}
-                // update={update}
-                // delete={deleteP}
+                insert={insert}
+                update={update}
+                delete={deleteProps}
                 // buttons={buttons}
+                forceReload={forceReloadRef}
             />
-            <SecondaryEditor itemId={editingId} onClose={onSecondaryPanelClose} isOpen={isSecondaryPanelOpen} />
+            <SecondaryEditor
+                itemId={editingId}
+                itemTitle={editingTitle}
+                onClose={onSecondaryPanelClose}
+                isOpen={isSecondaryPanelOpen}
+            />
         </RequireAtLeastOnePermissionWrapper>
     );
 }

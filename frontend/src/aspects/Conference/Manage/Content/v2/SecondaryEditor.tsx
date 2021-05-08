@@ -40,6 +40,7 @@ import {
     Switch,
     Text,
     Tooltip,
+    useColorModeValue,
     useDisclosure,
     useToast,
     VStack,
@@ -56,10 +57,12 @@ import {
     useManageContent_DeleteElementMutation,
     useManageContent_DeleteItemProgramPersonMutation,
     useManageContent_InsertItemProgramPersonMutation,
+    useManageContent_SelectItemPeopleQuery,
     useManageContent_SelectItemQuery,
     useManageContent_SelectProgramPeopleQuery,
     useManageContent_SetElementIsHiddenMutation,
     useManageContent_UpdateElementMutation,
+    useManageContent_UpdateItemProgramPersonMutation,
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
@@ -73,10 +76,12 @@ import { LayoutEditor } from "./LayoutEditor";
 
 export function SecondaryEditor({
     itemId,
+    itemTitle,
     isOpen,
     onClose,
 }: {
     itemId: string | null;
+    itemTitle: string | null;
     isOpen: boolean;
     onClose: () => void;
 }): JSX.Element {
@@ -85,11 +90,13 @@ export function SecondaryEditor({
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="lg">
                 <DrawerOverlay />
                 <DrawerContent>
-                    <DrawerCloseButton />
-                    <DrawerHeader pb={0}>
-                        <Text fontSize="lg">Edit item</Text>
+                    <DrawerHeader pb={0} pr="3em">
+                        <Text fontSize="lg" overflow="wrap">
+                            Edit item: {itemTitle}
+                        </Text>
                         <Code fontSize="xs">{itemId}</Code>
                     </DrawerHeader>
+                    <DrawerCloseButton />
 
                     <DrawerBody>{itemId && <SecondaryEditorInner itemId={itemId} />}</DrawerBody>
                 </DrawerContent>
@@ -109,7 +116,7 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
 
     return (
         <VStack w="100%" alignItems="flex-start">
-            <HStack flexWrap="wrap" justifyContent="flex-start" w="100%">
+            <HStack flexWrap="wrap" justifyContent="flex-start" w="100%" gridRowGap={2}>
                 <LinkButton
                     size="sm"
                     to={`/conference/${conference.slug}/item/${itemId}`}
@@ -117,6 +124,7 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                     aria-label="View item"
                     title="View item"
                 >
+                    <FAIcon iconStyle="s" icon="link" mr={2} />
                     View item&nbsp;
                     <ExternalLinkIcon />
                 </LinkButton>
@@ -130,6 +138,7 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                                 aria-label="View discussion room"
                                 title="View discussion room"
                             >
+                                <FAIcon iconStyle="s" icon="link" mr={2} />
                                 View discussion room&nbsp;
                                 <ExternalLinkIcon />
                             </LinkButton>
@@ -146,8 +155,15 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                     </>
                 ) : undefined}
             </HStack>
-            <ApolloQueryWrapper getter={(result) => result.content_Item_by_pk} queryResult={itemResponse}>
-                {(result: ManageContent_ItemSecondaryFragment) => <Elements itemId={itemId} {...result} />}
+            <ApolloQueryWrapper
+                getter={(result) => ({ rooms: [], ...result.content_Item_by_pk, elements: result.content_Element })}
+                queryResult={itemResponse}
+            >
+                {(
+                    result: ManageContent_ItemSecondaryFragment & {
+                        elements: readonly ManageContent_ElementFragment[];
+                    }
+                ) => <Elements itemId={itemId} {...result} />}
             </ApolloQueryWrapper>
         </VStack>
     );
@@ -156,14 +172,12 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
 function Elements({
     itemId,
     elements,
-    itemPeople,
-    itemExhibitions,
     rooms,
     chatId,
     originatingData,
-}: { itemId: string } & ManageContent_ItemSecondaryFragment): JSX.Element {
-    const conference = useConference();
-
+}: { itemId: string } & ManageContent_ItemSecondaryFragment & {
+        elements: readonly ManageContent_ElementFragment[];
+    }): JSX.Element {
     const sortedElements = useMemo(() => {
         const sortedElements = [...elements];
 
@@ -185,52 +199,95 @@ function Elements({
         return sortedElements;
     }, [elements]);
 
-    const itemPeopleIds = useMemo(() => itemPeople.map((x) => x.id), [itemPeople]);
-
     return (
         <Accordion allowToggle allowMultiple w="100%">
             <AccordionItem w="100%">
-                <AccordionButton>People</AccordionButton>
-                <AccordionPanel pb={4}>
-                    <VStack spacing={2} alignItems="flex-start">
-                        <Text>Add or remove Program People associated with this item.</Text>
-                        <Text fontSize="sm" pb={2}>
-                            Please add people to the Program People table (optionally link them to their Registrant),
-                            then link them to this item.
-                        </Text>
-                        <ButtonGroup>
-                            <AddItemPerson itemId={itemId} existingPeopleIds={itemPeopleIds} />
-                            <LinkButton size="sm" to={`/conference/${conference.slug}/manage/people`}>
-                                <Tooltip label="Link opens in the same tab">Manage Program People</Tooltip>
-                            </LinkButton>
-                        </ButtonGroup>
-                        <ItemPersonsList itemPeople={itemPeople} />
-                    </VStack>
-                </AccordionPanel>
+                {({ isExpanded }) => (
+                    <>
+                        <AccordionButton>
+                            People
+                            <AccordionIcon ml="auto" />
+                        </AccordionButton>
+                        <AccordionPanel pb={4}>
+                            {isExpanded ? <ItemPeoplePanel itemId={itemId} /> : <></>}
+                        </AccordionPanel>
+                    </>
+                )}
             </AccordionItem>
-            {sortedElements.map((item) => (
-                <Element key={item.id} element={item} />
+            {sortedElements.map((item, idx) => (
+                // TODO: previousElementId
+                // TODO: nextElementId
+                <Element key={item.id} element={item} numElements={sortedElements.length} idx={idx} />
             ))}
         </Accordion>
     );
 }
 
+function ItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element {
+    const conference = useConference();
+    const itemPeopleResponse = useManageContent_SelectItemPeopleQuery({
+        variables: {
+            itemId,
+        },
+    });
+    const itemPeople = itemPeopleResponse.data?.content_ItemProgramPerson;
+    const itemPeopleIds = useMemo(() => itemPeople?.map((x) => x.id), [itemPeople]);
+
+    return (
+        <VStack spacing={2} alignItems="flex-start" w="100%">
+            <Text>Add or remove Program People associated with this item.</Text>
+            <Text fontSize="sm" pb={2}>
+                Please add people to the Program People table (optionally link them to their Registrant), then link them
+                to this item.
+            </Text>
+            <ButtonGroup>
+                {itemPeopleIds ? <AddItemPerson itemId={itemId} existingPeopleIds={itemPeopleIds} /> : undefined}
+                <LinkButton size="sm" to={`/conference/${conference.slug}/manage/people`}>
+                    <Tooltip label="Link opens in the same tab">
+                        <>
+                            <FAIcon iconStyle="s" icon="link" mr={2} />
+                            <chakra.span>Manage Program People</chakra.span>
+                        </>
+                    </Tooltip>
+                </LinkButton>
+            </ButtonGroup>
+            {itemPeopleResponse.loading && !itemPeople ? <Spinner label="Loading people" /> : undefined}
+            {itemPeople ? <ItemPersonsList itemPeople={itemPeople} /> : undefined}
+        </VStack>
+    );
+}
+
 gql`
     query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, registrantId: { _is_null: false } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ManageContent_ProgramPerson
         }
     }
 
-    mutation ManageContent_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $itemId: uuid!) {
+    mutation ManageContent_InsertItemProgramPerson(
+        $conferenceId: uuid!
+        $personId: uuid!
+        $roleName: String!
+        $priority: Int!
+        $itemId: uuid!
+    ) {
         insert_content_ItemProgramPerson_one(
             object: {
                 conferenceId: $conferenceId
                 personId: $personId
                 itemId: $itemId
-                priority: 1
-                roleName: "AUTHOR"
+                priority: $priority
+                roleName: $roleName
             }
+        ) {
+            ...ManageContent_ItemProgramPerson
+        }
+    }
+
+    mutation ManageContent_UpdateItemProgramPerson($itemPersonId: uuid!, $priority: Int!, $roleName: String!) {
+        update_content_ItemProgramPerson_by_pk(
+            pk_columns: { id: $itemPersonId }
+            _set: { priority: $priority, roleName: $roleName }
         ) {
             ...ManageContent_ItemProgramPerson
         }
@@ -243,7 +300,7 @@ gql`
     }
 `;
 
-function AddRepBody({
+function AddItemPersonBody({
     itemId,
     existingPeopleIds,
     onClose,
@@ -259,6 +316,7 @@ function AddRepBody({
         },
     });
     const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
+    const [selectedRole, setSelectedRole] = useState<string>("AUTHOR");
     const [insertItemPerson, insertItemPersonResponse] = useManageContent_InsertItemProgramPersonMutation();
 
     const sortedPeople = useMemo(
@@ -274,21 +332,34 @@ function AddRepBody({
         <>
             <PopoverHeader>Link program person</PopoverHeader>
             <PopoverBody>
-                {peopleResponse.loading && !sortedPeople ? <Spinner label="Loading program people" /> : undefined}
-                {sortedPeople ? (
-                    <Select
-                        value={selectedPersonId ?? ""}
-                        onChange={(ev) => setSelectedPersonId(ev.target.value === "" ? null : ev.target.value)}
-                    >
-                        <option value="">Select a program person</option>
-                        {sortedPeople.map((person) => (
-                            <option key={person.id} value={person.id}>
-                                {person.name} {person.affiliation?.length ? `(${person.affiliation})` : ""} &lt;
-                                {person.email?.length ? person.email : "No email"}&gt;
-                            </option>
-                        ))}
-                    </Select>
-                ) : undefined}
+                <VStack spacing={2}>
+                    {peopleResponse.loading && !sortedPeople ? <Spinner label="Loading program people" /> : undefined}
+                    {sortedPeople ? (
+                        <FormControl>
+                            <FormLabel>Person</FormLabel>
+                            <Select
+                                value={selectedPersonId ?? ""}
+                                onChange={(ev) => setSelectedPersonId(ev.target.value === "" ? null : ev.target.value)}
+                            >
+                                <option value="">Select a program person</option>
+                                {sortedPeople.map((person) => (
+                                    <option key={person.id} value={person.id}>
+                                        {person.name} {person.affiliation?.length ? `(${person.affiliation})` : ""} &lt;
+                                        {person.email?.length ? person.email : "No email"}&gt;
+                                    </option>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    ) : undefined}
+                    <FormControl>
+                        <FormLabel>Role</FormLabel>
+                        <Select value={selectedRole ?? ""} onChange={(ev) => setSelectedRole(ev.target.value)}>
+                            <option value="AUTHOR">Author</option>
+                            <option value="CHAIR">Chair</option>
+                            <option value="PRESENTER">Presenter</option>
+                        </Select>
+                    </FormControl>
+                </VStack>
             </PopoverBody>
             <PopoverFooter>
                 <Button
@@ -302,8 +373,8 @@ function AddRepBody({
                                     conferenceId: conference.id,
                                     itemId,
                                     personId: selectedPersonId,
-                                    // TODO: Role
-                                    // TODO: Priority
+                                    roleName: selectedRole,
+                                    priority: existingPeopleIds.length,
                                 },
                                 update: (cache, response) => {
                                     if (response.data) {
@@ -347,6 +418,7 @@ function AddRepBody({
 function AddItemPerson(props: { itemId: string; existingPeopleIds: string[] }): JSX.Element {
     const { onOpen, onClose, isOpen } = useDisclosure();
 
+    const bgColor = useColorModeValue("green.50", "green.900");
     return (
         <Popover placement="bottom-start" isLazy isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <PopoverTrigger>
@@ -356,8 +428,8 @@ function AddItemPerson(props: { itemId: string; existingPeopleIds: string[] }): 
                     <ChevronDownIcon ml={1} />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent>
-                <AddRepBody onClose={onClose} {...props} />
+            <PopoverContent bgColor={bgColor}>
+                <AddItemPersonBody onClose={onClose} {...props} />
             </PopoverContent>
         </Popover>
     );
@@ -380,22 +452,94 @@ function ItemPersonsList({
         [itemPeople]
     );
     const toast = useToast();
+    const [
+        updateItemProgramPerson,
+        updateItemProgramPersonResponse,
+    ] = useManageContent_UpdateItemProgramPersonMutation();
     const [deleteItemPerson, deleteItemPersonResponse] = useManageContent_DeleteItemProgramPersonMutation();
-
-    // TODO: Roles
 
     return sortedReps.length > 0 ? (
         <>
             <Text>People:</Text>
-            <VStack w="100%">
-                {sortedReps.map((person, idx) => (
-                    <Flex key={person.id} w="100%">
+            <VStack w="100%" overflow="auto">
+                {sortedReps.map((itemProgramPerson, idx) => (
+                    <Flex key={itemProgramPerson.id} w="100%">
                         <ButtonGroup mr={2}>
                             <Button
                                 size="xs"
                                 isDisabled={idx === 0}
                                 onClick={() => {
-                                    // TODO
+                                    const previousItemProgramPerson = sortedReps[idx - 1];
+
+                                    updateItemProgramPerson({
+                                        variables: {
+                                            itemPersonId: itemProgramPerson.id,
+                                            priority: idx - 1,
+                                            roleName: itemProgramPerson.roleName,
+                                        },
+                                        update: (cache, { data: _data }) => {
+                                            if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                const data = _data.update_content_ItemProgramPerson_by_pk;
+                                                cache.modify({
+                                                    fields: {
+                                                        content_ItemProgramPerson(
+                                                            existingRefs: Reference[] = [],
+                                                            { readField }
+                                                        ) {
+                                                            const newRef = cache.writeFragment({
+                                                                data,
+                                                                fragment: ManageContent_ItemProgramPersonFragmentDoc,
+                                                                fragmentName: "ManageContent_ItemProgramPerson",
+                                                            });
+                                                            if (
+                                                                existingRefs.some(
+                                                                    (ref) => readField("id", ref) === data.id
+                                                                )
+                                                            ) {
+                                                                return existingRefs;
+                                                            }
+                                                            return [...existingRefs, newRef];
+                                                        },
+                                                    },
+                                                });
+                                            }
+                                        },
+                                    });
+
+                                    updateItemProgramPerson({
+                                        variables: {
+                                            itemPersonId: previousItemProgramPerson.id,
+                                            priority: idx,
+                                            roleName: itemProgramPerson.roleName,
+                                        },
+                                        update: (cache, { data: _data }) => {
+                                            if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                const data = _data.update_content_ItemProgramPerson_by_pk;
+                                                cache.modify({
+                                                    fields: {
+                                                        content_ItemProgramPerson(
+                                                            existingRefs: Reference[] = [],
+                                                            { readField }
+                                                        ) {
+                                                            const newRef = cache.writeFragment({
+                                                                data,
+                                                                fragment: ManageContent_ItemProgramPersonFragmentDoc,
+                                                                fragmentName: "ManageContent_ItemProgramPerson",
+                                                            });
+                                                            if (
+                                                                existingRefs.some(
+                                                                    (ref) => readField("id", ref) === data.id
+                                                                )
+                                                            ) {
+                                                                return existingRefs;
+                                                            }
+                                                            return [...existingRefs, newRef];
+                                                        },
+                                                    },
+                                                });
+                                            }
+                                        },
+                                    });
                                 }}
                             >
                                 <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
@@ -404,24 +548,144 @@ function ItemPersonsList({
                                 size="xs"
                                 isDisabled={idx === sortedReps.length - 1}
                                 onClick={() => {
-                                    // TODO
+                                    const previousItemProgramPerson = sortedReps[idx + 1];
+
+                                    updateItemProgramPerson({
+                                        variables: {
+                                            itemPersonId: itemProgramPerson.id,
+                                            priority: idx + 1,
+                                            roleName: itemProgramPerson.roleName,
+                                        },
+                                        update: (cache, { data: _data }) => {
+                                            if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                const data = _data.update_content_ItemProgramPerson_by_pk;
+                                                cache.modify({
+                                                    fields: {
+                                                        content_ItemProgramPerson(
+                                                            existingRefs: Reference[] = [],
+                                                            { readField }
+                                                        ) {
+                                                            const newRef = cache.writeFragment({
+                                                                data,
+                                                                fragment: ManageContent_ItemProgramPersonFragmentDoc,
+                                                                fragmentName: "ManageContent_ItemProgramPerson",
+                                                            });
+                                                            if (
+                                                                existingRefs.some(
+                                                                    (ref) => readField("id", ref) === data.id
+                                                                )
+                                                            ) {
+                                                                return existingRefs;
+                                                            }
+                                                            return [...existingRefs, newRef];
+                                                        },
+                                                    },
+                                                });
+                                            }
+                                        },
+                                    });
+
+                                    updateItemProgramPerson({
+                                        variables: {
+                                            itemPersonId: previousItemProgramPerson.id,
+                                            priority: idx,
+                                            roleName: itemProgramPerson.roleName,
+                                        },
+                                        update: (cache, { data: _data }) => {
+                                            if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                const data = _data.update_content_ItemProgramPerson_by_pk;
+                                                cache.modify({
+                                                    fields: {
+                                                        content_ItemProgramPerson(
+                                                            existingRefs: Reference[] = [],
+                                                            { readField }
+                                                        ) {
+                                                            const newRef = cache.writeFragment({
+                                                                data,
+                                                                fragment: ManageContent_ItemProgramPersonFragmentDoc,
+                                                                fragmentName: "ManageContent_ItemProgramPerson",
+                                                            });
+                                                            if (
+                                                                existingRefs.some(
+                                                                    (ref) => readField("id", ref) === data.id
+                                                                )
+                                                            ) {
+                                                                return existingRefs;
+                                                            }
+                                                            return [...existingRefs, newRef];
+                                                        },
+                                                    },
+                                                });
+                                            }
+                                        },
+                                    });
                                 }}
                             >
                                 <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
                             </Button>
                         </ButtonGroup>
-                        <chakra.span>
-                            {person.person.name} &lt;{person.person.email?.length ? person.person.email : "No email"}
-                            &gt;
-                        </chakra.span>
+                        <Tooltip
+                            label={
+                                itemProgramPerson.person.registrantId
+                                    ? "Person is linked to registrant."
+                                    : "Person is not linked to registrant."
+                            }
+                        >
+                            <FAIcon
+                                iconStyle="s"
+                                icon={itemProgramPerson.person.registrantId ? "check-circle" : "exclamation-triangle"}
+                                color={itemProgramPerson.person.registrantId ? "green.400" : "orange.400"}
+                            />
+                        </Tooltip>
+                        <Flex flexDir={["column", "column", "row"]}>
+                            <chakra.span ml={2}>{itemProgramPerson.person.name}</chakra.span>
+                            <chakra.span ml={2}>
+                                &lt;
+                                {itemProgramPerson.person.email?.length ? itemProgramPerson.person.email : "No email"}
+                                &gt;
+                            </chakra.span>
+                        </Flex>
                         <Select
                             ml="auto"
                             size="xs"
-                            value={person.roleName}
+                            value={itemProgramPerson.roleName}
                             w="auto"
-                            onSelect={(ev) => {
-                                // TODO
+                            isDisabled={updateItemProgramPersonResponse.loading}
+                            onChange={(ev) => {
+                                updateItemProgramPerson({
+                                    variables: {
+                                        itemPersonId: itemProgramPerson.id,
+                                        priority: itemProgramPerson.priority ?? idx,
+                                        roleName: ev.target.value,
+                                    },
+                                    update: (cache, { data: _data }) => {
+                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                            const data = _data.update_content_ItemProgramPerson_by_pk;
+                                            cache.modify({
+                                                fields: {
+                                                    content_ItemProgramPerson(
+                                                        existingRefs: Reference[] = [],
+                                                        { readField }
+                                                    ) {
+                                                        const newRef = cache.writeFragment({
+                                                            data,
+                                                            fragment: ManageContent_ItemProgramPersonFragmentDoc,
+                                                            fragmentName: "ManageContent_ItemProgramPerson",
+                                                        });
+                                                        if (
+                                                            existingRefs.some((ref) => readField("id", ref) === data.id)
+                                                        ) {
+                                                            return existingRefs;
+                                                        }
+                                                        return [...existingRefs, newRef];
+                                                    },
+                                                },
+                                            });
+                                        }
+                                    },
+                                });
                             }}
+                            minW={"5em"}
                         >
                             <option value="AUTHOR">Author</option>
                             <option value="CHAIR">Chair</option>
@@ -437,7 +701,7 @@ function ItemPersonsList({
                                 try {
                                     deleteItemPerson({
                                         variables: {
-                                            itemPersonId: person.id,
+                                            itemPersonId: itemProgramPerson.id,
                                         },
                                         update: (cache, response) => {
                                             if (response.data?.delete_content_ItemProgramPerson_by_pk) {
@@ -506,23 +770,70 @@ gql`
     }
 `;
 
-export function Element({ element }: { element: ManageContent_ElementFragment }): JSX.Element {
+export function Element({
+    element,
+    idx,
+    numElements,
+}: {
+    element: ManageContent_ElementFragment;
+    idx: number;
+    numElements: number;
+    previousElementId?: string;
+    nextElementId?: string;
+}): JSX.Element {
     const [deleteElement] = useManageContent_DeleteElementMutation();
     const toast = useToast();
 
     return (
         <AccordionItem w="100%">
-            <AccordionButton>
-                <Box flex="1" textAlign="left">
-                    {element.name}
-                </Box>
+            <AccordionButton
+                as={"div"}
+                cursor="pointer"
+                tabIndex={0}
+                onKeyUp={(ev) => {
+                    if (ev.key === "Enter" || ev.key === " ") {
+                        (ev.target as HTMLDivElement).click();
+                    }
+                }}
+            >
+                <ButtonGroup mr={4}>
+                    <Tooltip label="Move element up">
+                        <Button
+                            size="xs"
+                            isDisabled={idx === 0}
+                            onClick={(ev) => {
+                                // TODO
+                                ev.stopPropagation();
+                            }}
+                            aria-label="Move item up"
+                        >
+                            <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip label="Move element down">
+                        <Button
+                            size="xs"
+                            isDisabled={idx === numElements - 1}
+                            onClick={(ev) => {
+                                // TODO
+                                ev.stopPropagation();
+                            }}
+                            aria-label="Move item down"
+                        >
+                            <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
+                        </Button>
+                    </Tooltip>
+                </ButtonGroup>
+                <Box textAlign="left">{element.name}</Box>
                 <Tooltip label="Manage element security">
                     <IconButton
+                        ml="auto"
                         colorScheme="yellow"
                         size="xs"
                         aria-label="Element security"
                         icon={<FAIcon iconStyle="s" icon="lock" />}
-                        onClick={() => {
+                        onClick={(ev) => {
+                            ev.stopPropagation();
                             // TODO
                         }}
                     />
@@ -533,7 +844,8 @@ export function Element({ element }: { element: ManageContent_ElementFragment })
                         size="xs"
                         aria-label="Delete element"
                         icon={<FAIcon iconStyle="s" icon="trash-alt" />}
-                        onClick={async () => {
+                        onClick={async (ev) => {
+                            ev.stopPropagation();
                             try {
                                 await deleteElement({
                                     variables: {

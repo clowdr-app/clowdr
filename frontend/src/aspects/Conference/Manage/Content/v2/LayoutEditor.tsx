@@ -1,18 +1,6 @@
-import {
-    Button,
-    FormControl,
-    FormHelperText,
-    FormLabel,
-    HStack,
-    NumberDecrementStepper,
-    NumberIncrementStepper,
-    NumberInput,
-    NumberInputField,
-    NumberInputStepper,
-    Switch,
-} from "@chakra-ui/react";
+import { FormControl, FormHelperText, FormLabel, HStack, Switch } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 
 export function LayoutEditor({
@@ -51,10 +39,10 @@ export function LayoutEditor({
         newLayoutData,
     ]);
 
-    const [priority, setPriority] = useState<number | null>(null);
-    useEffect(() => {
-        setPriority(null);
-    }, [layoutData.priority]);
+    // const [priority, setPriority] = useState<number | null>(null);
+    // useEffect(() => {
+    //     setPriority(null);
+    // }, [layoutData.priority]);
 
     return (
         <HStack alignItems="flex-start" mt={4}>
@@ -72,7 +60,7 @@ export function LayoutEditor({
                 />
                 <FormHelperText>Display this content across both columns.</FormHelperText>
             </FormControl>
-            <FormControl>
+            {/* <FormControl>
                 <FormLabel>Order</FormLabel>
                 {layoutDataBlob ? (
                     <NumberInput
@@ -106,7 +94,7 @@ export function LayoutEditor({
                     </Button>
                 )}
                 <FormHelperText>The order in which to display this content (lower numbers come first).</FormHelperText>
-            </FormControl>
+            </FormControl> */}
         </HStack>
     );
 }

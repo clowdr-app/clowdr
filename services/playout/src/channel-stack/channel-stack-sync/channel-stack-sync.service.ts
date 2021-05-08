@@ -68,7 +68,7 @@ export class ChannelStackSyncService {
                         _not: {
                             _or: [
                                 { channelStackCreateJobs: { jobStatusName: { _in: [IN_PROGRESS, NEW] } } }
-                                { mediaLiveChannel: {} }
+                                { channelStack: {} }
                             ]
                         }
                     }
@@ -96,7 +96,7 @@ export class ChannelStackSyncService {
     > {
         gql`
             query GetObsoleteChannelStacks($past: timestamptz) {
-                video_MediaLiveChannel(
+                video_ChannelStack(
                     where: {
                         _or: [
                             {
@@ -130,7 +130,7 @@ export class ChannelStackSyncService {
             },
         });
 
-        return result.data.video_MediaLiveChannel;
+        return result.data.video_ChannelStack;
     }
 
     public async ensureChannelStacksCreated(): Promise<void> {

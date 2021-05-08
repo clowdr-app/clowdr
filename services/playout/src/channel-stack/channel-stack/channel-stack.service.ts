@@ -1,12 +1,13 @@
 import { App } from "@aws-cdk/core";
 import { DescribeStacksCommandOutput, StackStatus } from "@aws-sdk/client-cloudformation";
-import { ChannelState } from "@aws-sdk/client-medialive";
+import { ChannelState, DescribeChannelResponse } from "@aws-sdk/client-medialive";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import parseArn from "@unbounce/parse-aws-arn";
 import assert from "assert";
 import { DeployStackResult } from "aws-cdk/lib/api/deploy-stack";
+import pThrottle from "p-throttle";
 import { AwsService } from "../../aws/aws.service";
 import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
@@ -50,7 +51,7 @@ export class ChannelStackService {
         }
 
         const description = await this.describeChannelStack(stackLogicalResourceId);
-        await this.channelStackDataService.createMediaLiveChannel(
+        await this.channelStackDataService.createChannelStack(
             description,
             stackPhysicalResourceId,
             job.jobId,
@@ -181,7 +182,7 @@ export class ChannelStackService {
     }
 
     /**
-     * @summary Deletes the MediaLiveChannel and starts teardown of the channel CloudFormation stack (does not await completion)
+     * @summary Creates the job to delete the channel CloudFormation stack and deletes the ChannelStack record.
      */
     public async startChannelStackDeletion(channelStackId: string, mediaLiveChannelId: string): Promise<void> {
         this.logger.info({ channelStackId }, "Deleting channel stack");
@@ -285,5 +286,31 @@ export class ChannelStackService {
                 this.logger.error({ err }, "Failed to update stuck channel stack delete job");
             }
         }
+    }
+
+    public async getChannelStacks(): Promise<
+        {
+            roomId: string;
+            channelStackId: string;
+            channel: DescribeChannelResponse;
+        }[]
+    > {
+        const channelStacks = await this.channelStackDataService.getChannelStacks();
+
+        const throttle = pThrottle({
+            interval: 1000,
+            limit: 5,
+        });
+        const throttledGetChannel = throttle(this.mediaLiveService.describeChannel.bind(this.mediaLiveService));
+
+        const result = await Promise.all(
+            channelStacks.map(async (channelStack) => {
+                const details = await throttledGetChannel(channelStack.mediaLiveChannelId);
+
+                return { channel: details, ...channelStack };
+            })
+        );
+
+        return result;
     }
 }

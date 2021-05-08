@@ -5502,6 +5502,7 @@
         remote_table:
           schema: registrant
           name: Registrant
+        insertion_order: null
         column_mapping:
           registrantId: id
   select_permissions:
@@ -6036,6 +6037,15 @@
     schema: room
     name: Room
   object_relationships:
+  - name: channelStack
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: ChannelStack
+        insertion_order: null
+        column_mapping:
+          id: roomId
   - name: chat
     using:
       foreign_key_constraint_on: chatId
@@ -6064,14 +6074,6 @@
   - name: managementMode
     using:
       foreign_key_constraint_on: managementModeName
-  - name: mediaLiveChannel
-    using:
-      manual_configuration:
-        remote_table:
-          schema: video
-          name: MediaLiveChannel
-        column_mapping:
-          id: roomId
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId
@@ -7955,6 +7957,64 @@
       value_from_env: EVENT_SECRET
 - table:
     schema: video
+    name: ChannelStack
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  object_relationships:
+  - name: channelStackCreateJob
+    using:
+      foreign_key_constraint_on: channelStackCreateJobId
+  - name: conference
+    using:
+      foreign_key_constraint_on: conferenceId
+  - name: mediaLiveChannelStatus
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: MediaLiveChannelStatus
+        insertion_order: null
+        column_mapping:
+          id: channelStackId
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - cloudFrontDomain
+      - conferenceId
+      - endpointUri
+      - id
+      - roomId
+      filter:
+        _or:
+        - conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_VIEW
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupRegistrants:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+- table:
+    schema: video
     name: EventParticipantStream
   configuration:
     custom_root_fields: {}
@@ -8162,53 +8222,11 @@
   is_enum: true
 - table:
     schema: video
-    name: MediaLiveChannel
-  configuration:
-    custom_root_fields: {}
-    custom_column_names:
-      updated_at: updatedAt
-      created_at: createdAt
+    name: MediaLiveChannelStatus
   object_relationships:
-  - name: channelStackCreateJob
+  - name: channelStack
     using:
-      foreign_key_constraint_on: channelStackCreateJobId
-  - name: conference
-    using:
-      foreign_key_constraint_on: conferenceId
-  - name: room
-    using:
-      foreign_key_constraint_on: roomId
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - cloudFrontDomain
-      - conferenceId
-      - endpointUri
-      - id
-      - roomId
-      filter:
-        _or:
-        - conference:
-            groups:
-              _and:
-              - enabled:
-                  _eq: true
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
-                          _eq: CONFERENCE_VIEW
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_SCHEDULE
-              - _or:
-                - includeUnauthenticated:
-                    _eq: true
-                - groupRegistrants:
-                    registrant:
-                      userId:
-                        _eq: X-Hasura-User-Id
+      foreign_key_constraint_on: channelStackId
 - table:
     schema: video
     name: RtmpInput

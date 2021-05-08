@@ -2,15 +2,17 @@ import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import AmazonS3URI from "amazon-s3-uri";
+import * as R from "ramda";
 import { ChannelStackDescription } from "../../channel-stack/channel-stack/channelStack";
 import {
     ChannelStack_CreateChannelStackDeleteJobDocument,
+    ChannelStack_DeleteDocument,
+    ChannelStack_DetachDocument,
     ChannelStack_GetChannelStackCloudFormationStackArnDocument,
-    CreateMediaLiveChannelDocument,
-    DeleteMediaLiveChannelDocument,
-    FindMediaLiveChannelsByStackArnDocument,
-    GetMediaLiveChannelByRoomDocument,
-    MediaLiveChannelService_DetachDocument,
+    ChannelStack_GetChannelStacksDocument,
+    CreateChannelStackDocument,
+    FindChannelStacksByStackArnDocument,
+    GetChannelStackByRoomDocument,
 } from "../../generated/graphql";
 import { ConferenceConfigurationService } from "../conference-configuration/conference-configuration.service";
 import { GraphQlService } from "../graphql/graphql.service";
@@ -30,11 +32,11 @@ export class ChannelStackDataService {
 
     public async getChannelStackDetails(roomId: string): Promise<ChannelStackDetails | null> {
         gql`
-            query GetMediaLiveChannelByRoom($roomId: uuid!) {
+            query GetChannelStackByRoom($roomId: uuid!) {
                 room_Room_by_pk(id: $roomId) {
                     id
                     conferenceId
-                    mediaLiveChannel {
+                    channelStack {
                         id
                         mediaLiveChannelId
                         mp4InputAttachmentName
@@ -46,34 +48,33 @@ export class ChannelStackDataService {
             }
         `;
         const channelResult = await this.graphQlService.apolloClient.query({
-            query: GetMediaLiveChannelByRoomDocument,
+            query: GetChannelStackByRoomDocument,
             variables: {
                 roomId,
             },
         });
 
-        if (!channelResult.data.room_Room_by_pk?.mediaLiveChannel) {
+        if (!channelResult.data.room_Room_by_pk?.channelStack) {
             return null;
         }
 
         const fillerVideoKey = await this.getFillerVideoKey(channelResult.data.room_Room_by_pk.conferenceId);
 
         return {
-            id: channelResult.data.room_Room_by_pk.mediaLiveChannel.id,
+            id: channelResult.data.room_Room_by_pk.channelStack.id,
             roomId,
             conferenceId: channelResult.data.room_Room_by_pk.conferenceId,
-            mediaLiveChannelId: channelResult.data.room_Room_by_pk.mediaLiveChannel.mediaLiveChannelId,
-            mp4InputAttachmentName: channelResult.data.room_Room_by_pk.mediaLiveChannel.mp4InputAttachmentName,
-            rtmpAInputAttachmentName: channelResult.data.room_Room_by_pk.mediaLiveChannel.rtmpAInputAttachmentName,
-            rtmpBInputAttachmentName:
-                channelResult.data.room_Room_by_pk.mediaLiveChannel.rtmpBInputAttachmentName ?? null,
+            mediaLiveChannelId: channelResult.data.room_Room_by_pk.channelStack.mediaLiveChannelId,
+            mp4InputAttachmentName: channelResult.data.room_Room_by_pk.channelStack.mp4InputAttachmentName,
+            rtmpAInputAttachmentName: channelResult.data.room_Room_by_pk.channelStack.rtmpAInputAttachmentName,
+            rtmpBInputAttachmentName: channelResult.data.room_Room_by_pk.channelStack.rtmpBInputAttachmentName ?? null,
             loopingMp4InputAttachmentName:
-                channelResult.data.room_Room_by_pk.mediaLiveChannel.loopingMp4InputAttachmentName,
+                channelResult.data.room_Room_by_pk.channelStack.loopingMp4InputAttachmentName,
             fillerVideoKey,
         };
     }
 
-    public async createMediaLiveChannel(
+    public async createChannelStack(
         stackDescription: ChannelStackDescription,
         cloudFormationStackArn: string,
         jobId: string,
@@ -81,7 +82,7 @@ export class ChannelStackDataService {
         roomId: string
     ): Promise<void> {
         gql`
-            mutation CreateMediaLiveChannel(
+            mutation CreateChannelStack(
                 $cloudFormationStackArn: String!
                 $cloudFrontDistributionId: String!
                 $mediaLiveChannelId: String!
@@ -101,7 +102,7 @@ export class ChannelStackDataService {
                 $channelStackCreateJobId: uuid!
                 $roomId: uuid!
             ) {
-                insert_video_MediaLiveChannel_one(
+                insert_video_ChannelStack_one(
                     object: {
                         cloudFormationStackArn: $cloudFormationStackArn
                         cloudFrontDistributionId: $cloudFrontDistributionId
@@ -129,7 +130,7 @@ export class ChannelStackDataService {
         `;
 
         const result = await this.graphQlService.apolloClient.mutate({
-            mutation: CreateMediaLiveChannelDocument,
+            mutation: CreateChannelStackDocument,
             variables: {
                 channelStackCreateJobId: jobId,
                 cloudFormationStackArn,
@@ -154,9 +155,9 @@ export class ChannelStackDataService {
 
         this.logger.info(
             {
-                mediaLiveChannelId: result.data?.insert_video_MediaLiveChannel_one?.id,
+                channelStackId: result.data?.insert_video_ChannelStack_one?.id,
             },
-            "Created MediaLiveChannel"
+            "Created ChannelStack"
         );
     }
 
@@ -165,8 +166,8 @@ export class ChannelStackDataService {
      */
     public async deleteChannelStackRecord(channelStackId: string): Promise<{ cloudFormationStackArn?: string | null }> {
         gql`
-            mutation DeleteMediaLiveChannel($channelStackId: uuid!) {
-                delete_video_MediaLiveChannel_by_pk(id: $channelStackId) {
+            mutation ChannelStack_Delete($channelStackId: uuid!) {
+                delete_video_ChannelStack_by_pk(id: $channelStackId) {
                     id
                     cloudFormationStackArn
                 }
@@ -174,31 +175,31 @@ export class ChannelStackDataService {
         `;
 
         const result = await this.graphQlService.apolloClient.mutate({
-            mutation: DeleteMediaLiveChannelDocument,
+            mutation: ChannelStack_DeleteDocument,
             variables: {
                 channelStackId,
             },
         });
 
-        return { cloudFormationStackArn: result.data?.delete_video_MediaLiveChannel_by_pk?.cloudFormationStackArn };
+        return { cloudFormationStackArn: result.data?.delete_video_ChannelStack_by_pk?.cloudFormationStackArn };
     }
 
-    public async findMediaLiveChannelsByStackArn(stackArn: string): Promise<string[]> {
+    public async findChannelStackIdsByStackArn(stackArn: string): Promise<string[]> {
         gql`
-            query FindMediaLiveChannelsByStackArn($stackArn: String!) {
-                video_MediaLiveChannel(where: { cloudFormationStackArn: { _eq: $stackArn } }) {
+            query FindChannelStacksByStackArn($stackArn: String!) {
+                video_ChannelStack(where: { cloudFormationStackArn: { _eq: $stackArn } }) {
                     id
                 }
             }
         `;
 
         const result = await this.graphQlService.apolloClient.query({
-            query: FindMediaLiveChannelsByStackArnDocument,
+            query: FindChannelStacksByStackArnDocument,
             variables: {
                 stackArn,
             },
         });
-        return result.data.video_MediaLiveChannel.map((c) => c.id);
+        return result.data.video_ChannelStack.map((c) => c.id);
     }
 
     async getFillerVideoKey(conferenceId: string): Promise<string | null> {
@@ -217,17 +218,17 @@ export class ChannelStackDataService {
         return fillerVideoKey;
     }
 
-    public async detachMediaLiveChannel(channelStackId: string): Promise<void> {
+    public async detachChannelStack(channelStackId: string): Promise<void> {
         gql`
-            mutation MediaLiveChannelService_Detach($id: uuid!) {
-                update_video_MediaLiveChannel_by_pk(pk_columns: { id: $id }, _set: { roomId: null }) {
+            mutation ChannelStack_Detach($id: uuid!) {
+                update_video_ChannelStack_by_pk(pk_columns: { id: $id }, _set: { roomId: null }) {
                     id
                 }
             }
         `;
 
         await this.graphQlService.apolloClient.mutate({
-            mutation: MediaLiveChannelService_DetachDocument,
+            mutation: ChannelStack_DetachDocument,
             variables: {
                 id: channelStackId,
             },
@@ -237,7 +238,7 @@ export class ChannelStackDataService {
     public async createChannelStackDeleteJob(channelStackId: string, mediaLiveChannelId: string): Promise<void> {
         gql`
             query ChannelStack_GetChannelStackCloudFormationStackArn($channelStackId: uuid!) {
-                video_MediaLiveChannel_by_pk(id: $channelStackId) {
+                video_ChannelStack_by_pk(id: $channelStackId) {
                     id
                     cloudFormationStackArn
                 }
@@ -266,12 +267,12 @@ export class ChannelStackDataService {
             },
         });
 
-        if (!result.data.video_MediaLiveChannel_by_pk) {
+        if (!result.data.video_ChannelStack_by_pk) {
             this.logger.warn({ channelStackId }, "Could not find channel stack to be deleted");
             return;
         }
 
-        if (!result.data.video_MediaLiveChannel_by_pk.cloudFormationStackArn) {
+        if (!result.data.video_ChannelStack_by_pk.cloudFormationStackArn) {
             this.logger.warn(
                 { channelStackId },
                 "Found channel stack to be deleted, but it does not have a CloudFormation stack Arn"
@@ -281,15 +282,51 @@ export class ChannelStackDataService {
         }
 
         this.logger.info(
-            { channelStackId, cloudFormationStackArn: result.data.video_MediaLiveChannel_by_pk.cloudFormationStackArn },
+            { channelStackId, cloudFormationStackArn: result.data.video_ChannelStack_by_pk.cloudFormationStackArn },
             "Creating channel stack delete job"
         );
         await this.graphQlService.apolloClient.mutate({
             mutation: ChannelStack_CreateChannelStackDeleteJobDocument,
             variables: {
-                cloudFormationStackArn: result.data.video_MediaLiveChannel_by_pk.cloudFormationStackArn,
+                cloudFormationStackArn: result.data.video_ChannelStack_by_pk.cloudFormationStackArn,
                 mediaLiveChannelId,
             },
         });
+    }
+
+    public async getChannelStacks(): Promise<{ channelStackId: string; roomId: string; mediaLiveChannelId: string }[]> {
+        gql`
+            query ChannelStack_GetChannelStacks {
+                video_ChannelStack(where: { roomId: {} }) {
+                    channelStackId: id
+                    mediaLiveChannelId
+                    roomId
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: ChannelStack_GetChannelStacksDocument,
+        });
+
+        return R.flatten(
+            result.data.video_ChannelStack.map<
+                {
+                    channelStackId: string;
+                    roomId: string;
+                    mediaLiveChannelId: string;
+                }[]
+            >((channelStack) =>
+                channelStack.roomId
+                    ? [
+                          {
+                              channelStackId: channelStack.channelStackId,
+                              mediaLiveChannelId: channelStack.mediaLiveChannelId,
+                              roomId: channelStack.roomId,
+                          },
+                      ]
+                    : []
+            )
+        );
     }
 }

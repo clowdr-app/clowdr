@@ -421,7 +421,7 @@ export class ScheduleSyncService {
             ];
             if (failStates.includes(channelState)) {
                 try {
-                    await this.channelStackDataService.detachMediaLiveChannel(room.mediaLiveChannelId);
+                    await this.channelStackDataService.detachChannelStack(room.mediaLiveChannelId);
                 } catch (e) {
                     this.logger.error(
                         { channelStackId: room.channelStackId, roomId: room.roomId },
@@ -478,7 +478,7 @@ export class ScheduleSyncService {
                 const channelExists = await this.mediaLiveService.channelExists(mediaLiveChannelId);
                 if (!channelExists) {
                     this.logger.info({ channelStackId }, "MediaLive channel does not exist, detaching");
-                    await this.channelStackDataService.detachMediaLiveChannel(channelStackId);
+                    await this.channelStackDataService.detachChannelStack(channelStackId);
                 }
             } catch (e) {
                 this.logger.error({ channelStackId }, "Failed to detach channel stack");

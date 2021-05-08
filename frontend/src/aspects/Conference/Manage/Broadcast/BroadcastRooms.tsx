@@ -22,14 +22,14 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
 import ReactPlayer from "react-player";
-import { useGetMediaLiveChannelsQuery } from "../../../../generated/graphql";
+import { useGetChannelStacksQuery } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 
 gql`
-    query GetMediaLiveChannels($conferenceId: uuid!) {
-        room_Room(where: { mediaLiveChannel: {}, conferenceId: { _eq: $conferenceId } }) {
-            mediaLiveChannel {
+    query GetChannelStacks($conferenceId: uuid!) {
+        room_Room(where: { channelStack: {}, conferenceId: { _eq: $conferenceId } }) {
+            channelStack {
                 cloudFrontDomain
                 endpointUri
                 id
@@ -41,7 +41,7 @@ gql`
 `;
 
 export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const { data, loading, error, refetch } = useGetMediaLiveChannelsQuery({ variables: { conferenceId } });
+    const { data, loading, error, refetch } = useGetChannelStacksQuery({ variables: { conferenceId } });
     useQueryErrorToast(error, false);
 
     const toStreamingEndpoint = useCallback((endpointUri: string, cloudFrontDomain: string): string => {
@@ -78,13 +78,13 @@ export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.
                             <Td>{room.name}</Td>
                             <Td>
                                 <Button
-                                    isDisabled={!room.mediaLiveChannel}
+                                    isDisabled={!room.channelStack}
                                     onClick={() => {
-                                        if (room.mediaLiveChannel) {
+                                        if (room.channelStack) {
                                             setStreamUri(
                                                 toStreamingEndpoint(
-                                                    room.mediaLiveChannel.endpointUri,
-                                                    room.mediaLiveChannel.cloudFrontDomain
+                                                    room.channelStack.endpointUri,
+                                                    room.channelStack.cloudFrontDomain
                                                 )
                                             );
                                             streamDisclosure.onOpen();

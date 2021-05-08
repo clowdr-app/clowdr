@@ -212,13 +212,13 @@ function RoomInner({
     } = useCurrentRoomEvent(roomEvents);
 
     const hlsUri = useMemo(() => {
-        if (!roomDetails.mediaLiveChannel) {
+        if (!roomDetails.channelStack) {
             return null;
         }
-        const finalUri = new URL(roomDetails.mediaLiveChannel.endpointUri);
-        finalUri.hostname = roomDetails.mediaLiveChannel.cloudFrontDomain;
+        const finalUri = new URL(roomDetails.channelStack.endpointUri);
+        finalUri.hostname = roomDetails.channelStack.cloudFrontDomain;
         return finalUri.toString();
-    }, [roomDetails.mediaLiveChannel]);
+    }, [roomDetails.channelStack]);
 
     const isPresenterOfUpcomingEvent = useMemo(
         () =>

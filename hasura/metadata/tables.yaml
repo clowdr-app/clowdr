@@ -8091,6 +8091,28 @@
       value_from_env: EVENT_SECRET
 - table:
     schema: video
+    name: ImmediateSwitch
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
+  event_triggers:
+  - name: ImmediateSwitchCreated
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+- table:
+    schema: video
     name: InputType
   is_enum: true
   array_relationships:
@@ -8115,10 +8137,54 @@
 - table:
     schema: video
     name: MediaLiveChannelStatus
+  configuration:
+    custom_root_fields: {}
+    custom_column_names:
+      updated_at: updatedAt
+      created_at: createdAt
   object_relationships:
   - name: channelStack
     using:
       foreign_key_constraint_on: channelStackId
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        insertion_order: null
+        column_mapping:
+          conferenceId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - activeInputAttachmentName
+      - activeInputSwitchActionName
+      - channelStackId
+      - conferenceId
+      - created_at
+      - id
+      - pipelinesRunningCount
+      - updated_at
+      filter:
+        conference:
+          _and:
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-User-Id
+                - permission_name:
+                    _in:
+                    - CONFERENCE_VIEW_ATTENDEES
+              _table:
+                schema: public
+                name: FlatUserPermission
 - table:
     schema: video
     name: RtmpInput

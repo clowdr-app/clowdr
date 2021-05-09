@@ -11,6 +11,7 @@ import { add, addHours, addMinutes } from "date-fns";
 import * as R from "ramda";
 import {
     Content_ElementType_Enum,
+    LocalSchedule_GetEventDocument,
     LocalSchedule_GetRoomsWithEventsStartingDocument,
     LocalSchedule_GetRoomsWithoutEventsDocument,
     Room_Mode_Enum,
@@ -336,6 +337,65 @@ export class LocalScheduleService {
             mediaLiveChannelId: room.channelStack?.mediaLiveChannelId ?? null,
         }));
     }
+
+    public async getEvent(eventId: string): Promise<Event | null> {
+        gql`
+            query LocalSchedule_GetEvent($eventId: uuid!) {
+                schedule_Event_by_pk(id: $eventId) {
+                    id
+                    conferenceId
+                    endTime
+                    startTime
+                    eventVonageSession {
+                        rtmpInputName
+                    }
+                    room {
+                        id
+                        channelStack {
+                            id
+                            mediaLiveChannelId
+                            rtmpAInputAttachmentName
+                            rtmpBInputAttachmentName
+                            mp4InputAttachmentName
+                            loopingMp4InputAttachmentName
+                        }
+                    }
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: LocalSchedule_GetEventDocument,
+            variables: {
+                eventId,
+            },
+        });
+
+        const channelStack: ChannelStack | null = result.data.schedule_Event_by_pk?.room.channelStack
+            ? {
+                  id: result.data.schedule_Event_by_pk.room.channelStack.id,
+                  mediaLiveChannelId: result.data.schedule_Event_by_pk.room.channelStack.mediaLiveChannelId,
+                  loopingMp4InputAttachmentName:
+                      result.data.schedule_Event_by_pk.room.channelStack.loopingMp4InputAttachmentName,
+                  mp4InputAttachmentName: result.data.schedule_Event_by_pk.room.channelStack.mp4InputAttachmentName,
+                  rtmpAInputAttachmentName: result.data.schedule_Event_by_pk.room.channelStack.rtmpAInputAttachmentName,
+                  rtmpBInputAttachmentName:
+                      result.data.schedule_Event_by_pk.room.channelStack.rtmpBInputAttachmentName ??
+                      result.data.schedule_Event_by_pk.room.channelStack.rtmpAInputAttachmentName,
+              }
+            : null;
+
+        return result.data.schedule_Event_by_pk
+            ? {
+                  eventId: result.data.schedule_Event_by_pk.id,
+                  conferenceId: result.data.schedule_Event_by_pk.conferenceId,
+                  channelStack,
+                  startTime: Date.parse(result.data.schedule_Event_by_pk.startTime),
+                  endTime: Date.parse(result.data.schedule_Event_by_pk.endTime),
+                  eventRtmpInputName: result.data.schedule_Event_by_pk.eventVonageSession?.rtmpInputName ?? null,
+              }
+            : null;
+    }
 }
 
 export interface Room {
@@ -343,4 +403,22 @@ export interface Room {
     conferenceId: string;
     channelStackId: string | null;
     mediaLiveChannelId: string | null;
+}
+
+export interface Event {
+    eventId: string;
+    conferenceId: string;
+    startTime: number;
+    endTime: number;
+    channelStack: ChannelStack | null;
+    eventRtmpInputName: string | null;
+}
+
+export interface ChannelStack {
+    id: string;
+    mediaLiveChannelId: string;
+    rtmpAInputAttachmentName: string;
+    rtmpBInputAttachmentName: string;
+    mp4InputAttachmentName: string;
+    loopingMp4InputAttachmentName: string;
 }

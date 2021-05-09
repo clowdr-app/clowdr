@@ -32,23 +32,31 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
         }
 
         if (message.Type === "Notification") {
-            console.log(`${req.originalUrl}: received message`, message.MessageId, message.Message);
-
-            /*if ("alert_type" in message.Message && message.Message.alert_type === "Video Not Detected") {
-                console.log("Video not detected ");
-            }*/
-
-            let event: MediaLiveEvent;
+            let event: MediaLiveEvent | null = null;
             try {
                 event = JSON.parse(message.Message);
                 assertType<MediaLiveEvent>(event);
             } catch (err) {
-                console.error(`${req.originalUrl}: Unrecognised notification message`, err);
-                res.status(500).json("Unrecognised notification message");
-                return;
+                if (event && event["detail-type"] !== "MediaLive Channel State Change") {
+                    console.log("Received event of unexpected detail-type", {
+                        "detail-type": event["detail-type"],
+                    });
+                } else {
+                    console.error("Unrecognised MediaLive notification message", {
+                        err,
+                        message,
+                        originalUrl: req.originalUrl,
+                    });
+                    res.status(500).json("Unrecognised notification message");
+                    return;
+                }
             }
 
-            if (event["detail-type"] === "MediaLive Channel State Change" && event.detail.state === "RUNNING") {
+            if (
+                event &&
+                event["detail-type"] === "MediaLive Channel State Change" &&
+                event.detail.state === "RUNNING"
+            ) {
                 const { resourceId } = parseArn(event.detail.channel_arn);
 
                 if (!resourceId) {

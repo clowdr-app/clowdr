@@ -421,7 +421,7 @@ Order of the rules matters.
            context.accessToken[namespace] =
            {
                'x-hasura-default-role': 'user',
-               'x-hasura-allowed-roles': ['user'],
+               'x-hasura-allowed-roles': ['user', 'unauthenticated'],
                'x-hasura-user-id': user.user_id,
                'x-hasura-magic-token': magicToken,
                'x-hasura-conference-slugs': "{" + user.app_metadata.conferenceSlugs.reduce((acc, x) => `${acc},"${x}"`, "").substr(1) + "}",

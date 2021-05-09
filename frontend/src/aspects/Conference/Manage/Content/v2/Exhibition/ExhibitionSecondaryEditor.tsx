@@ -39,11 +39,11 @@ import {
     useManageContent_SelectAllItemsQuery,
     useManageContent_SelectItemExhibitionsQuery,
     useManageContent_UpdateItemExhibitionMutation,
-} from "../../../../../generated/graphql";
-import { LinkButton } from "../../../../Chakra/LinkButton";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { maybeCompare } from "../../../../Utils/maybeSort";
-import { useConference } from "../../../useConference";
+} from "../../../../../../generated/graphql";
+import { LinkButton } from "../../../../../Chakra/LinkButton";
+import { FAIcon } from "../../../../../Icons/FAIcon";
+import { maybeCompare } from "../../../../../Utils/maybeSort";
+import { useConference } from "../../../../useConference";
 
 gql`
     query ManageContent_SelectItemExhibitions($exhibitionId: uuid!) {

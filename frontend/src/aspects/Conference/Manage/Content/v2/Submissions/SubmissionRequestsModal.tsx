@@ -42,10 +42,10 @@ import {
     SubmissionRequestsModal_UploadableElementFragment,
     useInsertSubmissionRequestEmailJobsMutation,
     useSubmissionRequestsModalDataQuery,
-} from "../../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { useConference } from "../../../useConference";
+} from "../../../../../../generated/graphql";
+import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
+import { FAIcon } from "../../../../../Icons/FAIcon";
+import { useConference } from "../../../../useConference";
 
 // gql`
 //     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {

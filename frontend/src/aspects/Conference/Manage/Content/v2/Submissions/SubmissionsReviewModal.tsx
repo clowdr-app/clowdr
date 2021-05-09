@@ -27,8 +27,8 @@ import React, { useMemo } from "react";
 import {
     SubmissionsReviewModal_UploadableElementFragment,
     useSubmissionsReviewModalDataQuery,
-} from "../../../../../generated/graphql";
-import { Element } from "../../../Attend/Content/Element/Element";
+} from "../../../../../../generated/graphql";
+import { Element } from "../../../../Attend/Content/Element/Element";
 
 gql`
     query SubmissionsReviewModalData($itemIds: [uuid!]!) {
@@ -255,7 +255,7 @@ function DeferredElement({
         )
     ) : (
         <Box p={2}>
-            <Button onClick={onOpen}>Reveal uploadableElement</Button>
+            <Button onClick={onOpen}>Reveal submission</Button>
         </Box>
     );
 }

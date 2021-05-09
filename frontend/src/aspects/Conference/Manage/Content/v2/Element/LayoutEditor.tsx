@@ -1,7 +1,7 @@
 import { FormControl, FormHelperText, FormLabel, HStack, Switch } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useCallback, useMemo } from "react";
-import { Content_ElementType_Enum } from "../../../../../generated/graphql";
+import { Content_ElementType_Enum } from "../../../../../../generated/graphql";
 
 export function LayoutEditor({
     layoutDataBlob,
@@ -46,9 +46,10 @@ export function LayoutEditor({
 
     return (
         <HStack alignItems="flex-start" mt={4}>
-            <FormControl>
-                <FormLabel>Wide</FormLabel>
+            <FormControl as={HStack} spacing={2}>
+                <FormLabel m={0}>Wide</FormLabel>
                 <Switch
+                    m={0}
                     size="sm"
                     isChecked={layoutData.wide}
                     onChange={(event) => {
@@ -58,7 +59,7 @@ export function LayoutEditor({
                         });
                     }}
                 />
-                <FormHelperText>Display this content across both columns.</FormHelperText>
+                <FormHelperText m={0}>Display this content across both columns.</FormHelperText>
             </FormControl>
             {/* <FormControl>
                 <FormLabel>Order</FormLabel>

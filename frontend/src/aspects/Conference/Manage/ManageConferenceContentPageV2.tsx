@@ -49,11 +49,11 @@ import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
-import ManageExhibitionsModal from "./Content/v2/ManageExhibitionsModal";
+import ManageExhibitionsModal from "./Content/v2/Exhibition/ManageExhibitionsModal";
+import { SecondaryEditor } from "./Content/v2/Item/SecondaryEditor";
 import ManageTagsModal from "./Content/v2/ManageTagsModal";
-import { SecondaryEditor } from "./Content/v2/SecondaryEditor";
-import { SendSubmissionRequestsModal } from "./Content/v2/SubmissionRequestsModal";
-import { SubmissionsReviewModal } from "./Content/v2/SubmissionsReviewModal";
+import { SendSubmissionRequestsModal } from "./Content/v2/Submissions/SubmissionRequestsModal";
+import { SubmissionsReviewModal } from "./Content/v2/Submissions/SubmissionsReviewModal";
 
 gql`
     ## Items
@@ -109,6 +109,19 @@ gql`
         updatedAt
     }
 
+    fragment ManageContent_UploadableElement on content_UploadableElement {
+        id
+        itemId
+        typeName
+        name
+        conferenceId
+        uploadsRemaining
+        isHidden
+        element {
+            ...ManageContent_Element
+        }
+    }
+
     fragment ManageContent_ProgramPerson on collection_ProgramPerson {
         id
         name
@@ -147,8 +160,11 @@ gql`
         content_Item_by_pk(id: $itemId) {
             ...ManageContent_ItemSecondary
         }
-        content_Element(where: { itemId: { _eq: $itemId } }) {
+        content_Element(where: { itemId: { _eq: $itemId }, uploadableId: { _is_null: true } }) {
             ...ManageContent_Element
+        }
+        content_UploadableElement(where: { itemId: { _eq: $itemId } }) {
+            ...ManageContent_UploadableElement
         }
     }
 

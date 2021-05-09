@@ -36022,56 +36022,6 @@ export type UpdateExhibitionMutation = { readonly __typename?: 'mutation_root', 
     & ExhibitionInfoFragment
   )> };
 
-export type AddContentMenu_CreateElementMutationVariables = Exact<{
-  object: Content_Element_Insert_Input;
-}>;
-
-
-export type AddContentMenu_CreateElementMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element_one?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any }> };
-
-export type ManageContent_SelectProgramPeopleQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type ManageContent_SelectProgramPeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<(
-    { readonly __typename?: 'collection_ProgramPerson' }
-    & ManageContent_ProgramPersonFragment
-  )> };
-
-export type ManageContent_InsertItemProgramPersonMutationVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  personId: Scalars['uuid'];
-  roleName: Scalars['String'];
-  priority: Scalars['Int'];
-  itemId: Scalars['uuid'];
-}>;
-
-
-export type ManageContent_InsertItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemProgramPerson_one?: Maybe<(
-    { readonly __typename?: 'content_ItemProgramPerson' }
-    & ManageContent_ItemProgramPersonFragment
-  )> };
-
-export type ManageContent_UpdateItemProgramPersonMutationVariables = Exact<{
-  itemPersonId: Scalars['uuid'];
-  priority: Scalars['Int'];
-  roleName: Scalars['String'];
-}>;
-
-
-export type ManageContent_UpdateItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemProgramPerson_by_pk?: Maybe<(
-    { readonly __typename?: 'content_ItemProgramPerson' }
-    & ManageContent_ItemProgramPersonFragment
-  )> };
-
-export type ManageContent_DeleteItemProgramPersonMutationVariables = Exact<{
-  itemPersonId: Scalars['uuid'];
-}>;
-
-
-export type ManageContent_DeleteItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ItemProgramPerson_by_pk?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any }> };
-
 export type ManageContent_DeleteElementMutationVariables = Exact<{
   elementId: Scalars['uuid'];
 }>;
@@ -36099,6 +36049,47 @@ export type ManageContent_UpdateElementMutationVariables = Exact<{
 export type ManageContent_UpdateElementMutation = { readonly __typename?: 'mutation_root', readonly update_content_Element_by_pk?: Maybe<(
     { readonly __typename?: 'content_Element' }
     & ManageContent_ElementFragment
+  )> };
+
+export type ManageContent_DeleteUploadableElementMutationVariables = Exact<{
+  uploadableElementId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly delete_content_UploadableElement_by_pk?: Maybe<{ readonly __typename?: 'content_UploadableElement', readonly id: any }> };
+
+export type ManageContent_SetUploadableElementIsHiddenMutationVariables = Exact<{
+  uploadableElementId: Scalars['uuid'];
+  isHidden: Scalars['Boolean'];
+}>;
+
+
+export type ManageContent_SetUploadableElementIsHiddenMutation = { readonly __typename?: 'mutation_root', readonly update_content_UploadableElement_by_pk?: Maybe<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & ManageContent_UploadableElementFragment
+  )> };
+
+export type ManageContent_UpdateUploadableElementMutationVariables = Exact<{
+  uploadableElementId: Scalars['uuid'];
+  uploadableElement: Content_UploadableElement_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly update_content_UploadableElement_by_pk?: Maybe<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & ManageContent_UploadableElementFragment
+  )> };
+
+export type ManageContent_UploaderFragment = { readonly __typename?: 'content_Uploader', readonly id: any, readonly uploadableElementId: any, readonly email: string, readonly name: string, readonly emailsSentCount: number, readonly conferenceId: any };
+
+export type ManageContent_SelectUploadersQueryVariables = Exact<{
+  uploadableElementId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectUploadersQuery = { readonly __typename?: 'query_root', readonly content_Uploader: ReadonlyArray<(
+    { readonly __typename?: 'content_Uploader' }
+    & ManageContent_UploaderFragment
   )> };
 
 export type ManageContent_SelectItemExhibitionsQueryVariables = Exact<{
@@ -36169,6 +36160,69 @@ export type ManageContent_DeleteExhibitionsMutationVariables = Exact<{
 
 
 export type ManageContent_DeleteExhibitionsMutation = { readonly __typename?: 'mutation_root', readonly delete_collection_Exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any }> }> };
+
+export type AddContentMenu_CreateElementMutationVariables = Exact<{
+  object: Content_Element_Insert_Input;
+}>;
+
+
+export type AddContentMenu_CreateElementMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element_one?: Maybe<(
+    { readonly __typename?: 'content_Element' }
+    & ManageContent_ElementFragment
+  )> };
+
+export type AddContentMenu_CreateUploadableElementMutationVariables = Exact<{
+  object: Content_UploadableElement_Insert_Input;
+}>;
+
+
+export type AddContentMenu_CreateUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly insert_content_UploadableElement_one?: Maybe<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & ManageContent_UploadableElementFragment
+  )> };
+
+export type ManageContent_SelectProgramPeopleQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectProgramPeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<(
+    { readonly __typename?: 'collection_ProgramPerson' }
+    & ManageContent_ProgramPersonFragment
+  )> };
+
+export type ManageContent_InsertItemProgramPersonMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  personId: Scalars['uuid'];
+  roleName: Scalars['String'];
+  priority: Scalars['Int'];
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_InsertItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemProgramPerson_one?: Maybe<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ManageContent_ItemProgramPersonFragment
+  )> };
+
+export type ManageContent_UpdateItemProgramPersonMutationVariables = Exact<{
+  itemPersonId: Scalars['uuid'];
+  priority: Scalars['Int'];
+  roleName: Scalars['String'];
+}>;
+
+
+export type ManageContent_UpdateItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemProgramPerson_by_pk?: Maybe<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ManageContent_ItemProgramPersonFragment
+  )> };
+
+export type ManageContent_DeleteItemProgramPersonMutationVariables = Exact<{
+  itemPersonId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ItemProgramPerson_by_pk?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any }> };
 
 export type ManageContent_InsertTagMutationVariables = Exact<{
   tag: Collection_Tag_Insert_Input;
@@ -36401,6 +36455,11 @@ export type ManageContent_RoomFragment = { readonly __typename?: 'room_Room', re
 
 export type ManageContent_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
 
+export type ManageContent_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly conferenceId: any, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly element?: Maybe<(
+    { readonly __typename?: 'content_Element' }
+    & ManageContent_ElementFragment
+  )> };
+
 export type ManageContent_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> };
 
 export type ManageContent_ItemProgramPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
@@ -36437,6 +36496,9 @@ export type ManageContent_SelectItemQuery = { readonly __typename?: 'query_root'
   )>, readonly content_Element: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
     & ManageContent_ElementFragment
+  )>, readonly content_UploadableElement: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & ManageContent_UploadableElementFragment
   )> };
 
 export type ManageContent_SelectItemPeopleQueryVariables = Exact<{
@@ -38325,6 +38387,16 @@ export const ExhibitionInfoFragmentDoc = gql`
   priority
 }
     `;
+export const ManageContent_UploaderFragmentDoc = gql`
+    fragment ManageContent_Uploader on content_Uploader {
+  id
+  uploadableElementId
+  email
+  name
+  emailsSentCount
+  conferenceId
+}
+    `;
 export const SubmissionRequestsModal_UploadableElementFragmentDoc = gql`
     fragment SubmissionRequestsModal_UploadableElement on content_UploadableElement {
   id
@@ -38455,6 +38527,20 @@ export const ManageContent_ElementFragmentDoc = gql`
   updatedAt
 }
     `;
+export const ManageContent_UploadableElementFragmentDoc = gql`
+    fragment ManageContent_UploadableElement on content_UploadableElement {
+  id
+  itemId
+  typeName
+  name
+  conferenceId
+  uploadsRemaining
+  isHidden
+  element {
+    ...ManageContent_Element
+  }
+}
+    ${ManageContent_ElementFragmentDoc}`;
 export const ManageContent_ProgramPersonFragmentDoc = gql`
     fragment ManageContent_ProgramPerson on collection_ProgramPerson {
   id
@@ -42134,184 +42220,6 @@ export function useUpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateExhibitionMutationHookResult = ReturnType<typeof useUpdateExhibitionMutation>;
 export type UpdateExhibitionMutationResult = Apollo.MutationResult<UpdateExhibitionMutation>;
 export type UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>;
-export const AddContentMenu_CreateElementDocument = gql`
-    mutation AddContentMenu_CreateElement($object: content_Element_insert_input!) {
-  insert_content_Element_one(object: $object) {
-    id
-  }
-}
-    `;
-export type AddContentMenu_CreateElementMutationFn = Apollo.MutationFunction<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
-
-/**
- * __useAddContentMenu_CreateElementMutation__
- *
- * To run a mutation, you first call `useAddContentMenu_CreateElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddContentMenu_CreateElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addContentMenuCreateElementMutation, { data, loading, error }] = useAddContentMenu_CreateElementMutation({
- *   variables: {
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useAddContentMenu_CreateElementMutation(baseOptions?: Apollo.MutationHookOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>(AddContentMenu_CreateElementDocument, options);
-      }
-export type AddContentMenu_CreateElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateElementMutation>;
-export type AddContentMenu_CreateElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateElementMutation>;
-export type AddContentMenu_CreateElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
-export const ManageContent_SelectProgramPeopleDocument = gql`
-    query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
-  collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...ManageContent_ProgramPerson
-  }
-}
-    ${ManageContent_ProgramPersonFragmentDoc}`;
-
-/**
- * __useManageContent_SelectProgramPeopleQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectProgramPeopleQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectProgramPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectProgramPeopleQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContent_SelectProgramPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>(ManageContent_SelectProgramPeopleDocument, options);
-      }
-export function useManageContent_SelectProgramPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>(ManageContent_SelectProgramPeopleDocument, options);
-        }
-export type ManageContent_SelectProgramPeopleQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleQuery>;
-export type ManageContent_SelectProgramPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleLazyQuery>;
-export type ManageContent_SelectProgramPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>;
-export const ManageContent_InsertItemProgramPersonDocument = gql`
-    mutation ManageContent_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $roleName: String!, $priority: Int!, $itemId: uuid!) {
-  insert_content_ItemProgramPerson_one(
-    object: {conferenceId: $conferenceId, personId: $personId, itemId: $itemId, priority: $priority, roleName: $roleName}
-  ) {
-    ...ManageContent_ItemProgramPerson
-  }
-}
-    ${ManageContent_ItemProgramPersonFragmentDoc}`;
-export type ManageContent_InsertItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
-
-/**
- * __useManageContent_InsertItemProgramPersonMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertItemProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertItemProgramPersonMutation, { data, loading, error }] = useManageContent_InsertItemProgramPersonMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      personId: // value for 'personId'
- *      roleName: // value for 'roleName'
- *      priority: // value for 'priority'
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useManageContent_InsertItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>(ManageContent_InsertItemProgramPersonDocument, options);
-      }
-export type ManageContent_InsertItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_InsertItemProgramPersonMutation>;
-export type ManageContent_InsertItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_InsertItemProgramPersonMutation>;
-export type ManageContent_InsertItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
-export const ManageContent_UpdateItemProgramPersonDocument = gql`
-    mutation ManageContent_UpdateItemProgramPerson($itemPersonId: uuid!, $priority: Int!, $roleName: String!) {
-  update_content_ItemProgramPerson_by_pk(
-    pk_columns: {id: $itemPersonId}
-    _set: {priority: $priority, roleName: $roleName}
-  ) {
-    ...ManageContent_ItemProgramPerson
-  }
-}
-    ${ManageContent_ItemProgramPersonFragmentDoc}`;
-export type ManageContent_UpdateItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
-
-/**
- * __useManageContent_UpdateItemProgramPersonMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateItemProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateItemProgramPersonMutation, { data, loading, error }] = useManageContent_UpdateItemProgramPersonMutation({
- *   variables: {
- *      itemPersonId: // value for 'itemPersonId'
- *      priority: // value for 'priority'
- *      roleName: // value for 'roleName'
- *   },
- * });
- */
-export function useManageContent_UpdateItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>(ManageContent_UpdateItemProgramPersonDocument, options);
-      }
-export type ManageContent_UpdateItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_UpdateItemProgramPersonMutation>;
-export type ManageContent_UpdateItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_UpdateItemProgramPersonMutation>;
-export type ManageContent_UpdateItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
-export const ManageContent_DeleteItemProgramPersonDocument = gql`
-    mutation ManageContent_DeleteItemProgramPerson($itemPersonId: uuid!) {
-  delete_content_ItemProgramPerson_by_pk(id: $itemPersonId) {
-    id
-  }
-}
-    `;
-export type ManageContent_DeleteItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>;
-
-/**
- * __useManageContent_DeleteItemProgramPersonMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteItemProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteItemProgramPersonMutation, { data, loading, error }] = useManageContent_DeleteItemProgramPersonMutation({
- *   variables: {
- *      itemPersonId: // value for 'itemPersonId'
- *   },
- * });
- */
-export function useManageContent_DeleteItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>(ManageContent_DeleteItemProgramPersonDocument, options);
-      }
-export type ManageContent_DeleteItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_DeleteItemProgramPersonMutation>;
-export type ManageContent_DeleteItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_DeleteItemProgramPersonMutation>;
-export type ManageContent_DeleteItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>;
 export const ManageContent_DeleteElementDocument = gql`
     mutation ManageContent_DeleteElement($elementId: uuid!) {
   delete_content_Element_by_pk(id: $elementId) {
@@ -42416,6 +42324,148 @@ export function useManageContent_UpdateElementMutation(baseOptions?: Apollo.Muta
 export type ManageContent_UpdateElementMutationHookResult = ReturnType<typeof useManageContent_UpdateElementMutation>;
 export type ManageContent_UpdateElementMutationResult = Apollo.MutationResult<ManageContent_UpdateElementMutation>;
 export type ManageContent_UpdateElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>;
+export const ManageContent_DeleteUploadableElementDocument = gql`
+    mutation ManageContent_DeleteUploadableElement($uploadableElementId: uuid!) {
+  delete_content_UploadableElement_by_pk(id: $uploadableElementId) {
+    id
+  }
+}
+    `;
+export type ManageContent_DeleteUploadableElementMutationFn = Apollo.MutationFunction<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>;
+
+/**
+ * __useManageContent_DeleteUploadableElementMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteUploadableElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteUploadableElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteUploadableElementMutation, { data, loading, error }] = useManageContent_DeleteUploadableElementMutation({
+ *   variables: {
+ *      uploadableElementId: // value for 'uploadableElementId'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>(ManageContent_DeleteUploadableElementDocument, options);
+      }
+export type ManageContent_DeleteUploadableElementMutationHookResult = ReturnType<typeof useManageContent_DeleteUploadableElementMutation>;
+export type ManageContent_DeleteUploadableElementMutationResult = Apollo.MutationResult<ManageContent_DeleteUploadableElementMutation>;
+export type ManageContent_DeleteUploadableElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>;
+export const ManageContent_SetUploadableElementIsHiddenDocument = gql`
+    mutation ManageContent_SetUploadableElementIsHidden($uploadableElementId: uuid!, $isHidden: Boolean!) {
+  update_content_UploadableElement_by_pk(
+    pk_columns: {id: $uploadableElementId}
+    _set: {isHidden: $isHidden}
+  ) {
+    ...ManageContent_UploadableElement
+  }
+}
+    ${ManageContent_UploadableElementFragmentDoc}`;
+export type ManageContent_SetUploadableElementIsHiddenMutationFn = Apollo.MutationFunction<ManageContent_SetUploadableElementIsHiddenMutation, ManageContent_SetUploadableElementIsHiddenMutationVariables>;
+
+/**
+ * __useManageContent_SetUploadableElementIsHiddenMutation__
+ *
+ * To run a mutation, you first call `useManageContent_SetUploadableElementIsHiddenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SetUploadableElementIsHiddenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentSetUploadableElementIsHiddenMutation, { data, loading, error }] = useManageContent_SetUploadableElementIsHiddenMutation({
+ *   variables: {
+ *      uploadableElementId: // value for 'uploadableElementId'
+ *      isHidden: // value for 'isHidden'
+ *   },
+ * });
+ */
+export function useManageContent_SetUploadableElementIsHiddenMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_SetUploadableElementIsHiddenMutation, ManageContent_SetUploadableElementIsHiddenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_SetUploadableElementIsHiddenMutation, ManageContent_SetUploadableElementIsHiddenMutationVariables>(ManageContent_SetUploadableElementIsHiddenDocument, options);
+      }
+export type ManageContent_SetUploadableElementIsHiddenMutationHookResult = ReturnType<typeof useManageContent_SetUploadableElementIsHiddenMutation>;
+export type ManageContent_SetUploadableElementIsHiddenMutationResult = Apollo.MutationResult<ManageContent_SetUploadableElementIsHiddenMutation>;
+export type ManageContent_SetUploadableElementIsHiddenMutationOptions = Apollo.BaseMutationOptions<ManageContent_SetUploadableElementIsHiddenMutation, ManageContent_SetUploadableElementIsHiddenMutationVariables>;
+export const ManageContent_UpdateUploadableElementDocument = gql`
+    mutation ManageContent_UpdateUploadableElement($uploadableElementId: uuid!, $uploadableElement: content_UploadableElement_set_input!) {
+  update_content_UploadableElement_by_pk(
+    pk_columns: {id: $uploadableElementId}
+    _set: $uploadableElement
+  ) {
+    ...ManageContent_UploadableElement
+  }
+}
+    ${ManageContent_UploadableElementFragmentDoc}`;
+export type ManageContent_UpdateUploadableElementMutationFn = Apollo.MutationFunction<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>;
+
+/**
+ * __useManageContent_UpdateUploadableElementMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateUploadableElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateUploadableElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateUploadableElementMutation, { data, loading, error }] = useManageContent_UpdateUploadableElementMutation({
+ *   variables: {
+ *      uploadableElementId: // value for 'uploadableElementId'
+ *      uploadableElement: // value for 'uploadableElement'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>(ManageContent_UpdateUploadableElementDocument, options);
+      }
+export type ManageContent_UpdateUploadableElementMutationHookResult = ReturnType<typeof useManageContent_UpdateUploadableElementMutation>;
+export type ManageContent_UpdateUploadableElementMutationResult = Apollo.MutationResult<ManageContent_UpdateUploadableElementMutation>;
+export type ManageContent_UpdateUploadableElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>;
+export const ManageContent_SelectUploadersDocument = gql`
+    query ManageContent_SelectUploaders($uploadableElementId: uuid!) {
+  content_Uploader(where: {uploadableElementId: {_eq: $uploadableElementId}}) {
+    ...ManageContent_Uploader
+  }
+}
+    ${ManageContent_UploaderFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectUploadersQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectUploadersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectUploadersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectUploadersQuery({
+ *   variables: {
+ *      uploadableElementId: // value for 'uploadableElementId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectUploadersQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>(ManageContent_SelectUploadersDocument, options);
+      }
+export function useManageContent_SelectUploadersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>(ManageContent_SelectUploadersDocument, options);
+        }
+export type ManageContent_SelectUploadersQueryHookResult = ReturnType<typeof useManageContent_SelectUploadersQuery>;
+export type ManageContent_SelectUploadersLazyQueryHookResult = ReturnType<typeof useManageContent_SelectUploadersLazyQuery>;
+export type ManageContent_SelectUploadersQueryResult = Apollo.QueryResult<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>;
 export const ManageContent_SelectItemExhibitionsDocument = gql`
     query ManageContent_SelectItemExhibitions($exhibitionId: uuid!) {
   content_ItemExhibition(where: {exhibitionId: {_eq: $exhibitionId}}) {
@@ -42661,6 +42711,217 @@ export function useManageContent_DeleteExhibitionsMutation(baseOptions?: Apollo.
 export type ManageContent_DeleteExhibitionsMutationHookResult = ReturnType<typeof useManageContent_DeleteExhibitionsMutation>;
 export type ManageContent_DeleteExhibitionsMutationResult = Apollo.MutationResult<ManageContent_DeleteExhibitionsMutation>;
 export type ManageContent_DeleteExhibitionsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
+export const AddContentMenu_CreateElementDocument = gql`
+    mutation AddContentMenu_CreateElement($object: content_Element_insert_input!) {
+  insert_content_Element_one(object: $object) {
+    ...ManageContent_Element
+  }
+}
+    ${ManageContent_ElementFragmentDoc}`;
+export type AddContentMenu_CreateElementMutationFn = Apollo.MutationFunction<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
+
+/**
+ * __useAddContentMenu_CreateElementMutation__
+ *
+ * To run a mutation, you first call `useAddContentMenu_CreateElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddContentMenu_CreateElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addContentMenuCreateElementMutation, { data, loading, error }] = useAddContentMenu_CreateElementMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useAddContentMenu_CreateElementMutation(baseOptions?: Apollo.MutationHookOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>(AddContentMenu_CreateElementDocument, options);
+      }
+export type AddContentMenu_CreateElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateElementMutation>;
+export type AddContentMenu_CreateElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateElementMutation>;
+export type AddContentMenu_CreateElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
+export const AddContentMenu_CreateUploadableElementDocument = gql`
+    mutation AddContentMenu_CreateUploadableElement($object: content_UploadableElement_insert_input!) {
+  insert_content_UploadableElement_one(object: $object) {
+    ...ManageContent_UploadableElement
+  }
+}
+    ${ManageContent_UploadableElementFragmentDoc}`;
+export type AddContentMenu_CreateUploadableElementMutationFn = Apollo.MutationFunction<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>;
+
+/**
+ * __useAddContentMenu_CreateUploadableElementMutation__
+ *
+ * To run a mutation, you first call `useAddContentMenu_CreateUploadableElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddContentMenu_CreateUploadableElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addContentMenuCreateUploadableElementMutation, { data, loading, error }] = useAddContentMenu_CreateUploadableElementMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useAddContentMenu_CreateUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>(AddContentMenu_CreateUploadableElementDocument, options);
+      }
+export type AddContentMenu_CreateUploadableElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateUploadableElementMutation>;
+export type AddContentMenu_CreateUploadableElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateUploadableElementMutation>;
+export type AddContentMenu_CreateUploadableElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>;
+export const ManageContent_SelectProgramPeopleDocument = gql`
+    query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
+  collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContent_ProgramPerson
+  }
+}
+    ${ManageContent_ProgramPersonFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectProgramPeopleQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectProgramPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectProgramPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectProgramPeopleQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectProgramPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>(ManageContent_SelectProgramPeopleDocument, options);
+      }
+export function useManageContent_SelectProgramPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>(ManageContent_SelectProgramPeopleDocument, options);
+        }
+export type ManageContent_SelectProgramPeopleQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleQuery>;
+export type ManageContent_SelectProgramPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleLazyQuery>;
+export type ManageContent_SelectProgramPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>;
+export const ManageContent_InsertItemProgramPersonDocument = gql`
+    mutation ManageContent_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $roleName: String!, $priority: Int!, $itemId: uuid!) {
+  insert_content_ItemProgramPerson_one(
+    object: {conferenceId: $conferenceId, personId: $personId, itemId: $itemId, priority: $priority, roleName: $roleName}
+  ) {
+    ...ManageContent_ItemProgramPerson
+  }
+}
+    ${ManageContent_ItemProgramPersonFragmentDoc}`;
+export type ManageContent_InsertItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
+
+/**
+ * __useManageContent_InsertItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertItemProgramPersonMutation, { data, loading, error }] = useManageContent_InsertItemProgramPersonMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      personId: // value for 'personId'
+ *      roleName: // value for 'roleName'
+ *      priority: // value for 'priority'
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useManageContent_InsertItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>(ManageContent_InsertItemProgramPersonDocument, options);
+      }
+export type ManageContent_InsertItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_InsertItemProgramPersonMutation>;
+export type ManageContent_InsertItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_InsertItemProgramPersonMutation>;
+export type ManageContent_InsertItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
+export const ManageContent_UpdateItemProgramPersonDocument = gql`
+    mutation ManageContent_UpdateItemProgramPerson($itemPersonId: uuid!, $priority: Int!, $roleName: String!) {
+  update_content_ItemProgramPerson_by_pk(
+    pk_columns: {id: $itemPersonId}
+    _set: {priority: $priority, roleName: $roleName}
+  ) {
+    ...ManageContent_ItemProgramPerson
+  }
+}
+    ${ManageContent_ItemProgramPersonFragmentDoc}`;
+export type ManageContent_UpdateItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
+
+/**
+ * __useManageContent_UpdateItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateItemProgramPersonMutation, { data, loading, error }] = useManageContent_UpdateItemProgramPersonMutation({
+ *   variables: {
+ *      itemPersonId: // value for 'itemPersonId'
+ *      priority: // value for 'priority'
+ *      roleName: // value for 'roleName'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>(ManageContent_UpdateItemProgramPersonDocument, options);
+      }
+export type ManageContent_UpdateItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_UpdateItemProgramPersonMutation>;
+export type ManageContent_UpdateItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_UpdateItemProgramPersonMutation>;
+export type ManageContent_UpdateItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
+export const ManageContent_DeleteItemProgramPersonDocument = gql`
+    mutation ManageContent_DeleteItemProgramPerson($itemPersonId: uuid!) {
+  delete_content_ItemProgramPerson_by_pk(id: $itemPersonId) {
+    id
+  }
+}
+    `;
+export type ManageContent_DeleteItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>;
+
+/**
+ * __useManageContent_DeleteItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteItemProgramPersonMutation, { data, loading, error }] = useManageContent_DeleteItemProgramPersonMutation({
+ *   variables: {
+ *      itemPersonId: // value for 'itemPersonId'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>(ManageContent_DeleteItemProgramPersonDocument, options);
+      }
+export type ManageContent_DeleteItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_DeleteItemProgramPersonMutation>;
+export type ManageContent_DeleteItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_DeleteItemProgramPersonMutation>;
+export type ManageContent_DeleteItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>;
 export const ManageContent_InsertTagDocument = gql`
     mutation ManageContent_InsertTag($tag: collection_Tag_insert_input!) {
   insert_collection_Tag_one(object: $tag) {
@@ -43548,12 +43809,16 @@ export const ManageContent_SelectItemDocument = gql`
   content_Item_by_pk(id: $itemId) {
     ...ManageContent_ItemSecondary
   }
-  content_Element(where: {itemId: {_eq: $itemId}}) {
+  content_Element(where: {itemId: {_eq: $itemId}, uploadableId: {_is_null: true}}) {
     ...ManageContent_Element
+  }
+  content_UploadableElement(where: {itemId: {_eq: $itemId}}) {
+    ...ManageContent_UploadableElement
   }
 }
     ${ManageContent_ItemSecondaryFragmentDoc}
-${ManageContent_ElementFragmentDoc}`;
+${ManageContent_ElementFragmentDoc}
+${ManageContent_UploadableElementFragmentDoc}`;
 
 /**
  * __useManageContent_SelectItemQuery__

@@ -35,17 +35,17 @@ import {
     useManageContent_InsertExhibitionMutation,
     useManageContent_SelectAllExhibitionsQuery,
     useManageContent_UpdateExhibitionMutation,
-} from "../../../../../generated/graphql";
-import { NumberRangeColumnFilter, TextColumnFilter } from "../../../../CRUDTable2/CRUDComponents";
+} from "../../../../../../generated/graphql";
+import { NumberRangeColumnFilter, TextColumnFilter } from "../../../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
     RowSpecification,
     SortDirection,
-} from "../../../../CRUDTable2/CRUDTable2";
-import { maybeCompare } from "../../../../Utils/maybeSort";
-import { useConference } from "../../../useConference";
+} from "../../../../../CRUDTable2/CRUDTable2";
+import { maybeCompare } from "../../../../../Utils/maybeSort";
+import { useConference } from "../../../../useConference";
 import { SecondaryEditor } from "./ExhibitionSecondaryEditor";
 
 gql`

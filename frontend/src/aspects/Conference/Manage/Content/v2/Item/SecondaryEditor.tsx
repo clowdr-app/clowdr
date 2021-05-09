@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
+    ButtonGroup,
     Code,
     Drawer,
     DrawerBody,
@@ -16,14 +17,16 @@ import React from "react";
 import {
     ManageContent_ElementFragment,
     ManageContent_ItemSecondaryFragment,
+    ManageContent_UploadableElementFragment,
     useManageContent_SelectItemQuery,
-} from "../../../../../generated/graphql";
-import { LinkButton } from "../../../../Chakra/LinkButton";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { useConference } from "../../../useConference";
+} from "../../../../../../generated/graphql";
+import { LinkButton } from "../../../../../Chakra/LinkButton";
+import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
+import { FAIcon } from "../../../../../Icons/FAIcon";
+import { useConference } from "../../../../useConference";
+import { EditElements } from "../Element/EditElements";
 import { AddContentMenu } from "./AddContentMenu";
-import { Elements } from "./EditElement";
+import { CreateRoomButton } from "./CreateRoomButton";
 
 export function SecondaryEditor({
     itemId,
@@ -95,27 +98,37 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                             </LinkButton>
                         ) : itemResponse.data.content_Item_by_pk.rooms.length > 1 ? (
                             <Menu>TODO</Menu>
-                        ) : undefined}
-                        <AddContentMenu
-                            itemId={itemId}
-                            roomId={itemResponse.data.content_Item_by_pk.rooms[0]?.id ?? null}
-                            refetch={async () => {
-                                await itemResponse.refetch();
-                            }}
-                        />
+                        ) : (
+                            <CreateRoomButton size="sm" itemId={itemId} refetch={() => itemResponse.refetch()} />
+                        )}
                     </>
                 ) : undefined}
             </HStack>
             <ApolloQueryWrapper
-                getter={(result) => ({ rooms: [], ...result.content_Item_by_pk, elements: result.content_Element })}
+                getter={(result) => ({
+                    rooms: [],
+                    ...result.content_Item_by_pk,
+                    elements: result.content_Element,
+                    uploadableElements: result.content_UploadableElement,
+                })}
                 queryResult={itemResponse}
             >
                 {(
                     result: ManageContent_ItemSecondaryFragment & {
                         elements: readonly ManageContent_ElementFragment[];
+                        uploadableElements: readonly ManageContent_UploadableElementFragment[];
                     }
-                ) => <Elements itemId={itemId} {...result} />}
+                ) => <EditElements itemId={itemId} {...result} />}
             </ApolloQueryWrapper>
+            {itemResponse.data?.content_Item_by_pk ? (
+                <ButtonGroup>
+                    <AddContentMenu
+                        itemId={itemId}
+                        roomId={itemResponse.data.content_Item_by_pk.rooms[0]?.id ?? null}
+                        refetch={() => itemResponse.refetch()}
+                    />
+                </ButtonGroup>
+            ) : undefined}
         </VStack>
     );
 }

@@ -8,6 +8,7 @@ import {
     Permissions_Permission_Enum,
     useInsertSubmissionRequestEmailJobsMutation,
 } from "../../../generated/graphql";
+import { LinkButton } from "../../Chakra/LinkButton";
 import CRUDTable, {
     CRUDTableProps,
     defaultSelectFilter,
@@ -18,6 +19,7 @@ import CRUDTable, {
     UpdateResult,
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
+import { FAIcon } from "../../Icons/FAIcon";
 import isValidUUID from "../../Utils/isValidUUID";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -328,6 +330,11 @@ export default function ManageConferenceContentPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Content
             </Heading>
+            <LinkButton colorScheme="orange" to={`/conference/${conference.slug}/manage/content/v2`}>
+                <FAIcon iconStyle="s" icon="hand-point-right" mr={2} />
+                Try the new version of this UI &nbsp;
+                <FAIcon iconStyle="s" icon="link" />
+            </LinkButton>
             {saveContentDiff.loadingContent &&
             (!allGroupsMap || !allTagsMap || !allPeopleMap || !allOriginatingDatasMap || !allExhibitionsMap) ? (
                 <Spinner />

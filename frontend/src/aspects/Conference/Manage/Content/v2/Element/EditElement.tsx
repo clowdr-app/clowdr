@@ -439,6 +439,28 @@ export function EditElement({
                                                 <FAIcon iconStyle="s" icon="save" />
                                             </Button>
                                         </Tooltip>
+                                        <Tooltip label="Discard name changes">
+                                            <Button
+                                                colorScheme="orange"
+                                                size="xs"
+                                                aria-label="Discard name changes"
+                                                mx={2}
+                                                isLoading={
+                                                    updateElementResponse.loading ||
+                                                    updateUploadableElementResponse.loading
+                                                }
+                                                onClick={(ev) => {
+                                                    ev.stopPropagation();
+                                                    setIsEditingTitle(false);
+                                                    setNewName(element.name);
+                                                }}
+                                                onKeyUp={(ev) => {
+                                                    ev.stopPropagation();
+                                                }}
+                                            >
+                                                <FAIcon iconStyle="s" icon="ban" />
+                                            </Button>
+                                        </Tooltip>
                                     </>
                                 ) : (
                                     <>

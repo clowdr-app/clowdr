@@ -127,18 +127,20 @@ export function EditUploaders({ uploadableElementId }: { uploadableElementId: st
         return (
             <>
                 <HStack w="100%" mt={4} mb={2}>
-                    <Tooltip label="Send submission request emails to all uploaders of this element.">
-                        <Button
-                            size="xs"
-                            aria-label="Send submission request emails to all uploaders of this element."
-                            onClick={() => {
-                                // TODO: Send multiple submission request email
-                            }}
-                            mr={3}
-                            isLoading={insertUploadersResponse.loading}
-                        >
-                            <FAIcon iconStyle="s" icon="envelope" />
-                        </Button>
+                    <Tooltip label="Coming soon: Send submission request emails to all uploaders of this element.">
+                        <Box mr={3} display="inline-block">
+                            <Button
+                                size="xs"
+                                aria-label="Send submission request emails to all uploaders of this element."
+                                onClick={() => {
+                                    // TODO: Send multiple submission request email
+                                }}
+                                isLoading={insertUploadersResponse.loading}
+                                isDisabled={true}
+                            >
+                                <FAIcon iconStyle="s" icon="envelope" />
+                            </Button>
+                        </Box>
                     </Tooltip>
                     <Popover
                         placement="bottom-start"
@@ -307,19 +309,21 @@ function EditUploader({ uploader }: { uploader: ManageContent_UploaderFragment }
         <ListItem w="100%" mb={1}>
             <Flex w="100%" alignItems="flex-start">
                 <Tooltip
-                    label={`Send submission request email to ${uploader.email}. ${uploader.emailsSentCount} previously sent.`}
+                    label={`Coming soon: Send submission request email to ${uploader.email}. ${uploader.emailsSentCount} previously sent.`}
                 >
-                    <Button
-                        size="xs"
-                        aria-label={`Send submission request email to ${uploader.email}. ${uploader.emailsSentCount} previously sent.`}
-                        onClick={() => {
-                            // TODO: Send single submission request email
-                        }}
-                        mr={2}
-                    >
-                        <FAIcon iconStyle="s" icon="envelope" />
-                        &nbsp;&nbsp;{uploader.emailsSentCount}
-                    </Button>
+                    <Box mr={2} display="inline-block">
+                        <Button
+                            size="xs"
+                            aria-label={`Send submission request email to ${uploader.email}. ${uploader.emailsSentCount} previously sent.`}
+                            onClick={() => {
+                                // TODO: Send single submission request email
+                            }}
+                            isDisabled={true}
+                        >
+                            <FAIcon iconStyle="s" icon="envelope" />
+                            &nbsp;&nbsp;{uploader.emailsSentCount}
+                        </Button>
+                    </Box>
                 </Tooltip>
                 {!isEditing ? (
                     <>
@@ -375,12 +379,27 @@ function EditUploader({ uploader }: { uploader: ManageContent_UploaderFragment }
                                         });
                                     }
                                 }}
-                                mr={2}
                                 colorScheme="green"
                                 isDisabled={newName === "" || newEmail === "" || !newEmailIsValid}
                                 isLoading={updateUploaderResponse.loading}
                             >
                                 <FAIcon iconStyle="s" icon="save" />
+                            </Button>
+                        </Tooltip>
+                        <Tooltip label="Discard changes">
+                            <Button
+                                size="xs"
+                                aria-label="Discard changes"
+                                onClick={() => {
+                                    setNewName(uploader.name);
+                                    setNewEmail(uploader.email);
+                                    setIsEditing(false);
+                                }}
+                                mr={2}
+                                colorScheme="orange"
+                                isLoading={updateUploaderResponse.loading}
+                            >
+                                <FAIcon iconStyle="s" icon="ban" />
                             </Button>
                         </Tooltip>
                         <Input

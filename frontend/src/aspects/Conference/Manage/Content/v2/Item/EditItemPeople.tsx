@@ -178,55 +178,61 @@ function AddItemPersonBody({
                     </FormControl>
                 </VStack>
             </PopoverBody>
-            <PopoverFooter>
-                <Button
-                    colorScheme="green"
-                    isDisabled={!selectedPersonId}
-                    isLoading={insertItemPersonResponse.loading}
-                    onClick={async () => {
-                        try {
-                            await insertItemPerson({
-                                variables: {
-                                    conferenceId: conference.id,
-                                    itemId,
-                                    personId: selectedPersonId,
-                                    roleName: selectedRole,
-                                    priority: existingPeopleIds.length,
-                                },
-                                update: (cache, response) => {
-                                    if (response.data) {
-                                        const data = response.data.insert_content_ItemProgramPerson_one;
-                                        cache.modify({
-                                            fields: {
-                                                content_ItemProgramPerson(existingRefs: Reference[] = []) {
-                                                    const newRef = cache.writeFragment({
-                                                        data,
-                                                        fragment: ManageContent_ItemProgramPersonFragmentDoc,
-                                                        fragmentName: "ManageContent_ItemProgramPerson",
-                                                    });
-                                                    return [...existingRefs, newRef];
+            <PopoverFooter textAlign="right">
+                <ButtonGroup>
+                    <Button size="sm" onClick={onClose}>
+                        Cancel
+                    </Button>
+                    <Button
+                        size="sm"
+                        colorScheme="green"
+                        isDisabled={!selectedPersonId}
+                        isLoading={insertItemPersonResponse.loading}
+                        onClick={async () => {
+                            try {
+                                await insertItemPerson({
+                                    variables: {
+                                        conferenceId: conference.id,
+                                        itemId,
+                                        personId: selectedPersonId,
+                                        roleName: selectedRole,
+                                        priority: existingPeopleIds.length,
+                                    },
+                                    update: (cache, response) => {
+                                        if (response.data) {
+                                            const data = response.data.insert_content_ItemProgramPerson_one;
+                                            cache.modify({
+                                                fields: {
+                                                    content_ItemProgramPerson(existingRefs: Reference[] = []) {
+                                                        const newRef = cache.writeFragment({
+                                                            data,
+                                                            fragment: ManageContent_ItemProgramPersonFragmentDoc,
+                                                            fragmentName: "ManageContent_ItemProgramPerson",
+                                                        });
+                                                        return [...existingRefs, newRef];
+                                                    },
                                                 },
-                                            },
-                                        });
-                                    }
-                                },
-                            });
+                                            });
+                                        }
+                                    },
+                                });
 
-                            onClose();
-                        } catch (e) {
-                            toast({
-                                title: "Error linking person",
-                                description: e.message ?? e.toString(),
-                                isClosable: true,
-                                duration: 10000,
-                                position: "bottom",
-                                status: "error",
-                            });
-                        }
-                    }}
-                >
-                    Add link
-                </Button>
+                                onClose();
+                            } catch (e) {
+                                toast({
+                                    title: "Error linking person",
+                                    description: e.message ?? e.toString(),
+                                    isClosable: true,
+                                    duration: 10000,
+                                    position: "bottom",
+                                    status: "error",
+                                });
+                            }
+                        }}
+                    >
+                        Add link
+                    </Button>
+                </ButtonGroup>
             </PopoverFooter>
         </>
     );

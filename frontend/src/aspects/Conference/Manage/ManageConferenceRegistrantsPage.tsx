@@ -12,7 +12,6 @@ import {
     MenuGroup,
     MenuItem,
     MenuList,
-    MenuOptionGroup,
     Text,
     Tooltip,
     useDisclosure,
@@ -713,7 +712,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 <MenuList>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {enabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
@@ -734,7 +732,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                     )}
                                     {disabledGroups?.length ? (
                                         <MenuGroup title="Disabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {disabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
@@ -788,7 +785,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 <MenuList>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {enabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
@@ -895,7 +891,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 <MenuList>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {enabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
@@ -999,7 +994,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 <MenuList>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {enabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}

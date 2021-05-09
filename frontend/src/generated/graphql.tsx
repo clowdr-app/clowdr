@@ -10634,6 +10634,8 @@ export type Content_UploadableElement = {
   readonly createdAt: Scalars['timestamptz'];
   /** An object relationship */
   readonly element?: Maybe<Content_Element>;
+  /** A computed field, executes function "content.hasBeenUploaded" */
+  readonly hasBeenUploaded?: Maybe<Scalars['Boolean']>;
   readonly id: Scalars['uuid'];
   readonly isHidden: Scalars['Boolean'];
   /** An object relationship */
@@ -36190,6 +36192,22 @@ export type ManageContent_UpdateElementMutationVariables = Exact<{
 
 export type ManageContent_UpdateElementMutation = { readonly __typename?: 'mutation_root', readonly update_content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any }> };
 
+export type SubmissionRequestsModalDataQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type SubmissionRequestsModalDataQuery = { readonly __typename?: 'query_root', readonly conference_Configuration: ReadonlyArray<(
+    { readonly __typename?: 'conference_Configuration' }
+    & ConfigureEmailTemplates_ConferenceConfigurationFragment
+  )>, readonly content_UploadableElement: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & SubmissionRequestsModal_UploadableElementFragment
+  )> };
+
+export type SubmissionRequestsModal_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly hasBeenUploaded?: Maybe<boolean>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string }> };
+
 export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -38284,6 +38302,22 @@ export const ExhibitionInfoFragmentDoc = gql`
   colour
   name
   priority
+}
+    `;
+export const SubmissionRequestsModal_UploadableElementFragmentDoc = gql`
+    fragment SubmissionRequestsModal_UploadableElement on content_UploadableElement {
+  id
+  itemId
+  typeName
+  name
+  uploadsRemaining
+  itemTitle
+  hasBeenUploaded
+  uploaders {
+    id
+    email
+    name
+  }
 }
     `;
 export const ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc = gql`
@@ -42688,6 +42722,46 @@ export function useManageContent_UpdateElementMutation(baseOptions?: Apollo.Muta
 export type ManageContent_UpdateElementMutationHookResult = ReturnType<typeof useManageContent_UpdateElementMutation>;
 export type ManageContent_UpdateElementMutationResult = Apollo.MutationResult<ManageContent_UpdateElementMutation>;
 export type ManageContent_UpdateElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>;
+export const SubmissionRequestsModalDataDocument = gql`
+    query SubmissionRequestsModalData($conferenceId: uuid!, $itemIds: [uuid!]!) {
+  conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ConfigureEmailTemplates_ConferenceConfiguration
+  }
+  content_UploadableElement(where: {itemId: {_in: $itemIds}}) {
+    ...SubmissionRequestsModal_UploadableElement
+  }
+}
+    ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}
+${SubmissionRequestsModal_UploadableElementFragmentDoc}`;
+
+/**
+ * __useSubmissionRequestsModalDataQuery__
+ *
+ * To run a query within a React component, call `useSubmissionRequestsModalDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubmissionRequestsModalDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubmissionRequestsModalDataQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      itemIds: // value for 'itemIds'
+ *   },
+ * });
+ */
+export function useSubmissionRequestsModalDataQuery(baseOptions: Apollo.QueryHookOptions<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>(SubmissionRequestsModalDataDocument, options);
+      }
+export function useSubmissionRequestsModalDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>(SubmissionRequestsModalDataDocument, options);
+        }
+export type SubmissionRequestsModalDataQueryHookResult = ReturnType<typeof useSubmissionRequestsModalDataQuery>;
+export type SubmissionRequestsModalDataLazyQueryHookResult = ReturnType<typeof useSubmissionRequestsModalDataLazyQuery>;
+export type SubmissionRequestsModalDataQueryResult = Apollo.QueryResult<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>;
 export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
     query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
   conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {

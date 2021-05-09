@@ -1,5 +1,22 @@
 import { gql, Reference } from "@apollo/client";
-import { Button, FormLabel, Heading, HStack, Input, Select, Text, useDisclosure } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import {
+    Button,
+    FormLabel,
+    Heading,
+    HStack,
+    Input,
+    Menu,
+    MenuButton,
+    MenuGroup,
+    MenuItemOption,
+    MenuList,
+    Select,
+    Text,
+    Tooltip,
+    useDisclosure,
+} from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { LegacyRef, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -22,6 +39,7 @@ import CRUDTable, {
     ColumnHeaderProps,
     ColumnSpecification,
     DeepWriteable,
+    ExtraButton,
     RowSpecification,
     SortDirection,
 } from "../../CRUDTable2/CRUDTable2";
@@ -34,6 +52,7 @@ import { useConference } from "../useConference";
 import ManageExhibitionsModal from "./Content/v2/ManageExhibitionsModal";
 import ManageTagsModal from "./Content/v2/ManageTagsModal";
 import { SecondaryEditor } from "./Content/v2/SecondaryEditor";
+import { SendSubmissionRequestsModal } from "./Content/v2/SubmissionRequestsModal";
 
 gql`
     ## Items
@@ -671,6 +690,79 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
         /* EMPTY */
     });
 
+    const {
+        isOpen: sendSubmissionRequests_IsOpen,
+        onOpen: sendSubmissionRequests_OnOpen,
+        onClose: sendSubmissionRequests_OnClose,
+    } = useDisclosure();
+    const [sendSubmissionRequests_ItemIds, setSendSubmissionRequests_ItemIds] = useState<string[]>([]);
+    const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(
+        () => [
+            {
+                render: function SendSubmissionRequests(items: ManageContent_ItemFragment[]) {
+                    return items.length > 0 ? (
+                        <Tooltip label="Send submission request emails to selected items (first requests, reminders or repeats).">
+                            <Button
+                                onClick={() => {
+                                    setSendSubmissionRequests_ItemIds(items.map((x) => x.id));
+                                    sendSubmissionRequests_OnOpen();
+                                }}
+                            >
+                                Send submission requests
+                            </Button>
+                        </Tooltip>
+                    ) : (
+                        <Menu>
+                            <Tooltip label="Send submission requests (first requests, reminders or repeats).">
+                                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                                    Send submission requests
+                                </MenuButton>
+                            </Tooltip>
+                            <MenuList overflow="auto" maxH="30vh">
+                                <MenuItemOption
+                                    onClick={() => {
+                                        if (allItems?.content_Item) {
+                                            setSendSubmissionRequests_ItemIds(allItems.content_Item.map((x) => x.id));
+                                            sendSubmissionRequests_OnOpen();
+                                        }
+                                    }}
+                                >
+                                    All items
+                                </MenuItemOption>
+                                <MenuGroup title="Items with tag">
+                                    {allTags?.collection_Tag
+                                        ? R.sortBy((x) => x.name, allTags.collection_Tag).map((tag) => (
+                                              <MenuItemOption
+                                                  key={tag.id}
+                                                  onClick={() => {
+                                                      if (allItems?.content_Item) {
+                                                          setSendSubmissionRequests_ItemIds(
+                                                              allItems.content_Item
+                                                                  .filter((item) =>
+                                                                      item.itemTags.some(
+                                                                          (itemTag) => itemTag.tagId === tag.id
+                                                                      )
+                                                                  )
+                                                                  .map((x) => x.id)
+                                                          );
+                                                          sendSubmissionRequests_OnOpen();
+                                                      }
+                                                  }}
+                                              >
+                                                  {tag.name}
+                                              </MenuItemOption>
+                                          ))
+                                        : undefined}
+                                </MenuGroup>
+                            </MenuList>
+                        </Menu>
+                    );
+                },
+            },
+        ],
+        [allTags?.collection_Tag, sendSubmissionRequests_OnOpen, allItems?.content_Item]
+    );
+
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
@@ -735,7 +827,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 insert={insert}
                 update={update}
                 delete={deleteProps}
-                // buttons={buttons}
+                buttons={buttons}
                 forceReload={forceReloadRef}
             />
             <SecondaryEditor
@@ -743,6 +835,11 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 itemTitle={editingTitle}
                 onClose={onSecondaryPanelClose}
                 isOpen={isSecondaryPanelOpen}
+            />
+            <SendSubmissionRequestsModal
+                isOpen={sendSubmissionRequests_IsOpen}
+                onClose={sendSubmissionRequests_OnClose}
+                itemIds={sendSubmissionRequests_ItemIds}
             />
         </RequireAtLeastOnePermissionWrapper>
     );

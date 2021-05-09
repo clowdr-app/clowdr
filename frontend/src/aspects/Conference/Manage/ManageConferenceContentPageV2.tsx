@@ -53,6 +53,7 @@ import ManageExhibitionsModal from "./Content/v2/ManageExhibitionsModal";
 import ManageTagsModal from "./Content/v2/ManageTagsModal";
 import { SecondaryEditor } from "./Content/v2/SecondaryEditor";
 import { SendSubmissionRequestsModal } from "./Content/v2/SubmissionRequestsModal";
+import { SubmissionsReviewModal } from "./Content/v2/SubmissionsReviewModal";
 
 gql`
     ## Items
@@ -695,7 +696,13 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
         onOpen: sendSubmissionRequests_OnOpen,
         onClose: sendSubmissionRequests_OnClose,
     } = useDisclosure();
+    const {
+        isOpen: submissionsReview_IsOpen,
+        onOpen: submissionsReview_OnOpen,
+        onClose: submissionsReview_OnClose,
+    } = useDisclosure();
     const [sendSubmissionRequests_ItemIds, setSendSubmissionRequests_ItemIds] = useState<string[]>([]);
+    const [submissionsReview_ItemIds, setSubmissionsReview_ItemIds] = useState<string[]>([]);
     const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(
         () => [
             {
@@ -759,8 +766,65 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                     );
                 },
             },
+            {
+                render: function SubmissionReviews(items: ManageContent_ItemFragment[]) {
+                    return items.length > 0 ? (
+                        <Button
+                            onClick={() => {
+                                setSubmissionsReview_ItemIds(items.map((x) => x.id));
+                                submissionsReview_OnOpen();
+                            }}
+                        >
+                            Review submissions
+                        </Button>
+                    ) : (
+                        <Menu>
+                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                                Review submissions
+                            </MenuButton>
+                            <MenuList overflow="auto" maxH="30vh">
+                                <MenuItemOption
+                                    onClick={() => {
+                                        if (allItems?.content_Item) {
+                                            setSubmissionsReview_ItemIds(allItems.content_Item.map((x) => x.id));
+                                            submissionsReview_OnOpen();
+                                        }
+                                    }}
+                                >
+                                    All items
+                                </MenuItemOption>
+                                <MenuGroup title="Items with tag">
+                                    {allTags?.collection_Tag
+                                        ? R.sortBy((x) => x.name, allTags.collection_Tag).map((tag) => (
+                                              <MenuItemOption
+                                                  key={tag.id}
+                                                  onClick={() => {
+                                                      if (allItems?.content_Item) {
+                                                          setSubmissionsReview_ItemIds(
+                                                              allItems.content_Item
+                                                                  .filter((item) =>
+                                                                      item.itemTags.some(
+                                                                          (itemTag) => itemTag.tagId === tag.id
+                                                                      )
+                                                                  )
+                                                                  .map((x) => x.id)
+                                                          );
+                                                          submissionsReview_OnOpen();
+                                                      }
+                                                  }}
+                                              >
+                                                  {tag.name}
+                                              </MenuItemOption>
+                                          ))
+                                        : undefined}
+                                </MenuGroup>
+                            </MenuList>
+                        </Menu>
+                    );
+                },
+            },
         ],
-        [allTags?.collection_Tag, sendSubmissionRequests_OnOpen, allItems?.content_Item]
+        [allTags?.collection_Tag, sendSubmissionRequests_OnOpen, allItems?.content_Item, submissionsReview_OnOpen]
     );
 
     return (
@@ -840,6 +904,11 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 isOpen={sendSubmissionRequests_IsOpen}
                 onClose={sendSubmissionRequests_OnClose}
                 itemIds={sendSubmissionRequests_ItemIds}
+            />
+            <SubmissionsReviewModal
+                isOpen={submissionsReview_IsOpen}
+                onClose={submissionsReview_OnClose}
+                itemIds={submissionsReview_ItemIds}
             />
         </RequireAtLeastOnePermissionWrapper>
     );

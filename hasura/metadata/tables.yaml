@@ -3349,6 +3349,9 @@
                       _eq: X-Hasura-User-Id
 - table:
     schema: content
+    name: UploadableElementPermissionGrant
+- table:
+    schema: content
     name: Uploader
   configuration:
     custom_root_fields: {}

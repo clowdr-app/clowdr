@@ -1,5 +1,6 @@
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import {
+    HasuraInsertEvent,
     HasuraUpdateEvent,
     TrackedHasuraEventHandler,
     TrackedHasuraScheduledEventHandler,
@@ -35,7 +36,24 @@ export class AppService {
         schema: "public",
     })
     handlePlayout_EventUpdated(_evt: HasuraUpdateEvent<EventData>): void {
-        this.logger.info({ event: "Playout_EventUpdated", data: _evt });
+        // this.logger.info({ event: "Playout_EventUpdated", data: _evt });
+    }
+
+    @TrackedHasuraEventHandler({
+        triggerName: "ImmediateSwitchCreated",
+        tableName: "ImmediateSwitch",
+        definition: {
+            type: "insert",
+        },
+        schema: "video",
+    })
+    handleImmediateSwitchCreated(evt: HasuraInsertEvent<ImmediateSwitchData>): void {
+        this.logger.info({ event: "ImmediateSwitchCreated", data: evt });
+        this.scheduleSync.handleImmediateSwitch(
+            evt.event.data.new.data,
+            evt.event.data.new.id,
+            evt.event.data.new.eventId
+        );
     }
 
     @TrackedHasuraScheduledEventHandler({
@@ -77,4 +95,9 @@ export interface EventData extends BaseData {
     itemId: string | null;
     originatingDataId: string | null;
     roomId: string;
+}
+
+export interface ImmediateSwitchData extends BaseData {
+    data: any;
+    eventId: string | null;
 }

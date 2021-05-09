@@ -292,6 +292,7 @@ export class ChannelStackService {
         {
             roomId: string;
             channelStackId: string;
+            conferenceId: string;
             channel: DescribeChannelResponse;
         }[]
     > {

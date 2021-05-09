@@ -294,11 +294,14 @@ export class ChannelStackDataService {
         });
     }
 
-    public async getChannelStacks(): Promise<{ channelStackId: string; roomId: string; mediaLiveChannelId: string }[]> {
+    public async getChannelStacks(): Promise<
+        { channelStackId: string; roomId: string; mediaLiveChannelId: string; conferenceId: string }[]
+    > {
         gql`
             query ChannelStack_GetChannelStacks {
                 video_ChannelStack(where: { roomId: {} }) {
                     channelStackId: id
+                    conferenceId
                     mediaLiveChannelId
                     roomId
                 }
@@ -315,6 +318,7 @@ export class ChannelStackDataService {
                     channelStackId: string;
                     roomId: string;
                     mediaLiveChannelId: string;
+                    conferenceId: string;
                 }[]
             >((channelStack) =>
                 channelStack.roomId
@@ -323,6 +327,7 @@ export class ChannelStackDataService {
                               channelStackId: channelStack.channelStackId,
                               mediaLiveChannelId: channelStack.mediaLiveChannelId,
                               roomId: channelStack.roomId,
+                              conferenceId: channelStack.conferenceId,
                           },
                       ]
                     : []

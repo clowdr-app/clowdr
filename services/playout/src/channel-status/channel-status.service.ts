@@ -54,6 +54,7 @@ export class ChannelStatusService {
                             channelStack.channel.PipelineDetails?.[0]?.ActiveInputSwitchActionName ?? null,
                         pipelinesRunningCount: channelStack.channel.PipelinesRunningCount ?? null,
                         channelStackId: channelStack.channelStackId,
+                        conferenceId: channelStack.conferenceId,
                     })),
                 },
             });

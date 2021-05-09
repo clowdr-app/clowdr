@@ -2,7 +2,9 @@ import { ChannelState, FollowPoint, ScheduleAction } from "@aws-sdk/client-media
 import { VideoBroadcastBlob } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import AmazonS3URI from "amazon-s3-uri";
-import { add } from "date-fns";
+import { plainToClass } from "class-transformer";
+import { validate } from "class-validator";
+import { add, sub } from "date-fns";
 import * as R from "ramda";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
@@ -22,6 +24,7 @@ import {
     RemoteScheduleService,
 } from "../remote-schedule/remote-schedule.service";
 import { VonageService } from "../vonage/vonage.service";
+import { ImmediateSwitchData } from "./immediate-switch-data";
 
 export class ScheduleSyncService {
     private readonly logger: Bunyan;
@@ -34,6 +37,112 @@ export class ScheduleSyncService {
         private vonageService: VonageService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
+    }
+
+    public async handleImmediateSwitch(data: unknown, id: string, eventId: string | null): Promise<void> {
+        const transformed = plainToClass(ImmediateSwitchData, { data });
+        const errors = await validate(transformed);
+        if (errors.length > 1) {
+            this.logger.error({ errors }, "Immediate switch data is invalid");
+            return;
+        } else {
+            this.logger.info({ request: transformed }, "Received valid immediate switch request");
+
+            if (eventId) {
+                const event = await this.localScheduleService.getEvent(eventId);
+                const now = Date.now();
+
+                if (!event) {
+                    this.logger.info(
+                        { eventId },
+                        "Event associated with immediate switch request does not exist, ignoring"
+                    );
+                    return;
+                }
+
+                if (now <= event.startTime) {
+                    this.logger.info({ event, now }, "Immediate switch request made before start of event, ignoring");
+                    return;
+                }
+
+                if (now > sub(event.endTime, { seconds: 20 }).getTime()) {
+                    this.logger.info(
+                        { event, now },
+                        "Immediate switch request made too close to or after end of event, ignoring"
+                    );
+                    return;
+                }
+
+                if (!event.channelStack) {
+                    this.logger.info({ event }, "No channel stack exists for event, cannot perform immediate switch");
+                    return;
+                }
+
+                await this.mediaLiveService.updateSchedule(
+                    event.channelStack.mediaLiveChannelId,
+                    [],
+                    [
+                        {
+                            ActionName: `i/${id}`,
+                            ScheduleActionSettings: {
+                                InputSwitchSettings:
+                                    transformed.data.kind === "filler"
+                                        ? {
+                                              InputAttachmentNameReference:
+                                                  event.channelStack.loopingMp4InputAttachmentName,
+                                              UrlPath: [
+                                                  (await this.channelStackDataService.getFillerVideoKey(
+                                                      event.conferenceId
+                                                  )) ?? "",
+                                              ],
+                                          }
+                                        : transformed.data.kind === "video"
+                                        ? {
+                                              InputAttachmentNameReference: event.channelStack.mp4InputAttachmentName,
+                                              UrlPath: [transformed.data.key],
+                                          }
+                                        : {
+                                              InputAttachmentNameReference:
+                                                  event.eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
+                                                      ? event.channelStack.rtmpBInputAttachmentName
+                                                      : event.channelStack.rtmpAInputAttachmentName,
+                                          },
+                            },
+                            ScheduleActionStartSettings: {
+                                ImmediateModeScheduleActionStartSettings: {},
+                            },
+                        },
+                        ...(transformed.data.kind === "video"
+                            ? [
+                                  {
+                                      ActionName: `i/${id}/f`,
+                                      ScheduleActionSettings: {
+                                          InputSwitchSettings: {
+                                              InputAttachmentNameReference:
+                                                  event.eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
+                                                      ? event.channelStack.rtmpBInputAttachmentName
+                                                      : event.channelStack.rtmpAInputAttachmentName,
+                                          },
+                                      },
+                                      ScheduleActionStartSettings: {
+                                          FollowModeScheduleActionStartSettings: {
+                                              FollowPoint: FollowPoint.END,
+                                              ReferenceActionName: `i/${id}`,
+                                          },
+                                      },
+                                  },
+                              ]
+                            : []),
+                    ]
+                );
+            } else {
+                this.logger.warn(
+                    { request: transformed },
+                    "No event ID given for immediate switch request - this is not yet supported"
+                );
+                return;
+            }
+        }
     }
 
     public async fullScheduleSync(): Promise<void> {

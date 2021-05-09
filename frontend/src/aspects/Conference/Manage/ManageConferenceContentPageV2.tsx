@@ -706,9 +706,18 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
     const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(
         () => [
             {
-                render: function SendSubmissionRequests(items: ManageContent_ItemFragment[]) {
+                render: function SendSubmissionRequests({
+                    selectedData: items,
+                    key,
+                }: {
+                    selectedData: ManageContent_ItemFragment[];
+                    key: string;
+                }) {
                     return items.length > 0 ? (
-                        <Tooltip label="Send submission request emails to selected items (first requests, reminders or repeats).">
+                        <Tooltip
+                            key={key}
+                            label="Send submission request emails to selected items (first requests, reminders or repeats)."
+                        >
                             <Button
                                 onClick={() => {
                                     setSendSubmissionRequests_ItemIds(items.map((x) => x.id));
@@ -719,7 +728,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                             </Button>
                         </Tooltip>
                     ) : (
-                        <Menu>
+                        <Menu key={key}>
                             <Tooltip label="Send submission requests (first requests, reminders or repeats).">
                                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                                     Send submission requests
@@ -727,6 +736,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                             </Tooltip>
                             <MenuList overflow="auto" maxH="30vh">
                                 <MenuItemOption
+                                    key="all-items"
                                     onClick={() => {
                                         if (allItems?.content_Item) {
                                             setSendSubmissionRequests_ItemIds(allItems.content_Item.map((x) => x.id));
@@ -767,9 +777,16 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 },
             },
             {
-                render: function SubmissionReviews(items: ManageContent_ItemFragment[]) {
+                render: function SubmissionReviews({
+                    selectedData: items,
+                    key,
+                }: {
+                    selectedData: ManageContent_ItemFragment[];
+                    key: string;
+                }) {
                     return items.length > 0 ? (
                         <Button
+                            key={key}
                             onClick={() => {
                                 setSubmissionsReview_ItemIds(items.map((x) => x.id));
                                 submissionsReview_OnOpen();
@@ -778,12 +795,13 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                             Review submissions
                         </Button>
                     ) : (
-                        <Menu>
+                        <Menu key={key}>
                             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                                 Review submissions
                             </MenuButton>
                             <MenuList overflow="auto" maxH="30vh">
                                 <MenuItemOption
+                                    key="all-items"
                                     onClick={() => {
                                         if (allItems?.content_Item) {
                                             setSubmissionsReview_ItemIds(allItems.content_Item.map((x) => x.id));

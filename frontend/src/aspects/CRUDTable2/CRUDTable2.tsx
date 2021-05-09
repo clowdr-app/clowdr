@@ -131,7 +131,7 @@ export interface RowSpecification<T> {
 }
 
 export interface ExtraButton<T> {
-    render: (selectedData: T[]) => JSX.Element;
+    render: (props: { key: string; selectedData: T[] }) => JSX.Element;
 }
 
 export interface Insert<T> {
@@ -867,7 +867,7 @@ function RenderedCRUDTable<T>({
 
     const buttonEls = useMemo(() => {
         const selectedData: T[] = data ? data.filter((x) => selectedKeys.has(row.getKey(x))) : [];
-        return buttons.map((button) => button.render(selectedData));
+        return buttons.map((button, idx) => button.render({ selectedData, key: idx.toString() }));
     }, [buttons, data, row, selectedKeys]);
 
     const bgColour = useColorModeValue("gray.50", "gray.900");

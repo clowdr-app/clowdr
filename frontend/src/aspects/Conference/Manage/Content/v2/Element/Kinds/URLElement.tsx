@@ -209,7 +209,11 @@ export const URLElementTemplate: ElementBaseTemplate = {
         return (
             <>
                 {notice}
-                <Text>No URL uploaded yet.</Text>
+                {data.uploadableElement.hasBeenUploaded ? (
+                    <Text>A URL has been uploaded but you do not have permission to view it.</Text>
+                ) : (
+                    <Text>No URL uploaded yet.</Text>
+                )}
             </>
         );
     },

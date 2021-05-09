@@ -146,7 +146,11 @@ export const TextElementTemplate: ElementBaseTemplate = {
                 />
             );
         }
-        return <>No text uploaded yet.</>;
+        return data.uploadableElement.hasBeenUploaded ? (
+            <>Text has been uploaded but you do not have permission to view it.</>
+        ) : (
+            <>No text uploaded yet.</>
+        );
     },
     renderEditorHeading: function TextElementEditorHeading(data) {
         return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;

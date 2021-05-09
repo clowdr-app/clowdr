@@ -36029,17 +36029,6 @@ export type ManageContent_DeleteElementMutationVariables = Exact<{
 
 export type ManageContent_DeleteElementMutation = { readonly __typename?: 'mutation_root', readonly delete_content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any }> };
 
-export type ManageContent_SetElementIsHiddenMutationVariables = Exact<{
-  elementId: Scalars['uuid'];
-  isHidden: Scalars['Boolean'];
-}>;
-
-
-export type ManageContent_SetElementIsHiddenMutation = { readonly __typename?: 'mutation_root', readonly update_content_Element_by_pk?: Maybe<(
-    { readonly __typename?: 'content_Element' }
-    & ManageContent_ElementFragment
-  )> };
-
 export type ManageContent_UpdateElementMutationVariables = Exact<{
   elementId: Scalars['uuid'];
   element: Content_Element_Set_Input;
@@ -36057,17 +36046,6 @@ export type ManageContent_DeleteUploadableElementMutationVariables = Exact<{
 
 
 export type ManageContent_DeleteUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly delete_content_UploadableElement_by_pk?: Maybe<{ readonly __typename?: 'content_UploadableElement', readonly id: any }> };
-
-export type ManageContent_SetUploadableElementIsHiddenMutationVariables = Exact<{
-  uploadableElementId: Scalars['uuid'];
-  isHidden: Scalars['Boolean'];
-}>;
-
-
-export type ManageContent_SetUploadableElementIsHiddenMutation = { readonly __typename?: 'mutation_root', readonly update_content_UploadableElement_by_pk?: Maybe<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & ManageContent_UploadableElementFragment
-  )> };
 
 export type ManageContent_UpdateUploadableElementMutationVariables = Exact<{
   uploadableElementId: Scalars['uuid'];
@@ -36091,6 +36069,34 @@ export type ManageContent_SelectUploadersQuery = { readonly __typename?: 'query_
     { readonly __typename?: 'content_Uploader' }
     & ManageContent_UploaderFragment
   )> };
+
+export type ManageContent_InsertUploadersMutationVariables = Exact<{
+  objects: ReadonlyArray<Content_Uploader_Insert_Input> | Content_Uploader_Insert_Input;
+}>;
+
+
+export type ManageContent_InsertUploadersMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Uploader?: Maybe<{ readonly __typename?: 'content_Uploader_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_Uploader' }
+      & ManageContent_UploaderFragment
+    )> }> };
+
+export type ManageContent_UpdateUploaderMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  update: Content_Uploader_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateUploaderMutation = { readonly __typename?: 'mutation_root', readonly update_content_Uploader_by_pk?: Maybe<(
+    { readonly __typename?: 'content_Uploader' }
+    & ManageContent_UploaderFragment
+  )> };
+
+export type ManageContent_DeleteUploadersMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteUploadersMutation = { readonly __typename?: 'mutation_root', readonly delete_content_Uploader?: Maybe<{ readonly __typename?: 'content_Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> }> };
 
 export type ManageContent_SelectItemExhibitionsQueryVariables = Exact<{
   exhibitionId: Scalars['uuid'];
@@ -36455,7 +36461,7 @@ export type ManageContent_RoomFragment = { readonly __typename?: 'room_Room', re
 
 export type ManageContent_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
 
-export type ManageContent_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly conferenceId: any, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly element?: Maybe<(
+export type ManageContent_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly conferenceId: any, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly hasBeenUploaded?: Maybe<boolean>, readonly element?: Maybe<(
     { readonly __typename?: 'content_Element' }
     & ManageContent_ElementFragment
   )> };
@@ -38536,6 +38542,7 @@ export const ManageContent_UploadableElementFragmentDoc = gql`
   conferenceId
   uploadsRemaining
   isHidden
+  hasBeenUploaded
   element {
     ...ManageContent_Element
   }
@@ -42253,43 +42260,6 @@ export function useManageContent_DeleteElementMutation(baseOptions?: Apollo.Muta
 export type ManageContent_DeleteElementMutationHookResult = ReturnType<typeof useManageContent_DeleteElementMutation>;
 export type ManageContent_DeleteElementMutationResult = Apollo.MutationResult<ManageContent_DeleteElementMutation>;
 export type ManageContent_DeleteElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>;
-export const ManageContent_SetElementIsHiddenDocument = gql`
-    mutation ManageContent_SetElementIsHidden($elementId: uuid!, $isHidden: Boolean!) {
-  update_content_Element_by_pk(
-    pk_columns: {id: $elementId}
-    _set: {isHidden: $isHidden}
-  ) {
-    ...ManageContent_Element
-  }
-}
-    ${ManageContent_ElementFragmentDoc}`;
-export type ManageContent_SetElementIsHiddenMutationFn = Apollo.MutationFunction<ManageContent_SetElementIsHiddenMutation, ManageContent_SetElementIsHiddenMutationVariables>;
-
-/**
- * __useManageContent_SetElementIsHiddenMutation__
- *
- * To run a mutation, you first call `useManageContent_SetElementIsHiddenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SetElementIsHiddenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentSetElementIsHiddenMutation, { data, loading, error }] = useManageContent_SetElementIsHiddenMutation({
- *   variables: {
- *      elementId: // value for 'elementId'
- *      isHidden: // value for 'isHidden'
- *   },
- * });
- */
-export function useManageContent_SetElementIsHiddenMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_SetElementIsHiddenMutation, ManageContent_SetElementIsHiddenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_SetElementIsHiddenMutation, ManageContent_SetElementIsHiddenMutationVariables>(ManageContent_SetElementIsHiddenDocument, options);
-      }
-export type ManageContent_SetElementIsHiddenMutationHookResult = ReturnType<typeof useManageContent_SetElementIsHiddenMutation>;
-export type ManageContent_SetElementIsHiddenMutationResult = Apollo.MutationResult<ManageContent_SetElementIsHiddenMutation>;
-export type ManageContent_SetElementIsHiddenMutationOptions = Apollo.BaseMutationOptions<ManageContent_SetElementIsHiddenMutation, ManageContent_SetElementIsHiddenMutationVariables>;
 export const ManageContent_UpdateElementDocument = gql`
     mutation ManageContent_UpdateElement($elementId: uuid!, $element: content_Element_set_input!) {
   update_content_Element_by_pk(pk_columns: {id: $elementId}, _set: $element) {
@@ -42357,43 +42327,6 @@ export function useManageContent_DeleteUploadableElementMutation(baseOptions?: A
 export type ManageContent_DeleteUploadableElementMutationHookResult = ReturnType<typeof useManageContent_DeleteUploadableElementMutation>;
 export type ManageContent_DeleteUploadableElementMutationResult = Apollo.MutationResult<ManageContent_DeleteUploadableElementMutation>;
 export type ManageContent_DeleteUploadableElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>;
-export const ManageContent_SetUploadableElementIsHiddenDocument = gql`
-    mutation ManageContent_SetUploadableElementIsHidden($uploadableElementId: uuid!, $isHidden: Boolean!) {
-  update_content_UploadableElement_by_pk(
-    pk_columns: {id: $uploadableElementId}
-    _set: {isHidden: $isHidden}
-  ) {
-    ...ManageContent_UploadableElement
-  }
-}
-    ${ManageContent_UploadableElementFragmentDoc}`;
-export type ManageContent_SetUploadableElementIsHiddenMutationFn = Apollo.MutationFunction<ManageContent_SetUploadableElementIsHiddenMutation, ManageContent_SetUploadableElementIsHiddenMutationVariables>;
-
-/**
- * __useManageContent_SetUploadableElementIsHiddenMutation__
- *
- * To run a mutation, you first call `useManageContent_SetUploadableElementIsHiddenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SetUploadableElementIsHiddenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentSetUploadableElementIsHiddenMutation, { data, loading, error }] = useManageContent_SetUploadableElementIsHiddenMutation({
- *   variables: {
- *      uploadableElementId: // value for 'uploadableElementId'
- *      isHidden: // value for 'isHidden'
- *   },
- * });
- */
-export function useManageContent_SetUploadableElementIsHiddenMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_SetUploadableElementIsHiddenMutation, ManageContent_SetUploadableElementIsHiddenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_SetUploadableElementIsHiddenMutation, ManageContent_SetUploadableElementIsHiddenMutationVariables>(ManageContent_SetUploadableElementIsHiddenDocument, options);
-      }
-export type ManageContent_SetUploadableElementIsHiddenMutationHookResult = ReturnType<typeof useManageContent_SetUploadableElementIsHiddenMutation>;
-export type ManageContent_SetUploadableElementIsHiddenMutationResult = Apollo.MutationResult<ManageContent_SetUploadableElementIsHiddenMutation>;
-export type ManageContent_SetUploadableElementIsHiddenMutationOptions = Apollo.BaseMutationOptions<ManageContent_SetUploadableElementIsHiddenMutation, ManageContent_SetUploadableElementIsHiddenMutationVariables>;
 export const ManageContent_UpdateUploadableElementDocument = gql`
     mutation ManageContent_UpdateUploadableElement($uploadableElementId: uuid!, $uploadableElement: content_UploadableElement_set_input!) {
   update_content_UploadableElement_by_pk(
@@ -42466,6 +42399,110 @@ export function useManageContent_SelectUploadersLazyQuery(baseOptions?: Apollo.L
 export type ManageContent_SelectUploadersQueryHookResult = ReturnType<typeof useManageContent_SelectUploadersQuery>;
 export type ManageContent_SelectUploadersLazyQueryHookResult = ReturnType<typeof useManageContent_SelectUploadersLazyQuery>;
 export type ManageContent_SelectUploadersQueryResult = Apollo.QueryResult<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>;
+export const ManageContent_InsertUploadersDocument = gql`
+    mutation ManageContent_InsertUploaders($objects: [content_Uploader_insert_input!]!) {
+  insert_content_Uploader(objects: $objects) {
+    returning {
+      ...ManageContent_Uploader
+    }
+  }
+}
+    ${ManageContent_UploaderFragmentDoc}`;
+export type ManageContent_InsertUploadersMutationFn = Apollo.MutationFunction<ManageContent_InsertUploadersMutation, ManageContent_InsertUploadersMutationVariables>;
+
+/**
+ * __useManageContent_InsertUploadersMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertUploadersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertUploadersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertUploadersMutation, { data, loading, error }] = useManageContent_InsertUploadersMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useManageContent_InsertUploadersMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertUploadersMutation, ManageContent_InsertUploadersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertUploadersMutation, ManageContent_InsertUploadersMutationVariables>(ManageContent_InsertUploadersDocument, options);
+      }
+export type ManageContent_InsertUploadersMutationHookResult = ReturnType<typeof useManageContent_InsertUploadersMutation>;
+export type ManageContent_InsertUploadersMutationResult = Apollo.MutationResult<ManageContent_InsertUploadersMutation>;
+export type ManageContent_InsertUploadersMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertUploadersMutation, ManageContent_InsertUploadersMutationVariables>;
+export const ManageContent_UpdateUploaderDocument = gql`
+    mutation ManageContent_UpdateUploader($id: uuid!, $update: content_Uploader_set_input!) {
+  update_content_Uploader_by_pk(pk_columns: {id: $id}, _set: $update) {
+    ...ManageContent_Uploader
+  }
+}
+    ${ManageContent_UploaderFragmentDoc}`;
+export type ManageContent_UpdateUploaderMutationFn = Apollo.MutationFunction<ManageContent_UpdateUploaderMutation, ManageContent_UpdateUploaderMutationVariables>;
+
+/**
+ * __useManageContent_UpdateUploaderMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateUploaderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateUploaderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateUploaderMutation, { data, loading, error }] = useManageContent_UpdateUploaderMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      update: // value for 'update'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateUploaderMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateUploaderMutation, ManageContent_UpdateUploaderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateUploaderMutation, ManageContent_UpdateUploaderMutationVariables>(ManageContent_UpdateUploaderDocument, options);
+      }
+export type ManageContent_UpdateUploaderMutationHookResult = ReturnType<typeof useManageContent_UpdateUploaderMutation>;
+export type ManageContent_UpdateUploaderMutationResult = Apollo.MutationResult<ManageContent_UpdateUploaderMutation>;
+export type ManageContent_UpdateUploaderMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateUploaderMutation, ManageContent_UpdateUploaderMutationVariables>;
+export const ManageContent_DeleteUploadersDocument = gql`
+    mutation ManageContent_DeleteUploaders($ids: [uuid!]!) {
+  delete_content_Uploader(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ManageContent_DeleteUploadersMutationFn = Apollo.MutationFunction<ManageContent_DeleteUploadersMutation, ManageContent_DeleteUploadersMutationVariables>;
+
+/**
+ * __useManageContent_DeleteUploadersMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteUploadersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteUploadersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteUploadersMutation, { data, loading, error }] = useManageContent_DeleteUploadersMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteUploadersMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteUploadersMutation, ManageContent_DeleteUploadersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteUploadersMutation, ManageContent_DeleteUploadersMutationVariables>(ManageContent_DeleteUploadersDocument, options);
+      }
+export type ManageContent_DeleteUploadersMutationHookResult = ReturnType<typeof useManageContent_DeleteUploadersMutation>;
+export type ManageContent_DeleteUploadersMutationResult = Apollo.MutationResult<ManageContent_DeleteUploadersMutation>;
+export type ManageContent_DeleteUploadersMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteUploadersMutation, ManageContent_DeleteUploadersMutationVariables>;
 export const ManageContent_SelectItemExhibitionsDocument = gql`
     query ManageContent_SelectItemExhibitions($exhibitionId: uuid!) {
   content_ItemExhibition(where: {exhibitionId: {_eq: $exhibitionId}}) {

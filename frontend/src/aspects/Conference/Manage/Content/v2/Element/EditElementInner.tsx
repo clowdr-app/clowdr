@@ -1,5 +1,5 @@
 import type { Reference } from "@apollo/client";
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Divider, Spinner, Text } from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Divider, Text } from "@chakra-ui/react";
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
@@ -124,14 +124,22 @@ export function EditElementInner(
                     }
 
                     if (updated.type === "required-and-element" || updated.type === "required-only") {
-                        // TODO: Update uploadable element
+                        updateUploadableElement({
+                            variables: {
+                                uploadableElementId: updated.uploadableElement.id,
+                                uploadableElement: updated.uploadableElement,
+                            },
+                            optimisticResponse: {
+                                update_content_UploadableElement_by_pk: updated.uploadableElement,
+                            },
+                        });
                     }
                 }}
             />
         ) : (
             <Text>Cannot edit {itemType} items.</Text>
         );
-    }, [descriptors, itemTemplate, itemType, updateElement]);
+    }, [descriptors, itemTemplate, itemType, updateElement, updateUploadableElement]);
 
     return (
         <>
@@ -148,9 +156,6 @@ export function EditElementInner(
                     <AlertTitle>Error saving changes</AlertTitle>
                     <AlertDescription>{updateUploadableElementResponse.error.message}</AlertDescription>
                 </Alert>
-            ) : undefined}
-            {updateElementResponse.loading || updateUploadableElementResponse.loading ? (
-                <Spinner size="xs" label="Saving changes" pos="absolute" top={2} right={1} />
             ) : undefined}
             {props.uploadableElement ? (
                 <>

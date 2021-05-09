@@ -238,7 +238,11 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                 </>
             );
         }
-        return <>No link uploaded yet.</>;
+        return data.uploadableElement.hasBeenUploaded ? (
+            <>A link has been uploaded but you do not have permission to view it.</>
+        ) : (
+            <>No link uploaded yet.</>
+        );
     },
     renderEditorHeading: function LinkElementEditorHeading(data) {
         return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;

@@ -169,7 +169,11 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
                 </>
             );
         }
-        return <>No video uploaded yet.</>;
+        return data.uploadableElement.hasBeenUploaded ? (
+            <>A video has been uploaded but you do not have permission to view it.</>
+        ) : (
+            <>No video uploaded yet.</>
+        );
     },
     renderEditorHeading: function VideoElementEditorHeading(data) {
         return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;

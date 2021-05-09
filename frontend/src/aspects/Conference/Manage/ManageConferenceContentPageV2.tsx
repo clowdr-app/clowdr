@@ -117,6 +117,7 @@ gql`
         conferenceId
         uploadsRemaining
         isHidden
+        hasBeenUploaded
         element {
             ...ManageContent_Element
         }

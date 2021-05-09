@@ -4,6 +4,8 @@ import {
     AccordionIcon,
     AccordionItem,
     AccordionPanel,
+    Code,
+    Text,
     useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
@@ -19,7 +21,6 @@ export function EditElements({
     itemId,
     elements,
     uploadableElements,
-    rooms,
     chatId,
     originatingData,
 }: { itemId: string } & ManageContent_ItemSecondaryFragment & {
@@ -78,6 +79,30 @@ export function EditElements({
                     </>
                 )}
             </AccordionItem>
+            {originatingData ? (
+                <AccordionItem>
+                    <AccordionButton bgColor={bgColor}>
+                        Originating data
+                        <AccordionIcon ml="auto" />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                        <Text>
+                            The following shows the raw data provided to Clowdr&apos;s Content Importer (accumulated
+                            across one or more imports).
+                        </Text>
+                        <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
+                            <Code w="100%" p={2}>
+                                Source Ids: {JSON.stringify(originatingData.sourceId.split("¬"), null, 2)}
+                            </Code>
+                        </Text>
+                        <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>
+                            <Code w="100%" p={2}>
+                                {JSON.stringify(originatingData.data, null, 2)}
+                            </Code>
+                        </Text>
+                    </AccordionPanel>
+                </AccordionItem>
+            ) : undefined}
             {sortedElements.map((item, idx) => (
                 <EditElement
                     key={item.id}

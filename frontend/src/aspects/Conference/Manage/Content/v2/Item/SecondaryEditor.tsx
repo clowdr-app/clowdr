@@ -1,5 +1,6 @@
-import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
+    Button,
     ButtonGroup,
     Code,
     Drawer,
@@ -9,7 +10,11 @@ import {
     DrawerHeader,
     DrawerOverlay,
     HStack,
+    Link,
     Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
     Text,
     VStack,
 } from "@chakra-ui/react";
@@ -96,8 +101,30 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                                 View discussion room&nbsp;
                                 <ExternalLinkIcon />
                             </LinkButton>
-                        ) : itemResponse.data.content_Item_by_pk.rooms.length > 1 ? (
-                            <Menu>TODO</Menu>
+                        ) : itemResponse.data.content_Item_by_pk.rooms.length >= 1 ? (
+                            <Menu size="sm">
+                                <MenuButton as={Button} rightIcon={<ChevronDownIcon />} size="sm">
+                                    View discussion rooms
+                                </MenuButton>
+                                <MenuList>
+                                    {itemResponse.data.content_Item_by_pk.rooms.map((room, idx) => (
+                                        <MenuItem key={room.id}>
+                                            <Link
+                                                size="sm"
+                                                href={`/conference/${conference.slug}/room/${room.id}`}
+                                                isExternal
+                                                aria-label="View discussion room"
+                                                title="View discussion room"
+                                                textDecoration="none"
+                                            >
+                                                {idx}. {room.name}
+                                                &nbsp;
+                                                <ExternalLinkIcon />
+                                            </Link>
+                                        </MenuItem>
+                                    ))}
+                                </MenuList>
+                            </Menu>
                         ) : (
                             <CreateRoomButton size="sm" itemId={itemId} refetch={() => itemResponse.refetch()} />
                         )}

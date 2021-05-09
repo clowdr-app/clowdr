@@ -161,7 +161,11 @@ export const FileElementTemplate: ElementBaseTemplate = {
                 </>
             );
         }
-        return <>No file uploaded yet.</>;
+        return data.uploadableElement.hasBeenUploaded ? (
+            <>A file has been uploaded but you do not have permission to view it.</>
+        ) : (
+            <>No file uploaded yet.</>
+        );
     },
     renderEditorHeading: function FileElementEditorHeading(data) {
         return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;

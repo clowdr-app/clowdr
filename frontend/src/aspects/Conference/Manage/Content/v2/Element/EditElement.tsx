@@ -483,7 +483,7 @@ export function EditElement({
                                     icon={<FAIcon iconStyle="s" icon="lock" />}
                                     onClick={(ev) => {
                                         ev.stopPropagation();
-                                        // TODO
+                                        // TODO: Manage element security
                                     }}
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
@@ -510,7 +510,7 @@ export function EditElement({
                             </Tooltip>
                             <AccordionIcon ml={2} />
                         </AccordionButton>
-                        <AccordionPanel overflow="visible" pos="relative" pb={4}>
+                        <AccordionPanel pb={4}>
                             {isExpanded ? (
                                 <EditElementInner
                                     element={actualElement ?? null}

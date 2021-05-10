@@ -1,4 +1,15 @@
-import { Heading, Spinner, useDisclosure, useToast } from "@chakra-ui/react";
+import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
+    Heading,
+    HStack,
+    Spinner,
+    useDisclosure,
+    useToast,
+    VStack,
+} from "@chakra-ui/react";
 import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -330,11 +341,24 @@ export default function ManageConferenceContentPage(): JSX.Element {
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Content
             </Heading>
-            <LinkButton colorScheme="orange" to={`/conference/${conference.slug}/manage/content/v2`}>
-                <FAIcon iconStyle="s" icon="hand-point-right" mr={2} />
-                Try the new version of this UI &nbsp;
-                <FAIcon iconStyle="s" icon="link" />
-            </LinkButton>
+            <VStack spacing={4}>
+                <LinkButton colorScheme="orange" to={`/conference/${conference.slug}/manage/content/v2`}>
+                    <FAIcon iconStyle="s" icon="hand-point-right" mr={2} />
+                    Try the new version of this UI &nbsp;
+                    <FAIcon iconStyle="s" icon="link" />
+                </LinkButton>
+                <Alert fontSize="sm" maxW="lg" status="warning" as={VStack}>
+                    <HStack>
+                        <AlertIcon />
+                        <AlertTitle>New permissions</AlertTitle>
+                    </HStack>
+                    <AlertDescription>
+                        New element-level security controls have been introduced. These can only be controlled through
+                        the new UI. If you add new items or elements and your attendees cannot see the content, it is
+                        likely due to missing permissions.
+                    </AlertDescription>
+                </Alert>
+            </VStack>
             {saveContentDiff.loadingContent &&
             (!allGroupsMap || !allTagsMap || !allPeopleMap || !allOriginatingDatasMap || !allExhibitionsMap) ? (
                 <Spinner />

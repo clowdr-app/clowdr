@@ -28,12 +28,10 @@ export function BulkOperationMenu({
     selectedData: selectedItems,
     allItems,
     allTags,
-    key,
 }: {
     selectedData: ManageContent_ItemFragment[];
     allItems: readonly ManageContent_ItemFragment[];
     allTags: readonly ManageContent_TagFragment[];
-    key: string;
 }): JSX.Element {
     const { isOpen: menuIsOpen, onOpen: menuOnOpen, onClose: _menuOnClose } = useDisclosure();
     const [selectedOperation, setSelectedOperation] = useState<string>("");
@@ -70,97 +68,97 @@ export function BulkOperationMenu({
                 });
             },
         },
-        {
-            label: "Copy people to uploaders",
-            value: "COPY_UPLOADERS",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "COPY_UPLOADERS",
-                    items: items,
-                    step: "SELECT",
-                    elementIds: [],
-                    uploadableIds: [],
-                });
-            },
-        },
-        {
-            label: "Add/remove tags",
-            value: "TAGS",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "TAGS",
-                    items: items,
-                    step: "ACT",
-                    elementIds: [],
-                    uploadableIds: [],
-                });
-            },
-        },
-        {
-            label: "Add to/remove from exhibitions",
-            value: "EXHIBITIONS",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "EXHIBITIONS",
-                    items: items,
-                    step: "ACT",
-                    elementIds: [],
-                    uploadableIds: [],
-                });
-            },
-        },
-        {
-            label: "Link/unlink people",
-            value: "PEOPLE",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "PEOPLE",
-                    items: items,
-                    step: "ACT",
-                    elementIds: [],
-                    uploadableIds: [],
-                });
-            },
-        },
-        {
-            label: "Add elements",
-            value: "ELEMENTS_ADD",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "ELEMENTS_ADD",
-                    items: items,
-                    step: "ACT",
-                    elementIds: [],
-                    uploadableIds: [],
-                });
-            },
-        },
-        {
-            label: "Add uploadable elements",
-            value: "UPLOADABLES_ADD",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "UPLOADABLES_ADD",
-                    items: items,
-                    step: "ACT",
-                    elementIds: [],
-                    uploadableIds: [],
-                });
-            },
-        },
-        {
-            label: "Remove elements or uploadables",
-            value: "ELEMENTS_REMOVE",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "ELEMENTS_REMOVE",
-                    items: items,
-                    step: "SELECT",
-                    elementIds: [],
-                    uploadableIds: [],
-                });
-            },
-        },
+        // {
+        //     label: "Copy people to uploaders",
+        //     value: "COPY_UPLOADERS",
+        //     operation: (items) => {
+        //         setActiveOperation({
+        //             operation: "COPY_UPLOADERS",
+        //             items: items,
+        //             step: "SELECT",
+        //             elementIds: [],
+        //             uploadableIds: [],
+        //         });
+        //     },
+        // },
+        // {
+        //     label: "Add/remove tags",
+        //     value: "TAGS",
+        //     operation: (items) => {
+        //         setActiveOperation({
+        //             operation: "TAGS",
+        //             items: items,
+        //             step: "ACT",
+        //             elementIds: [],
+        //             uploadableIds: [],
+        //         });
+        //     },
+        // },
+        // {
+        //     label: "Add to/remove from exhibitions",
+        //     value: "EXHIBITIONS",
+        //     operation: (items) => {
+        //         setActiveOperation({
+        //             operation: "EXHIBITIONS",
+        //             items: items,
+        //             step: "ACT",
+        //             elementIds: [],
+        //             uploadableIds: [],
+        //         });
+        //     },
+        // },
+        // {
+        //     label: "Link/unlink people",
+        //     value: "PEOPLE",
+        //     operation: (items) => {
+        //         setActiveOperation({
+        //             operation: "PEOPLE",
+        //             items: items,
+        //             step: "ACT",
+        //             elementIds: [],
+        //             uploadableIds: [],
+        //         });
+        //     },
+        // },
+        // {
+        //     label: "Add elements",
+        //     value: "ELEMENTS_ADD",
+        //     operation: (items) => {
+        //         setActiveOperation({
+        //             operation: "ELEMENTS_ADD",
+        //             items: items,
+        //             step: "ACT",
+        //             elementIds: [],
+        //             uploadableIds: [],
+        //         });
+        //     },
+        // },
+        // {
+        //     label: "Add uploadable elements",
+        //     value: "UPLOADABLES_ADD",
+        //     operation: (items) => {
+        //         setActiveOperation({
+        //             operation: "UPLOADABLES_ADD",
+        //             items: items,
+        //             step: "ACT",
+        //             elementIds: [],
+        //             uploadableIds: [],
+        //         });
+        //     },
+        // },
+        // {
+        //     label: "Remove elements or uploadables",
+        //     value: "ELEMENTS_REMOVE",
+        //     operation: (items) => {
+        //         setActiveOperation({
+        //             operation: "ELEMENTS_REMOVE",
+        //             items: items,
+        //             step: "SELECT",
+        //             elementIds: [],
+        //             uploadableIds: [],
+        //         });
+        //     },
+        // },
     ];
 
     const toast = useToast();
@@ -168,7 +166,7 @@ export function BulkOperationMenu({
     return (
         <>
             {selectedItems.length > 0 ? (
-                <Menu key={key} isOpen={menuIsOpen} onClose={menuOnClose} onOpen={menuOnOpen}>
+                <Menu isOpen={menuIsOpen} onClose={menuOnClose} onOpen={menuOnOpen}>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                         Bulk edit
                     </MenuButton>
@@ -189,14 +187,7 @@ export function BulkOperationMenu({
                     </MenuList>
                 </Menu>
             ) : (
-                <Menu
-                    key={key}
-                    closeOnSelect={false}
-                    isLazy
-                    isOpen={menuIsOpen}
-                    onClose={menuOnClose}
-                    onOpen={menuOnOpen}
-                >
+                <Menu closeOnSelect={false} isLazy isOpen={menuIsOpen} onClose={menuOnClose} onOpen={menuOnOpen}>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                         Bulk edit
                     </MenuButton>

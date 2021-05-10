@@ -30,12 +30,10 @@ gql`
 
 export function AddContentMenu({
     itemId,
-    roomId,
-    refetch,
+    onCreate,
 }: {
     itemId: string;
-    roomId: string | null;
-    refetch: () => void;
+    onCreate: (newId: string) => void;
 }): JSX.Element {
     const toast = useToast();
     const conference = useConference();
@@ -95,12 +93,14 @@ export function AddContentMenu({
                                         name: newContent.element.name,
                                         isHidden: newContent.element.isHidden,
                                     };
-                                    await createElement({
+                                    const result = await createElement({
                                         variables: {
                                             object: obj,
                                         },
                                     });
-                                    refetch();
+                                    if (result.data?.insert_content_Element_one?.id) {
+                                        onCreate(result.data?.insert_content_Element_one?.id);
+                                    }
                                 } catch (e) {
                                     console.error("Could not create new ContenItem", e);
                                     toast({
@@ -117,7 +117,7 @@ export function AddContentMenu({
                 </MenuList>
             </Menu>
         ),
-        [conference.id, itemId, contentTypeOptions, createElement, refetch, toast]
+        [contentTypeOptions, conference.id, itemId, createElement, onCreate, toast]
     );
 
     const uploadableMenu = useMemo(
@@ -155,12 +155,14 @@ export function AddContentMenu({
                                             name: newContent.uploadableElement.name,
                                             uploadsRemaining: newContent.uploadableElement.uploadsRemaining,
                                         };
-                                        await createUploadableElement({
+                                        const result = await createUploadableElement({
                                             variables: {
                                                 object: obj,
                                             },
                                         });
-                                        refetch();
+                                        if (result.data?.insert_content_UploadableElement_one?.id) {
+                                            onCreate(result.data?.insert_content_UploadableElement_one?.id);
+                                        }
                                     } catch (e) {
                                         console.error("Could not create new ContenItem", e);
                                         toast({
@@ -177,7 +179,7 @@ export function AddContentMenu({
                 </MenuList>
             </Menu>
         ),
-        [contentTypeOptions, conference.id, itemId, createUploadableElement, refetch, toast]
+        [contentTypeOptions, conference.id, itemId, createUploadableElement, onCreate, toast]
     );
 
     return (

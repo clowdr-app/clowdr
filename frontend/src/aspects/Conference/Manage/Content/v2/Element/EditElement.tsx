@@ -75,12 +75,14 @@ export function EditElement({
     previousElement,
     nextElement,
     refetchElements,
+    defaultOpenSecurity,
 }: {
     element: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
     idx: number;
     previousElement?: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
     nextElement?: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
     refetchElements: () => void;
+    defaultOpenSecurity: boolean;
 }): JSX.Element {
     const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
         update: (cache, response) => {
@@ -208,7 +210,9 @@ export function EditElement({
         [nextElement]
     );
 
-    const { isOpen: editPGs_IsOpen, onOpen: editPGs_OnOpen, onClose: editPGs_OnClose } = useDisclosure();
+    const { isOpen: editPGs_IsOpen, onOpen: editPGs_OnOpen, onClose: editPGs_OnClose } = useDisclosure({
+        defaultIsOpen: defaultOpenSecurity,
+    });
     const editPGs_OnCloseFull = useCallback(() => {
         refetchElements();
         editPGs_OnClose();

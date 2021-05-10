@@ -5,6 +5,7 @@ import {
     FormLabel,
     Heading,
     HStack,
+    IconButton,
     Input,
     Menu,
     MenuButton,
@@ -17,7 +18,7 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { LegacyRef, useMemo, useRef, useState } from "react";
+import React, { LegacyRef, useCallback, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     Content_ItemType_Enum,
@@ -45,6 +46,7 @@ import CRUDTable, {
 } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { FAIcon } from "../../Icons/FAIcon";
 import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -53,6 +55,7 @@ import { BulkOperationMenu } from "./Content/v2/BulkOperations/BulkOperationMenu
 import ManageExhibitionsModal from "./Content/v2/Exhibition/ManageExhibitionsModal";
 import { SecondaryEditor } from "./Content/v2/Item/SecondaryEditor";
 import ManageTagsModal from "./Content/v2/ManageTagsModal";
+import { EditElementsPermissionGrantsModal } from "./Content/v2/Security/EditElementsPermissionGrantsModal";
 import { SendSubmissionRequestsModal } from "./Content/v2/Submissions/SubmissionRequestsModal";
 import { SubmissionsReviewModal } from "./Content/v2/Submissions/SubmissionsReviewModal";
 
@@ -881,6 +884,13 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
         [allTags?.collection_Tag, sendSubmissionRequests_OnOpen, allItems?.content_Item, submissionsReview_OnOpen]
     );
 
+    const { isOpen: editPGs_IsOpen, onOpen: editPGs_OnOpen, onClose: editPGs_OnClose } = useDisclosure();
+    const editPGs_OnCloseFull = useCallback(async () => {
+        await refetchAllItems();
+        forceReloadRef.current();
+        editPGs_OnClose();
+    }, [editPGs_OnClose, refetchAllItems]);
+
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
@@ -915,6 +925,15 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                         forceReloadRef.current();
                     }}
                 />
+                <Tooltip label="Manage global element security">
+                    <IconButton
+                        ml="auto"
+                        colorScheme="yellow"
+                        aria-label="Manage global element security"
+                        icon={<FAIcon iconStyle="s" icon="lock" />}
+                        onClick={editPGs_OnOpen}
+                    />
+                </Tooltip>
             </HStack>
             <CRUDTable<ManageContent_ItemFragment>
                 columns={columns}
@@ -963,6 +982,13 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 isOpen={submissionsReview_IsOpen}
                 onClose={submissionsReview_OnClose}
                 itemIds={submissionsReview_ItemIds}
+            />
+            <EditElementsPermissionGrantsModal
+                isOpen={editPGs_IsOpen}
+                onClose={editPGs_OnCloseFull}
+                elementIds={[]}
+                uploadableIds={[]}
+                treatEmptyAsAny={true}
             />
         </RequireAtLeastOnePermissionWrapper>
     );

@@ -10647,6 +10647,10 @@ export type Content_UploadableElement = {
   /** An object relationship */
   readonly originatingData?: Maybe<Conference_OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  readonly permissionGrants: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+  /** An aggregated array relationship */
+  readonly permissionGrants_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
   /** An object relationship */
   readonly type: Content_ElementType;
   readonly typeName: Content_ElementType_Enum;
@@ -10656,6 +10660,26 @@ export type Content_UploadableElement = {
   /** An aggregated array relationship */
   readonly uploaders_aggregate: Content_Uploader_Aggregate;
   readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+
+/** columns and relationships of "content.UploadableElement" */
+export type Content_UploadableElementPermissionGrantsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.UploadableElement" */
+export type Content_UploadableElementPermissionGrants_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
 };
 
 
@@ -10681,11 +10705,19 @@ export type Content_UploadableElementUploaders_AggregateArgs = {
 /** columns and relationships of "content.UploadableElementPermissionGrant" */
 export type Content_UploadableElementPermissionGrant = {
   readonly __typename?: 'content_UploadableElementPermissionGrant';
+  /** An object relationship */
+  readonly conference: Conference_Conference;
   readonly conferenceSlug: Scalars['String'];
   readonly created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly entity?: Maybe<Content_UploadableElement>;
   readonly entityId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly group?: Maybe<Permissions_Group>;
   readonly groupId?: Maybe<Scalars['uuid']>;
   readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly permissionSet: Permissions_Role;
   readonly permissionSetId: Scalars['uuid'];
   readonly updated_at: Scalars['timestamptz'];
 };
@@ -10730,11 +10762,15 @@ export type Content_UploadableElementPermissionGrant_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>>>;
   readonly _not?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceSlug?: Maybe<String_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly entity?: Maybe<Content_UploadableElement_Bool_Exp>;
   readonly entityId?: Maybe<Uuid_Comparison_Exp>;
+  readonly group?: Maybe<Permissions_Group_Bool_Exp>;
   readonly groupId?: Maybe<Uuid_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly permissionSet?: Maybe<Permissions_Role_Bool_Exp>;
   readonly permissionSetId?: Maybe<Uuid_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -10749,11 +10785,15 @@ export enum Content_UploadableElementPermissionGrant_Constraint {
 
 /** input type for inserting data into table "content.UploadableElementPermissionGrant" */
 export type Content_UploadableElementPermissionGrant_Insert_Input = {
+  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceSlug?: Maybe<Scalars['String']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entity?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
   readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly group?: Maybe<Permissions_Group_Obj_Rel_Insert_Input>;
   readonly groupId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSet?: Maybe<Permissions_Role_Obj_Rel_Insert_Input>;
   readonly permissionSetId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -10828,11 +10868,15 @@ export type Content_UploadableElementPermissionGrant_On_Conflict = {
 
 /** ordering options when selecting data from "content.UploadableElementPermissionGrant" */
 export type Content_UploadableElementPermissionGrant_Order_By = {
+  readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceSlug?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
+  readonly entity?: Maybe<Content_UploadableElement_Order_By>;
   readonly entityId?: Maybe<Order_By>;
+  readonly group?: Maybe<Permissions_Group_Order_By>;
   readonly groupId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly permissionSet?: Maybe<Permissions_Role_Order_By>;
   readonly permissionSetId?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
@@ -10968,6 +11012,7 @@ export type Content_UploadableElement_Bool_Exp = {
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
   readonly type?: Maybe<Content_ElementType_Bool_Exp>;
   readonly typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -11000,6 +11045,7 @@ export type Content_UploadableElement_Insert_Input = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input>;
   readonly type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
   readonly typeName?: Maybe<Content_ElementType_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -11097,6 +11143,7 @@ export type Content_UploadableElement_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly permissionGrants_aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Order_By>;
   readonly type?: Maybe<Content_ElementType_Order_By>;
   readonly typeName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -36602,6 +36649,60 @@ export type ManageContent_DeleteTagsMutationVariables = Exact<{
 
 export type ManageContent_DeleteTagsMutation = { readonly __typename?: 'mutation_root', readonly delete_collection_Tag?: Maybe<{ readonly __typename?: 'collection_Tag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any }> }> };
 
+export type ElementSecurity_ElementPgFragment = { readonly __typename?: 'content_ElementPermissionGrant', readonly id: any, readonly permissionSetId: any, readonly conferenceSlug: string, readonly groupId?: Maybe<any>, readonly entityId?: Maybe<any> };
+
+export type ElementSecurity_UploadablePgFragment = { readonly __typename?: 'content_UploadableElementPermissionGrant', readonly id: any, readonly permissionSetId: any, readonly conferenceSlug: string, readonly groupId?: Maybe<any>, readonly entityId?: Maybe<any>, readonly entity?: Maybe<{ readonly __typename?: 'content_UploadableElement', readonly id: any, readonly element?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly permissionGrants: ReadonlyArray<(
+        { readonly __typename?: 'content_ElementPermissionGrant' }
+        & ElementSecurity_ElementPgFragment
+      )> }> }> };
+
+export type ElementSecurity_PermissionSetFragment = { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string };
+
+export type ElementSecurity_GroupFragment = { readonly __typename?: 'permissions_Group', readonly id: any, readonly name: string, readonly enabled: boolean, readonly includeUnauthenticated: boolean };
+
+export type ElementSecurity_SelectGrantsQueryVariables = Exact<{
+  elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  uploadableIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ElementSecurity_SelectGrantsQuery = { readonly __typename?: 'query_root', readonly content_ElementPermissionGrant: ReadonlyArray<(
+    { readonly __typename?: 'content_ElementPermissionGrant' }
+    & ElementSecurity_ElementPgFragment
+  )>, readonly content_UploadableElementPermissionGrant: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElementPermissionGrant' }
+    & ElementSecurity_UploadablePgFragment
+  )>, readonly permissions_Role: ReadonlyArray<(
+    { readonly __typename?: 'permissions_Role' }
+    & ElementSecurity_PermissionSetFragment
+  )>, readonly permissions_Group: ReadonlyArray<(
+    { readonly __typename?: 'permissions_Group' }
+    & ElementSecurity_GroupFragment
+  )> };
+
+export type ElementSecurity_InsertGrantsMutationVariables = Exact<{
+  elementGrants: ReadonlyArray<Content_ElementPermissionGrant_Insert_Input> | Content_ElementPermissionGrant_Insert_Input;
+  uploadableGrants: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input> | Content_UploadableElementPermissionGrant_Insert_Input;
+}>;
+
+
+export type ElementSecurity_InsertGrantsMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_ElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_ElementPermissionGrant' }
+      & ElementSecurity_ElementPgFragment
+    )> }>, readonly insert_content_UploadableElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_UploadableElementPermissionGrant' }
+      & ElementSecurity_UploadablePgFragment
+    )> }> };
+
+export type ElementSecurity_DeleteGrantsMutationVariables = Exact<{
+  elementGrantIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  uploadableGrantIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ElementSecurity_DeleteGrantsMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_ElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ElementPermissionGrant', readonly id: any }> }>, readonly delete_content_UploadableElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_UploadableElementPermissionGrant', readonly id: any }> }> };
+
 export type SubmissionRequestsModalDataQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -38773,6 +38874,47 @@ export const ManageContent_UploaderFragmentDoc = gql`
   name
   emailsSentCount
   conferenceId
+}
+    `;
+export const ElementSecurity_ElementPgFragmentDoc = gql`
+    fragment ElementSecurity_ElementPG on content_ElementPermissionGrant {
+  id
+  permissionSetId
+  conferenceSlug
+  groupId
+  entityId
+}
+    `;
+export const ElementSecurity_UploadablePgFragmentDoc = gql`
+    fragment ElementSecurity_UploadablePG on content_UploadableElementPermissionGrant {
+  id
+  permissionSetId
+  conferenceSlug
+  groupId
+  entityId
+  entity {
+    id
+    element {
+      id
+      permissionGrants {
+        ...ElementSecurity_ElementPG
+      }
+    }
+  }
+}
+    ${ElementSecurity_ElementPgFragmentDoc}`;
+export const ElementSecurity_PermissionSetFragmentDoc = gql`
+    fragment ElementSecurity_PermissionSet on permissions_Role {
+  id
+  name
+}
+    `;
+export const ElementSecurity_GroupFragmentDoc = gql`
+    fragment ElementSecurity_Group on permissions_Group {
+  id
+  name
+  enabled
+  includeUnauthenticated
 }
     `;
 export const SubmissionRequestsModal_UploadableElementFragmentDoc = gql`
@@ -43474,6 +43616,150 @@ export function useManageContent_DeleteTagsMutation(baseOptions?: Apollo.Mutatio
 export type ManageContent_DeleteTagsMutationHookResult = ReturnType<typeof useManageContent_DeleteTagsMutation>;
 export type ManageContent_DeleteTagsMutationResult = Apollo.MutationResult<ManageContent_DeleteTagsMutation>;
 export type ManageContent_DeleteTagsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
+export const ElementSecurity_SelectGrantsDocument = gql`
+    query ElementSecurity_SelectGrants($elementIds: [uuid!]!, $uploadableIds: [uuid!]!, $conferenceId: uuid!) {
+  content_ElementPermissionGrant(
+    where: {_or: [{_and: [{entityId: {_is_null: true}}, {conference: {id: {_eq: $conferenceId}}}]}, {entityId: {_in: $elementIds}}]}
+  ) {
+    ...ElementSecurity_ElementPG
+  }
+  content_UploadableElementPermissionGrant(
+    where: {_or: [{_and: [{entityId: {_is_null: true}}, {conference: {id: {_eq: $conferenceId}}}]}, {entityId: {_in: $uploadableIds}}]}
+  ) {
+    ...ElementSecurity_UploadablePG
+  }
+  permissions_Role(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ElementSecurity_PermissionSet
+  }
+  permissions_Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ElementSecurity_Group
+  }
+}
+    ${ElementSecurity_ElementPgFragmentDoc}
+${ElementSecurity_UploadablePgFragmentDoc}
+${ElementSecurity_PermissionSetFragmentDoc}
+${ElementSecurity_GroupFragmentDoc}`;
+
+/**
+ * __useElementSecurity_SelectGrantsQuery__
+ *
+ * To run a query within a React component, call `useElementSecurity_SelectGrantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useElementSecurity_SelectGrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useElementSecurity_SelectGrantsQuery({
+ *   variables: {
+ *      elementIds: // value for 'elementIds'
+ *      uploadableIds: // value for 'uploadableIds'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useElementSecurity_SelectGrantsQuery(baseOptions: Apollo.QueryHookOptions<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>(ElementSecurity_SelectGrantsDocument, options);
+      }
+export function useElementSecurity_SelectGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>(ElementSecurity_SelectGrantsDocument, options);
+        }
+export type ElementSecurity_SelectGrantsQueryHookResult = ReturnType<typeof useElementSecurity_SelectGrantsQuery>;
+export type ElementSecurity_SelectGrantsLazyQueryHookResult = ReturnType<typeof useElementSecurity_SelectGrantsLazyQuery>;
+export type ElementSecurity_SelectGrantsQueryResult = Apollo.QueryResult<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>;
+export const ElementSecurity_InsertGrantsDocument = gql`
+    mutation ElementSecurity_InsertGrants($elementGrants: [content_ElementPermissionGrant_insert_input!]!, $uploadableGrants: [content_UploadableElementPermissionGrant_insert_input!]!) {
+  insert_content_ElementPermissionGrant(
+    objects: $elementGrants
+    on_conflict: {constraint: ElementPermissionGrant_permissionSetId_groupId_entityId_key, update_columns: []}
+  ) {
+    returning {
+      ...ElementSecurity_ElementPG
+    }
+  }
+  insert_content_UploadableElementPermissionGrant(
+    objects: $uploadableGrants
+    on_conflict: {constraint: UploadableElementPermissionGr_permissionSetId_groupId_entit_key, update_columns: []}
+  ) {
+    returning {
+      ...ElementSecurity_UploadablePG
+    }
+  }
+}
+    ${ElementSecurity_ElementPgFragmentDoc}
+${ElementSecurity_UploadablePgFragmentDoc}`;
+export type ElementSecurity_InsertGrantsMutationFn = Apollo.MutationFunction<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>;
+
+/**
+ * __useElementSecurity_InsertGrantsMutation__
+ *
+ * To run a mutation, you first call `useElementSecurity_InsertGrantsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useElementSecurity_InsertGrantsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [elementSecurityInsertGrantsMutation, { data, loading, error }] = useElementSecurity_InsertGrantsMutation({
+ *   variables: {
+ *      elementGrants: // value for 'elementGrants'
+ *      uploadableGrants: // value for 'uploadableGrants'
+ *   },
+ * });
+ */
+export function useElementSecurity_InsertGrantsMutation(baseOptions?: Apollo.MutationHookOptions<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>(ElementSecurity_InsertGrantsDocument, options);
+      }
+export type ElementSecurity_InsertGrantsMutationHookResult = ReturnType<typeof useElementSecurity_InsertGrantsMutation>;
+export type ElementSecurity_InsertGrantsMutationResult = Apollo.MutationResult<ElementSecurity_InsertGrantsMutation>;
+export type ElementSecurity_InsertGrantsMutationOptions = Apollo.BaseMutationOptions<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>;
+export const ElementSecurity_DeleteGrantsDocument = gql`
+    mutation ElementSecurity_DeleteGrants($elementGrantIds: [uuid!]!, $uploadableGrantIds: [uuid!]!) {
+  delete_content_ElementPermissionGrant(where: {id: {_in: $elementGrantIds}}) {
+    returning {
+      id
+    }
+  }
+  delete_content_UploadableElementPermissionGrant(
+    where: {id: {_in: $uploadableGrantIds}}
+  ) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ElementSecurity_DeleteGrantsMutationFn = Apollo.MutationFunction<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>;
+
+/**
+ * __useElementSecurity_DeleteGrantsMutation__
+ *
+ * To run a mutation, you first call `useElementSecurity_DeleteGrantsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useElementSecurity_DeleteGrantsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [elementSecurityDeleteGrantsMutation, { data, loading, error }] = useElementSecurity_DeleteGrantsMutation({
+ *   variables: {
+ *      elementGrantIds: // value for 'elementGrantIds'
+ *      uploadableGrantIds: // value for 'uploadableGrantIds'
+ *   },
+ * });
+ */
+export function useElementSecurity_DeleteGrantsMutation(baseOptions?: Apollo.MutationHookOptions<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>(ElementSecurity_DeleteGrantsDocument, options);
+      }
+export type ElementSecurity_DeleteGrantsMutationHookResult = ReturnType<typeof useElementSecurity_DeleteGrantsMutation>;
+export type ElementSecurity_DeleteGrantsMutationResult = Apollo.MutationResult<ElementSecurity_DeleteGrantsMutation>;
+export type ElementSecurity_DeleteGrantsMutationOptions = Apollo.BaseMutationOptions<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>;
 export const SubmissionRequestsModalDataDocument = gql`
     query SubmissionRequestsModalData($conferenceId: uuid!, $itemIds: [uuid!]!) {
   conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {

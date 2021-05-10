@@ -21,10 +21,14 @@ export function EditElements({
     itemId,
     elements,
     uploadableElements,
-    chatId,
     originatingData,
     refetchElements,
-}: { itemId: string; refetchElements: () => void } & ManageContent_ItemSecondaryFragment & {
+    defaultOpenSecurityForId,
+}: {
+    itemId: string;
+    refetchElements: () => void;
+    defaultOpenSecurityForId?: string;
+} & ManageContent_ItemSecondaryFragment & {
         elements: readonly ManageContent_ElementFragment[];
         uploadableElements: readonly ManageContent_UploadableElementFragment[];
     }): JSX.Element {
@@ -112,6 +116,7 @@ export function EditElements({
                     previousElement={sortedElements[idx - 1]}
                     nextElement={sortedElements[idx + 1]}
                     refetchElements={refetchElements}
+                    defaultOpenSecurity={item.id === defaultOpenSecurityForId}
                 />
             ))}
         </Accordion>

@@ -18,7 +18,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import {
     ManageContent_ElementFragment,
     ManageContent_ItemSecondaryFragment,
@@ -72,6 +72,7 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
         },
         fetchPolicy: "network-only",
     });
+    const [defaultOpenSecurityForId, setDefaultOpenSecurityForId] = useState<string | null>(null);
 
     return (
         <VStack w="100%" alignItems="flex-start">
@@ -151,6 +152,7 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                         refetchElements={() => {
                             itemResponse.refetch();
                         }}
+                        defaultOpenSecurityForId={defaultOpenSecurityForId ?? undefined}
                         {...result}
                     />
                 )}
@@ -159,8 +161,10 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                 <ButtonGroup>
                     <AddContentMenu
                         itemId={itemId}
-                        roomId={itemResponse.data.content_Item_by_pk.rooms[0]?.id ?? null}
-                        refetch={() => itemResponse.refetch()}
+                        onCreate={(newId) => {
+                            setDefaultOpenSecurityForId(newId);
+                            itemResponse.refetch();
+                        }}
                     />
                 </ButtonGroup>
             ) : undefined}

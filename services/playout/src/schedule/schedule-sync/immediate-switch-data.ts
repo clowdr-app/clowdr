@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { Equals, IsNotEmpty, IsNotEmptyObject, IsString, ValidateNested } from "class-validator";
+import { Equals, IsNotEmpty, IsNotEmptyObject, IsString, IsUUID, ValidateNested } from "class-validator";
 
 export class BaseImmediateSwitchData {
     @IsNotEmpty()
@@ -15,7 +15,8 @@ export class VideoImmediateSwitchData extends BaseImmediateSwitchData {
     @IsNotEmpty()
     kind: "video";
     @IsString()
-    key: string;
+    @IsUUID()
+    elementId: string;
 }
 
 export class RtmpPushImmediateSwitchData extends BaseImmediateSwitchData {

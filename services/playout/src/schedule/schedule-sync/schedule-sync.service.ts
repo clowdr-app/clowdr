@@ -1,7 +1,5 @@
 import { ChannelState, FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
-import { VideoBroadcastBlob } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
-import AmazonS3URI from "amazon-s3-uri";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { add, sub } from "date-fns";
@@ -10,7 +8,9 @@ import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
 import { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
+import { ContentElementService } from "../../hasura-data/content/content-element.service";
 import {
+    ChannelStack,
     LocalSchedule,
     LocalScheduleAction,
     LocalScheduleService,
@@ -34,7 +34,8 @@ export class ScheduleSyncService {
         private channelStackDataService: ChannelStackDataService,
         private localScheduleService: LocalScheduleService,
         private remoteScheduleService: RemoteScheduleService,
-        private vonageService: VonageService
+        private vonageService: VonageService,
+        private contentElementService: ContentElementService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
@@ -78,63 +79,21 @@ export class ScheduleSyncService {
                     return;
                 }
 
-                await this.mediaLiveService.updateSchedule(
-                    event.channelStack.mediaLiveChannelId,
-                    [],
-                    [
-                        {
-                            ActionName: `i/${id}`,
-                            ScheduleActionSettings: {
-                                InputSwitchSettings:
-                                    transformed.data.kind === "filler"
-                                        ? {
-                                              InputAttachmentNameReference:
-                                                  event.channelStack.loopingMp4InputAttachmentName,
-                                              UrlPath: [
-                                                  (await this.channelStackDataService.getFillerVideoKey(
-                                                      event.conferenceId
-                                                  )) ?? "",
-                                              ],
-                                          }
-                                        : transformed.data.kind === "video"
-                                        ? {
-                                              InputAttachmentNameReference: event.channelStack.mp4InputAttachmentName,
-                                              UrlPath: [transformed.data.key],
-                                          }
-                                        : {
-                                              InputAttachmentNameReference:
-                                                  event.eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
-                                                      ? event.channelStack.rtmpBInputAttachmentName
-                                                      : event.channelStack.rtmpAInputAttachmentName,
-                                          },
-                            },
-                            ScheduleActionStartSettings: {
-                                ImmediateModeScheduleActionStartSettings: {},
-                            },
-                        },
-                        ...(transformed.data.kind === "video"
-                            ? [
-                                  {
-                                      ActionName: `i/${id}/f`,
-                                      ScheduleActionSettings: {
-                                          InputSwitchSettings: {
-                                              InputAttachmentNameReference:
-                                                  event.eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
-                                                      ? event.channelStack.rtmpBInputAttachmentName
-                                                      : event.channelStack.rtmpAInputAttachmentName,
-                                          },
-                                      },
-                                      ScheduleActionStartSettings: {
-                                          FollowModeScheduleActionStartSettings: {
-                                              FollowPoint: FollowPoint.END,
-                                              ReferenceActionName: `i/${id}`,
-                                          },
-                                      },
-                                  },
-                              ]
-                            : []),
-                    ]
+                const inputSwitchActions = await this.toInputSwitchActions(
+                    transformed,
+                    event.channelStack,
+                    event.eventRtmpInputName,
+                    id,
+                    event.conferenceId
                 );
+
+                if (inputSwitchActions.length) {
+                    await this.mediaLiveService.updateSchedule(
+                        event.channelStack.mediaLiveChannelId,
+                        [],
+                        inputSwitchActions
+                    );
+                }
             } else {
                 this.logger.warn(
                     { request: transformed },
@@ -142,6 +101,108 @@ export class ScheduleSyncService {
                 );
                 return;
             }
+        }
+    }
+
+    async toInputSwitchActions(
+        switchData: ImmediateSwitchData,
+        channelStack: ChannelStack,
+        eventRtmpInputName: string | null,
+        immediateSwitchId: string,
+        conferenceId: string
+    ): Promise<ScheduleAction[]> {
+        switch (switchData.data.kind) {
+            case "filler": {
+                const fillerVideoKey = (await this.channelStackDataService.getFillerVideoKey(conferenceId)) ?? "";
+                return [
+                    {
+                        ActionName: `i/${immediateSwitchId}`,
+                        ScheduleActionSettings: {
+                            InputSwitchSettings: {
+                                InputAttachmentNameReference: channelStack.loopingMp4InputAttachmentName,
+                                UrlPath: [fillerVideoKey],
+                            },
+                        },
+                        ScheduleActionStartSettings: {
+                            ImmediateModeScheduleActionStartSettings: {},
+                        },
+                    },
+                ];
+            }
+            case "video": {
+                const element = await this.contentElementService.getElement(switchData.data.elementId);
+                if (!element || element.conferenceId !== conferenceId) {
+                    this.logger.warn(
+                        { switchData, element, conferenceId },
+                        "Retrieved content element belongs to a different conference, skipping"
+                    );
+                    return [];
+                }
+                const broadcastVideoData = this.contentElementService.getLatestBroadcastVideoData(element.data);
+                if (!broadcastVideoData) {
+                    this.logger.warn(
+                        { switchData, element, conferenceId, broadcastVideoData },
+                        "Could not find latest video broadcast data in element"
+                    );
+                    return [];
+                }
+                const videoKey = this.contentElementService.getVideoKey(broadcastVideoData);
+                if (!videoKey) {
+                    this.logger.warn(
+                        { switchData, element, conferenceId, broadcastVideoData },
+                        "Could not retrieve video key from video broadcast data"
+                    );
+                    return [];
+                }
+                return [
+                    {
+                        ActionName: `i/${immediateSwitchId}`,
+                        ScheduleActionSettings: {
+                            InputSwitchSettings: {
+                                InputAttachmentNameReference: channelStack.mp4InputAttachmentName,
+                                UrlPath: [videoKey],
+                            },
+                        },
+                        ScheduleActionStartSettings: {
+                            ImmediateModeScheduleActionStartSettings: {},
+                        },
+                    },
+                    {
+                        ActionName: `i/${immediateSwitchId}/f`,
+                        ScheduleActionSettings: {
+                            InputSwitchSettings: {
+                                InputAttachmentNameReference:
+                                    eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
+                                        ? channelStack.rtmpBInputAttachmentName
+                                        : channelStack.rtmpAInputAttachmentName,
+                            },
+                        },
+                        ScheduleActionStartSettings: {
+                            FollowModeScheduleActionStartSettings: {
+                                FollowPoint: FollowPoint.END,
+                                ReferenceActionName: `i/${immediateSwitchId}`,
+                            },
+                        },
+                    },
+                ];
+            }
+            case "rtmp_push":
+                return [
+                    {
+                        ActionName: `i/${immediateSwitchId}`,
+                        ScheduleActionSettings: {
+                            InputSwitchSettings: {
+                                InputAttachmentNameReference:
+                                    eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
+                                        ? channelStack.rtmpBInputAttachmentName
+                                        : channelStack.rtmpAInputAttachmentName,
+                            },
+                        },
+                        ScheduleActionStartSettings: {
+                            ImmediateModeScheduleActionStartSettings: {},
+                        },
+                    },
+                ];
         }
     }
 
@@ -362,7 +423,9 @@ export class ScheduleSyncService {
         }
 
         if (localAction.roomModeName === Room_Mode_Enum.Prerecorded) {
-            const videoKey = localAction.videoData ? this.getVideoKey(localAction.videoData) : null;
+            const videoKey = localAction.videoData
+                ? this.contentElementService.getVideoKey(localAction.videoData)
+                : null;
             if (!videoKey) {
                 this.logger.warn(
                     { eventId: localAction.eventId },
@@ -419,58 +482,14 @@ export class ScheduleSyncService {
             (remoteAction.mode === "prerecorded" && !!localAction.videoData) ||
             (remoteAction.mode === "live" && !!localAction.rtmpInputName);
         const rtmpInputsMatch = remoteAction.rtmpInputName === localAction.rtmpInputName;
-        const videosMatch = !!localAction.videoData && this.getVideoKey(localAction.videoData) === remoteAction.s3Key;
+        const videosMatch =
+            !!localAction.videoData &&
+            this.contentElementService.getVideoKey(localAction.videoData) === remoteAction.s3Key;
         const timesMatch = remoteAction.startTime === localAction.startTime;
 
         return (
             remoteAction.eventId === localAction.eventId && modesMatch && rtmpInputsMatch && videosMatch && timesMatch
         );
-    }
-
-    public getVideoKey(videoBroadcastData: VideoBroadcastBlob): string | null {
-        if (videoBroadcastData.broadcastTranscode?.s3Url) {
-            try {
-                const { key } = new AmazonS3URI(videoBroadcastData.broadcastTranscode.s3Url);
-                if (!key) {
-                    throw new Error("Key in S3 URL was empty");
-                }
-                return key;
-            } catch (err) {
-                this.logger.warn(
-                    { err, s3Url: videoBroadcastData.broadcastTranscode.s3Url },
-                    "Could not parse S3 URL of broadcast transcode."
-                );
-            }
-        }
-        if (videoBroadcastData.transcode?.s3Url) {
-            try {
-                const { key } = new AmazonS3URI(videoBroadcastData.transcode.s3Url);
-                if (!key) {
-                    throw new Error("Key in S3 URL was empty");
-                }
-                return key;
-            } catch (err) {
-                this.logger.warn(
-                    { err, s3Url: videoBroadcastData.transcode.s3Url },
-                    "Could not parse S3 URL of preview transcode."
-                );
-            }
-        }
-        if (videoBroadcastData.s3Url) {
-            try {
-                const { key } = new AmazonS3URI(videoBroadcastData.s3Url);
-                if (!key) {
-                    throw new Error("Key in S3 URL was empty");
-                }
-                return key;
-            } catch (err) {
-                this.logger.warn(
-                    { err, s3Url: videoBroadcastData.s3Url },
-                    "Could not parse S3 URL of original upload."
-                );
-            }
-        }
-        return null;
     }
 
     public async deleteInvalidActions(

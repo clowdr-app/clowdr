@@ -1,16 +1,10 @@
 import { gql } from "@apollo/client/core";
-import {
-    ElementBaseType,
-    ElementDataBlob,
-    isElementDataBlob,
-    VideoBroadcastBlob,
-} from "@clowdr-app/shared-types/build/content";
+import { VideoBroadcastBlob } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import { add, addHours, addMinutes } from "date-fns";
 import * as R from "ramda";
 import {
-    Content_ElementType_Enum,
     LocalSchedule_GetEventDocument,
     LocalSchedule_GetRoomsWithEventsStartingDocument,
     LocalSchedule_GetRoomsWithoutEventsDocument,
@@ -20,6 +14,7 @@ import {
     ScheduleService_UpdateRtmpInputsDocument,
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
+import { ContentElementService } from "../content/content-element.service";
 import { GraphQlService } from "../graphql/graphql.service";
 
 export interface LocalSchedule {
@@ -40,7 +35,11 @@ export interface LocalScheduleAction {
 export class LocalScheduleService {
     private logger: Bunyan;
 
-    constructor(@RootLogger() logger: Bunyan, private graphQlService: GraphQlService) {
+    constructor(
+        @RootLogger() logger: Bunyan,
+        private graphQlService: GraphQlService,
+        private contentElementService: ContentElementService
+    ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
@@ -110,7 +109,7 @@ export class LocalScheduleService {
 
         const scheduleItems = scheduleResult.data.schedule_Event.map((event) => {
             const videoData = event.item?.elements.length
-                ? this.getLatestBroadcastVideoData(event.item.elements[0].data)
+                ? this.contentElementService.getLatestBroadcastVideoData(event.item.elements[0].data)
                 : null;
 
             const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;
@@ -137,28 +136,6 @@ export class LocalScheduleService {
 
     isLive(roomMode: Room_Mode_Enum): boolean {
         return [Room_Mode_Enum.QAndA, Room_Mode_Enum.Presentation].includes(roomMode);
-    }
-
-    getLatestBroadcastVideoData(contentItemData: unknown): VideoBroadcastBlob | null {
-        if (!isElementDataBlob(contentItemData)) {
-            return null;
-        }
-        const contentItemDataBlob: ElementDataBlob = contentItemData as any;
-
-        const latestVersion = R.last(contentItemDataBlob);
-
-        if (!latestVersion) {
-            return null;
-        }
-
-        if (
-            latestVersion.data.baseType === ElementBaseType.Video &&
-            latestVersion.data.type === Content_ElementType_Enum.VideoBroadcast
-        ) {
-            return latestVersion.data;
-        }
-
-        return null;
     }
 
     public async ensureRtmpInputsAlternate(scheduleData: LocalSchedule): Promise<LocalSchedule> {

@@ -23,7 +23,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
     ManageContent_ElementFragment,
     ManageContent_ElementFragmentDoc,
@@ -35,6 +35,7 @@ import {
     useManageContent_UpdateUploadableElementMutation,
 } from "../../../../../../generated/graphql";
 import { FAIcon } from "../../../../../Icons/FAIcon";
+import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
 import { EditElementInner } from "./EditElementInner";
 
 gql`
@@ -73,11 +74,13 @@ export function EditElement({
     idx,
     previousElement,
     nextElement,
+    refetchElements,
 }: {
     element: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
     idx: number;
     previousElement?: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
     nextElement?: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
+    refetchElements: () => void;
 }): JSX.Element {
     const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
         update: (cache, response) => {
@@ -204,6 +207,12 @@ export function EditElement({
                 : undefined),
         [nextElement]
     );
+
+    const { isOpen: editPGs_IsOpen, onOpen: editPGs_OnOpen, onClose: editPGs_OnClose } = useDisclosure();
+    const editPGs_OnCloseFull = useCallback(() => {
+        refetchElements();
+        editPGs_OnClose();
+    }, [editPGs_OnClose, refetchElements]);
 
     const bgColor = useColorModeValue("gray.100", "gray.800");
     return (
@@ -505,7 +514,7 @@ export function EditElement({
                                     icon={<FAIcon iconStyle="s" icon="lock" />}
                                     onClick={(ev) => {
                                         ev.stopPropagation();
-                                        // TODO: Manage element security
+                                        editPGs_OnOpen();
                                     }}
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
@@ -598,6 +607,21 @@ export function EditElement({
                     </AlertDialogContent>
                 </AlertDialogOverlay>
             </AlertDialog>
+            <EditElementsPermissionGrantsModal
+                isOpen={editPGs_IsOpen}
+                onClose={editPGs_OnCloseFull}
+                elementIds={"layoutData" in element ? [element.id] : []}
+                uploadableIds={
+                    !("layoutData" in element)
+                        ? [
+                              {
+                                  elementId: (element as ManageContent_UploadableElementFragment).element?.id,
+                                  uploadableId: element.id,
+                              },
+                          ]
+                        : []
+                }
+            />
         </>
     );
 }

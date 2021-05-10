@@ -10678,6 +10678,217 @@ export type Content_UploadableElementUploaders_AggregateArgs = {
   where?: Maybe<Content_Uploader_Bool_Exp>;
 };
 
+/** columns and relationships of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant';
+  readonly conferenceSlug: Scalars['String'];
+  readonly created_at: Scalars['timestamptz'];
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id: Scalars['uuid'];
+  readonly permissionSetId: Scalars['uuid'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_aggregate';
+  readonly aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+};
+
+/** aggregate fields of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_Fields = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Content_UploadableElementPermissionGrant_Max_Fields>;
+  readonly min?: Maybe<Content_UploadableElementPermissionGrant_Min_Fields>;
+};
+
+
+/** aggregate fields of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Content_UploadableElementPermissionGrant_Max_Order_By>;
+  readonly min?: Maybe<Content_UploadableElementPermissionGrant_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input>;
+  readonly on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "content.UploadableElementPermissionGrant". All fields are combined with a logical 'AND'. */
+export type Content_UploadableElementPermissionGrant_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>>>;
+  readonly _not?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>>>;
+  readonly conferenceSlug?: Maybe<String_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly entityId?: Maybe<Uuid_Comparison_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly permissionSetId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Constraint {
+  /** unique or primary key constraint */
+  UploadableElementPermissionGrPermissionSetIdGroupIdEntitKey = 'UploadableElementPermissionGr_permissionSetId_groupId_entit_key',
+  /** unique or primary key constraint */
+  UploadableElementPermissionGrantPkey = 'UploadableElementPermissionGrant_pkey'
+}
+
+/** input type for inserting data into table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Insert_Input = {
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Content_UploadableElementPermissionGrant_Max_Fields = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_max_fields';
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Max_Order_By = {
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_UploadableElementPermissionGrant_Min_Fields = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_min_fields';
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Min_Order_By = {
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Mutation_Response = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+};
+
+/** input type for inserting object relation for remote table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Obj_Rel_Insert_Input = {
+  readonly data: Content_UploadableElementPermissionGrant_Insert_Input;
+  readonly on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
+};
+
+/** on conflict condition type for table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_On_Conflict = {
+  readonly constraint: Content_UploadableElementPermissionGrant_Constraint;
+  readonly update_columns: ReadonlyArray<Content_UploadableElementPermissionGrant_Update_Column>;
+  readonly where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Order_By = {
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Select_Column {
+  /** column name */
+  ConferenceSlug = 'conferenceSlug',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EntityId = 'entityId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PermissionSetId = 'permissionSetId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Set_Input = {
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Update_Column {
+  /** column name */
+  ConferenceSlug = 'conferenceSlug',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EntityId = 'entityId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PermissionSetId = 'permissionSetId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** aggregated selection of "content.UploadableElement" */
 export type Content_UploadableElement_Aggregate = {
   readonly __typename?: 'content_UploadableElement_aggregate';
@@ -13863,6 +14074,10 @@ export type Mutation_Root = {
   readonly delete_content_Item_by_pk?: Maybe<Content_Item>;
   /** delete data from the table: "content.UploadableElement" */
   readonly delete_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+  /** delete data from the table: "content.UploadableElementPermissionGrant" */
+  readonly delete_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+  /** delete single row from the table: "content.UploadableElementPermissionGrant" */
+  readonly delete_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
   /** delete single row from the table: "content.UploadableElement" */
   readonly delete_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
   /** delete data from the table: "content.Uploader" */
@@ -14201,6 +14416,10 @@ export type Mutation_Root = {
   readonly insert_content_Item_one?: Maybe<Content_Item>;
   /** insert data into the table: "content.UploadableElement" */
   readonly insert_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+  /** insert data into the table: "content.UploadableElementPermissionGrant" */
+  readonly insert_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+  /** insert a single row into the table: "content.UploadableElementPermissionGrant" */
+  readonly insert_content_UploadableElementPermissionGrant_one?: Maybe<Content_UploadableElementPermissionGrant>;
   /** insert a single row into the table: "content.UploadableElement" */
   readonly insert_content_UploadableElement_one?: Maybe<Content_UploadableElement>;
   /** insert data into the table: "content.Uploader" */
@@ -14565,6 +14784,10 @@ export type Mutation_Root = {
   readonly update_content_Item_by_pk?: Maybe<Content_Item>;
   /** update data of the table: "content.UploadableElement" */
   readonly update_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+  /** update data of the table: "content.UploadableElementPermissionGrant" */
+  readonly update_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+  /** update single row of the table: "content.UploadableElementPermissionGrant" */
+  readonly update_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
   /** update single row of the table: "content.UploadableElement" */
   readonly update_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
   /** update data of the table: "content.Uploader" */
@@ -15186,6 +15409,18 @@ export type Mutation_RootDelete_Content_Item_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Content_UploadableElementArgs = {
   where: Content_UploadableElement_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Content_UploadableElementPermissionGrantArgs = {
+  where: Content_UploadableElementPermissionGrant_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Content_UploadableElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -16268,6 +16503,20 @@ export type Mutation_RootInsert_Content_Item_OneArgs = {
 export type Mutation_RootInsert_Content_UploadableElementArgs = {
   objects: ReadonlyArray<Content_UploadableElement_Insert_Input>;
   on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_UploadableElementPermissionGrantArgs = {
+  objects: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input>;
+  on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_UploadableElementPermissionGrant_OneArgs = {
+  object: Content_UploadableElementPermissionGrant_Insert_Input;
+  on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
 };
 
 
@@ -17621,6 +17870,20 @@ export type Mutation_RootUpdate_Content_UploadableElementArgs = {
   _inc?: Maybe<Content_UploadableElement_Inc_Input>;
   _set?: Maybe<Content_UploadableElement_Set_Input>;
   where: Content_UploadableElement_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_UploadableElementPermissionGrantArgs = {
+  _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
+  where: Content_UploadableElementPermissionGrant_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_UploadableElementPermissionGrant_By_PkArgs = {
+  _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
+  pk_columns: Content_UploadableElementPermissionGrant_Pk_Columns_Input;
 };
 
 
@@ -19980,6 +20243,12 @@ export type Query_Root = {
   readonly content_Item_by_pk?: Maybe<Content_Item>;
   /** fetch data from the table: "content.UploadableElement" */
   readonly content_UploadableElement: ReadonlyArray<Content_UploadableElement>;
+  /** fetch data from the table: "content.UploadableElementPermissionGrant" */
+  readonly content_UploadableElementPermissionGrant: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+  /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
+  readonly content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
+  /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
+  readonly content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.UploadableElement" */
   readonly content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
   /** fetch data from the table: "content.UploadableElement" using primary key columns */
@@ -21225,6 +21494,32 @@ export type Query_RootContent_UploadableElementArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
   where?: Maybe<Content_UploadableElement_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContent_UploadableElementPermissionGrantArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -29140,6 +29435,12 @@ export type Subscription_Root = {
   readonly content_Item_by_pk?: Maybe<Content_Item>;
   /** fetch data from the table: "content.UploadableElement" */
   readonly content_UploadableElement: ReadonlyArray<Content_UploadableElement>;
+  /** fetch data from the table: "content.UploadableElementPermissionGrant" */
+  readonly content_UploadableElementPermissionGrant: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+  /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
+  readonly content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
+  /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
+  readonly content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.UploadableElement" */
   readonly content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
   /** fetch data from the table: "content.UploadableElement" using primary key columns */
@@ -30385,6 +30686,32 @@ export type Subscription_RootContent_UploadableElementArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
   where?: Maybe<Content_UploadableElement_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContent_UploadableElementPermissionGrantArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -36022,6 +36349,23 @@ export type UpdateExhibitionMutation = { readonly __typename?: 'mutation_root', 
     & ExhibitionInfoFragment
   )> };
 
+export type SEoUm_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
+
+export type SEoUm_UploadableFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly hasBeenUploaded?: Maybe<boolean>, readonly itemId: any, readonly itemTitle?: Maybe<string>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }>, readonly element?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any }> };
+
+export type SEoUm_InfosQueryVariables = Exact<{
+  itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type SEoUm_InfosQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<(
+    { readonly __typename?: 'content_Element' }
+    & SEoUm_ElementFragment
+  )>, readonly content_UploadableElement: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & SEoUm_UploadableFragment
+  )> };
+
 export type ManageContent_DeleteElementMutationVariables = Exact<{
   elementId: Scalars['uuid'];
 }>;
@@ -38391,6 +38735,34 @@ export const ExhibitionInfoFragmentDoc = gql`
   colour
   name
   priority
+}
+    `;
+export const SEoUm_ElementFragmentDoc = gql`
+    fragment SEoUM_Element on content_Element {
+  id
+  name
+  typeName
+  itemId
+  item {
+    id
+    title
+  }
+}
+    `;
+export const SEoUm_UploadableFragmentDoc = gql`
+    fragment SEoUM_Uploadable on content_UploadableElement {
+  id
+  name
+  typeName
+  hasBeenUploaded
+  uploaders {
+    id
+  }
+  element {
+    id
+  }
+  itemId
+  itemTitle
 }
     `;
 export const ManageContent_UploaderFragmentDoc = gql`
@@ -42227,6 +42599,47 @@ export function useUpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateExhibitionMutationHookResult = ReturnType<typeof useUpdateExhibitionMutation>;
 export type UpdateExhibitionMutationResult = Apollo.MutationResult<UpdateExhibitionMutation>;
 export type UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>;
+export const SEoUm_InfosDocument = gql`
+    query SEoUM_Infos($itemIds: [uuid!]!) {
+  content_Element(
+    where: {itemId: {_in: $itemIds}, uploadableId: {_is_null: true}}
+  ) {
+    ...SEoUM_Element
+  }
+  content_UploadableElement(where: {itemId: {_in: $itemIds}}) {
+    ...SEoUM_Uploadable
+  }
+}
+    ${SEoUm_ElementFragmentDoc}
+${SEoUm_UploadableFragmentDoc}`;
+
+/**
+ * __useSEoUm_InfosQuery__
+ *
+ * To run a query within a React component, call `useSEoUm_InfosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSEoUm_InfosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSEoUm_InfosQuery({
+ *   variables: {
+ *      itemIds: // value for 'itemIds'
+ *   },
+ * });
+ */
+export function useSEoUm_InfosQuery(baseOptions: Apollo.QueryHookOptions<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>(SEoUm_InfosDocument, options);
+      }
+export function useSEoUm_InfosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>(SEoUm_InfosDocument, options);
+        }
+export type SEoUm_InfosQueryHookResult = ReturnType<typeof useSEoUm_InfosQuery>;
+export type SEoUm_InfosLazyQueryHookResult = ReturnType<typeof useSEoUm_InfosLazyQuery>;
+export type SEoUm_InfosQueryResult = Apollo.QueryResult<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>;
 export const ManageContent_DeleteElementDocument = gql`
     mutation ManageContent_DeleteElement($elementId: uuid!) {
   delete_content_Element_by_pk(id: $elementId) {

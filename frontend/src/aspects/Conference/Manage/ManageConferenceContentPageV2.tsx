@@ -9,7 +9,7 @@ import {
     Menu,
     MenuButton,
     MenuGroup,
-    MenuItemOption,
+    MenuItem,
     MenuList,
     Select,
     Text,
@@ -49,6 +49,7 @@ import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import { BulkOperationMenu } from "./Content/v2/BulkOperations/BulkOperationMenu";
 import ManageExhibitionsModal from "./Content/v2/Exhibition/ManageExhibitionsModal";
 import { SecondaryEditor } from "./Content/v2/Item/SecondaryEditor";
 import ManageTagsModal from "./Content/v2/ManageTagsModal";
@@ -752,7 +753,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                 </MenuButton>
                             </Tooltip>
                             <MenuList overflow="auto" maxH="30vh">
-                                <MenuItemOption
+                                <MenuItem
                                     key="all-items"
                                     onClick={() => {
                                         if (allItems?.content_Item) {
@@ -762,11 +763,11 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                     }}
                                 >
                                     All items
-                                </MenuItemOption>
+                                </MenuItem>
                                 <MenuGroup title="Items with tag">
                                     {allTags?.collection_Tag
                                         ? R.sortBy((x) => x.name, allTags.collection_Tag).map((tag) => (
-                                              <MenuItemOption
+                                              <MenuItem
                                                   key={tag.id}
                                                   onClick={() => {
                                                       if (allItems?.content_Item) {
@@ -784,7 +785,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                                   }}
                                               >
                                                   {tag.name}
-                                              </MenuItemOption>
+                                              </MenuItem>
                                           ))
                                         : undefined}
                                 </MenuGroup>
@@ -817,7 +818,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                 Review submissions
                             </MenuButton>
                             <MenuList overflow="auto" maxH="30vh">
-                                <MenuItemOption
+                                <MenuItem
                                     key="all-items"
                                     onClick={() => {
                                         if (allItems?.content_Item) {
@@ -827,11 +828,11 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                     }}
                                 >
                                     All items
-                                </MenuItemOption>
+                                </MenuItem>
                                 <MenuGroup title="Items with tag">
                                     {allTags?.collection_Tag
                                         ? R.sortBy((x) => x.name, allTags.collection_Tag).map((tag) => (
-                                              <MenuItemOption
+                                              <MenuItem
                                                   key={tag.id}
                                                   onClick={() => {
                                                       if (allItems?.content_Item) {
@@ -849,12 +850,30 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                                   }}
                                               >
                                                   {tag.name}
-                                              </MenuItemOption>
+                                              </MenuItem>
                                           ))
                                         : undefined}
                                 </MenuGroup>
                             </MenuList>
                         </Menu>
+                    );
+                },
+            },
+            {
+                render: function RenderBulkOperationMenu({
+                    selectedData,
+                    key,
+                }: {
+                    selectedData: ManageContent_ItemFragment[];
+                    key: string;
+                }) {
+                    return (
+                        <BulkOperationMenu
+                            key={key}
+                            selectedData={selectedData}
+                            allItems={allItems?.content_Item ?? []}
+                            allTags={allTags?.collection_Tag ?? []}
+                        />
                     );
                 },
             },

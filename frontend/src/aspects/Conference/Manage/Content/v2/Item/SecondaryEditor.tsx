@@ -145,7 +145,15 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                         elements: readonly ManageContent_ElementFragment[];
                         uploadableElements: readonly ManageContent_UploadableElementFragment[];
                     }
-                ) => <EditElements itemId={itemId} {...result} />}
+                ) => (
+                    <EditElements
+                        itemId={itemId}
+                        refetchElements={() => {
+                            itemResponse.refetch();
+                        }}
+                        {...result}
+                    />
+                )}
             </ApolloQueryWrapper>
             {itemResponse.data?.content_Item_by_pk ? (
                 <ButtonGroup>

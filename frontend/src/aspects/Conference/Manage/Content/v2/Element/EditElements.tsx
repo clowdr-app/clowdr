@@ -23,7 +23,8 @@ export function EditElements({
     uploadableElements,
     chatId,
     originatingData,
-}: { itemId: string } & ManageContent_ItemSecondaryFragment & {
+    refetchElements,
+}: { itemId: string; refetchElements: () => void } & ManageContent_ItemSecondaryFragment & {
         elements: readonly ManageContent_ElementFragment[];
         uploadableElements: readonly ManageContent_UploadableElementFragment[];
     }): JSX.Element {
@@ -110,6 +111,7 @@ export function EditElements({
                     idx={idx}
                     previousElement={sortedElements[idx - 1]}
                     nextElement={sortedElements[idx + 1]}
+                    refetchElements={refetchElements}
                 />
             ))}
         </Accordion>

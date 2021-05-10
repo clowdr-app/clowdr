@@ -53,6 +53,14 @@ gql`
         }
     }
 
+    fragment UploadableElementPermissionGrantFields on content_UploadableElementPermissionGrant {
+        id
+        permissionSetId
+        groupId
+        entityId
+        conferenceSlug
+    }
+
     fragment UploadableElementFields on content_UploadableElement {
         id
         typeName
@@ -73,6 +81,9 @@ gql`
             id
             title
         }
+        permissionGrants {
+            ...UploadableElementPermissionGrantFields
+        }
     }
 
     mutation CreateElement(
@@ -84,6 +95,7 @@ gql`
         $layoutData: jsonb = null
         $name: String!
         $uploadableElementId: uuid!
+        $grants: [content_ElementPermissionGrant_insert_input!]!
     ) {
         insert_content_Element_one(
             object: {
@@ -95,6 +107,7 @@ gql`
                 layoutData: $layoutData
                 name: $name
                 uploadableId: $uploadableElementId
+                permissionGrants: { data: $grants }
             }
             on_conflict: { constraint: Element_requiredContentId_key, update_columns: data }
         ) {
@@ -360,6 +373,11 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
                     layoutData: null,
                     name: uploadableElement.name,
                     uploadableElementId: uploadableElement.id,
+                    grants: itemByToken.uploadableElement.permissionGrants.map((grant) => ({
+                        conferenceSlug: grant.conferenceSlug,
+                        groupId: grant.groupId,
+                        permissionSetId: grant.permissionSetId,
+                    })),
                 },
             });
 

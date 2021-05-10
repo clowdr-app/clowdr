@@ -14,7 +14,7 @@ import { ContentElement_GetElementDocument } from "../../generated/graphql";
 import { GraphQlService } from "../graphql/graphql.service";
 
 @Injectable()
-export class ContentElementService {
+export class ContentElementDataService {
     private logger: Bunyan;
 
     constructor(@RootLogger() logger: Bunyan, private graphQlService: GraphQlService) {

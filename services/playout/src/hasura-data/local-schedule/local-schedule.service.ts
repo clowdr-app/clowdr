@@ -14,7 +14,7 @@ import {
     ScheduleService_UpdateRtmpInputsDocument,
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
-import { ContentElementService } from "../content/content-element.service";
+import { ContentElementDataService } from "../content/content-element.service";
 import { GraphQlService } from "../graphql/graphql.service";
 
 export interface LocalSchedule {
@@ -38,7 +38,7 @@ export class LocalScheduleService {
     constructor(
         @RootLogger() logger: Bunyan,
         private graphQlService: GraphQlService,
-        private contentElementService: ContentElementService
+        private contentElementService: ContentElementDataService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }

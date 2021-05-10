@@ -175,6 +175,7 @@ export default function SubmitItemPage({
             case Content_ElementType_Enum.PaperUrl:
             case Content_ElementType_Enum.PosterUrl:
             case Content_ElementType_Enum.VideoUrl:
+            case Content_ElementType_Enum.Zoom:
                 return (
                     <UploadUrlForm
                         magicToken={magicToken}
@@ -198,6 +199,8 @@ export default function SubmitItemPage({
                         handleFormSubmitted={formSubmitted}
                     />
                 );
+            default:
+                return <>Unrecognised upload type.</>;
         }
     }, [formSubmitted, magicToken, uploadableElement, uploadAgreement]);
 

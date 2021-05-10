@@ -131,7 +131,7 @@ export interface RowSpecification<T> {
 }
 
 export interface ExtraButton<T> {
-    render: (selectedData: T[]) => JSX.Element;
+    render: (props: { key: string; selectedData: T[] }) => JSX.Element;
 }
 
 export interface Insert<T> {
@@ -867,8 +867,11 @@ function RenderedCRUDTable<T>({
 
     const buttonEls = useMemo(() => {
         const selectedData: T[] = data ? data.filter((x) => selectedKeys.has(row.getKey(x))) : [];
-        return buttons.map((button) => button.render(selectedData));
+        return buttons.map((button, idx) => button.render({ selectedData, key: idx.toString() }));
     }, [buttons, data, row, selectedKeys]);
+
+    const bgColour = useColorModeValue("gray.50", "gray.900");
+    const headerBottomColour = useColorModeValue("gray.500", "gray.400");
 
     return (
         <>
@@ -878,8 +881,18 @@ function RenderedCRUDTable<T>({
             <Center flexDir="column">
                 Filtered to {filteredDataLength} out of {fullDataLength} ({selectedKeys.size} selected)
             </Center>
-            <Table display="block" maxWidth="100%" width="auto" size="sm" variant="striped" overflow="auto">
-                <Thead>
+            <Table
+                bgColor={bgColour}
+                display="block"
+                maxWidth="100%"
+                width="auto"
+                size="sm"
+                variant="striped"
+                overflow="auto"
+                pt={1}
+                colorScheme="gray"
+            >
+                <Thead borderBottom="2px solid" borderBottomColor={headerBottomColour}>
                     <Tr>
                         {selectColumnEl}
                         {editColumnEl}
@@ -1437,12 +1450,11 @@ export default function CRUDTable<T>({
 
     // TODO: Undo stack for handling Ctrl+Z from the window-level onKeyUp
 
-    // TODO: Insert modal (use: insertRecord)
     const cancelDeleteRef = useRef<HTMLButtonElement | null>(null);
     return (
         <>
             {alertEl}
-            <Center w="100%" h="100%" minH="1.4rem" flexWrap="wrap">
+            <Center w="100%" minH="1.5rem" flexWrap="wrap">
                 {insertProps?.ongoing || updateProps?.ongoing || deleteProps?.ongoing ? (
                     <HStack>
                         <div>

@@ -128,7 +128,7 @@ export function AddSponsorContentMenu({
             </LinkButton>
             {!roomId ? (
                 <Box mt={1}>
-                    <CreateRoomButton groupId={itemId} buttonText="Create booth (room)" />
+                    <CreateRoomButton itemId={itemId} buttonText="Create booth (room)" />
                 </Box>
             ) : undefined}
             {menu}

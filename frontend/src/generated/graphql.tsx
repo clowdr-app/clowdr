@@ -8142,8 +8142,14 @@ export type Content_Element = {
   /** An object relationship */
   readonly originatingData?: Maybe<Conference_OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  /** An object relationship */
-  readonly stats?: Maybe<Analytics_ContentElementStats>;
+  /** An array relationship */
+  readonly permissionGrants: ReadonlyArray<Content_ElementPermissionGrant>;
+  /** An aggregated array relationship */
+  readonly permissionGrants_aggregate: Content_ElementPermissionGrant_Aggregate;
+  /** An array relationship */
+  readonly stats: ReadonlyArray<Analytics_ContentElementStats>;
+  /** An aggregated array relationship */
+  readonly stats_aggregate: Analytics_ContentElementStats_Aggregate;
   /** An object relationship */
   readonly type: Content_ElementType;
   readonly typeName: Content_ElementType_Enum;
@@ -8167,6 +8173,46 @@ export type Content_ElementDataArgs = {
 /** columns and relationships of "content.Element" */
 export type Content_ElementLayoutDataArgs = {
   path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementPermissionGrantsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementPermissionGrants_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentElementStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentElementStats_Order_By>>;
+  where?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentElementStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentElementStats_Order_By>>;
+  where?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
 };
 
 
@@ -8351,6 +8397,237 @@ export enum Content_ElementByAccessToken_Select_Column {
   Name = 'name',
   /** column name */
   TypeName = 'typeName'
+}
+
+/** columns and relationships of "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant = {
+  readonly __typename?: 'content_ElementPermissionGrant';
+  /** An object relationship */
+  readonly conference: Conference_Conference;
+  readonly conferenceSlug: Scalars['String'];
+  readonly created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly entity?: Maybe<Content_Element>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly group?: Maybe<Permissions_Group>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly permissionSet: Permissions_Role;
+  readonly permissionSetId: Scalars['uuid'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Aggregate = {
+  readonly __typename?: 'content_ElementPermissionGrant_aggregate';
+  readonly aggregate?: Maybe<Content_ElementPermissionGrant_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Content_ElementPermissionGrant>;
+};
+
+/** aggregate fields of "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Aggregate_Fields = {
+  readonly __typename?: 'content_ElementPermissionGrant_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Content_ElementPermissionGrant_Max_Fields>;
+  readonly min?: Maybe<Content_ElementPermissionGrant_Min_Fields>;
+};
+
+
+/** aggregate fields of "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Content_ElementPermissionGrant_Max_Order_By>;
+  readonly min?: Maybe<Content_ElementPermissionGrant_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Content_ElementPermissionGrant_Insert_Input>;
+  readonly on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "content.ElementPermissionGrant". All fields are combined with a logical 'AND'. */
+export type Content_ElementPermissionGrant_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Content_ElementPermissionGrant_Bool_Exp>>>;
+  readonly _not?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Content_ElementPermissionGrant_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
+  readonly conferenceSlug?: Maybe<String_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly entity?: Maybe<Content_Element_Bool_Exp>;
+  readonly entityId?: Maybe<Uuid_Comparison_Exp>;
+  readonly group?: Maybe<Permissions_Group_Bool_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly permissionSet?: Maybe<Permissions_Role_Bool_Exp>;
+  readonly permissionSetId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "content.ElementPermissionGrant" */
+export enum Content_ElementPermissionGrant_Constraint {
+  /** unique or primary key constraint */
+  ElementPermissionGrantPermissionSetIdGroupIdEntityIdKey = 'ElementPermissionGrant_permissionSetId_groupId_entityId_key',
+  /** unique or primary key constraint */
+  ElementPermissionGrantPkey = 'ElementPermissionGrant_pkey'
+}
+
+/** input type for inserting data into table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Insert_Input = {
+  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entity?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly group?: Maybe<Permissions_Group_Obj_Rel_Insert_Input>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSet?: Maybe<Permissions_Role_Obj_Rel_Insert_Input>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Content_ElementPermissionGrant_Max_Fields = {
+  readonly __typename?: 'content_ElementPermissionGrant_max_fields';
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Max_Order_By = {
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_ElementPermissionGrant_Min_Fields = {
+  readonly __typename?: 'content_ElementPermissionGrant_min_fields';
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Min_Order_By = {
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Mutation_Response = {
+  readonly __typename?: 'content_ElementPermissionGrant_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Content_ElementPermissionGrant>;
+};
+
+/** input type for inserting object relation for remote table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Obj_Rel_Insert_Input = {
+  readonly data: Content_ElementPermissionGrant_Insert_Input;
+  readonly on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
+};
+
+/** on conflict condition type for table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_On_Conflict = {
+  readonly constraint: Content_ElementPermissionGrant_Constraint;
+  readonly update_columns: ReadonlyArray<Content_ElementPermissionGrant_Update_Column>;
+  readonly where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Order_By = {
+  readonly conference?: Maybe<Conference_Conference_Order_By>;
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entity?: Maybe<Content_Element_Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly group?: Maybe<Permissions_Group_Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSet?: Maybe<Permissions_Role_Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "content.ElementPermissionGrant" */
+export enum Content_ElementPermissionGrant_Select_Column {
+  /** column name */
+  ConferenceSlug = 'conferenceSlug',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EntityId = 'entityId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PermissionSetId = 'permissionSetId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Set_Input = {
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "content.ElementPermissionGrant" */
+export enum Content_ElementPermissionGrant_Update_Column {
+  /** column name */
+  ConferenceSlug = 'conferenceSlug',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EntityId = 'entityId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PermissionSetId = 'permissionSetId',
+  /** column name */
+  UpdatedAt = 'updated_at'
 }
 
 /** columns and relationships of "content.ElementType" */
@@ -8614,6 +8891,7 @@ export type Content_Element_Bool_Exp = {
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly permissionGrants?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
   readonly stats?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
   readonly type?: Maybe<Content_ElementType_Bool_Exp>;
   readonly typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
@@ -8664,7 +8942,8 @@ export type Content_Element_Insert_Input = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  readonly stats?: Maybe<Analytics_ContentElementStats_Obj_Rel_Insert_Input>;
+  readonly permissionGrants?: Maybe<Content_ElementPermissionGrant_Arr_Rel_Insert_Input>;
+  readonly stats?: Maybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
   readonly type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
   readonly typeName?: Maybe<Content_ElementType_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -8760,7 +9039,8 @@ export type Content_Element_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
-  readonly stats?: Maybe<Analytics_ContentElementStats_Order_By>;
+  readonly permissionGrants_aggregate?: Maybe<Content_ElementPermissionGrant_Aggregate_Order_By>;
+  readonly stats_aggregate?: Maybe<Analytics_ContentElementStats_Aggregate_Order_By>;
   readonly type?: Maybe<Content_ElementType_Order_By>;
   readonly typeName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -8893,8 +9173,10 @@ export type Content_Item = {
   /** An aggregated array relationship */
   readonly rooms_aggregate: Room_Room_Aggregate;
   readonly shortTitle?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  readonly stats?: Maybe<Analytics_ContentItemStats>;
+  /** An array relationship */
+  readonly stats: ReadonlyArray<Analytics_ContentItemStats>;
+  /** An aggregated array relationship */
+  readonly stats_aggregate: Analytics_ContentItemStats_Aggregate;
   readonly title: Scalars['String'];
   /** An object relationship */
   readonly type: Content_ItemType;
@@ -9024,6 +9306,26 @@ export type Content_ItemRooms_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Room_Room_Order_By>>;
   where?: Maybe<Room_Room_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemStatsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Order_By>>;
+  where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemStats_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Order_By>>;
+  where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
 };
 
 
@@ -10154,7 +10456,7 @@ export type Content_Item_Insert_Input = {
   readonly room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
   readonly rooms?: Maybe<Room_Room_Arr_Rel_Insert_Input>;
   readonly shortTitle?: Maybe<Scalars['String']>;
-  readonly stats?: Maybe<Analytics_ContentItemStats_Obj_Rel_Insert_Input>;
+  readonly stats?: Maybe<Analytics_ContentItemStats_Arr_Rel_Insert_Input>;
   readonly title?: Maybe<Scalars['String']>;
   readonly type?: Maybe<Content_ItemType_Obj_Rel_Insert_Input>;
   readonly typeName?: Maybe<Content_ItemType_Enum>;
@@ -10252,7 +10554,7 @@ export type Content_Item_Order_By = {
   readonly room?: Maybe<Room_Room_Order_By>;
   readonly rooms_aggregate?: Maybe<Room_Room_Aggregate_Order_By>;
   readonly shortTitle?: Maybe<Order_By>;
-  readonly stats?: Maybe<Analytics_ContentItemStats_Order_By>;
+  readonly stats_aggregate?: Maybe<Analytics_ContentItemStats_Aggregate_Order_By>;
   readonly title?: Maybe<Order_By>;
   readonly type?: Maybe<Content_ItemType_Order_By>;
   readonly typeName?: Maybe<Order_By>;
@@ -10332,6 +10634,8 @@ export type Content_UploadableElement = {
   readonly createdAt: Scalars['timestamptz'];
   /** An object relationship */
   readonly element?: Maybe<Content_Element>;
+  /** A computed field, executes function "content.hasBeenUploaded" */
+  readonly hasBeenUploaded?: Maybe<Scalars['Boolean']>;
   readonly id: Scalars['uuid'];
   readonly isHidden: Scalars['Boolean'];
   /** An object relationship */
@@ -10343,6 +10647,10 @@ export type Content_UploadableElement = {
   /** An object relationship */
   readonly originatingData?: Maybe<Conference_OriginatingData>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  readonly permissionGrants: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+  /** An aggregated array relationship */
+  readonly permissionGrants_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
   /** An object relationship */
   readonly type: Content_ElementType;
   readonly typeName: Content_ElementType_Enum;
@@ -10352,6 +10660,26 @@ export type Content_UploadableElement = {
   /** An aggregated array relationship */
   readonly uploaders_aggregate: Content_Uploader_Aggregate;
   readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+
+/** columns and relationships of "content.UploadableElement" */
+export type Content_UploadableElementPermissionGrantsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.UploadableElement" */
+export type Content_UploadableElementPermissionGrants_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
 };
 
 
@@ -10373,6 +10701,237 @@ export type Content_UploadableElementUploaders_AggregateArgs = {
   order_by?: Maybe<ReadonlyArray<Content_Uploader_Order_By>>;
   where?: Maybe<Content_Uploader_Bool_Exp>;
 };
+
+/** columns and relationships of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant';
+  /** An object relationship */
+  readonly conference: Conference_Conference;
+  readonly conferenceSlug: Scalars['String'];
+  readonly created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly entity?: Maybe<Content_UploadableElement>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly group?: Maybe<Permissions_Group>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly permissionSet: Permissions_Role;
+  readonly permissionSetId: Scalars['uuid'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_aggregate';
+  readonly aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+};
+
+/** aggregate fields of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_Fields = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_aggregate_fields';
+  readonly count?: Maybe<Scalars['Int']>;
+  readonly max?: Maybe<Content_UploadableElementPermissionGrant_Max_Fields>;
+  readonly min?: Maybe<Content_UploadableElementPermissionGrant_Min_Fields>;
+};
+
+
+/** aggregate fields of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Content_UploadableElementPermissionGrant_Max_Order_By>;
+  readonly min?: Maybe<Content_UploadableElementPermissionGrant_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input>;
+  readonly on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "content.UploadableElementPermissionGrant". All fields are combined with a logical 'AND'. */
+export type Content_UploadableElementPermissionGrant_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>>>;
+  readonly _not?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>>>;
+  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
+  readonly conferenceSlug?: Maybe<String_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly entity?: Maybe<Content_UploadableElement_Bool_Exp>;
+  readonly entityId?: Maybe<Uuid_Comparison_Exp>;
+  readonly group?: Maybe<Permissions_Group_Bool_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly permissionSet?: Maybe<Permissions_Role_Bool_Exp>;
+  readonly permissionSetId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Constraint {
+  /** unique or primary key constraint */
+  UploadableElementPermissionGrPermissionSetIdGroupIdEntitKey = 'UploadableElementPermissionGr_permissionSetId_groupId_entit_key',
+  /** unique or primary key constraint */
+  UploadableElementPermissionGrantPkey = 'UploadableElementPermissionGrant_pkey'
+}
+
+/** input type for inserting data into table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Insert_Input = {
+  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entity?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly group?: Maybe<Permissions_Group_Obj_Rel_Insert_Input>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSet?: Maybe<Permissions_Role_Obj_Rel_Insert_Input>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Content_UploadableElementPermissionGrant_Max_Fields = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_max_fields';
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Max_Order_By = {
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_UploadableElementPermissionGrant_Min_Fields = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_min_fields';
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Min_Order_By = {
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Mutation_Response = {
+  readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response';
+  /** number of affected rows by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data of the affected rows by the mutation */
+  readonly returning: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+};
+
+/** input type for inserting object relation for remote table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Obj_Rel_Insert_Input = {
+  readonly data: Content_UploadableElementPermissionGrant_Insert_Input;
+  readonly on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
+};
+
+/** on conflict condition type for table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_On_Conflict = {
+  readonly constraint: Content_UploadableElementPermissionGrant_Constraint;
+  readonly update_columns: ReadonlyArray<Content_UploadableElementPermissionGrant_Update_Column>;
+  readonly where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+/** ordering options when selecting data from "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Order_By = {
+  readonly conference?: Maybe<Conference_Conference_Order_By>;
+  readonly conferenceSlug?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly entity?: Maybe<Content_UploadableElement_Order_By>;
+  readonly entityId?: Maybe<Order_By>;
+  readonly group?: Maybe<Permissions_Group_Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly permissionSet?: Maybe<Permissions_Role_Order_By>;
+  readonly permissionSetId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Select_Column {
+  /** column name */
+  ConferenceSlug = 'conferenceSlug',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EntityId = 'entityId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PermissionSetId = 'permissionSetId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Set_Input = {
+  readonly conferenceSlug?: Maybe<Scalars['String']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly entityId?: Maybe<Scalars['uuid']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly permissionSetId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Update_Column {
+  /** column name */
+  ConferenceSlug = 'conferenceSlug',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EntityId = 'entityId',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PermissionSetId = 'permissionSetId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
 
 /** aggregated selection of "content.UploadableElement" */
 export type Content_UploadableElement_Aggregate = {
@@ -10453,6 +11012,7 @@ export type Content_UploadableElement_Bool_Exp = {
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
   readonly type?: Maybe<Content_ElementType_Bool_Exp>;
   readonly typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -10485,6 +11045,7 @@ export type Content_UploadableElement_Insert_Input = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input>;
   readonly type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
   readonly typeName?: Maybe<Content_ElementType_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
@@ -10582,6 +11143,7 @@ export type Content_UploadableElement_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
+  readonly permissionGrants_aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Order_By>;
   readonly type?: Maybe<Content_ElementType_Order_By>;
   readonly typeName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
@@ -13527,6 +14089,10 @@ export type Mutation_Root = {
   readonly delete_conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
   /** delete data from the table: "content.Element" */
   readonly delete_content_Element?: Maybe<Content_Element_Mutation_Response>;
+  /** delete data from the table: "content.ElementPermissionGrant" */
+  readonly delete_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
+  /** delete single row from the table: "content.ElementPermissionGrant" */
+  readonly delete_content_ElementPermissionGrant_by_pk?: Maybe<Content_ElementPermissionGrant>;
   /** delete data from the table: "content.ElementType" */
   readonly delete_content_ElementType?: Maybe<Content_ElementType_Mutation_Response>;
   /** delete single row from the table: "content.ElementType" */
@@ -13555,6 +14121,10 @@ export type Mutation_Root = {
   readonly delete_content_Item_by_pk?: Maybe<Content_Item>;
   /** delete data from the table: "content.UploadableElement" */
   readonly delete_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+  /** delete data from the table: "content.UploadableElementPermissionGrant" */
+  readonly delete_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+  /** delete single row from the table: "content.UploadableElementPermissionGrant" */
+  readonly delete_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
   /** delete single row from the table: "content.UploadableElement" */
   readonly delete_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
   /** delete data from the table: "content.Uploader" */
@@ -13861,6 +14431,10 @@ export type Mutation_Root = {
   readonly insert_conference_PrepareJob_one?: Maybe<Conference_PrepareJob>;
   /** insert data into the table: "content.Element" */
   readonly insert_content_Element?: Maybe<Content_Element_Mutation_Response>;
+  /** insert data into the table: "content.ElementPermissionGrant" */
+  readonly insert_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
+  /** insert a single row into the table: "content.ElementPermissionGrant" */
+  readonly insert_content_ElementPermissionGrant_one?: Maybe<Content_ElementPermissionGrant>;
   /** insert data into the table: "content.ElementType" */
   readonly insert_content_ElementType?: Maybe<Content_ElementType_Mutation_Response>;
   /** insert a single row into the table: "content.ElementType" */
@@ -13889,6 +14463,10 @@ export type Mutation_Root = {
   readonly insert_content_Item_one?: Maybe<Content_Item>;
   /** insert data into the table: "content.UploadableElement" */
   readonly insert_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+  /** insert data into the table: "content.UploadableElementPermissionGrant" */
+  readonly insert_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+  /** insert a single row into the table: "content.UploadableElementPermissionGrant" */
+  readonly insert_content_UploadableElementPermissionGrant_one?: Maybe<Content_UploadableElementPermissionGrant>;
   /** insert a single row into the table: "content.UploadableElement" */
   readonly insert_content_UploadableElement_one?: Maybe<Content_UploadableElement>;
   /** insert data into the table: "content.Uploader" */
@@ -14221,6 +14799,10 @@ export type Mutation_Root = {
   readonly update_conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
   /** update data of the table: "content.Element" */
   readonly update_content_Element?: Maybe<Content_Element_Mutation_Response>;
+  /** update data of the table: "content.ElementPermissionGrant" */
+  readonly update_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
+  /** update single row of the table: "content.ElementPermissionGrant" */
+  readonly update_content_ElementPermissionGrant_by_pk?: Maybe<Content_ElementPermissionGrant>;
   /** update data of the table: "content.ElementType" */
   readonly update_content_ElementType?: Maybe<Content_ElementType_Mutation_Response>;
   /** update single row of the table: "content.ElementType" */
@@ -14249,6 +14831,10 @@ export type Mutation_Root = {
   readonly update_content_Item_by_pk?: Maybe<Content_Item>;
   /** update data of the table: "content.UploadableElement" */
   readonly update_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+  /** update data of the table: "content.UploadableElementPermissionGrant" */
+  readonly update_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+  /** update single row of the table: "content.UploadableElementPermissionGrant" */
+  readonly update_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
   /** update single row of the table: "content.UploadableElement" */
   readonly update_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
   /** update data of the table: "content.Uploader" */
@@ -14778,6 +15364,18 @@ export type Mutation_RootDelete_Content_ElementArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Content_ElementPermissionGrantArgs = {
+  where: Content_ElementPermissionGrant_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Content_ElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Content_ElementTypeArgs = {
   where: Content_ElementType_Bool_Exp;
 };
@@ -14858,6 +15456,18 @@ export type Mutation_RootDelete_Content_Item_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Content_UploadableElementArgs = {
   where: Content_UploadableElement_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Content_UploadableElementPermissionGrantArgs = {
+  where: Content_UploadableElementPermissionGrant_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Content_UploadableElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -15832,6 +16442,20 @@ export type Mutation_RootInsert_Content_ElementArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Content_ElementPermissionGrantArgs = {
+  objects: ReadonlyArray<Content_ElementPermissionGrant_Insert_Input>;
+  on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ElementPermissionGrant_OneArgs = {
+  object: Content_ElementPermissionGrant_Insert_Input;
+  on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Content_ElementTypeArgs = {
   objects: ReadonlyArray<Content_ElementType_Insert_Input>;
   on_conflict?: Maybe<Content_ElementType_On_Conflict>;
@@ -15926,6 +16550,20 @@ export type Mutation_RootInsert_Content_Item_OneArgs = {
 export type Mutation_RootInsert_Content_UploadableElementArgs = {
   objects: ReadonlyArray<Content_UploadableElement_Insert_Input>;
   on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_UploadableElementPermissionGrantArgs = {
+  objects: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input>;
+  on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_UploadableElementPermissionGrant_OneArgs = {
+  object: Content_UploadableElementPermissionGrant_Insert_Input;
+  on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
 };
 
 
@@ -17151,6 +17789,20 @@ export type Mutation_RootUpdate_Content_ElementArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Content_ElementPermissionGrantArgs = {
+  _set?: Maybe<Content_ElementPermissionGrant_Set_Input>;
+  where: Content_ElementPermissionGrant_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_ElementPermissionGrant_By_PkArgs = {
+  _set?: Maybe<Content_ElementPermissionGrant_Set_Input>;
+  pk_columns: Content_ElementPermissionGrant_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Content_ElementTypeArgs = {
   _set?: Maybe<Content_ElementType_Set_Input>;
   where: Content_ElementType_Bool_Exp;
@@ -17265,6 +17917,20 @@ export type Mutation_RootUpdate_Content_UploadableElementArgs = {
   _inc?: Maybe<Content_UploadableElement_Inc_Input>;
   _set?: Maybe<Content_UploadableElement_Set_Input>;
   where: Content_UploadableElement_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_UploadableElementPermissionGrantArgs = {
+  _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
+  where: Content_UploadableElementPermissionGrant_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_UploadableElementPermissionGrant_By_PkArgs = {
+  _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
+  pk_columns: Content_UploadableElementPermissionGrant_Pk_Columns_Input;
 };
 
 
@@ -19576,6 +20242,12 @@ export type Query_Root = {
   readonly content_ElementByAccessToken: ReadonlyArray<Content_ElementByAccessToken>;
   /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
   readonly content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
+  /** fetch data from the table: "content.ElementPermissionGrant" */
+  readonly content_ElementPermissionGrant: ReadonlyArray<Content_ElementPermissionGrant>;
+  /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
+  readonly content_ElementPermissionGrant_aggregate: Content_ElementPermissionGrant_Aggregate;
+  /** fetch data from the table: "content.ElementPermissionGrant" using primary key columns */
+  readonly content_ElementPermissionGrant_by_pk?: Maybe<Content_ElementPermissionGrant>;
   /** fetch data from the table: "content.ElementType" */
   readonly content_ElementType: ReadonlyArray<Content_ElementType>;
   /** fetch aggregated fields from the table: "content.ElementType" */
@@ -19618,6 +20290,12 @@ export type Query_Root = {
   readonly content_Item_by_pk?: Maybe<Content_Item>;
   /** fetch data from the table: "content.UploadableElement" */
   readonly content_UploadableElement: ReadonlyArray<Content_UploadableElement>;
+  /** fetch data from the table: "content.UploadableElementPermissionGrant" */
+  readonly content_UploadableElementPermissionGrant: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+  /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
+  readonly content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
+  /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
+  readonly content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.UploadableElement" */
   readonly content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
   /** fetch data from the table: "content.UploadableElement" using primary key columns */
@@ -20659,6 +21337,32 @@ export type Query_RootContent_ElementByAccessToken_AggregateArgs = {
 
 
 /** query root */
+export type Query_RootContent_ElementPermissionGrantArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContent_ElementPermissionGrant_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContent_ElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** query root */
 export type Query_RootContent_ElementTypeArgs = {
   distinct_on?: Maybe<ReadonlyArray<Content_ElementType_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -20837,6 +21541,32 @@ export type Query_RootContent_UploadableElementArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
   where?: Maybe<Content_UploadableElement_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContent_UploadableElementPermissionGrantArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** query root */
+export type Query_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -28704,6 +29434,12 @@ export type Subscription_Root = {
   readonly content_ElementByAccessToken: ReadonlyArray<Content_ElementByAccessToken>;
   /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
   readonly content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
+  /** fetch data from the table: "content.ElementPermissionGrant" */
+  readonly content_ElementPermissionGrant: ReadonlyArray<Content_ElementPermissionGrant>;
+  /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
+  readonly content_ElementPermissionGrant_aggregate: Content_ElementPermissionGrant_Aggregate;
+  /** fetch data from the table: "content.ElementPermissionGrant" using primary key columns */
+  readonly content_ElementPermissionGrant_by_pk?: Maybe<Content_ElementPermissionGrant>;
   /** fetch data from the table: "content.ElementType" */
   readonly content_ElementType: ReadonlyArray<Content_ElementType>;
   /** fetch aggregated fields from the table: "content.ElementType" */
@@ -28746,6 +29482,12 @@ export type Subscription_Root = {
   readonly content_Item_by_pk?: Maybe<Content_Item>;
   /** fetch data from the table: "content.UploadableElement" */
   readonly content_UploadableElement: ReadonlyArray<Content_UploadableElement>;
+  /** fetch data from the table: "content.UploadableElementPermissionGrant" */
+  readonly content_UploadableElementPermissionGrant: ReadonlyArray<Content_UploadableElementPermissionGrant>;
+  /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
+  readonly content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
+  /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
+  readonly content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.UploadableElement" */
   readonly content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
   /** fetch data from the table: "content.UploadableElement" using primary key columns */
@@ -29787,6 +30529,32 @@ export type Subscription_RootContent_ElementByAccessToken_AggregateArgs = {
 
 
 /** subscription root */
+export type Subscription_RootContent_ElementPermissionGrantArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContent_ElementPermissionGrant_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContent_ElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** subscription root */
 export type Subscription_RootContent_ElementTypeArgs = {
   distinct_on?: Maybe<ReadonlyArray<Content_ElementType_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -29965,6 +30733,32 @@ export type Subscription_RootContent_UploadableElementArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
   where?: Maybe<Content_UploadableElement_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContent_UploadableElementPermissionGrantArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
+  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** subscription root */
+export type Subscription_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -35602,6 +36396,344 @@ export type UpdateExhibitionMutation = { readonly __typename?: 'mutation_root', 
     & ExhibitionInfoFragment
   )> };
 
+export type SEoUm_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
+
+export type SEoUm_UploadableFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly hasBeenUploaded?: Maybe<boolean>, readonly itemId: any, readonly itemTitle?: Maybe<string>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }>, readonly element?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any }> };
+
+export type SEoUm_InfosQueryVariables = Exact<{
+  itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type SEoUm_InfosQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<(
+    { readonly __typename?: 'content_Element' }
+    & SEoUm_ElementFragment
+  )>, readonly content_UploadableElement: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & SEoUm_UploadableFragment
+  )> };
+
+export type ManageContent_DeleteElementMutationVariables = Exact<{
+  elementId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteElementMutation = { readonly __typename?: 'mutation_root', readonly delete_content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any }> };
+
+export type ManageContent_UpdateElementMutationVariables = Exact<{
+  elementId: Scalars['uuid'];
+  element: Content_Element_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateElementMutation = { readonly __typename?: 'mutation_root', readonly update_content_Element_by_pk?: Maybe<(
+    { readonly __typename?: 'content_Element' }
+    & ManageContent_ElementFragment
+  )> };
+
+export type ManageContent_DeleteUploadableElementMutationVariables = Exact<{
+  uploadableElementId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly delete_content_UploadableElement_by_pk?: Maybe<{ readonly __typename?: 'content_UploadableElement', readonly id: any }> };
+
+export type ManageContent_UpdateUploadableElementMutationVariables = Exact<{
+  uploadableElementId: Scalars['uuid'];
+  uploadableElement: Content_UploadableElement_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly update_content_UploadableElement_by_pk?: Maybe<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & ManageContent_UploadableElementFragment
+  )> };
+
+export type ManageContent_UploaderFragment = { readonly __typename?: 'content_Uploader', readonly id: any, readonly uploadableElementId: any, readonly email: string, readonly name: string, readonly emailsSentCount: number, readonly conferenceId: any };
+
+export type ManageContent_SelectUploadersQueryVariables = Exact<{
+  uploadableElementId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectUploadersQuery = { readonly __typename?: 'query_root', readonly content_Uploader: ReadonlyArray<(
+    { readonly __typename?: 'content_Uploader' }
+    & ManageContent_UploaderFragment
+  )> };
+
+export type ManageContent_InsertUploadersMutationVariables = Exact<{
+  objects: ReadonlyArray<Content_Uploader_Insert_Input> | Content_Uploader_Insert_Input;
+}>;
+
+
+export type ManageContent_InsertUploadersMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Uploader?: Maybe<{ readonly __typename?: 'content_Uploader_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_Uploader' }
+      & ManageContent_UploaderFragment
+    )> }> };
+
+export type ManageContent_UpdateUploaderMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  update: Content_Uploader_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateUploaderMutation = { readonly __typename?: 'mutation_root', readonly update_content_Uploader_by_pk?: Maybe<(
+    { readonly __typename?: 'content_Uploader' }
+    & ManageContent_UploaderFragment
+  )> };
+
+export type ManageContent_DeleteUploadersMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteUploadersMutation = { readonly __typename?: 'mutation_root', readonly delete_content_Uploader?: Maybe<{ readonly __typename?: 'content_Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> }> };
+
+export type ManageContent_SelectItemExhibitionsQueryVariables = Exact<{
+  exhibitionId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectItemExhibitionsQuery = { readonly __typename?: 'query_root', readonly content_ItemExhibition: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemExhibition' }
+    & ManageContent_ItemExhibitionFragment
+  )> };
+
+export type ManageContent_InsertItemExhibitionMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  exhibitionId: Scalars['uuid'];
+  itemId: Scalars['uuid'];
+  priority: Scalars['Int'];
+}>;
+
+
+export type ManageContent_InsertItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemExhibition_one?: Maybe<(
+    { readonly __typename?: 'content_ItemExhibition' }
+    & ManageContent_ItemExhibitionFragment
+  )> };
+
+export type ManageContent_UpdateItemExhibitionMutationVariables = Exact<{
+  itemExhibitionId: Scalars['uuid'];
+  priority: Scalars['Int'];
+}>;
+
+
+export type ManageContent_UpdateItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemExhibition_by_pk?: Maybe<(
+    { readonly __typename?: 'content_ItemExhibition' }
+    & ManageContent_ItemExhibitionFragment
+  )> };
+
+export type ManageContent_DeleteItemExhibitionMutationVariables = Exact<{
+  itemExhibitionId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ItemExhibition_by_pk?: Maybe<{ readonly __typename?: 'content_ItemExhibition', readonly id: any }> };
+
+export type ManageContent_InsertExhibitionMutationVariables = Exact<{
+  exhibition: Collection_Exhibition_Insert_Input;
+}>;
+
+
+export type ManageContent_InsertExhibitionMutation = { readonly __typename?: 'mutation_root', readonly insert_collection_Exhibition_one?: Maybe<(
+    { readonly __typename?: 'collection_Exhibition' }
+    & ManageContent_ExhibitionFragment
+  )> };
+
+export type ManageContent_UpdateExhibitionMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  update: Collection_Exhibition_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateExhibitionMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Exhibition_by_pk?: Maybe<(
+    { readonly __typename?: 'collection_Exhibition' }
+    & ManageContent_ExhibitionFragment
+  )> };
+
+export type ManageContent_DeleteExhibitionsMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteExhibitionsMutation = { readonly __typename?: 'mutation_root', readonly delete_collection_Exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any }> }> };
+
+export type AddContentMenu_CreateElementMutationVariables = Exact<{
+  object: Content_Element_Insert_Input;
+}>;
+
+
+export type AddContentMenu_CreateElementMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element_one?: Maybe<(
+    { readonly __typename?: 'content_Element' }
+    & ManageContent_ElementFragment
+  )> };
+
+export type AddContentMenu_CreateUploadableElementMutationVariables = Exact<{
+  object: Content_UploadableElement_Insert_Input;
+}>;
+
+
+export type AddContentMenu_CreateUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly insert_content_UploadableElement_one?: Maybe<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & ManageContent_UploadableElementFragment
+  )> };
+
+export type ManageContent_SelectProgramPeopleQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectProgramPeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<(
+    { readonly __typename?: 'collection_ProgramPerson' }
+    & ManageContent_ProgramPersonFragment
+  )> };
+
+export type ManageContent_InsertItemProgramPersonMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  personId: Scalars['uuid'];
+  roleName: Scalars['String'];
+  priority: Scalars['Int'];
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_InsertItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemProgramPerson_one?: Maybe<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ManageContent_ItemProgramPersonFragment
+  )> };
+
+export type ManageContent_UpdateItemProgramPersonMutationVariables = Exact<{
+  itemPersonId: Scalars['uuid'];
+  priority: Scalars['Int'];
+  roleName: Scalars['String'];
+}>;
+
+
+export type ManageContent_UpdateItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemProgramPerson_by_pk?: Maybe<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ManageContent_ItemProgramPersonFragment
+  )> };
+
+export type ManageContent_DeleteItemProgramPersonMutationVariables = Exact<{
+  itemPersonId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ItemProgramPerson_by_pk?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any }> };
+
+export type ManageContent_InsertTagMutationVariables = Exact<{
+  tag: Collection_Tag_Insert_Input;
+}>;
+
+
+export type ManageContent_InsertTagMutation = { readonly __typename?: 'mutation_root', readonly insert_collection_Tag_one?: Maybe<(
+    { readonly __typename?: 'collection_Tag' }
+    & ManageContent_TagFragment
+  )> };
+
+export type ManageContent_UpdateTagMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  update: Collection_Tag_Set_Input;
+}>;
+
+
+export type ManageContent_UpdateTagMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Tag_by_pk?: Maybe<(
+    { readonly __typename?: 'collection_Tag' }
+    & ManageContent_TagFragment
+  )> };
+
+export type ManageContent_DeleteTagsMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteTagsMutation = { readonly __typename?: 'mutation_root', readonly delete_collection_Tag?: Maybe<{ readonly __typename?: 'collection_Tag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any }> }> };
+
+export type ElementSecurity_ElementPgFragment = { readonly __typename?: 'content_ElementPermissionGrant', readonly id: any, readonly permissionSetId: any, readonly conferenceSlug: string, readonly groupId?: Maybe<any>, readonly entityId?: Maybe<any> };
+
+export type ElementSecurity_UploadablePgFragment = { readonly __typename?: 'content_UploadableElementPermissionGrant', readonly id: any, readonly permissionSetId: any, readonly conferenceSlug: string, readonly groupId?: Maybe<any>, readonly entityId?: Maybe<any>, readonly entity?: Maybe<{ readonly __typename?: 'content_UploadableElement', readonly id: any, readonly element?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly permissionGrants: ReadonlyArray<(
+        { readonly __typename?: 'content_ElementPermissionGrant' }
+        & ElementSecurity_ElementPgFragment
+      )> }> }> };
+
+export type ElementSecurity_PermissionSetFragment = { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string };
+
+export type ElementSecurity_GroupFragment = { readonly __typename?: 'permissions_Group', readonly id: any, readonly name: string, readonly enabled: boolean, readonly includeUnauthenticated: boolean };
+
+export type ElementSecurity_SelectGrantsQueryVariables = Exact<{
+  elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  uploadableIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ElementSecurity_SelectGrantsQuery = { readonly __typename?: 'query_root', readonly content_ElementPermissionGrant: ReadonlyArray<(
+    { readonly __typename?: 'content_ElementPermissionGrant' }
+    & ElementSecurity_ElementPgFragment
+  )>, readonly content_UploadableElementPermissionGrant: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElementPermissionGrant' }
+    & ElementSecurity_UploadablePgFragment
+  )>, readonly permissions_Role: ReadonlyArray<(
+    { readonly __typename?: 'permissions_Role' }
+    & ElementSecurity_PermissionSetFragment
+  )>, readonly permissions_Group: ReadonlyArray<(
+    { readonly __typename?: 'permissions_Group' }
+    & ElementSecurity_GroupFragment
+  )> };
+
+export type ElementSecurity_InsertGrantsMutationVariables = Exact<{
+  elementGrants: ReadonlyArray<Content_ElementPermissionGrant_Insert_Input> | Content_ElementPermissionGrant_Insert_Input;
+  uploadableGrants: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input> | Content_UploadableElementPermissionGrant_Insert_Input;
+}>;
+
+
+export type ElementSecurity_InsertGrantsMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_ElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_ElementPermissionGrant' }
+      & ElementSecurity_ElementPgFragment
+    )> }>, readonly insert_content_UploadableElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_UploadableElementPermissionGrant' }
+      & ElementSecurity_UploadablePgFragment
+    )> }> };
+
+export type ElementSecurity_DeleteGrantsMutationVariables = Exact<{
+  elementGrantIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  uploadableGrantIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ElementSecurity_DeleteGrantsMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_ElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ElementPermissionGrant', readonly id: any }> }>, readonly delete_content_UploadableElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_UploadableElementPermissionGrant', readonly id: any }> }> };
+
+export type SubmissionRequestsModalDataQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type SubmissionRequestsModalDataQuery = { readonly __typename?: 'query_root', readonly conference_Configuration: ReadonlyArray<(
+    { readonly __typename?: 'conference_Configuration' }
+    & ConfigureEmailTemplates_ConferenceConfigurationFragment
+  )>, readonly content_UploadableElement: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & SubmissionRequestsModal_UploadableElementFragment
+  )> };
+
+export type SubmissionRequestsModal_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly hasBeenUploaded?: Maybe<boolean>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string }> };
+
+export type SubmissionsReviewModalDataQueryVariables = Exact<{
+  itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type SubmissionsReviewModalDataQuery = { readonly __typename?: 'query_root', readonly content_UploadableElement: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & SubmissionsReviewModal_UploadableElementFragment
+  )> };
+
+export type SubmissionsReviewModal_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly hasBeenUploaded?: Maybe<boolean>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string, readonly emailsSentCount: number }>, readonly element?: Maybe<(
+    { readonly __typename?: 'content_Element' }
+    & ElementDataFragment
+  )> };
+
 export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -35758,6 +36890,134 @@ export type ImportRegistrantsMutationVariables = Exact<{
 
 
 export type ImportRegistrantsMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant_mutation_response', readonly affected_rows: number }>, readonly insert_registrant_Invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation_mutation_response', readonly affected_rows: number }>, readonly insert_permissions_GroupRegistrant?: Maybe<{ readonly __typename?: 'permissions_GroupRegistrant_mutation_response', readonly affected_rows: number }> };
+
+export type ManageContent_ItemTagFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any };
+
+export type ManageContent_ItemExhibitionFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly conferenceId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
+
+export type ManageContent_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemTag' }
+    & ManageContent_ItemTagFragment
+  )> };
+
+export type ManageContent_OriginatingDataFragment = { readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> };
+
+export type ManageContent_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string };
+
+export type ManageContent_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
+
+export type ManageContent_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly conferenceId: any, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly hasBeenUploaded?: Maybe<boolean>, readonly element?: Maybe<(
+    { readonly __typename?: 'content_Element' }
+    & ManageContent_ElementFragment
+  )> };
+
+export type ManageContent_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> };
+
+export type ManageContent_ItemProgramPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
+    { readonly __typename?: 'collection_ProgramPerson' }
+    & ManageContent_ProgramPersonFragment
+  ) };
+
+export type ManageContent_ItemSecondaryFragment = { readonly __typename?: 'content_Item', readonly chatId?: Maybe<any>, readonly rooms: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & ManageContent_RoomFragment
+  )>, readonly originatingData?: Maybe<(
+    { readonly __typename?: 'conference_OriginatingData' }
+    & ManageContent_OriginatingDataFragment
+  )> };
+
+export type ManageContent_SelectAllItemsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectAllItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<(
+    { readonly __typename?: 'content_Item' }
+    & ManageContent_ItemFragment
+  )> };
+
+export type ManageContent_SelectItemQueryVariables = Exact<{
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<(
+    { readonly __typename?: 'content_Item' }
+    & ManageContent_ItemSecondaryFragment
+  )>, readonly content_Element: ReadonlyArray<(
+    { readonly __typename?: 'content_Element' }
+    & ManageContent_ElementFragment
+  )>, readonly content_UploadableElement: ReadonlyArray<(
+    { readonly __typename?: 'content_UploadableElement' }
+    & ManageContent_UploadableElementFragment
+  )> };
+
+export type ManageContent_SelectItemPeopleQueryVariables = Exact<{
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectItemPeopleQuery = { readonly __typename?: 'query_root', readonly content_ItemProgramPerson: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ManageContent_ItemProgramPersonFragment
+  )> };
+
+export type ManageContent_InsertItemMutationVariables = Exact<{
+  item: Content_Item_Insert_Input;
+}>;
+
+
+export type ManageContent_InsertItemMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Item_one?: Maybe<(
+    { readonly __typename?: 'content_Item' }
+    & ManageContent_ItemFragment
+  )> };
+
+export type ManageContent_UpdateItemMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  item: Content_Item_Set_Input;
+  tags: ReadonlyArray<Content_ItemTag_Insert_Input> | Content_ItemTag_Insert_Input;
+  tagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ManageContent_UpdateItemMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_ItemTag' }
+      & ManageContent_ItemTagFragment
+    )> }>, readonly delete_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any }> }>, readonly update_content_Item_by_pk?: Maybe<(
+    { readonly __typename?: 'content_Item' }
+    & ManageContent_ItemFragment
+  )> };
+
+export type ManageContent_DeleteItemsMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ManageContent_DeleteItemsMutation = { readonly __typename?: 'mutation_root', readonly delete_content_Item?: Maybe<{ readonly __typename?: 'content_Item_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any }> }> };
+
+export type ManageContent_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly name: string, readonly colour: string, readonly priority: number };
+
+export type ManageContent_SelectAllTagsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectAllTagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<(
+    { readonly __typename?: 'collection_Tag' }
+    & ManageContent_TagFragment
+  )> };
+
+export type ManageContent_ExhibitionFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly name: string, readonly colour: string, readonly priority: number };
+
+export type ManageContent_SelectAllExhibitionsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageContent_SelectAllExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<(
+    { readonly __typename?: 'collection_Exhibition' }
+    & ManageContent_ExhibitionFragment
+  )> };
 
 export type ManageGroups_GroupFragment = { readonly __typename?: 'permissions_Group', readonly conferenceId: any, readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any }> };
 
@@ -37578,6 +38838,121 @@ export const ExhibitionInfoFragmentDoc = gql`
   priority
 }
     `;
+export const SEoUm_ElementFragmentDoc = gql`
+    fragment SEoUM_Element on content_Element {
+  id
+  name
+  typeName
+  itemId
+  item {
+    id
+    title
+  }
+}
+    `;
+export const SEoUm_UploadableFragmentDoc = gql`
+    fragment SEoUM_Uploadable on content_UploadableElement {
+  id
+  name
+  typeName
+  hasBeenUploaded
+  uploaders {
+    id
+  }
+  element {
+    id
+  }
+  itemId
+  itemTitle
+}
+    `;
+export const ManageContent_UploaderFragmentDoc = gql`
+    fragment ManageContent_Uploader on content_Uploader {
+  id
+  uploadableElementId
+  email
+  name
+  emailsSentCount
+  conferenceId
+}
+    `;
+export const ElementSecurity_ElementPgFragmentDoc = gql`
+    fragment ElementSecurity_ElementPG on content_ElementPermissionGrant {
+  id
+  permissionSetId
+  conferenceSlug
+  groupId
+  entityId
+}
+    `;
+export const ElementSecurity_UploadablePgFragmentDoc = gql`
+    fragment ElementSecurity_UploadablePG on content_UploadableElementPermissionGrant {
+  id
+  permissionSetId
+  conferenceSlug
+  groupId
+  entityId
+  entity {
+    id
+    element {
+      id
+      permissionGrants {
+        ...ElementSecurity_ElementPG
+      }
+    }
+  }
+}
+    ${ElementSecurity_ElementPgFragmentDoc}`;
+export const ElementSecurity_PermissionSetFragmentDoc = gql`
+    fragment ElementSecurity_PermissionSet on permissions_Role {
+  id
+  name
+}
+    `;
+export const ElementSecurity_GroupFragmentDoc = gql`
+    fragment ElementSecurity_Group on permissions_Group {
+  id
+  name
+  enabled
+  includeUnauthenticated
+}
+    `;
+export const SubmissionRequestsModal_UploadableElementFragmentDoc = gql`
+    fragment SubmissionRequestsModal_UploadableElement on content_UploadableElement {
+  id
+  itemId
+  typeName
+  name
+  uploadsRemaining
+  itemTitle
+  hasBeenUploaded
+  uploaders {
+    id
+    email
+    name
+  }
+}
+    `;
+export const SubmissionsReviewModal_UploadableElementFragmentDoc = gql`
+    fragment SubmissionsReviewModal_UploadableElement on content_UploadableElement {
+  id
+  itemId
+  typeName
+  name
+  uploadsRemaining
+  itemTitle
+  hasBeenUploaded
+  uploaders {
+    id
+    email
+    name
+    emailsSentCount
+  }
+  element {
+    ...ElementData
+  }
+}
+    ${ElementDataFragmentDoc}`;
 export const ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc = gql`
     fragment ConfigureEmailTemplates_ConferenceConfiguration on conference_Configuration {
   id
@@ -37627,6 +39002,128 @@ export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
       title
     }
   }
+}
+    `;
+export const ManageContent_ItemExhibitionFragmentDoc = gql`
+    fragment ManageContent_ItemExhibition on content_ItemExhibition {
+  id
+  conferenceId
+  item {
+    id
+    title
+  }
+  exhibitionId
+  priority
+  layout
+}
+    `;
+export const ManageContent_ItemTagFragmentDoc = gql`
+    fragment ManageContent_ItemTag on content_ItemTag {
+  id
+  itemId
+  tagId
+}
+    `;
+export const ManageContent_ItemFragmentDoc = gql`
+    fragment ManageContent_Item on content_Item {
+  id
+  conferenceId
+  title
+  shortTitle
+  typeName
+  itemTags {
+    ...ManageContent_ItemTag
+  }
+}
+    ${ManageContent_ItemTagFragmentDoc}`;
+export const ManageContent_ElementFragmentDoc = gql`
+    fragment ManageContent_Element on content_Element {
+  id
+  name
+  typeName
+  data
+  layoutData
+  isHidden
+  updatedAt
+}
+    `;
+export const ManageContent_UploadableElementFragmentDoc = gql`
+    fragment ManageContent_UploadableElement on content_UploadableElement {
+  id
+  itemId
+  typeName
+  name
+  conferenceId
+  uploadsRemaining
+  isHidden
+  hasBeenUploaded
+  element {
+    ...ManageContent_Element
+  }
+}
+    ${ManageContent_ElementFragmentDoc}`;
+export const ManageContent_ProgramPersonFragmentDoc = gql`
+    fragment ManageContent_ProgramPerson on collection_ProgramPerson {
+  id
+  name
+  affiliation
+  email
+  registrantId
+}
+    `;
+export const ManageContent_ItemProgramPersonFragmentDoc = gql`
+    fragment ManageContent_ItemProgramPerson on content_ItemProgramPerson {
+  id
+  itemId
+  priority
+  roleName
+  person {
+    ...ManageContent_ProgramPerson
+  }
+}
+    ${ManageContent_ProgramPersonFragmentDoc}`;
+export const ManageContent_RoomFragmentDoc = gql`
+    fragment ManageContent_Room on room_Room {
+  id
+  name
+}
+    `;
+export const ManageContent_OriginatingDataFragmentDoc = gql`
+    fragment ManageContent_OriginatingData on conference_OriginatingData {
+  id
+  conferenceId
+  sourceId
+  data
+}
+    `;
+export const ManageContent_ItemSecondaryFragmentDoc = gql`
+    fragment ManageContent_ItemSecondary on content_Item {
+  rooms {
+    ...ManageContent_Room
+  }
+  chatId
+  originatingData {
+    ...ManageContent_OriginatingData
+  }
+}
+    ${ManageContent_RoomFragmentDoc}
+${ManageContent_OriginatingDataFragmentDoc}`;
+export const ManageContent_TagFragmentDoc = gql`
+    fragment ManageContent_Tag on collection_Tag {
+  id
+  conferenceId
+  name
+  colour
+  priority
+}
+    `;
+export const ManageContent_ExhibitionFragmentDoc = gql`
+    fragment ManageContent_Exhibition on collection_Exhibition {
+  id
+  conferenceId
+  name
+  colour
+  priority
 }
     `;
 export const ManageGroups_GroupFragmentDoc = gql`
@@ -41244,6 +42741,1100 @@ export function useUpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateExhibitionMutationHookResult = ReturnType<typeof useUpdateExhibitionMutation>;
 export type UpdateExhibitionMutationResult = Apollo.MutationResult<UpdateExhibitionMutation>;
 export type UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>;
+export const SEoUm_InfosDocument = gql`
+    query SEoUM_Infos($itemIds: [uuid!]!) {
+  content_Element(
+    where: {itemId: {_in: $itemIds}, uploadableId: {_is_null: true}}
+  ) {
+    ...SEoUM_Element
+  }
+  content_UploadableElement(where: {itemId: {_in: $itemIds}}) {
+    ...SEoUM_Uploadable
+  }
+}
+    ${SEoUm_ElementFragmentDoc}
+${SEoUm_UploadableFragmentDoc}`;
+
+/**
+ * __useSEoUm_InfosQuery__
+ *
+ * To run a query within a React component, call `useSEoUm_InfosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSEoUm_InfosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSEoUm_InfosQuery({
+ *   variables: {
+ *      itemIds: // value for 'itemIds'
+ *   },
+ * });
+ */
+export function useSEoUm_InfosQuery(baseOptions: Apollo.QueryHookOptions<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>(SEoUm_InfosDocument, options);
+      }
+export function useSEoUm_InfosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>(SEoUm_InfosDocument, options);
+        }
+export type SEoUm_InfosQueryHookResult = ReturnType<typeof useSEoUm_InfosQuery>;
+export type SEoUm_InfosLazyQueryHookResult = ReturnType<typeof useSEoUm_InfosLazyQuery>;
+export type SEoUm_InfosQueryResult = Apollo.QueryResult<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>;
+export const ManageContent_DeleteElementDocument = gql`
+    mutation ManageContent_DeleteElement($elementId: uuid!) {
+  delete_content_Element_by_pk(id: $elementId) {
+    id
+  }
+}
+    `;
+export type ManageContent_DeleteElementMutationFn = Apollo.MutationFunction<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>;
+
+/**
+ * __useManageContent_DeleteElementMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteElementMutation, { data, loading, error }] = useManageContent_DeleteElementMutation({
+ *   variables: {
+ *      elementId: // value for 'elementId'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>(ManageContent_DeleteElementDocument, options);
+      }
+export type ManageContent_DeleteElementMutationHookResult = ReturnType<typeof useManageContent_DeleteElementMutation>;
+export type ManageContent_DeleteElementMutationResult = Apollo.MutationResult<ManageContent_DeleteElementMutation>;
+export type ManageContent_DeleteElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>;
+export const ManageContent_UpdateElementDocument = gql`
+    mutation ManageContent_UpdateElement($elementId: uuid!, $element: content_Element_set_input!) {
+  update_content_Element_by_pk(pk_columns: {id: $elementId}, _set: $element) {
+    ...ManageContent_Element
+  }
+}
+    ${ManageContent_ElementFragmentDoc}`;
+export type ManageContent_UpdateElementMutationFn = Apollo.MutationFunction<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>;
+
+/**
+ * __useManageContent_UpdateElementMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateElementMutation, { data, loading, error }] = useManageContent_UpdateElementMutation({
+ *   variables: {
+ *      elementId: // value for 'elementId'
+ *      element: // value for 'element'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>(ManageContent_UpdateElementDocument, options);
+      }
+export type ManageContent_UpdateElementMutationHookResult = ReturnType<typeof useManageContent_UpdateElementMutation>;
+export type ManageContent_UpdateElementMutationResult = Apollo.MutationResult<ManageContent_UpdateElementMutation>;
+export type ManageContent_UpdateElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>;
+export const ManageContent_DeleteUploadableElementDocument = gql`
+    mutation ManageContent_DeleteUploadableElement($uploadableElementId: uuid!) {
+  delete_content_UploadableElement_by_pk(id: $uploadableElementId) {
+    id
+  }
+}
+    `;
+export type ManageContent_DeleteUploadableElementMutationFn = Apollo.MutationFunction<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>;
+
+/**
+ * __useManageContent_DeleteUploadableElementMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteUploadableElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteUploadableElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteUploadableElementMutation, { data, loading, error }] = useManageContent_DeleteUploadableElementMutation({
+ *   variables: {
+ *      uploadableElementId: // value for 'uploadableElementId'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>(ManageContent_DeleteUploadableElementDocument, options);
+      }
+export type ManageContent_DeleteUploadableElementMutationHookResult = ReturnType<typeof useManageContent_DeleteUploadableElementMutation>;
+export type ManageContent_DeleteUploadableElementMutationResult = Apollo.MutationResult<ManageContent_DeleteUploadableElementMutation>;
+export type ManageContent_DeleteUploadableElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>;
+export const ManageContent_UpdateUploadableElementDocument = gql`
+    mutation ManageContent_UpdateUploadableElement($uploadableElementId: uuid!, $uploadableElement: content_UploadableElement_set_input!) {
+  update_content_UploadableElement_by_pk(
+    pk_columns: {id: $uploadableElementId}
+    _set: $uploadableElement
+  ) {
+    ...ManageContent_UploadableElement
+  }
+}
+    ${ManageContent_UploadableElementFragmentDoc}`;
+export type ManageContent_UpdateUploadableElementMutationFn = Apollo.MutationFunction<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>;
+
+/**
+ * __useManageContent_UpdateUploadableElementMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateUploadableElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateUploadableElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateUploadableElementMutation, { data, loading, error }] = useManageContent_UpdateUploadableElementMutation({
+ *   variables: {
+ *      uploadableElementId: // value for 'uploadableElementId'
+ *      uploadableElement: // value for 'uploadableElement'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>(ManageContent_UpdateUploadableElementDocument, options);
+      }
+export type ManageContent_UpdateUploadableElementMutationHookResult = ReturnType<typeof useManageContent_UpdateUploadableElementMutation>;
+export type ManageContent_UpdateUploadableElementMutationResult = Apollo.MutationResult<ManageContent_UpdateUploadableElementMutation>;
+export type ManageContent_UpdateUploadableElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>;
+export const ManageContent_SelectUploadersDocument = gql`
+    query ManageContent_SelectUploaders($uploadableElementId: uuid!) {
+  content_Uploader(where: {uploadableElementId: {_eq: $uploadableElementId}}) {
+    ...ManageContent_Uploader
+  }
+}
+    ${ManageContent_UploaderFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectUploadersQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectUploadersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectUploadersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectUploadersQuery({
+ *   variables: {
+ *      uploadableElementId: // value for 'uploadableElementId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectUploadersQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>(ManageContent_SelectUploadersDocument, options);
+      }
+export function useManageContent_SelectUploadersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>(ManageContent_SelectUploadersDocument, options);
+        }
+export type ManageContent_SelectUploadersQueryHookResult = ReturnType<typeof useManageContent_SelectUploadersQuery>;
+export type ManageContent_SelectUploadersLazyQueryHookResult = ReturnType<typeof useManageContent_SelectUploadersLazyQuery>;
+export type ManageContent_SelectUploadersQueryResult = Apollo.QueryResult<ManageContent_SelectUploadersQuery, ManageContent_SelectUploadersQueryVariables>;
+export const ManageContent_InsertUploadersDocument = gql`
+    mutation ManageContent_InsertUploaders($objects: [content_Uploader_insert_input!]!) {
+  insert_content_Uploader(objects: $objects) {
+    returning {
+      ...ManageContent_Uploader
+    }
+  }
+}
+    ${ManageContent_UploaderFragmentDoc}`;
+export type ManageContent_InsertUploadersMutationFn = Apollo.MutationFunction<ManageContent_InsertUploadersMutation, ManageContent_InsertUploadersMutationVariables>;
+
+/**
+ * __useManageContent_InsertUploadersMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertUploadersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertUploadersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertUploadersMutation, { data, loading, error }] = useManageContent_InsertUploadersMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useManageContent_InsertUploadersMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertUploadersMutation, ManageContent_InsertUploadersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertUploadersMutation, ManageContent_InsertUploadersMutationVariables>(ManageContent_InsertUploadersDocument, options);
+      }
+export type ManageContent_InsertUploadersMutationHookResult = ReturnType<typeof useManageContent_InsertUploadersMutation>;
+export type ManageContent_InsertUploadersMutationResult = Apollo.MutationResult<ManageContent_InsertUploadersMutation>;
+export type ManageContent_InsertUploadersMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertUploadersMutation, ManageContent_InsertUploadersMutationVariables>;
+export const ManageContent_UpdateUploaderDocument = gql`
+    mutation ManageContent_UpdateUploader($id: uuid!, $update: content_Uploader_set_input!) {
+  update_content_Uploader_by_pk(pk_columns: {id: $id}, _set: $update) {
+    ...ManageContent_Uploader
+  }
+}
+    ${ManageContent_UploaderFragmentDoc}`;
+export type ManageContent_UpdateUploaderMutationFn = Apollo.MutationFunction<ManageContent_UpdateUploaderMutation, ManageContent_UpdateUploaderMutationVariables>;
+
+/**
+ * __useManageContent_UpdateUploaderMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateUploaderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateUploaderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateUploaderMutation, { data, loading, error }] = useManageContent_UpdateUploaderMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      update: // value for 'update'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateUploaderMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateUploaderMutation, ManageContent_UpdateUploaderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateUploaderMutation, ManageContent_UpdateUploaderMutationVariables>(ManageContent_UpdateUploaderDocument, options);
+      }
+export type ManageContent_UpdateUploaderMutationHookResult = ReturnType<typeof useManageContent_UpdateUploaderMutation>;
+export type ManageContent_UpdateUploaderMutationResult = Apollo.MutationResult<ManageContent_UpdateUploaderMutation>;
+export type ManageContent_UpdateUploaderMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateUploaderMutation, ManageContent_UpdateUploaderMutationVariables>;
+export const ManageContent_DeleteUploadersDocument = gql`
+    mutation ManageContent_DeleteUploaders($ids: [uuid!]!) {
+  delete_content_Uploader(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ManageContent_DeleteUploadersMutationFn = Apollo.MutationFunction<ManageContent_DeleteUploadersMutation, ManageContent_DeleteUploadersMutationVariables>;
+
+/**
+ * __useManageContent_DeleteUploadersMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteUploadersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteUploadersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteUploadersMutation, { data, loading, error }] = useManageContent_DeleteUploadersMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteUploadersMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteUploadersMutation, ManageContent_DeleteUploadersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteUploadersMutation, ManageContent_DeleteUploadersMutationVariables>(ManageContent_DeleteUploadersDocument, options);
+      }
+export type ManageContent_DeleteUploadersMutationHookResult = ReturnType<typeof useManageContent_DeleteUploadersMutation>;
+export type ManageContent_DeleteUploadersMutationResult = Apollo.MutationResult<ManageContent_DeleteUploadersMutation>;
+export type ManageContent_DeleteUploadersMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteUploadersMutation, ManageContent_DeleteUploadersMutationVariables>;
+export const ManageContent_SelectItemExhibitionsDocument = gql`
+    query ManageContent_SelectItemExhibitions($exhibitionId: uuid!) {
+  content_ItemExhibition(where: {exhibitionId: {_eq: $exhibitionId}}) {
+    ...ManageContent_ItemExhibition
+  }
+}
+    ${ManageContent_ItemExhibitionFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectItemExhibitionsQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectItemExhibitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectItemExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectItemExhibitionsQuery({
+ *   variables: {
+ *      exhibitionId: // value for 'exhibitionId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectItemExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>(ManageContent_SelectItemExhibitionsDocument, options);
+      }
+export function useManageContent_SelectItemExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>(ManageContent_SelectItemExhibitionsDocument, options);
+        }
+export type ManageContent_SelectItemExhibitionsQueryHookResult = ReturnType<typeof useManageContent_SelectItemExhibitionsQuery>;
+export type ManageContent_SelectItemExhibitionsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemExhibitionsLazyQuery>;
+export type ManageContent_SelectItemExhibitionsQueryResult = Apollo.QueryResult<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>;
+export const ManageContent_InsertItemExhibitionDocument = gql`
+    mutation ManageContent_InsertItemExhibition($conferenceId: uuid!, $exhibitionId: uuid!, $itemId: uuid!, $priority: Int!) {
+  insert_content_ItemExhibition_one(
+    object: {conferenceId: $conferenceId, exhibitionId: $exhibitionId, itemId: $itemId, priority: $priority}
+  ) {
+    ...ManageContent_ItemExhibition
+  }
+}
+    ${ManageContent_ItemExhibitionFragmentDoc}`;
+export type ManageContent_InsertItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_InsertItemExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertItemExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertItemExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertItemExhibitionMutation, { data, loading, error }] = useManageContent_InsertItemExhibitionMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      exhibitionId: // value for 'exhibitionId'
+ *      itemId: // value for 'itemId'
+ *      priority: // value for 'priority'
+ *   },
+ * });
+ */
+export function useManageContent_InsertItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>(ManageContent_InsertItemExhibitionDocument, options);
+      }
+export type ManageContent_InsertItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_InsertItemExhibitionMutation>;
+export type ManageContent_InsertItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_InsertItemExhibitionMutation>;
+export type ManageContent_InsertItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>;
+export const ManageContent_UpdateItemExhibitionDocument = gql`
+    mutation ManageContent_UpdateItemExhibition($itemExhibitionId: uuid!, $priority: Int!) {
+  update_content_ItemExhibition_by_pk(
+    pk_columns: {id: $itemExhibitionId}
+    _set: {priority: $priority}
+  ) {
+    ...ManageContent_ItemExhibition
+  }
+}
+    ${ManageContent_ItemExhibitionFragmentDoc}`;
+export type ManageContent_UpdateItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_UpdateItemExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateItemExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateItemExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateItemExhibitionMutation, { data, loading, error }] = useManageContent_UpdateItemExhibitionMutation({
+ *   variables: {
+ *      itemExhibitionId: // value for 'itemExhibitionId'
+ *      priority: // value for 'priority'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>(ManageContent_UpdateItemExhibitionDocument, options);
+      }
+export type ManageContent_UpdateItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_UpdateItemExhibitionMutation>;
+export type ManageContent_UpdateItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_UpdateItemExhibitionMutation>;
+export type ManageContent_UpdateItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>;
+export const ManageContent_DeleteItemExhibitionDocument = gql`
+    mutation ManageContent_DeleteItemExhibition($itemExhibitionId: uuid!) {
+  delete_content_ItemExhibition_by_pk(id: $itemExhibitionId) {
+    id
+  }
+}
+    `;
+export type ManageContent_DeleteItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_DeleteItemExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteItemExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteItemExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteItemExhibitionMutation, { data, loading, error }] = useManageContent_DeleteItemExhibitionMutation({
+ *   variables: {
+ *      itemExhibitionId: // value for 'itemExhibitionId'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>(ManageContent_DeleteItemExhibitionDocument, options);
+      }
+export type ManageContent_DeleteItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_DeleteItemExhibitionMutation>;
+export type ManageContent_DeleteItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_DeleteItemExhibitionMutation>;
+export type ManageContent_DeleteItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>;
+export const ManageContent_InsertExhibitionDocument = gql`
+    mutation ManageContent_InsertExhibition($exhibition: collection_Exhibition_insert_input!) {
+  insert_collection_Exhibition_one(object: $exhibition) {
+    ...ManageContent_Exhibition
+  }
+}
+    ${ManageContent_ExhibitionFragmentDoc}`;
+export type ManageContent_InsertExhibitionMutationFn = Apollo.MutationFunction<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_InsertExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertExhibitionMutation, { data, loading, error }] = useManageContent_InsertExhibitionMutation({
+ *   variables: {
+ *      exhibition: // value for 'exhibition'
+ *   },
+ * });
+ */
+export function useManageContent_InsertExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>(ManageContent_InsertExhibitionDocument, options);
+      }
+export type ManageContent_InsertExhibitionMutationHookResult = ReturnType<typeof useManageContent_InsertExhibitionMutation>;
+export type ManageContent_InsertExhibitionMutationResult = Apollo.MutationResult<ManageContent_InsertExhibitionMutation>;
+export type ManageContent_InsertExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>;
+export const ManageContent_UpdateExhibitionDocument = gql`
+    mutation ManageContent_UpdateExhibition($id: uuid!, $update: collection_Exhibition_set_input!) {
+  update_collection_Exhibition_by_pk(pk_columns: {id: $id}, _set: $update) {
+    ...ManageContent_Exhibition
+  }
+}
+    ${ManageContent_ExhibitionFragmentDoc}`;
+export type ManageContent_UpdateExhibitionMutationFn = Apollo.MutationFunction<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>;
+
+/**
+ * __useManageContent_UpdateExhibitionMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateExhibitionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateExhibitionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateExhibitionMutation, { data, loading, error }] = useManageContent_UpdateExhibitionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      update: // value for 'update'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>(ManageContent_UpdateExhibitionDocument, options);
+      }
+export type ManageContent_UpdateExhibitionMutationHookResult = ReturnType<typeof useManageContent_UpdateExhibitionMutation>;
+export type ManageContent_UpdateExhibitionMutationResult = Apollo.MutationResult<ManageContent_UpdateExhibitionMutation>;
+export type ManageContent_UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>;
+export const ManageContent_DeleteExhibitionsDocument = gql`
+    mutation ManageContent_DeleteExhibitions($ids: [uuid!]!) {
+  delete_collection_Exhibition(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ManageContent_DeleteExhibitionsMutationFn = Apollo.MutationFunction<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
+
+/**
+ * __useManageContent_DeleteExhibitionsMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteExhibitionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteExhibitionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteExhibitionsMutation, { data, loading, error }] = useManageContent_DeleteExhibitionsMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteExhibitionsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>(ManageContent_DeleteExhibitionsDocument, options);
+      }
+export type ManageContent_DeleteExhibitionsMutationHookResult = ReturnType<typeof useManageContent_DeleteExhibitionsMutation>;
+export type ManageContent_DeleteExhibitionsMutationResult = Apollo.MutationResult<ManageContent_DeleteExhibitionsMutation>;
+export type ManageContent_DeleteExhibitionsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
+export const AddContentMenu_CreateElementDocument = gql`
+    mutation AddContentMenu_CreateElement($object: content_Element_insert_input!) {
+  insert_content_Element_one(object: $object) {
+    ...ManageContent_Element
+  }
+}
+    ${ManageContent_ElementFragmentDoc}`;
+export type AddContentMenu_CreateElementMutationFn = Apollo.MutationFunction<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
+
+/**
+ * __useAddContentMenu_CreateElementMutation__
+ *
+ * To run a mutation, you first call `useAddContentMenu_CreateElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddContentMenu_CreateElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addContentMenuCreateElementMutation, { data, loading, error }] = useAddContentMenu_CreateElementMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useAddContentMenu_CreateElementMutation(baseOptions?: Apollo.MutationHookOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>(AddContentMenu_CreateElementDocument, options);
+      }
+export type AddContentMenu_CreateElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateElementMutation>;
+export type AddContentMenu_CreateElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateElementMutation>;
+export type AddContentMenu_CreateElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
+export const AddContentMenu_CreateUploadableElementDocument = gql`
+    mutation AddContentMenu_CreateUploadableElement($object: content_UploadableElement_insert_input!) {
+  insert_content_UploadableElement_one(object: $object) {
+    ...ManageContent_UploadableElement
+  }
+}
+    ${ManageContent_UploadableElementFragmentDoc}`;
+export type AddContentMenu_CreateUploadableElementMutationFn = Apollo.MutationFunction<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>;
+
+/**
+ * __useAddContentMenu_CreateUploadableElementMutation__
+ *
+ * To run a mutation, you first call `useAddContentMenu_CreateUploadableElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddContentMenu_CreateUploadableElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addContentMenuCreateUploadableElementMutation, { data, loading, error }] = useAddContentMenu_CreateUploadableElementMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useAddContentMenu_CreateUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>(AddContentMenu_CreateUploadableElementDocument, options);
+      }
+export type AddContentMenu_CreateUploadableElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateUploadableElementMutation>;
+export type AddContentMenu_CreateUploadableElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateUploadableElementMutation>;
+export type AddContentMenu_CreateUploadableElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>;
+export const ManageContent_SelectProgramPeopleDocument = gql`
+    query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
+  collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContent_ProgramPerson
+  }
+}
+    ${ManageContent_ProgramPersonFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectProgramPeopleQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectProgramPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectProgramPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectProgramPeopleQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectProgramPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>(ManageContent_SelectProgramPeopleDocument, options);
+      }
+export function useManageContent_SelectProgramPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>(ManageContent_SelectProgramPeopleDocument, options);
+        }
+export type ManageContent_SelectProgramPeopleQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleQuery>;
+export type ManageContent_SelectProgramPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleLazyQuery>;
+export type ManageContent_SelectProgramPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>;
+export const ManageContent_InsertItemProgramPersonDocument = gql`
+    mutation ManageContent_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $roleName: String!, $priority: Int!, $itemId: uuid!) {
+  insert_content_ItemProgramPerson_one(
+    object: {conferenceId: $conferenceId, personId: $personId, itemId: $itemId, priority: $priority, roleName: $roleName}
+  ) {
+    ...ManageContent_ItemProgramPerson
+  }
+}
+    ${ManageContent_ItemProgramPersonFragmentDoc}`;
+export type ManageContent_InsertItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
+
+/**
+ * __useManageContent_InsertItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertItemProgramPersonMutation, { data, loading, error }] = useManageContent_InsertItemProgramPersonMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      personId: // value for 'personId'
+ *      roleName: // value for 'roleName'
+ *      priority: // value for 'priority'
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useManageContent_InsertItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>(ManageContent_InsertItemProgramPersonDocument, options);
+      }
+export type ManageContent_InsertItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_InsertItemProgramPersonMutation>;
+export type ManageContent_InsertItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_InsertItemProgramPersonMutation>;
+export type ManageContent_InsertItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
+export const ManageContent_UpdateItemProgramPersonDocument = gql`
+    mutation ManageContent_UpdateItemProgramPerson($itemPersonId: uuid!, $priority: Int!, $roleName: String!) {
+  update_content_ItemProgramPerson_by_pk(
+    pk_columns: {id: $itemPersonId}
+    _set: {priority: $priority, roleName: $roleName}
+  ) {
+    ...ManageContent_ItemProgramPerson
+  }
+}
+    ${ManageContent_ItemProgramPersonFragmentDoc}`;
+export type ManageContent_UpdateItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
+
+/**
+ * __useManageContent_UpdateItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateItemProgramPersonMutation, { data, loading, error }] = useManageContent_UpdateItemProgramPersonMutation({
+ *   variables: {
+ *      itemPersonId: // value for 'itemPersonId'
+ *      priority: // value for 'priority'
+ *      roleName: // value for 'roleName'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>(ManageContent_UpdateItemProgramPersonDocument, options);
+      }
+export type ManageContent_UpdateItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_UpdateItemProgramPersonMutation>;
+export type ManageContent_UpdateItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_UpdateItemProgramPersonMutation>;
+export type ManageContent_UpdateItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
+export const ManageContent_DeleteItemProgramPersonDocument = gql`
+    mutation ManageContent_DeleteItemProgramPerson($itemPersonId: uuid!) {
+  delete_content_ItemProgramPerson_by_pk(id: $itemPersonId) {
+    id
+  }
+}
+    `;
+export type ManageContent_DeleteItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>;
+
+/**
+ * __useManageContent_DeleteItemProgramPersonMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteItemProgramPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteItemProgramPersonMutation, { data, loading, error }] = useManageContent_DeleteItemProgramPersonMutation({
+ *   variables: {
+ *      itemPersonId: // value for 'itemPersonId'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>(ManageContent_DeleteItemProgramPersonDocument, options);
+      }
+export type ManageContent_DeleteItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_DeleteItemProgramPersonMutation>;
+export type ManageContent_DeleteItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_DeleteItemProgramPersonMutation>;
+export type ManageContent_DeleteItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>;
+export const ManageContent_InsertTagDocument = gql`
+    mutation ManageContent_InsertTag($tag: collection_Tag_insert_input!) {
+  insert_collection_Tag_one(object: $tag) {
+    ...ManageContent_Tag
+  }
+}
+    ${ManageContent_TagFragmentDoc}`;
+export type ManageContent_InsertTagMutationFn = Apollo.MutationFunction<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
+
+/**
+ * __useManageContent_InsertTagMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertTagMutation, { data, loading, error }] = useManageContent_InsertTagMutation({
+ *   variables: {
+ *      tag: // value for 'tag'
+ *   },
+ * });
+ */
+export function useManageContent_InsertTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>(ManageContent_InsertTagDocument, options);
+      }
+export type ManageContent_InsertTagMutationHookResult = ReturnType<typeof useManageContent_InsertTagMutation>;
+export type ManageContent_InsertTagMutationResult = Apollo.MutationResult<ManageContent_InsertTagMutation>;
+export type ManageContent_InsertTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
+export const ManageContent_UpdateTagDocument = gql`
+    mutation ManageContent_UpdateTag($id: uuid!, $update: collection_Tag_set_input!) {
+  update_collection_Tag_by_pk(pk_columns: {id: $id}, _set: $update) {
+    ...ManageContent_Tag
+  }
+}
+    ${ManageContent_TagFragmentDoc}`;
+export type ManageContent_UpdateTagMutationFn = Apollo.MutationFunction<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
+
+/**
+ * __useManageContent_UpdateTagMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateTagMutation, { data, loading, error }] = useManageContent_UpdateTagMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      update: // value for 'update'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>(ManageContent_UpdateTagDocument, options);
+      }
+export type ManageContent_UpdateTagMutationHookResult = ReturnType<typeof useManageContent_UpdateTagMutation>;
+export type ManageContent_UpdateTagMutationResult = Apollo.MutationResult<ManageContent_UpdateTagMutation>;
+export type ManageContent_UpdateTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
+export const ManageContent_DeleteTagsDocument = gql`
+    mutation ManageContent_DeleteTags($ids: [uuid!]!) {
+  delete_collection_Tag(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ManageContent_DeleteTagsMutationFn = Apollo.MutationFunction<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
+
+/**
+ * __useManageContent_DeleteTagsMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteTagsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteTagsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteTagsMutation, { data, loading, error }] = useManageContent_DeleteTagsMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteTagsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>(ManageContent_DeleteTagsDocument, options);
+      }
+export type ManageContent_DeleteTagsMutationHookResult = ReturnType<typeof useManageContent_DeleteTagsMutation>;
+export type ManageContent_DeleteTagsMutationResult = Apollo.MutationResult<ManageContent_DeleteTagsMutation>;
+export type ManageContent_DeleteTagsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
+export const ElementSecurity_SelectGrantsDocument = gql`
+    query ElementSecurity_SelectGrants($elementIds: [uuid!]!, $uploadableIds: [uuid!]!, $conferenceId: uuid!) {
+  content_ElementPermissionGrant(
+    where: {_or: [{_and: [{entityId: {_is_null: true}}, {conference: {id: {_eq: $conferenceId}}}]}, {entityId: {_in: $elementIds}}]}
+  ) {
+    ...ElementSecurity_ElementPG
+  }
+  content_UploadableElementPermissionGrant(
+    where: {_or: [{_and: [{entityId: {_is_null: true}}, {conference: {id: {_eq: $conferenceId}}}]}, {entityId: {_in: $uploadableIds}}]}
+  ) {
+    ...ElementSecurity_UploadablePG
+  }
+  permissions_Role(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ElementSecurity_PermissionSet
+  }
+  permissions_Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ElementSecurity_Group
+  }
+}
+    ${ElementSecurity_ElementPgFragmentDoc}
+${ElementSecurity_UploadablePgFragmentDoc}
+${ElementSecurity_PermissionSetFragmentDoc}
+${ElementSecurity_GroupFragmentDoc}`;
+
+/**
+ * __useElementSecurity_SelectGrantsQuery__
+ *
+ * To run a query within a React component, call `useElementSecurity_SelectGrantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useElementSecurity_SelectGrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useElementSecurity_SelectGrantsQuery({
+ *   variables: {
+ *      elementIds: // value for 'elementIds'
+ *      uploadableIds: // value for 'uploadableIds'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useElementSecurity_SelectGrantsQuery(baseOptions: Apollo.QueryHookOptions<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>(ElementSecurity_SelectGrantsDocument, options);
+      }
+export function useElementSecurity_SelectGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>(ElementSecurity_SelectGrantsDocument, options);
+        }
+export type ElementSecurity_SelectGrantsQueryHookResult = ReturnType<typeof useElementSecurity_SelectGrantsQuery>;
+export type ElementSecurity_SelectGrantsLazyQueryHookResult = ReturnType<typeof useElementSecurity_SelectGrantsLazyQuery>;
+export type ElementSecurity_SelectGrantsQueryResult = Apollo.QueryResult<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>;
+export const ElementSecurity_InsertGrantsDocument = gql`
+    mutation ElementSecurity_InsertGrants($elementGrants: [content_ElementPermissionGrant_insert_input!]!, $uploadableGrants: [content_UploadableElementPermissionGrant_insert_input!]!) {
+  insert_content_ElementPermissionGrant(
+    objects: $elementGrants
+    on_conflict: {constraint: ElementPermissionGrant_permissionSetId_groupId_entityId_key, update_columns: []}
+  ) {
+    returning {
+      ...ElementSecurity_ElementPG
+    }
+  }
+  insert_content_UploadableElementPermissionGrant(
+    objects: $uploadableGrants
+    on_conflict: {constraint: UploadableElementPermissionGr_permissionSetId_groupId_entit_key, update_columns: []}
+  ) {
+    returning {
+      ...ElementSecurity_UploadablePG
+    }
+  }
+}
+    ${ElementSecurity_ElementPgFragmentDoc}
+${ElementSecurity_UploadablePgFragmentDoc}`;
+export type ElementSecurity_InsertGrantsMutationFn = Apollo.MutationFunction<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>;
+
+/**
+ * __useElementSecurity_InsertGrantsMutation__
+ *
+ * To run a mutation, you first call `useElementSecurity_InsertGrantsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useElementSecurity_InsertGrantsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [elementSecurityInsertGrantsMutation, { data, loading, error }] = useElementSecurity_InsertGrantsMutation({
+ *   variables: {
+ *      elementGrants: // value for 'elementGrants'
+ *      uploadableGrants: // value for 'uploadableGrants'
+ *   },
+ * });
+ */
+export function useElementSecurity_InsertGrantsMutation(baseOptions?: Apollo.MutationHookOptions<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>(ElementSecurity_InsertGrantsDocument, options);
+      }
+export type ElementSecurity_InsertGrantsMutationHookResult = ReturnType<typeof useElementSecurity_InsertGrantsMutation>;
+export type ElementSecurity_InsertGrantsMutationResult = Apollo.MutationResult<ElementSecurity_InsertGrantsMutation>;
+export type ElementSecurity_InsertGrantsMutationOptions = Apollo.BaseMutationOptions<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>;
+export const ElementSecurity_DeleteGrantsDocument = gql`
+    mutation ElementSecurity_DeleteGrants($elementGrantIds: [uuid!]!, $uploadableGrantIds: [uuid!]!) {
+  delete_content_ElementPermissionGrant(where: {id: {_in: $elementGrantIds}}) {
+    returning {
+      id
+    }
+  }
+  delete_content_UploadableElementPermissionGrant(
+    where: {id: {_in: $uploadableGrantIds}}
+  ) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ElementSecurity_DeleteGrantsMutationFn = Apollo.MutationFunction<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>;
+
+/**
+ * __useElementSecurity_DeleteGrantsMutation__
+ *
+ * To run a mutation, you first call `useElementSecurity_DeleteGrantsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useElementSecurity_DeleteGrantsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [elementSecurityDeleteGrantsMutation, { data, loading, error }] = useElementSecurity_DeleteGrantsMutation({
+ *   variables: {
+ *      elementGrantIds: // value for 'elementGrantIds'
+ *      uploadableGrantIds: // value for 'uploadableGrantIds'
+ *   },
+ * });
+ */
+export function useElementSecurity_DeleteGrantsMutation(baseOptions?: Apollo.MutationHookOptions<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>(ElementSecurity_DeleteGrantsDocument, options);
+      }
+export type ElementSecurity_DeleteGrantsMutationHookResult = ReturnType<typeof useElementSecurity_DeleteGrantsMutation>;
+export type ElementSecurity_DeleteGrantsMutationResult = Apollo.MutationResult<ElementSecurity_DeleteGrantsMutation>;
+export type ElementSecurity_DeleteGrantsMutationOptions = Apollo.BaseMutationOptions<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>;
+export const SubmissionRequestsModalDataDocument = gql`
+    query SubmissionRequestsModalData($conferenceId: uuid!, $itemIds: [uuid!]!) {
+  conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ConfigureEmailTemplates_ConferenceConfiguration
+  }
+  content_UploadableElement(where: {itemId: {_in: $itemIds}}) {
+    ...SubmissionRequestsModal_UploadableElement
+  }
+}
+    ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}
+${SubmissionRequestsModal_UploadableElementFragmentDoc}`;
+
+/**
+ * __useSubmissionRequestsModalDataQuery__
+ *
+ * To run a query within a React component, call `useSubmissionRequestsModalDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubmissionRequestsModalDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubmissionRequestsModalDataQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      itemIds: // value for 'itemIds'
+ *   },
+ * });
+ */
+export function useSubmissionRequestsModalDataQuery(baseOptions: Apollo.QueryHookOptions<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>(SubmissionRequestsModalDataDocument, options);
+      }
+export function useSubmissionRequestsModalDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>(SubmissionRequestsModalDataDocument, options);
+        }
+export type SubmissionRequestsModalDataQueryHookResult = ReturnType<typeof useSubmissionRequestsModalDataQuery>;
+export type SubmissionRequestsModalDataLazyQueryHookResult = ReturnType<typeof useSubmissionRequestsModalDataLazyQuery>;
+export type SubmissionRequestsModalDataQueryResult = Apollo.QueryResult<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>;
+export const SubmissionsReviewModalDataDocument = gql`
+    query SubmissionsReviewModalData($itemIds: [uuid!]!) {
+  content_UploadableElement(where: {itemId: {_in: $itemIds}}) {
+    ...SubmissionsReviewModal_UploadableElement
+  }
+}
+    ${SubmissionsReviewModal_UploadableElementFragmentDoc}`;
+
+/**
+ * __useSubmissionsReviewModalDataQuery__
+ *
+ * To run a query within a React component, call `useSubmissionsReviewModalDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubmissionsReviewModalDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubmissionsReviewModalDataQuery({
+ *   variables: {
+ *      itemIds: // value for 'itemIds'
+ *   },
+ * });
+ */
+export function useSubmissionsReviewModalDataQuery(baseOptions: Apollo.QueryHookOptions<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>(SubmissionsReviewModalDataDocument, options);
+      }
+export function useSubmissionsReviewModalDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>(SubmissionsReviewModalDataDocument, options);
+        }
+export type SubmissionsReviewModalDataQueryHookResult = ReturnType<typeof useSubmissionsReviewModalDataQuery>;
+export type SubmissionsReviewModalDataLazyQueryHookResult = ReturnType<typeof useSubmissionsReviewModalDataLazyQuery>;
+export type SubmissionsReviewModalDataQueryResult = Apollo.QueryResult<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>;
 export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
     query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
   conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -41914,6 +44505,307 @@ export function useImportRegistrantsMutation(baseOptions?: Apollo.MutationHookOp
 export type ImportRegistrantsMutationHookResult = ReturnType<typeof useImportRegistrantsMutation>;
 export type ImportRegistrantsMutationResult = Apollo.MutationResult<ImportRegistrantsMutation>;
 export type ImportRegistrantsMutationOptions = Apollo.BaseMutationOptions<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>;
+export const ManageContent_SelectAllItemsDocument = gql`
+    query ManageContent_SelectAllItems($conferenceId: uuid!) {
+  content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContent_Item
+  }
+}
+    ${ManageContent_ItemFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectAllItemsQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectAllItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectAllItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectAllItemsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectAllItemsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>(ManageContent_SelectAllItemsDocument, options);
+      }
+export function useManageContent_SelectAllItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>(ManageContent_SelectAllItemsDocument, options);
+        }
+export type ManageContent_SelectAllItemsQueryHookResult = ReturnType<typeof useManageContent_SelectAllItemsQuery>;
+export type ManageContent_SelectAllItemsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllItemsLazyQuery>;
+export type ManageContent_SelectAllItemsQueryResult = Apollo.QueryResult<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>;
+export const ManageContent_SelectItemDocument = gql`
+    query ManageContent_SelectItem($itemId: uuid!) {
+  content_Item_by_pk(id: $itemId) {
+    ...ManageContent_ItemSecondary
+  }
+  content_Element(where: {itemId: {_eq: $itemId}, uploadableId: {_is_null: true}}) {
+    ...ManageContent_Element
+  }
+  content_UploadableElement(where: {itemId: {_eq: $itemId}}) {
+    ...ManageContent_UploadableElement
+  }
+}
+    ${ManageContent_ItemSecondaryFragmentDoc}
+${ManageContent_ElementFragmentDoc}
+${ManageContent_UploadableElementFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectItemQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectItemQuery({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectItemQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>(ManageContent_SelectItemDocument, options);
+      }
+export function useManageContent_SelectItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>(ManageContent_SelectItemDocument, options);
+        }
+export type ManageContent_SelectItemQueryHookResult = ReturnType<typeof useManageContent_SelectItemQuery>;
+export type ManageContent_SelectItemLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemLazyQuery>;
+export type ManageContent_SelectItemQueryResult = Apollo.QueryResult<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>;
+export const ManageContent_SelectItemPeopleDocument = gql`
+    query ManageContent_SelectItemPeople($itemId: uuid!) {
+  content_ItemProgramPerson(where: {itemId: {_eq: $itemId}}) {
+    ...ManageContent_ItemProgramPerson
+  }
+}
+    ${ManageContent_ItemProgramPersonFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectItemPeopleQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectItemPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectItemPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectItemPeopleQuery({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectItemPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>(ManageContent_SelectItemPeopleDocument, options);
+      }
+export function useManageContent_SelectItemPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>(ManageContent_SelectItemPeopleDocument, options);
+        }
+export type ManageContent_SelectItemPeopleQueryHookResult = ReturnType<typeof useManageContent_SelectItemPeopleQuery>;
+export type ManageContent_SelectItemPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemPeopleLazyQuery>;
+export type ManageContent_SelectItemPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>;
+export const ManageContent_InsertItemDocument = gql`
+    mutation ManageContent_InsertItem($item: content_Item_insert_input!) {
+  insert_content_Item_one(object: $item) {
+    ...ManageContent_Item
+  }
+}
+    ${ManageContent_ItemFragmentDoc}`;
+export type ManageContent_InsertItemMutationFn = Apollo.MutationFunction<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>;
+
+/**
+ * __useManageContent_InsertItemMutation__
+ *
+ * To run a mutation, you first call `useManageContent_InsertItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_InsertItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentInsertItemMutation, { data, loading, error }] = useManageContent_InsertItemMutation({
+ *   variables: {
+ *      item: // value for 'item'
+ *   },
+ * });
+ */
+export function useManageContent_InsertItemMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>(ManageContent_InsertItemDocument, options);
+      }
+export type ManageContent_InsertItemMutationHookResult = ReturnType<typeof useManageContent_InsertItemMutation>;
+export type ManageContent_InsertItemMutationResult = Apollo.MutationResult<ManageContent_InsertItemMutation>;
+export type ManageContent_InsertItemMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>;
+export const ManageContent_UpdateItemDocument = gql`
+    mutation ManageContent_UpdateItem($id: uuid!, $item: content_Item_set_input!, $tags: [content_ItemTag_insert_input!]!, $tagIds: [uuid!]!) {
+  insert_content_ItemTag(
+    objects: $tags
+    on_conflict: {constraint: ItemTag_itemId_tagId_key, update_columns: []}
+  ) {
+    returning {
+      ...ManageContent_ItemTag
+    }
+  }
+  delete_content_ItemTag(where: {tagId: {_nin: $tagIds}, itemId: {_eq: $id}}) {
+    returning {
+      id
+    }
+  }
+  update_content_Item_by_pk(pk_columns: {id: $id}, _set: $item) {
+    ...ManageContent_Item
+  }
+}
+    ${ManageContent_ItemTagFragmentDoc}
+${ManageContent_ItemFragmentDoc}`;
+export type ManageContent_UpdateItemMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>;
+
+/**
+ * __useManageContent_UpdateItemMutation__
+ *
+ * To run a mutation, you first call `useManageContent_UpdateItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_UpdateItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentUpdateItemMutation, { data, loading, error }] = useManageContent_UpdateItemMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      item: // value for 'item'
+ *      tags: // value for 'tags'
+ *      tagIds: // value for 'tagIds'
+ *   },
+ * });
+ */
+export function useManageContent_UpdateItemMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>(ManageContent_UpdateItemDocument, options);
+      }
+export type ManageContent_UpdateItemMutationHookResult = ReturnType<typeof useManageContent_UpdateItemMutation>;
+export type ManageContent_UpdateItemMutationResult = Apollo.MutationResult<ManageContent_UpdateItemMutation>;
+export type ManageContent_UpdateItemMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>;
+export const ManageContent_DeleteItemsDocument = gql`
+    mutation ManageContent_DeleteItems($ids: [uuid!]!) {
+  delete_content_Item(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ManageContent_DeleteItemsMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>;
+
+/**
+ * __useManageContent_DeleteItemsMutation__
+ *
+ * To run a mutation, you first call `useManageContent_DeleteItemsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_DeleteItemsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageContentDeleteItemsMutation, { data, loading, error }] = useManageContent_DeleteItemsMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useManageContent_DeleteItemsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>(ManageContent_DeleteItemsDocument, options);
+      }
+export type ManageContent_DeleteItemsMutationHookResult = ReturnType<typeof useManageContent_DeleteItemsMutation>;
+export type ManageContent_DeleteItemsMutationResult = Apollo.MutationResult<ManageContent_DeleteItemsMutation>;
+export type ManageContent_DeleteItemsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>;
+export const ManageContent_SelectAllTagsDocument = gql`
+    query ManageContent_SelectAllTags($conferenceId: uuid!) {
+  collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContent_Tag
+  }
+}
+    ${ManageContent_TagFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectAllTagsQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectAllTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectAllTagsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectAllTagsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>(ManageContent_SelectAllTagsDocument, options);
+      }
+export function useManageContent_SelectAllTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>(ManageContent_SelectAllTagsDocument, options);
+        }
+export type ManageContent_SelectAllTagsQueryHookResult = ReturnType<typeof useManageContent_SelectAllTagsQuery>;
+export type ManageContent_SelectAllTagsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllTagsLazyQuery>;
+export type ManageContent_SelectAllTagsQueryResult = Apollo.QueryResult<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>;
+export const ManageContent_SelectAllExhibitionsDocument = gql`
+    query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {
+  collection_Exhibition(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageContent_Exhibition
+  }
+}
+    ${ManageContent_ExhibitionFragmentDoc}`;
+
+/**
+ * __useManageContent_SelectAllExhibitionsQuery__
+ *
+ * To run a query within a React component, call `useManageContent_SelectAllExhibitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageContent_SelectAllExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageContent_SelectAllExhibitionsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageContent_SelectAllExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>(ManageContent_SelectAllExhibitionsDocument, options);
+      }
+export function useManageContent_SelectAllExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>(ManageContent_SelectAllExhibitionsDocument, options);
+        }
+export type ManageContent_SelectAllExhibitionsQueryHookResult = ReturnType<typeof useManageContent_SelectAllExhibitionsQuery>;
+export type ManageContent_SelectAllExhibitionsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllExhibitionsLazyQuery>;
+export type ManageContent_SelectAllExhibitionsQueryResult = Apollo.QueryResult<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>;
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   permissions_Group(where: {conferenceId: {_eq: $conferenceId}}) {

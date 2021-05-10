@@ -12,7 +12,6 @@ import {
     MenuGroup,
     MenuItem,
     MenuList,
-    MenuOptionGroup,
     Text,
     Tooltip,
     useDisclosure,
@@ -659,7 +658,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
             },
             {
-                render: (selectedData) => {
+                render: ({ selectedData }: { selectedData: RegistrantDescriptor[] }) => {
                     function doExport(dataToExport: RegistrantDescriptor[]) {
                         const csvText = Papa.unparse(
                             dataToExport.map((registrant) => ({
@@ -713,7 +712,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 <MenuList>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {enabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
@@ -734,7 +732,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                     )}
                                     {disabledGroups?.length ? (
                                         <MenuGroup title="Disabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {disabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
@@ -774,7 +771,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
             },
             {
-                render: function SendInitialInvitesButton(selectedData) {
+                render: function SendInitialInvitesButton({ selectedData }: { selectedData: RegistrantDescriptor[] }) {
                     const tooltip = (filler: string, filler2: string) =>
                         `Sends invitations to ${filler} who have not already been sent an invite${filler2}.`;
                     if (selectedData.length === 0) {
@@ -788,7 +785,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 <MenuList>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {enabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
@@ -882,7 +878,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
             },
             {
-                render: function SendRepeatInvitesButton(selectedData) {
+                render: function SendRepeatInvitesButton({ selectedData }: { selectedData: RegistrantDescriptor[] }) {
                     const tooltip = (filler: string) => `Sends repeat invitations to ${filler}.`;
                     if (selectedData.length === 0) {
                         return (
@@ -895,7 +891,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 <MenuList>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {enabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
@@ -986,7 +981,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
             },
             {
-                render: function SendCustomEmailButton(selectedData) {
+                render: function SendCustomEmailButton({ selectedData }: { selectedData: RegistrantDescriptor[] }) {
                     const tooltip = (filler: string) => `Sends a custom email to ${filler}.`;
                     if (selectedData.length === 0) {
                         return (
@@ -999,7 +994,6 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                 <MenuList>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
-                                            <MenuOptionGroup></MenuOptionGroup>
                                             {enabledGroups.map((group) => (
                                                 <MenuItem
                                                     key={group.id}

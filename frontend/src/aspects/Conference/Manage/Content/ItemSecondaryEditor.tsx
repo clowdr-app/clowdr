@@ -197,7 +197,7 @@ export function ItemSecondaryEditor(
                     View item
                 </LinkButton>
                 {group.rooms.length === 0 ? (
-                    <CreateRoomButton groupId={group?.id} />
+                    <CreateRoomButton itemId={group?.id} />
                 ) : (
                     <LinkButton
                         size="sm"

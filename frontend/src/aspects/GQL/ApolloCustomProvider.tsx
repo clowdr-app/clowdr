@@ -171,6 +171,7 @@ async function createApolloClient(
                     ignoreCache: true,
                     "magic-token": magicToken,
                 });
+                newHeaders["X-Hasura-Role"] = "unauthenticated";
             } else {
                 token = await tokenCache.getToken(userId ?? null, conferenceSlug, getAccessTokenSilently);
             }

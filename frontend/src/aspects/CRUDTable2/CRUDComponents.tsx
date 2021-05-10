@@ -26,7 +26,7 @@ export function TextColumnFilter({ value, onChange, onBlur }: FilterProps<string
                 onChange(e.target.value || null);
             }}
             onBlur={onBlur}
-            placeholder="Search..."
+            placeholder="Filter..."
         />
     );
 }

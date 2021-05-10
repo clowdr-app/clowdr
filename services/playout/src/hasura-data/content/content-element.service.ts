@@ -8,6 +8,7 @@ import {
 } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
+import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import { ContentElement_GetElementDocument } from "../../generated/graphql";
 import { GraphQlService } from "../graphql/graphql.service";
@@ -46,6 +47,52 @@ export class ContentElementService {
             conferenceId: result.data.content_Element_by_pk.conferenceId,
             data: result.data.content_Element_by_pk.data,
         };
+    }
+
+    public getVideoKey(videoBroadcastData: VideoBroadcastBlob): string | null {
+        if (videoBroadcastData.broadcastTranscode?.s3Url) {
+            try {
+                const { key } = new AmazonS3URI(videoBroadcastData.broadcastTranscode.s3Url);
+                if (!key) {
+                    throw new Error("Key in S3 URL was empty");
+                }
+                return key;
+            } catch (err) {
+                this.logger.warn(
+                    { err, s3Url: videoBroadcastData.broadcastTranscode.s3Url },
+                    "Could not parse S3 URL of broadcast transcode."
+                );
+            }
+        }
+        if (videoBroadcastData.transcode?.s3Url) {
+            try {
+                const { key } = new AmazonS3URI(videoBroadcastData.transcode.s3Url);
+                if (!key) {
+                    throw new Error("Key in S3 URL was empty");
+                }
+                return key;
+            } catch (err) {
+                this.logger.warn(
+                    { err, s3Url: videoBroadcastData.transcode.s3Url },
+                    "Could not parse S3 URL of preview transcode."
+                );
+            }
+        }
+        if (videoBroadcastData.s3Url) {
+            try {
+                const { key } = new AmazonS3URI(videoBroadcastData.s3Url);
+                if (!key) {
+                    throw new Error("Key in S3 URL was empty");
+                }
+                return key;
+            } catch (err) {
+                this.logger.warn(
+                    { err, s3Url: videoBroadcastData.s3Url },
+                    "Could not parse S3 URL of original upload."
+                );
+            }
+        }
+        return null;
     }
 
     getLatestBroadcastVideoData(contentItemData: unknown): VideoBroadcastBlob | null {

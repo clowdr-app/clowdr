@@ -4,8 +4,9 @@ import { ChannelStackCreateJobService } from "./channel-stack-create-job/channel
 import { ChannelStackDeleteJobService } from "./channel-stack-delete-job/channel-stack-delete-job.service";
 import { ChannelStackDataService } from "./channel-stack/channel-stack.service";
 import { ConferenceConfigurationService } from "./conference-configuration/conference-configuration.service";
-import { ContentElementService } from "./content/content-element.service";
+import { ContentElementDataService } from "./content/content-element.service";
 import { GraphQlService } from "./graphql/graphql.service";
+import { ImmediateSwitchDataService } from "./immediate-switch/immediate-switch.service";
 import { LocalScheduleService } from "./local-schedule/local-schedule.service";
 
 export type HasuraDataModuleOptions = {
@@ -23,7 +24,8 @@ export type HasuraDataModuleOptions = {
         ChannelStackDeleteJobService,
         LocalScheduleService,
         ConferenceConfigurationService,
-        ContentElementService,
+        ContentElementDataService,
+        ImmediateSwitchDataService,
     ],
     exports: [
         GraphQlService,
@@ -32,7 +34,8 @@ export type HasuraDataModuleOptions = {
         ChannelStackDeleteJobService,
         LocalScheduleService,
         ConferenceConfigurationService,
-        ContentElementService,
+        ContentElementDataService,
+        ImmediateSwitchDataService,
     ],
 })
 export class HasuraDataModule {

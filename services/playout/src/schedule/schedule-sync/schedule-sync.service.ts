@@ -8,7 +8,8 @@ import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
 import { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
-import { ContentElementService } from "../../hasura-data/content/content-element.service";
+import { ContentElementDataService } from "../../hasura-data/content/content-element.service";
+import { ImmediateSwitchDataService } from "../../hasura-data/immediate-switch/immediate-switch.service";
 import {
     ChannelStack,
     LocalSchedule,
@@ -35,72 +36,96 @@ export class ScheduleSyncService {
         private localScheduleService: LocalScheduleService,
         private remoteScheduleService: RemoteScheduleService,
         private vonageService: VonageService,
-        private contentElementService: ContentElementService
+        private contentElementDataService: ContentElementDataService,
+        private immediateSwitchDataService: ImmediateSwitchDataService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
     public async handleImmediateSwitch(data: unknown, id: string, eventId: string | null): Promise<void> {
-        const transformed = plainToClass(ImmediateSwitchData, { data });
-        const errors = await validate(transformed);
-        if (errors.length > 1) {
-            this.logger.error({ errors }, "Immediate switch data is invalid");
-            return;
-        } else {
-            this.logger.info({ request: transformed }, "Received valid immediate switch request");
+        try {
+            const transformed = plainToClass(ImmediateSwitchData, { data });
+            const errors = await validate(transformed);
+            if (errors.length > 1) {
+                this.logger.error({ errors }, "Immediate switch data is invalid");
+                await this.immediateSwitchDataService.failImmediateSwitch(id, "Invalid request");
+                return;
+            } else {
+                this.logger.info({ request: transformed }, "Received valid immediate switch request");
 
-            if (eventId) {
-                const event = await this.localScheduleService.getEvent(eventId);
-                const now = Date.now();
+                if (eventId) {
+                    const event = await this.localScheduleService.getEvent(eventId);
+                    const now = Date.now();
 
-                if (!event) {
-                    this.logger.info(
-                        { eventId },
-                        "Event associated with immediate switch request does not exist, ignoring"
+                    if (!event) {
+                        this.logger.info(
+                            { eventId },
+                            "Event associated with immediate switch request does not exist, ignoring"
+                        );
+                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Event not found");
+                        return;
+                    }
+
+                    if (now <= event.startTime) {
+                        this.logger.info(
+                            { event, now },
+                            "Immediate switch request made before start of event, ignoring"
+                        );
+                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Event has not yet started");
+                        return;
+                    }
+
+                    if (now > sub(event.endTime, { seconds: 20 }).getTime()) {
+                        this.logger.info(
+                            { event, now },
+                            "Immediate switch request made too close to or after end of event, ignoring"
+                        );
+                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Too close to end of event");
+                        return;
+                    }
+
+                    if (!event.channelStack) {
+                        this.logger.warn(
+                            { event },
+                            "No channel stack exists for event, cannot perform immediate switch"
+                        );
+                        await this.immediateSwitchDataService.failImmediateSwitch(id, "No stream exists");
+                        return;
+                    }
+
+                    const inputSwitchActions = await this.toInputSwitchActions(
+                        transformed,
+                        event.channelStack,
+                        event.eventRtmpInputName,
+                        id,
+                        event.conferenceId
                     );
-                    return;
-                }
 
-                if (now <= event.startTime) {
-                    this.logger.info({ event, now }, "Immediate switch request made before start of event, ignoring");
-                    return;
-                }
+                    if (typeof inputSwitchActions === "string") {
+                        this.logger.warn({ event, inputSwitchActions }, "Failed to generate immediate switch actions");
+                        await this.immediateSwitchDataService.failImmediateSwitch(id, inputSwitchActions);
+                        return;
+                    }
 
-                if (now > sub(event.endTime, { seconds: 20 }).getTime()) {
-                    this.logger.info(
-                        { event, now },
-                        "Immediate switch request made too close to or after end of event, ignoring"
-                    );
-                    return;
-                }
-
-                if (!event.channelStack) {
-                    this.logger.info({ event }, "No channel stack exists for event, cannot perform immediate switch");
-                    return;
-                }
-
-                const inputSwitchActions = await this.toInputSwitchActions(
-                    transformed,
-                    event.channelStack,
-                    event.eventRtmpInputName,
-                    id,
-                    event.conferenceId
-                );
-
-                if (inputSwitchActions.length) {
                     await this.mediaLiveService.updateSchedule(
                         event.channelStack.mediaLiveChannelId,
                         [],
                         inputSwitchActions
                     );
+
+                    await this.immediateSwitchDataService.completeImmediateSwitch(id);
+                } else {
+                    this.logger.warn(
+                        { request: transformed },
+                        "No event ID given for immediate switch request - this is not yet supported"
+                    );
+                    await this.immediateSwitchDataService.failImmediateSwitch(id, "Currently outside an event");
+                    return;
                 }
-            } else {
-                this.logger.warn(
-                    { request: transformed },
-                    "No event ID given for immediate switch request - this is not yet supported"
-                );
-                return;
             }
+        } catch (err) {
+            await this.immediateSwitchDataService.failImmediateSwitch(id, "Processing error");
+            throw err;
         }
     }
 
@@ -110,7 +135,7 @@ export class ScheduleSyncService {
         eventRtmpInputName: string | null,
         immediateSwitchId: string,
         conferenceId: string
-    ): Promise<ScheduleAction[]> {
+    ): Promise<ScheduleAction[] | string> {
         switch (switchData.data.kind) {
             case "filler": {
                 const fillerVideoKey = (await this.channelStackDataService.getFillerVideoKey(conferenceId)) ?? "";
@@ -130,29 +155,29 @@ export class ScheduleSyncService {
                 ];
             }
             case "video": {
-                const element = await this.contentElementService.getElement(switchData.data.elementId);
+                const element = await this.contentElementDataService.getElement(switchData.data.elementId);
                 if (!element || element.conferenceId !== conferenceId) {
                     this.logger.warn(
                         { switchData, element, conferenceId },
                         "Retrieved content element belongs to a different conference, skipping"
                     );
-                    return [];
+                    return "Element belongs to another conference";
                 }
-                const broadcastVideoData = this.contentElementService.getLatestBroadcastVideoData(element.data);
+                const broadcastVideoData = this.contentElementDataService.getLatestBroadcastVideoData(element.data);
                 if (!broadcastVideoData) {
                     this.logger.warn(
                         { switchData, element, conferenceId, broadcastVideoData },
                         "Could not find latest video broadcast data in element"
                     );
-                    return [];
+                    return "Could not find video data";
                 }
-                const videoKey = this.contentElementService.getVideoKey(broadcastVideoData);
+                const videoKey = this.contentElementDataService.getVideoKey(broadcastVideoData);
                 if (!videoKey) {
                     this.logger.warn(
                         { switchData, element, conferenceId, broadcastVideoData },
                         "Could not retrieve video key from video broadcast data"
                     );
-                    return [];
+                    return "Could not find video file";
                 }
                 return [
                     {
@@ -424,7 +449,7 @@ export class ScheduleSyncService {
 
         if (localAction.roomModeName === Room_Mode_Enum.Prerecorded) {
             const videoKey = localAction.videoData
-                ? this.contentElementService.getVideoKey(localAction.videoData)
+                ? this.contentElementDataService.getVideoKey(localAction.videoData)
                 : null;
             if (!videoKey) {
                 this.logger.warn(
@@ -484,7 +509,7 @@ export class ScheduleSyncService {
         const rtmpInputsMatch = remoteAction.rtmpInputName === localAction.rtmpInputName;
         const videosMatch =
             !!localAction.videoData &&
-            this.contentElementService.getVideoKey(localAction.videoData) === remoteAction.s3Key;
+            this.contentElementDataService.getVideoKey(localAction.videoData) === remoteAction.s3Key;
         const timesMatch = remoteAction.startTime === localAction.startTime;
 
         return (

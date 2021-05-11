@@ -39617,7 +39617,7 @@ export const ImmediateSwitch_GetElementsDocument = gql`
     id
     item {
       id
-      elements {
+      elements(where: {typeName: {_eq: VIDEO_BROADCAST}}) {
         id
         name
       }

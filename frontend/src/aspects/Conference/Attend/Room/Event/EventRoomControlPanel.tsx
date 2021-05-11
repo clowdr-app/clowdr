@@ -81,7 +81,7 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
 
     const broadcastPopover = useMemo(
         () => (
-            <Popover placement="auto-end">
+            <Popover placement="auto-end" isLazy>
                 <PopoverTrigger>
                     <VStack>
                         <Button
@@ -119,38 +119,9 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
 
     const immediatePopover = useMemo(
         () => (
-            <Popover placement="auto-end">
-                <PopoverTrigger>
-                    <VStack>
-                        <Button
-                            aria-label="Switch livestream input"
-                            title="Switch livestream input"
-                            textAlign="center"
-                            my={4}
-                            ml={2}
-                        >
-                            <FAIcon icon="random" iconStyle="s" mr={2} />
-                            <Text>Switch input</Text>
-                        </Button>
-                    </VStack>
-                </PopoverTrigger>
-                <Portal>
-                    <Box zIndex="500" position="relative">
-                        <PopoverContent>
-                            <PopoverArrow />
-                            <PopoverCloseButton />
-                            <PopoverHeader>Switch livestream input</PopoverHeader>
-                            <PopoverBody>
-                                <ImmediateSwitch
-                                    live={live}
-                                    secondsUntilOffAir={secondsUntilOffAir}
-                                    eventId={event.id}
-                                />
-                            </PopoverBody>
-                        </PopoverContent>
-                    </Box>
-                </Portal>
-            </Popover>
+            <Box ml={2} my={4} maxW="30ch">
+                <ImmediateSwitch live={live} secondsUntilOffAir={secondsUntilOffAir} eventId={event.id} />
+            </Box>
         ),
         [event.id, live, secondsUntilOffAir]
     );
@@ -159,9 +130,9 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
     return (
         <Flex w="100%" p={2} flexWrap="wrap" alignItems="center" justifyContent="center">
             {/* Add a spacer of equal width to the Broadcast Controls button, so that the time info is centered */}
-            {insertSpacer ? <Box w={"10em"}>&nbsp;</Box> : <></>}
-            <LiveIndicator live={live} secondsUntilLive={secondsUntilLive} secondsUntilOffAir={secondsUntilOffAir} />
             {broadcastPopover}
+            {insertSpacer ? <Box w={"5em"}>&nbsp;</Box> : <></>}
+            <LiveIndicator live={live} secondsUntilLive={secondsUntilLive} secondsUntilOffAir={secondsUntilOffAir} />
             {immediatePopover}
         </Flex>
     );

@@ -1624,10 +1624,37 @@ export type Analytics_ContentElementStats_Aggregate_FieldsCountArgs = {
     distinct?: Maybe<Scalars["Boolean"]>;
 };
 
+/** order by aggregate values of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Aggregate_Order_By = {
+    avg?: Maybe<Analytics_ContentElementStats_Avg_Order_By>;
+    count?: Maybe<Order_By>;
+    max?: Maybe<Analytics_ContentElementStats_Max_Order_By>;
+    min?: Maybe<Analytics_ContentElementStats_Min_Order_By>;
+    stddev?: Maybe<Analytics_ContentElementStats_Stddev_Order_By>;
+    stddev_pop?: Maybe<Analytics_ContentElementStats_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Analytics_ContentElementStats_Stddev_Samp_Order_By>;
+    sum?: Maybe<Analytics_ContentElementStats_Sum_Order_By>;
+    var_pop?: Maybe<Analytics_ContentElementStats_Var_Pop_Order_By>;
+    var_samp?: Maybe<Analytics_ContentElementStats_Var_Samp_Order_By>;
+    variance?: Maybe<Analytics_ContentElementStats_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Arr_Rel_Insert_Input = {
+    data: Array<Analytics_ContentElementStats_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Analytics_ContentElementStats_On_Conflict>;
+};
+
 /** aggregate avg on columns */
 export type Analytics_ContentElementStats_Avg_Fields = {
     __typename?: "analytics_ContentElementStats_avg_fields";
     viewCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Avg_Order_By = {
+    viewCount?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "analytics.ContentElementStats". All fields are combined with a logical 'AND'. */
@@ -1676,6 +1703,15 @@ export type Analytics_ContentElementStats_Max_Fields = {
     viewCount?: Maybe<Scalars["Int"]>;
 };
 
+/** order by max() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Max_Order_By = {
+    created_at?: Maybe<Order_By>;
+    elementId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Analytics_ContentElementStats_Min_Fields = {
     __typename?: "analytics_ContentElementStats_min_fields";
@@ -1686,6 +1722,15 @@ export type Analytics_ContentElementStats_Min_Fields = {
     viewCount?: Maybe<Scalars["Int"]>;
 };
 
+/** order by min() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Min_Order_By = {
+    created_at?: Maybe<Order_By>;
+    elementId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    viewCount?: Maybe<Order_By>;
+};
+
 /** response of any mutation on the table "analytics.ContentElementStats" */
 export type Analytics_ContentElementStats_Mutation_Response = {
     __typename?: "analytics_ContentElementStats_mutation_response";
@@ -1693,13 +1738,6 @@ export type Analytics_ContentElementStats_Mutation_Response = {
     affected_rows: Scalars["Int"];
     /** data from the rows affected by the mutation */
     returning: Array<Analytics_ContentElementStats>;
-};
-
-/** input type for inserting object relation for remote table "analytics.ContentElementStats" */
-export type Analytics_ContentElementStats_Obj_Rel_Insert_Input = {
-    data: Analytics_ContentElementStats_Insert_Input;
-    /** on conflict condition */
-    on_conflict?: Maybe<Analytics_ContentElementStats_On_Conflict>;
 };
 
 /** on conflict condition type for table "analytics.ContentElementStats" */
@@ -1753,10 +1791,20 @@ export type Analytics_ContentElementStats_Stddev_Fields = {
     viewCount?: Maybe<Scalars["Float"]>;
 };
 
+/** order by stddev() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Stddev_Order_By = {
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate stddev_pop on columns */
 export type Analytics_ContentElementStats_Stddev_Pop_Fields = {
     __typename?: "analytics_ContentElementStats_stddev_pop_fields";
     viewCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Stddev_Pop_Order_By = {
+    viewCount?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
@@ -1765,10 +1813,20 @@ export type Analytics_ContentElementStats_Stddev_Samp_Fields = {
     viewCount?: Maybe<Scalars["Float"]>;
 };
 
+/** order by stddev_samp() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Stddev_Samp_Order_By = {
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate sum on columns */
 export type Analytics_ContentElementStats_Sum_Fields = {
     __typename?: "analytics_ContentElementStats_sum_fields";
     viewCount?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Sum_Order_By = {
+    viewCount?: Maybe<Order_By>;
 };
 
 /** update columns of table "analytics.ContentElementStats" */
@@ -1791,16 +1849,31 @@ export type Analytics_ContentElementStats_Var_Pop_Fields = {
     viewCount?: Maybe<Scalars["Float"]>;
 };
 
+/** order by var_pop() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Var_Pop_Order_By = {
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate var_samp on columns */
 export type Analytics_ContentElementStats_Var_Samp_Fields = {
     __typename?: "analytics_ContentElementStats_var_samp_fields";
     viewCount?: Maybe<Scalars["Float"]>;
 };
 
+/** order by var_samp() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Var_Samp_Order_By = {
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate variance on columns */
 export type Analytics_ContentElementStats_Variance_Fields = {
     __typename?: "analytics_ContentElementStats_variance_fields";
     viewCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "analytics.ContentElementStats" */
+export type Analytics_ContentElementStats_Variance_Order_By = {
+    viewCount?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "analytics.ContentItemStats" */
@@ -1844,10 +1917,37 @@ export type Analytics_ContentItemStats_Aggregate_FieldsCountArgs = {
     distinct?: Maybe<Scalars["Boolean"]>;
 };
 
+/** order by aggregate values of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Aggregate_Order_By = {
+    avg?: Maybe<Analytics_ContentItemStats_Avg_Order_By>;
+    count?: Maybe<Order_By>;
+    max?: Maybe<Analytics_ContentItemStats_Max_Order_By>;
+    min?: Maybe<Analytics_ContentItemStats_Min_Order_By>;
+    stddev?: Maybe<Analytics_ContentItemStats_Stddev_Order_By>;
+    stddev_pop?: Maybe<Analytics_ContentItemStats_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Analytics_ContentItemStats_Stddev_Samp_Order_By>;
+    sum?: Maybe<Analytics_ContentItemStats_Sum_Order_By>;
+    var_pop?: Maybe<Analytics_ContentItemStats_Var_Pop_Order_By>;
+    var_samp?: Maybe<Analytics_ContentItemStats_Var_Samp_Order_By>;
+    variance?: Maybe<Analytics_ContentItemStats_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Arr_Rel_Insert_Input = {
+    data: Array<Analytics_ContentItemStats_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
+};
+
 /** aggregate avg on columns */
 export type Analytics_ContentItemStats_Avg_Fields = {
     __typename?: "analytics_ContentItemStats_avg_fields";
     viewCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Avg_Order_By = {
+    viewCount?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "analytics.ContentItemStats". All fields are combined with a logical 'AND'. */
@@ -1896,6 +1996,15 @@ export type Analytics_ContentItemStats_Max_Fields = {
     viewCount?: Maybe<Scalars["Int"]>;
 };
 
+/** order by max() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Max_Order_By = {
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    itemId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Analytics_ContentItemStats_Min_Fields = {
     __typename?: "analytics_ContentItemStats_min_fields";
@@ -1906,6 +2015,15 @@ export type Analytics_ContentItemStats_Min_Fields = {
     viewCount?: Maybe<Scalars["Int"]>;
 };
 
+/** order by min() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Min_Order_By = {
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    itemId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    viewCount?: Maybe<Order_By>;
+};
+
 /** response of any mutation on the table "analytics.ContentItemStats" */
 export type Analytics_ContentItemStats_Mutation_Response = {
     __typename?: "analytics_ContentItemStats_mutation_response";
@@ -1913,13 +2031,6 @@ export type Analytics_ContentItemStats_Mutation_Response = {
     affected_rows: Scalars["Int"];
     /** data from the rows affected by the mutation */
     returning: Array<Analytics_ContentItemStats>;
-};
-
-/** input type for inserting object relation for remote table "analytics.ContentItemStats" */
-export type Analytics_ContentItemStats_Obj_Rel_Insert_Input = {
-    data: Analytics_ContentItemStats_Insert_Input;
-    /** on conflict condition */
-    on_conflict?: Maybe<Analytics_ContentItemStats_On_Conflict>;
 };
 
 /** on conflict condition type for table "analytics.ContentItemStats" */
@@ -1973,10 +2084,20 @@ export type Analytics_ContentItemStats_Stddev_Fields = {
     viewCount?: Maybe<Scalars["Float"]>;
 };
 
+/** order by stddev() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Stddev_Order_By = {
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate stddev_pop on columns */
 export type Analytics_ContentItemStats_Stddev_Pop_Fields = {
     __typename?: "analytics_ContentItemStats_stddev_pop_fields";
     viewCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Stddev_Pop_Order_By = {
+    viewCount?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
@@ -1985,10 +2106,20 @@ export type Analytics_ContentItemStats_Stddev_Samp_Fields = {
     viewCount?: Maybe<Scalars["Float"]>;
 };
 
+/** order by stddev_samp() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Stddev_Samp_Order_By = {
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate sum on columns */
 export type Analytics_ContentItemStats_Sum_Fields = {
     __typename?: "analytics_ContentItemStats_sum_fields";
     viewCount?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Sum_Order_By = {
+    viewCount?: Maybe<Order_By>;
 };
 
 /** update columns of table "analytics.ContentItemStats" */
@@ -2011,16 +2142,31 @@ export type Analytics_ContentItemStats_Var_Pop_Fields = {
     viewCount?: Maybe<Scalars["Float"]>;
 };
 
+/** order by var_pop() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Var_Pop_Order_By = {
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate var_samp on columns */
 export type Analytics_ContentItemStats_Var_Samp_Fields = {
     __typename?: "analytics_ContentItemStats_var_samp_fields";
     viewCount?: Maybe<Scalars["Float"]>;
 };
 
+/** order by var_samp() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Var_Samp_Order_By = {
+    viewCount?: Maybe<Order_By>;
+};
+
 /** aggregate variance on columns */
 export type Analytics_ContentItemStats_Variance_Fields = {
     __typename?: "analytics_ContentItemStats_variance_fields";
     viewCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "analytics.ContentItemStats" */
+export type Analytics_ContentItemStats_Variance_Order_By = {
+    viewCount?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "analytics.RoomStats" */
@@ -7530,8 +7676,14 @@ export type Content_Element = {
     /** An object relationship */
     originatingData?: Maybe<Conference_OriginatingData>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
-    stats?: Maybe<Analytics_ContentElementStats>;
+    /** An array relationship */
+    permissionGrants: Array<Content_ElementPermissionGrant>;
+    /** An aggregate relationship */
+    permissionGrants_aggregate: Content_ElementPermissionGrant_Aggregate;
+    /** An array relationship */
+    stats: Array<Analytics_ContentElementStats>;
+    /** An aggregate relationship */
+    stats_aggregate: Analytics_ContentElementStats_Aggregate;
     /** An object relationship */
     type: Content_ElementType;
     typeName: Content_ElementType_Enum;
@@ -7553,6 +7705,42 @@ export type Content_ElementDataArgs = {
 /** columns and relationships of "content.Element" */
 export type Content_ElementLayoutDataArgs = {
     path?: Maybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementPermissionGrantsArgs = {
+    distinct_on?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementPermissionGrants_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementStatsArgs = {
+    distinct_on?: Maybe<Array<Analytics_ContentElementStats_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Analytics_ContentElementStats_Order_By>>;
+    where?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementStats_AggregateArgs = {
+    distinct_on?: Maybe<Array<Analytics_ContentElementStats_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Analytics_ContentElementStats_Order_By>>;
+    where?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
 };
 
 /** columns and relationships of "content.Element" */
@@ -7677,6 +7865,231 @@ export enum Content_ElementByAccessToken_Select_Column {
     Name = "name",
     /** column name */
     TypeName = "typeName",
+}
+
+/** columns and relationships of "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant = {
+    __typename?: "content_ElementPermissionGrant";
+    /** An object relationship */
+    conference: Conference_Conference;
+    conferenceSlug: Scalars["String"];
+    created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    entity?: Maybe<Content_Element>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    group?: Maybe<Permissions_Group>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id: Scalars["uuid"];
+    /** An object relationship */
+    permissionSet: Permissions_Role;
+    permissionSetId: Scalars["uuid"];
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Aggregate = {
+    __typename?: "content_ElementPermissionGrant_aggregate";
+    aggregate?: Maybe<Content_ElementPermissionGrant_Aggregate_Fields>;
+    nodes: Array<Content_ElementPermissionGrant>;
+};
+
+/** aggregate fields of "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Aggregate_Fields = {
+    __typename?: "content_ElementPermissionGrant_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Content_ElementPermissionGrant_Max_Fields>;
+    min?: Maybe<Content_ElementPermissionGrant_Min_Fields>;
+};
+
+/** aggregate fields of "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Aggregate_Order_By = {
+    count?: Maybe<Order_By>;
+    max?: Maybe<Content_ElementPermissionGrant_Max_Order_By>;
+    min?: Maybe<Content_ElementPermissionGrant_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Arr_Rel_Insert_Input = {
+    data: Array<Content_ElementPermissionGrant_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "content.ElementPermissionGrant". All fields are combined with a logical 'AND'. */
+export type Content_ElementPermissionGrant_Bool_Exp = {
+    _and?: Maybe<Array<Content_ElementPermissionGrant_Bool_Exp>>;
+    _not?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+    _or?: Maybe<Array<Content_ElementPermissionGrant_Bool_Exp>>;
+    conference?: Maybe<Conference_Conference_Bool_Exp>;
+    conferenceSlug?: Maybe<String_Comparison_Exp>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    entity?: Maybe<Content_Element_Bool_Exp>;
+    entityId?: Maybe<Uuid_Comparison_Exp>;
+    group?: Maybe<Permissions_Group_Bool_Exp>;
+    groupId?: Maybe<Uuid_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    permissionSet?: Maybe<Permissions_Role_Bool_Exp>;
+    permissionSetId?: Maybe<Uuid_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "content.ElementPermissionGrant" */
+export enum Content_ElementPermissionGrant_Constraint {
+    /** unique or primary key constraint */
+    ElementPermissionGrantPermissionSetIdGroupIdEntityIdKey = "ElementPermissionGrant_permissionSetId_groupId_entityId_key",
+    /** unique or primary key constraint */
+    ElementPermissionGrantPkey = "ElementPermissionGrant_pkey",
+}
+
+/** input type for inserting data into table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Insert_Input = {
+    conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceSlug?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    entity?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    group?: Maybe<Permissions_Group_Obj_Rel_Insert_Input>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    permissionSet?: Maybe<Permissions_Role_Obj_Rel_Insert_Input>;
+    permissionSetId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Content_ElementPermissionGrant_Max_Fields = {
+    __typename?: "content_ElementPermissionGrant_max_fields";
+    conferenceSlug?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    permissionSetId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Max_Order_By = {
+    conferenceSlug?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    entityId?: Maybe<Order_By>;
+    groupId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    permissionSetId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_ElementPermissionGrant_Min_Fields = {
+    __typename?: "content_ElementPermissionGrant_min_fields";
+    conferenceSlug?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    permissionSetId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Min_Order_By = {
+    conferenceSlug?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    entityId?: Maybe<Order_By>;
+    groupId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    permissionSetId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Mutation_Response = {
+    __typename?: "content_ElementPermissionGrant_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Content_ElementPermissionGrant>;
+};
+
+/** on conflict condition type for table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_On_Conflict = {
+    constraint: Content_ElementPermissionGrant_Constraint;
+    update_columns?: Array<Content_ElementPermissionGrant_Update_Column>;
+    where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "content.ElementPermissionGrant". */
+export type Content_ElementPermissionGrant_Order_By = {
+    conference?: Maybe<Conference_Conference_Order_By>;
+    conferenceSlug?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    entity?: Maybe<Content_Element_Order_By>;
+    entityId?: Maybe<Order_By>;
+    group?: Maybe<Permissions_Group_Order_By>;
+    groupId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    permissionSet?: Maybe<Permissions_Role_Order_By>;
+    permissionSetId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: content_ElementPermissionGrant */
+export type Content_ElementPermissionGrant_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "content.ElementPermissionGrant" */
+export enum Content_ElementPermissionGrant_Select_Column {
+    /** column name */
+    ConferenceSlug = "conferenceSlug",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EntityId = "entityId",
+    /** column name */
+    GroupId = "groupId",
+    /** column name */
+    Id = "id",
+    /** column name */
+    PermissionSetId = "permissionSetId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "content.ElementPermissionGrant" */
+export type Content_ElementPermissionGrant_Set_Input = {
+    conferenceSlug?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    permissionSetId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "content.ElementPermissionGrant" */
+export enum Content_ElementPermissionGrant_Update_Column {
+    /** column name */
+    ConferenceSlug = "conferenceSlug",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EntityId = "entityId",
+    /** column name */
+    GroupId = "groupId",
+    /** column name */
+    Id = "id",
+    /** column name */
+    PermissionSetId = "permissionSetId",
+    /** column name */
+    UpdatedAt = "updated_at",
 }
 
 /** columns and relationships of "content.ElementType" */
@@ -7915,6 +8328,7 @@ export type Content_Element_Bool_Exp = {
     name?: Maybe<String_Comparison_Exp>;
     originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
     originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    permissionGrants?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
     stats?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
     type?: Maybe<Content_ElementType_Bool_Exp>;
     typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
@@ -7965,7 +8379,8 @@ export type Content_Element_Insert_Input = {
     name?: Maybe<Scalars["String"]>;
     originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
-    stats?: Maybe<Analytics_ContentElementStats_Obj_Rel_Insert_Input>;
+    permissionGrants?: Maybe<Content_ElementPermissionGrant_Arr_Rel_Insert_Input>;
+    stats?: Maybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
     type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
     typeName?: Maybe<Content_ElementType_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -8062,7 +8477,8 @@ export type Content_Element_Order_By = {
     name?: Maybe<Order_By>;
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
     originatingDataId?: Maybe<Order_By>;
-    stats?: Maybe<Analytics_ContentElementStats_Order_By>;
+    permissionGrants_aggregate?: Maybe<Content_ElementPermissionGrant_Aggregate_Order_By>;
+    stats_aggregate?: Maybe<Analytics_ContentElementStats_Aggregate_Order_By>;
     type?: Maybe<Content_ElementType_Order_By>;
     typeName?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
@@ -8195,8 +8611,10 @@ export type Content_Item = {
     /** An aggregate relationship */
     rooms_aggregate: Room_Room_Aggregate;
     shortTitle?: Maybe<Scalars["String"]>;
-    /** An object relationship */
-    stats?: Maybe<Analytics_ContentItemStats>;
+    /** An array relationship */
+    stats: Array<Analytics_ContentItemStats>;
+    /** An aggregate relationship */
+    stats_aggregate: Analytics_ContentItemStats_Aggregate;
     title: Scalars["String"];
     /** An object relationship */
     type: Content_ItemType;
@@ -8314,6 +8732,24 @@ export type Content_ItemRooms_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Room_Room_Order_By>>;
     where?: Maybe<Room_Room_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemStatsArgs = {
+    distinct_on?: Maybe<Array<Analytics_ContentItemStats_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Analytics_ContentItemStats_Order_By>>;
+    where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemStats_AggregateArgs = {
+    distinct_on?: Maybe<Array<Analytics_ContentItemStats_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Analytics_ContentItemStats_Order_By>>;
+    where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
 };
 
 /** columns and relationships of "content.Item" */
@@ -9398,7 +9834,7 @@ export type Content_Item_Insert_Input = {
     room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
     rooms?: Maybe<Room_Room_Arr_Rel_Insert_Input>;
     shortTitle?: Maybe<Scalars["String"]>;
-    stats?: Maybe<Analytics_ContentItemStats_Obj_Rel_Insert_Input>;
+    stats?: Maybe<Analytics_ContentItemStats_Arr_Rel_Insert_Input>;
     title?: Maybe<Scalars["String"]>;
     type?: Maybe<Content_ItemType_Obj_Rel_Insert_Input>;
     typeName?: Maybe<Content_ItemType_Enum>;
@@ -9497,7 +9933,7 @@ export type Content_Item_Order_By = {
     room?: Maybe<Room_Room_Order_By>;
     rooms_aggregate?: Maybe<Room_Room_Aggregate_Order_By>;
     shortTitle?: Maybe<Order_By>;
-    stats?: Maybe<Analytics_ContentItemStats_Order_By>;
+    stats_aggregate?: Maybe<Analytics_ContentItemStats_Aggregate_Order_By>;
     title?: Maybe<Order_By>;
     type?: Maybe<Content_ItemType_Order_By>;
     typeName?: Maybe<Order_By>;
@@ -9570,13 +10006,15 @@ export enum Content_Item_Update_Column {
 /** columns and relationships of "content.UploadableElement" */
 export type Content_UploadableElement = {
     __typename?: "content_UploadableElement";
-    accessToken?: Maybe<Scalars["String"]>;
+    accessToken: Scalars["String"];
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
     createdAt: Scalars["timestamptz"];
     /** An object relationship */
     element?: Maybe<Content_Element>;
+    /** A computed field, executes function "content.hasBeenUploaded" */
+    hasBeenUploaded?: Maybe<Scalars["Boolean"]>;
     id: Scalars["uuid"];
     isHidden: Scalars["Boolean"];
     /** An object relationship */
@@ -9588,6 +10026,10 @@ export type Content_UploadableElement = {
     /** An object relationship */
     originatingData?: Maybe<Conference_OriginatingData>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
+    /** An array relationship */
+    permissionGrants: Array<Content_UploadableElementPermissionGrant>;
+    /** An aggregate relationship */
+    permissionGrants_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
     /** An object relationship */
     type: Content_ElementType;
     typeName: Content_ElementType_Enum;
@@ -9597,6 +10039,24 @@ export type Content_UploadableElement = {
     /** An aggregate relationship */
     uploaders_aggregate: Content_Uploader_Aggregate;
     uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** columns and relationships of "content.UploadableElement" */
+export type Content_UploadableElementPermissionGrantsArgs = {
+    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+/** columns and relationships of "content.UploadableElement" */
+export type Content_UploadableElementPermissionGrants_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
 };
 
 /** columns and relationships of "content.UploadableElement" */
@@ -9616,6 +10076,231 @@ export type Content_UploadableElementUploaders_AggregateArgs = {
     order_by?: Maybe<Array<Content_Uploader_Order_By>>;
     where?: Maybe<Content_Uploader_Bool_Exp>;
 };
+
+/** columns and relationships of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant = {
+    __typename?: "content_UploadableElementPermissionGrant";
+    /** An object relationship */
+    conference: Conference_Conference;
+    conferenceSlug: Scalars["String"];
+    created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    entity?: Maybe<Content_UploadableElement>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    group?: Maybe<Permissions_Group>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id: Scalars["uuid"];
+    /** An object relationship */
+    permissionSet: Permissions_Role;
+    permissionSetId: Scalars["uuid"];
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate = {
+    __typename?: "content_UploadableElementPermissionGrant_aggregate";
+    aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Fields>;
+    nodes: Array<Content_UploadableElementPermissionGrant>;
+};
+
+/** aggregate fields of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_Fields = {
+    __typename?: "content_UploadableElementPermissionGrant_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Content_UploadableElementPermissionGrant_Max_Fields>;
+    min?: Maybe<Content_UploadableElementPermissionGrant_Min_Fields>;
+};
+
+/** aggregate fields of "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Aggregate_Order_By = {
+    count?: Maybe<Order_By>;
+    max?: Maybe<Content_UploadableElementPermissionGrant_Max_Order_By>;
+    min?: Maybe<Content_UploadableElementPermissionGrant_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input = {
+    data: Array<Content_UploadableElementPermissionGrant_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "content.UploadableElementPermissionGrant". All fields are combined with a logical 'AND'. */
+export type Content_UploadableElementPermissionGrant_Bool_Exp = {
+    _and?: Maybe<Array<Content_UploadableElementPermissionGrant_Bool_Exp>>;
+    _not?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+    _or?: Maybe<Array<Content_UploadableElementPermissionGrant_Bool_Exp>>;
+    conference?: Maybe<Conference_Conference_Bool_Exp>;
+    conferenceSlug?: Maybe<String_Comparison_Exp>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    entity?: Maybe<Content_UploadableElement_Bool_Exp>;
+    entityId?: Maybe<Uuid_Comparison_Exp>;
+    group?: Maybe<Permissions_Group_Bool_Exp>;
+    groupId?: Maybe<Uuid_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    permissionSet?: Maybe<Permissions_Role_Bool_Exp>;
+    permissionSetId?: Maybe<Uuid_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Constraint {
+    /** unique or primary key constraint */
+    UploadableElementPermissionGrPermissionSetIdGroupIdEntitKey = "UploadableElementPermissionGr_permissionSetId_groupId_entit_key",
+    /** unique or primary key constraint */
+    UploadableElementPermissionGrantPkey = "UploadableElementPermissionGrant_pkey",
+}
+
+/** input type for inserting data into table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Insert_Input = {
+    conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceSlug?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    entity?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    group?: Maybe<Permissions_Group_Obj_Rel_Insert_Input>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    permissionSet?: Maybe<Permissions_Role_Obj_Rel_Insert_Input>;
+    permissionSetId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Content_UploadableElementPermissionGrant_Max_Fields = {
+    __typename?: "content_UploadableElementPermissionGrant_max_fields";
+    conferenceSlug?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    permissionSetId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Max_Order_By = {
+    conferenceSlug?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    entityId?: Maybe<Order_By>;
+    groupId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    permissionSetId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_UploadableElementPermissionGrant_Min_Fields = {
+    __typename?: "content_UploadableElementPermissionGrant_min_fields";
+    conferenceSlug?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    permissionSetId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Min_Order_By = {
+    conferenceSlug?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    entityId?: Maybe<Order_By>;
+    groupId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    permissionSetId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Mutation_Response = {
+    __typename?: "content_UploadableElementPermissionGrant_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Content_UploadableElementPermissionGrant>;
+};
+
+/** on conflict condition type for table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_On_Conflict = {
+    constraint: Content_UploadableElementPermissionGrant_Constraint;
+    update_columns?: Array<Content_UploadableElementPermissionGrant_Update_Column>;
+    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "content.UploadableElementPermissionGrant". */
+export type Content_UploadableElementPermissionGrant_Order_By = {
+    conference?: Maybe<Conference_Conference_Order_By>;
+    conferenceSlug?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    entity?: Maybe<Content_UploadableElement_Order_By>;
+    entityId?: Maybe<Order_By>;
+    group?: Maybe<Permissions_Group_Order_By>;
+    groupId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    permissionSet?: Maybe<Permissions_Role_Order_By>;
+    permissionSetId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: content_UploadableElementPermissionGrant */
+export type Content_UploadableElementPermissionGrant_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Select_Column {
+    /** column name */
+    ConferenceSlug = "conferenceSlug",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EntityId = "entityId",
+    /** column name */
+    GroupId = "groupId",
+    /** column name */
+    Id = "id",
+    /** column name */
+    PermissionSetId = "permissionSetId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "content.UploadableElementPermissionGrant" */
+export type Content_UploadableElementPermissionGrant_Set_Input = {
+    conferenceSlug?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    entityId?: Maybe<Scalars["uuid"]>;
+    groupId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    permissionSetId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "content.UploadableElementPermissionGrant" */
+export enum Content_UploadableElementPermissionGrant_Update_Column {
+    /** column name */
+    ConferenceSlug = "conferenceSlug",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EntityId = "entityId",
+    /** column name */
+    GroupId = "groupId",
+    /** column name */
+    Id = "id",
+    /** column name */
+    PermissionSetId = "permissionSetId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
 
 /** aggregated selection of "content.UploadableElement" */
 export type Content_UploadableElement_Aggregate = {
@@ -9696,6 +10381,7 @@ export type Content_UploadableElement_Bool_Exp = {
     name?: Maybe<String_Comparison_Exp>;
     originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
     originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
     type?: Maybe<Content_ElementType_Bool_Exp>;
     typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -9728,6 +10414,7 @@ export type Content_UploadableElement_Insert_Input = {
     name?: Maybe<Scalars["String"]>;
     originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
+    permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input>;
     type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
     typeName?: Maybe<Content_ElementType_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
@@ -9826,6 +10513,7 @@ export type Content_UploadableElement_Order_By = {
     name?: Maybe<Order_By>;
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
     originatingDataId?: Maybe<Order_By>;
+    permissionGrants_aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Order_By>;
     type?: Maybe<Content_ElementType_Order_By>;
     typeName?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
@@ -12372,6 +13060,10 @@ export type Mutation_Root = {
     delete_conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
     /** delete data from the table: "content.Element" */
     delete_content_Element?: Maybe<Content_Element_Mutation_Response>;
+    /** delete data from the table: "content.ElementPermissionGrant" */
+    delete_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
+    /** delete single row from the table: "content.ElementPermissionGrant" */
+    delete_content_ElementPermissionGrant_by_pk?: Maybe<Content_ElementPermissionGrant>;
     /** delete data from the table: "content.ElementType" */
     delete_content_ElementType?: Maybe<Content_ElementType_Mutation_Response>;
     /** delete single row from the table: "content.ElementType" */
@@ -12400,6 +13092,10 @@ export type Mutation_Root = {
     delete_content_Item_by_pk?: Maybe<Content_Item>;
     /** delete data from the table: "content.UploadableElement" */
     delete_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+    /** delete data from the table: "content.UploadableElementPermissionGrant" */
+    delete_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+    /** delete single row from the table: "content.UploadableElementPermissionGrant" */
+    delete_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
     /** delete single row from the table: "content.UploadableElement" */
     delete_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
     /** delete data from the table: "content.Uploader" */
@@ -12574,6 +13270,10 @@ export type Mutation_Root = {
     delete_video_EventVonageSession?: Maybe<Video_EventVonageSession_Mutation_Response>;
     /** delete single row from the table: "video.EventVonageSession" */
     delete_video_EventVonageSession_by_pk?: Maybe<Video_EventVonageSession>;
+    /** delete data from the table: "video.ImmediateSwitch" */
+    delete_video_ImmediateSwitch?: Maybe<Video_ImmediateSwitch_Mutation_Response>;
+    /** delete single row from the table: "video.ImmediateSwitch" */
+    delete_video_ImmediateSwitch_by_pk?: Maybe<Video_ImmediateSwitch>;
     /** delete data from the table: "video.InputType" */
     delete_video_InputType?: Maybe<Video_InputType_Mutation_Response>;
     /** delete single row from the table: "video.InputType" */
@@ -12709,6 +13409,10 @@ export type Mutation_Root = {
     insert_conference_PrepareJob_one?: Maybe<Conference_PrepareJob>;
     /** insert data into the table: "content.Element" */
     insert_content_Element?: Maybe<Content_Element_Mutation_Response>;
+    /** insert data into the table: "content.ElementPermissionGrant" */
+    insert_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
+    /** insert a single row into the table: "content.ElementPermissionGrant" */
+    insert_content_ElementPermissionGrant_one?: Maybe<Content_ElementPermissionGrant>;
     /** insert data into the table: "content.ElementType" */
     insert_content_ElementType?: Maybe<Content_ElementType_Mutation_Response>;
     /** insert a single row into the table: "content.ElementType" */
@@ -12737,6 +13441,10 @@ export type Mutation_Root = {
     insert_content_Item_one?: Maybe<Content_Item>;
     /** insert data into the table: "content.UploadableElement" */
     insert_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+    /** insert data into the table: "content.UploadableElementPermissionGrant" */
+    insert_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+    /** insert a single row into the table: "content.UploadableElementPermissionGrant" */
+    insert_content_UploadableElementPermissionGrant_one?: Maybe<Content_UploadableElementPermissionGrant>;
     /** insert a single row into the table: "content.UploadableElement" */
     insert_content_UploadableElement_one?: Maybe<Content_UploadableElement>;
     /** insert data into the table: "content.Uploader" */
@@ -12911,6 +13619,10 @@ export type Mutation_Root = {
     insert_video_EventVonageSession?: Maybe<Video_EventVonageSession_Mutation_Response>;
     /** insert a single row into the table: "video.EventVonageSession" */
     insert_video_EventVonageSession_one?: Maybe<Video_EventVonageSession>;
+    /** insert data into the table: "video.ImmediateSwitch" */
+    insert_video_ImmediateSwitch?: Maybe<Video_ImmediateSwitch_Mutation_Response>;
+    /** insert a single row into the table: "video.ImmediateSwitch" */
+    insert_video_ImmediateSwitch_one?: Maybe<Video_ImmediateSwitch>;
     /** insert data into the table: "video.InputType" */
     insert_video_InputType?: Maybe<Video_InputType_Mutation_Response>;
     /** insert a single row into the table: "video.InputType" */
@@ -13059,6 +13771,10 @@ export type Mutation_Root = {
     update_conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
     /** update data of the table: "content.Element" */
     update_content_Element?: Maybe<Content_Element_Mutation_Response>;
+    /** update data of the table: "content.ElementPermissionGrant" */
+    update_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
+    /** update single row of the table: "content.ElementPermissionGrant" */
+    update_content_ElementPermissionGrant_by_pk?: Maybe<Content_ElementPermissionGrant>;
     /** update data of the table: "content.ElementType" */
     update_content_ElementType?: Maybe<Content_ElementType_Mutation_Response>;
     /** update single row of the table: "content.ElementType" */
@@ -13087,6 +13803,10 @@ export type Mutation_Root = {
     update_content_Item_by_pk?: Maybe<Content_Item>;
     /** update data of the table: "content.UploadableElement" */
     update_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
+    /** update data of the table: "content.UploadableElementPermissionGrant" */
+    update_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
+    /** update single row of the table: "content.UploadableElementPermissionGrant" */
+    update_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
     /** update single row of the table: "content.UploadableElement" */
     update_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
     /** update data of the table: "content.Uploader" */
@@ -13261,6 +13981,10 @@ export type Mutation_Root = {
     update_video_EventVonageSession?: Maybe<Video_EventVonageSession_Mutation_Response>;
     /** update single row of the table: "video.EventVonageSession" */
     update_video_EventVonageSession_by_pk?: Maybe<Video_EventVonageSession>;
+    /** update data of the table: "video.ImmediateSwitch" */
+    update_video_ImmediateSwitch?: Maybe<Video_ImmediateSwitch_Mutation_Response>;
+    /** update single row of the table: "video.ImmediateSwitch" */
+    update_video_ImmediateSwitch_by_pk?: Maybe<Video_ImmediateSwitch>;
     /** update data of the table: "video.InputType" */
     update_video_InputType?: Maybe<Video_InputType_Mutation_Response>;
     /** update single row of the table: "video.InputType" */
@@ -13566,6 +14290,16 @@ export type Mutation_RootDelete_Content_ElementArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Content_ElementPermissionGrantArgs = {
+    where: Content_ElementPermissionGrant_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Content_ElementPermissionGrant_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Content_ElementTypeArgs = {
     where: Content_ElementType_Bool_Exp;
 };
@@ -13633,6 +14367,16 @@ export type Mutation_RootDelete_Content_Item_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Content_UploadableElementArgs = {
     where: Content_UploadableElement_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Content_UploadableElementPermissionGrantArgs = {
+    where: Content_UploadableElementPermissionGrant_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Content_UploadableElementPermissionGrant_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 /** mutation root */
@@ -14071,6 +14815,16 @@ export type Mutation_RootDelete_Video_EventVonageSession_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Video_ImmediateSwitchArgs = {
+    where: Video_ImmediateSwitch_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_ImmediateSwitch_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Video_InputTypeArgs = {
     where: Video_InputType_Bool_Exp;
 };
@@ -14463,6 +15217,18 @@ export type Mutation_RootInsert_Content_ElementArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Content_ElementPermissionGrantArgs = {
+    objects: Array<Content_ElementPermissionGrant_Insert_Input>;
+    on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ElementPermissionGrant_OneArgs = {
+    object: Content_ElementPermissionGrant_Insert_Input;
+    on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Content_ElementTypeArgs = {
     objects: Array<Content_ElementType_Insert_Input>;
     on_conflict?: Maybe<Content_ElementType_On_Conflict>;
@@ -14544,6 +15310,18 @@ export type Mutation_RootInsert_Content_Item_OneArgs = {
 export type Mutation_RootInsert_Content_UploadableElementArgs = {
     objects: Array<Content_UploadableElement_Insert_Input>;
     on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Content_UploadableElementPermissionGrantArgs = {
+    objects: Array<Content_UploadableElementPermissionGrant_Insert_Input>;
+    on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Content_UploadableElementPermissionGrant_OneArgs = {
+    object: Content_UploadableElementPermissionGrant_Insert_Input;
+    on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
 };
 
 /** mutation root */
@@ -15066,6 +15844,18 @@ export type Mutation_RootInsert_Video_EventVonageSessionArgs = {
 export type Mutation_RootInsert_Video_EventVonageSession_OneArgs = {
     object: Video_EventVonageSession_Insert_Input;
     on_conflict?: Maybe<Video_EventVonageSession_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_ImmediateSwitchArgs = {
+    objects: Array<Video_ImmediateSwitch_Insert_Input>;
+    on_conflict?: Maybe<Video_ImmediateSwitch_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_ImmediateSwitch_OneArgs = {
+    object: Video_ImmediateSwitch_Insert_Input;
+    on_conflict?: Maybe<Video_ImmediateSwitch_On_Conflict>;
 };
 
 /** mutation root */
@@ -15615,6 +16405,18 @@ export type Mutation_RootUpdate_Content_ElementArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Content_ElementPermissionGrantArgs = {
+    _set?: Maybe<Content_ElementPermissionGrant_Set_Input>;
+    where: Content_ElementPermissionGrant_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_ElementPermissionGrant_By_PkArgs = {
+    _set?: Maybe<Content_ElementPermissionGrant_Set_Input>;
+    pk_columns: Content_ElementPermissionGrant_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Content_ElementTypeArgs = {
     _set?: Maybe<Content_ElementType_Set_Input>;
     where: Content_ElementType_Bool_Exp;
@@ -15716,6 +16518,18 @@ export type Mutation_RootUpdate_Content_UploadableElementArgs = {
     _inc?: Maybe<Content_UploadableElement_Inc_Input>;
     _set?: Maybe<Content_UploadableElement_Set_Input>;
     where: Content_UploadableElement_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_UploadableElementPermissionGrantArgs = {
+    _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
+    where: Content_UploadableElementPermissionGrant_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_UploadableElementPermissionGrant_By_PkArgs = {
+    _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
+    pk_columns: Content_UploadableElementPermissionGrant_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -16355,6 +17169,28 @@ export type Mutation_RootUpdate_Video_EventVonageSession_By_PkArgs = {
     _prepend?: Maybe<Video_EventVonageSession_Prepend_Input>;
     _set?: Maybe<Video_EventVonageSession_Set_Input>;
     pk_columns: Video_EventVonageSession_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_ImmediateSwitchArgs = {
+    _append?: Maybe<Video_ImmediateSwitch_Append_Input>;
+    _delete_at_path?: Maybe<Video_ImmediateSwitch_Delete_At_Path_Input>;
+    _delete_elem?: Maybe<Video_ImmediateSwitch_Delete_Elem_Input>;
+    _delete_key?: Maybe<Video_ImmediateSwitch_Delete_Key_Input>;
+    _prepend?: Maybe<Video_ImmediateSwitch_Prepend_Input>;
+    _set?: Maybe<Video_ImmediateSwitch_Set_Input>;
+    where: Video_ImmediateSwitch_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_ImmediateSwitch_By_PkArgs = {
+    _append?: Maybe<Video_ImmediateSwitch_Append_Input>;
+    _delete_at_path?: Maybe<Video_ImmediateSwitch_Delete_At_Path_Input>;
+    _delete_elem?: Maybe<Video_ImmediateSwitch_Delete_Elem_Input>;
+    _delete_key?: Maybe<Video_ImmediateSwitch_Delete_Key_Input>;
+    _prepend?: Maybe<Video_ImmediateSwitch_Prepend_Input>;
+    _set?: Maybe<Video_ImmediateSwitch_Set_Input>;
+    pk_columns: Video_ImmediateSwitch_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -17901,6 +18737,12 @@ export type Query_Root = {
     content_ElementByAccessToken: Array<Content_ElementByAccessToken>;
     /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
     content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
+    /** fetch data from the table: "content.ElementPermissionGrant" */
+    content_ElementPermissionGrant: Array<Content_ElementPermissionGrant>;
+    /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
+    content_ElementPermissionGrant_aggregate: Content_ElementPermissionGrant_Aggregate;
+    /** fetch data from the table: "content.ElementPermissionGrant" using primary key columns */
+    content_ElementPermissionGrant_by_pk?: Maybe<Content_ElementPermissionGrant>;
     /** fetch data from the table: "content.ElementType" */
     content_ElementType: Array<Content_ElementType>;
     /** fetch aggregated fields from the table: "content.ElementType" */
@@ -17943,6 +18785,12 @@ export type Query_Root = {
     content_Item_by_pk?: Maybe<Content_Item>;
     /** fetch data from the table: "content.UploadableElement" */
     content_UploadableElement: Array<Content_UploadableElement>;
+    /** fetch data from the table: "content.UploadableElementPermissionGrant" */
+    content_UploadableElementPermissionGrant: Array<Content_UploadableElementPermissionGrant>;
+    /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
+    content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
+    /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
+    content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
     /** fetch aggregated fields from the table: "content.UploadableElement" */
     content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
     /** fetch data from the table: "content.UploadableElement" using primary key columns */
@@ -18212,6 +19060,12 @@ export type Query_Root = {
     video_EventVonageSession_aggregate: Video_EventVonageSession_Aggregate;
     /** fetch data from the table: "video.EventVonageSession" using primary key columns */
     video_EventVonageSession_by_pk?: Maybe<Video_EventVonageSession>;
+    /** fetch data from the table: "video.ImmediateSwitch" */
+    video_ImmediateSwitch: Array<Video_ImmediateSwitch>;
+    /** fetch aggregated fields from the table: "video.ImmediateSwitch" */
+    video_ImmediateSwitch_aggregate: Video_ImmediateSwitch_Aggregate;
+    /** fetch data from the table: "video.ImmediateSwitch" using primary key columns */
+    video_ImmediateSwitch_by_pk?: Maybe<Video_ImmediateSwitch>;
     /** fetch data from the table: "video.InputType" */
     video_InputType: Array<Video_InputType>;
     /** fetch aggregated fields from the table: "video.InputType" */
@@ -18821,6 +19675,26 @@ export type Query_RootContent_ElementByAccessToken_AggregateArgs = {
     where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
 };
 
+export type Query_RootContent_ElementPermissionGrantArgs = {
+    distinct_on?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+export type Query_RootContent_ElementPermissionGrant_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+export type Query_RootContent_ElementPermissionGrant_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
 export type Query_RootContent_ElementTypeArgs = {
     distinct_on?: Maybe<Array<Content_ElementType_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -18959,6 +19833,26 @@ export type Query_RootContent_UploadableElementArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
     where?: Maybe<Content_UploadableElement_Bool_Exp>;
+};
+
+export type Query_RootContent_UploadableElementPermissionGrantArgs = {
+    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+export type Query_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+export type Query_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Query_RootContent_UploadableElement_AggregateArgs = {
@@ -19850,6 +20744,26 @@ export type Query_RootVideo_EventVonageSession_AggregateArgs = {
 };
 
 export type Query_RootVideo_EventVonageSession_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootVideo_ImmediateSwitchArgs = {
+    distinct_on?: Maybe<Array<Video_ImmediateSwitch_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_ImmediateSwitch_Order_By>>;
+    where?: Maybe<Video_ImmediateSwitch_Bool_Exp>;
+};
+
+export type Query_RootVideo_ImmediateSwitch_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_ImmediateSwitch_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_ImmediateSwitch_Order_By>>;
+    where?: Maybe<Video_ImmediateSwitch_Bool_Exp>;
+};
+
+export type Query_RootVideo_ImmediateSwitch_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -26127,6 +27041,12 @@ export type Subscription_Root = {
     content_ElementByAccessToken: Array<Content_ElementByAccessToken>;
     /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
     content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
+    /** fetch data from the table: "content.ElementPermissionGrant" */
+    content_ElementPermissionGrant: Array<Content_ElementPermissionGrant>;
+    /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
+    content_ElementPermissionGrant_aggregate: Content_ElementPermissionGrant_Aggregate;
+    /** fetch data from the table: "content.ElementPermissionGrant" using primary key columns */
+    content_ElementPermissionGrant_by_pk?: Maybe<Content_ElementPermissionGrant>;
     /** fetch data from the table: "content.ElementType" */
     content_ElementType: Array<Content_ElementType>;
     /** fetch aggregated fields from the table: "content.ElementType" */
@@ -26169,6 +27089,12 @@ export type Subscription_Root = {
     content_Item_by_pk?: Maybe<Content_Item>;
     /** fetch data from the table: "content.UploadableElement" */
     content_UploadableElement: Array<Content_UploadableElement>;
+    /** fetch data from the table: "content.UploadableElementPermissionGrant" */
+    content_UploadableElementPermissionGrant: Array<Content_UploadableElementPermissionGrant>;
+    /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
+    content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
+    /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
+    content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
     /** fetch aggregated fields from the table: "content.UploadableElement" */
     content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
     /** fetch data from the table: "content.UploadableElement" using primary key columns */
@@ -26435,6 +27361,12 @@ export type Subscription_Root = {
     video_EventVonageSession_aggregate: Video_EventVonageSession_Aggregate;
     /** fetch data from the table: "video.EventVonageSession" using primary key columns */
     video_EventVonageSession_by_pk?: Maybe<Video_EventVonageSession>;
+    /** fetch data from the table: "video.ImmediateSwitch" */
+    video_ImmediateSwitch: Array<Video_ImmediateSwitch>;
+    /** fetch aggregated fields from the table: "video.ImmediateSwitch" */
+    video_ImmediateSwitch_aggregate: Video_ImmediateSwitch_Aggregate;
+    /** fetch data from the table: "video.ImmediateSwitch" using primary key columns */
+    video_ImmediateSwitch_by_pk?: Maybe<Video_ImmediateSwitch>;
     /** fetch data from the table: "video.InputType" */
     video_InputType: Array<Video_InputType>;
     /** fetch aggregated fields from the table: "video.InputType" */
@@ -27044,6 +27976,26 @@ export type Subscription_RootContent_ElementByAccessToken_AggregateArgs = {
     where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
 };
 
+export type Subscription_RootContent_ElementPermissionGrantArgs = {
+    distinct_on?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+export type Subscription_RootContent_ElementPermissionGrant_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+export type Subscription_RootContent_ElementPermissionGrant_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
 export type Subscription_RootContent_ElementTypeArgs = {
     distinct_on?: Maybe<Array<Content_ElementType_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -27182,6 +28134,26 @@ export type Subscription_RootContent_UploadableElementArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
     where?: Maybe<Content_UploadableElement_Bool_Exp>;
+};
+
+export type Subscription_RootContent_UploadableElementPermissionGrantArgs = {
+    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+export type Subscription_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
+    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
+};
+
+export type Subscription_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Subscription_RootContent_UploadableElement_AggregateArgs = {
@@ -28069,6 +29041,26 @@ export type Subscription_RootVideo_EventVonageSession_AggregateArgs = {
 };
 
 export type Subscription_RootVideo_EventVonageSession_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootVideo_ImmediateSwitchArgs = {
+    distinct_on?: Maybe<Array<Video_ImmediateSwitch_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_ImmediateSwitch_Order_By>>;
+    where?: Maybe<Video_ImmediateSwitch_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_ImmediateSwitch_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_ImmediateSwitch_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_ImmediateSwitch_Order_By>>;
+    where?: Maybe<Video_ImmediateSwitch_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_ImmediateSwitch_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -29707,6 +30699,201 @@ export enum Video_EventVonageSession_Update_Column {
     UpdatedAt = "updatedAt",
 }
 
+/** columns and relationships of "video.ImmediateSwitch" */
+export type Video_ImmediateSwitch = {
+    __typename?: "video_ImmediateSwitch";
+    createdAt: Scalars["timestamptz"];
+    data: Scalars["jsonb"];
+    errorMessage?: Maybe<Scalars["String"]>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    executedAt?: Maybe<Scalars["timestamptz"]>;
+    id: Scalars["uuid"];
+    updatedAt: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "video.ImmediateSwitch" */
+export type Video_ImmediateSwitchDataArgs = {
+    path?: Maybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "video.ImmediateSwitch" */
+export type Video_ImmediateSwitch_Aggregate = {
+    __typename?: "video_ImmediateSwitch_aggregate";
+    aggregate?: Maybe<Video_ImmediateSwitch_Aggregate_Fields>;
+    nodes: Array<Video_ImmediateSwitch>;
+};
+
+/** aggregate fields of "video.ImmediateSwitch" */
+export type Video_ImmediateSwitch_Aggregate_Fields = {
+    __typename?: "video_ImmediateSwitch_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Video_ImmediateSwitch_Max_Fields>;
+    min?: Maybe<Video_ImmediateSwitch_Min_Fields>;
+};
+
+/** aggregate fields of "video.ImmediateSwitch" */
+export type Video_ImmediateSwitch_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Video_ImmediateSwitch_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Video_ImmediateSwitch_Append_Input = {
+    data?: Maybe<Scalars["jsonb"]>;
+};
+
+/** Boolean expression to filter rows from the table "video.ImmediateSwitch". All fields are combined with a logical 'AND'. */
+export type Video_ImmediateSwitch_Bool_Exp = {
+    _and?: Maybe<Array<Video_ImmediateSwitch_Bool_Exp>>;
+    _not?: Maybe<Video_ImmediateSwitch_Bool_Exp>;
+    _or?: Maybe<Array<Video_ImmediateSwitch_Bool_Exp>>;
+    createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+    data?: Maybe<Jsonb_Comparison_Exp>;
+    errorMessage?: Maybe<String_Comparison_Exp>;
+    eventId?: Maybe<Uuid_Comparison_Exp>;
+    executedAt?: Maybe<Timestamptz_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.ImmediateSwitch" */
+export enum Video_ImmediateSwitch_Constraint {
+    /** unique or primary key constraint */
+    ImmediateSwitchPkey = "ImmediateSwitch_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Video_ImmediateSwitch_Delete_At_Path_Input = {
+    data?: Maybe<Array<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Video_ImmediateSwitch_Delete_Elem_Input = {
+    data?: Maybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Video_ImmediateSwitch_Delete_Key_Input = {
+    data?: Maybe<Scalars["String"]>;
+};
+
+/** input type for inserting data into table "video.ImmediateSwitch" */
+export type Video_ImmediateSwitch_Insert_Input = {
+    createdAt?: Maybe<Scalars["timestamptz"]>;
+    data?: Maybe<Scalars["jsonb"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    executedAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Video_ImmediateSwitch_Max_Fields = {
+    __typename?: "video_ImmediateSwitch_max_fields";
+    createdAt?: Maybe<Scalars["timestamptz"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    executedAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Video_ImmediateSwitch_Min_Fields = {
+    __typename?: "video_ImmediateSwitch_min_fields";
+    createdAt?: Maybe<Scalars["timestamptz"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    executedAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "video.ImmediateSwitch" */
+export type Video_ImmediateSwitch_Mutation_Response = {
+    __typename?: "video_ImmediateSwitch_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Video_ImmediateSwitch>;
+};
+
+/** on conflict condition type for table "video.ImmediateSwitch" */
+export type Video_ImmediateSwitch_On_Conflict = {
+    constraint: Video_ImmediateSwitch_Constraint;
+    update_columns?: Array<Video_ImmediateSwitch_Update_Column>;
+    where?: Maybe<Video_ImmediateSwitch_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.ImmediateSwitch". */
+export type Video_ImmediateSwitch_Order_By = {
+    createdAt?: Maybe<Order_By>;
+    data?: Maybe<Order_By>;
+    errorMessage?: Maybe<Order_By>;
+    eventId?: Maybe<Order_By>;
+    executedAt?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: video_ImmediateSwitch */
+export type Video_ImmediateSwitch_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Video_ImmediateSwitch_Prepend_Input = {
+    data?: Maybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "video.ImmediateSwitch" */
+export enum Video_ImmediateSwitch_Select_Column {
+    /** column name */
+    CreatedAt = "createdAt",
+    /** column name */
+    Data = "data",
+    /** column name */
+    ErrorMessage = "errorMessage",
+    /** column name */
+    EventId = "eventId",
+    /** column name */
+    ExecutedAt = "executedAt",
+    /** column name */
+    Id = "id",
+    /** column name */
+    UpdatedAt = "updatedAt",
+}
+
+/** input type for updating data in table "video.ImmediateSwitch" */
+export type Video_ImmediateSwitch_Set_Input = {
+    createdAt?: Maybe<Scalars["timestamptz"]>;
+    data?: Maybe<Scalars["jsonb"]>;
+    errorMessage?: Maybe<Scalars["String"]>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    executedAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "video.ImmediateSwitch" */
+export enum Video_ImmediateSwitch_Update_Column {
+    /** column name */
+    CreatedAt = "createdAt",
+    /** column name */
+    Data = "data",
+    /** column name */
+    ErrorMessage = "errorMessage",
+    /** column name */
+    EventId = "eventId",
+    /** column name */
+    ExecutedAt = "executedAt",
+    /** column name */
+    Id = "id",
+    /** column name */
+    UpdatedAt = "updatedAt",
+}
+
 /** columns and relationships of "video.InputType" */
 export type Video_InputType = {
     __typename?: "video_InputType";
@@ -30024,10 +31211,13 @@ export type Video_MediaLiveChannelStatus = {
     /** An object relationship */
     channelStack: Video_ChannelStack;
     channelStackId: Scalars["uuid"];
-    created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    conference?: Maybe<Conference_Conference>;
+    conferenceId: Scalars["uuid"];
+    createdAt: Scalars["timestamptz"];
     id: Scalars["uuid"];
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
-    updated_at: Scalars["timestamptz"];
+    updatedAt: Scalars["timestamptz"];
 };
 
 /** aggregated selection of "video.MediaLiveChannelStatus" */
@@ -30074,10 +31264,12 @@ export type Video_MediaLiveChannelStatus_Bool_Exp = {
     activeInputSwitchActionName?: Maybe<String_Comparison_Exp>;
     channelStack?: Maybe<Video_ChannelStack_Bool_Exp>;
     channelStackId?: Maybe<Uuid_Comparison_Exp>;
-    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    conference?: Maybe<Conference_Conference_Bool_Exp>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     pipelinesRunningCount?: Maybe<Numeric_Comparison_Exp>;
-    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+    updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "video.MediaLiveChannelStatus" */
@@ -30099,10 +31291,12 @@ export type Video_MediaLiveChannelStatus_Insert_Input = {
     activeInputSwitchActionName?: Maybe<Scalars["String"]>;
     channelStack?: Maybe<Video_ChannelStack_Obj_Rel_Insert_Input>;
     channelStackId?: Maybe<Scalars["uuid"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
+    conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
 /** aggregate max on columns */
@@ -30111,10 +31305,11 @@ export type Video_MediaLiveChannelStatus_Max_Fields = {
     activeInputAttachmentName?: Maybe<Scalars["String"]>;
     activeInputSwitchActionName?: Maybe<Scalars["String"]>;
     channelStackId?: Maybe<Scalars["uuid"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
 /** aggregate min on columns */
@@ -30123,10 +31318,11 @@ export type Video_MediaLiveChannelStatus_Min_Fields = {
     activeInputAttachmentName?: Maybe<Scalars["String"]>;
     activeInputSwitchActionName?: Maybe<Scalars["String"]>;
     channelStackId?: Maybe<Scalars["uuid"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
 /** response of any mutation on the table "video.MediaLiveChannelStatus" */
@@ -30158,10 +31354,12 @@ export type Video_MediaLiveChannelStatus_Order_By = {
     activeInputSwitchActionName?: Maybe<Order_By>;
     channelStack?: Maybe<Video_ChannelStack_Order_By>;
     channelStackId?: Maybe<Order_By>;
-    created_at?: Maybe<Order_By>;
+    conference?: Maybe<Conference_Conference_Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    createdAt?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     pipelinesRunningCount?: Maybe<Order_By>;
-    updated_at?: Maybe<Order_By>;
+    updatedAt?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: video_MediaLiveChannelStatus */
@@ -30178,13 +31376,15 @@ export enum Video_MediaLiveChannelStatus_Select_Column {
     /** column name */
     ChannelStackId = "channelStackId",
     /** column name */
-    CreatedAt = "created_at",
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "createdAt",
     /** column name */
     Id = "id",
     /** column name */
     PipelinesRunningCount = "pipelinesRunningCount",
     /** column name */
-    UpdatedAt = "updated_at",
+    UpdatedAt = "updatedAt",
 }
 
 /** input type for updating data in table "video.MediaLiveChannelStatus" */
@@ -30192,10 +31392,11 @@ export type Video_MediaLiveChannelStatus_Set_Input = {
     activeInputAttachmentName?: Maybe<Scalars["String"]>;
     activeInputSwitchActionName?: Maybe<Scalars["String"]>;
     channelStackId?: Maybe<Scalars["uuid"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
+    updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
 /** aggregate stddev on columns */
@@ -30231,13 +31432,15 @@ export enum Video_MediaLiveChannelStatus_Update_Column {
     /** column name */
     ChannelStackId = "channelStackId",
     /** column name */
-    CreatedAt = "created_at",
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "createdAt",
     /** column name */
     Id = "id",
     /** column name */
     PipelinesRunningCount = "pipelinesRunningCount",
     /** column name */
-    UpdatedAt = "updated_at",
+    UpdatedAt = "updatedAt",
 }
 
 /** aggregate var_pop on columns */

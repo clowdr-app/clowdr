@@ -22,6 +22,7 @@ import { useRealTime } from "../../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { BroadcastControlPanel } from "./BroadcastControlPanel";
+import { ImmediateSwitch } from "./ImmediateSwitch";
 import { LiveIndicator } from "./LiveIndicator";
 
 export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
@@ -116,6 +117,44 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
         [event.eventVonageSession?.id, live, streamsData?.video_EventParticipantStream, streamsError, streamsLoading]
     );
 
+    const immediatePopover = useMemo(
+        () => (
+            <Popover placement="auto-end">
+                <PopoverTrigger>
+                    <VStack>
+                        <Button
+                            aria-label="Switch livestream input"
+                            title="Switch livestream input"
+                            textAlign="center"
+                            my={4}
+                            ml={2}
+                        >
+                            <FAIcon icon="random" iconStyle="s" mr={2} />
+                            <Text>Switch input</Text>
+                        </Button>
+                    </VStack>
+                </PopoverTrigger>
+                <Portal>
+                    <Box zIndex="500" position="relative">
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverCloseButton />
+                            <PopoverHeader>Switch livestream input</PopoverHeader>
+                            <PopoverBody>
+                                <ImmediateSwitch
+                                    live={live}
+                                    secondsUntilOffAir={secondsUntilOffAir}
+                                    eventId={event.id}
+                                />
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Box>
+                </Portal>
+            </Popover>
+        ),
+        [event.id, live, secondsUntilOffAir]
+    );
+
     const insertSpacer = useBreakpointValue([false, false, true]);
     return (
         <Flex w="100%" p={2} flexWrap="wrap" alignItems="center" justifyContent="center">
@@ -123,6 +162,7 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
             {insertSpacer ? <Box w={"10em"}>&nbsp;</Box> : <></>}
             <LiveIndicator live={live} secondsUntilLive={secondsUntilLive} secondsUntilOffAir={secondsUntilOffAir} />
             {broadcastPopover}
+            {immediatePopover}
         </Flex>
     );
 }

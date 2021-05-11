@@ -1944,15 +1944,6 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
-  - name: broadcastElement
-    using:
-      manual_configuration:
-        remote_table:
-          schema: video
-          name: BroadcastElement
-        insertion_order: null
-        column_mapping:
-          id: elementId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
@@ -6142,13 +6133,6 @@
         table:
           schema: analytics
           name: RoomStats
-  - name: transitions
-    using:
-      foreign_key_constraint_on:
-        column: roomId
-        table:
-          schema: video
-          name: Transitions
   computed_fields:
   - name: isProgramRoom
     definition:
@@ -6979,15 +6963,6 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
-  - name: broadcastElement
-    using:
-      manual_configuration:
-        remote_table:
-          schema: video
-          name: BroadcastElement
-        insertion_order: null
-        column_mapping:
-          id: eventId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
@@ -7047,13 +7022,6 @@
         table:
           schema: video
           name: EventParticipantStream
-  - name: transitions
-    using:
-      foreign_key_constraint_on:
-        column: eventId
-        table:
-          schema: video
-          name: Transitions
   insert_permissions:
   - role: user
     permission:
@@ -7919,62 +7887,6 @@
   is_enum: true
 - table:
     schema: video
-    name: BroadcastElement
-  configuration:
-    custom_root_fields: {}
-    custom_column_names:
-      updated_at: updatedAt
-      created_at: createdAt
-  object_relationships:
-  - name: conference
-    using:
-      foreign_key_constraint_on: conferenceId
-  - name: element
-    using:
-      foreign_key_constraint_on: elementId
-  - name: event
-    using:
-      foreign_key_constraint_on: eventId
-  - name: inputType
-    using:
-      foreign_key_constraint_on: inputTypeName
-  array_relationships:
-  - name: fallbackForTransitions
-    using:
-      foreign_key_constraint_on:
-        column: fallbackBroadcastElementId
-        table:
-          schema: video
-          name: Transitions
-  - name: transitions
-    using:
-      foreign_key_constraint_on:
-        column: broadcastElementId
-        table:
-          schema: video
-          name: Transitions
-  event_triggers:
-  - name: BroadcastElementUpdated
-    definition:
-      enable_manual: false
-      insert:
-        columns: '*'
-      update:
-        columns:
-        - input
-        - inputTypeName
-        - conferenceId
-        - elementId
-    retry_conf:
-      num_retries: 0
-      interval_sec: 10
-      timeout_sec: 60
-    webhook: '{{ACTION_BASE_URL}}/broadcastElement/updated'
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-- table:
-    schema: video
     name: ChannelStack
   configuration:
     custom_root_fields: {}
@@ -8364,14 +8276,6 @@
     schema: video
     name: InputType
   is_enum: true
-  array_relationships:
-  - name: broadcastContentItems
-    using:
-      foreign_key_constraint_on:
-        column: inputTypeName
-        table:
-          schema: video
-          name: BroadcastElement
   select_permissions:
   - role: unauthenticated
     permission:
@@ -8443,36 +8347,23 @@
     name: TranscriptionJob
 - table:
     schema: video
-    name: Transitions
-  object_relationships:
-  - name: broadcastElement
-    using:
-      foreign_key_constraint_on: broadcastElementId
-  - name: conference
-    using:
-      foreign_key_constraint_on: conferenceId
-  - name: event
-    using:
-      foreign_key_constraint_on: eventId
-  - name: fallbackBroadcastElement
-    using:
-      foreign_key_constraint_on: fallbackBroadcastElementId
-  - name: room
-    using:
-      foreign_key_constraint_on: roomId
-- table:
-    schema: video
     name: VideoRenderJob
   object_relationships:
-  - name: broadcastElement
-    using:
-      foreign_key_constraint_on: broadcastElementId
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
   - name: conferencePrepareJob
     using:
       foreign_key_constraint_on: conferencePrepareJobId
+  - name: element
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: Element
+        insertion_order: null
+        column_mapping:
+          elementId: id
   - name: jobStatus
     using:
       foreign_key_constraint_on: jobStatusName
@@ -8483,6 +8374,7 @@
       - conferenceId
       - conferencePrepareJobId
       - created_at
+      - elementId
       - id
       - jobStatusName
       - updated_at
@@ -8516,9 +8408,9 @@
         - data
         - jobStatusName
         - message
-        - broadcastElementId
         - conferenceId
         - conferencePrepareJobId
+        - elementId
         - id
     retry_conf:
       num_retries: 0

@@ -1,5 +1,5 @@
 import { ElasticTranscoderEvent } from "@clowdr-app/shared-types/build/sns/elasticTranscoder";
-import bodyParser from "body-parser";
+import { text } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
@@ -8,7 +8,7 @@ import * as VideoRenderJob from "../lib/videoRenderJob";
 export const router = express.Router();
 
 // Unprotected routes
-router.post("/notify", bodyParser.text(), async (req: Request, res: Response) => {
+router.post("/notify", text(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
 
     try {
@@ -45,7 +45,7 @@ router.post("/notify", bodyParser.text(), async (req: Request, res: Response) =>
 
             switch (event.state) {
                 case "ERROR": {
-                    console.log("Elastic Transcoder job errored", event.jobId);
+                    console.log("Elastic Transcoder job errored", { jobId: event.jobId });
                     try {
                         await VideoRenderJob.failVideoRenderJob(
                             event.userMetadata.videoRenderJobId,

@@ -1,4 +1,5 @@
 import { ChannelState, FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
+import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
@@ -25,7 +26,6 @@ import {
     RemoteScheduleService,
 } from "../remote-schedule/remote-schedule.service";
 import { VonageService } from "../vonage/vonage.service";
-import { ImmediateSwitchData } from "./immediate-switch-data";
 
 export class ScheduleSyncService {
     private readonly logger: Bunyan;

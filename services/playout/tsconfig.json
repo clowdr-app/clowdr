@@ -1,5 +1,5 @@
 {
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "../../shared/src/video/immediate-switch-data.ts"],
     "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
     "compilerOptions": {
         /* Visit https://aka.ms/tsconfig.json to read more about this file */

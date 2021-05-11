@@ -588,7 +588,18 @@ Order of the rules matters.
                        );
                    }
                    else {
-                       callback(null, _user, _ctx);
+                       auth0.users.updateAppMetadata(_user.user_id, _user.app_metadata)
+                            .then(function(){
+                                if (_err) {
+                                    callback(_err);
+                                }
+                                else {
+                                    callback(null, _user, _ctx);
+                                }
+                            })
+                            .catch(function(_err2){
+                                callback(_err2);
+                            });
                    }
                }
            );

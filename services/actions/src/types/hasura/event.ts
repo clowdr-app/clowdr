@@ -7,7 +7,6 @@ import {
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
-    Video_InputType_Enum,
     Video_JobStatus_Enum,
 } from "../../generated/graphql";
 
@@ -99,7 +98,7 @@ export interface VideoRenderJobData extends BaseData {
     conferencePrepareJobId: string;
     jobStatusName: Video_JobStatus_Enum;
     conferenceId: string;
-    broadcastElementId: string;
+    elementId: string;
     data: VideoRenderJobDataBlob;
     message: string | null;
 }
@@ -110,30 +109,6 @@ export interface CombineVideosJobData extends BaseData {
     jobStatusName: Video_JobStatus_Enum;
     conferenceId: string;
     message: string | null;
-}
-
-export interface BroadcastElementDataBase extends BaseData {
-    elementId: string | null;
-    eventId: string | null;
-    input: BroadcastElementInput;
-    inputTypeName: Video_InputType_Enum;
-    conferenceId: string;
-}
-
-export type BroadcastElementData = MP4BroadcastElementData | VonageBroadcastElementData;
-
-export interface MP4BroadcastElementData extends BroadcastElementDataBase {
-    elementId: string;
-    eventId: null;
-    inputTypeName: Video_InputType_Enum.Mp4;
-    input: MP4Input | PendingCreation;
-}
-
-export interface VonageBroadcastElementData extends BroadcastElementDataBase {
-    elementId: null;
-    eventId: string;
-    inputTypeName: Video_InputType_Enum.VonageSession;
-    input: VonageInput | PendingCreation;
 }
 
 export interface EventData extends BaseData {

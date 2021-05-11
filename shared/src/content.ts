@@ -285,6 +285,7 @@ export interface TranscodeDetails {
 
 export interface BroadcastTranscodeDetails {
     s3Url?: string;
+    durationSeconds?: number;
     updatedTimestamp: number;
 }
 

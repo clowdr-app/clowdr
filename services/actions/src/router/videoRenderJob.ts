@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleProcessVideoRenderJobQueue, handleVideoRenderJobUpdated } from "../handlers/videoRenderJob";
@@ -10,7 +10,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/updated", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<VideoRenderJobData>>(req.body);
     } catch (e) {
@@ -30,7 +30,7 @@ router.post("/updated", bodyParser.json(), async (req: Request, res: Response) =
     res.status(200).json("OK");
 });
 
-router.post("/processQueue", bodyParser.json(), async (_req: Request, res: Response) => {
+router.post("/processQueue", json(), async (_req: Request, res: Response) => {
     try {
         await handleProcessVideoRenderJobQueue();
     } catch (e) {

@@ -18,7 +18,7 @@ gql`
             _append: { data: $data }
         ) {
             id
-            broadcastElementId
+            elementId
         }
     }
 `;
@@ -167,39 +167,6 @@ export async function updateVideoRenderJob(videoRenderJobId: string, data: Video
     });
 }
 
-// export async function startTitlesVideoRenderJob(
-//     videoRenderJobId: string,
-//     titleRenderJobData: TitleRenderJobDataBlob,
-//     openShotExportId: number,
-//     webhookKey: string
-// ): Promise<void> {
-//     titleRenderJobData["openShotExportId"] = openShotExportId;
-//     titleRenderJobData["webhookKey"] = webhookKey;
-
-//     await apolloClient.mutate({
-//         mutation: StartVideoRenderJobDocument,
-//         variables: {
-//             data: titleRenderJobData,
-//             videoRenderJobId,
-//         },
-//     });
-// }
-
-// export async function startBroadcastVideoRenderJob(
-//     videoRenderJobId: string,
-//     broadcastRenderJobData: BroadcastRenderJobDataBlob,
-//     elasticTranscoderJobId: string
-// ): Promise<void> {
-//     broadcastRenderJobData["elasticTranscoderJobId"] = elasticTranscoderJobId;
-//     await apolloClient.mutate({
-//         mutation: StartVideoRenderJobDocument,
-//         variables: {
-//             data: broadcastRenderJobData,
-//             videoRenderJobId,
-//         },
-//     });
-// }
-
 gql`
     query CountUnfinishedVideoRenderJobs($conferencePrepareJobId: uuid!) {
         video_VideoRenderJob_aggregate(
@@ -235,11 +202,8 @@ export async function allVideoRenderJobsCompleted(conferencePrepareJobId: string
 gql`
     query GetBroadcastVideoRenderJobDetails($videoRenderJobId: uuid!) {
         video_VideoRenderJob_by_pk(id: $videoRenderJobId) {
-            broadcastElement {
-                id
-                elementId
-            }
             id
+            elementId
             conferencePrepareJob {
                 id
                 jobStatusName

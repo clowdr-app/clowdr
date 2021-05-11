@@ -107,10 +107,15 @@ export async function addNewElementVersion(elementId: string, version: ElementVe
     }
 }
 
-export async function addNewBroadcastTranscode(elementId: string, s3Url: string): Promise<void> {
+export async function addNewBroadcastTranscode(
+    elementId: string,
+    s3Url: string,
+    durationSeconds: number | null
+): Promise<void> {
     console.log("Updating content item with result of broadcast transcode", elementId);
     const transcodeDetails: BroadcastTranscodeDetails = {
         updatedTimestamp: new Date().getTime(),
+        durationSeconds: durationSeconds ?? undefined,
         s3Url,
     };
     const newVersion = await createNewVersionFromBroadcastTranscode(elementId, transcodeDetails);

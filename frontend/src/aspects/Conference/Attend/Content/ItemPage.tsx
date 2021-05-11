@@ -51,6 +51,7 @@ gql`
 
     fragment ItemEvent on schedule_Event {
         startTime
+        roomId
         room {
             name
             id

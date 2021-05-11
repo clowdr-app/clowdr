@@ -10627,7 +10627,7 @@ export enum Content_Item_Update_Column {
 /** columns and relationships of "content.UploadableElement" */
 export type Content_UploadableElement = {
   readonly __typename?: 'content_UploadableElement';
-  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly accessToken: Scalars['String'];
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -35602,7 +35602,7 @@ export type ItemDataFragment = { readonly __typename?: 'content_Item', readonly 
 
 export type ItemPage_ItemRoomsFragment = { readonly __typename?: 'content_Item', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
 
-export type ItemEventFragment = { readonly __typename?: 'schedule_Event', readonly startTime: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } };
+export type ItemEventFragment = { readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } };
 
 export type ExhibitionItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
@@ -38361,6 +38361,7 @@ export const ItemPage_ItemRoomsFragmentDoc = gql`
 export const ItemEventFragmentDoc = gql`
     fragment ItemEvent on schedule_Event {
   startTime
+  roomId
   room {
     name
     id

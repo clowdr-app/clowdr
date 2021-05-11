@@ -49,9 +49,9 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
         () => [
             ...events
                 .reduce((acc, event) => {
-                    const existing = acc.get(event.room.id);
+                    const existing = acc.get(event.roomId);
                     if (!existing) {
-                        acc.set(event.room.id, { roomName: event.room.name, events: [event] });
+                        acc.set(event.roomId, { roomName: event.room?.name ?? "Private room", events: [event] });
                     } else {
                         existing.events.push(event);
                     }
@@ -290,8 +290,8 @@ function Event({
                 "room" in itemEvent && itemEvent.room ? (
                     <Td>
                         <LinkButton
-                            to={`/conference/${conference.slug}/room/${itemEvent.room.id}`}
-                            aria-label={`Go to room: ${itemEvent.room.name}`}
+                            to={`/conference/${conference.slug}/room/${itemEvent.roomId}`}
+                            aria-label={`Go to room: ${itemEvent.room?.name ?? "private room"}`}
                             whiteSpace="normal"
                             variant="outline"
                             size="sm"
@@ -301,7 +301,7 @@ function Event({
                             colorScheme="blue"
                             linkProps={{ maxH: "unset" }}
                         >
-                            <Twemoji className="twemoji" text={itemEvent.room.name} />
+                            <Twemoji className="twemoji" text={itemEvent.room?.name ?? "Private room"} />
                         </LinkButton>
                     </Td>
                 ) : (

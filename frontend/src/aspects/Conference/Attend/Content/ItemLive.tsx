@@ -79,7 +79,7 @@ export function ItemLive({
             {liveEvents?.map((event) => (
                 <LinkButton
                     width="100%"
-                    to={`/conference/${conference.slug}/room/${event.room.id}`}
+                    to={`/conference/${conference.slug}/room/${event.roomId}`}
                     key={event.id}
                     size="lg"
                     colorScheme="red"
@@ -99,7 +99,7 @@ export function ItemLive({
             {/* {nextEvent ? (
                 <LinkButton
                     width="100%"
-                    to={`/conference/${conference.slug}/room/${nextEvent.room.id}`}
+                    to={`/conference/${conference.slug}/room/${nextEvent.roomId}`}
                     size="sm"
                     colorScheme="teal"
                     height="auto"

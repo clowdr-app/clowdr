@@ -28,7 +28,19 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
             ) : queryResult.error ? (
                 <Text>An error occurred loading in data - please see further information in notifications.</Text>
             ) : undefined}
-            {queryResult.loading && !innerData ? <></> : !innerData ? <Text>No data found</Text> : children(innerData)}
+            {queryResult.loading && !innerData ? (
+                <></>
+            ) : !innerData ? (
+                <>
+                    <Text>No data found</Text>
+                    <Text>
+                        (You might not have permission to access this. Please contact your conference organisers if you
+                        think this is a mistake.)
+                    </Text>
+                </>
+            ) : (
+                children(innerData)
+            )}
         </>
     );
 }

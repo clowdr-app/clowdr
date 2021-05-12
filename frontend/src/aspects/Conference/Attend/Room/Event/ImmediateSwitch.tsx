@@ -183,7 +183,7 @@ export function ImmediateSwitch({
                                                     {...{ ...field }}
                                                     placeholder="Choose input"
                                                     isRequired
-                                                    isDisabled={disable}
+                                                    isDisabled={disable || !enableSwitchButton}
                                                 >
                                                     {options}
                                                 </Select>

@@ -8195,7 +8195,9 @@
                           _eq: X-Hasura-User-Id
                   - eventPersonRole:
                       name:
-                        _eq: CHAIR
+                        _in:
+                        - CHAIR
+                        - PRESENTER
       columns:
       - data
       - eventId

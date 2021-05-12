@@ -88,7 +88,6 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                             aria-label="Advanced broadcast controls"
                             title="Advanced broadcast controls"
                             textAlign="center"
-                            my={4}
                         >
                             <FAIcon icon="cogs" iconStyle="s" mr={2} />
                             <Text>Stream layout</Text>
@@ -102,6 +101,10 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                             <PopoverCloseButton />
                             <PopoverHeader>Broadcast controls</PopoverHeader>
                             <PopoverBody>
+                                <Text fontSize="sm" mb={2}>
+                                    Here you can control how the video streams from the backstage are laid out in the
+                                    broadcast video.
+                                </Text>
                                 {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
                                 <BroadcastControlPanel
                                     live={live}
@@ -117,9 +120,9 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
         [event.eventVonageSession?.id, live, streamsData?.video_EventParticipantStream, streamsError, streamsLoading]
     );
 
-    const immediatePopover = useMemo(
+    const immediateSwitchControls = useMemo(
         () => (
-            <Box ml={2} my={4} maxW="30ch">
+            <Box maxW="30ch">
                 <ImmediateSwitch live={live} secondsUntilOffAir={secondsUntilOffAir} eventId={event.id} />
             </Box>
         ),
@@ -128,12 +131,20 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
 
     const insertSpacer = useBreakpointValue([false, false, true]);
     return (
-        <Flex w="100%" p={2} flexWrap="wrap" alignItems="center" justifyContent="center">
+        <Flex w="100%" p={2} flexWrap="wrap" alignItems="center" justifyContent="space-between">
             {/* Add a spacer of equal width to the Broadcast Controls button, so that the time info is centered */}
-            {broadcastPopover}
-            {insertSpacer ? <Box w={"5em"}>&nbsp;</Box> : <></>}
-            <LiveIndicator live={live} secondsUntilLive={secondsUntilLive} secondsUntilOffAir={secondsUntilOffAir} />
-            {immediatePopover}
+            {insertSpacer ? <Box w={"10em"}>&nbsp;</Box> : <></>}
+            <LiveIndicator
+                live={live}
+                secondsUntilLive={secondsUntilLive}
+                secondsUntilOffAir={secondsUntilOffAir}
+                now={now}
+                eventId={event.id}
+            />
+            <VStack justifyContent="center" alignItems="flex-end" my={2}>
+                {immediateSwitchControls}
+                {broadcastPopover}
+            </VStack>
         </Flex>
     );
 }

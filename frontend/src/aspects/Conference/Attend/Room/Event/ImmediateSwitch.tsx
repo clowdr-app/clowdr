@@ -1,23 +1,10 @@
 import { gql } from "@apollo/client";
-import {
-    Button,
-    FormControl,
-    FormLabel,
-    HStack,
-    Select,
-    Spinner,
-    Text,
-    useToast,
-    VisuallyHidden,
-} from "@chakra-ui/react";
-import {
+import { Button, FormControl, FormLabel, HStack, Select, useToast, VisuallyHidden } from "@chakra-ui/react";
+import type {
     FillerImmediateSwitchData,
-    ImmediateSwitchData,
     RtmpPushImmediateSwitchData,
     VideoImmediateSwitchData,
 } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
-import { plainToClass } from "class-transformer";
-import { validateSync } from "class-validator";
 import { Field, FieldProps, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
@@ -25,7 +12,6 @@ import { validate } from "uuid";
 import {
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
-    useImmediateSwitch_GetLatestQuery,
 } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Generic/useRealTime";
 import FAIcon from "../../../../Icons/FAIcon";
@@ -41,18 +27,6 @@ export function ImmediateSwitch({
 }): JSX.Element {
     const toast = useToast();
     gql`
-        query ImmediateSwitch_GetLatest($eventId: uuid!) {
-            video_ImmediateSwitch(
-                order_by: { executedAt: desc_nulls_last }
-                where: { eventId: { _eq: $eventId }, executedAt: { _is_null: false } }
-                limit: 1
-            ) {
-                id
-                data
-                executedAt
-            }
-        }
-
         query ImmediateSwitch_GetElements($eventId: uuid!) {
             schedule_Event_by_pk(id: $eventId) {
                 id
@@ -73,17 +47,6 @@ export function ImmediateSwitch({
         }
     `;
 
-    const {
-        data: latestImmediateSwitchData,
-        loading: latestImmediateSwitchLoading,
-        error: latestImmediateSwitchError,
-    } = useImmediateSwitch_GetLatestQuery({
-        variables: {
-            eventId,
-        },
-        pollInterval: 10000,
-    });
-
     const { data: elementsData } = useImmediateSwitch_GetElementsQuery({
         variables: {
             eventId,
@@ -92,38 +55,6 @@ export function ImmediateSwitch({
 
     const [createImmediateSwitch] = useImmediateSwitch_CreateMutation();
 
-    const latestSwitch = useMemo(() => {
-        if (!latestImmediateSwitchData?.video_ImmediateSwitch?.length) {
-            return "Playing live presentation";
-        }
-
-        const transformed = plainToClass(ImmediateSwitchData, {
-            type: "switch",
-            data: latestImmediateSwitchData.video_ImmediateSwitch[0].data,
-        });
-
-        const errors = validateSync(transformed);
-        if (errors.length) {
-            console.error("Invalid immediate switch", { errors, data: transformed });
-            return "Could not determine current input";
-        }
-
-        const data = transformed.data;
-
-        switch (data.kind) {
-            case "filler":
-                return "Playing filler video";
-            case "rtmp_push":
-                return "Playing live presentation";
-            case "video": {
-                const elementName = elementsData?.schedule_Event_by_pk?.item?.elements?.find(
-                    (element) => element.id === data.elementId
-                )?.name;
-                return `Playing ${elementName ? `'${elementName}'` : "unknown video"}`;
-            }
-        }
-    }, [elementsData?.schedule_Event_by_pk?.item?.elements, latestImmediateSwitchData?.video_ImmediateSwitch]);
-
     const now = useRealTime(1000);
     const [lastSwitched, setLastSwitched] = useState<number>(0);
     const enableSwitchButton = now - lastSwitched > 5000;
@@ -131,11 +62,11 @@ export function ImmediateSwitch({
     const options = useMemo(
         () => (
             <>
+                <option key="rtmp_push" value="rtmp_push">
+                    Live backstage (default)
+                </option>
                 <option key="filler" value="filler">
                     Filler video
-                </option>
-                <option key="rtmp_push" value="rtmp_push">
-                    Live presentation
                 </option>
                 {R.sort(
                     (a, b) => a.name.localeCompare(b.name),
@@ -150,15 +81,11 @@ export function ImmediateSwitch({
         [elementsData?.schedule_Event_by_pk?.item?.elements]
     );
 
+    const disable = useMemo(() => !live || secondsUntilOffAir < 20, [live, secondsUntilOffAir]);
+
     const form = useMemo(
         () => (
             <>
-                {latestImmediateSwitchError ? (
-                    <>Error loading input switch data.</>
-                ) : latestImmediateSwitchLoading ? (
-                    <Spinner />
-                ) : undefined}
-                <Text>{latestSwitch}</Text>
                 <Formik<{ choice: string }>
                     initialValues={{
                         choice: "filler",
@@ -252,7 +179,12 @@ export function ImmediateSwitch({
                                                 <VisuallyHidden>
                                                     <FormLabel htmlFor="choice">Livestream input</FormLabel>
                                                 </VisuallyHidden>
-                                                <Select {...{ ...field }} placeholder="Choose input" isRequired>
+                                                <Select
+                                                    {...{ ...field }}
+                                                    placeholder="Choose input"
+                                                    isRequired
+                                                    isDisabled={disable}
+                                                >
                                                     {options}
                                                 </Select>
                                             </FormControl>
@@ -263,7 +195,7 @@ export function ImmediateSwitch({
                                         colorScheme="green"
                                         isLoading={props.isSubmitting || !enableSwitchButton}
                                         type="submit"
-                                        isDisabled={!props.isValid}
+                                        isDisabled={!props.isValid || disable}
                                         aria-label="Switch livestream input"
                                         title="Switch livestream input"
                                         size="sm"
@@ -277,18 +209,8 @@ export function ImmediateSwitch({
                 </Formik>
             </>
         ),
-        [
-            createImmediateSwitch,
-            enableSwitchButton,
-            eventId,
-            latestImmediateSwitchError,
-            latestImmediateSwitchLoading,
-            latestSwitch,
-            now,
-            options,
-            toast,
-        ]
+        [createImmediateSwitch, disable, enableSwitchButton, eventId, now, options, toast]
     );
 
-    return live && secondsUntilOffAir > 20 ? form : <></>;
+    return form;
 }

@@ -7783,8 +7783,6 @@ export enum Conference_PrepareJob_Update_Column {
 export type Content_Element = {
   readonly __typename?: 'content_Element';
   /** An object relationship */
-  readonly broadcastElement?: Maybe<Video_BroadcastElement>;
-  /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
   readonly createdAt: Scalars['timestamptz'];
@@ -8452,7 +8450,6 @@ export type Content_Element_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Content_Element_Bool_Exp>>;
   readonly _not?: Maybe<Content_Element_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Content_Element_Bool_Exp>>;
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Bool_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -8503,7 +8500,6 @@ export type Content_Element_Delete_Key_Input = {
 
 /** input type for inserting data into table "content.Element" */
 export type Content_Element_Insert_Input = {
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Obj_Rel_Insert_Input>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
@@ -8601,7 +8597,6 @@ export type Content_Element_On_Conflict = {
 
 /** Ordering options when selecting data from "content.Element". */
 export type Content_Element_Order_By = {
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
@@ -13434,10 +13429,6 @@ export type Mutation_Root = {
   readonly delete_system_ConfigurationKey_by_pk?: Maybe<System_ConfigurationKey>;
   /** delete single row from the table: "system.Configuration" */
   readonly delete_system_Configuration_by_pk?: Maybe<System_Configuration>;
-  /** delete data from the table: "video.BroadcastElement" */
-  readonly delete_video_BroadcastElement?: Maybe<Video_BroadcastElement_Mutation_Response>;
-  /** delete single row from the table: "video.BroadcastElement" */
-  readonly delete_video_BroadcastElement_by_pk?: Maybe<Video_BroadcastElement>;
   /** delete data from the table: "video.ChannelStack" */
   readonly delete_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
   /** delete single row from the table: "video.ChannelStack" */
@@ -13474,10 +13465,6 @@ export type Mutation_Root = {
   readonly delete_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
   /** delete single row from the table: "video.TranscriptionJob" */
   readonly delete_video_TranscriptionJob_by_pk?: Maybe<Video_TranscriptionJob>;
-  /** delete data from the table: "video.Transitions" */
-  readonly delete_video_Transitions?: Maybe<Video_Transitions_Mutation_Response>;
-  /** delete single row from the table: "video.Transitions" */
-  readonly delete_video_Transitions_by_pk?: Maybe<Video_Transitions>;
   /** delete data from the table: "video.VideoRenderJob" */
   readonly delete_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** delete single row from the table: "video.VideoRenderJob" */
@@ -13783,10 +13770,6 @@ export type Mutation_Root = {
   readonly insert_system_ConfigurationKey_one?: Maybe<System_ConfigurationKey>;
   /** insert a single row into the table: "system.Configuration" */
   readonly insert_system_Configuration_one?: Maybe<System_Configuration>;
-  /** insert data into the table: "video.BroadcastElement" */
-  readonly insert_video_BroadcastElement?: Maybe<Video_BroadcastElement_Mutation_Response>;
-  /** insert a single row into the table: "video.BroadcastElement" */
-  readonly insert_video_BroadcastElement_one?: Maybe<Video_BroadcastElement>;
   /** insert data into the table: "video.ChannelStack" */
   readonly insert_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
   /** insert a single row into the table: "video.ChannelStack" */
@@ -13823,10 +13806,6 @@ export type Mutation_Root = {
   readonly insert_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
   /** insert a single row into the table: "video.TranscriptionJob" */
   readonly insert_video_TranscriptionJob_one?: Maybe<Video_TranscriptionJob>;
-  /** insert data into the table: "video.Transitions" */
-  readonly insert_video_Transitions?: Maybe<Video_Transitions_Mutation_Response>;
-  /** insert a single row into the table: "video.Transitions" */
-  readonly insert_video_Transitions_one?: Maybe<Video_Transitions>;
   /** insert data into the table: "video.VideoRenderJob" */
   readonly insert_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** insert a single row into the table: "video.VideoRenderJob" */
@@ -14145,10 +14124,6 @@ export type Mutation_Root = {
   readonly update_system_ConfigurationKey_by_pk?: Maybe<System_ConfigurationKey>;
   /** update single row of the table: "system.Configuration" */
   readonly update_system_Configuration_by_pk?: Maybe<System_Configuration>;
-  /** update data of the table: "video.BroadcastElement" */
-  readonly update_video_BroadcastElement?: Maybe<Video_BroadcastElement_Mutation_Response>;
-  /** update single row of the table: "video.BroadcastElement" */
-  readonly update_video_BroadcastElement_by_pk?: Maybe<Video_BroadcastElement>;
   /** update data of the table: "video.ChannelStack" */
   readonly update_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
   /** update single row of the table: "video.ChannelStack" */
@@ -14185,10 +14160,6 @@ export type Mutation_Root = {
   readonly update_video_TranscriptionJob?: Maybe<Video_TranscriptionJob_Mutation_Response>;
   /** update single row of the table: "video.TranscriptionJob" */
   readonly update_video_TranscriptionJob_by_pk?: Maybe<Video_TranscriptionJob>;
-  /** update data of the table: "video.Transitions" */
-  readonly update_video_Transitions?: Maybe<Video_Transitions_Mutation_Response>;
-  /** update single row of the table: "video.Transitions" */
-  readonly update_video_Transitions_by_pk?: Maybe<Video_Transitions>;
   /** update data of the table: "video.VideoRenderJob" */
   readonly update_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** update single row of the table: "video.VideoRenderJob" */
@@ -15106,18 +15077,6 @@ export type Mutation_RootDelete_System_Configuration_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootDelete_Video_BroadcastElementArgs = {
-  where: Video_BroadcastElement_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Video_BroadcastElement_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
 export type Mutation_RootDelete_Video_ChannelStackArgs = {
   where: Video_ChannelStack_Bool_Exp;
 };
@@ -15221,18 +15180,6 @@ export type Mutation_RootDelete_Video_TranscriptionJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_TranscriptionJob_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Video_TransitionsArgs = {
-  where: Video_Transitions_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Video_Transitions_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -16305,20 +16252,6 @@ export type Mutation_RootInsert_System_Configuration_OneArgs = {
 
 
 /** mutation root */
-export type Mutation_RootInsert_Video_BroadcastElementArgs = {
-  objects: ReadonlyArray<Video_BroadcastElement_Insert_Input>;
-  on_conflict?: Maybe<Video_BroadcastElement_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Video_BroadcastElement_OneArgs = {
-  object: Video_BroadcastElement_Insert_Input;
-  on_conflict?: Maybe<Video_BroadcastElement_On_Conflict>;
-};
-
-
-/** mutation root */
 export type Mutation_RootInsert_Video_ChannelStackArgs = {
   objects: ReadonlyArray<Video_ChannelStack_Insert_Input>;
   on_conflict?: Maybe<Video_ChannelStack_On_Conflict>;
@@ -16441,20 +16374,6 @@ export type Mutation_RootInsert_Video_TranscriptionJobArgs = {
 export type Mutation_RootInsert_Video_TranscriptionJob_OneArgs = {
   object: Video_TranscriptionJob_Insert_Input;
   on_conflict?: Maybe<Video_TranscriptionJob_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Video_TransitionsArgs = {
-  objects: ReadonlyArray<Video_Transitions_Insert_Input>;
-  on_conflict?: Maybe<Video_Transitions_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Video_Transitions_OneArgs = {
-  object: Video_Transitions_Insert_Input;
-  on_conflict?: Maybe<Video_Transitions_On_Conflict>;
 };
 
 
@@ -17797,30 +17716,6 @@ export type Mutation_RootUpdate_System_Configuration_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Video_BroadcastElementArgs = {
-  _append?: Maybe<Video_BroadcastElement_Append_Input>;
-  _delete_at_path?: Maybe<Video_BroadcastElement_Delete_At_Path_Input>;
-  _delete_elem?: Maybe<Video_BroadcastElement_Delete_Elem_Input>;
-  _delete_key?: Maybe<Video_BroadcastElement_Delete_Key_Input>;
-  _prepend?: Maybe<Video_BroadcastElement_Prepend_Input>;
-  _set?: Maybe<Video_BroadcastElement_Set_Input>;
-  where: Video_BroadcastElement_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Video_BroadcastElement_By_PkArgs = {
-  _append?: Maybe<Video_BroadcastElement_Append_Input>;
-  _delete_at_path?: Maybe<Video_BroadcastElement_Delete_At_Path_Input>;
-  _delete_elem?: Maybe<Video_BroadcastElement_Delete_Elem_Input>;
-  _delete_key?: Maybe<Video_BroadcastElement_Delete_Key_Input>;
-  _prepend?: Maybe<Video_BroadcastElement_Prepend_Input>;
-  _set?: Maybe<Video_BroadcastElement_Set_Input>;
-  pk_columns: Video_BroadcastElement_Pk_Columns_Input;
-};
-
-
-/** mutation root */
 export type Mutation_RootUpdate_Video_ChannelStackArgs = {
   _set?: Maybe<Video_ChannelStack_Set_Input>;
   where: Video_ChannelStack_Bool_Exp;
@@ -17965,20 +17860,6 @@ export type Mutation_RootUpdate_Video_TranscriptionJobArgs = {
 export type Mutation_RootUpdate_Video_TranscriptionJob_By_PkArgs = {
   _set?: Maybe<Video_TranscriptionJob_Set_Input>;
   pk_columns: Video_TranscriptionJob_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Video_TransitionsArgs = {
-  _set?: Maybe<Video_Transitions_Set_Input>;
-  where: Video_Transitions_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Video_Transitions_By_PkArgs = {
-  _set?: Maybe<Video_Transitions_Set_Input>;
-  pk_columns: Video_Transitions_Pk_Columns_Input;
 };
 
 
@@ -19771,12 +19652,6 @@ export type Query_Root = {
   /** fetch data from the table: "system.Configuration" using primary key columns */
   readonly system_Configuration_by_pk?: Maybe<System_Configuration>;
   readonly vapidPublicKey: VapidPublicKeyOutput;
-  /** fetch data from the table: "video.BroadcastElement" */
-  readonly video_BroadcastElement: ReadonlyArray<Video_BroadcastElement>;
-  /** fetch aggregated fields from the table: "video.BroadcastElement" */
-  readonly video_BroadcastElement_aggregate: Video_BroadcastElement_Aggregate;
-  /** fetch data from the table: "video.BroadcastElement" using primary key columns */
-  readonly video_BroadcastElement_by_pk?: Maybe<Video_BroadcastElement>;
   /** fetch data from the table: "video.ChannelStack" */
   readonly video_ChannelStack: ReadonlyArray<Video_ChannelStack>;
   /** fetch aggregated fields from the table: "video.ChannelStack" */
@@ -19831,12 +19706,6 @@ export type Query_Root = {
   readonly video_TranscriptionJob_aggregate: Video_TranscriptionJob_Aggregate;
   /** fetch data from the table: "video.TranscriptionJob" using primary key columns */
   readonly video_TranscriptionJob_by_pk?: Maybe<Video_TranscriptionJob>;
-  /** fetch data from the table: "video.Transitions" */
-  readonly video_Transitions: ReadonlyArray<Video_Transitions>;
-  /** fetch aggregated fields from the table: "video.Transitions" */
-  readonly video_Transitions_aggregate: Video_Transitions_Aggregate;
-  /** fetch data from the table: "video.Transitions" using primary key columns */
-  readonly video_Transitions_by_pk?: Maybe<Video_Transitions>;
   /** fetch data from the table: "video.VideoRenderJob" */
   readonly video_VideoRenderJob: ReadonlyArray<Video_VideoRenderJob>;
   /** fetch aggregated fields from the table: "video.VideoRenderJob" */
@@ -21634,29 +21503,6 @@ export type Query_RootSystem_Configuration_By_PkArgs = {
 };
 
 
-export type Query_RootVideo_BroadcastElementArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_BroadcastElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_BroadcastElement_Order_By>>;
-  where?: Maybe<Video_BroadcastElement_Bool_Exp>;
-};
-
-
-export type Query_RootVideo_BroadcastElement_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_BroadcastElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_BroadcastElement_Order_By>>;
-  where?: Maybe<Video_BroadcastElement_Bool_Exp>;
-};
-
-
-export type Query_RootVideo_BroadcastElement_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
 export type Query_RootVideo_ChannelStackArgs = {
   distinct_on?: Maybe<ReadonlyArray<Video_ChannelStack_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21860,29 +21706,6 @@ export type Query_RootVideo_TranscriptionJob_AggregateArgs = {
 
 
 export type Query_RootVideo_TranscriptionJob_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootVideo_TransitionsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-export type Query_RootVideo_Transitions_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-export type Query_RootVideo_Transitions_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -24424,10 +24247,6 @@ export type Room_Room = {
   readonly stats: ReadonlyArray<Analytics_RoomStats>;
   /** An aggregate relationship */
   readonly stats_aggregate: Analytics_RoomStats_Aggregate;
-  /** An array relationship */
-  readonly transitions: ReadonlyArray<Video_Transitions>;
-  /** An aggregate relationship */
-  readonly transitions_aggregate: Video_Transitions_Aggregate;
   readonly updated_at: Scalars['timestamptz'];
 };
 
@@ -24549,26 +24368,6 @@ export type Room_RoomStats_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Analytics_RoomStats_Order_By>>;
   where?: Maybe<Analytics_RoomStats_Bool_Exp>;
-};
-
-
-/** columns and relationships of "room.Room" */
-export type Room_RoomTransitionsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-/** columns and relationships of "room.Room" */
-export type Room_RoomTransitions_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
 };
 
 /** columns and relationships of "room.RoomPerson" */
@@ -24874,7 +24673,6 @@ export type Room_Room_Bool_Exp = {
   readonly roomPeople?: Maybe<Room_RoomPerson_Bool_Exp>;
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
   readonly stats?: Maybe<Analytics_RoomStats_Bool_Exp>;
-  readonly transitions?: Maybe<Video_Transitions_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -24925,7 +24723,6 @@ export type Room_Room_Insert_Input = {
   readonly roomPeople?: Maybe<Room_RoomPerson_Arr_Rel_Insert_Input>;
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
   readonly stats?: Maybe<Analytics_RoomStats_Arr_Rel_Insert_Input>;
-  readonly transitions?: Maybe<Video_Transitions_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -25049,7 +24846,6 @@ export type Room_Room_Order_By = {
   readonly roomPeople_aggregate?: Maybe<Room_RoomPerson_Aggregate_Order_By>;
   readonly shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
   readonly stats_aggregate?: Maybe<Analytics_RoomStats_Aggregate_Order_By>;
-  readonly transitions_aggregate?: Maybe<Video_Transitions_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
 };
 
@@ -26606,8 +26402,6 @@ export type Room_ShuffleRoom_Variance_Order_By = {
 export type Schedule_Event = {
   readonly __typename?: 'schedule_Event';
   /** An object relationship */
-  readonly broadcastElement?: Maybe<Video_BroadcastElement>;
-  /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
   readonly createdAt: Scalars['timestamptz'];
@@ -26652,10 +26446,6 @@ export type Schedule_Event = {
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime: Scalars['timestamptz'];
-  /** An array relationship */
-  readonly transitions: ReadonlyArray<Video_Transitions>;
-  /** An aggregate relationship */
-  readonly transitions_aggregate: Video_Transitions_Aggregate;
   readonly updatedAt: Scalars['timestamptz'];
 };
 
@@ -26737,26 +26527,6 @@ export type Schedule_EventParticipantStreams_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Video_EventParticipantStream_Order_By>>;
   where?: Maybe<Video_EventParticipantStream_Bool_Exp>;
-};
-
-
-/** columns and relationships of "schedule.Event" */
-export type Schedule_EventTransitionsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-/** columns and relationships of "schedule.Event" */
-export type Schedule_EventTransitions_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
 };
 
 /** columns and relationships of "schedule.EventProgramPerson" */
@@ -27591,7 +27361,6 @@ export type Schedule_Event_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
   readonly _not?: Maybe<Schedule_Event_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Bool_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -27617,7 +27386,6 @@ export type Schedule_Event_Bool_Exp = {
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
   readonly shufflePeriodId?: Maybe<Uuid_Comparison_Exp>;
   readonly startTime?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly transitions?: Maybe<Video_Transitions_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -27634,7 +27402,6 @@ export type Schedule_Event_Inc_Input = {
 
 /** input type for inserting data into table "schedule.Event" */
 export type Schedule_Event_Insert_Input = {
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Obj_Rel_Insert_Input>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
@@ -27660,7 +27427,6 @@ export type Schedule_Event_Insert_Input = {
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
-  readonly transitions?: Maybe<Video_Transitions_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -27759,7 +27525,6 @@ export type Schedule_Event_On_Conflict = {
 
 /** Ordering options when selecting data from "schedule.Event". */
 export type Schedule_Event_Order_By = {
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
@@ -27785,7 +27550,6 @@ export type Schedule_Event_Order_By = {
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
   readonly shufflePeriodId?: Maybe<Order_By>;
   readonly startTime?: Maybe<Order_By>;
-  readonly transitions_aggregate?: Maybe<Video_Transitions_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -28415,12 +28179,6 @@ export type Subscription_Root = {
   readonly system_Configuration_aggregate: System_Configuration_Aggregate;
   /** fetch data from the table: "system.Configuration" using primary key columns */
   readonly system_Configuration_by_pk?: Maybe<System_Configuration>;
-  /** fetch data from the table: "video.BroadcastElement" */
-  readonly video_BroadcastElement: ReadonlyArray<Video_BroadcastElement>;
-  /** fetch aggregated fields from the table: "video.BroadcastElement" */
-  readonly video_BroadcastElement_aggregate: Video_BroadcastElement_Aggregate;
-  /** fetch data from the table: "video.BroadcastElement" using primary key columns */
-  readonly video_BroadcastElement_by_pk?: Maybe<Video_BroadcastElement>;
   /** fetch data from the table: "video.ChannelStack" */
   readonly video_ChannelStack: ReadonlyArray<Video_ChannelStack>;
   /** fetch aggregated fields from the table: "video.ChannelStack" */
@@ -28475,12 +28233,6 @@ export type Subscription_Root = {
   readonly video_TranscriptionJob_aggregate: Video_TranscriptionJob_Aggregate;
   /** fetch data from the table: "video.TranscriptionJob" using primary key columns */
   readonly video_TranscriptionJob_by_pk?: Maybe<Video_TranscriptionJob>;
-  /** fetch data from the table: "video.Transitions" */
-  readonly video_Transitions: ReadonlyArray<Video_Transitions>;
-  /** fetch aggregated fields from the table: "video.Transitions" */
-  readonly video_Transitions_aggregate: Video_Transitions_Aggregate;
-  /** fetch data from the table: "video.Transitions" using primary key columns */
-  readonly video_Transitions_by_pk?: Maybe<Video_Transitions>;
   /** fetch data from the table: "video.VideoRenderJob" */
   readonly video_VideoRenderJob: ReadonlyArray<Video_VideoRenderJob>;
   /** fetch aggregated fields from the table: "video.VideoRenderJob" */
@@ -30273,29 +30025,6 @@ export type Subscription_RootSystem_Configuration_By_PkArgs = {
 };
 
 
-export type Subscription_RootVideo_BroadcastElementArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_BroadcastElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_BroadcastElement_Order_By>>;
-  where?: Maybe<Video_BroadcastElement_Bool_Exp>;
-};
-
-
-export type Subscription_RootVideo_BroadcastElement_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_BroadcastElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_BroadcastElement_Order_By>>;
-  where?: Maybe<Video_BroadcastElement_Bool_Exp>;
-};
-
-
-export type Subscription_RootVideo_BroadcastElement_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
 export type Subscription_RootVideo_ChannelStackArgs = {
   distinct_on?: Maybe<ReadonlyArray<Video_ChannelStack_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -30499,29 +30228,6 @@ export type Subscription_RootVideo_TranscriptionJob_AggregateArgs = {
 
 
 export type Subscription_RootVideo_TranscriptionJob_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootVideo_TransitionsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-export type Subscription_RootVideo_Transitions_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-export type Subscription_RootVideo_Transitions_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -30905,331 +30611,6 @@ export type Uuid_Comparison_Exp = {
   readonly _neq?: Maybe<Scalars['uuid']>;
   readonly _nin?: Maybe<ReadonlyArray<Scalars['uuid']>>;
 };
-
-/** columns and relationships of "video.BroadcastElement" */
-export type Video_BroadcastElement = {
-  readonly __typename?: 'video_BroadcastElement';
-  /** An object relationship */
-  readonly conference: Conference_Conference;
-  readonly conferenceId: Scalars['uuid'];
-  readonly createdAt: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly element?: Maybe<Content_Element>;
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  /** An object relationship */
-  readonly event?: Maybe<Schedule_Event>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  /** An array relationship */
-  readonly fallbackForTransitions: ReadonlyArray<Video_Transitions>;
-  /** An aggregate relationship */
-  readonly fallbackForTransitions_aggregate: Video_Transitions_Aggregate;
-  readonly id: Scalars['uuid'];
-  readonly input: Scalars['jsonb'];
-  /** An object relationship */
-  readonly inputType: Video_InputType;
-  readonly inputTypeName: Video_InputType_Enum;
-  /** An array relationship */
-  readonly transitions: ReadonlyArray<Video_Transitions>;
-  /** An aggregate relationship */
-  readonly transitions_aggregate: Video_Transitions_Aggregate;
-  readonly updatedAt: Scalars['timestamptz'];
-};
-
-
-/** columns and relationships of "video.BroadcastElement" */
-export type Video_BroadcastElementFallbackForTransitionsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-/** columns and relationships of "video.BroadcastElement" */
-export type Video_BroadcastElementFallbackForTransitions_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-/** columns and relationships of "video.BroadcastElement" */
-export type Video_BroadcastElementInputArgs = {
-  path?: Maybe<Scalars['String']>;
-};
-
-
-/** columns and relationships of "video.BroadcastElement" */
-export type Video_BroadcastElementTransitionsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-
-/** columns and relationships of "video.BroadcastElement" */
-export type Video_BroadcastElementTransitions_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_Transitions_Order_By>>;
-  where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-/** aggregated selection of "video.BroadcastElement" */
-export type Video_BroadcastElement_Aggregate = {
-  readonly __typename?: 'video_BroadcastElement_aggregate';
-  readonly aggregate?: Maybe<Video_BroadcastElement_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<Video_BroadcastElement>;
-};
-
-/** aggregate fields of "video.BroadcastElement" */
-export type Video_BroadcastElement_Aggregate_Fields = {
-  readonly __typename?: 'video_BroadcastElement_aggregate_fields';
-  readonly count: Scalars['Int'];
-  readonly max?: Maybe<Video_BroadcastElement_Max_Fields>;
-  readonly min?: Maybe<Video_BroadcastElement_Min_Fields>;
-};
-
-
-/** aggregate fields of "video.BroadcastElement" */
-export type Video_BroadcastElement_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<Video_BroadcastElement_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "video.BroadcastElement" */
-export type Video_BroadcastElement_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<Video_BroadcastElement_Max_Order_By>;
-  readonly min?: Maybe<Video_BroadcastElement_Min_Order_By>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Video_BroadcastElement_Append_Input = {
-  readonly input?: Maybe<Scalars['jsonb']>;
-};
-
-/** input type for inserting array relation for remote table "video.BroadcastElement" */
-export type Video_BroadcastElement_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<Video_BroadcastElement_Insert_Input>;
-  /** on conflict condition */
-  readonly on_conflict?: Maybe<Video_BroadcastElement_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "video.BroadcastElement". All fields are combined with a logical 'AND'. */
-export type Video_BroadcastElement_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Video_BroadcastElement_Bool_Exp>>;
-  readonly _not?: Maybe<Video_BroadcastElement_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Video_BroadcastElement_Bool_Exp>>;
-  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
-  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly element?: Maybe<Content_Element_Bool_Exp>;
-  readonly elementId?: Maybe<Uuid_Comparison_Exp>;
-  readonly event?: Maybe<Schedule_Event_Bool_Exp>;
-  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
-  readonly fallbackForTransitions?: Maybe<Video_Transitions_Bool_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly input?: Maybe<Jsonb_Comparison_Exp>;
-  readonly inputType?: Maybe<Video_InputType_Bool_Exp>;
-  readonly inputTypeName?: Maybe<Video_InputType_Enum_Comparison_Exp>;
-  readonly transitions?: Maybe<Video_Transitions_Bool_Exp>;
-  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "video.BroadcastElement" */
-export enum Video_BroadcastElement_Constraint {
-  /** unique or primary key constraint */
-  BroadcastElementElementIdKey = 'BroadcastElement_elementId_key',
-  /** unique or primary key constraint */
-  BroadcastElementEventIdKey = 'BroadcastElement_eventId_key',
-  /** unique or primary key constraint */
-  BroadcastElementPkey = 'BroadcastElement_pkey'
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Video_BroadcastElement_Delete_At_Path_Input = {
-  readonly input?: Maybe<ReadonlyArray<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Video_BroadcastElement_Delete_Elem_Input = {
-  readonly input?: Maybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Video_BroadcastElement_Delete_Key_Input = {
-  readonly input?: Maybe<Scalars['String']>;
-};
-
-/** input type for inserting data into table "video.BroadcastElement" */
-export type Video_BroadcastElement_Insert_Input = {
-  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  readonly event?: Maybe<Schedule_Event_Obj_Rel_Insert_Input>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  readonly fallbackForTransitions?: Maybe<Video_Transitions_Arr_Rel_Insert_Input>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly input?: Maybe<Scalars['jsonb']>;
-  readonly inputType?: Maybe<Video_InputType_Obj_Rel_Insert_Input>;
-  readonly inputTypeName?: Maybe<Video_InputType_Enum>;
-  readonly transitions?: Maybe<Video_Transitions_Arr_Rel_Insert_Input>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate max on columns */
-export type Video_BroadcastElement_Max_Fields = {
-  readonly __typename?: 'video_BroadcastElement_max_fields';
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "video.BroadcastElement" */
-export type Video_BroadcastElement_Max_Order_By = {
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly elementId?: Maybe<Order_By>;
-  readonly eventId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Video_BroadcastElement_Min_Fields = {
-  readonly __typename?: 'video_BroadcastElement_min_fields';
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "video.BroadcastElement" */
-export type Video_BroadcastElement_Min_Order_By = {
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly elementId?: Maybe<Order_By>;
-  readonly eventId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "video.BroadcastElement" */
-export type Video_BroadcastElement_Mutation_Response = {
-  readonly __typename?: 'video_BroadcastElement_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Video_BroadcastElement>;
-};
-
-/** input type for inserting object relation for remote table "video.BroadcastElement" */
-export type Video_BroadcastElement_Obj_Rel_Insert_Input = {
-  readonly data: Video_BroadcastElement_Insert_Input;
-  /** on conflict condition */
-  readonly on_conflict?: Maybe<Video_BroadcastElement_On_Conflict>;
-};
-
-/** on conflict condition type for table "video.BroadcastElement" */
-export type Video_BroadcastElement_On_Conflict = {
-  readonly constraint: Video_BroadcastElement_Constraint;
-  readonly update_columns: ReadonlyArray<Video_BroadcastElement_Update_Column>;
-  readonly where?: Maybe<Video_BroadcastElement_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "video.BroadcastElement". */
-export type Video_BroadcastElement_Order_By = {
-  readonly conference?: Maybe<Conference_Conference_Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly element?: Maybe<Content_Element_Order_By>;
-  readonly elementId?: Maybe<Order_By>;
-  readonly event?: Maybe<Schedule_Event_Order_By>;
-  readonly eventId?: Maybe<Order_By>;
-  readonly fallbackForTransitions_aggregate?: Maybe<Video_Transitions_Aggregate_Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly input?: Maybe<Order_By>;
-  readonly inputType?: Maybe<Video_InputType_Order_By>;
-  readonly inputTypeName?: Maybe<Order_By>;
-  readonly transitions_aggregate?: Maybe<Video_Transitions_Aggregate_Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: video_BroadcastElement */
-export type Video_BroadcastElement_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Video_BroadcastElement_Prepend_Input = {
-  readonly input?: Maybe<Scalars['jsonb']>;
-};
-
-/** select columns of table "video.BroadcastElement" */
-export enum Video_BroadcastElement_Select_Column {
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  ElementId = 'elementId',
-  /** column name */
-  EventId = 'eventId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Input = 'input',
-  /** column name */
-  InputTypeName = 'inputTypeName',
-  /** column name */
-  UpdatedAt = 'updatedAt'
-}
-
-/** input type for updating data in table "video.BroadcastElement" */
-export type Video_BroadcastElement_Set_Input = {
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly input?: Maybe<Scalars['jsonb']>;
-  readonly inputTypeName?: Maybe<Video_InputType_Enum>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-};
-
-/** update columns of table "video.BroadcastElement" */
-export enum Video_BroadcastElement_Update_Column {
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  ElementId = 'elementId',
-  /** column name */
-  EventId = 'eventId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Input = 'input',
-  /** column name */
-  InputTypeName = 'inputTypeName',
-  /** column name */
-  UpdatedAt = 'updatedAt'
-}
 
 /** columns and relationships of "video.ChannelStack" */
 export type Video_ChannelStack = {
@@ -32266,32 +31647,8 @@ export enum Video_ImmediateSwitch_Update_Column {
 /** columns and relationships of "video.InputType" */
 export type Video_InputType = {
   readonly __typename?: 'video_InputType';
-  /** An array relationship */
-  readonly broadcastContentItems: ReadonlyArray<Video_BroadcastElement>;
-  /** An aggregate relationship */
-  readonly broadcastContentItems_aggregate: Video_BroadcastElement_Aggregate;
   readonly description: Scalars['String'];
   readonly name: Scalars['String'];
-};
-
-
-/** columns and relationships of "video.InputType" */
-export type Video_InputTypeBroadcastContentItemsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_BroadcastElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_BroadcastElement_Order_By>>;
-  where?: Maybe<Video_BroadcastElement_Bool_Exp>;
-};
-
-
-/** columns and relationships of "video.InputType" */
-export type Video_InputTypeBroadcastContentItems_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Video_BroadcastElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Video_BroadcastElement_Order_By>>;
-  where?: Maybe<Video_BroadcastElement_Bool_Exp>;
 };
 
 /** aggregated selection of "video.InputType" */
@@ -32321,7 +31678,6 @@ export type Video_InputType_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Video_InputType_Bool_Exp>>;
   readonly _not?: Maybe<Video_InputType_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Video_InputType_Bool_Exp>>;
-  readonly broadcastContentItems?: Maybe<Video_BroadcastElement_Bool_Exp>;
   readonly description?: Maybe<String_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
 };
@@ -32332,33 +31688,8 @@ export enum Video_InputType_Constraint {
   InputTypeNamePkey = 'InputTypeName_pkey'
 }
 
-export enum Video_InputType_Enum {
-  /** GIF image. */
-  Gif = 'GIF',
-  /** JPEG image (jay-peg). */
-  Jpeg = 'JPEG',
-  /** MP4 video file. */
-  Mp4 = 'MP4',
-  /** PNG image. */
-  Png = 'PNG',
-  /** RTMP stream in push mode. */
-  RtmpPush = 'RTMP_PUSH',
-  /** RTMP push from a Vonage Video API session. */
-  VonageSession = 'VONAGE_SESSION'
-}
-
-/** Boolean expression to compare columns of type "video_InputType_enum". All fields are combined with logical 'AND'. */
-export type Video_InputType_Enum_Comparison_Exp = {
-  readonly _eq?: Maybe<Video_InputType_Enum>;
-  readonly _in?: Maybe<ReadonlyArray<Video_InputType_Enum>>;
-  readonly _is_null?: Maybe<Scalars['Boolean']>;
-  readonly _neq?: Maybe<Video_InputType_Enum>;
-  readonly _nin?: Maybe<ReadonlyArray<Video_InputType_Enum>>;
-};
-
 /** input type for inserting data into table "video.InputType" */
 export type Video_InputType_Insert_Input = {
-  readonly broadcastContentItems?: Maybe<Video_BroadcastElement_Arr_Rel_Insert_Input>;
   readonly description?: Maybe<Scalars['String']>;
   readonly name?: Maybe<Scalars['String']>;
 };
@@ -32386,13 +31717,6 @@ export type Video_InputType_Mutation_Response = {
   readonly returning: ReadonlyArray<Video_InputType>;
 };
 
-/** input type for inserting object relation for remote table "video.InputType" */
-export type Video_InputType_Obj_Rel_Insert_Input = {
-  readonly data: Video_InputType_Insert_Input;
-  /** on conflict condition */
-  readonly on_conflict?: Maybe<Video_InputType_On_Conflict>;
-};
-
 /** on conflict condition type for table "video.InputType" */
 export type Video_InputType_On_Conflict = {
   readonly constraint: Video_InputType_Constraint;
@@ -32402,7 +31726,6 @@ export type Video_InputType_On_Conflict = {
 
 /** Ordering options when selecting data from "video.InputType". */
 export type Video_InputType_Order_By = {
-  readonly broadcastContentItems_aggregate?: Maybe<Video_BroadcastElement_Aggregate_Order_By>;
   readonly description?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
 };
@@ -33145,267 +32468,9 @@ export enum Video_TranscriptionJob_Update_Column {
   VideoS3Url = 'videoS3Url'
 }
 
-/** columns and relationships of "video.Transitions" */
-export type Video_Transitions = {
-  readonly __typename?: 'video_Transitions';
-  /** An object relationship */
-  readonly broadcastElement: Video_BroadcastElement;
-  readonly broadcastElementId: Scalars['uuid'];
-  /** An object relationship */
-  readonly conference: Conference_Conference;
-  readonly conferenceId: Scalars['uuid'];
-  readonly created_at: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly event: Schedule_Event;
-  readonly eventId: Scalars['uuid'];
-  /** An object relationship */
-  readonly fallbackBroadcastElement?: Maybe<Video_BroadcastElement>;
-  readonly fallbackBroadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly id: Scalars['uuid'];
-  /** An object relationship */
-  readonly room: Room_Room;
-  readonly roomId: Scalars['uuid'];
-  readonly time: Scalars['timestamptz'];
-  readonly updated_at: Scalars['timestamptz'];
-};
-
-/** aggregated selection of "video.Transitions" */
-export type Video_Transitions_Aggregate = {
-  readonly __typename?: 'video_Transitions_aggregate';
-  readonly aggregate?: Maybe<Video_Transitions_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<Video_Transitions>;
-};
-
-/** aggregate fields of "video.Transitions" */
-export type Video_Transitions_Aggregate_Fields = {
-  readonly __typename?: 'video_Transitions_aggregate_fields';
-  readonly count: Scalars['Int'];
-  readonly max?: Maybe<Video_Transitions_Max_Fields>;
-  readonly min?: Maybe<Video_Transitions_Min_Fields>;
-};
-
-
-/** aggregate fields of "video.Transitions" */
-export type Video_Transitions_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<Video_Transitions_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "video.Transitions" */
-export type Video_Transitions_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<Video_Transitions_Max_Order_By>;
-  readonly min?: Maybe<Video_Transitions_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "video.Transitions" */
-export type Video_Transitions_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<Video_Transitions_Insert_Input>;
-  /** on conflict condition */
-  readonly on_conflict?: Maybe<Video_Transitions_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "video.Transitions". All fields are combined with a logical 'AND'. */
-export type Video_Transitions_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Video_Transitions_Bool_Exp>>;
-  readonly _not?: Maybe<Video_Transitions_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Video_Transitions_Bool_Exp>>;
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Bool_Exp>;
-  readonly broadcastElementId?: Maybe<Uuid_Comparison_Exp>;
-  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
-  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly event?: Maybe<Schedule_Event_Bool_Exp>;
-  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
-  readonly fallbackBroadcastElement?: Maybe<Video_BroadcastElement_Bool_Exp>;
-  readonly fallbackBroadcastElementId?: Maybe<Uuid_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly room?: Maybe<Room_Room_Bool_Exp>;
-  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
-  readonly time?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "video.Transitions" */
-export enum Video_Transitions_Constraint {
-  /** unique or primary key constraint */
-  TransitionsPkey = 'Transitions_pkey'
-}
-
-/** input type for inserting data into table "video.Transitions" */
-export type Video_Transitions_Insert_Input = {
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Obj_Rel_Insert_Input>;
-  readonly broadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly event?: Maybe<Schedule_Event_Obj_Rel_Insert_Input>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  readonly fallbackBroadcastElement?: Maybe<Video_BroadcastElement_Obj_Rel_Insert_Input>;
-  readonly fallbackBroadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly time?: Maybe<Scalars['timestamptz']>;
-  readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate max on columns */
-export type Video_Transitions_Max_Fields = {
-  readonly __typename?: 'video_Transitions_max_fields';
-  readonly broadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  readonly fallbackBroadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly time?: Maybe<Scalars['timestamptz']>;
-  readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "video.Transitions" */
-export type Video_Transitions_Max_Order_By = {
-  readonly broadcastElementId?: Maybe<Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly created_at?: Maybe<Order_By>;
-  readonly eventId?: Maybe<Order_By>;
-  readonly fallbackBroadcastElementId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly roomId?: Maybe<Order_By>;
-  readonly time?: Maybe<Order_By>;
-  readonly updated_at?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Video_Transitions_Min_Fields = {
-  readonly __typename?: 'video_Transitions_min_fields';
-  readonly broadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  readonly fallbackBroadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly time?: Maybe<Scalars['timestamptz']>;
-  readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "video.Transitions" */
-export type Video_Transitions_Min_Order_By = {
-  readonly broadcastElementId?: Maybe<Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly created_at?: Maybe<Order_By>;
-  readonly eventId?: Maybe<Order_By>;
-  readonly fallbackBroadcastElementId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly roomId?: Maybe<Order_By>;
-  readonly time?: Maybe<Order_By>;
-  readonly updated_at?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "video.Transitions" */
-export type Video_Transitions_Mutation_Response = {
-  readonly __typename?: 'video_Transitions_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Video_Transitions>;
-};
-
-/** on conflict condition type for table "video.Transitions" */
-export type Video_Transitions_On_Conflict = {
-  readonly constraint: Video_Transitions_Constraint;
-  readonly update_columns: ReadonlyArray<Video_Transitions_Update_Column>;
-  readonly where?: Maybe<Video_Transitions_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "video.Transitions". */
-export type Video_Transitions_Order_By = {
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Order_By>;
-  readonly broadcastElementId?: Maybe<Order_By>;
-  readonly conference?: Maybe<Conference_Conference_Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly created_at?: Maybe<Order_By>;
-  readonly event?: Maybe<Schedule_Event_Order_By>;
-  readonly eventId?: Maybe<Order_By>;
-  readonly fallbackBroadcastElement?: Maybe<Video_BroadcastElement_Order_By>;
-  readonly fallbackBroadcastElementId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly room?: Maybe<Room_Room_Order_By>;
-  readonly roomId?: Maybe<Order_By>;
-  readonly time?: Maybe<Order_By>;
-  readonly updated_at?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: video_Transitions */
-export type Video_Transitions_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "video.Transitions" */
-export enum Video_Transitions_Select_Column {
-  /** column name */
-  BroadcastElementId = 'broadcastElementId',
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  EventId = 'eventId',
-  /** column name */
-  FallbackBroadcastElementId = 'fallbackBroadcastElementId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  RoomId = 'roomId',
-  /** column name */
-  Time = 'time',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** input type for updating data in table "video.Transitions" */
-export type Video_Transitions_Set_Input = {
-  readonly broadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly eventId?: Maybe<Scalars['uuid']>;
-  readonly fallbackBroadcastElementId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly roomId?: Maybe<Scalars['uuid']>;
-  readonly time?: Maybe<Scalars['timestamptz']>;
-  readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** update columns of table "video.Transitions" */
-export enum Video_Transitions_Update_Column {
-  /** column name */
-  BroadcastElementId = 'broadcastElementId',
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  EventId = 'eventId',
-  /** column name */
-  FallbackBroadcastElementId = 'fallbackBroadcastElementId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  RoomId = 'roomId',
-  /** column name */
-  Time = 'time',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
 /** columns and relationships of "video.VideoRenderJob" */
 export type Video_VideoRenderJob = {
   readonly __typename?: 'video_VideoRenderJob';
-  /** An object relationship */
-  readonly broadcastElement: Video_BroadcastElement;
-  readonly broadcastElementId: Scalars['uuid'];
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -33414,6 +32479,9 @@ export type Video_VideoRenderJob = {
   readonly conferencePrepareJobId: Scalars['uuid'];
   readonly created_at: Scalars['timestamptz'];
   readonly data: Scalars['jsonb'];
+  /** An object relationship */
+  readonly element?: Maybe<Content_Element>;
+  readonly elementId: Scalars['uuid'];
   readonly id: Scalars['uuid'];
   /** An object relationship */
   readonly jobStatus: Video_JobStatus;
@@ -33502,14 +32570,14 @@ export type Video_VideoRenderJob_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Video_VideoRenderJob_Bool_Exp>>;
   readonly _not?: Maybe<Video_VideoRenderJob_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Video_VideoRenderJob_Bool_Exp>>;
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Bool_Exp>;
-  readonly broadcastElementId?: Maybe<Uuid_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly conferencePrepareJob?: Maybe<Conference_PrepareJob_Bool_Exp>;
   readonly conferencePrepareJobId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly data?: Maybe<Jsonb_Comparison_Exp>;
+  readonly element?: Maybe<Content_Element_Bool_Exp>;
+  readonly elementId?: Maybe<Uuid_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly jobStatus?: Maybe<Video_JobStatus_Bool_Exp>;
   readonly jobStatusName?: Maybe<Video_JobStatus_Enum_Comparison_Exp>;
@@ -33546,14 +32614,14 @@ export type Video_VideoRenderJob_Inc_Input = {
 
 /** input type for inserting data into table "video.VideoRenderJob" */
 export type Video_VideoRenderJob_Insert_Input = {
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Obj_Rel_Insert_Input>;
-  readonly broadcastElementId?: Maybe<Scalars['uuid']>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly conferencePrepareJob?: Maybe<Conference_PrepareJob_Obj_Rel_Insert_Input>;
   readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
+  readonly element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
+  readonly elementId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatus?: Maybe<Video_JobStatus_Obj_Rel_Insert_Input>;
   readonly jobStatusName?: Maybe<Video_JobStatus_Enum>;
@@ -33565,10 +32633,10 @@ export type Video_VideoRenderJob_Insert_Input = {
 /** aggregate max on columns */
 export type Video_VideoRenderJob_Max_Fields = {
   readonly __typename?: 'video_VideoRenderJob_max_fields';
-  readonly broadcastElementId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly elementId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
@@ -33577,10 +32645,10 @@ export type Video_VideoRenderJob_Max_Fields = {
 
 /** order by max() on columns of table "video.VideoRenderJob" */
 export type Video_VideoRenderJob_Max_Order_By = {
-  readonly broadcastElementId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly conferencePrepareJobId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
+  readonly elementId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
@@ -33590,10 +32658,10 @@ export type Video_VideoRenderJob_Max_Order_By = {
 /** aggregate min on columns */
 export type Video_VideoRenderJob_Min_Fields = {
   readonly __typename?: 'video_VideoRenderJob_min_fields';
-  readonly broadcastElementId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly elementId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
@@ -33602,10 +32670,10 @@ export type Video_VideoRenderJob_Min_Fields = {
 
 /** order by min() on columns of table "video.VideoRenderJob" */
 export type Video_VideoRenderJob_Min_Order_By = {
-  readonly broadcastElementId?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly conferencePrepareJobId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
+  readonly elementId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly message?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
@@ -33630,14 +32698,14 @@ export type Video_VideoRenderJob_On_Conflict = {
 
 /** Ordering options when selecting data from "video.VideoRenderJob". */
 export type Video_VideoRenderJob_Order_By = {
-  readonly broadcastElement?: Maybe<Video_BroadcastElement_Order_By>;
-  readonly broadcastElementId?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly conferencePrepareJob?: Maybe<Conference_PrepareJob_Order_By>;
   readonly conferencePrepareJobId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
+  readonly element?: Maybe<Content_Element_Order_By>;
+  readonly elementId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly jobStatus?: Maybe<Video_JobStatus_Order_By>;
   readonly jobStatusName?: Maybe<Order_By>;
@@ -33659,8 +32727,6 @@ export type Video_VideoRenderJob_Prepend_Input = {
 /** select columns of table "video.VideoRenderJob" */
 export enum Video_VideoRenderJob_Select_Column {
   /** column name */
-  BroadcastElementId = 'broadcastElementId',
-  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   ConferencePrepareJobId = 'conferencePrepareJobId',
@@ -33668,6 +32734,8 @@ export enum Video_VideoRenderJob_Select_Column {
   CreatedAt = 'created_at',
   /** column name */
   Data = 'data',
+  /** column name */
+  ElementId = 'elementId',
   /** column name */
   Id = 'id',
   /** column name */
@@ -33682,11 +32750,11 @@ export enum Video_VideoRenderJob_Select_Column {
 
 /** input type for updating data in table "video.VideoRenderJob" */
 export type Video_VideoRenderJob_Set_Input = {
-  readonly broadcastElementId?: Maybe<Scalars['uuid']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly conferencePrepareJobId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
+  readonly elementId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly jobStatusName?: Maybe<Video_JobStatus_Enum>;
   readonly message?: Maybe<Scalars['String']>;
@@ -33741,8 +32809,6 @@ export type Video_VideoRenderJob_Sum_Order_By = {
 /** update columns of table "video.VideoRenderJob" */
 export enum Video_VideoRenderJob_Update_Column {
   /** column name */
-  BroadcastElementId = 'broadcastElementId',
-  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   ConferencePrepareJobId = 'conferencePrepareJobId',
@@ -33750,6 +32816,8 @@ export enum Video_VideoRenderJob_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Data = 'data',
+  /** column name */
+  ElementId = 'elementId',
   /** column name */
   Id = 'id',
   /** column name */
@@ -34441,13 +33509,6 @@ export type GetEventDetailsQuery = { readonly __typename?: 'query_root', readonl
 
 export type RoomEventDetailsFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string }> };
 
-export type ImmediateSwitch_GetLatestQueryVariables = Exact<{
-  eventId: Scalars['uuid'];
-}>;
-
-
-export type ImmediateSwitch_GetLatestQuery = { readonly __typename?: 'query_root', readonly video_ImmediateSwitch: ReadonlyArray<{ readonly __typename?: 'video_ImmediateSwitch', readonly id: any, readonly data: any, readonly executedAt?: Maybe<any> }> };
-
 export type ImmediateSwitch_GetElementsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
@@ -34469,6 +33530,20 @@ export type ApproveEventRoomJoinRequestMutationVariables = Exact<{
 
 
 export type ApproveEventRoomJoinRequestMutation = { readonly __typename?: 'mutation_root', readonly update_schedule_EventRoomJoinRequest_by_pk?: Maybe<{ readonly __typename?: 'schedule_EventRoomJoinRequest', readonly id: any }> };
+
+export type LiveIndicator_GetLatestQueryVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type LiveIndicator_GetLatestQuery = { readonly __typename?: 'query_root', readonly video_ImmediateSwitch: ReadonlyArray<{ readonly __typename?: 'video_ImmediateSwitch', readonly id: any, readonly data: any, readonly executedAt?: Maybe<any> }> };
+
+export type LiveIndicator_GetElementQueryVariables = Exact<{
+  elementId: Scalars['uuid'];
+}>;
+
+
+export type LiveIndicator_GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> };
 
 export type GetBreakoutRoomFromEventQueryVariables = Exact<{
   originatingEventId: Scalars['uuid'];
@@ -39570,47 +38645,6 @@ export function useGetEventDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetEventDetailsQueryHookResult = ReturnType<typeof useGetEventDetailsQuery>;
 export type GetEventDetailsLazyQueryHookResult = ReturnType<typeof useGetEventDetailsLazyQuery>;
 export type GetEventDetailsQueryResult = Apollo.QueryResult<GetEventDetailsQuery, GetEventDetailsQueryVariables>;
-export const ImmediateSwitch_GetLatestDocument = gql`
-    query ImmediateSwitch_GetLatest($eventId: uuid!) {
-  video_ImmediateSwitch(
-    order_by: {executedAt: desc_nulls_last}
-    where: {eventId: {_eq: $eventId}, executedAt: {_is_null: false}}
-    limit: 1
-  ) {
-    id
-    data
-    executedAt
-  }
-}
-    `;
-
-/**
- * __useImmediateSwitch_GetLatestQuery__
- *
- * To run a query within a React component, call `useImmediateSwitch_GetLatestQuery` and pass it any options that fit your needs.
- * When your component renders, `useImmediateSwitch_GetLatestQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useImmediateSwitch_GetLatestQuery({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useImmediateSwitch_GetLatestQuery(baseOptions: Apollo.QueryHookOptions<ImmediateSwitch_GetLatestQuery, ImmediateSwitch_GetLatestQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ImmediateSwitch_GetLatestQuery, ImmediateSwitch_GetLatestQueryVariables>(ImmediateSwitch_GetLatestDocument, options);
-      }
-export function useImmediateSwitch_GetLatestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ImmediateSwitch_GetLatestQuery, ImmediateSwitch_GetLatestQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ImmediateSwitch_GetLatestQuery, ImmediateSwitch_GetLatestQueryVariables>(ImmediateSwitch_GetLatestDocument, options);
-        }
-export type ImmediateSwitch_GetLatestQueryHookResult = ReturnType<typeof useImmediateSwitch_GetLatestQuery>;
-export type ImmediateSwitch_GetLatestLazyQueryHookResult = ReturnType<typeof useImmediateSwitch_GetLatestLazyQuery>;
-export type ImmediateSwitch_GetLatestQueryResult = Apollo.QueryResult<ImmediateSwitch_GetLatestQuery, ImmediateSwitch_GetLatestQueryVariables>;
 export const ImmediateSwitch_GetElementsDocument = gql`
     query ImmediateSwitch_GetElements($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
@@ -39723,6 +38757,83 @@ export function useApproveEventRoomJoinRequestMutation(baseOptions?: Apollo.Muta
 export type ApproveEventRoomJoinRequestMutationHookResult = ReturnType<typeof useApproveEventRoomJoinRequestMutation>;
 export type ApproveEventRoomJoinRequestMutationResult = Apollo.MutationResult<ApproveEventRoomJoinRequestMutation>;
 export type ApproveEventRoomJoinRequestMutationOptions = Apollo.BaseMutationOptions<ApproveEventRoomJoinRequestMutation, ApproveEventRoomJoinRequestMutationVariables>;
+export const LiveIndicator_GetLatestDocument = gql`
+    query LiveIndicator_GetLatest($eventId: uuid!) {
+  video_ImmediateSwitch(
+    order_by: {executedAt: desc_nulls_last}
+    where: {eventId: {_eq: $eventId}, executedAt: {_is_null: false}}
+    limit: 1
+  ) {
+    id
+    data
+    executedAt
+  }
+}
+    `;
+
+/**
+ * __useLiveIndicator_GetLatestQuery__
+ *
+ * To run a query within a React component, call `useLiveIndicator_GetLatestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLiveIndicator_GetLatestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLiveIndicator_GetLatestQuery({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useLiveIndicator_GetLatestQuery(baseOptions: Apollo.QueryHookOptions<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(LiveIndicator_GetLatestDocument, options);
+      }
+export function useLiveIndicator_GetLatestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(LiveIndicator_GetLatestDocument, options);
+        }
+export type LiveIndicator_GetLatestQueryHookResult = ReturnType<typeof useLiveIndicator_GetLatestQuery>;
+export type LiveIndicator_GetLatestLazyQueryHookResult = ReturnType<typeof useLiveIndicator_GetLatestLazyQuery>;
+export type LiveIndicator_GetLatestQueryResult = Apollo.QueryResult<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>;
+export const LiveIndicator_GetElementDocument = gql`
+    query LiveIndicator_GetElement($elementId: uuid!) {
+  content_Element_by_pk(id: $elementId) {
+    id
+    data
+  }
+}
+    `;
+
+/**
+ * __useLiveIndicator_GetElementQuery__
+ *
+ * To run a query within a React component, call `useLiveIndicator_GetElementQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLiveIndicator_GetElementQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLiveIndicator_GetElementQuery({
+ *   variables: {
+ *      elementId: // value for 'elementId'
+ *   },
+ * });
+ */
+export function useLiveIndicator_GetElementQuery(baseOptions: Apollo.QueryHookOptions<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>(LiveIndicator_GetElementDocument, options);
+      }
+export function useLiveIndicator_GetElementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>(LiveIndicator_GetElementDocument, options);
+        }
+export type LiveIndicator_GetElementQueryHookResult = ReturnType<typeof useLiveIndicator_GetElementQuery>;
+export type LiveIndicator_GetElementLazyQueryHookResult = ReturnType<typeof useLiveIndicator_GetElementLazyQuery>;
+export type LiveIndicator_GetElementQueryResult = Apollo.QueryResult<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>;
 export const GetBreakoutRoomFromEventDocument = gql`
     query GetBreakoutRoomFromEvent($originatingEventId: uuid!) {
   room_Room(where: {originatingEventId: {_eq: $originatingEventId}}) {

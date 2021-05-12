@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import {
     Badge,
     Button,
@@ -14,7 +15,13 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
+import { plainToClass } from "class-transformer";
+import { validateSync } from "class-validator";
+import * as R from "ramda";
+import React, { useMemo } from "react";
+import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../generated/graphql";
 import { roundDownToNearest } from "../../../../Generic/MathUtils";
 import { FAIcon } from "../../../../Icons/FAIcon";
 
@@ -31,15 +38,169 @@ export function formatRemainingTime(seconds: number): string {
 
 export function LiveIndicator({
     live,
+    now,
     secondsUntilLive,
     secondsUntilOffAir,
+    eventId,
 }: {
     live: boolean;
+    now: number;
     secondsUntilLive: number;
     secondsUntilOffAir: number;
+    eventId: string;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
+
+    gql`
+        query LiveIndicator_GetLatest($eventId: uuid!) {
+            video_ImmediateSwitch(
+                order_by: { executedAt: desc_nulls_last }
+                where: { eventId: { _eq: $eventId }, executedAt: { _is_null: false } }
+                limit: 1
+            ) {
+                id
+                data
+                executedAt
+            }
+        }
+
+        query LiveIndicator_GetElement($elementId: uuid!) {
+            content_Element_by_pk(id: $elementId) {
+                id
+                data
+            }
+        }
+    `;
+
+    const {
+        data: latestImmediateSwitchData,
+        loading: latestImmediateSwitchLoading,
+        error: latestImmediateSwitchError,
+    } = useLiveIndicator_GetLatestQuery({
+        variables: {
+            eventId,
+        },
+        pollInterval: 10000,
+    });
+
+    const latestSwitchData = useMemo(() => {
+        if (!latestImmediateSwitchData?.video_ImmediateSwitch?.length) {
+            return null;
+        }
+
+        const transformed = plainToClass(ImmediateSwitchData, {
+            type: "switch",
+            data: latestImmediateSwitchData.video_ImmediateSwitch[0].data,
+        });
+
+        const errors = validateSync(transformed);
+        if (errors.length) {
+            console.error("Invalid immediate switch", { errors, data: transformed });
+            return null;
+        }
+
+        return transformed;
+    }, [latestImmediateSwitchData]);
+
+    const {
+        data: currentElementData,
+        loading: currentElementLoading,
+        error: currentElementError,
+    } = useLiveIndicator_GetElementQuery({
+        variables: {
+            elementId: latestSwitchData?.data.kind === "video" ? latestSwitchData.data.elementId : null,
+        },
+        skip: latestSwitchData?.data.kind !== "video",
+    });
+
+    const durationCurrentElement = useMemo((): number | null => {
+        if (
+            currentElementData?.content_Element_by_pk?.data &&
+            isElementDataBlob(currentElementData.content_Element_by_pk.data)
+        ) {
+            const elementDataBlob: ElementDataBlob = currentElementData.content_Element_by_pk.data;
+            const latestVersion = R.last(elementDataBlob);
+            if (
+                !latestVersion ||
+                latestVersion.data.type !== Content_ElementType_Enum.VideoBroadcast ||
+                !latestVersion.data.broadcastTranscode?.durationSeconds
+            ) {
+                return null;
+            }
+
+            return latestVersion.data.broadcastTranscode.durationSeconds;
+        }
+        return null;
+    }, [currentElementData?.content_Element_by_pk?.data]);
+
+    const currentInput = useMemo((): "filler" | "rtmp_push" | "video" | "video_ending" | null => {
+        if (!latestSwitchData) {
+            return "rtmp_push";
+        }
+
+        switch (latestSwitchData.data.kind) {
+            case "filler":
+                return "filler";
+            case "rtmp_push":
+                return "rtmp_push";
+            case "video": {
+                if (!latestImmediateSwitchData?.video_ImmediateSwitch?.[0]?.executedAt || !durationCurrentElement) {
+                    return null;
+                }
+                const switchedToVideoAt = Date.parse(latestImmediateSwitchData?.video_ImmediateSwitch[0].executedAt);
+                if (now - switchedToVideoAt > durationCurrentElement * 1000) {
+                    return "rtmp_push";
+                } else if (now - switchedToVideoAt > (durationCurrentElement - 10) * 1000) {
+                    return "video_ending";
+                } else {
+                    return "video";
+                }
+            }
+        }
+
+        return null;
+    }, [durationCurrentElement, latestImmediateSwitchData?.video_ImmediateSwitch, latestSwitchData, now]);
+
+    const whatIsLiveText = useMemo(() => {
+        switch (currentInput) {
+            case null:
+                return (
+                    <>
+                        <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
+                        <Text>You are live (uncertain input)</Text>
+                    </>
+                );
+            case "filler":
+                return (
+                    <>
+                        <FAIcon icon="play" iconStyle="s" fontSize="lg" />
+                        <Text>Filler video</Text>
+                    </>
+                );
+            case "rtmp_push":
+                return (
+                    <>
+                        <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
+                        <Text>You are live</Text>
+                    </>
+                );
+            case "video":
+                return (
+                    <>
+                        <FAIcon icon="play" iconStyle="s" fontSize="lg" />
+                        <Text>Pre-recorded video</Text>
+                    </>
+                );
+            case "video_ending":
+                return (
+                    <>
+                        <FAIcon icon="play" iconStyle="s" fontSize="lg" />
+                        <Text>Pre-recorded video (ending soon)</Text>
+                    </>
+                );
+        }
+    }, [currentInput]);
 
     return (
         <>
@@ -77,13 +238,10 @@ export function LiveIndicator({
             {live ? (
                 <HStack alignItems="flex-start" justifyContent="flex-start" mx="auto">
                     <Badge fontSize="lg" colorScheme="red" fontWeight="bold" p={4}>
-                        <HStack>
-                            <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
-                            <Text mx={2}>You are live</Text>
-                        </HStack>
+                        <HStack>{whatIsLiveText}</HStack>
                     </Badge>
                     <Stat fontSize="md" ml="auto" flexGrow={1} textAlign="center">
-                        <StatLabel>Time remaining until you are off-air</StatLabel>
+                        <StatLabel>Time remaining until event ends</StatLabel>
                         <StatNumber>{formatRemainingTime(secondsUntilOffAir)}</StatNumber>
                     </Stat>
                 </HStack>

@@ -49,11 +49,9 @@ export class AppService {
     })
     handleImmediateSwitchCreated(evt: HasuraInsertEvent<ImmediateSwitchData>): void {
         this.logger.info({ event: "ImmediateSwitchCreated", data: evt });
-        this.scheduleSync.handleImmediateSwitch(
-            evt.event.data.new.data,
-            evt.event.data.new.id,
-            evt.event.data.new.eventId
-        );
+        this.scheduleSync
+            .handleImmediateSwitch(evt.event.data.new.data, evt.event.data.new.id, evt.event.data.new.eventId)
+            .catch((err) => this.logger.error({ err, evt }, "Failed to handle ImmediateSwitchCreated"));
     }
 
     @TrackedHasuraScheduledEventHandler({
@@ -64,7 +62,9 @@ export class AppService {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannelStacks(_evt: any): void {
         this.logger.info({ event: "SyncChannelStacks", data: _evt });
-        this.channelStackSync.syncChannelStacks().catch((err) => this.logger.error(err));
+        this.channelStackSync
+            .syncChannelStacks()
+            .catch((err) => this.logger.error({ err }, "Failed to handle SyncChannelStacks"));
     }
 
     @TrackedHasuraScheduledEventHandler({
@@ -75,7 +75,9 @@ export class AppService {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleSyncChannels(_evt: any): void {
         this.logger.info({ event: "SyncChannels", data: _evt });
-        this.scheduleSync.fullScheduleSync().catch((err) => this.logger.error(err));
+        this.scheduleSync
+            .fullScheduleSync()
+            .catch((err) => this.logger.error({ err }, "Failed to handle SyncChannels"));
     }
 }
 

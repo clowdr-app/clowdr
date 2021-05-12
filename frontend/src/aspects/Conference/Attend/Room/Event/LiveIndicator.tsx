@@ -167,8 +167,8 @@ export function LiveIndicator({
             case null:
                 return (
                     <>
-                        <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
-                        <Text>You are live (uncertain input)</Text>
+                        <FAIcon icon="question-circle" iconStyle="s" fontSize="lg" />
+                        <Text>Uncertain input</Text>
                     </>
                 );
             case "filler":

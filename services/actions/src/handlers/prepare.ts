@@ -131,7 +131,11 @@ async function createBroadcastTranscodes(conferencePrepareJobId: string, confere
             continue;
         }
 
-        if (latestVersion.data.broadcastTranscode && latestVersion.data.broadcastTranscode.s3Url) {
+        if (
+            latestVersion.data.broadcastTranscode &&
+            latestVersion.data.broadcastTranscode.s3Url &&
+            latestVersion.data.broadcastTranscode.durationSeconds
+        ) {
             console.log("Conference prepare: item already has up-to-date broadcast transcode", {
                 elementId: element.id,
                 conferencePrepareJobId,

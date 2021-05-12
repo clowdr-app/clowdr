@@ -202,16 +202,11 @@ actions:
 custom_types:
   enums: []
   input_objects:
-  - name: SampleInput
-  - name: EchoInput
   - name: SubmitContentItemInput
   - name: ConfirmInvitationInput
   - name: InvitationConfirmationEmailInput
   - name: SubmitUpdatedSubtitlesInput
   objects:
-  - name: SampleOutput
-  - name: EchoOutput
-  - name: ProtectedEchoOutput
   - name: SubmitContentItemOutput
   - name: ConfirmInvitationOutput
   - name: InvitationConfirmationEmailOutput
@@ -231,7 +226,6 @@ custom_types:
         schema: room
         name: Room
       name: room
-      source: default
       type: object
       field_mapping:
         roomId: id
@@ -254,7 +248,6 @@ custom_types:
         schema: room
         name: Room
       name: room
-      source: default
       type: object
       field_mapping:
         roomId: id

@@ -143,15 +143,6 @@ type Query {
 
 
 
-input SampleInput {
-  username : String!
-  password : String!
-}
-
-input EchoInput {
-  message : String!
-}
-
 input SubmitContentItemInput {
   contentItemData : jsonb!
 }
@@ -169,18 +160,6 @@ input SubmitUpdatedSubtitlesInput {
   contentItemId : String!
   subtitleText : String!
   accessToken : String!
-}
-
-type SampleOutput {
-  accessToken : String!
-}
-
-type EchoOutput {
-  message : String!
-}
-
-type ProtectedEchoOutput {
-  message : String!
 }
 
 type SubmitContentItemOutput {

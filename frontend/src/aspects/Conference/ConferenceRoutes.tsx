@@ -18,6 +18,7 @@ import RegistrantListPage from "./Attend/Registrant/RegistrantListPage";
 import RoomListPage from "./Attend/Room/RoomListPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import Schedule from "./Attend/Schedule/Schedule";
+import ChecklistPage from "./Manage/Checklist/ChecklistPage";
 import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
 import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
 import ManageConferenceContentPageV2 from "./Manage/ManageConferenceContentPageV2";
@@ -135,6 +136,9 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             </Route>
             <Route path={`${rootUrl}/manage/sponsors`}>
                 <ManageConferenceSponsorsPage />
+            </Route>
+            <Route path={`${rootUrl}/manage/checklist`}>
+                <ChecklistPage />
             </Route>
             <Route path={`${rootUrl}/manage/analytics`}>
                 <PageNotImplemented />

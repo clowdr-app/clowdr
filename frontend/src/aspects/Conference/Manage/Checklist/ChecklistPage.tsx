@@ -1,0 +1,1207 @@
+import { gql } from "@apollo/client";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import {
+    Accordion,
+    AccordionButton,
+    AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    Box,
+    chakra,
+    Grid,
+    GridItem,
+    Heading,
+    ListItem,
+    Spinner,
+    Text,
+    UnorderedList,
+    useBreakpointValue,
+    VStack,
+} from "@chakra-ui/react";
+import {
+    AWSJobStatus,
+    Content_ElementType_Enum,
+    ElementDataBlob,
+    isElementDataBlob,
+} from "@clowdr-app/shared-types/build/content";
+import React, { PropsWithChildren, useMemo } from "react";
+import { Permissions_Permission_Enum, Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
+import { LinkButton } from "../../../Chakra/LinkButton";
+import PageNotFound from "../../../Errors/PageNotFound";
+import { roundDownToNearest } from "../../../Generic/MathUtils";
+import { FAIcon } from "../../../Icons/FAIcon";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+
+gql`
+    query PreshowChecklist($conferenceId: uuid!) {
+        requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                eventPeople: { event: { intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A] } } }
+                registrantId: { _is_null: true }
+            }
+        ) {
+            id
+            name
+            affiliation
+            email
+        }
+
+        requiredProgramPeopleNotRegistered: collection_ProgramPerson(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                eventPeople: { event: { intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A] } } }
+                registrant: { userId: { _is_null: true } }
+            }
+        ) {
+            id
+            name
+            affiliation
+            email
+        }
+
+        submissionsNotReceived: content_UploadableElement(
+            where: { conferenceId: { _eq: $conferenceId }, _not: { element: {} } }
+        ) {
+            id
+            name
+            typeName
+            item {
+                id
+                title
+            }
+        }
+
+        livestreamEventsWithoutPresenter: schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A] }
+                _not: { eventPeople: { roleName: { _eq: PRESENTER } } }
+            }
+        ) {
+            id
+            name
+            startTime
+            endTime
+            room {
+                id
+                name
+            }
+            item {
+                id
+                title
+            }
+        }
+
+        livestreamEventsWithoutChair: schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A] }
+                _not: { eventPeople: { roleName: { _eq: CHAIR } } }
+            }
+        ) {
+            id
+            name
+            startTime
+            endTime
+            room {
+                id
+                name
+            }
+            item {
+                id
+                title
+            }
+        }
+
+        prerecordedEventsWithoutVideo: schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _eq: PRERECORDED }
+                _not: { item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } } }
+            }
+        ) {
+            id
+            name
+            startTime
+            endTime
+            room {
+                id
+                name
+            }
+            item {
+                id
+                title
+            }
+        }
+
+        prerecordedEventsWithVideo: schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _eq: PRERECORDED }
+                item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } }
+            }
+        ) {
+            id
+            name
+            startTime
+            endTime
+            room {
+                id
+                name
+            }
+            item {
+                id
+                title
+                elements(where: { typeName: { _eq: VIDEO_BROADCAST } }) {
+                    id
+                    name
+                    data
+                }
+            }
+        }
+
+        allLiveEventsWithPeople: schedule_Event(
+            where: { conferenceId: { _eq: $conferenceId }, intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] } }
+        ) {
+            id
+            name
+            intendedRoomModeName
+            room {
+                id
+                name
+            }
+            item {
+                id
+                title
+                itemPeopleWithRegistrant: itemPeople(where: { person: { registrantId: { _is_null: false } } }) {
+                    personId
+                }
+                itemPeopleWithoutRegistrant: itemPeople(where: { person: { registrantId: { _is_null: true } } }) {
+                    personId
+                }
+            }
+            exhibition {
+                id
+                name
+            }
+            startTime
+            endTime
+            eventPeople {
+                id
+                personId
+            }
+        }
+
+        emptyExhibitions: collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, _not: { items: {} } }) {
+            id
+            name
+        }
+
+        emptyTags: collection_Tag(where: { conferenceId: { _eq: $conferenceId }, _not: { itemTags: {} } }) {
+            id
+            name
+        }
+
+        exhibitionEventsWithoutExhibition: schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _in: [EXHIBITION] }
+                exhibitionId: { _is_null: true }
+            }
+        ) {
+            id
+            name
+            startTime
+            endTime
+            room {
+                id
+                name
+            }
+        }
+
+        exhibitionEventsWithoutDiscussionRooms: schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _in: [EXHIBITION, NONE] }
+                exhibition: { items: { item: { _not: { rooms: {} } } } }
+            }
+        ) {
+            id
+            name
+            startTime
+            endTime
+            room {
+                id
+                name
+            }
+            exhibition {
+                id
+                name
+                items(where: { item: { _not: { rooms: {} } } }) {
+                    id
+                    item {
+                        id
+                        title
+                    }
+                }
+            }
+        }
+
+        liveEventsWithoutContent: schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                itemId: { _is_null: true }
+            }
+        ) {
+            id
+            name
+            startTime
+            endTime
+            item {
+                id
+                title
+            }
+            room {
+                id
+                name
+            }
+        }
+
+        overlappingEvents: schedule_OverlappingEvents(where: { conferenceId: { _eq: $conferenceId } }) {
+            eventX {
+                id
+                name
+                startTime
+                endTime
+                room {
+                    id
+                    name
+                }
+            }
+            eventY {
+                id
+                name
+                startTime
+                endTime
+            }
+        }
+
+        shortEvents: schedule_Event(where: { conferenceId: { _eq: $conferenceId }, durationSeconds: { _lte: 60 } }) {
+            id
+            name
+            startTime
+            endTime
+            room {
+                id
+                name
+            }
+            item {
+                id
+                title
+            }
+        }
+
+        roomsWithStreams: room_Room(where: { conferenceId: { _eq: $conferenceId }, livestreamDuration: {} }) {
+            id
+            name
+            livestreamDuration {
+                sum
+            }
+        }
+
+        eventsWithNegativeDuration: schedule_Event(
+            where: { conferenceId: { _eq: $conferenceId }, durationSeconds: { _lt: 0 } }
+        ) {
+            id
+            name
+            startTime
+            durationSeconds
+            room {
+                id
+                name
+            }
+            item {
+                id
+                title
+            }
+        }
+    }
+`;
+
+export function formatDuration(seconds: number): string {
+    const NearestHoursInS = roundDownToNearest(seconds, 60 * 60);
+    const IntermediateSeconds = seconds - NearestHoursInS;
+    const NearestMinutesInS = roundDownToNearest(IntermediateSeconds, 60);
+    const NearestSeconds = IntermediateSeconds - NearestMinutesInS;
+    const Hours = (NearestHoursInS / (60 * 60)).toFixed(0).padStart(2, "0");
+    const Minutes = (NearestMinutesInS / 60).toFixed(0).padStart(2, "0");
+    const Seconds = NearestSeconds.toFixed(0).padStart(2, "0");
+    return `${Hours}:${Minutes}:${Seconds}`;
+}
+
+export default function ChecklistPage(): JSX.Element {
+    const conference = useConference();
+    const title = useTitle(`Pre-conference checklist at ${conference.shortName}`);
+
+    const checklistResponse = usePreshowChecklistQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+
+    const emptyTags = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All tags have at least one item"
+                status="warning"
+                description="We recommend that all tags have at least one item. Empty tags can be confusing for attendees. If you do not have any items to add to a tag, please consider deleting it."
+                action={{
+                    title: "Manage Tags",
+                    url: "content",
+                }}
+                ok={checklistResponse.data?.emptyTags.length === 0}
+            >
+                <Text>The following tags are empty:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.emptyTags.map((tag) => (
+                        <ListItem key={tag.id}>{tag.name}</ListItem>
+                    ))}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.emptyTags]);
+
+    const emptyExhibitions = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All exhibitions have at least one item"
+                status="warning"
+                description="We recommend that all exhibitions have at least one item. Empty exhibitions can be confusing for attendees. If you do not have any items to add to an exhibition, please consider deleting it."
+                action={{
+                    title: "Manage Exhibitions",
+                    url: "content",
+                }}
+                ok={checklistResponse.data?.emptyExhibitions.length === 0}
+            >
+                <Text>The following exhibitions are empty:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.emptyExhibitions.map((exh) => (
+                        <ListItem key={exh.id}>{exh.name}</ListItem>
+                    ))}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.emptyExhibitions]);
+
+    const requiredPeopleNotLinkedToRegistrant = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All people required at a live-stream event are linked to a registrant"
+                status="error"
+                description="Live-stream events are assigned Program People, enabling access to the respective backstages. In order for users to access their backstages, the corresponding Program Person needs to be linked to their Registrant."
+                action={{
+                    title: "Manage Program People",
+                    url: "people",
+                }}
+                ok={checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant.length === 0}
+            >
+                <Text>
+                    The following Program People are assigned to a live-stream event but are not linked to a Registrant:
+                </Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant.map((x) => (
+                        <ListItem key={x.id}>
+                            {x.name} {x.affiliation ? `(${x.affiliation})` : ""} {x.email ? `<${x.email}>` : ""}
+                        </ListItem>
+                    ))}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant]);
+
+    const requiredPeopleNotRegistered = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All people required at a live-stream event have completed registration"
+                status="error"
+                description="Users that are expected to participant in a live-stream event need to complete registration to access their backstages."
+                action={{
+                    title: "Manage Registrants",
+                    url: "registrants",
+                }}
+                ok={checklistResponse.data?.requiredProgramPeopleNotRegistered.length === 0}
+            >
+                <Text>
+                    The following people are assigned to a live-stream event but have not completed registration:
+                </Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.requiredProgramPeopleNotRegistered.map((x) => (
+                        <ListItem key={x.id}>
+                            {x.name} {x.affiliation ? `(${x.affiliation})` : ""} {x.email ? `<${x.email}>` : ""}
+                        </ListItem>
+                    ))}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.requiredProgramPeopleNotRegistered]);
+
+    const livestreamEventsHaveAPresenter = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All live-stream events have at least one presenter"
+                status="error"
+                description="Presenters and chairs are the normal roles for people presenting during a live-stream event. All live-stream events should have at least one person with the Presenter role."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={checklistResponse.data?.livestreamEventsWithoutPresenter.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.livestreamEventsWithoutPresenter.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.livestreamEventsWithoutPresenter &&
+                    checklistResponse.data.livestreamEventsWithoutPresenter.length > 10 ? (
+                        <ListItem>
+                            and {checklistResponse.data.livestreamEventsWithoutPresenter.length - 10} more.
+                        </ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.livestreamEventsWithoutPresenter]);
+
+    const livestreamEventsHaveAChair = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All live-stream events have at least one chair"
+                status="warning"
+                description="Presenters and chairs are the normal roles for people presenting during a live-stream event. We recommend that all live-stream events have a chair."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={checklistResponse.data?.livestreamEventsWithoutChair.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.livestreamEventsWithoutChair.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.livestreamEventsWithoutChair &&
+                    checklistResponse.data.livestreamEventsWithoutChair.length > 10 ? (
+                        <ListItem>and {checklistResponse.data.livestreamEventsWithoutChair.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.livestreamEventsWithoutChair]);
+
+    const eventPeopleSyncedToContentPeople = useMemo(() => {
+        const nonsyncedEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
+            (event) =>
+                event.item &&
+                ![
+                    ...event.item.itemPeopleWithRegistrant,
+                    ...event.item.itemPeopleWithoutRegistrant,
+                ].every((itemPerson) =>
+                    event.eventPeople.some((eventPerson) => eventPerson.personId === itemPerson.personId)
+                )
+        );
+        return (
+            <ChecklistItem
+                title="Event people are synchronised to content people"
+                status="warning"
+                description={
+                    'We recommend using the "Add people to events (batch)" option in the Schedule to copy across all people from content to their respective events.'
+                }
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={!!nonsyncedEvents && nonsyncedEvents.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {nonsyncedEvents?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {nonsyncedEvents && nonsyncedEvents.length > 10 ? (
+                        <ListItem>and {nonsyncedEvents.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.allLiveEventsWithPeople]);
+
+    const eventPeopleSyncedToContentPeopleWithRegistrant = useMemo(() => {
+        const nonsyncedEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
+            (event) =>
+                event.item &&
+                !event.item.itemPeopleWithRegistrant.every((itemPerson) =>
+                    event.eventPeople.some((eventPerson) => eventPerson.personId === itemPerson.personId)
+                )
+        );
+        return (
+            <ChecklistItem
+                title="Event people are synchronised to registered content people"
+                status="warning"
+                description={
+                    'We recommend using the "Add people to events (batch)" option in the Schedule to copy across all people from content to their respective events.'
+                }
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={!!nonsyncedEvents && nonsyncedEvents.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {nonsyncedEvents?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {nonsyncedEvents && nonsyncedEvents.length > 10 ? (
+                        <ListItem>and {nonsyncedEvents.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.allLiveEventsWithPeople]);
+
+    const submissionsNotReceived = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All submissions received"
+                status="warning"
+                description="One or more uploadable elements have not been submitted. Please use the Submission Review option in the Manage Content page to review missing submissions."
+                action={{
+                    title: "Manage Content",
+                    url: "content",
+                }}
+                ok={checklistResponse.data?.submissionsNotReceived.length === 0}
+            >
+                <Text>The following uploadables have not been submitted:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.submissionsNotReceived?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {x.name}: {x.item?.title ?? "Unknown item"}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.submissionsNotReceived &&
+                    checklistResponse.data?.submissionsNotReceived.length > 10 ? (
+                        <ListItem>and {checklistResponse.data?.submissionsNotReceived.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.submissionsNotReceived]);
+
+    const videoSubmissionsNotReceived = useMemo(() => {
+        const filteredSubmissions = checklistResponse.data?.submissionsNotReceived.filter(
+            (uploadable) =>
+                uploadable.typeName === Content_ElementType_Enum.VideoBroadcast ||
+                uploadable.typeName === Content_ElementType_Enum.VideoPrepublish ||
+                uploadable.typeName === Content_ElementType_Enum.VideoFile
+        );
+        return (
+            <ChecklistItem
+                title="All video submissions received"
+                status="warning"
+                description="One or more uploadable video elements have not been submitted. This is likely to be a problem if you are using videos as part of live-streaming. Please use the Submission Review option in the Manage Content page to review missing submissions."
+                action={{
+                    title: "Manage Content",
+                    url: "content",
+                }}
+                ok={filteredSubmissions?.length === 0}
+            >
+                <Text>The following uploadables have not been submitted:</Text>
+                <UnorderedList spacing={2}>
+                    {filteredSubmissions?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {x.name}: {x.item?.title ?? "Unknown item"}
+                        </ListItem>
+                    ))}
+                    {filteredSubmissions && filteredSubmissions.length > 10 ? (
+                        <ListItem>and {filteredSubmissions.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.submissionsNotReceived]);
+
+    const prerecordedEventsHaveItem = useMemo(() => {
+        const filteredEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
+            (event) => event.intendedRoomModeName === Room_Mode_Enum.Prerecorded && !event.item
+        );
+        return (
+            <ChecklistItem
+                title="All pre-recorded events have been assigned a content item"
+                status="error"
+                description="Pre-recorded events pick up the Broadcast Video from their assigned content item. One or more 'pre-recorded' mode events has not been assigned an item and so will not be able to play back a video. This may be caused by a missing video submission. Please review your schedule and content to upload the missing video(s) or remove the events from the schedule."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={!!filteredEvents && filteredEvents.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {filteredEvents?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {filteredEvents && filteredEvents.length > 10 ? (
+                        <ListItem>and {filteredEvents.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.allLiveEventsWithPeople]);
+
+    const prerecordedEventsHaveVideoElement = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All pre-recorded events have an item with a broadcast video element"
+                status="error"
+                description="Pre-recorded events pick up the Broadcast Video from their assigned content item. One or more 'pre-recorded' mode events has been assigned an item that does not have a broadcast video element and so will not be able to play back a video. This may be caused by a missing video submission. Please review your schedule and content to upload the missing video(s) or remove the events from the schedule."
+                action={{
+                    title: "Manage Content",
+                    url: "content",
+                }}
+                ok={checklistResponse.data?.prerecordedEventsWithoutVideo.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.prerecordedEventsWithoutVideo?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.prerecordedEventsWithoutVideo &&
+                    checklistResponse.data?.prerecordedEventsWithoutVideo.length > 10 ? (
+                        <ListItem>
+                            and {checklistResponse.data?.prerecordedEventsWithoutVideo.length - 10} more.
+                        </ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.prerecordedEventsWithoutVideo]);
+
+    const prerecordedEventsHaveVideo = useMemo(() => {
+        const filteredEvents = checklistResponse.data?.prerecordedEventsWithVideo.filter(
+            (event) =>
+                !event.item ||
+                !event.item.elements.some((element) => {
+                    if (isElementDataBlob(element.data)) {
+                        const data = element.data as ElementDataBlob;
+                        return data.some(
+                            (version) =>
+                                version.data.type === Content_ElementType_Enum.VideoBroadcast &&
+                                version.data.transcode &&
+                                version.data.transcode.s3Url &&
+                                version.data.transcode.s3Url !== "" &&
+                                version.data.transcode.status === AWSJobStatus.Completed
+                        );
+                    }
+                    return false;
+                })
+        );
+        return (
+            <ChecklistItem
+                title="All pre-recorded events have a broadcast video available"
+                status="error"
+                description="Pre-recorded events pick up the Broadcast Video from their assigned content item. One or more 'pre-recorded' mode events has been assigned an item which has a broadcast video element for which a file has not been uploaded. This means the event will not be able to play back a video. This may be caused by a missing video submission. Please review your schedule and content to upload the missing video(s) or remove the events from the schedule."
+                action={{
+                    title: "Manage Content",
+                    url: "content",
+                }}
+                ok={
+                    checklistResponse.data?.prerecordedEventsWithoutVideo.length === 0 &&
+                    !!filteredEvents &&
+                    filteredEvents.length === 0
+                }
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {filteredEvents?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {filteredEvents && filteredEvents.length > 10 ? (
+                        <ListItem>and {filteredEvents.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.prerecordedEventsWithoutVideo, checklistResponse.data?.prerecordedEventsWithVideo]);
+
+    const videoPlayerEventsHaveItem = useMemo(() => {
+        const filteredEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
+            (event) => event.intendedRoomModeName === Room_Mode_Enum.VideoPlayer && !event.item
+        );
+        return (
+            <ChecklistItem
+                title="All video-player events have been assigned a content item"
+                status="error"
+                description="Video-player events show the most recent video elements from their assigned content item. One or more 'video-player' mode events has not been assigned an item and so will not display any videos. Please edit the event(s) to assign content items to them."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={!!filteredEvents && filteredEvents.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {filteredEvents?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {filteredEvents && filteredEvents.length > 10 ? (
+                        <ListItem>and {filteredEvents.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.allLiveEventsWithPeople]);
+
+    const exhibitionEventsWithoutExhibition = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All exhibition events have an exhibition"
+                status="error"
+                description="One or more 'exhibition' mode events has not been assigned an exhibition. Please edit your schedule to assign an exhibition to each exhibition-mode event."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={checklistResponse.data?.exhibitionEventsWithoutExhibition.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.exhibitionEventsWithoutExhibition?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.exhibitionEventsWithoutExhibition &&
+                    checklistResponse.data?.exhibitionEventsWithoutExhibition.length > 10 ? (
+                        <ListItem>
+                            and {checklistResponse.data?.exhibitionEventsWithoutExhibition.length - 10} more.
+                        </ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.exhibitionEventsWithoutExhibition]);
+
+    const exhibitionEventsWithoutDiscussionRooms = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All items in an exhibition event have a discussion room"
+                status="error"
+                description="One or more exhibition-mode events has been assigned an exhibition that contains items that do not have a discussion room. Please use the Manage Content page to edit relevant items and click 'Create discussion room'."
+                action={{
+                    title: "Manage Content",
+                    url: "content",
+                }}
+                ok={checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}: {x.name}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms &&
+                    checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms.length > 10 ? (
+                        <ListItem>
+                            and {checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms.length - 10} more.
+                        </ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms]);
+
+    const liveEventsWithoutContent = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="For recordings to be stored, all live-stream events have been assigned an item"
+                status="warning"
+                description={
+                    "One or more live-stream (presentation / Q&A) events has not been assigned a content item. The recording of these events will not be stored. If you wish to keep the recordings, please assign a content item to them."
+                }
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={checklistResponse.data?.liveEventsWithoutContent.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.liveEventsWithoutContent?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.liveEventsWithoutContent &&
+                    checklistResponse.data?.liveEventsWithoutContent.length > 10 ? (
+                        <ListItem>and {checklistResponse.data?.liveEventsWithoutContent.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.liveEventsWithoutContent]);
+
+    const overlappingEvents = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="Events in the same room do not overlap"
+                status="error"
+                description="Oops, how did this happen! One or more events in the same room overlaps. Please edit your schedule to ensure events do not overlap. If this issue persists, please contact Clowdr tech support."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={checklistResponse.data?.overlappingEvents.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.overlappingEvents?.slice(0, 10).map((x, idx) =>
+                        x.eventX && x.eventY ? (
+                            <ListItem key={x.eventX.id + "--" + x.eventY.id}>
+                                {new Date(x.eventX.startTime).toLocaleString()} - {x.eventX.room?.name}: {x.eventX.name}
+                                <br />
+                                overlaps with
+                                <br />
+                                {new Date(x.eventY.startTime).toLocaleString()}: {x.eventY.name}
+                            </ListItem>
+                        ) : (
+                            <ListItem key={idx}>Unknown events</ListItem>
+                        )
+                    )}
+                    {checklistResponse.data?.overlappingEvents &&
+                    checklistResponse.data?.overlappingEvents.length > 10 ? (
+                        <ListItem>and {checklistResponse.data?.overlappingEvents.length - 10} more overlaps.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.overlappingEvents]);
+
+    const shortEvents = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All events are longer than 60 seconds"
+                status="warning"
+                description="We do not recommend having events that are shorter than 60 seconds. Please consider modifying your schedule to lengthen these events."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={checklistResponse.data?.shortEvents.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.shortEvents?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.shortEvents && checklistResponse.data?.shortEvents.length > 10 ? (
+                        <ListItem>and {checklistResponse.data?.shortEvents.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.shortEvents]);
+
+    const eventsWithNegativeDuration = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All events have positive duration"
+                status="error"
+                description="Oops, how did this happen! One or more events has a negative duration. Please edit your schedule to ensure events end after they start. If this issue persists, please contact Clowdr tech support."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={checklistResponse.data?.eventsWithNegativeDuration.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <UnorderedList spacing={2}>
+                    {checklistResponse.data?.eventsWithNegativeDuration?.slice(0, 10).map((x) => (
+                        <ListItem key={x.id}>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </ListItem>
+                    ))}
+                    {checklistResponse.data?.eventsWithNegativeDuration &&
+                    checklistResponse.data?.eventsWithNegativeDuration.length > 10 ? (
+                        <ListItem>and {checklistResponse.data?.eventsWithNegativeDuration.length - 10} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.eventsWithNegativeDuration]);
+
+    const roomsWithStreams = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="Summary of streams"
+                status="info"
+                description="The following is a summary of the live-streams scheduled to take place in each room (including past streams)."
+                ok={false}
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+            >
+                <Text>Streams listed by room:</Text>
+                <Grid rowGap={2} columnGap={4} templateColumns="auto auto">
+                    <GridItem fontWeight="bold">Room name</GridItem>
+                    <GridItem fontWeight="bold">Duration (hh:mm:ss)</GridItem>
+                    {checklistResponse.data?.roomsWithStreams.map((x) => (
+                        <>
+                            <GridItem key={x.id + "-col1"}>{x.name}</GridItem>
+                            <GridItem key={x.id + "-col2"}>
+                                {x.livestreamDuration?.sum
+                                    ? formatDuration(x.livestreamDuration.sum)
+                                    : "Unknown duration"}
+                            </GridItem>
+                        </>
+                    ))}
+                </Grid>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.roomsWithStreams]);
+
+    const defaultColSpan = useBreakpointValue({
+        base: 2,
+        lg: 1,
+    });
+
+    return (
+        <RequireAtLeastOnePermissionWrapper
+            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
+            componentIfDenied={<PageNotFound />}
+        >
+            {title}
+            <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+                Manage {conference.shortName}
+            </Heading>
+            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
+                Pre-conference Checklist
+            </Heading>
+            {checklistResponse.loading && !checklistResponse.data ? <Spinner label="Loading checks" /> : undefined}
+            {checklistResponse.data ? (
+                <Accordion allowToggle maxW={800}>
+                    <Grid alignItems="stretch" rowGap={2} columnGap={4} templateColumns="auto auto">
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>
+                            <VStack alignItems="flex-start">
+                                <Text fontStyle="italic">Rules</Text>
+                                <Text>
+                                    Each rule is automatically checked. If a check fails, it will display an exclamation
+                                    mark and either a recommendation (for non-critical checks that you should consider)
+                                    or a resolution (for critical issues that need to be fixed).
+                                </Text>
+                            </VStack>
+                        </GridItem>
+                        <GridItem colSpan={2} rowSpan={2}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h3" fontSize="xl" textAlign="left">
+                                Content
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{emptyTags}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{emptyExhibitions}</GridItem>
+                        <GridItem colSpan={2} rowSpan={3}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h3" fontSize="xl" textAlign="left">
+                                Submissions
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{submissionsNotReceived}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{videoSubmissionsNotReceived}</GridItem>
+                        <GridItem colSpan={2} rowSpan={3}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h3" fontSize="xl" textAlign="left">
+                                People
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{requiredPeopleNotLinkedToRegistrant}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{requiredPeopleNotRegistered}</GridItem>
+                        <GridItem colSpan={2} rowSpan={3}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h3" fontSize="xl" textAlign="left">
+                                Events
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{overlappingEvents}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{shortEvents}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{eventsWithNegativeDuration}</GridItem>
+                        <GridItem colSpan={2} rowSpan={2}></GridItem>
+
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h4" fontSize="md" textAlign="left">
+                                Event People
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{eventPeopleSyncedToContentPeople}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{eventPeopleSyncedToContentPeopleWithRegistrant}</GridItem>
+                        <GridItem colSpan={2} rowSpan={2}></GridItem>
+
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h4" fontSize="md" textAlign="left">
+                                Live-stream events
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{roomsWithStreams}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{livestreamEventsHaveAPresenter}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{livestreamEventsHaveAChair}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{liveEventsWithoutContent}</GridItem>
+                        <GridItem colSpan={2} rowSpan={2}></GridItem>
+
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h4" fontSize="md" textAlign="left">
+                                Pre-recorded events
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{prerecordedEventsHaveItem}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{prerecordedEventsHaveVideoElement}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{prerecordedEventsHaveVideo}</GridItem>
+                        <GridItem colSpan={2} rowSpan={2}></GridItem>
+
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h4" fontSize="md" textAlign="left">
+                                Video-player events
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{videoPlayerEventsHaveItem}</GridItem>
+                        <GridItem colSpan={2} rowSpan={2}></GridItem>
+
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h4" fontSize="md" textAlign="left">
+                                Exhibition events
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{exhibitionEventsWithoutExhibition}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{exhibitionEventsWithoutDiscussionRooms}</GridItem>
+                        <GridItem colSpan={2} rowSpan={2}></GridItem>
+                    </Grid>
+                </Accordion>
+            ) : undefined}
+        </RequireAtLeastOnePermissionWrapper>
+    );
+}
+
+function ChecklistItem({
+    children,
+    ok,
+    title,
+    status,
+    description,
+    action: { title: actionTitle, url: actionURL },
+}: PropsWithChildren<{
+    ok: boolean;
+    title: string;
+    status: "error" | "warning" | "info";
+    description: string;
+    action: {
+        title: string;
+        url: string;
+    };
+}>): JSX.Element {
+    const conference = useConference();
+
+    return (
+        <AccordionItem flex="1">
+            <Alert status={ok ? "success" : status}>
+                <AlertIcon />
+                <AlertTitle>{title}</AlertTitle>
+            </Alert>
+
+            {!ok ? (
+                <>
+                    <AccordionButton>
+                        <AccordionIcon mr={2} />
+                        <Box flex="1" textAlign="left">
+                            {status === "error"
+                                ? "Resolution"
+                                : status === "warning"
+                                ? "Recommendation"
+                                : "Summary of livestream durations"}
+                        </Box>
+                    </AccordionButton>
+                    <AccordionPanel>
+                        <VStack spacing={3} alignItems="flex-start">
+                            <Text>{description}</Text>
+                            <LinkButton isExternal size="md" to={`/conference/${conference.slug}/manage/${actionURL}`}>
+                                <FAIcon iconStyle="s" icon="link" mr={2} />
+                                <chakra.span>{actionTitle}</chakra.span>
+                                <ExternalLinkIcon ml={2} />
+                            </LinkButton>
+                            {children}
+                        </VStack>
+                    </AccordionPanel>
+                </>
+            ) : undefined}
+        </AccordionItem>
+    );
+}

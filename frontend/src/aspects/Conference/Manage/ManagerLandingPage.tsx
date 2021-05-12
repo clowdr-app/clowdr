@@ -180,6 +180,17 @@ export default function ManagerLandingPage(): JSX.Element {
                     ]}
                     colorScheme="gray"
                 />
+                <RestrictedDashboardButton
+                    to="checklist"
+                    name="Checklist"
+                    icon="check-circle"
+                    description="Run the automatic checker to see if you're ready for the start of your conference."
+                    permissions={[
+                        Permissions_Permission_Enum.ConferenceManageContent,
+                        Permissions_Permission_Enum.ConferenceManageSchedule,
+                    ]}
+                    colorScheme="green"
+                />
                 {/* <RestrictedDashboardButton
                     to="analytics"
                     name="Analytics"

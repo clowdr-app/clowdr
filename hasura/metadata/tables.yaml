@@ -5854,6 +5854,52 @@
       limit: 1
 - table:
     schema: room
+    name: LivestreamDurations
+  object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        column_mapping:
+          conferenceId: id
+  - name: room
+    using:
+      manual_configuration:
+        remote_table:
+          schema: room
+          name: Room
+        column_mapping:
+          roomId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - roomId
+      - sum
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+- table:
+    schema: room
     name: ManagementMode
   is_enum: true
   select_permissions:
@@ -6007,6 +6053,14 @@
   - name: currentMode
     using:
       foreign_key_constraint_on: currentModeName
+  - name: livestreamDuration
+    using:
+      manual_configuration:
+        remote_table:
+          schema: room
+          name: LivestreamDurations
+        column_mapping:
+          id: roomId
   - name: managementMode
     using:
       foreign_key_constraint_on: managementModeName
@@ -7744,6 +7798,60 @@
                     _eq: X-Hasura-Conference-Slug
                 - permission_name:
                     _eq: CONFERENCE_MANAGE_SCHEDULE
+              _table:
+                schema: public
+                name: FlatUserPermission
+- table:
+    schema: schedule
+    name: OverlappingEvents
+  object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        column_mapping:
+          conferenceId: id
+  - name: eventX
+    using:
+      manual_configuration:
+        remote_table:
+          schema: schedule
+          name: Event
+        column_mapping:
+          xId: id
+  - name: eventY
+    using:
+      manual_configuration:
+        remote_table:
+          schema: schedule
+          name: Event
+        column_mapping:
+          yId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - xId
+      - yId
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
               _table:
                 schema: public
                 name: FlatUserPermission

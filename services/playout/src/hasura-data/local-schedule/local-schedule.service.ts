@@ -155,7 +155,7 @@ export class LocalScheduleService {
             },
         });
 
-        const scheduleItems = scheduleResult.data.schedule_Event.map(this.toLocalScheduleAction);
+        const scheduleItems = scheduleResult.data.schedule_Event.map(this.toLocalScheduleAction.bind(this));
 
         return {
             roomId,

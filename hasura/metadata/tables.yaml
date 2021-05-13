@@ -522,6 +522,7 @@
         remote_table:
           schema: chat
           name: Message
+        insertion_order: null
         column_mapping:
           sId: duplicatedMessageSId
   - name: duplicateOutgoing
@@ -1413,6 +1414,7 @@
         remote_table:
           schema: public
           name: FlatUnauthPermission
+        insertion_order: null
         column_mapping:
           slug: slug
   - name: registrants
@@ -1456,6 +1458,7 @@
         remote_table:
           schema: public
           name: FlatUserPermission
+        insertion_order: null
         column_mapping:
           slug: slug
   insert_permissions:
@@ -1674,6 +1677,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           id: demoCodeId
   - name: usedBy
@@ -2555,6 +2559,7 @@
         remote_table:
           schema: room
           name: Room
+        insertion_order: null
         column_mapping:
           id: originatingItemId
   - name: type
@@ -3237,6 +3242,7 @@
         remote_table:
           schema: content
           name: Element
+        insertion_order: null
         column_mapping:
           id: uploadableId
   - name: item
@@ -4940,6 +4946,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           slug: slug
   - name: permission
@@ -4948,6 +4955,7 @@
         remote_table:
           schema: permissions
           name: Permission
+        insertion_order: null
         column_mapping:
           permission_name: name
   - name: user
@@ -4956,6 +4964,7 @@
         remote_table:
           schema: public
           name: User
+        insertion_order: null
         column_mapping:
           user_id: id
   select_permissions:
@@ -5494,6 +5503,7 @@
         remote_table:
           schema: registrant
           name: Registrant
+        insertion_order: null
         column_mapping:
           registrantId: id
   select_permissions:
@@ -5561,6 +5571,7 @@
         remote_table:
           schema: registrant
           name: Invitation
+        insertion_order: null
         column_mapping:
           id: registrantId
   - name: profile
@@ -5569,6 +5580,7 @@
         remote_table:
           schema: registrant
           name: Profile
+        insertion_order: null
         column_mapping:
           id: registrantId
   - name: user
@@ -5581,6 +5593,7 @@
         remote_table:
           schema: registrant
           name: ProfileBadges
+        insertion_order: null
         column_mapping:
           id: registrantId
   - name: groupRegistrants
@@ -5783,6 +5796,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: room
@@ -5791,6 +5805,7 @@
         remote_table:
           schema: room
           name: Room
+        insertion_order: null
         column_mapping:
           roomId: id
   select_permissions:
@@ -6036,6 +6051,7 @@
         remote_table:
           schema: video
           name: ChannelStack
+        insertion_order: null
         column_mapping:
           id: roomId
   - name: chat
@@ -6047,6 +6063,7 @@
         remote_table:
           schema: room
           name: ChimeMeeting
+        insertion_order: null
         column_mapping:
           id: roomId
   - name: conference
@@ -6958,6 +6975,7 @@
         remote_table:
           schema: video
           name: EventVonageSession
+        insertion_order: null
         column_mapping:
           id: eventId
   - name: exhibition
@@ -7894,6 +7912,7 @@
         remote_table:
           schema: video
           name: MediaLiveChannelStatus
+        insertion_order: null
         column_mapping:
           id: channelStackId
   - name: room
@@ -8138,6 +8157,7 @@
         remote_table:
           schema: schedule
           name: Event
+        insertion_order: null
         column_mapping:
           eventId: id
   insert_permissions:
@@ -8305,6 +8325,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           conferenceId: id
   select_permissions:
@@ -8360,6 +8381,7 @@
         remote_table:
           schema: content
           name: Element
+        insertion_order: null
         column_mapping:
           elementId: id
   - name: jobStatus

@@ -433,12 +433,12 @@ export default function MessageBox({
 
     const emojiFloat = useEmojiFloat();
     const addEmojiFloat = useAddEmojiFloat();
-    const isEmoteNow = emojiFloat.isActive && message.type === Chat_MessageType_Enum.Emote;
+    const isEmoteNow = emojiFloat.isActive === message.chatId && message.type === Chat_MessageType_Enum.Emote;
     // useState
     // && message.created_at >= Date.now() - 10000
     useEffect(() => {
         if (
-            emojiFloat.isActive &&
+            emojiFloat.isActive === message.chatId &&
             message.type === Chat_MessageType_Enum.Emote &&
             message.created_at >= Date.now() - 10000 &&
             registrant

@@ -42,11 +42,11 @@ export function BreakoutRoom({
             <>
                 <Box pos="relative" display={enableChime ? "block" : "none"}>
                     <BreakoutChimeRoom room={roomDetails} enable={enableChime} />
-                    {enableChime ? <EmojiFloatContainer /> : undefined}
+                    {enableChime ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
                 <Box pos="relative" display={enableVonage ? "block" : "none"}>
                     <BreakoutVonageRoom room={roomDetails} enable={enableVonage} />
-                    {enableVonage ? <EmojiFloatContainer /> : undefined}
+                    {enableVonage ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
                 {!backend && enable ? <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} /> : undefined}
             </>

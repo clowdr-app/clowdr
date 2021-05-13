@@ -383,9 +383,17 @@ function RoomInner({
                 setWatchStreamForEventId={setWatchStreamForEventId}
                 onRoomJoined={setBackStageRoomJoined}
                 onEventSelected={setBackstageSelectedEventId}
+                roomChatId={roomDetails.chatId}
             />
         ),
-        [currentRoomEvent?.id, nextRoomEvent, roomDetails.name, roomEventsForCurrentRegistrant, showBackstage]
+        [
+            currentRoomEvent?.id,
+            nextRoomEvent,
+            roomDetails.chatId,
+            roomDetails.name,
+            roomEventsForCurrentRegistrant,
+            showBackstage,
+        ]
     );
 
     const contentEl = useMemo(
@@ -573,7 +581,7 @@ function RoomInner({
                             elementId={maybeVideoDetails.elementId}
                             videoElementData={maybeVideoDetails.data}
                         />
-                        <EmojiFloatContainer />
+                        <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
                     </Box>
                 ) : (
                     <>Could not find video.</>
@@ -585,7 +593,7 @@ function RoomInner({
                         canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
                         hlsUri={hlsUri}
                     />
-                    <EmojiFloatContainer />
+                    <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
                 </Box>
             ) : undefined
         ) : undefined;
@@ -598,6 +606,7 @@ function RoomInner({
         showBackstage,
         showDefaultBreakoutRoom,
         withinThreeMinutesOfBroadcastEvent,
+        roomDetails.chatId,
     ]);
 
     return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (

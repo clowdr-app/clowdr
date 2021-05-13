@@ -47,7 +47,9 @@ function EventBackstage({
     event,
     selectedEventId,
     setSelectedEventId,
+    roomChatId,
 }: {
+    roomChatId: string | undefined | null;
     event: Room_EventSummaryFragment;
     selectedEventId: string | null;
     setSelectedEventId: (value: string | null) => void;
@@ -116,7 +118,7 @@ function EventBackstage({
                         Once this event ends, you will be automatically taken to a breakout room to continue the
                         conversation.
                     </Alert>
-                    <EmojiFloatContainer xDurationMs={4000} yDurationMs={10000} />
+                    <EmojiFloatContainer chatId={roomChatId ?? ""} xDurationMs={4000} yDurationMs={10000} />
                 </Box>
             ) : !isActive ? (
                 <Alert status="warning" mb={8}>
@@ -124,7 +126,7 @@ function EventBackstage({
                     This event has now finished. Once you close this room, you will not be able to rejoin it.
                 </Alert>
             ) : undefined,
-        [event.id, isActive, isNow, selectedEventId, vonageRoom]
+        [event.id, isActive, isNow, selectedEventId, vonageRoom, roomChatId]
     );
 
     return (
@@ -144,6 +146,7 @@ export function RoomBackstage({
     setWatchStreamForEventId,
     onRoomJoined,
     onEventSelected,
+    roomChatId,
 }: {
     showBackstage: boolean;
     roomName: string;
@@ -153,6 +156,7 @@ export function RoomBackstage({
     setWatchStreamForEventId: (eventId: string | null) => void;
     onRoomJoined: (joined: boolean) => void;
     onEventSelected: (eventId: string | null) => void;
+    roomChatId: string | null | undefined;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
@@ -201,6 +205,7 @@ export function RoomBackstage({
                             event={x}
                             selectedEventId={selectedEventId}
                             setSelectedEventId={setSelectedEventId}
+                            roomChatId={roomChatId}
                         />
                     </Box>
                 ))}

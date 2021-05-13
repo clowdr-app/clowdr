@@ -23,6 +23,7 @@ import { useHistory } from "react-router-dom";
 import { useCreateDmMutation } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
+import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
@@ -42,11 +43,12 @@ export default function ProfileModal({
     const conference = useConference();
     const mCurrentRegistrant = useMaybeCurrentRegistrant();
     const history = useHistory();
+    const chatState = useGlobalChatState();
 
     const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
     const toast = useToast();
     const createDM = useCallback(async () => {
-        if (registrant) {
+        if (registrant && chatState.openChatInSidebar) {
             try {
                 const result = await createDmMutation({
                     variables: {
@@ -54,7 +56,7 @@ export default function ProfileModal({
                         conferenceId: conference.id,
                     },
                 });
-                if (result.errors || !result.data?.createRoomDm?.roomId) {
+                if (result.errors || !result.data?.createRoomDm) {
                     console.error("Failed to create DM", result.errors);
                     throw new Error("Failed to create DM");
                 } else {
@@ -65,11 +67,7 @@ export default function ProfileModal({
                         });
                     }
 
-                    // Wait, because Vonage session creation is not instantaneous
-                    setTimeout(() => {
-                        history.push(`/conference/${conference.slug}/room/${result.data?.createRoomDm?.roomId}`);
-                        onClose();
-                    }, 2000);
+                    chatState.openChatInSidebar(result.data.createRoomDm.chatId);
 
                     onClose();
                 }
@@ -81,7 +79,16 @@ export default function ProfileModal({
                 console.error("Could not create DM", e);
             }
         }
-    }, [registrant, conference.id, conference.slug, createDmMutation, history, onClose, toast]);
+    }, [
+        registrant,
+        conference.id,
+        conference.slug,
+        createDmMutation,
+        history,
+        onClose,
+        toast,
+        chatState.openChatInSidebar,
+    ]);
 
     return (
         <Portal>

@@ -7,18 +7,15 @@ import {
     Box,
     Flex,
     Heading,
-    useDisclosure,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import React, { useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import {
     RegistrantFieldsFragment,
     RoomListRoomDetailsFragment,
     useGetAllTodaysRoomsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
-import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
 import { RoomList } from "../Conference/Attend/Room/RoomList";
 import { useConference } from "../Conference/useConference";
 import { useRestorableState } from "../Generic/useRestorableState";
@@ -41,15 +38,19 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
         },
     });
 
-    const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
-    const history = useHistory();
+    // const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
+    // const history = useHistory();
 
     return (
         <>
             <AccordionPanel pb={4} px={"3px"}>
                 <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                     {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                        <RoomList rooms={rooms} layout={{ type: "list" }} />
+                        <RoomList
+                            rooms={rooms}
+                            layout={{ type: "list" }}
+                            noRoomsMessage={"Rooms for sessions will show here each day."}
+                        />
                     )}
                 </ApolloQueryWrapper>
                 <ApolloQueryWrapper getter={(data) => data.socialOrDiscussionRooms} queryResult={result} noSpinner>
@@ -68,8 +69,19 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                         </RoomList>
                     )}
                 </ApolloQueryWrapper>
+                <LinkButton
+                    size="xs"
+                    to={`/conference/${confSlug}/rooms`}
+                    linkProps={{ width: "100%", mt: 2, px: 1 }}
+                    width="100%"
+                    colorScheme="green"
+                    borderRadius={0}
+                >
+                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
+                    All rooms
+                </LinkButton>
             </AccordionPanel>
-            <CreateRoomModal
+            {/* <CreateRoomModal
                 isOpen={isCreateRoomOpen}
                 onClose={onCreateRoomClose}
                 onCreated={async (id, cb) => {
@@ -79,7 +91,7 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                         history.push(`/conference/${confSlug}/room/${id}`);
                     }, 2000);
                 }}
-            />
+            /> */}
         </>
     );
 }

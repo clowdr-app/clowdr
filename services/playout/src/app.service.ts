@@ -9,6 +9,7 @@ import { Injectable } from "@nestjs/common";
 import * as Bunyan from "bunyan";
 import { ChannelStackSyncService } from "./channel-stack/channel-stack-sync/channel-stack-sync.service";
 import { Room_Mode_Enum } from "./generated/graphql";
+import { ImmediateSwitchService } from "./schedule/immediate-switch/immediate-switch.service";
 import { ScheduleSyncService } from "./schedule/schedule-sync/schedule-sync.service";
 
 @Injectable()
@@ -18,7 +19,8 @@ export class AppService {
     constructor(
         @RootLogger() logger: Bunyan,
         private channelStackSync: ChannelStackSyncService,
-        private scheduleSync: ScheduleSyncService
+        private scheduleSync: ScheduleSyncService,
+        private immediateSwitchService: ImmediateSwitchService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
@@ -49,7 +51,7 @@ export class AppService {
     })
     handleImmediateSwitchCreated(evt: HasuraInsertEvent<ImmediateSwitchData>): void {
         this.logger.info({ event: "ImmediateSwitchCreated", data: evt });
-        this.scheduleSync
+        this.immediateSwitchService
             .handleImmediateSwitch(evt.event.data.new.data, evt.event.data.new.id, evt.event.data.new.eventId)
             .catch((err) => this.logger.error({ err, evt }, "Failed to handle ImmediateSwitchCreated"));
     }

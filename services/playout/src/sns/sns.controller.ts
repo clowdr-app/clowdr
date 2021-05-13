@@ -1,5 +1,6 @@
 import { Logger } from "@eropple/nestjs-bunyan";
 import { Body, Controller, Post } from "@nestjs/common";
+import parseArn from "@unbounce/parse-aws-arn";
 import axios from "axios";
 import * as Bunyan from "bunyan";
 import { plainToClass } from "class-transformer";
@@ -9,6 +10,7 @@ import { MediaLiveNotification } from "../aws/medialive/medialive-notification.d
 import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
 import { Video_JobStatus_Enum } from "../generated/graphql";
 import { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
+import { ScheduleSyncService } from "../schedule/schedule-sync/schedule-sync.service";
 import { SNSNotificationDto } from "./sns-notification.dto";
 
 @Controller("aws")
@@ -19,7 +21,8 @@ export class SnsController {
         @Logger() requestLogger: Bunyan,
         private cloudFormationService: CloudFormationService,
         private channelsService: ChannelStackService,
-        private channelStackDeleteJobService: ChannelStackDeleteJobService
+        private channelStackDeleteJobService: ChannelStackDeleteJobService,
+        private scheduleSyncService: ScheduleSyncService
     ) {
         this.logger = requestLogger.child({ component: this.constructor.name });
     }
@@ -49,7 +52,24 @@ export class SnsController {
                 mediaLiveNotification.notification["detail-type"] === "MediaLive Channel State Change" &&
                 mediaLiveNotification.notification.detail.state === "RUNNING"
             ) {
-                // do something useful
+                const { resourceId: mediaLiveChannelId } = parseArn(
+                    mediaLiveNotification.notification.detail.channel_arn
+                );
+
+                if (!mediaLiveChannelId) {
+                    this.logger.error(
+                        { mediaLiveChannelArn: mediaLiveNotification.notification.detail.channel_arn },
+                        "Could not parse MediaLive channel resource ID from ARN"
+                    );
+                    return;
+                }
+
+                this.logger.info({ mediaLiveChannelId }, "Received notification that MediaLive channel has started");
+                try {
+                    await this.scheduleSyncService.syncChannelOnStartup(mediaLiveChannelId);
+                } catch (err) {
+                    this.logger.error({ err, mediaLiveChannelId }, "Could not sync channel on startup");
+                }
             }
         }
     }

@@ -5,12 +5,15 @@ import { Injectable } from "@nestjs/common";
 import { add, addHours, addMinutes } from "date-fns";
 import * as R from "ramda";
 import {
+    LocalSchedule_EventDetailsFragment,
+    LocalSchedule_EventFragment,
     LocalSchedule_GetEventDocument,
+    LocalSchedule_GetEventScheduleDocument,
     LocalSchedule_GetRoomsWithEventsStartingDocument,
     LocalSchedule_GetRoomsWithoutEventsDocument,
+    LocalSchedule_GetScheduleDocument,
     Room_Mode_Enum,
     ScheduleService_GetRoomsWithBroadcastEventsDocument,
-    ScheduleService_GetScheduleDocument,
     ScheduleService_UpdateRtmpInputsDocument,
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
@@ -68,30 +71,75 @@ export class LocalScheduleService {
         return result.data.room_Room.map((room) => room.id);
     }
 
+    public toLocalScheduleAction(event: LocalSchedule_EventDetailsFragment): LocalScheduleAction {
+        const videoData = event.item?.elements.length
+            ? this.contentElementService.getLatestBroadcastVideoData(event.item.elements[0].data)
+            : null;
+
+        const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;
+
+        if (!event.eventVonageSession && this.isLive(event.intendedRoomModeName)) {
+            this.logger.warn({ eventId: event.id }, "Live event is missing a Vonage session");
+        }
+
+        return {
+            eventId: event.id,
+            rtmpInputName,
+            roomModeName: event.intendedRoomModeName,
+            videoData,
+            startTime: Date.parse(event.startTime),
+            endTime: Date.parse(event.endTime ?? event.startTime),
+        };
+    }
+
+    public async getEventScheduleData(eventId: string): Promise<LocalScheduleAction | null> {
+        gql`
+            query LocalSchedule_GetEventSchedule($eventId: uuid!) {
+                schedule_Event_by_pk(id: $eventId) {
+                    ...LocalSchedule_EventDetails
+                }
+            }
+        `;
+        const scheduleResult = await this.graphQlService.apolloClient.query({
+            query: LocalSchedule_GetEventScheduleDocument,
+            variables: {
+                eventId,
+            },
+        });
+
+        return scheduleResult.data.schedule_Event_by_pk
+            ? this.toLocalScheduleAction(scheduleResult.data.schedule_Event_by_pk)
+            : null;
+    }
+
     public async getScheduleData(roomId: string): Promise<LocalSchedule> {
         gql`
-            query ScheduleService_GetSchedule($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
+            query LocalSchedule_GetSchedule($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
                 schedule_Event(where: { roomId: { _eq: $roomId }, endTime: { _gte: $now, _lt: $cutoff } }) {
-                    id
-                    item {
-                        id
-                        elements(
-                            where: { typeName: { _eq: VIDEO_BROADCAST } }
-                            limit: 1
-                            order_by: { createdAt: desc_nulls_last }
-                        ) {
-                            id
-                            data
-                        }
-                    }
-                    endTime
-                    startTime
-                    eventVonageSession {
-                        id
-                        rtmpInputName
-                    }
-                    intendedRoomModeName
+                    ...LocalSchedule_EventDetails
                 }
+            }
+
+            fragment LocalSchedule_EventDetails on schedule_Event {
+                id
+                item {
+                    id
+                    elements(
+                        where: { typeName: { _eq: VIDEO_BROADCAST } }
+                        limit: 1
+                        order_by: { createdAt: desc_nulls_last }
+                    ) {
+                        id
+                        data
+                    }
+                }
+                endTime
+                startTime
+                eventVonageSession {
+                    id
+                    rtmpInputName
+                }
+                intendedRoomModeName
             }
         `;
 
@@ -99,7 +147,7 @@ export class LocalScheduleService {
         const cutoff = add(Date.now(), { days: 1 }).toISOString();
 
         const scheduleResult = await this.graphQlService.apolloClient.query({
-            query: ScheduleService_GetScheduleDocument,
+            query: LocalSchedule_GetScheduleDocument,
             variables: {
                 roomId,
                 now,
@@ -107,26 +155,7 @@ export class LocalScheduleService {
             },
         });
 
-        const scheduleItems = scheduleResult.data.schedule_Event.map((event) => {
-            const videoData = event.item?.elements.length
-                ? this.contentElementService.getLatestBroadcastVideoData(event.item.elements[0].data)
-                : null;
-
-            const rtmpInputName = event.eventVonageSession?.rtmpInputName ?? null;
-
-            if (!event.eventVonageSession && this.isLive(event.intendedRoomModeName)) {
-                this.logger.warn({ eventId: event.id }, "Live event is missing a Vonage session");
-            }
-
-            return {
-                eventId: event.id,
-                rtmpInputName,
-                roomModeName: event.intendedRoomModeName,
-                videoData,
-                startTime: Date.parse(event.startTime),
-                endTime: Date.parse(event.endTime ?? event.startTime),
-            };
-        });
+        const scheduleItems = scheduleResult.data.schedule_Event.map(this.toLocalScheduleAction);
 
         return {
             roomId,
@@ -315,27 +344,55 @@ export class LocalScheduleService {
         }));
     }
 
+    public parseEventFragment(event: LocalSchedule_EventFragment): Event {
+        const channelStack: ChannelStack | null = event.room.channelStack
+            ? {
+                  id: event.room.channelStack.id,
+                  mediaLiveChannelId: event.room.channelStack.mediaLiveChannelId,
+                  loopingMp4InputAttachmentName: event.room.channelStack.loopingMp4InputAttachmentName,
+                  mp4InputAttachmentName: event.room.channelStack.mp4InputAttachmentName,
+                  rtmpAInputAttachmentName: event.room.channelStack.rtmpAInputAttachmentName,
+                  rtmpBInputAttachmentName:
+                      event.room.channelStack.rtmpBInputAttachmentName ??
+                      event.room.channelStack.rtmpAInputAttachmentName,
+              }
+            : null;
+
+        return {
+            eventId: event.id,
+            conferenceId: event.conferenceId,
+            channelStack,
+            startTime: Date.parse(event.startTime),
+            endTime: Date.parse(event.endTime),
+            eventRtmpInputName: event.eventVonageSession?.rtmpInputName ?? null,
+        };
+    }
+
     public async getEvent(eventId: string): Promise<Event | null> {
         gql`
             query LocalSchedule_GetEvent($eventId: uuid!) {
                 schedule_Event_by_pk(id: $eventId) {
+                    ...LocalSchedule_Event
+                }
+            }
+
+            fragment LocalSchedule_Event on schedule_Event {
+                id
+                conferenceId
+                endTime
+                startTime
+                eventVonageSession {
+                    rtmpInputName
+                }
+                room {
                     id
-                    conferenceId
-                    endTime
-                    startTime
-                    eventVonageSession {
-                        rtmpInputName
-                    }
-                    room {
+                    channelStack {
                         id
-                        channelStack {
-                            id
-                            mediaLiveChannelId
-                            rtmpAInputAttachmentName
-                            rtmpBInputAttachmentName
-                            mp4InputAttachmentName
-                            loopingMp4InputAttachmentName
-                        }
+                        mediaLiveChannelId
+                        rtmpAInputAttachmentName
+                        rtmpBInputAttachmentName
+                        mp4InputAttachmentName
+                        loopingMp4InputAttachmentName
                     }
                 }
             }
@@ -348,30 +405,11 @@ export class LocalScheduleService {
             },
         });
 
-        const channelStack: ChannelStack | null = result.data.schedule_Event_by_pk?.room.channelStack
-            ? {
-                  id: result.data.schedule_Event_by_pk.room.channelStack.id,
-                  mediaLiveChannelId: result.data.schedule_Event_by_pk.room.channelStack.mediaLiveChannelId,
-                  loopingMp4InputAttachmentName:
-                      result.data.schedule_Event_by_pk.room.channelStack.loopingMp4InputAttachmentName,
-                  mp4InputAttachmentName: result.data.schedule_Event_by_pk.room.channelStack.mp4InputAttachmentName,
-                  rtmpAInputAttachmentName: result.data.schedule_Event_by_pk.room.channelStack.rtmpAInputAttachmentName,
-                  rtmpBInputAttachmentName:
-                      result.data.schedule_Event_by_pk.room.channelStack.rtmpBInputAttachmentName ??
-                      result.data.schedule_Event_by_pk.room.channelStack.rtmpAInputAttachmentName,
-              }
-            : null;
+        if (!result.data.schedule_Event_by_pk) {
+            return null;
+        }
 
-        return result.data.schedule_Event_by_pk
-            ? {
-                  eventId: result.data.schedule_Event_by_pk.id,
-                  conferenceId: result.data.schedule_Event_by_pk.conferenceId,
-                  channelStack,
-                  startTime: Date.parse(result.data.schedule_Event_by_pk.startTime),
-                  endTime: Date.parse(result.data.schedule_Event_by_pk.endTime),
-                  eventRtmpInputName: result.data.schedule_Event_by_pk.eventVonageSession?.rtmpInputName ?? null,
-              }
-            : null;
+        return this.parseEventFragment(result.data.schedule_Event_by_pk);
     }
 }
 

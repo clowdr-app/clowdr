@@ -1,18 +1,14 @@
 import { ChannelState, FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
-import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
-import { plainToClass } from "class-transformer";
-import { validate } from "class-validator";
-import { add, sub } from "date-fns";
+import { add } from "date-fns";
 import * as R from "ramda";
+import { v4 as uuidv4 } from "uuid";
 import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
 import { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import { ContentElementDataService } from "../../hasura-data/content/content-element.service";
-import { ImmediateSwitchDataService } from "../../hasura-data/immediate-switch/immediate-switch.service";
 import {
-    ChannelStack,
     LocalSchedule,
     LocalScheduleAction,
     LocalScheduleService,
@@ -36,197 +32,88 @@ export class ScheduleSyncService {
         private localScheduleService: LocalScheduleService,
         private remoteScheduleService: RemoteScheduleService,
         private vonageService: VonageService,
-        private contentElementDataService: ContentElementDataService,
-        private immediateSwitchDataService: ImmediateSwitchDataService
+        private contentElementDataService: ContentElementDataService
     ) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
-    public async handleImmediateSwitch(data: unknown, id: string, eventId: string | null): Promise<void> {
-        try {
-            const transformed = plainToClass(ImmediateSwitchData, { data });
-            const errors = await validate(transformed);
-            if (errors.length > 1) {
-                this.logger.error({ errors }, "Immediate switch data is invalid");
-                await this.immediateSwitchDataService.failImmediateSwitch(id, "Invalid request");
-                return;
-            } else {
-                this.logger.info({ request: transformed }, "Received valid immediate switch request");
+    public async syncChannelOnStartup(mediaLiveChannelId: string): Promise<void> {
+        const {
+            eventId,
+            roomId,
+            conferenceId,
+        } = await this.channelStackDataService.getCurrentOrUpcomingEventByMediaLiveChannelId(mediaLiveChannelId);
 
-                if (eventId) {
-                    const event = await this.localScheduleService.getEvent(eventId);
-                    const now = Date.now();
-
-                    if (!event) {
-                        this.logger.warn(
-                            { eventId },
-                            "Event associated with immediate switch request does not exist, ignoring"
-                        );
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Event not found");
-                        return;
-                    }
-
-                    if (now <= event.startTime) {
-                        this.logger.warn(
-                            { event, now },
-                            "Immediate switch request made before start of event, ignoring"
-                        );
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Event has not yet started");
-                        return;
-                    }
-
-                    if (now > sub(event.endTime, { seconds: 20 }).getTime()) {
-                        this.logger.warn(
-                            { event, now },
-                            "Immediate switch request made too close to or after end of event, ignoring"
-                        );
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, "Too close to end of event");
-                        return;
-                    }
-
-                    if (!event.channelStack) {
-                        this.logger.warn(
-                            { event },
-                            "No channel stack exists for event, cannot perform immediate switch"
-                        );
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, "No stream exists");
-                        return;
-                    }
-
-                    const inputSwitchActions = await this.toInputSwitchActions(
-                        transformed,
-                        event.channelStack,
-                        event.eventRtmpInputName,
-                        id,
-                        event.conferenceId
-                    );
-
-                    if (typeof inputSwitchActions === "string") {
-                        this.logger.warn({ event, inputSwitchActions }, "Failed to generate immediate switch actions");
-                        await this.immediateSwitchDataService.failImmediateSwitch(id, inputSwitchActions);
-                        return;
-                    }
-
-                    await this.mediaLiveService.updateSchedule(
-                        event.channelStack.mediaLiveChannelId,
-                        [],
-                        inputSwitchActions
-                    );
-
-                    await this.immediateSwitchDataService.completeImmediateSwitch(id);
-                } else {
-                    this.logger.warn(
-                        { request: transformed },
-                        "Immediate switches are not yet supported outside an event."
-                    );
-                    await this.immediateSwitchDataService.failImmediateSwitch(id, "Currently outside an event");
-                }
-            }
-        } catch (err) {
-            await this.immediateSwitchDataService.failImmediateSwitch(id, "Processing error");
-            throw err;
+        if (!roomId) {
+            this.logger.error(
+                { mediaLiveChannelId },
+                "Could not find any room associated with the MediaLive channel, ignoring"
+            );
+            return;
         }
-    }
 
-    async toInputSwitchActions(
-        switchData: ImmediateSwitchData,
-        channelStack: ChannelStack,
-        eventRtmpInputName: string | null,
-        immediateSwitchId: string,
-        conferenceId: string
-    ): Promise<ScheduleAction[] | string> {
-        switch (switchData.data.kind) {
-            case "filler": {
-                const fillerVideoKey = (await this.channelStackDataService.getFillerVideoKey(conferenceId)) ?? "";
-                return [
-                    {
-                        ActionName: `i/${immediateSwitchId}`,
-                        ScheduleActionSettings: {
-                            InputSwitchSettings: {
-                                InputAttachmentNameReference: channelStack.loopingMp4InputAttachmentName,
-                                UrlPath: [fillerVideoKey],
-                            },
-                        },
-                        ScheduleActionStartSettings: {
-                            ImmediateModeScheduleActionStartSettings: {},
-                        },
-                    },
-                ];
+        if (!conferenceId) {
+            this.logger.error(
+                { mediaLiveChannelId },
+                "Could not find any conference associated with the MediaLive channel, ignoring"
+            );
+            return;
+        }
+
+        const channelStackDetails = await this.channelStackDataService.getChannelStackDetails(roomId);
+
+        if (!channelStackDetails) {
+            this.logger.error(
+                { mediaLiveChannelId },
+                "Could not retrieve details of the channel stack for this MediaLive channel"
+            );
+            return;
+        }
+
+        if (eventId) {
+            this.logger.info({ eventId, mediaLiveChannelId }, "Found event to play on channel startup");
+            const localScheduleAction = await this.localScheduleService.getEventScheduleData(eventId);
+
+            if (!localScheduleAction) {
+                this.logger.error({ eventId, mediaLiveChannelId }, "Could not retrieve details of event, ignoring");
+                return;
             }
-            case "video": {
-                const element = await this.contentElementDataService.getElement(switchData.data.elementId);
-                if (!element || element.conferenceId !== conferenceId) {
-                    this.logger.warn(
-                        { switchData, element, conferenceId },
-                        "Retrieved content element belongs to a different conference, skipping"
-                    );
-                    return "Element belongs to another conference";
-                }
-                const broadcastVideoData = this.contentElementDataService.getLatestBroadcastVideoData(element.data);
-                if (!broadcastVideoData) {
-                    this.logger.warn(
-                        { switchData, element, conferenceId, broadcastVideoData },
-                        "Could not find latest video broadcast data in element"
-                    );
-                    return "Could not find video data";
-                }
-                const videoKey = this.contentElementDataService.getVideoKey(broadcastVideoData);
-                if (!videoKey) {
-                    this.logger.warn(
-                        { switchData, element, conferenceId, broadcastVideoData },
-                        "Could not retrieve video key from video broadcast data"
-                    );
-                    return "Could not find video file";
-                }
-                return [
-                    {
-                        ActionName: `i/${immediateSwitchId}`,
-                        ScheduleActionSettings: {
-                            InputSwitchSettings: {
-                                InputAttachmentNameReference: channelStack.mp4InputAttachmentName,
-                                UrlPath: [videoKey],
-                            },
-                        },
-                        ScheduleActionStartSettings: {
-                            ImmediateModeScheduleActionStartSettings: {},
-                        },
-                    },
-                    {
-                        ActionName: `i/${immediateSwitchId}/f`,
-                        ScheduleActionSettings: {
-                            InputSwitchSettings: {
-                                InputAttachmentNameReference:
-                                    eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
-                                        ? channelStack.rtmpBInputAttachmentName
-                                        : channelStack.rtmpAInputAttachmentName,
-                            },
-                        },
-                        ScheduleActionStartSettings: {
-                            FollowModeScheduleActionStartSettings: {
-                                FollowPoint: FollowPoint.END,
-                                ReferenceActionName: `i/${immediateSwitchId}`,
-                            },
-                        },
-                    },
-                ];
+
+            const scheduleActions = this.convertLocalEventToScheduleActions(
+                localScheduleAction,
+                channelStackDetails,
+                0,
+                true
+            );
+            await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
+        } else {
+            this.logger.info("No event found to play on channel startup, playing filler video.");
+            const fillerVideoKey = await this.channelStackDataService.getFillerVideoKey(conferenceId);
+
+            if (!fillerVideoKey) {
+                this.logger.warn(
+                    { mediaLiveChannelId, conferenceId },
+                    "Conference does not have a filler video, skipping"
+                );
+                return;
             }
-            case "rtmp_push":
-                return [
-                    {
-                        ActionName: `i/${immediateSwitchId}`,
-                        ScheduleActionSettings: {
-                            InputSwitchSettings: {
-                                InputAttachmentNameReference:
-                                    eventRtmpInputName === Video_RtmpInput_Enum.RtmpB
-                                        ? channelStack.rtmpBInputAttachmentName
-                                        : channelStack.rtmpAInputAttachmentName,
-                            },
-                        },
-                        ScheduleActionStartSettings: {
-                            ImmediateModeScheduleActionStartSettings: {},
+
+            const scheduleActions = [
+                {
+                    ActionName: `i/${uuidv4()}`,
+                    ScheduleActionSettings: {
+                        InputSwitchSettings: {
+                            InputAttachmentNameReference: channelStackDetails.loopingMp4InputAttachmentName,
+                            UrlPath: [fillerVideoKey],
                         },
                     },
-                ];
+                    ScheduleActionStartSettings: {
+                        ImmediateModeScheduleActionStartSettings: {},
+                    },
+                },
+            ];
+
+            await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
         }
     }
 
@@ -408,7 +295,7 @@ export class ScheduleSyncService {
 
         const adds = R.flatten(
             missingActions.map((action) =>
-                this.convertLocalEventToScheduleActions(action, channelDetails, syncCutoffTime)
+                this.convertLocalEventToScheduleActions(action, channelDetails, syncCutoffTime, false)
             )
         );
 
@@ -418,21 +305,26 @@ export class ScheduleSyncService {
     public convertLocalEventToScheduleActions(
         localAction: LocalScheduleAction,
         channelStackDetails: ChannelStackDetails,
-        syncCutoffTime: number
+        syncCutoffTime: number,
+        immediate: boolean
     ): ScheduleAction[] {
-        if (localAction.startTime <= syncCutoffTime) {
+        if (!immediate && localAction.startTime <= syncCutoffTime) {
             return [];
         }
 
         if (this.localScheduleService.isLive(localAction.roomModeName)) {
             return [
                 {
-                    ActionName: `e/${localAction.eventId}`,
-                    ScheduleActionStartSettings: {
-                        FixedModeScheduleActionStartSettings: {
-                            Time: new Date(localAction.startTime).toISOString(),
-                        },
-                    },
+                    ActionName: immediate ? `i/${uuidv4()}` : `e/${localAction.eventId}`,
+                    ScheduleActionStartSettings: immediate
+                        ? {
+                              ImmediateModeScheduleActionStartSettings: {},
+                          }
+                        : {
+                              FixedModeScheduleActionStartSettings: {
+                                  Time: new Date(localAction.startTime).toISOString(),
+                              },
+                          },
                     ScheduleActionSettings: {
                         InputSwitchSettings: {
                             InputAttachmentNameReference:
@@ -458,12 +350,16 @@ export class ScheduleSyncService {
             } else {
                 return [
                     {
-                        ActionName: `e/${localAction.eventId}`,
-                        ScheduleActionStartSettings: {
-                            FixedModeScheduleActionStartSettings: {
-                                Time: new Date(localAction.startTime).toISOString(),
-                            },
-                        },
+                        ActionName: immediate ? `i/${uuidv4()}` : `e/${localAction.eventId}`,
+                        ScheduleActionStartSettings: immediate
+                            ? {
+                                  ImmediateModeScheduleActionStartSettings: {},
+                              }
+                            : {
+                                  FixedModeScheduleActionStartSettings: {
+                                      Time: new Date(localAction.startTime).toISOString(),
+                                  },
+                              },
                         ScheduleActionSettings: {
                             InputSwitchSettings: {
                                 InputAttachmentNameReference: channelStackDetails.mp4InputAttachmentName,

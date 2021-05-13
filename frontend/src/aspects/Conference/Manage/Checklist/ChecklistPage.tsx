@@ -10,6 +10,7 @@ import {
     AlertIcon,
     AlertTitle,
     Box,
+    Button,
     chakra,
     Grid,
     GridItem,
@@ -19,6 +20,7 @@ import {
     Text,
     UnorderedList,
     useBreakpointValue,
+    useDisclosure,
     VStack,
 } from "@chakra-ui/react";
 import {
@@ -369,11 +371,7 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.emptyTags.length === 0}
             >
                 <Text>The following tags are empty:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.emptyTags.map((tag) => (
-                        <ListItem key={tag.id}>{tag.name}</ListItem>
-                    ))}
-                </UnorderedList>
+                <ExpandableList items={checklistResponse.data?.emptyTags}>{(tag) => <>{tag.name}</>}</ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.emptyTags]);
@@ -391,11 +389,9 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.emptyExhibitions.length === 0}
             >
                 <Text>The following exhibitions are empty:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.emptyExhibitions.map((exh) => (
-                        <ListItem key={exh.id}>{exh.name}</ListItem>
-                    ))}
-                </UnorderedList>
+                <ExpandableList items={checklistResponse.data?.emptyExhibitions}>
+                    {(exh) => <>{exh.name}</>}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.emptyExhibitions]);
@@ -415,13 +411,13 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>
                     The following Program People are assigned to a live-stream event but are not linked to a Registrant:
                 </Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant.map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant}>
+                    {(x) => (
+                        <>
                             {x.name} {x.affiliation ? `(${x.affiliation})` : ""} {x.email ? `<${x.email}>` : ""}
-                        </ListItem>
-                    ))}
-                </UnorderedList>
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant]);
@@ -441,13 +437,13 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>
                     The following people are assigned to a live-stream event but have not completed registration:
                 </Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.requiredProgramPeopleNotRegistered.map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.requiredProgramPeopleNotRegistered}>
+                    {(x) => (
+                        <>
                             {x.name} {x.affiliation ? `(${x.affiliation})` : ""} {x.email ? `<${x.email}>` : ""}
-                        </ListItem>
-                    ))}
-                </UnorderedList>
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.requiredProgramPeopleNotRegistered]);
@@ -465,21 +461,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.livestreamEventsWithoutPresenter.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.livestreamEventsWithoutPresenter.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.livestreamEventsWithoutPresenter}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
                             {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.livestreamEventsWithoutPresenter &&
-                    checklistResponse.data.livestreamEventsWithoutPresenter.length > 10 ? (
-                        <ListItem>
-                            and {checklistResponse.data.livestreamEventsWithoutPresenter.length - 10} more.
-                        </ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.livestreamEventsWithoutPresenter]);
@@ -497,19 +487,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.livestreamEventsWithoutChair.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.livestreamEventsWithoutChair.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.livestreamEventsWithoutChair}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.livestreamEventsWithoutChair &&
-                    checklistResponse.data.livestreamEventsWithoutChair.length > 10 ? (
-                        <ListItem>and {checklistResponse.data.livestreamEventsWithoutChair.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.livestreamEventsWithoutChair]);
@@ -539,18 +525,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!nonsyncedEvents && nonsyncedEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {nonsyncedEvents?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={nonsyncedEvents}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {nonsyncedEvents && nonsyncedEvents.length > 10 ? (
-                        <ListItem>and {nonsyncedEvents.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.allLiveEventsWithPeople]);
@@ -577,18 +560,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!nonsyncedEvents && nonsyncedEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {nonsyncedEvents?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={nonsyncedEvents}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {nonsyncedEvents && nonsyncedEvents.length > 10 ? (
-                        <ListItem>and {nonsyncedEvents.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.allLiveEventsWithPeople]);
@@ -606,17 +586,13 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.submissionsNotReceived.length === 0}
             >
                 <Text>The following uploadables have not been submitted:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.submissionsNotReceived?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.submissionsNotReceived}>
+                    {(x) => (
+                        <>
                             {x.name}: {x.item?.title ?? "Unknown item"}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.submissionsNotReceived &&
-                    checklistResponse.data?.submissionsNotReceived.length > 10 ? (
-                        <ListItem>and {checklistResponse.data?.submissionsNotReceived.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.submissionsNotReceived]);
@@ -640,16 +616,13 @@ export default function ChecklistPage(): JSX.Element {
                 ok={filteredSubmissions?.length === 0}
             >
                 <Text>The following uploadables have not been submitted:</Text>
-                <UnorderedList spacing={2}>
-                    {filteredSubmissions?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={filteredSubmissions}>
+                    {(x) => (
+                        <>
                             {x.name}: {x.item?.title ?? "Unknown item"}
-                        </ListItem>
-                    ))}
-                    {filteredSubmissions && filteredSubmissions.length > 10 ? (
-                        <ListItem>and {filteredSubmissions.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.submissionsNotReceived]);
@@ -670,18 +643,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {filteredEvents?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={filteredEvents}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {filteredEvents && filteredEvents.length > 10 ? (
-                        <ListItem>and {filteredEvents.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.allLiveEventsWithPeople]);
@@ -699,21 +669,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.prerecordedEventsWithoutVideo.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.prerecordedEventsWithoutVideo?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.prerecordedEventsWithoutVideo}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.prerecordedEventsWithoutVideo &&
-                    checklistResponse.data?.prerecordedEventsWithoutVideo.length > 10 ? (
-                        <ListItem>
-                            and {checklistResponse.data?.prerecordedEventsWithoutVideo.length - 10} more.
-                        </ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.prerecordedEventsWithoutVideo]);
@@ -753,18 +717,15 @@ export default function ChecklistPage(): JSX.Element {
                 }
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {filteredEvents?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={filteredEvents}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {filteredEvents && filteredEvents.length > 10 ? (
-                        <ListItem>and {filteredEvents.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.prerecordedEventsWithoutVideo, checklistResponse.data?.prerecordedEventsWithVideo]);
@@ -785,18 +746,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {filteredEvents?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={filteredEvents}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {filteredEvents && filteredEvents.length > 10 ? (
-                        <ListItem>and {filteredEvents.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.allLiveEventsWithPeople]);
@@ -814,19 +772,13 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.exhibitionEventsWithoutExhibition.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.exhibitionEventsWithoutExhibition?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
-                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.exhibitionEventsWithoutExhibition &&
-                    checklistResponse.data?.exhibitionEventsWithoutExhibition.length > 10 ? (
-                        <ListItem>
-                            and {checklistResponse.data?.exhibitionEventsWithoutExhibition.length - 10} more.
-                        </ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                <ExpandableList items={checklistResponse.data?.exhibitionEventsWithoutExhibition}>
+                    {(x) => (
+                        <>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}: {x.name}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.exhibitionEventsWithoutExhibition]);
@@ -844,19 +796,13 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}: {x.name}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms &&
-                    checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms.length > 10 ? (
-                        <ListItem>
-                            and {checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms.length - 10} more.
-                        </ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms]);
@@ -876,19 +822,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.liveEventsWithoutContent.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.liveEventsWithoutContent?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.liveEventsWithoutContent}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.liveEventsWithoutContent &&
-                    checklistResponse.data?.liveEventsWithoutContent.length > 10 ? (
-                        <ListItem>and {checklistResponse.data?.liveEventsWithoutContent.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.liveEventsWithoutContent]);
@@ -906,25 +848,21 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.overlappingEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.overlappingEvents?.slice(0, 10).map((x, idx) =>
+                <ExpandableList items={checklistResponse.data?.overlappingEvents}>
+                    {(x) =>
                         x.eventX && x.eventY ? (
-                            <ListItem key={x.eventX.id + "--" + x.eventY.id}>
+                            <>
                                 {new Date(x.eventX.startTime).toLocaleString()} - {x.eventX.room?.name}: {x.eventX.name}
                                 <br />
                                 overlaps with
                                 <br />
                                 {new Date(x.eventY.startTime).toLocaleString()}: {x.eventY.name}
-                            </ListItem>
+                            </>
                         ) : (
-                            <ListItem key={idx}>Unknown events</ListItem>
+                            <>Unknown events</>
                         )
-                    )}
-                    {checklistResponse.data?.overlappingEvents &&
-                    checklistResponse.data?.overlappingEvents.length > 10 ? (
-                        <ListItem>and {checklistResponse.data?.overlappingEvents.length - 10} more overlaps.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                    }
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.overlappingEvents]);
@@ -942,18 +880,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.shortEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.shortEvents?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.shortEvents}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.shortEvents && checklistResponse.data?.shortEvents.length > 10 ? (
-                        <ListItem>and {checklistResponse.data?.shortEvents.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.shortEvents]);
@@ -971,19 +906,15 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.eventsWithNegativeDuration.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <UnorderedList spacing={2}>
-                    {checklistResponse.data?.eventsWithNegativeDuration?.slice(0, 10).map((x) => (
-                        <ListItem key={x.id}>
+                <ExpandableList items={checklistResponse.data?.eventsWithNegativeDuration}>
+                    {(x) => (
+                        <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
                             <br />
-                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
-                        </ListItem>
-                    ))}
-                    {checklistResponse.data?.eventsWithNegativeDuration &&
-                    checklistResponse.data?.eventsWithNegativeDuration.length > 10 ? (
-                        <ListItem>and {checklistResponse.data?.eventsWithNegativeDuration.length - 10} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.eventsWithNegativeDuration]);
@@ -1149,6 +1080,40 @@ export default function ChecklistPage(): JSX.Element {
             ) : undefined}
         </RequireAtLeastOnePermissionWrapper>
     );
+}
+
+function ExpandableList<T>({
+    items,
+    children,
+    limit = 10,
+}: {
+    items?: readonly T[] | null;
+    children: (item: T) => JSX.Element;
+    limit?: number;
+}): JSX.Element {
+    const { isOpen, onToggle } = useDisclosure();
+
+    if (items) {
+        return (
+            <>
+                <Text>({items?.length} items)</Text>
+                <UnorderedList spacing={2}>
+                    {(isOpen ? items : items.slice(0, limit)).map((x, idx) => (
+                        <ListItem key={idx}>{children(x)}</ListItem>
+                    ))}
+                    {!isOpen && items.length > limit ? (
+                        <ListItem>and {items.length - limit} more.</ListItem>
+                    ) : undefined}
+                </UnorderedList>
+                {items.length > limit ? (
+                    <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
+                        {isOpen ? "Show fewer" : "Show all"}
+                    </Button>
+                ) : undefined}
+            </>
+        );
+    }
+    return <>No items list at the moment. This may be blocked by another issue.</>;
 }
 
 function ChecklistItem({

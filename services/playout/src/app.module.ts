@@ -104,7 +104,7 @@ export class AppModule implements NestModule {
         consumer
             .apply(TextBodyMiddleware)
             .forRoutes({
-                path: "/aws/cloudformation/notify",
+                path: "/aws/*/notify",
                 method: RequestMethod.POST,
             })
             .apply(JsonBodyMiddleware)

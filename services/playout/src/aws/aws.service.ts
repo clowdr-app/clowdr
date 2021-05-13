@@ -1,10 +1,8 @@
 import { App, Stack } from "@aws-cdk/core";
-import { SNS } from "@aws-sdk/client-sns";
 import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { RootLogger } from "@eropple/nestjs-bunyan";
-import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import assert from "assert";
 import { DeployStackResult, SdkProvider } from "aws-cdk";
 import { CloudFormationDeployments } from "aws-cdk/lib/api/cloudformation-deployments";
 import AWS, { CredentialProviderChain } from "aws-sdk";
@@ -13,12 +11,11 @@ import { AWS_MODULE_OPTIONS } from "../constants";
 import { AwsModuleOptions } from "./aws.module";
 
 @Injectable()
-export class AwsService implements OnModuleInit {
+export class AwsService {
     private readonly logger: Bunyan;
 
     private readonly credentials: NewSdkCredentials;
     private readonly region: string;
-    private sns: SNS;
 
     constructor(
         @RootLogger() logger: Bunyan,
@@ -29,32 +26,6 @@ export class AwsService implements OnModuleInit {
 
         this.credentials = config.credentials;
         this.region = config.region;
-    }
-
-    onModuleInit(): void {
-        this.sns = new SNS({
-            apiVersion: "2010-03-31",
-            credentials: this.credentials,
-            region: this.region,
-        });
-    }
-
-    public getHostUrl(): string {
-        const hostDomain = this.configService.get<string>("HOST_DOMAIN");
-        assert(hostDomain, "Missing HOST_DOMAIN.");
-        const hostSecureProtocols = this.configService.get<string>("HOST_SECURE_PROTOCOLS") !== "false";
-
-        return `${hostSecureProtocols ? "https" : "http"}://${hostDomain}`;
-    }
-
-    public async subscribeToTopic(topicArn: string, endpointUri: string): Promise<void> {
-        const hostSecureProtocols = this.configService.get<string>("HOST_SECURE_PROTOCOLS") !== "false";
-
-        await this.sns.subscribe({
-            Protocol: hostSecureProtocols ? "https" : "http",
-            TopicArn: topicArn,
-            Endpoint: endpointUri,
-        });
     }
 
     public async deployCdkStack(app: App, stack: Stack, notificationTopicArn: string): Promise<DeployStackResult> {

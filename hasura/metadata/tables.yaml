@@ -5854,6 +5854,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: room
@@ -5862,6 +5863,7 @@
         remote_table:
           schema: room
           name: Room
+        insertion_order: null
         column_mapping:
           roomId: id
   select_permissions:
@@ -6059,6 +6061,7 @@
         remote_table:
           schema: room
           name: LivestreamDurations
+        insertion_order: null
         column_mapping:
           id: roomId
   - name: managementMode
@@ -7781,6 +7784,7 @@
         remote_table:
           schema: conference
           name: Conference
+        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: eventX
@@ -7789,6 +7793,7 @@
         remote_table:
           schema: schedule
           name: Event
+        insertion_order: null
         column_mapping:
           xId: id
   - name: eventY
@@ -7797,6 +7802,7 @@
         remote_table:
           schema: schedule
           name: Event
+        insertion_order: null
         column_mapping:
           yId: id
   select_permissions:
@@ -8117,6 +8123,15 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        insertion_order: null
+        column_mapping:
+          conferenceId: id
   - name: event
     using:
       manual_configuration:
@@ -8129,9 +8144,9 @@
   - role: user
     permission:
       check:
-        _or:
-        - event:
-            conference:
+        _and:
+        - _or:
+          - conference:
               _and:
               - slug:
                   _eq: X-Hasura-Conference-Slug
@@ -8148,36 +8163,40 @@
                   _table:
                     schema: public
                     name: FlatUserPermission
-        - _and:
           - _and:
-            - event:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-            - _exists:
-                _where:
-                  _and:
-                  - user_id:
-                      _eq: X-Hasura-User-Id
-                  - slug:
+            - _and:
+              - event:
+                  conference:
+                    slug:
                       _eq: X-Hasura-Conference-Slug
-                  - permission_name:
-                      _eq: CONFERENCE_VIEW_ATTENDEES
-                _table:
-                  schema: public
-                  name: FlatUserPermission
-            - event:
-                eventPeople:
-                  _and:
-                  - person:
-                      registrant:
-                        userId:
-                          _eq: X-Hasura-User-Id
-                  - eventPersonRole:
-                      name:
-                        _in:
-                        - CHAIR
-                        - PRESENTER
+              - _exists:
+                  _where:
+                    _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+                  _table:
+                    schema: public
+                    name: FlatUserPermission
+              - event:
+                  eventPeople:
+                    _and:
+                    - person:
+                        registrant:
+                          userId:
+                            _eq: X-Hasura-User-Id
+                    - eventPersonRole:
+                        name:
+                          _in:
+                          - CHAIR
+                          - PRESENTER
+        - event:
+            conferenceId:
+              _ceq:
+              - conferenceId
       columns:
       - data
       - eventId
@@ -8195,24 +8214,23 @@
       - updated_at
       filter:
         _or:
-        - event:
-            conference:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - _exists:
-                  _where:
-                    _and:
-                    - user_id:
-                        _eq: X-Hasura-User-Id
-                    - slug:
-                        _eq: X-Hasura-Conference-Slug
-                    - permission_name:
-                        _in:
-                        - CONFERENCE_MANAGE_SCHEDULE
-                  _table:
-                    schema: public
-                    name: FlatUserPermission
+        - conference:
+            _and:
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_SCHEDULE
+                _table:
+                  schema: public
+                  name: FlatUserPermission
         - _and:
           - _and:
             - event:

@@ -102,4 +102,5 @@ export interface EventData extends BaseData {
 export interface ImmediateSwitchData extends BaseData {
     data: any;
     eventId: string | null;
+    roomId: string;
 }

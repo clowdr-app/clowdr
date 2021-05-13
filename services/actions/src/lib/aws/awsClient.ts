@@ -241,22 +241,6 @@ async function initialiseAwsClient(): Promise<void> {
         throw new Error("Could not subscribe to Elastic Transcoder notifications");
     }
 
-    // Subscribe to MediaLive SNS topic
-    const mediaLiveNotificationUrl = new URL(getHostUrl());
-    mediaLiveNotificationUrl.pathname = "/mediaLive/notify";
-
-    console.log("Subscribing to SNS topic: MediaLive notifications");
-    const mediaLiveSubscribeResult = await sns.subscribe({
-        Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
-        TopicArn: process.env.AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN,
-        Endpoint: mediaLiveNotificationUrl.toString(),
-    });
-    console.log("Subscribed to SNS topic: MediaLive notifications");
-
-    if (!mediaLiveSubscribeResult.SubscriptionArn) {
-        throw new Error("Could not subscribe to MediaLive notifications");
-    }
-
     // Subscribe to MediaPackage Harvest SNS topic
     const mediaPackageHarvestNotificationUrl = new URL(getHostUrl());
     mediaPackageHarvestNotificationUrl.pathname = "/mediaPackage/harvest/notify";

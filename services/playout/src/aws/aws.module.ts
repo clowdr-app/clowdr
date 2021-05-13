@@ -6,6 +6,7 @@ import { AWS_MODULE_OPTIONS } from "../constants";
 import { AwsService } from "./aws.service";
 import { CloudFormationService } from "./cloud-formation/cloud-formation.service";
 import { MediaLiveService } from "./medialive/medialive.service";
+import { SnsService } from "./sns/sns.service";
 
 export type AwsModuleOptions = {
     credentials: {
@@ -19,8 +20,8 @@ export type AwsModuleOptions = {
 
 @Global()
 @Module({
-    providers: [AwsService, CloudFormationService, MediaLiveService],
-    exports: [AwsService, CloudFormationService, MediaLiveService],
+    providers: [AwsService, CloudFormationService, MediaLiveService, SnsService],
+    exports: [AwsService, CloudFormationService, MediaLiveService, SnsService],
 })
 export class AwsModule {
     static forRoot(config: AwsModuleOptions): DynamicModule {
@@ -59,24 +60,21 @@ export class AwsModule {
 
     private readonly logger: Bunyan;
 
-    constructor(private awsService: AwsService, @RootLogger() logger: Bunyan, private configService: ConfigService) {
+    constructor(private snsService: SnsService, @RootLogger() logger: Bunyan, private configService: ConfigService) {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
     async onModuleInit(): Promise<void> {
         this.logger.info("Subscribing to CloudFormation SNS notifications");
-        const hostUrl = this.awsService.getHostUrl();
-        const cloudFormationNotificationUrl = new URL(hostUrl);
-        cloudFormationNotificationUrl.pathname = "/aws/cloudformation/notify";
-
         const cloudFormationNotificationsTopicArn = this.configService.get<string>(
             "AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN"
         );
         assert(cloudFormationNotificationsTopicArn, "Missing AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN");
+        await this.snsService.subscribeToTopic(cloudFormationNotificationsTopicArn, "/aws/cloudformation/notify");
 
-        await this.awsService.subscribeToTopic(
-            cloudFormationNotificationsTopicArn,
-            cloudFormationNotificationUrl.toString()
-        );
+        this.logger.info("Subscribing to MediaLive SNS notifications");
+        const mediaLiveNotificationsTopicArn = this.configService.get<string>("AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN");
+        assert(mediaLiveNotificationsTopicArn, "Missing AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN");
+        await this.snsService.subscribeToTopic(mediaLiveNotificationsTopicArn, "/aws/medialive/notify");
     }
 }

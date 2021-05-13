@@ -27,7 +27,6 @@ import { router as eventRoomJoinRequestRouter } from "./router/eventRoomJoinRequ
 import { router as eventVonageSessionRouter } from "./router/eventVonageSession";
 import { router as googleRouter } from "./router/google";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
-import { router as mediaLiveRouter } from "./router/mediaLive";
 import { router as mediaPackageRouter } from "./router/mediaPackage";
 import { router as mediaPackageHarvestJobRouter } from "./router/mediaPackageHarvestJob";
 import { router as profileRouter } from "./router/profile";
@@ -69,7 +68,6 @@ app.use("/companion", companionRouter);
 app.use("/mediaConvert", mediaConvertRouter);
 app.use("/amazonTranscribe", amazonTranscribeRouter);
 app.use("/elasticTranscoder", elasticTranscoderRouter);
-app.use("/mediaLive", mediaLiveRouter);
 app.use("/mediaPackage", mediaPackageRouter);
 app.use("/google", googleRouter);
 

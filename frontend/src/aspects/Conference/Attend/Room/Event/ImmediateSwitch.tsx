@@ -15,6 +15,7 @@ import {
 } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Generic/useRealTime";
 import FAIcon from "../../../../Icons/FAIcon";
+import { useConference } from "../../../useConference";
 
 export function ImmediateSwitch({
     live,
@@ -40,8 +41,8 @@ export function ImmediateSwitch({
             }
         }
 
-        mutation ImmediateSwitch_Create($data: jsonb!, $eventId: uuid!) {
-            insert_video_ImmediateSwitch_one(object: { data: $data, eventId: $eventId }) {
+        mutation ImmediateSwitch_Create($data: jsonb!, $eventId: uuid!, $conferenceId: uuid!) {
+            insert_video_ImmediateSwitch_one(object: { data: $data, eventId: $eventId, conferenceId: $conferenceId }) {
                 id
             }
         }
@@ -58,6 +59,7 @@ export function ImmediateSwitch({
     const now = useRealTime(1000);
     const [lastSwitched, setLastSwitched] = useState<number>(0);
     const enableSwitchButton = now - lastSwitched > 5000;
+    const conference = useConference();
 
     const options = useMemo(
         () => (
@@ -101,6 +103,7 @@ export function ImmediateSwitch({
                                         variables: {
                                             data,
                                             eventId,
+                                            conferenceId: conference.id,
                                         },
                                     });
                                 } catch (err) {
@@ -122,6 +125,7 @@ export function ImmediateSwitch({
                                         variables: {
                                             data,
                                             eventId,
+                                            conferenceId: conference.id,
                                         },
                                     });
                                 } catch (err) {
@@ -153,6 +157,7 @@ export function ImmediateSwitch({
                                         variables: {
                                             data,
                                             eventId,
+                                            conferenceId: conference.id,
                                         },
                                     });
                                 } catch (err) {

@@ -58,7 +58,7 @@ export class ScheduleSyncService {
                     const now = Date.now();
 
                     if (!event) {
-                        this.logger.info(
+                        this.logger.warn(
                             { eventId },
                             "Event associated with immediate switch request does not exist, ignoring"
                         );
@@ -67,7 +67,7 @@ export class ScheduleSyncService {
                     }
 
                     if (now <= event.startTime) {
-                        this.logger.info(
+                        this.logger.warn(
                             { event, now },
                             "Immediate switch request made before start of event, ignoring"
                         );
@@ -76,7 +76,7 @@ export class ScheduleSyncService {
                     }
 
                     if (now > sub(event.endTime, { seconds: 20 }).getTime()) {
-                        this.logger.info(
+                        this.logger.warn(
                             { event, now },
                             "Immediate switch request made too close to or after end of event, ignoring"
                         );
@@ -117,10 +117,9 @@ export class ScheduleSyncService {
                 } else {
                     this.logger.warn(
                         { request: transformed },
-                        "No event ID given for immediate switch request - this is not yet supported"
+                        "Immediate switches are not yet supported outside an event."
                     );
                     await this.immediateSwitchDataService.failImmediateSwitch(id, "Currently outside an event");
-                    return;
                 }
             }
         } catch (err) {

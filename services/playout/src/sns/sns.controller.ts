@@ -2,11 +2,13 @@ import { Logger } from "@eropple/nestjs-bunyan";
 import { Body, Controller, Post } from "@nestjs/common";
 import axios from "axios";
 import * as Bunyan from "bunyan";
+import { plainToClass } from "class-transformer";
+import { validateSync } from "class-validator";
 import { CloudFormationService } from "../aws/cloud-formation/cloud-formation.service";
+import { MediaLiveNotification } from "../aws/medialive/medialive-notification.dto";
 import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
 import { Video_JobStatus_Enum } from "../generated/graphql";
 import { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
-import { ChannelStackDataService } from "../hasura-data/channel-stack/channel-stack.service";
 import { SNSNotificationDto } from "./sns-notification.dto";
 
 @Controller("aws")
@@ -15,16 +17,45 @@ export class SnsController {
 
     constructor(
         @Logger() requestLogger: Bunyan,
-        private cloudformationService: CloudFormationService,
+        private cloudFormationService: CloudFormationService,
         private channelsService: ChannelStackService,
-        private channelStackDataService: ChannelStackDataService,
         private channelStackDeleteJobService: ChannelStackDeleteJobService
     ) {
         this.logger = requestLogger.child({ component: this.constructor.name });
     }
 
+    @Post("medialive/notify")
+    async notifyMediaLive(@Body() notification: SNSNotificationDto): Promise<void> {
+        if (notification.Type === "SubscriptionConfirmation" && notification.SubscribeURL) {
+            this.logger.info("Subscribing to MediaLive notifications");
+            axios.get(notification.SubscribeURL);
+        }
+
+        if (notification.Type === "Notification") {
+            const message: string = notification.Message;
+            const parsedMessage = JSON.parse(message);
+            const mediaLiveNotification = plainToClass(MediaLiveNotification, {
+                type: "notification",
+                notification: parsedMessage,
+            });
+            const errors = validateSync(mediaLiveNotification);
+
+            if (errors.length) {
+                this.logger.warn({ errors, message }, "SNS notification from MediaLive did not match expected format");
+                return;
+            }
+
+            if (
+                mediaLiveNotification.notification["detail-type"] === "MediaLive Channel State Change" &&
+                mediaLiveNotification.notification.detail.state === "RUNNING"
+            ) {
+                // do something useful
+            }
+        }
+    }
+
     @Post("cloudformation/notify")
-    async notify(@Body() notification: SNSNotificationDto): Promise<void> {
+    async notifyCloudFormation(@Body() notification: SNSNotificationDto): Promise<void> {
         if (notification.Type === "SubscriptionConfirmation" && notification.SubscribeURL) {
             this.logger.info("Subscribing to CloudFormation notifications");
             axios.get(notification.SubscribeURL);
@@ -32,7 +63,7 @@ export class SnsController {
 
         if (notification.Type === "Notification") {
             const message: string = notification.Message;
-            const parsedMessage = this.cloudformationService.parseCloudFormationEvent(message);
+            const parsedMessage = this.cloudFormationService.parseCloudFormationEvent(message);
 
             if (parsedMessage["ResourceType"] !== "AWS::CloudFormation::Stack") {
                 return;

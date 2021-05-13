@@ -29,6 +29,7 @@ import {
     ElementDataBlob,
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
+import * as R from "ramda";
 import React, { PropsWithChildren, useMemo } from "react";
 import { Permissions_Permission_Enum, Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -371,7 +372,9 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.emptyTags.length === 0}
             >
                 <Text>The following tags are empty:</Text>
-                <ExpandableList items={checklistResponse.data?.emptyTags}>{(tag) => <>{tag.name}</>}</ExpandableList>
+                <ExpandableList items={checklistResponse.data?.emptyTags} sortBy={(x) => x.name}>
+                    {(tag) => <>{tag.name}</>}
+                </ExpandableList>
             </ChecklistItem>
         );
     }, [checklistResponse.data?.emptyTags]);
@@ -389,7 +392,7 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.emptyExhibitions.length === 0}
             >
                 <Text>The following exhibitions are empty:</Text>
-                <ExpandableList items={checklistResponse.data?.emptyExhibitions}>
+                <ExpandableList items={checklistResponse.data?.emptyExhibitions} sortBy={(x) => x.name}>
                     {(exh) => <>{exh.name}</>}
                 </ExpandableList>
             </ChecklistItem>
@@ -411,7 +414,10 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>
                     The following Program People are assigned to a live-stream event but are not linked to a Registrant:
                 </Text>
-                <ExpandableList items={checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant}>
+                <ExpandableList
+                    items={checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant}
+                    sortBy={(x) => x.name}
+                >
                     {(x) => (
                         <>
                             {x.name} {x.affiliation ? `(${x.affiliation})` : ""} {x.email ? `<${x.email}>` : ""}
@@ -437,7 +443,10 @@ export default function ChecklistPage(): JSX.Element {
                 <Text>
                     The following people are assigned to a live-stream event but have not completed registration:
                 </Text>
-                <ExpandableList items={checklistResponse.data?.requiredProgramPeopleNotRegistered}>
+                <ExpandableList
+                    items={checklistResponse.data?.requiredProgramPeopleNotRegistered}
+                    sortBy={(x) => x.name}
+                >
                     {(x) => (
                         <>
                             {x.name} {x.affiliation ? `(${x.affiliation})` : ""} {x.email ? `<${x.email}>` : ""}
@@ -461,7 +470,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.livestreamEventsWithoutPresenter.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.livestreamEventsWithoutPresenter}>
+                <ExpandableList
+                    items={checklistResponse.data?.livestreamEventsWithoutPresenter}
+                    sortBy={(x) => Date.parse(x.startTime)}
+                >
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -487,7 +499,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.livestreamEventsWithoutChair.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.livestreamEventsWithoutChair}>
+                <ExpandableList
+                    items={checklistResponse.data?.livestreamEventsWithoutChair}
+                    sortBy={(x) => Date.parse(x.startTime)}
+                >
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -525,7 +540,7 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!nonsyncedEvents && nonsyncedEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={nonsyncedEvents}>
+                <ExpandableList items={nonsyncedEvents} sortBy={(x) => Date.parse(x.startTime)}>
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -560,7 +575,7 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!nonsyncedEvents && nonsyncedEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={nonsyncedEvents}>
+                <ExpandableList items={nonsyncedEvents} sortBy={(x) => Date.parse(x.startTime)}>
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -586,7 +601,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.submissionsNotReceived.length === 0}
             >
                 <Text>The following uploadables have not been submitted:</Text>
-                <ExpandableList items={checklistResponse.data?.submissionsNotReceived}>
+                <ExpandableList
+                    items={checklistResponse.data?.submissionsNotReceived}
+                    sortBy={(x) => x.item?.title ?? x.name}
+                >
                     {(x) => (
                         <>
                             {x.name}: {x.item?.title ?? "Unknown item"}
@@ -616,7 +634,7 @@ export default function ChecklistPage(): JSX.Element {
                 ok={filteredSubmissions?.length === 0}
             >
                 <Text>The following uploadables have not been submitted:</Text>
-                <ExpandableList items={filteredSubmissions}>
+                <ExpandableList items={filteredSubmissions} sortBy={(x) => x.item?.title ?? x.name}>
                     {(x) => (
                         <>
                             {x.name}: {x.item?.title ?? "Unknown item"}
@@ -643,7 +661,7 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -669,7 +687,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.prerecordedEventsWithoutVideo.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.prerecordedEventsWithoutVideo}>
+                <ExpandableList
+                    items={checklistResponse.data?.prerecordedEventsWithoutVideo}
+                    sortBy={(x) => Date.parse(x.startTime)}
+                >
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -717,7 +738,7 @@ export default function ChecklistPage(): JSX.Element {
                 }
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -746,7 +767,7 @@ export default function ChecklistPage(): JSX.Element {
                 ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={filteredEvents}>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -772,7 +793,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.exhibitionEventsWithoutExhibition.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.exhibitionEventsWithoutExhibition}>
+                <ExpandableList
+                    items={checklistResponse.data?.exhibitionEventsWithoutExhibition}
+                    sortBy={(x) => Date.parse(x.startTime)}
+                >
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}: {x.name}
@@ -796,7 +820,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms}>
+                <ExpandableList
+                    items={checklistResponse.data?.exhibitionEventsWithoutDiscussionRooms}
+                    sortBy={(x) => Date.parse(x.startTime)}
+                >
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}: {x.name}
@@ -822,7 +849,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.liveEventsWithoutContent.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.liveEventsWithoutContent}>
+                <ExpandableList
+                    items={checklistResponse.data?.liveEventsWithoutContent}
+                    sortBy={(x) => Date.parse(x.startTime)}
+                >
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -848,7 +878,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.overlappingEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.overlappingEvents}>
+                <ExpandableList
+                    items={checklistResponse.data?.overlappingEvents}
+                    sortBy={(x) => (x.eventX ? Date.parse(x.eventX.startTime) : 0)}
+                >
                     {(x) =>
                         x.eventX && x.eventY ? (
                             <>
@@ -880,7 +913,7 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.shortEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.shortEvents}>
+                <ExpandableList items={checklistResponse.data?.shortEvents} sortBy={(x) => Date.parse(x.startTime)}>
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -906,7 +939,10 @@ export default function ChecklistPage(): JSX.Element {
                 ok={checklistResponse.data?.eventsWithNegativeDuration.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
-                <ExpandableList items={checklistResponse.data?.eventsWithNegativeDuration}>
+                <ExpandableList
+                    items={checklistResponse.data?.eventsWithNegativeDuration}
+                    sortBy={(x) => Date.parse(x.startTime)}
+                >
                     {(x) => (
                         <>
                             {new Date(x.startTime).toLocaleString()} - {x.room?.name}
@@ -935,16 +971,17 @@ export default function ChecklistPage(): JSX.Element {
                 <Grid rowGap={2} columnGap={4} templateColumns="auto auto">
                     <GridItem fontWeight="bold">Room name</GridItem>
                     <GridItem fontWeight="bold">Duration (hh:mm:ss)</GridItem>
-                    {checklistResponse.data?.roomsWithStreams.map((x) => (
-                        <>
-                            <GridItem key={x.id + "-col1"}>{x.name}</GridItem>
-                            <GridItem key={x.id + "-col2"}>
-                                {x.livestreamDuration?.sum
-                                    ? formatDuration(x.livestreamDuration.sum)
-                                    : "Unknown duration"}
-                            </GridItem>
-                        </>
-                    ))}
+                    {checklistResponse.data?.roomsWithStreams &&
+                        R.sortBy((x) => x.name, checklistResponse.data.roomsWithStreams).map((x) => (
+                            <>
+                                <GridItem key={x.id + "-col1"}>{x.name}</GridItem>
+                                <GridItem key={x.id + "-col2"}>
+                                    {x.livestreamDuration?.sum
+                                        ? formatDuration(x.livestreamDuration.sum)
+                                        : "Unknown duration"}
+                                </GridItem>
+                            </>
+                        ))}
                 </Grid>
             </ChecklistItem>
         );
@@ -1083,29 +1120,33 @@ export default function ChecklistPage(): JSX.Element {
 }
 
 function ExpandableList<T>({
-    items,
+    items: unsortedItems,
     children,
+    sortBy,
     limit = 10,
 }: {
     items?: readonly T[] | null;
     children: (item: T) => JSX.Element;
+    sortBy: (item: T) => R.Ord;
     limit?: number;
 }): JSX.Element {
     const { isOpen, onToggle } = useDisclosure();
+
+    const items = useMemo(() => unsortedItems && R.sortBy(sortBy, unsortedItems), [unsortedItems, sortBy]);
 
     if (items) {
         return (
             <>
                 <Text>({items?.length} items)</Text>
                 <UnorderedList spacing={2}>
-                    {(isOpen ? items : items.slice(0, limit)).map((x, idx) => (
+                    {(isOpen ? items : items.length > limit + 1 ? items.slice(0, limit) : items).map((x, idx) => (
                         <ListItem key={idx}>{children(x)}</ListItem>
                     ))}
-                    {!isOpen && items.length > limit ? (
+                    {!isOpen && items.length > limit + 1 ? (
                         <ListItem>and {items.length - limit} more.</ListItem>
                     ) : undefined}
                 </UnorderedList>
-                {items.length > limit ? (
+                {items.length > limit + 1 ? (
                     <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
                         {isOpen ? "Show fewer" : "Show all"}
                     </Button>

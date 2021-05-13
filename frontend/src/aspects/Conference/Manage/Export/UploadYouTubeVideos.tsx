@@ -1079,8 +1079,9 @@ export function UploadYouTubeVideos(): JSX.Element {
                                     jobs.map((job) => (
                                         <ListItem key={job.id}>
                                             <HStack>
-                                                <Text>
-                                                    {job.element.item.title} ({job.element.name})
+                                                <Text data-jobid={job.id}>
+                                                    {job.element?.item.title ?? "Unknown item"} (
+                                                    {job.element?.name ?? "Unknown element"})
                                                 </Text>
                                                 <Box ml={2}>{jobStatus(job.jobStatusName)}</Box>
                                             </HStack>

@@ -4,7 +4,6 @@ import {
     Box,
     FormControl,
     FormHelperText,
-    FormLabel,
     Heading,
     HStack,
     Input,
@@ -181,9 +180,6 @@ export function MainMenuProgram(): JSX.Element {
     return (
         <>
             <FormControl mb={4} maxW={400}>
-                <FormLabel textAlign="center" fontSize="sm">
-                    {resultCountStr}
-                </FormLabel>
                 <InputGroup size="sm">
                     <InputLeftAddon aria-hidden>Search</InputLeftAddon>
                     <Input
@@ -199,21 +195,25 @@ export function MainMenuProgram(): JSX.Element {
                         <FAIcon iconStyle="s" icon="search" />
                     </InputRightElement>
                 </InputGroup>
-                <FormHelperText>Search for an event.</FormHelperText>
+                <FormHelperText>Search by title, author, affiliation, etc.</FormHelperText>
             </FormControl>
             {debouncedSearch.length > 0 ? (
                 <>
                     <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={searchResult}>
-                        {(events: readonly MenuSchedule_EventFragment[]) => (
-                            <MainMenuProgramInner
-                                linkToRoom={false}
-                                events={events}
-                                fromMillis={0}
-                                toMillis={Number.MAX_SAFE_INTEGER}
-                                title="Search results"
-                                showTime={true}
-                            />
-                        )}
+                        {(events: readonly MenuSchedule_EventFragment[]) =>
+                            events.length > 0 ? (
+                                <MainMenuProgramInner
+                                    linkToRoom={false}
+                                    events={events}
+                                    fromMillis={0}
+                                    toMillis={Number.MAX_SAFE_INTEGER}
+                                    title="Search results"
+                                    showTime={true}
+                                />
+                            ) : (
+                                <Text mb={2}>No results</Text>
+                            )
+                        }
                     </ApolloQueryWrapper>
                 </>
             ) : (
@@ -233,20 +233,30 @@ export function MainMenuProgram(): JSX.Element {
                                     fromMillis={filterTimes.inThreeMinutes.getTime()}
                                     toMillis={filterTimes.in30Minutes.getTime()}
                                     events={events}
-                                    title="Starting in the next 30 minutes"
+                                    title="In the next 30 minutes"
                                 />
                                 <MainMenuProgramInner
                                     linkToRoom={true}
                                     fromMillis={filterTimes.in30Minutes.getTime()}
                                     toMillis={filterTimes.inOneHour.getTime()}
                                     events={events}
-                                    title="Starting in the next hour"
+                                    title="In the next hour"
                                 />
                             </>
                         )}
                     </ApolloQueryWrapper>
                 </>
             )}
+            <LinkButton
+                linkProps={{ w: "100%", mt: 2 }}
+                size="sm"
+                to={`/conference/${conference.slug}/schedule`}
+                width="100%"
+                colorScheme="blue"
+            >
+                <FAIcon icon="calendar" iconStyle="r" mr={3} />
+                Whole Schedule
+            </LinkButton>
         </>
     );
 }
@@ -277,68 +287,66 @@ export function MainMenuProgramInner({
         [events, fromMillis, toMillis]
     );
 
-    return (
+    return filteredEvents.length > 0 ? (
         <Box width="100%">
             <Heading as="h4" size="sm" mt={4} mb={2} textAlign="left" fontSize="sm">
                 {title}
             </Heading>
-            {filteredEvents.length > 0 ? (
-                <List>
-                    {filteredEvents.map((event) => {
-                        const eventName =
-                            event.name.length > 0 && event.item
-                                ? event.name + ": " + event.item.title
-                                : event.item
-                                ? event.item.title
-                                : event.name;
-                        return (
-                            <ListItem key={event.id} width="100%" my={2}>
-                                {showTime ? (
-                                    <Text fontSize="sm" mb={1} mt={2}>
-                                        {formatRelative(Date.parse(event.startTime), new Date())}
+            <List>
+                {filteredEvents.map((event) => {
+                    const eventName =
+                        event.name.length > 0 && event.item
+                            ? event.name + ": " + event.item.title
+                            : event.item
+                            ? event.item.title
+                            : event.name;
+                    return (
+                        <ListItem key={event.id} width="100%" my={2}>
+                            {showTime ? (
+                                <Text fontSize="sm" mb={1} mt={2}>
+                                    {formatRelative(Date.parse(event.startTime), new Date())}
+                                </Text>
+                            ) : undefined}
+                            <LinkButton
+                                to={
+                                    linkToRoom
+                                        ? `/conference/${conference.slug}/room/${event.room.id}`
+                                        : event.item
+                                        ? `/conference/${conference.slug}/item/${event.item.id}`
+                                        : `/conference/${conference.slug}/room/${event.room.id}`
+                                }
+                                width="100%"
+                                linkProps={{ width: "100%" }}
+                                h="auto"
+                                py={2}
+                                size="sm"
+                            >
+                                <HStack width="100%" justifyContent="space-between">
+                                    <Text flex="0 1 1" overflow="hidden" title={eventName} whiteSpace="normal">
+                                        <Twemoji className="twemoji" text={eventName} />
                                     </Text>
-                                ) : undefined}
-                                <LinkButton
-                                    to={
-                                        linkToRoom
-                                            ? `/conference/${conference.slug}/room/${event.room.id}`
-                                            : event.item
-                                            ? `/conference/${conference.slug}/item/${event.item.id}`
-                                            : `/conference/${conference.slug}/room/${event.room.id}`
-                                    }
-                                    width="100%"
-                                    linkProps={{ width: "100%" }}
-                                    h="auto"
-                                    py={2}
-                                    size="sm"
-                                >
-                                    <HStack width="100%" justifyContent="space-between">
-                                        <Text flex="0 1 1" overflow="hidden" title={eventName} whiteSpace="normal">
-                                            <Twemoji className="twemoji" text={eventName} />
-                                        </Text>
-                                        <Text flex="0 1 1">
-                                            {event.eventTags.map((tag) => (
-                                                <Badge
-                                                    key={tag.tag.id}
-                                                    color="gray.50"
-                                                    backgroundColor={tag.tag.colour}
-                                                    ml={1}
-                                                    p={1}
-                                                    borderRadius={4}
-                                                >
-                                                    {tag.tag.name}
-                                                </Badge>
-                                            ))}
-                                        </Text>
-                                    </HStack>
-                                </LinkButton>
-                            </ListItem>
-                        );
-                    })}
-                </List>
-            ) : (
-                <>No events.</>
-            )}
+                                    <Text flex="0 1 1">
+                                        {event.eventTags.map((tag) => (
+                                            <Badge
+                                                key={tag.tag.id}
+                                                color="gray.50"
+                                                backgroundColor={tag.tag.colour}
+                                                ml={1}
+                                                p={1}
+                                                borderRadius={4}
+                                            >
+                                                {tag.tag.name}
+                                            </Badge>
+                                        ))}
+                                    </Text>
+                                </HStack>
+                            </LinkButton>
+                        </ListItem>
+                    );
+                })}
+            </List>
         </Box>
+    ) : (
+        <></>
     );
 }

@@ -19,7 +19,6 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
 import { useCreateDmMutation } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -42,7 +41,6 @@ export default function ProfileModal({
 }): JSX.Element {
     const conference = useConference();
     const mCurrentRegistrant = useMaybeCurrentRegistrant();
-    const history = useHistory();
     const chatState = useGlobalChatState();
 
     const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
@@ -79,16 +77,7 @@ export default function ProfileModal({
                 console.error("Could not create DM", e);
             }
         }
-    }, [
-        registrant,
-        conference.id,
-        conference.slug,
-        createDmMutation,
-        history,
-        onClose,
-        toast,
-        chatState.openChatInSidebar,
-    ]);
+    }, [registrant, chatState, createDmMutation, conference.id, onClose, toast]);
 
     return (
         <Portal>

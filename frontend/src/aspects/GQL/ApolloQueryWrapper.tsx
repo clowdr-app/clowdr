@@ -7,10 +7,12 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
     queryResult,
     getter,
     children,
+    noSpinner = false,
 }: {
     queryResult: QueryResult<TData, TVariables> | LazyQueryResult<TData, TVariables>;
     getter: (data: TData) => TInnerData | undefined | null;
     children: (data: TInnerData) => React.ReactNode | React.ReactNodeArray;
+    noSpinner?: boolean;
 }): JSX.Element {
     const innerData = useMemo(() => {
         if (queryResult.data) {
@@ -24,7 +26,11 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
     return (
         <>
             {queryResult.loading ? (
-                <Spinner />
+                noSpinner ? (
+                    <></>
+                ) : (
+                    <Spinner />
+                )
             ) : queryResult.error ? (
                 <Text>An error occurred loading in data - please see further information in notifications.</Text>
             ) : undefined}

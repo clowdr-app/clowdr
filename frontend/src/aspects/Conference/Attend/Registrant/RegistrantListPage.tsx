@@ -52,7 +52,7 @@ export default function RegistrantListPage(): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
-    const title = useTitle(`Registrants at ${conference.shortName}`);
+    const title = useTitle(`People at ${conference.shortName}`);
 
     const [
         searchQuery,
@@ -137,7 +137,7 @@ export default function RegistrantListPage(): JSX.Element {
     return (
         <>
             {title}
-            <Heading as="h1">Registrants</Heading>
+            <Heading as="h1">People</Heading>
             <FormControl maxW={400}>
                 <InputGroup>
                     <InputLeftAddon as="label" id="registrants-search">

@@ -5,15 +5,12 @@ import {
     AccordionItem,
     AccordionPanel,
     Box,
-    Button,
-    ButtonGroup,
     Flex,
     Heading,
-    HStack,
     useDisclosure,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
-import React from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import {
     RegistrantFieldsFragment,
@@ -24,6 +21,7 @@ import { LinkButton } from "../Chakra/LinkButton";
 import { CreateRoomModal } from "../Conference/Attend/Room/CreateRoomModal";
 import { RoomList } from "../Conference/Attend/Room/RoomList";
 import { useConference } from "../Conference/useConference";
+import { useRestorableState } from "../Generic/useRestorableState";
 import ApolloQueryWrapper from "../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -49,41 +47,23 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     return (
         <>
             <AccordionPanel pb={4} px={"3px"}>
-                <Flex mb={2} ml={1} mr={1}>
-                    <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
-                        Social &amp; discussion rooms
-                    </Heading>
-                    <ButtonGroup ml="auto">
-                        <Button onClick={onCreateRoomOpen} colorScheme="green" size="xs">
-                            <FAIcon icon="plus-square" iconStyle="s" />
-                        </Button>
-                        <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="xs" mt={-1}>
-                            All rooms
-                        </LinkButton>
-                    </ButtonGroup>
-                </Flex>
-                <ApolloQueryWrapper getter={(data) => data.socialOrDiscussionRooms} queryResult={result}>
-                    {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                        <RoomList
-                            rooms={rooms}
-                            layout={{ type: "list" }}
-                            limit={5}
-                            noRoomsMessage="No social or discussion rooms at the moment."
-                        />
-                    )}
-                </ApolloQueryWrapper>
                 <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                     {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                        <RoomList rooms={rooms} layout={{ type: "list" }}>
+                        <RoomList rooms={rooms} layout={{ type: "list" }} />
+                    )}
+                </ApolloQueryWrapper>
+                <ApolloQueryWrapper getter={(data) => data.socialOrDiscussionRooms} queryResult={result} noSpinner>
+                    {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                        <RoomList rooms={rooms} layout={{ type: "list" }} limit={5}>
                             <Flex mb={2} mt={4} ml={1} mr={1}>
                                 <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
-                                    Today&apos;s Program rooms
+                                    Active social &amp; discussion rooms
                                 </Heading>
-                                <ButtonGroup ml="auto">
-                                    <LinkButton to={`/conference/${confSlug}/rooms`} colorScheme="blue" size="xs">
-                                        All rooms
-                                    </LinkButton>
-                                </ButtonGroup>
+                                {/* <ButtonGroup ml="auto">
+                                    <Button onClick={onCreateRoomOpen} colorScheme="green" size="xs">
+                                        <FAIcon icon="plus-square" iconStyle="s" />
+                                    </Button>
+                                </ButtonGroup> */}
                             </Flex>
                         </RoomList>
                     )}
@@ -104,7 +84,20 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     );
 }
 
-function LazyRoomsPanel({ isExpanded, confSlug }: { isExpanded: boolean; confSlug: string }): JSX.Element {
+function LazyRoomsPanel({
+    isExpanded,
+    confSlug,
+    setDefaultIndex,
+}: {
+    isExpanded: boolean;
+    confSlug: string;
+    setDefaultIndex: (index: number) => void;
+}): JSX.Element {
+    useEffect(() => {
+        if (isExpanded) {
+            setDefaultIndex(0);
+        }
+    }, [isExpanded, setDefaultIndex]);
     return useLazyRenderAndRetain(() => <RoomsPanel confSlug={confSlug} />, isExpanded);
 }
 
@@ -116,11 +109,33 @@ function SchedulePanel(): JSX.Element {
     );
 }
 
-function LazySchedulePanel({ isExpanded }: { isExpanded: boolean }): JSX.Element {
+function LazySchedulePanel({
+    isExpanded,
+    setDefaultIndex,
+}: {
+    isExpanded: boolean;
+    setDefaultIndex: (index: number) => void;
+}): JSX.Element {
+    useEffect(() => {
+        if (isExpanded) {
+            setDefaultIndex(1);
+        }
+    }, [isExpanded, setDefaultIndex]);
     return useLazyRenderAndRetain(() => <SchedulePanel />, isExpanded);
 }
 
-function LazySponsorsPanel({ isExpanded }: { isExpanded: boolean }): JSX.Element {
+function LazySponsorsPanel({
+    isExpanded,
+    setDefaultIndex,
+}: {
+    isExpanded: boolean;
+    setDefaultIndex: (index: number) => void;
+}): JSX.Element {
+    useEffect(() => {
+        if (isExpanded) {
+            setDefaultIndex(2);
+        }
+    }, [isExpanded, setDefaultIndex]);
     return useLazyRenderAndRetain(() => <MainMenuSponsors />, isExpanded);
 }
 
@@ -132,11 +147,16 @@ export function LeftSidebarConferenceSections_Inner({
     registrant: RegistrantFieldsFragment;
     onClose: () => void;
 }): JSX.Element {
+    const [defaultIndex, setDefaultIndex] = useRestorableState<number>(
+        "LEFT_SIDEBAR_DEFAULT_PANEL_INDEX",
+        -1,
+        (x) => x.toString(),
+        (x) => parseInt(x, 10)
+    );
     return (
         <>
-            <HStack spacing={2} my={2} mx={2} alignItems="flex-start">
-                <Flex justifyContent="center" alignItems="center" flexWrap="wrap" gridGap={2}>
-                    <LinkButton
+            <Flex my={2} mx={2} justifyContent="center" alignItems="center" flexWrap="wrap">
+                {/* <LinkButton
                         linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
                         size="sm"
                         to={`/conference/${confSlug}/schedule`}
@@ -144,66 +164,60 @@ export function LeftSidebarConferenceSections_Inner({
                     >
                         <FAIcon icon="calendar" iconStyle="r" mr={3} />
                         Schedule
-                    </LinkButton>
-                    <LinkButton
+                    </LinkButton> */}
+                <LinkButton size="sm" to={`/conference/${confSlug}/exhibitions`} width="100%">
+                    <FAIcon icon="images" iconStyle="r" mr={3} />
+                    Exhibitions
+                </LinkButton>
+                {/* <LinkButton
                         linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
                         size="sm"
                         to={`/conference/${confSlug}/registrants`}
                         width="100%"
                     >
                         <FAIcon icon="cat" iconStyle="s" mr={3} />
-                        Registrants
-                    </LinkButton>
-                    <LinkButton
-                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
-                        size="sm"
-                        to={`/conference/${confSlug}/rooms`}
-                        width="100%"
-                    >
-                        <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
-                        Rooms
-                    </LinkButton>
-                    <LinkButton
-                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
-                        size="sm"
-                        to={`/conference/${confSlug}/shuffle`}
-                        width="100%"
-                    >
-                        <FAIcon icon="random" iconStyle="s" mr={3} />
-                        Shuffle
-                    </LinkButton>
-                    <LinkButton
-                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
-                        size="sm"
-                        to={`/conference/${confSlug}/exhibitions`}
-                        width="100%"
-                    >
-                        <FAIcon icon="images" iconStyle="r" mr={3} />
-                        Exhibitions
-                    </LinkButton>
-                    <LinkButton
-                        linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
-                        size="sm"
-                        to={`/conference/${confSlug}/profile/backstages`}
-                        width="100%"
-                    >
-                        <FAIcon icon="video" iconStyle="s" mr={3} />
-                        My Backstages
-                    </LinkButton>
-                </Flex>
-                <ToggleNavButton m={0} size="xs" />
-            </HStack>
-            <Accordion defaultIndex={[0, 2]} allowMultiple allowToggle>
+                        People
+                    </LinkButton> */}
+                <LinkButton size="sm" to={`/conference/${confSlug}/profile/backstages`} width="100%" mx={2}>
+                    <FAIcon icon="video" iconStyle="s" mr={3} />
+                    My Backstages
+                </LinkButton>
+                <ToggleNavButton m={0} ml="auto" size="xs" />
+            </Flex>
+            <Flex w="100%" justifyContent="center">
+                <LinkButton
+                    size="sm"
+                    to={`/conference/${confSlug}/rooms`}
+                    linkProps={{ width: "60%", height: 10, mt: 2, mb: 4, px: 2 }}
+                    width="100%"
+                    height="100%"
+                    colorScheme="green"
+                    borderRadius={0}
+                >
+                    <FAIcon icon="user-friends" iconStyle="s" mr={3} />
+                    Socialise
+                </LinkButton>
+            </Flex>
+            <Accordion defaultIndex={defaultIndex !== -1 ? defaultIndex : undefined} allowToggle>
                 <AccordionItem>
                     {({ isExpanded }) => (
                         <>
-                            <AccordionButton>
+                            <AccordionButton
+                                fontWeight="bold"
+                                borderTop="2px solid rgba(128, 128, 128, 0.7)"
+                                fontSize="lg"
+                            >
+                                <FAIcon iconStyle="s" icon="mug-hot" mr={4} w={6} />
                                 <Box flex="1" textAlign="left">
                                     Rooms
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>
-                            <LazyRoomsPanel isExpanded={isExpanded} confSlug={confSlug} />
+                            <LazyRoomsPanel
+                                isExpanded={isExpanded}
+                                setDefaultIndex={setDefaultIndex}
+                                confSlug={confSlug}
+                            />
                         </>
                     )}
                 </AccordionItem>
@@ -211,13 +225,18 @@ export function LeftSidebarConferenceSections_Inner({
                 <AccordionItem>
                     {({ isExpanded }) => (
                         <>
-                            <AccordionButton>
+                            <AccordionButton
+                                fontWeight="bold"
+                                borderTop="2px solid rgba(128, 128, 128, 0.7)"
+                                fontSize="lg"
+                            >
+                                <FAIcon iconStyle="r" icon="calendar" mr={4} w={6} />
                                 <Box flex="1" textAlign="left">
-                                    Happening soon
+                                    Explore program
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>
-                            <LazySchedulePanel isExpanded={isExpanded} />
+                            <LazySchedulePanel isExpanded={isExpanded} setDefaultIndex={setDefaultIndex} />
                         </>
                     )}
                 </AccordionItem>
@@ -225,13 +244,18 @@ export function LeftSidebarConferenceSections_Inner({
                 <AccordionItem>
                     {({ isExpanded }) => (
                         <>
-                            <AccordionButton>
+                            <AccordionButton
+                                fontWeight="bold"
+                                borderTop="2px solid rgba(128, 128, 128, 0.7)"
+                                fontSize="lg"
+                            >
+                                <FAIcon iconStyle="s" icon="star" mr={4} w={6} />
                                 <Box flex="1" textAlign="left">
                                     Sponsors
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>
-                            <LazySponsorsPanel isExpanded={isExpanded} />
+                            <LazySponsorsPanel isExpanded={isExpanded} setDefaultIndex={setDefaultIndex} />
                         </>
                     )}
                 </AccordionItem>

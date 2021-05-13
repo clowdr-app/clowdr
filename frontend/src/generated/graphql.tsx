@@ -36020,14 +36020,6 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
-export type CreateDmMutationVariables = Exact<{
-  registrantIds: ReadonlyArray<Maybe<Scalars['uuid']>> | Maybe<Scalars['uuid']>;
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type CreateDmMutation = { readonly __typename?: 'mutation_root', readonly createRoomDm?: Maybe<{ readonly __typename?: 'CreateRoomDmOutput', readonly message?: Maybe<string>, readonly roomId?: Maybe<any>, readonly chatId?: Maybe<any> }> };
-
 export type Registrant_RegistrantCreateRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   name: Scalars['String'];
@@ -36200,9 +36192,6 @@ export type GetAllRoomsQueryVariables = Exact<{
 
 
 export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<(
-    { readonly __typename?: 'room_Room' }
-    & RoomListRoomDetailsFragment
-  )>, readonly discussionRooms: ReadonlyArray<(
     { readonly __typename?: 'room_Room' }
     & RoomListRoomDetailsFragment
   )>, readonly programRooms: ReadonlyArray<(
@@ -38315,6 +38304,14 @@ export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_r
   )> };
 
 export type MainMenuSponsors_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
+
+export type CreateDmMutationVariables = Exact<{
+  registrantIds: ReadonlyArray<Maybe<Scalars['uuid']>> | Maybe<Scalars['uuid']>;
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateDmMutation = { readonly __typename?: 'mutation_root', readonly createRoomDm?: Maybe<{ readonly __typename?: 'CreateRoomDmOutput', readonly message?: Maybe<string>, readonly roomId?: Maybe<any>, readonly chatId?: Maybe<any> }> };
 
 export type GetRoomChatIdQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -40968,42 +40965,6 @@ export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookO
 export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
-export const CreateDmDocument = gql`
-    mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
-  createRoomDm(registrantIds: $registrantIds, conferenceId: $conferenceId) {
-    message
-    roomId
-    chatId
-  }
-}
-    `;
-export type CreateDmMutationFn = Apollo.MutationFunction<CreateDmMutation, CreateDmMutationVariables>;
-
-/**
- * __useCreateDmMutation__
- *
- * To run a mutation, you first call `useCreateDmMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDmMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createDmMutation, { data, loading, error }] = useCreateDmMutation({
- *   variables: {
- *      registrantIds: // value for 'registrantIds'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateDmMutation(baseOptions?: Apollo.MutationHookOptions<CreateDmMutation, CreateDmMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateDmMutation, CreateDmMutationVariables>(CreateDmDocument, options);
-      }
-export type CreateDmMutationHookResult = ReturnType<typeof useCreateDmMutation>;
-export type CreateDmMutationResult = Apollo.MutationResult<CreateDmMutation>;
-export type CreateDmMutationOptions = Apollo.BaseMutationOptions<CreateDmMutation, CreateDmMutationVariables>;
 export const Registrant_RegistrantCreateRoomDocument = gql`
     mutation registrant_RegistrantCreateRoom($conferenceId: uuid!, $name: String!, $managementModeName: room_ManagementMode_enum!) {
   insert_room_Room_one(
@@ -41690,12 +41651,6 @@ export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!) {
   socialRooms: room_Room(
     where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
-    order_by: {name: asc}
-  ) {
-    ...RoomListRoomDetails
-  }
-  discussionRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, _or: [{originatingItemId: {_is_null: false}}, {originatingEventId: {_is_null: false}}], originatingItem: {typeName: {_neq: SPONSOR}}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
@@ -48984,6 +48939,42 @@ export function useMainMenuSponsors_GetSponsorsLazyQuery(baseOptions?: Apollo.La
 export type MainMenuSponsors_GetSponsorsQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsQuery>;
 export type MainMenuSponsors_GetSponsorsLazyQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsLazyQuery>;
 export type MainMenuSponsors_GetSponsorsQueryResult = Apollo.QueryResult<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>;
+export const CreateDmDocument = gql`
+    mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
+  createRoomDm(registrantIds: $registrantIds, conferenceId: $conferenceId) {
+    message
+    roomId
+    chatId
+  }
+}
+    `;
+export type CreateDmMutationFn = Apollo.MutationFunction<CreateDmMutation, CreateDmMutationVariables>;
+
+/**
+ * __useCreateDmMutation__
+ *
+ * To run a mutation, you first call `useCreateDmMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDmMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDmMutation, { data, loading, error }] = useCreateDmMutation({
+ *   variables: {
+ *      registrantIds: // value for 'registrantIds'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateDmMutation(baseOptions?: Apollo.MutationHookOptions<CreateDmMutation, CreateDmMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDmMutation, CreateDmMutationVariables>(CreateDmDocument, options);
+      }
+export type CreateDmMutationHookResult = ReturnType<typeof useCreateDmMutation>;
+export type CreateDmMutationResult = Apollo.MutationResult<CreateDmMutation>;
+export type CreateDmMutationOptions = Apollo.BaseMutationOptions<CreateDmMutation, CreateDmMutationVariables>;
 export const GetRoomChatIdDocument = gql`
     query GetRoomChatId($roomId: uuid!) {
   room_Room_by_pk(id: $roomId) {

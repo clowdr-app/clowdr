@@ -41,15 +41,14 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
         () =>
             R.sortWith(
                 [
-                    R.descend((room) =>
-                        !roomParticipants
-                            ? Number.NEGATIVE_INFINITY
-                            : roomParticipants.filter((p) => p.roomId === room.id).length
-                    ),
+                    R.descend((room) => (room.participants ? room.participants.length : Number.NEGATIVE_INFINITY)),
                     R.ascend((room) => room.priority),
                     R.ascend((room) => room.name),
                 ],
-                rooms
+                rooms.map((room) => ({
+                    ...room,
+                    participants: roomParticipants ? roomParticipants.filter((p) => p.roomId === room.id) : undefined,
+                }))
             ),
         [roomParticipants, rooms]
     );
@@ -99,7 +98,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                             ) : room.managementModeName === Room_ManagementMode_Enum.Dm ? (
                                 <FAIcon icon="envelope" iconStyle="s" textAlign="center" />
                             ) : (
-                                <FAIcon icon="mug-hot" iconStyle="s" textAlign="center" />
+                                <></>
                             )}
                             <Text
                                 textAlign="left"
@@ -133,7 +132,9 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
         () =>
             sortedRooms.map((room) => ({
                 name: room.name.toLowerCase(),
-                showByDefault: room.managementModeName !== Room_ManagementMode_Enum.Dm,
+                showByDefault:
+                    room.managementModeName !== Room_ManagementMode_Enum.Dm &&
+                    (!limit || (room.participants && room.participants.length > 0)),
                 el: (
                     <LinkButton
                         key={room.id}
@@ -152,7 +153,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                     </LinkButton>
                 ),
             })),
-        [conference.slug, onClick, sortedRooms, toButtonContents]
+        [conference.slug, limit, onClick, sortedRooms, toButtonContents]
     );
 
     const s = search.toLowerCase();
@@ -163,7 +164,9 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
         : roomElements.filter((e) => e.showByDefault);
 
     const limitedElements =
-        limit && !s.length ? filteredElements.slice(0, Math.min(limit, filteredElements.length)) : filteredElements;
+        limit !== undefined && !s.length
+            ? filteredElements.slice(0, Math.min(limit, filteredElements.length))
+            : filteredElements;
 
     const resultCountStr = `Showing ${Math.min(limit ?? Number.MAX_SAFE_INTEGER, filteredElements.length)} of ${
         sortedRooms.length
@@ -180,7 +183,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
 
     return (
         <>
-            {roomElements.length > 0 ? (
+            {limitedElements.length > 0 ? (
                 <>
                     {children}
                     {layout.type === "grid" ? (
@@ -221,7 +224,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                     </SimpleGrid>
                 </>
             ) : undefined}
-            {roomElements.length === 0 ? <Text>{noRoomsMessage}</Text> : undefined}
+            {limitedElements.length === 0 ? <Text>{noRoomsMessage}</Text> : undefined}
         </>
     );
 }

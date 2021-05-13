@@ -61,6 +61,16 @@ import useRoomParticipants from "../Room/useRoomParticipants";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { ToggleChatsButton } from "./ToggleChatsButton";
 
+gql`
+    mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
+        createRoomDm(registrantIds: $registrantIds, conferenceId: $conferenceId) {
+            message
+            roomId
+            chatId
+        }
+    }
+`;
+
 function ChatListItem({ chat, onClick }: { chat: ChatState; onClick: () => void }): JSX.Element {
     const chatName = chat.Name;
     const [unreadCount, setUnreadCount] = useState<string>("");
@@ -976,7 +986,7 @@ function RightSidebarConferenceSections_Inner({
 
     const [currentTab, setCurrentTab] = useRestorableState<RightSidebarTabs>(
         "RightSideBar_CurrentTab",
-        RightSidebarTabs.Chats,
+        RightSidebarTabs.Presence,
         (x) => x.toString(),
         (x) => parseInt(x, 10)
     );

@@ -31,18 +31,18 @@ gql`
         ) {
             ...RoomListRoomDetails
         }
-        discussionRooms: room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
-                _or: [{ originatingItemId: { _is_null: false } }, { originatingEventId: { _is_null: false } }]
-                originatingItem: { typeName: { _neq: SPONSOR } }
-                managementModeName: { _in: [PUBLIC, PRIVATE] }
-            }
-            order_by: { name: asc }
-        ) {
-            ...RoomListRoomDetails
-        }
+        # discussionRooms: room_Room(
+        #     where: {
+        #         conferenceId: { _eq: $conferenceId }
+        #         _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
+        #         _or: [{ originatingItemId: { _is_null: false } }, { originatingEventId: { _is_null: false } }]
+        #         originatingItem: { typeName: { _neq: SPONSOR } }
+        #         managementModeName: { _in: [PUBLIC, PRIVATE] }
+        #     }
+        #     order_by: { name: asc }
+        # ) {
+        #     ...RoomListRoomDetails
+        # }
         programRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
@@ -137,30 +137,46 @@ export default function RoomListPage(): JSX.Element {
         >
             {title}
             <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
+            <HStack flexWrap="wrap" justifyContent="center" mt={2} w="100%">
+                <LinkButton
+                    to={`/conference/${conference.slug}/shuffle`}
+                    colorScheme="blue"
+                    linkProps={{ flex: "40% 1 1", maxW: "600px" }}
+                    w="100%"
+                >
+                    <FAIcon icon="random" iconStyle="s" mr={3} />
+                    Networking
+                </LinkButton>
+                <LinkButton
+                    to={`/conference/${conference.slug}/registrants`}
+                    colorScheme="purple"
+                    linkProps={{ flex: "40% 1 1", maxW: "600px" }}
+                    w="100%"
+                >
+                    <FAIcon icon="cat" iconStyle="s" mr={3} />
+                    People
+                </LinkButton>
+            </HStack>
+            <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
+                {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                    <RoomList rooms={rooms} layout={{ type: "grid", title: "Social Rooms" }} />
+                )}
+            </ApolloQueryWrapper>
             <HStack flexWrap="wrap" justifyContent="center" mt={2}>
                 <Button onClick={onOpen} colorScheme="green">
                     Create new room
                 </Button>
-                <LinkButton to={`/conference/${conference.slug}/shuffle`} colorScheme="blue">
-                    <FAIcon icon="random" iconStyle="s" mr={3} />
-                    Shuffle queues
-                </LinkButton>
             </HStack>
             <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "grid", title: "Program Rooms" }} />
                 )}
             </ApolloQueryWrapper>
-            <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
-                {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                    <RoomList rooms={rooms} layout={{ type: "grid", title: "Social Rooms" }} />
-                )}
-            </ApolloQueryWrapper>
-            <ApolloQueryWrapper getter={(data) => data.discussionRooms} queryResult={result}>
+            {/* <ApolloQueryWrapper getter={(data) => data.discussionRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "grid", title: "Discussion Rooms" }} limit={25} />
                 )}
-            </ApolloQueryWrapper>
+            </ApolloQueryWrapper> */}
         </RequireAtLeastOnePermissionWrapper>
     );
 }

@@ -8215,8 +8215,7 @@
                           - PRESENTER
         - event:
             conferenceId:
-              _ceq:
-              - conferenceId
+              _ceq: conferenceId
       columns:
       - data
       - eventId

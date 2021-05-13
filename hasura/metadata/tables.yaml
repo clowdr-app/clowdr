@@ -8217,6 +8217,7 @@
             conferenceId:
               _ceq: conferenceId
       columns:
+      - conferenceId
       - data
       - eventId
       backend_only: false

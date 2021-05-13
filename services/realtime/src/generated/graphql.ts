@@ -34371,7 +34371,10 @@ export type ChatInfoQueryVariables = Exact<{
 export type ChatInfoQuery = { __typename?: "query_root" } & {
     chat_Chat_by_pk?: Maybe<
         { __typename?: "chat_Chat" } & Pick<Chat_Chat, "id" | "restrictToAdmins"> & {
-                conference: { __typename?: "conference_Conference" } & Pick<Conference_Conference, "id" | "slug">;
+                conference: { __typename?: "conference_Conference" } & Pick<
+                    Conference_Conference,
+                    "id" | "slug" | "shortName"
+                >;
                 items: Array<{ __typename?: "content_Item" } & Pick<Content_Item, "id" | "title" | "shortTitle">>;
                 rooms: Array<
                     { __typename?: "room_Room" } & Pick<Room_Room, "id" | "name" | "managementModeName"> & {
@@ -34690,6 +34693,7 @@ export const ChatInfoDocument: DocumentNode<ChatInfoQuery, ChatInfoQueryVariable
                                         selections: [
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
                                             { kind: "Field", name: { kind: "Name", value: "slug" } },
+                                            { kind: "Field", name: { kind: "Name", value: "shortName" } },
                                         ],
                                     },
                                 },

@@ -26,25 +26,35 @@ async function onMessage(action: Action<Message>) {
 
     const chatId = action.data.chatId;
 
-    const redisSetKey = generateChatRecentMessagesSetKey(chatId);
-    await redisClientP.zadd(redisSetKey, Date.parse(action.data.created_at), action.data.sId);
-    await redisClientP.zremrangebyrank(redisSetKey, 0, -(1 + maxUnreadMessages));
+    if (
+        action.data.type !== Chat_MessageType_Enum.DuplicationMarker &&
+        action.data.type !== Chat_MessageType_Enum.Emote
+    ) {
+        const redisSetKey = generateChatRecentMessagesSetKey(chatId);
+        await redisClientP.zadd(redisSetKey, Date.parse(action.data.created_at), action.data.sId);
+        await redisClientP.zremrangebyrank(redisSetKey, 0, -(1 + maxUnreadMessages));
+    }
 
     emitter.to(generateChatRoomName(chatId)).emit(`chat.messages.${eventName}`, action.data);
 
-    if (action.op === "INSERT") {
-        await new Promise<unknown>((resolve, reject) => {
-            setTimeout(
-                () =>
-                    Promise.all([
-                        distributeMessageToSubscribedUsers(action),
-                        updateRecentMessagesAndUnreadCounts(action),
-                    ])
-                        .then(resolve)
-                        .catch(reject),
-                1500
-            );
-        });
+    if (
+        action.data.type !== Chat_MessageType_Enum.DuplicationMarker &&
+        action.data.type !== Chat_MessageType_Enum.Emote
+    ) {
+        if (action.op === "INSERT") {
+            await new Promise<unknown>((resolve, reject) => {
+                setTimeout(
+                    () =>
+                        Promise.all([
+                            distributeMessageToSubscribedUsers(action),
+                            updateRecentMessagesAndUnreadCounts(action),
+                        ])
+                            .then(resolve)
+                            .catch(reject),
+                    1500
+                );
+            });
+        }
     }
 }
 
@@ -134,19 +144,21 @@ async function distributeMessageToSubscribedUsers(action: Action<Message>) {
 
             sendNotifications(subscribedUserIds, {
                 description: action.data.message,
-                title: `New ${
-                    action.data.type === Chat_MessageType_Enum.Message
-                        ? "message"
-                        : action.data.type === Chat_MessageType_Enum.Answer
-                        ? "answer"
-                        : action.data.type === Chat_MessageType_Enum.Question
-                        ? "question"
-                        : action.data.type === Chat_MessageType_Enum.Emote
-                        ? "emote"
-                        : action.data.type === Chat_MessageType_Enum.DuplicationMarker
-                        ? "event"
-                        : "message"
-                }`,
+                title:
+                    (chatInfo.conference.shortName ? chatInfo.conference.shortName + ": " : "") +
+                    `New ${
+                        action.data.type === Chat_MessageType_Enum.Message
+                            ? "message"
+                            : action.data.type === Chat_MessageType_Enum.Answer
+                            ? "answer"
+                            : action.data.type === Chat_MessageType_Enum.Question
+                            ? "question"
+                            : action.data.type === Chat_MessageType_Enum.Emote
+                            ? "emote"
+                            : action.data.type === Chat_MessageType_Enum.DuplicationMarker
+                            ? "event"
+                            : "message"
+                    }`,
                 chatId,
                 linkURL: `/conference/${chatInfo.conference.slug}/chat/${chatId}`,
                 subtitle: registrantInfo ? `from ${registrantInfo.displayName}` : `in ${chatName}`,

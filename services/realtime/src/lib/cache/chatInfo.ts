@@ -11,6 +11,7 @@ gql`
             conference {
                 id
                 slug
+                shortName
             }
             items {
                 id
@@ -49,6 +50,7 @@ export type ChatInfo = {
     conference: {
         id: string;
         slug: string;
+        shortName?: string;
     };
     items: Item[];
     rooms: {
@@ -77,6 +79,7 @@ const chatInfoCache = new Cache<ChatInfo>(
                           conference: {
                               id: response.data.chat_Chat_by_pk.conference.id,
                               slug: response.data.chat_Chat_by_pk.conference.slug,
+                              shortName: response.data.chat_Chat_by_pk.conference.shortName,
                           },
                           items: response.data.chat_Chat_by_pk.items.map((item) => ({
                               id: item.id,

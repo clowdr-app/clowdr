@@ -1,4 +1,4 @@
-import * as d3 from "d3-format";
+import { format } from "d3-format";
 
 export interface AmazonTranscribeOutput {
     jobName: string;
@@ -42,10 +42,10 @@ function toTimeCode(totalSeconds: number): string {
     const seconds = Math.floor(secondSeconds);
     const millis = (secondSeconds - seconds) * 1000;
 
-    const hoursPart = d3.format("02d")(hours);
-    const minutesPart = d3.format("02d")(minutes);
-    const secondsPart = d3.format("02d")(seconds);
-    const millisPart = d3.format("03d")(millis);
+    const hoursPart = format("02d")(hours);
+    const minutesPart = format("02d")(minutes);
+    const secondsPart = format("02d")(seconds);
+    const millisPart = format("03d")(millis);
 
     return `${hoursPart}:${minutesPart}:${secondsPart},${millisPart}`;
 }

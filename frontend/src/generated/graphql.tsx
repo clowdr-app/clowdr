@@ -35039,13 +35039,14 @@ export type ManageContent_SelectItemPeopleQuery = { readonly __typename?: 'query
 
 export type ManageContent_InsertItemMutationVariables = Exact<{
   item: Content_Item_Insert_Input;
+  itemTags: ReadonlyArray<Content_ItemTag_Insert_Input> | Content_ItemTag_Insert_Input;
 }>;
 
 
 export type ManageContent_InsertItemMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Item_one?: Maybe<(
     { readonly __typename?: 'content_Item' }
     & ManageContent_ItemFragment
-  )> };
+  )>, readonly insert_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any }> }> };
 
 export type ManageContent_UpdateItemMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -43104,9 +43105,14 @@ export type ManageContent_SelectItemPeopleQueryHookResult = ReturnType<typeof us
 export type ManageContent_SelectItemPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemPeopleLazyQuery>;
 export type ManageContent_SelectItemPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>;
 export const ManageContent_InsertItemDocument = gql`
-    mutation ManageContent_InsertItem($item: content_Item_insert_input!) {
+    mutation ManageContent_InsertItem($item: content_Item_insert_input!, $itemTags: [content_ItemTag_insert_input!]!) {
   insert_content_Item_one(object: $item) {
     ...ManageContent_Item
+  }
+  insert_content_ItemTag(objects: $itemTags) {
+    returning {
+      id
+    }
   }
 }
     ${ManageContent_ItemFragmentDoc}`;
@@ -43126,6 +43132,7 @@ export type ManageContent_InsertItemMutationFn = Apollo.MutationFunction<ManageC
  * const [manageContentInsertItemMutation, { data, loading, error }] = useManageContent_InsertItemMutation({
  *   variables: {
  *      item: // value for 'item'
+ *      itemTags: // value for 'itemTags'
  *   },
  * });
  */

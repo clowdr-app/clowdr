@@ -179,9 +179,14 @@ gql`
         }
     }
 
-    mutation ManageContent_InsertItem($item: content_Item_insert_input!) {
+    mutation ManageContent_InsertItem($item: content_Item_insert_input!, $itemTags: [content_ItemTag_insert_input!]!) {
         insert_content_Item_one(object: $item) {
             ...ManageContent_Item
+        }
+        insert_content_ItemTag(objects: $itemTags) {
+            returning {
+                id
+            }
         }
     }
 
@@ -589,10 +594,8 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                       title: record.title,
                                       shortTitle: record.shortTitle,
                                       typeName: record.typeName,
-                                      itemTags: {
-                                          data: record.itemTags,
-                                      },
                                   },
+                                  itemTags: record.itemTags,
                               },
                               update: (cache, response) => {
                                   if (response.data?.insert_content_Item_one) {

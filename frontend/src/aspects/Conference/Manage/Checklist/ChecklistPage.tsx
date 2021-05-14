@@ -80,11 +80,11 @@ gql`
             }
         }
 
-        livestreamEventsWithoutPresenter: schedule_Event(
+        livestreamEventsWithoutRegisteredPresenter: schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
-                _not: { eventPeople: { roleName: { _eq: PRESENTER } } }
+                _not: { eventPeople: { roleName: { _eq: PRESENTER }, person: { registrantId: { _is_null: false } } } }
             }
         ) {
             id
@@ -101,11 +101,11 @@ gql`
             }
         }
 
-        livestreamEventsWithoutChair: schedule_Event(
+        livestreamEventsWithoutRegisteredChair: schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
-                _not: { eventPeople: { roleName: { _eq: CHAIR } } }
+                _not: { eventPeople: { roleName: { _eq: CHAIR }, person: { registrantId: { _is_null: false } } } }
             }
         ) {
             id
@@ -457,21 +457,53 @@ export default function ChecklistPage(): JSX.Element {
         );
     }, [checklistResponse.data?.requiredProgramPeopleNotRegistered]);
 
-    const livestreamEventsHaveAPresenter = useMemo(() => {
+    const livestreamEventsHaveAPerson = useMemo(() => {
+        const filteredEvents = checklistResponse.data?.livestreamEventsWithoutRegisteredPresenter.filter((eventX) =>
+            checklistResponse.data?.livestreamEventsWithoutRegisteredChair.some((eventY) => eventY.id === eventX.id)
+        );
         return (
             <ChecklistItem
-                title="All live-stream events have at least one presenter"
+                title="All live-stream events have at least one presenter or chair who is linked to a registrant"
                 status="error"
-                description="Presenters and chairs are the normal roles for people presenting during a live-stream event. All live-stream events should have at least one person with the Presenter role."
+                description="Presenters and chairs are the normal roles for people presenting during a live-stream event. All live-stream events must have at least one person with the Chair or Presenter role. They should also be linked to a registrant, to allow access to their backstage."
                 action={{
                     title: "Manage Schedule",
                     url: "schedule",
                 }}
-                ok={checklistResponse.data?.livestreamEventsWithoutPresenter.length === 0}
+                ok={filteredEvents?.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                    {(x) => (
+                        <>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}{" "}
+                        </>
+                    )}
+                </ExpandableList>
+            </ChecklistItem>
+        );
+    }, [
+        checklistResponse.data?.livestreamEventsWithoutRegisteredPresenter,
+        checklistResponse.data?.livestreamEventsWithoutRegisteredChair,
+    ]);
+
+    const livestreamEventsHaveAPresenter = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="All live-stream events have at least one presenter who is linked to a registrant"
+                status="error"
+                description="Presenters and chairs are the normal roles for people presenting during a live-stream event. All live-stream events should have at least one person with the Presenter role. They should also be linked to a registrant, to allow access to their backstage."
+                action={{
+                    title: "Manage Schedule",
+                    url: "schedule",
+                }}
+                ok={checklistResponse.data?.livestreamEventsWithoutRegisteredPresenter.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
-                    items={checklistResponse.data?.livestreamEventsWithoutPresenter}
+                    items={checklistResponse.data?.livestreamEventsWithoutRegisteredPresenter}
                     sortBy={(x) => Date.parse(x.startTime)}
                 >
                     {(x) => (
@@ -484,23 +516,23 @@ export default function ChecklistPage(): JSX.Element {
                 </ExpandableList>
             </ChecklistItem>
         );
-    }, [checklistResponse.data?.livestreamEventsWithoutPresenter]);
+    }, [checklistResponse.data?.livestreamEventsWithoutRegisteredPresenter]);
 
     const livestreamEventsHaveAChair = useMemo(() => {
         return (
             <ChecklistItem
-                title="All live-stream events have at least one chair"
+                title="All live-stream events have at least one chair who is linked to a registrant"
                 status="warning"
-                description="Presenters and chairs are the normal roles for people presenting during a live-stream event. We recommend that all live-stream events have a chair."
+                description="Presenters and chairs are the normal roles for people presenting during a live-stream event. We recommend that all live-stream events have a chair. They should also be linked to a registrant, to allow access to their backstage."
                 action={{
                     title: "Manage Schedule",
                     url: "schedule",
                 }}
-                ok={checklistResponse.data?.livestreamEventsWithoutChair.length === 0}
+                ok={checklistResponse.data?.livestreamEventsWithoutRegisteredChair.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList
-                    items={checklistResponse.data?.livestreamEventsWithoutChair}
+                    items={checklistResponse.data?.livestreamEventsWithoutRegisteredChair}
                     sortBy={(x) => Date.parse(x.startTime)}
                 >
                     {(x) => (
@@ -513,7 +545,7 @@ export default function ChecklistPage(): JSX.Element {
                 </ExpandableList>
             </ChecklistItem>
         );
-    }, [checklistResponse.data?.livestreamEventsWithoutChair]);
+    }, [checklistResponse.data?.livestreamEventsWithoutRegisteredChair]);
 
     const eventPeopleSyncedToContentPeople = useMemo(() => {
         const nonsyncedEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
@@ -1075,6 +1107,8 @@ export default function ChecklistPage(): JSX.Element {
                             </Heading>
                         </GridItem>
                         <GridItem colSpan={defaultColSpan}>{roomsWithStreams}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{livestreamEventsHaveAPerson}</GridItem>
                         <GridItem colSpan={defaultColSpan}></GridItem>
                         <GridItem colSpan={defaultColSpan}>{livestreamEventsHaveAPresenter}</GridItem>
                         <GridItem colSpan={defaultColSpan}></GridItem>

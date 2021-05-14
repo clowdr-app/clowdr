@@ -39979,8 +39979,8 @@ export const PreshowChecklistDocument = gql`
       title
     }
   }
-  livestreamEventsWithoutPresenter: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: PRESENTER}}}}
+  livestreamEventsWithoutRegisteredPresenter: schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: PRESENTER}, person: {registrantId: {_is_null: false}}}}}
   ) {
     id
     name
@@ -39995,8 +39995,8 @@ export const PreshowChecklistDocument = gql`
       title
     }
   }
-  livestreamEventsWithoutChair: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: CHAIR}}}}
+  livestreamEventsWithoutRegisteredChair: schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: CHAIR}, person: {registrantId: {_is_null: false}}}}}
   ) {
     id
     name

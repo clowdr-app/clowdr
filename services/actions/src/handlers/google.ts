@@ -22,6 +22,7 @@ import { registrantBelongsToUser } from "../lib/authorisation";
 import { S3 } from "../lib/aws/awsClient";
 import { createOAuth2Client, GoogleIdToken } from "../lib/googleAuth";
 import { callWithRetry } from "../utils";
+import { handleRefreshYouTubeData } from "./registrantGoogleAccount";
 
 assert(process.env.FRONTEND_DOMAIN, "FRONTEND_DOMAIN environment variable not provided.");
 process.env.FRONTEND_PROTOCOL =
@@ -99,7 +100,7 @@ export async function handleSubmitGoogleOAuthToken(
         const tokenData = jwt_decode<GoogleIdToken>(token.tokens.id_token);
 
         console.log("Saving Google OAuth tokens", userId, params.state);
-        await apolloClient.mutate({
+        const result = await apolloClient.mutate({
             mutation: Google_CreateRegistrantGoogleAccountDocument,
             variables: {
                 registrantId: params.state,
@@ -108,6 +109,21 @@ export async function handleSubmitGoogleOAuthToken(
                 tokenData: token.tokens,
             },
         });
+
+        if (result.data?.insert_registrant_GoogleAccount_one?.id) {
+            try {
+                await handleRefreshYouTubeData({
+                    registrantGoogleAccountId: result.data.insert_registrant_GoogleAccount_one.id,
+                    registrantId: params.state,
+                });
+            } catch (err) {
+                console.error("Failed to refresh data from YouTube account", {
+                    registrantGoogleAccountId: result.data.insert_registrant_GoogleAccount_one.id,
+                    registrantId: params.state,
+                    err,
+                });
+            }
+        }
 
         return {
             success: true,

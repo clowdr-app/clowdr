@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleRefreshYouTubeData, handleRegistrantGoogleAccountDeleted } from "../handlers/registrantGoogleAccount";
@@ -10,7 +10,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/deleted", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/deleted", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<RegistrantGoogleAccountData>>(req.body);
     } catch (e) {
@@ -30,7 +30,7 @@ router.post("/deleted", bodyParser.json(), async (req: Request, res: Response) =
     res.status(200).json("OK");
 });
 
-router.post("/refreshYouTubeData", bodyParser.json(), async (req: Request, res: Response<RefreshYouTubeDataOutput>) => {
+router.post("/refreshYouTubeData", json(), async (req: Request, res: Response<RefreshYouTubeDataOutput>) => {
     console.log(req.originalUrl);
     const params = req.body.input;
     try {

@@ -5,7 +5,8 @@ import {
     YouTubePlaylistDetails,
 } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
 import assert from "assert";
-import { Credentials } from "google-auth-library";
+import { IsNumber, IsString, validateSync } from "class-validator";
+import { OAuth2Client } from "google-auth-library";
 import { google, youtube_v3 } from "googleapis";
 import * as R from "ramda";
 import {
@@ -26,10 +27,10 @@ export async function handleRegistrantGoogleAccountDeleted(
     const accessToken = oldRow.tokenData.access_token;
 
     if (accessToken) {
-        console.log("Revoking credentials for registrant Google account", oldRow.id);
+        console.log("Revoking credentials for registrant Google account", { googleAccountId: oldRow.id });
         const oauth2Client = createOAuth2Client();
         await callWithRetry(async () => await oauth2Client.revokeToken(accessToken));
-        console.log("Revoked credentials for registrant Google account", oldRow.id);
+        console.log("Revoked credentials for registrant Google account", { googleAccountId: oldRow.id });
     }
     return;
 }
@@ -57,6 +58,34 @@ gql`
     }
 `;
 
+class TokenData {
+    @IsString()
+    scope: string;
+    @IsString()
+    id_token: string;
+    @IsString()
+    token_type: string;
+    @IsNumber()
+    expiry_date: number;
+    @IsString()
+    access_token: string;
+}
+
+export async function createGoogleOAuthClient(tokenData: unknown): Promise<OAuth2Client> {
+    const credentials: TokenData = tokenData as any;
+    const errors = validateSync(credentials);
+
+    if (errors.length) {
+        console.error("Invalid Google credentials", { errors });
+        throw new Error("Invalid Google credentials");
+    }
+
+    const client = createOAuth2Client();
+    client.setCredentials({ ...credentials });
+
+    return client;
+}
+
 export async function handleRefreshYouTubeData(payload: refreshYouTubeDataArgs): Promise<RefreshYouTubeDataOutput> {
     const registrantGoogleAccount = await apolloClient.query({
         query: RegistrantGoogleAccount_GetRegistrantGoogleAccountDocument,
@@ -74,8 +103,8 @@ export async function handleRefreshYouTubeData(payload: refreshYouTubeDataArgs):
         throw new Error("Could not find Google account");
     }
 
-    const client = createOAuth2Client();
-    client.setCredentials({ ...registrantGoogleAccount.data.registrant_GoogleAccount_by_pk.tokenData } as Credentials);
+    const client = await createGoogleOAuthClient(registrantGoogleAccount.data.registrant_GoogleAccount_by_pk.tokenData);
+
     const youtubeClient = google.youtube({
         auth: client,
         version: "v3",

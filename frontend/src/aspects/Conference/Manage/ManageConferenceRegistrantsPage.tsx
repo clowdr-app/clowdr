@@ -804,14 +804,14 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                         });
                                                         if (result.errors && result.errors.length > 0) {
                                                             toast({
-                                                                title: "Failed to send invitiation emails",
+                                                                title: "Failed to send invitation emails",
                                                                 description: result.errors[0].message,
                                                                 isClosable: true,
                                                                 status: "error",
                                                             });
                                                         } else {
                                                             toast({
-                                                                title: "Invitiation emails sent",
+                                                                title: "Invitation emails sent",
                                                                 duration: 8000,
                                                                 status: "success",
                                                             });
@@ -853,14 +853,14 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                             });
                                             if (result.errors && result.errors.length > 0) {
                                                 toast({
-                                                    title: "Failed to send invitiation emails",
+                                                    title: "Failed to send invitation emails",
                                                     description: result.errors[0].message,
                                                     isClosable: true,
                                                     status: "error",
                                                 });
                                             } else {
                                                 toast({
-                                                    title: "Invitiation emails sent",
+                                                    title: "Invitation emails sent",
                                                     duration: 8000,
                                                     status: "success",
                                                 });
@@ -910,14 +910,14 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                                         });
                                                         if (result.errors && result.errors.length > 0) {
                                                             toast({
-                                                                title: "Failed to send invitiation emails",
+                                                                title: "Failed to send invitation emails",
                                                                 description: result.errors[0].message,
                                                                 isClosable: true,
                                                                 status: "error",
                                                             });
                                                         } else {
                                                             toast({
-                                                                title: "Invitiation emails sent",
+                                                                title: "Invitation emails sent",
                                                                 duration: 8000,
                                                                 status: "success",
                                                             });
@@ -956,14 +956,14 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                                             });
                                             if (result.errors && result.errors.length > 0) {
                                                 toast({
-                                                    title: "Failed to send invitiation emails",
+                                                    title: "Failed to send invitation emails",
                                                     description: result.errors[0].message,
                                                     isClosable: true,
                                                     status: "error",
                                                 });
                                             } else {
                                                 toast({
-                                                    title: "Invitiation emails sent",
+                                                    title: "Invitation emails sent",
                                                     duration: 8000,
                                                     status: "success",
                                                 });

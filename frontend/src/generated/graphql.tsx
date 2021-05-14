@@ -39953,7 +39953,7 @@ export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.Subscrip
 export const PreshowChecklistDocument = gql`
     query PreshowChecklist($conferenceId: uuid!) {
   requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
-    where: {conferenceId: {_eq: $conferenceId}, eventPeople: {event: {intendedRoomModeName: {_in: [PRERECORDED, Q_AND_A]}}}, registrantId: {_is_null: true}}
+    where: {conferenceId: {_eq: $conferenceId}, eventPeople: {event: {intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}}, registrantId: {_is_null: true}}
   ) {
     id
     name
@@ -39961,7 +39961,7 @@ export const PreshowChecklistDocument = gql`
     email
   }
   requiredProgramPeopleNotRegistered: collection_ProgramPerson(
-    where: {conferenceId: {_eq: $conferenceId}, eventPeople: {event: {intendedRoomModeName: {_in: [PRERECORDED, Q_AND_A]}}}, registrant: {userId: {_is_null: true}}}
+    where: {conferenceId: {_eq: $conferenceId}, eventPeople: {event: {intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}}, registrant: {userId: {_is_null: true}}}
   ) {
     id
     name
@@ -39980,7 +39980,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   livestreamEventsWithoutPresenter: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRERECORDED, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: PRESENTER}}}}
+    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: PRESENTER}}}}
   ) {
     id
     name
@@ -39996,7 +39996,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   livestreamEventsWithoutChair: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRERECORDED, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: CHAIR}}}}
+    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: CHAIR}}}}
   ) {
     id
     name

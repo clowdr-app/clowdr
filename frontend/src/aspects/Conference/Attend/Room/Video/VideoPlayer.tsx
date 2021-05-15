@@ -1,5 +1,16 @@
 import { gql } from "@apollo/client";
-import { Alert, AlertIcon, AspectRatio, Skeleton } from "@chakra-ui/react";
+import {
+    Alert,
+    AlertIcon,
+    AspectRatio,
+    CloseButton,
+    Skeleton,
+    Text,
+    useFocusOnShow,
+    useId,
+    VStack,
+} from "@chakra-ui/react";
+import { contains, getRelatedTarget } from "@chakra-ui/utils";
 import {
     Content_ElementType_Enum,
     ElementBaseType,
@@ -8,7 +19,7 @@ import {
     VideoElementBlob,
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useVideoPlayer_GetElementQuery } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import { FAIcon } from "../../../../Icons/FAIcon";
@@ -68,6 +79,44 @@ export function VideoPlayer({ elementId }: { elementId: string }): JSX.Element {
     const conference = useConference();
     const itemPath = data?.content_Element_by_pk?.item ? `/conference/${conference.id}/` : undefined;
 
+    const popoverRef = useRef<HTMLDivElement>(null);
+    const [finished, setFinished] = useState<boolean>(false);
+    useFocusOnShow(popoverRef, {
+        shouldFocus: true,
+        visible: finished,
+    });
+    const id = useId();
+
+    useEffect(() => {
+        setFinished(false);
+    }, [elementId]);
+
+    const popoverEl = useMemo(
+        () => (
+            <VStack
+                bgColor="rgba(0, 0, 0, 0.7)"
+                position="absolute"
+                p={4}
+                ref={popoverRef}
+                id={id}
+                onBlur={(event) => {
+                    const relatedTarget = getRelatedTarget(event);
+                    const targetIsPopover = contains(popoverRef.current, relatedTarget);
+                    const isValidBlur = !targetIsPopover;
+
+                    if (finished && isValidBlur) {
+                        setFinished(false);
+                    }
+                }}
+            >
+                <CloseButton onClick={() => setFinished(false)} aria-controls={id} />
+                <Text fontSize="2xl">Select another video below</Text>
+                <FAIcon icon="hand-point-down" aria-hidden="true" iconStyle="r" fontSize="6xl" />
+            </VStack>
+        ),
+        [finished, id]
+    );
+
     return (
         <>
             {data?.content_Element_by_pk?.item && itemPath ? (
@@ -78,9 +127,17 @@ export function VideoPlayer({ elementId }: { elementId: string }): JSX.Element {
             ) : undefined}
             <AspectRatio maxW="100%" ratio={16 / 9}>
                 <>
-                    <Skeleton isLoaded={!loading}>
+                    <Skeleton isLoaded={!loading} position="relative">
                         {videoElementBlob ? (
-                            <VideoElement elementId={elementId} videoElementData={videoElementBlob} />
+                            <>
+                                {finished ? popoverEl : undefined}
+                                <VideoElement
+                                    elementId={elementId}
+                                    videoElementData={videoElementBlob}
+                                    onFinish={() => setFinished(true)}
+                                    onPlay={() => setFinished(false)}
+                                />
+                            </>
                         ) : undefined}
                         {error ? (
                             <Alert status="error">

@@ -16,12 +16,14 @@ export function VideoElement({
     title,
     onPlay,
     onPause,
+    onFinish,
 }: {
     elementId: string;
     videoElementData: VideoElementBlob;
     title?: string;
     onPlay?: () => void;
     onPause?: () => void;
+    onFinish?: () => void;
 }): JSX.Element {
     const previewTranscodeUrl = useMemo(() => {
         let s3Url;
@@ -124,12 +126,17 @@ export function VideoElement({
                         hlsPlayer.config.maxBufferSize = 60 * 1000 * 1000;
                     }
                 }}
+                onProgress={({ played }) => {
+                    if (played >= 1) {
+                        onFinish?.();
+                    }
+                }}
                 config={{ ...config }}
                 ref={playerRef}
                 style={{ borderRadius: "10px", overflow: "hidden" }}
             />
         );
-    }, [onPause, onPlay, previewTranscodeUrl, config]);
+    }, [previewTranscodeUrl, config, onPause, onPlay, onFinish]);
 
     useEffect(() => {
         if (playerRef.current) {

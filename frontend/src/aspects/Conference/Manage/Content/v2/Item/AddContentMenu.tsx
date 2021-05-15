@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Button, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
+import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import assert from "assert";
 import React, { useMemo } from "react";
 import {
@@ -92,6 +93,11 @@ export function AddContentMenu({
                                         typeName: newContent.element.typeName,
                                         name: newContent.element.name,
                                         isHidden: newContent.element.isHidden,
+                                        layoutData: {
+                                            contentType: newContent.element.typeName,
+                                            wide: false,
+                                            hidden: false,
+                                        } as LayoutDataBlob,
                                     };
                                     const result = await createElement({
                                         variables: {

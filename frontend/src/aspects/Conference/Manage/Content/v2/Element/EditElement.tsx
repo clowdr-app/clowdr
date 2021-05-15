@@ -246,6 +246,9 @@ export function EditElement({
 
                                                 if (actualPreviousElement) {
                                                     const layoutDataA: LayoutDataBlob = {
+                                                        contentType: actualElement.typeName,
+                                                        wide: false,
+                                                        hidden: false,
                                                         ...actualElement.layoutData,
                                                         priority: idx - 1,
                                                     };
@@ -259,6 +262,9 @@ export function EditElement({
                                                     });
 
                                                     const layoutDataB: LayoutDataBlob = {
+                                                        contentType: actualPreviousElement.typeName,
+                                                        wide: false,
+                                                        hidden: false,
                                                         ...actualPreviousElement.layoutData,
                                                         priority: idx,
                                                     };
@@ -290,6 +296,9 @@ export function EditElement({
 
                                                 if (actualNextElement) {
                                                     const layoutDataA: LayoutDataBlob = {
+                                                        contentType: actualElement.typeName,
+                                                        wide: false,
+                                                        hidden: false,
                                                         ...actualElement.layoutData,
                                                         priority: idx + 1,
                                                     };
@@ -303,6 +312,9 @@ export function EditElement({
                                                     });
 
                                                     const layoutDataB: LayoutDataBlob = {
+                                                        contentType: actualNextElement.typeName,
+                                                        wide: false,
+                                                        hidden: false,
                                                         ...actualNextElement.layoutData,
                                                         priority: idx,
                                                     };

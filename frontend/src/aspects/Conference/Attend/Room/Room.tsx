@@ -295,6 +295,7 @@ function RoomInner({
         }
     }, [currentRoomEvent, nextRoomEvent, now30s]);
 
+    const videoPlayerRef = useRef<HTMLDivElement | null>(null);
     const [selectedVideoElementId, setSelectedVideoElementId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -398,7 +399,11 @@ function RoomInner({
                 currentRoomEvent={currentRoomEvent}
                 nextRoomEvent={nextRoomEvent}
                 roomDetails={roomDetails}
-                onChooseVideo={setSelectedVideoElementId}
+                onChooseVideo={(id) => {
+                    setSelectedVideoElementId(id);
+                    videoPlayerRef?.current?.focus();
+                    videoPlayerRef?.current?.scrollIntoView();
+                }}
                 currentlySelectedVideoElementId={selectedVideoElementId ?? undefined}
             />
         ),
@@ -576,8 +581,8 @@ function RoomInner({
             !currentEventModeIsNone && !showDefaultBreakoutRoom && withinThreeMinutesOfBroadcastEvent;
 
         return !showBackstage ? (
-            currentEventIsVideoPlayer ? (
-                <Box pos="relative">
+            currentEventIsVideoPlayer || (selectedVideoElementId && !currentRoomEvent) ? (
+                <Box pos="relative" ref={videoPlayerRef}>
                     {selectedVideoElementId ? (
                         <VideoPlayer elementId={selectedVideoElementId} />
                     ) : (

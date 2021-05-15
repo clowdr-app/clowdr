@@ -51,7 +51,7 @@ export function RoomContent({
     const currentEventVideosEl = useMemo(
         () =>
             currentRoomEvent?.item?.videoElements?.length ? (
-                <Wrap role="list" justify="center" mt={6}>
+                <Wrap role="list" justify="center">
                     {currentRoomEvent.item.videoElements.map((element) => (
                         <WrapItem key={element.id} role="listitem" w="30ch" overflow="hidden" p="3px">
                             <VideoElementButton
@@ -86,12 +86,12 @@ export function RoomContent({
                     <Heading as="h3" textAlign="left" size="lg" mb={2}>
                         {currentRoomEvent.name}
                     </Heading>
-                    {currentEventVideosEl}
                     {currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
                         <ItemElementsWrapper itemId={currentRoomEvent.itemId} linkToItem={true} />
-                    ) : (
-                        <></>
-                    )}
+                    ) : undefined}
+                    {currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoPlayer
+                        ? currentEventVideosEl
+                        : undefined}
                     {currentRoomEvent.exhibitionId ? (
                         <ExhibitionLayoutWrapper
                             exhibitionId={currentRoomEvent.exhibitionId}

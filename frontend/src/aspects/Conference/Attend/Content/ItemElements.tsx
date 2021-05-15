@@ -161,7 +161,7 @@ export function ItemElements({
     }, [itemData.elements]);
 
     return (
-        <Box textAlign="left" my={5} maxW="100%" overflow="hidden">
+        <Box textAlign="left" mt={5} mb={2} maxW="100%" overflow="hidden">
             {linkToItem ? (
                 <LinkButton
                     to={`/conference/${conference.slug}/item/${itemData.id}`}
@@ -195,7 +195,7 @@ export function ItemElements({
             )}
             {children}
             <AuthorList programPeopleData={itemData.itemPeople ?? []} />
-            <HStack alignItems="flex-start" flexWrap="wrap" mt={5}>
+            <HStack alignItems="flex-start" flexWrap="wrap" mt={zoomDetailsEls.length || stackableEls.length ? 5 : 0}>
                 <RequireAtLeastOnePermissionWrapper permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}>
                     {zoomDetailsEls}
                 </RequireAtLeastOnePermissionWrapper>

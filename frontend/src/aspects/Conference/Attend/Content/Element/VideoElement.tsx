@@ -149,7 +149,7 @@ export function VideoElement({
                         : title}
                 </Heading>
             ) : undefined}
-            {videoElementData.s3Url && (!previewTranscodeUrl || !config) ? (
+            {videoElementData.s3Url && (!previewTranscodeUrl || !config) && !loading ? (
                 <>
                     <Spinner />
                     <Text mb={2}>Video is still being processed.</Text>

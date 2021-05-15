@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import {
     Alert,
     AlertIcon,
+    AspectRatio,
     Box,
     Button,
     HStack,
@@ -11,7 +12,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob, VideoElementBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
@@ -28,15 +29,16 @@ import {
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Generic/useRealTime";
+import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
-import { VideoElement } from "../Content/Element/VideoElement";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
 import { RoomContent } from "./RoomContent";
 import { RoomControlBar } from "./RoomControlBar";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { HlsPlayer } from "./Video/HlsPlayer";
+import { VideoPlayer } from "./Video/VideoPlayer";
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
@@ -58,18 +60,17 @@ gql`
             id
             title
             typeName
+            videoElements: elements(
+                where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] }, isHidden: { _eq: false } }
+                order_by: { name: asc }
+            ) {
+                id
+                name
+            }
             zoomItems: elements(where: { typeName: { _eq: ZOOM } }, limit: 1) {
                 id
                 data
                 name
-            }
-            videoItems: elements(
-                where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, isHidden: { _eq: false } }
-                limit: 1
-                order_by: { createdAt: desc_nulls_last }
-            ) {
-                id
-                data
             }
             chatId
         }
@@ -294,22 +295,17 @@ function RoomInner({
         }
     }, [currentRoomEvent, nextRoomEvent, now30s]);
 
-    const maybeVideoDetails = useMemo(() => {
-        try {
-            if (currentRoomEvent) {
-                const currentVideoItems = currentRoomEvent.item?.videoItems;
-                if (currentVideoItems?.length) {
-                    const versions = currentVideoItems[0].data as ElementDataBlob;
-                    const latest = R.last(versions)?.data as VideoElementBlob;
-                    return { data: latest, elementId: currentVideoItems[0].id };
-                }
-            }
+    const [selectedVideoElementId, setSelectedVideoElementId] = useState<string | null>(null);
 
-            return undefined;
-        } catch (e) {
-            console.error("Error finding current event video details", e);
-            return undefined;
+    useEffect(() => {
+        if (
+            selectedVideoElementId &&
+            currentRoomEvent &&
+            currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.VideoPlayer
+        ) {
+            setSelectedVideoElementId(null);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent]);
 
     useEffect(() => {
@@ -398,9 +394,15 @@ function RoomInner({
 
     const contentEl = useMemo(
         () => (
-            <RoomContent currentRoomEvent={currentRoomEvent} nextRoomEvent={nextRoomEvent} roomDetails={roomDetails} />
+            <RoomContent
+                currentRoomEvent={currentRoomEvent}
+                nextRoomEvent={nextRoomEvent}
+                roomDetails={roomDetails}
+                onChooseVideo={setSelectedVideoElementId}
+                currentlySelectedVideoElementId={selectedVideoElementId ?? undefined}
+            />
         ),
-        [currentRoomEvent, nextRoomEvent, roomDetails]
+        [currentRoomEvent, nextRoomEvent, roomDetails, selectedVideoElementId]
     );
 
     const [sendShuffleRoomNotification, setSendShuffleRoomNotification] = useState<boolean>(false);
@@ -575,17 +577,19 @@ function RoomInner({
 
         return !showBackstage ? (
             currentEventIsVideoPlayer ? (
-                maybeVideoDetails ? (
-                    <Box pos="relative">
-                        <VideoElement
-                            elementId={maybeVideoDetails.elementId}
-                            videoElementData={maybeVideoDetails.data}
-                        />
-                        <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
-                    </Box>
-                ) : (
-                    <>Could not find video.</>
-                )
+                <Box pos="relative">
+                    {selectedVideoElementId ? (
+                        <VideoPlayer elementId={selectedVideoElementId} />
+                    ) : (
+                        <AspectRatio maxW="100%" ratio={16 / 9}>
+                            <VStack>
+                                <Text fontSize="2xl">Select a video below</Text>
+                                <FAIcon icon="hand-point-down" aria-hidden="true" iconStyle="r" fontSize="6xl" />
+                            </VStack>
+                        </AspectRatio>
+                    )}
+                    <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
+                </Box>
             ) : shouldShowLivePlayer && hlsUri ? (
                 <Box pos="relative">
                     <HlsPlayer
@@ -598,15 +602,15 @@ function RoomInner({
             ) : undefined
         ) : undefined;
     }, [
-        currentEventModeIsNone,
         currentRoomEvent,
-        hlsUri,
-        maybeVideoDetails,
-        roomDetails.id,
-        showBackstage,
+        currentEventModeIsNone,
         showDefaultBreakoutRoom,
         withinThreeMinutesOfBroadcastEvent,
+        showBackstage,
+        selectedVideoElementId,
         roomDetails.chatId,
+        roomDetails.id,
+        hlsUri,
     ]);
 
     return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (

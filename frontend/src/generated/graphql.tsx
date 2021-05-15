@@ -36181,7 +36181,7 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }>, readonly videoItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
 
 export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
   originatingItemId: Scalars['uuid'];
@@ -36273,6 +36273,13 @@ export type RoomSponsorContent_ItemDataFragment = { readonly __typename?: 'conte
   )> };
 
 export type RoomSponsorContent_ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
+
+export type VideoPlayer_GetElementQueryVariables = Exact<{
+  elementId: Scalars['uuid'];
+}>;
+
+
+export type VideoPlayer_GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly isHidden: boolean, readonly data: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
 export type Schedule_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
 
@@ -38840,18 +38847,17 @@ export const Room_EventSummaryFragmentDoc = gql`
     id
     title
     typeName
+    videoElements: elements(
+      where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH]}, isHidden: {_eq: false}}
+      order_by: {name: asc}
+    ) {
+      id
+      name
+    }
     zoomItems: elements(where: {typeName: {_eq: ZOOM}}, limit: 1) {
       id
       data
       name
-    }
-    videoItems: elements(
-      where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_FILE]}, isHidden: {_eq: false}}
-      limit: 1
-      order_by: {createdAt: desc_nulls_last}
-    ) {
-      id
-      data
     }
     chatId
   }
@@ -41867,6 +41873,49 @@ export function useRoomSponsorContent_GetElementsLazyQuery(baseOptions?: Apollo.
 export type RoomSponsorContent_GetElementsQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetElementsQuery>;
 export type RoomSponsorContent_GetElementsLazyQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetElementsLazyQuery>;
 export type RoomSponsorContent_GetElementsQueryResult = Apollo.QueryResult<RoomSponsorContent_GetElementsQuery, RoomSponsorContent_GetElementsQueryVariables>;
+export const VideoPlayer_GetElementDocument = gql`
+    query VideoPlayer_GetElement($elementId: uuid!) {
+  content_Element_by_pk(id: $elementId) {
+    id
+    typeName
+    isHidden
+    data
+    name
+    item {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useVideoPlayer_GetElementQuery__
+ *
+ * To run a query within a React component, call `useVideoPlayer_GetElementQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideoPlayer_GetElementQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideoPlayer_GetElementQuery({
+ *   variables: {
+ *      elementId: // value for 'elementId'
+ *   },
+ * });
+ */
+export function useVideoPlayer_GetElementQuery(baseOptions: Apollo.QueryHookOptions<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>(VideoPlayer_GetElementDocument, options);
+      }
+export function useVideoPlayer_GetElementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>(VideoPlayer_GetElementDocument, options);
+        }
+export type VideoPlayer_GetElementQueryHookResult = ReturnType<typeof useVideoPlayer_GetElementQuery>;
+export type VideoPlayer_GetElementLazyQueryHookResult = ReturnType<typeof useVideoPlayer_GetElementLazyQuery>;
+export type VideoPlayer_GetElementQueryResult = Apollo.QueryResult<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>;
 export const Schedule_SelectItemDocument = gql`
     query Schedule_SelectItem($id: uuid!) {
   content_Item_by_pk(id: $id) {

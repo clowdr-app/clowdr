@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Tag, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Heading, HStack, Tag, Text, useColorModeValue, Wrap, WrapItem } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
 import {
@@ -13,15 +13,20 @@ import { ItemElementsWrapper } from "../Content/ItemElements";
 import { ExhibitionLayoutWrapper } from "../Exhibition/ExhibitionLayout";
 import { RoomTitle } from "./RoomTitle";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
+import { VideoElementButton } from "./Video/VideoElementButton";
 
 export function RoomContent({
     currentRoomEvent,
     nextRoomEvent,
     roomDetails,
+    currentlySelectedVideoElementId,
+    onChooseVideo,
 }: {
     currentRoomEvent: Room_EventSummaryFragment | null;
     nextRoomEvent: Room_EventSummaryFragment | null;
     roomDetails: RoomPage_RoomDetailsFragment;
+    currentlySelectedVideoElementId?: string;
+    onChooseVideo?: (elementId: string) => void;
 }): JSX.Element {
     const bgColour = useColorModeValue("green.200", "green.700");
     const nextBgColour = useColorModeValue("gray.200", "gray.700");
@@ -41,6 +46,24 @@ export function RoomContent({
                 (p) => p.person.registrantId && p.person.registrantId === currentRegistrant.id
             )?.roleName,
         [currentRegistrant, nextRoomEvent?.eventPeople]
+    );
+
+    const currentEventVideosEl = useMemo(
+        () =>
+            currentRoomEvent?.item?.videoElements?.length ? (
+                <Wrap role="list" justify="center" mt={6}>
+                    {currentRoomEvent.item.videoElements.map((element) => (
+                        <WrapItem key={element.id} role="listitem" w="30ch" overflow="hidden" p="3px">
+                            <VideoElementButton
+                                isSelected={currentlySelectedVideoElementId === element.id}
+                                elementName={element.name}
+                                onClick={() => onChooseVideo?.(element.id)}
+                            />
+                        </WrapItem>
+                    ))}
+                </Wrap>
+            ) : undefined,
+        [currentRoomEvent?.item?.videoElements, currentlySelectedVideoElementId, onChooseVideo]
     );
 
     const now5s = useRealTime(5000);
@@ -63,6 +86,7 @@ export function RoomContent({
                     <Heading as="h3" textAlign="left" size="lg" mb={2}>
                         {currentRoomEvent.name}
                     </Heading>
+                    {currentEventVideosEl}
                     {currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
                         <ItemElementsWrapper itemId={currentRoomEvent.itemId} linkToItem={true} />
                     ) : (

@@ -52,7 +52,7 @@ function ConferenceLandingContent({ group }: { group: ItemDataFragment }): JSX.E
     ];
 
     const elements = group.elements
-        .map((item) => ({ el: <Element key={item.id} item={item} />, type: item.typeName }))
+        .map((item) => ({ el: <Element key={item.id} element={item} />, type: item.typeName }))
         .sort(
             (x, y) =>
                 conferenceLandingContentSortOrder.indexOf(x.type) - conferenceLandingContentSortOrder.indexOf(y.type)

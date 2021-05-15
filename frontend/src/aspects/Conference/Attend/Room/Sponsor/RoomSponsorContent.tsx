@@ -87,7 +87,7 @@ export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element 
                                 colSpan={element.layoutBlob.wide ? [2] : [2, 2, 1]}
                                 p={4}
                             >
-                                <Element item={element.item} />
+                                <Element element={element.item} />
                             </GridItem>
                         )
                     )

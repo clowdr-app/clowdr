@@ -249,7 +249,7 @@ function DeferredElement({
     const { isOpen, onOpen } = useDisclosure();
     return isOpen ? (
         uploadableElement.element ? (
-            <Element item={uploadableElement.element} />
+            <Element element={uploadableElement.element} />
         ) : (
             <Box p={2}>This element has been submitted but you do not have permission to access it.</Box>
         )

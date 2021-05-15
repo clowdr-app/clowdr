@@ -77,7 +77,7 @@ export function ItemElements({
         const abstractItem = itemData.elements.find(
             (element) => element.typeName === Content_ElementType_Enum.Abstract
         );
-        return abstractItem && <Element item={abstractItem} />;
+        return abstractItem && <Element element={abstractItem} />;
     }, [itemData.elements]);
 
     const conference = useConference();
@@ -86,7 +86,7 @@ export function ItemElements({
         return itemData.elements
             .filter((element) => element.typeName === Content_ElementType_Enum.Zoom)
             .map((item) => {
-                return <Element key={item.id} item={item} />;
+                return <Element key={item.id} element={item} />;
             });
     }, [itemData.elements]);
 
@@ -100,7 +100,7 @@ export function ItemElements({
                 ].includes(element.typeName)
             )
             .map((item) => {
-                return <Element key={item.id} item={item} />;
+                return <Element key={item.id} element={item} />;
             });
     }, [itemData.elements]);
 
@@ -108,7 +108,7 @@ export function ItemElements({
         return itemData.elements
             .filter((element) => element.typeName === Content_ElementType_Enum.VideoUrl)
             .map((item) => {
-                return <Element key={item.id} item={item} />;
+                return <Element key={item.id} element={item} />;
             });
     }, [itemData.elements]);
 
@@ -155,7 +155,7 @@ export function ItemElements({
                     ].includes(element.typeName)
             )
             .map((item) => {
-                return <Element key={item.id} item={item} />;
+                return <Element key={item.id} element={item} />;
             })
             .sort((x, y) => contentSortOrder.indexOf(x.type) - contentSortOrder.indexOf(y.type));
     }, [itemData.elements]);

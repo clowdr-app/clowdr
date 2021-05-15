@@ -120,7 +120,7 @@ function ItemTile({
                     <PageCountText path={itemUrl} fontSize="inherit" />
                 </LinkButton>
             </HStack>
-            {primaryItem && <Element item={primaryItem} />}
+            {primaryItem && <Element element={primaryItem} />}
             {/* <Text>TODO: A marker to show if any of the authors are present</Text> */}
         </VStack>
     );

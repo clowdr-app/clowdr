@@ -9,11 +9,12 @@ import { ExternalLinkButton } from "../../../../Chakra/LinkButton";
 import { Markdown } from "../../../../Text/Markdown";
 import Schedule from "../../Schedule/Schedule";
 import ItemList from "../ItemList";
+import { VideoElement } from "./VideoElement";
 
-export function Element({ item }: { item: ElementDataFragment }): JSX.Element {
-    if (item.data && isElementDataBlob(item.data)) {
-        const blob = item.data;
-        return <ElementInner name={item.name} blob={blob} type={item.typeName} />;
+export function Element({ element }: { element: ElementDataFragment }): JSX.Element {
+    if (element.data && isElementDataBlob(element.data)) {
+        const blob = element.data;
+        return <ElementInner name={element.name} blob={blob} type={element.typeName} elementId={element.id} />;
     }
     return <></>;
 }
@@ -22,10 +23,12 @@ function ElementInner({
     blob,
     type,
     name,
+    elementId,
 }: {
     name: string;
     blob: ElementDataBlob;
     type: Content_ElementType_Enum;
+    elementId: string;
 }): JSX.Element {
     const el = useMemo(() => {
         const latestVersion = R.last(blob);
@@ -109,29 +112,7 @@ function ElementInner({
             case Content_ElementType_Enum.VideoPrepublish:
             case Content_ElementType_Enum.VideoSponsorsFiller:
             case Content_ElementType_Enum.VideoTitles:
-                try {
-                    const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                    if (!bucket || !key) {
-                        throw new Error("Missing S3 URI component");
-                    }
-                    return (
-                        // TODO: Chakra AspectRatio
-                        // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
-                        <Box maxWidth="100%" width="100%" height="0" paddingTop="56.25%" position="relative">
-                            <ReactPlayer
-                                url={`https://${bucket}.s3-${
-                                    import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                                }.amazonaws.com/${key}`}
-                                style={{ maxWidth: "100%", position: "absolute", top: 0, left: 0 }}
-                                width="100%"
-                                height="100%"
-                                controls={true}
-                            />
-                        </Box>
-                    );
-                } catch (e) {
-                    return <>Invalid video URL.</>;
-                }
+                return <VideoElement elementId={elementId} videoElementData={latestVersion.data} />;
 
             case Content_ElementType_Enum.PaperUrl:
                 return (

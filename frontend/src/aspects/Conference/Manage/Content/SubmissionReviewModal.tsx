@@ -251,7 +251,7 @@ function DeferredElement({ item }: { item: ElementDescriptor }): JSX.Element {
     const { isOpen, onOpen } = useDisclosure();
     return isOpen ? (
         <Element
-            item={{
+            element={{
                 ...item,
                 typeName: item.typeName,
             }}

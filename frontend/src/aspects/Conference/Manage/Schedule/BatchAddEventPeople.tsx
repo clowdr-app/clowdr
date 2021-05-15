@@ -744,47 +744,32 @@ async function insertEventPeople(
         update: (cache, { data: _data }) => {
             if (_data?.insert_schedule_EventProgramPerson) {
                 const data = _data.insert_schedule_EventProgramPerson;
-                cache.modify({
-                    fields: {
-                        schedule_Event: (existingRefs: Reference[] = [], { readField }) => {
-                            const eventRefs = existingRefs.filter((ref) =>
-                                events.some((x) => x.id === readField("id", ref))
-                            );
+                data.returning.forEach((x) => {
+                    cache.writeFragment({
+                        data: x,
+                        fragment: EventProgramPersonInfoFragmentDoc,
+                        fragmentName: "EventProgramPersonInfo",
+                    });
 
-                            for (const eventRef of eventRefs) {
-                                const frag = cache.readFragment<EventInfoFragment>({
-                                    fragment: EventInfoFragmentDoc,
-                                    fragmentName: "EventInfo",
-                                    id: eventRef.__ref,
-                                });
-                                if (frag) {
-                                    cache.writeFragment<EventInfoFragment>({
-                                        fragment: EventInfoFragmentDoc,
-                                        fragmentName: "EventInfo",
-                                        data: {
-                                            ...frag,
-                                            eventPeople: [
-                                                ...frag.eventPeople,
-                                                ...data.returning.filter((x) => x.eventId === frag.id),
-                                            ],
-                                        },
-                                    });
-                                }
-                            }
-
-                            return existingRefs;
-                        },
-                        schedule_EventProgramPerson(existingRefs: Reference[] = []) {
-                            const newRefs = data.returning.map((x) =>
-                                cache.writeFragment({
-                                    data: x,
-                                    fragment: EventProgramPersonInfoFragmentDoc,
-                                    fragmentName: "EventProgramPersonInfo",
-                                })
-                            );
-                            return [...existingRefs, ...newRefs];
-                        },
-                    },
+                    const frag = cache.readFragment<EventInfoFragment>({
+                        id: cache.identify({
+                            __typename: "schedule_Event",
+                            id: x.eventId,
+                        }),
+                        fragment: EventInfoFragmentDoc,
+                        fragmentName: "EventInfo",
+                    });
+                    if (frag) {
+                        cache.writeFragment<EventInfoFragment>({
+                            id: cache.identify(frag),
+                            data: {
+                                ...frag,
+                                eventPeople: [...frag.eventPeople, x],
+                            },
+                            fragment: EventInfoFragmentDoc,
+                            fragmentName: "EventInfo",
+                        });
+                    }
                 });
             }
         },

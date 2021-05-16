@@ -65,6 +65,26 @@ export function RaiseHandPanel(): JSX.Element {
             : []
     );
 
+    const completeJoinRef: React.MutableRefObject<() => Promise<void>> = React.useRef(async () => {
+        // Intentionally empty
+    });
+    useEffect(() => {
+        const unobserve = currentEventId
+            ? raiseHand.observe(currentEventId, (update) => {
+                  if ("userId" in update && update.userId === currentUser.id && update.wasAccepted) {
+                      // alert("Auto joining vonage backstage room");
+                      completeJoinRef.current();
+                  }
+              })
+            : () => {
+                  // Intentionally empty
+              };
+
+        return () => {
+            unobserve();
+        };
+    }, [currentEventId, currentUser.id, raiseHand]);
+
     if (isBackstage) {
         // RAISE_HAND_TODO: If is chair/presenter (yes let's include presenters!), give control to admit people
         // RAISE_HAND_TODO: Else, just display the "you are already backstage"
@@ -105,6 +125,7 @@ export function RaiseHandPanel(): JSX.Element {
                     eventId={currentEventId}
                     isRaiseHandPreJoin={true}
                     isRaiseHandWaiting={raisedHandUserIds.includes(currentUser.id)}
+                    completeJoinRef={completeJoinRef}
                 />
                 <RegistrantsList searchedRegistrants={registrants as Registrant[]} />
             </>

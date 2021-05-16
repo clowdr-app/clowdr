@@ -23,6 +23,7 @@ export function VonageRoom({
     raiseHandPrejoinEventId,
     isRaiseHandWaiting,
     requireMicrophone = false,
+    completeJoinRef,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
@@ -31,6 +32,7 @@ export function VonageRoom({
     raiseHandPrejoinEventId: string | null;
     isRaiseHandWaiting?: boolean;
     requireMicrophone?: boolean;
+    completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
 
@@ -42,9 +44,6 @@ export function VonageRoom({
     const roomCouldBeInUse = locationParts[0] === "conference" && locationParts[2] === "room";
 
     const raiseHand = useRaiseHandState();
-    const completeJoinRef: React.MutableRefObject<() => Promise<void>> = React.useRef(async () => {
-        // Intentionally empty
-    });
 
     return (
         <VonageRoomStateProvider>

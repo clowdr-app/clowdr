@@ -13236,10 +13236,6 @@ export type Mutation_Root = {
     delete_schedule_EventProgramPersonRole_by_pk?: Maybe<Schedule_EventProgramPersonRole>;
     /** delete single row from the table: "schedule.EventProgramPerson" */
     delete_schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
-    /** delete data from the table: "schedule.EventRoomJoinRequest" */
-    delete_schedule_EventRoomJoinRequest?: Maybe<Schedule_EventRoomJoinRequest_Mutation_Response>;
-    /** delete single row from the table: "schedule.EventRoomJoinRequest" */
-    delete_schedule_EventRoomJoinRequest_by_pk?: Maybe<Schedule_EventRoomJoinRequest>;
     /** delete data from the table: "schedule.EventTag" */
     delete_schedule_EventTag?: Maybe<Schedule_EventTag_Mutation_Response>;
     /** delete single row from the table: "schedule.EventTag" */
@@ -13577,10 +13573,6 @@ export type Mutation_Root = {
     insert_schedule_EventProgramPersonRole_one?: Maybe<Schedule_EventProgramPersonRole>;
     /** insert a single row into the table: "schedule.EventProgramPerson" */
     insert_schedule_EventProgramPerson_one?: Maybe<Schedule_EventProgramPerson>;
-    /** insert data into the table: "schedule.EventRoomJoinRequest" */
-    insert_schedule_EventRoomJoinRequest?: Maybe<Schedule_EventRoomJoinRequest_Mutation_Response>;
-    /** insert a single row into the table: "schedule.EventRoomJoinRequest" */
-    insert_schedule_EventRoomJoinRequest_one?: Maybe<Schedule_EventRoomJoinRequest>;
     /** insert data into the table: "schedule.EventTag" */
     insert_schedule_EventTag?: Maybe<Schedule_EventTag_Mutation_Response>;
     /** insert a single row into the table: "schedule.EventTag" */
@@ -13646,7 +13638,6 @@ export type Mutation_Root = {
     joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
     joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
-    /** Notifies the realtime service that a given event has ended. */
     notifyEventEnded: NotifyEventEnded;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
@@ -13933,10 +13924,6 @@ export type Mutation_Root = {
     update_schedule_EventProgramPersonRole_by_pk?: Maybe<Schedule_EventProgramPersonRole>;
     /** update single row of the table: "schedule.EventProgramPerson" */
     update_schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
-    /** update data of the table: "schedule.EventRoomJoinRequest" */
-    update_schedule_EventRoomJoinRequest?: Maybe<Schedule_EventRoomJoinRequest_Mutation_Response>;
-    /** update single row of the table: "schedule.EventRoomJoinRequest" */
-    update_schedule_EventRoomJoinRequest_by_pk?: Maybe<Schedule_EventRoomJoinRequest>;
     /** update data of the table: "schedule.EventTag" */
     update_schedule_EventTag?: Maybe<Schedule_EventTag_Mutation_Response>;
     /** update single row of the table: "schedule.EventTag" */
@@ -14704,16 +14691,6 @@ export type Mutation_RootDelete_Schedule_EventProgramPersonRole_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Schedule_EventProgramPerson_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Schedule_EventRoomJoinRequestArgs = {
-    where: Schedule_EventRoomJoinRequest_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Schedule_EventRoomJoinRequest_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -15700,18 +15677,6 @@ export type Mutation_RootInsert_Schedule_EventProgramPersonRole_OneArgs = {
 export type Mutation_RootInsert_Schedule_EventProgramPerson_OneArgs = {
     object: Schedule_EventProgramPerson_Insert_Input;
     on_conflict?: Maybe<Schedule_EventProgramPerson_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Schedule_EventRoomJoinRequestArgs = {
-    objects: Array<Schedule_EventRoomJoinRequest_Insert_Input>;
-    on_conflict?: Maybe<Schedule_EventRoomJoinRequest_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Schedule_EventRoomJoinRequest_OneArgs = {
-    object: Schedule_EventRoomJoinRequest_Insert_Input;
-    on_conflict?: Maybe<Schedule_EventRoomJoinRequest_On_Conflict>;
 };
 
 /** mutation root */
@@ -16975,18 +16940,6 @@ export type Mutation_RootUpdate_Schedule_EventProgramPersonRole_By_PkArgs = {
 export type Mutation_RootUpdate_Schedule_EventProgramPerson_By_PkArgs = {
     _set?: Maybe<Schedule_EventProgramPerson_Set_Input>;
     pk_columns: Schedule_EventProgramPerson_Pk_Columns_Input;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Schedule_EventRoomJoinRequestArgs = {
-    _set?: Maybe<Schedule_EventRoomJoinRequest_Set_Input>;
-    where: Schedule_EventRoomJoinRequest_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Schedule_EventRoomJoinRequest_By_PkArgs = {
-    _set?: Maybe<Schedule_EventRoomJoinRequest_Set_Input>;
-    pk_columns: Schedule_EventRoomJoinRequest_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -18916,12 +18869,6 @@ export type Query_Root = {
     schedule_EventProgramPerson_aggregate: Schedule_EventProgramPerson_Aggregate;
     /** fetch data from the table: "schedule.EventProgramPerson" using primary key columns */
     schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
-    /** fetch data from the table: "schedule.EventRoomJoinRequest" */
-    schedule_EventRoomJoinRequest: Array<Schedule_EventRoomJoinRequest>;
-    /** fetch aggregated fields from the table: "schedule.EventRoomJoinRequest" */
-    schedule_EventRoomJoinRequest_aggregate: Schedule_EventRoomJoinRequest_Aggregate;
-    /** fetch data from the table: "schedule.EventRoomJoinRequest" using primary key columns */
-    schedule_EventRoomJoinRequest_by_pk?: Maybe<Schedule_EventRoomJoinRequest>;
     /** fetch data from the table: "schedule.EventTag" */
     schedule_EventTag: Array<Schedule_EventTag>;
     /** fetch aggregated fields from the table: "schedule.EventTag" */
@@ -20489,26 +20436,6 @@ export type Query_RootSchedule_EventProgramPerson_AggregateArgs = {
 };
 
 export type Query_RootSchedule_EventProgramPerson_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-export type Query_RootSchedule_EventRoomJoinRequestArgs = {
-    distinct_on?: Maybe<Array<Schedule_EventRoomJoinRequest_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Schedule_EventRoomJoinRequest_Order_By>>;
-    where?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
-};
-
-export type Query_RootSchedule_EventRoomJoinRequest_AggregateArgs = {
-    distinct_on?: Maybe<Array<Schedule_EventRoomJoinRequest_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Schedule_EventRoomJoinRequest_Order_By>>;
-    where?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
-};
-
-export type Query_RootSchedule_EventRoomJoinRequest_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -25589,10 +25516,6 @@ export type Schedule_Event = {
     /** An object relationship */
     item?: Maybe<Content_Item>;
     itemId?: Maybe<Scalars["uuid"]>;
-    /** An array relationship */
-    joinRequests: Array<Schedule_EventRoomJoinRequest>;
-    /** An aggregate relationship */
-    joinRequests_aggregate: Schedule_EventRoomJoinRequest_Aggregate;
     name: Scalars["String"];
     /** An object relationship */
     originatingData?: Maybe<Conference_OriginatingData>;
@@ -25647,24 +25570,6 @@ export type Schedule_EventEventTags_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Schedule_EventTag_Order_By>>;
     where?: Maybe<Schedule_EventTag_Bool_Exp>;
-};
-
-/** columns and relationships of "schedule.Event" */
-export type Schedule_EventJoinRequestsArgs = {
-    distinct_on?: Maybe<Array<Schedule_EventRoomJoinRequest_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Schedule_EventRoomJoinRequest_Order_By>>;
-    where?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
-};
-
-/** columns and relationships of "schedule.Event" */
-export type Schedule_EventJoinRequests_AggregateArgs = {
-    distinct_on?: Maybe<Array<Schedule_EventRoomJoinRequest_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Schedule_EventRoomJoinRequest_Order_By>>;
-    where?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
 };
 
 /** columns and relationships of "schedule.Event" */
@@ -26050,236 +25955,6 @@ export enum Schedule_EventProgramPerson_Update_Column {
     UpdatedAt = "updatedAt",
 }
 
-/** columns and relationships of "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest = {
-    __typename?: "schedule_EventRoomJoinRequest";
-    approved: Scalars["Boolean"];
-    /** An object relationship */
-    conference: Conference_Conference;
-    conferenceId: Scalars["uuid"];
-    createdAt: Scalars["timestamptz"];
-    /** An object relationship */
-    event: Schedule_Event;
-    eventId: Scalars["uuid"];
-    /** An object relationship */
-    eventPersonRole: Schedule_EventProgramPersonRole;
-    eventPersonRoleName: Schedule_EventProgramPersonRole_Enum;
-    id: Scalars["uuid"];
-    /** An object relationship */
-    registrant: Registrant_Registrant;
-    registrantId: Scalars["uuid"];
-    updatedAt: Scalars["timestamptz"];
-};
-
-/** aggregated selection of "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Aggregate = {
-    __typename?: "schedule_EventRoomJoinRequest_aggregate";
-    aggregate?: Maybe<Schedule_EventRoomJoinRequest_Aggregate_Fields>;
-    nodes: Array<Schedule_EventRoomJoinRequest>;
-};
-
-/** aggregate fields of "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Aggregate_Fields = {
-    __typename?: "schedule_EventRoomJoinRequest_aggregate_fields";
-    count: Scalars["Int"];
-    max?: Maybe<Schedule_EventRoomJoinRequest_Max_Fields>;
-    min?: Maybe<Schedule_EventRoomJoinRequest_Min_Fields>;
-};
-
-/** aggregate fields of "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Schedule_EventRoomJoinRequest_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Aggregate_Order_By = {
-    count?: Maybe<Order_By>;
-    max?: Maybe<Schedule_EventRoomJoinRequest_Max_Order_By>;
-    min?: Maybe<Schedule_EventRoomJoinRequest_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Arr_Rel_Insert_Input = {
-    data: Array<Schedule_EventRoomJoinRequest_Insert_Input>;
-    /** on conflict condition */
-    on_conflict?: Maybe<Schedule_EventRoomJoinRequest_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "schedule.EventRoomJoinRequest". All fields are combined with a logical 'AND'. */
-export type Schedule_EventRoomJoinRequest_Bool_Exp = {
-    _and?: Maybe<Array<Schedule_EventRoomJoinRequest_Bool_Exp>>;
-    _not?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
-    _or?: Maybe<Array<Schedule_EventRoomJoinRequest_Bool_Exp>>;
-    approved?: Maybe<Boolean_Comparison_Exp>;
-    conference?: Maybe<Conference_Conference_Bool_Exp>;
-    conferenceId?: Maybe<Uuid_Comparison_Exp>;
-    createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-    event?: Maybe<Schedule_Event_Bool_Exp>;
-    eventId?: Maybe<Uuid_Comparison_Exp>;
-    eventPersonRole?: Maybe<Schedule_EventProgramPersonRole_Bool_Exp>;
-    eventPersonRoleName?: Maybe<Schedule_EventProgramPersonRole_Enum_Comparison_Exp>;
-    id?: Maybe<Uuid_Comparison_Exp>;
-    registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
-    registrantId?: Maybe<Uuid_Comparison_Exp>;
-    updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "schedule.EventRoomJoinRequest" */
-export enum Schedule_EventRoomJoinRequest_Constraint {
-    /** unique or primary key constraint */
-    EventRoomJoinRequestEventIdRegistrantIdKey = "EventRoomJoinRequest_eventId_registrantId_key",
-    /** unique or primary key constraint */
-    EventRoomJoinRequestPkey = "EventRoomJoinRequest_pkey",
-}
-
-/** input type for inserting data into table "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Insert_Input = {
-    approved?: Maybe<Scalars["Boolean"]>;
-    conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    event?: Maybe<Schedule_Event_Obj_Rel_Insert_Input>;
-    eventId?: Maybe<Scalars["uuid"]>;
-    eventPersonRole?: Maybe<Schedule_EventProgramPersonRole_Obj_Rel_Insert_Input>;
-    eventPersonRoleName?: Maybe<Schedule_EventProgramPersonRole_Enum>;
-    id?: Maybe<Scalars["uuid"]>;
-    registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
-    registrantId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** aggregate max on columns */
-export type Schedule_EventRoomJoinRequest_Max_Fields = {
-    __typename?: "schedule_EventRoomJoinRequest_max_fields";
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    eventId?: Maybe<Scalars["uuid"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    registrantId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** order by max() on columns of table "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Max_Order_By = {
-    conferenceId?: Maybe<Order_By>;
-    createdAt?: Maybe<Order_By>;
-    eventId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    registrantId?: Maybe<Order_By>;
-    updatedAt?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Schedule_EventRoomJoinRequest_Min_Fields = {
-    __typename?: "schedule_EventRoomJoinRequest_min_fields";
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    eventId?: Maybe<Scalars["uuid"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    registrantId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** order by min() on columns of table "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Min_Order_By = {
-    conferenceId?: Maybe<Order_By>;
-    createdAt?: Maybe<Order_By>;
-    eventId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    registrantId?: Maybe<Order_By>;
-    updatedAt?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Mutation_Response = {
-    __typename?: "schedule_EventRoomJoinRequest_mutation_response";
-    /** number of rows affected by the mutation */
-    affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    returning: Array<Schedule_EventRoomJoinRequest>;
-};
-
-/** on conflict condition type for table "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_On_Conflict = {
-    constraint: Schedule_EventRoomJoinRequest_Constraint;
-    update_columns?: Array<Schedule_EventRoomJoinRequest_Update_Column>;
-    where?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "schedule.EventRoomJoinRequest". */
-export type Schedule_EventRoomJoinRequest_Order_By = {
-    approved?: Maybe<Order_By>;
-    conference?: Maybe<Conference_Conference_Order_By>;
-    conferenceId?: Maybe<Order_By>;
-    createdAt?: Maybe<Order_By>;
-    event?: Maybe<Schedule_Event_Order_By>;
-    eventId?: Maybe<Order_By>;
-    eventPersonRole?: Maybe<Schedule_EventProgramPersonRole_Order_By>;
-    eventPersonRoleName?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    registrant?: Maybe<Registrant_Registrant_Order_By>;
-    registrantId?: Maybe<Order_By>;
-    updatedAt?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: schedule_EventRoomJoinRequest */
-export type Schedule_EventRoomJoinRequest_Pk_Columns_Input = {
-    id: Scalars["uuid"];
-};
-
-/** select columns of table "schedule.EventRoomJoinRequest" */
-export enum Schedule_EventRoomJoinRequest_Select_Column {
-    /** column name */
-    Approved = "approved",
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    EventId = "eventId",
-    /** column name */
-    EventPersonRoleName = "eventPersonRoleName",
-    /** column name */
-    Id = "id",
-    /** column name */
-    RegistrantId = "registrantId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-}
-
-/** input type for updating data in table "schedule.EventRoomJoinRequest" */
-export type Schedule_EventRoomJoinRequest_Set_Input = {
-    approved?: Maybe<Scalars["Boolean"]>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    eventId?: Maybe<Scalars["uuid"]>;
-    eventPersonRoleName?: Maybe<Schedule_EventProgramPersonRole_Enum>;
-    id?: Maybe<Scalars["uuid"]>;
-    registrantId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** update columns of table "schedule.EventRoomJoinRequest" */
-export enum Schedule_EventRoomJoinRequest_Update_Column {
-    /** column name */
-    Approved = "approved",
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    EventId = "eventId",
-    /** column name */
-    EventPersonRoleName = "eventPersonRoleName",
-    /** column name */
-    Id = "id",
-    /** column name */
-    RegistrantId = "registrantId",
-    /** column name */
-    UpdatedAt = "updatedAt",
-}
-
 /** columns and relationships of "schedule.EventTag" */
 export type Schedule_EventTag = {
     __typename?: "schedule_EventTag";
@@ -26524,7 +26199,6 @@ export type Schedule_Event_Bool_Exp = {
     intendedRoomModeName?: Maybe<Room_Mode_Enum_Comparison_Exp>;
     item?: Maybe<Content_Item_Bool_Exp>;
     itemId?: Maybe<Uuid_Comparison_Exp>;
-    joinRequests?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
     name?: Maybe<String_Comparison_Exp>;
     originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
     originatingDataId?: Maybe<Uuid_Comparison_Exp>;
@@ -26565,7 +26239,6 @@ export type Schedule_Event_Insert_Input = {
     intendedRoomModeName?: Maybe<Room_Mode_Enum>;
     item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
     itemId?: Maybe<Scalars["uuid"]>;
-    joinRequests?: Maybe<Schedule_EventRoomJoinRequest_Arr_Rel_Insert_Input>;
     name?: Maybe<Scalars["String"]>;
     originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
@@ -26688,7 +26361,6 @@ export type Schedule_Event_Order_By = {
     intendedRoomModeName?: Maybe<Order_By>;
     item?: Maybe<Content_Item_Order_By>;
     itemId?: Maybe<Order_By>;
-    joinRequests_aggregate?: Maybe<Schedule_EventRoomJoinRequest_Aggregate_Order_By>;
     name?: Maybe<Order_By>;
     originatingData?: Maybe<Conference_OriginatingData_Order_By>;
     originatingDataId?: Maybe<Order_By>;
@@ -27388,12 +27060,6 @@ export type Subscription_Root = {
     schedule_EventProgramPerson_aggregate: Schedule_EventProgramPerson_Aggregate;
     /** fetch data from the table: "schedule.EventProgramPerson" using primary key columns */
     schedule_EventProgramPerson_by_pk?: Maybe<Schedule_EventProgramPerson>;
-    /** fetch data from the table: "schedule.EventRoomJoinRequest" */
-    schedule_EventRoomJoinRequest: Array<Schedule_EventRoomJoinRequest>;
-    /** fetch aggregated fields from the table: "schedule.EventRoomJoinRequest" */
-    schedule_EventRoomJoinRequest_aggregate: Schedule_EventRoomJoinRequest_Aggregate;
-    /** fetch data from the table: "schedule.EventRoomJoinRequest" using primary key columns */
-    schedule_EventRoomJoinRequest_by_pk?: Maybe<Schedule_EventRoomJoinRequest>;
     /** fetch data from the table: "schedule.EventTag" */
     schedule_EventTag: Array<Schedule_EventTag>;
     /** fetch aggregated fields from the table: "schedule.EventTag" */
@@ -28956,26 +28622,6 @@ export type Subscription_RootSchedule_EventProgramPerson_AggregateArgs = {
 };
 
 export type Subscription_RootSchedule_EventProgramPerson_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-export type Subscription_RootSchedule_EventRoomJoinRequestArgs = {
-    distinct_on?: Maybe<Array<Schedule_EventRoomJoinRequest_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Schedule_EventRoomJoinRequest_Order_By>>;
-    where?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
-};
-
-export type Subscription_RootSchedule_EventRoomJoinRequest_AggregateArgs = {
-    distinct_on?: Maybe<Array<Schedule_EventRoomJoinRequest_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Schedule_EventRoomJoinRequest_Order_By>>;
-    where?: Maybe<Schedule_EventRoomJoinRequest_Bool_Exp>;
-};
-
-export type Subscription_RootSchedule_EventRoomJoinRequest_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -32263,7 +31909,10 @@ export type InsertEventParticipantMutationVariables = Exact<{
 export type InsertEventParticipantMutation = { __typename?: "mutation_root" } & {
     insert_schedule_EventProgramPerson_one?: Maybe<
         { __typename?: "schedule_EventProgramPerson" } & Pick<Schedule_EventProgramPerson, "id"> & {
-                person: { __typename?: "collection_ProgramPerson" } & Pick<Collection_ProgramPerson, "id">;
+                person: { __typename?: "collection_ProgramPerson" } & Pick<
+                    Collection_ProgramPerson,
+                    "id" | "name" | "affiliation" | "registrantId"
+                >;
             }
     >;
 };
@@ -33246,7 +32895,10 @@ export const InsertEventParticipantDocument: DocumentNode<
                                         {
                                             kind: "ObjectField",
                                             name: { kind: "Name", value: "update_columns" },
-                                            value: { kind: "ListValue", values: [] },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [{ kind: "EnumValue", value: "roleName" }],
+                                            },
                                         },
                                     ],
                                 },
@@ -33261,7 +32913,12 @@ export const InsertEventParticipantDocument: DocumentNode<
                                     name: { kind: "Name", value: "person" },
                                     selectionSet: {
                                         kind: "SelectionSet",
-                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "name" } },
+                                            { kind: "Field", name: { kind: "Name", value: "affiliation" } },
+                                            { kind: "Field", name: { kind: "Name", value: "registrantId" } },
+                                        ],
                                     },
                                 },
                             ],

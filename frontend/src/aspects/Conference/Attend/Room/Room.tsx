@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, useApolloClient } from "@apollo/client";
 import {
     Alert,
     AlertIcon,
@@ -20,6 +20,7 @@ import {
     Content_ItemType_Enum,
     RoomPage_RoomDetailsFragment,
     Room_EventSummaryFragment,
+    Room_EventSummaryFragmentDoc,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     useRoom_GetDefaultVideoRoomBackendQuery,
@@ -31,6 +32,7 @@ import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
+import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
@@ -369,30 +371,10 @@ function RoomInner({
         [currentRegistrant.id, roomEvents]
     );
     const [backstageSelectedEventId, setBackstageSelectedEventId] = useState<string | null>(null);
-    const backStageEl = useMemo(
-        () => (
-            <RoomBackstage
-                showBackstage={showBackstage}
-                roomName={roomDetails.name}
-                roomEvents={roomEventsForCurrentRegistrant}
-                currentRoomEventId={currentRoomEvent?.id}
-                nextRoomEventId={nextRoomEvent?.id}
-                setWatchStreamForEventId={setWatchStreamForEventId}
-                onEventSelected={setBackstageSelectedEventId}
-                roomChatId={roomDetails.chatId}
-            />
-        ),
-        [
-            currentRoomEvent?.id,
-            nextRoomEvent,
-            roomDetails.chatId,
-            roomDetails.name,
-            roomEventsForCurrentRegistrant,
-            showBackstage,
-        ]
-    );
 
     const raiseHand = useRaiseHandState();
+    const apolloClient = useApolloClient();
+    const currentUser = useCurrentUser().user;
     useEffect(() => {
         if (currentRegistrant.userId) {
             if (
@@ -420,6 +402,80 @@ function RoomInner({
     }, [raiseHand, showBackstage]);
 
     // RAISE_HAND_TODO: setStartTimeOfNextBackstage
+
+    useEffect(() => {
+        raiseHand.setIsBackstage(backstageSelectedEventId !== null);
+    }, [backstageSelectedEventId, raiseHand]);
+    useEffect(() => {
+        const unobserve = currentRoomEvent?.id
+            ? raiseHand.observe(currentRoomEvent.id, (update) => {
+                  if ("userId" in update && update.userId === currentUser.id && update.wasAccepted) {
+                      // alert("Auto revealing backstage room");
+                      const fragmentId = apolloClient.cache.identify({
+                          __typename: "schedule_Event",
+                          id: currentRoomEvent.id,
+                      });
+                      const eventFragment = apolloClient.cache.readFragment<Room_EventSummaryFragment>({
+                          fragment: Room_EventSummaryFragmentDoc,
+                          id: fragmentId,
+                          fragmentName: "Room_EventSummary",
+                      });
+                      if (eventFragment) {
+                          apolloClient.cache.writeFragment({
+                              fragment: Room_EventSummaryFragmentDoc,
+                              id: fragmentId,
+                              fragmentName: "Room_EventSummary",
+                              data: {
+                                  ...eventFragment,
+                                  eventPeople: !eventFragment.eventPeople.some((x) => x.id === update.eventPerson.id)
+                                      ? [
+                                            ...eventFragment.eventPeople,
+                                            {
+                                                id: update.eventPerson.id,
+                                                roleName: update.eventPerson.roleName,
+                                                person: update.eventPerson.person,
+                                            },
+                                        ]
+                                      : eventFragment.eventPeople,
+                              },
+                          });
+                      }
+                      setBackstageSelectedEventId(currentRoomEvent.id);
+                  }
+              })
+            : () => {
+                  // Intentionally empty
+              };
+
+        return () => {
+            unobserve();
+        };
+    }, [apolloClient.cache, currentRoomEvent?.id, currentUser.id, raiseHand]);
+
+    const backStageEl = useMemo(
+        () => (
+            <RoomBackstage
+                showBackstage={showBackstage}
+                roomName={roomDetails.name}
+                roomEvents={roomEventsForCurrentRegistrant}
+                currentRoomEventId={currentRoomEvent?.id}
+                nextRoomEventId={nextRoomEvent?.id}
+                selectedEventId={backstageSelectedEventId}
+                setWatchStreamForEventId={setWatchStreamForEventId}
+                onEventSelected={setBackstageSelectedEventId}
+                roomChatId={roomDetails.chatId}
+            />
+        ),
+        [
+            currentRoomEvent?.id,
+            nextRoomEvent,
+            roomDetails.chatId,
+            roomDetails.name,
+            roomEventsForCurrentRegistrant,
+            showBackstage,
+            backstageSelectedEventId,
+        ]
+    );
 
     const contentEl = useMemo(
         () => (

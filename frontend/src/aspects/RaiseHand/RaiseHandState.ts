@@ -1,8 +1,23 @@
 import { Mutex } from "async-mutex";
+import type { Schedule_EventProgramPersonRole_Enum } from "../../generated/graphql";
 import { Observable, Observer } from "../Chat/ChatGlobalState";
 import { realtimeService } from "../Realtime/RealtimeService";
 
-export type RaisedHandUpdate = { userIds: Set<string> } | { userId: string; wasAccepted: boolean };
+export interface HandRaise_EventPerson {
+    id: string;
+    roleName: Schedule_EventProgramPersonRole_Enum;
+    person: {
+        id: string;
+        name: string;
+        affiliation?: string | null;
+        registrantId?: string | null;
+    };
+}
+
+export type RaisedHandUpdate =
+    | { userIds: Set<string> }
+    | { userId: string; wasAccepted: true; eventPerson: HandRaise_EventPerson }
+    | { userId: string; wasAccepted: false };
 
 export class RaiseHandState {
     private offSocketAvailable: (() => void) | undefined;
@@ -77,12 +92,13 @@ export class RaiseHandState {
             });
         }
     }
-    private onAccepted(data: { eventId: string; userId: string }) {
+    private onAccepted(data: { eventId: string; userId: string; eventPerson: HandRaise_EventPerson }) {
         console.log("Event:handRaise:onAccepted", data);
         if (this.raisedHandsObservers[data.eventId]) {
             this.raisedHandsObservers[data.eventId].publish({
                 userId: data.userId,
                 wasAccepted: true,
+                eventPerson: data.eventPerson,
             });
         }
         if (this.raisedHandsLists[data.eventId]) {

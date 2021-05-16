@@ -43,10 +43,12 @@ export function EventVonageRoom({
     eventId,
     isRaiseHandPreJoin = false,
     isRaiseHandWaiting,
+    completeJoinRef,
 }: {
     eventId: string;
     isRaiseHandPreJoin?: boolean;
     isRaiseHandWaiting?: boolean;
+    completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
 }): JSX.Element {
     const [getEventVonageToken] = useGetEventVonageTokenMutation({
         variables: {
@@ -87,6 +89,7 @@ export function EventVonageRoom({
                                 raiseHandPrejoinEventId={isRaiseHandPreJoin ? eventId : null}
                                 isRaiseHandWaiting={isRaiseHandWaiting}
                                 requireMicrophone={isRaiseHandPreJoin}
+                                completeJoinRef={completeJoinRef}
                             />
                         ) : (
                             <>No room session available.</>

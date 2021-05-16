@@ -32,11 +32,15 @@ gql`
     mutation InsertEventParticipant($eventPerson: schedule_EventProgramPerson_insert_input!) {
         insert_schedule_EventProgramPerson_one(
             object: $eventPerson
-            on_conflict: { constraint: EventProgramPerson_eventId_personId_roleName_key, update_columns: [] }
+            on_conflict: { constraint: EventProgramPerson_eventId_personId_roleName_key, update_columns: [roleName] }
         ) {
             id
+            # Needs to match Room.tsx: fragment Room_EventSummary.eventPeople.person
             person {
                 id
+                name
+                affiliation
+                registrantId
             }
         }
     }
@@ -152,10 +156,12 @@ export function onAcceptHandRaised(
     _socket: Socket
 ): (eventId: any, targetUserId: any) => Promise<void> {
     return async (eventId, targetUserId) => {
-        if (eventId) {
+        if (eventId && targetUserId) {
             try {
                 assert(is<string>(eventId), "Data does not match expected type.");
                 assert(is<string>(targetUserId), "Data does not match expected type.");
+
+                const roleName = Schedule_EventProgramPersonRole_Enum.Participant;
 
                 const eventInfo = await getEventInfo(eventId, {
                     conference: { id: "event:test-conference-id", slug: conferenceSlugs[0] },
@@ -211,9 +217,9 @@ export function onAcceptHandRaised(
                     const existingPersonId = existingPeople.people?.length ? existingPeople.people[0].id : undefined;
                     const registrant = existingPeople.registrants?.length ? existingPeople.registrants[0] : undefined;
                     if (existingPersonId || registrant) {
-                        await testMode(
+                        const insertResult = await testMode(
                             async (apolloClient) => {
-                                await apolloClient.mutate({
+                                const response = await apolloClient.mutate({
                                     mutation: InsertEventParticipantDocument,
                                     variables: {
                                         eventPerson: {
@@ -229,18 +235,35 @@ export function onAcceptHandRaised(
                                                           },
                                                       }
                                                     : undefined,
-                                            roleName: Schedule_EventProgramPersonRole_Enum.Participant,
+                                            roleName,
                                         },
                                     },
                                 });
+                                return response.data?.insert_schedule_EventProgramPerson_one;
                             },
-                            async () => undefined
+                            async () => ({
+                                id: "test-EventProgramPerson-id",
+                                person: {
+                                    id: "test-ProgramPerson-id",
+                                },
+                            })
                         );
 
-                        await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), targetUserId);
-                        socketServer
-                            .in(generateEventHandsRaisedRoomName(eventId))
-                            .emit("event.handRaise.accepted", { eventId, userId: targetUserId });
+                        if (insertResult) {
+                            await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), targetUserId);
+                            socketServer
+                                .in(generateEventHandsRaisedRoomName(eventId))
+                                .emit("event.handRaise.accepted", {
+                                    eventId,
+                                    userId: targetUserId,
+                                    eventPerson: {
+                                        id: insertResult.id,
+                                        eventId,
+                                        roleName,
+                                        person: insertResult.person,
+                                    },
+                                });
+                        }
                     }
                 }
             } catch (e) {
@@ -257,7 +280,7 @@ export function onRejectHandRaised(
     _socket: Socket
 ): (eventId: any, targetUserId: any) => Promise<void> {
     return async (eventId, targetUserId) => {
-        if (eventId) {
+        if (eventId && targetUserId) {
             try {
                 assert(is<string>(eventId), "Data does not match expected type.");
                 assert(is<string>(targetUserId), "Data does not match expected type.");

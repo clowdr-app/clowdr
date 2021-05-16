@@ -24,6 +24,7 @@ export function SharedRoomContextProvider({
                     raiseHandPrejoinEventId={null}
                     isRaiseHandWaiting={undefined}
                     requireMicrophone={false}
+                    completeJoinRef={undefined}
                 />
             </portals.InPortal>
             <portals.InPortal node={chimeNode}>

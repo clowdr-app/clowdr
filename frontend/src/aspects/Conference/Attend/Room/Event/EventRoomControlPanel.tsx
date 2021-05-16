@@ -45,19 +45,6 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
             vonageStreamId
             registrantId
         }
-
-        subscription UnapprovedEventRoomJoinRequests($conferenceId: uuid!, $eventId: uuid!) {
-            schedule_EventRoomJoinRequest(
-                where: { conferenceId: { _eq: $conferenceId }, eventId: { _eq: $eventId }, approved: { _eq: false } }
-            ) {
-                ...EventRoomJoinRequestDetails
-            }
-        }
-
-        fragment EventRoomJoinRequestDetails on schedule_EventRoomJoinRequest {
-            id
-            registrantId
-        }
     `;
 
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);

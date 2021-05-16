@@ -124,13 +124,18 @@ export function EditElementInner(
                     }
 
                     if (updated.type === "required-and-element" || updated.type === "required-only") {
+                        const updatedUploadable = {
+                            ...updated.uploadableElement,
+                        };
+                        delete updatedUploadable.conferenceId;
+                        delete updatedUploadable.hasBeenUploaded;
                         updateUploadableElement({
                             variables: {
                                 uploadableElementId: updated.uploadableElement.id,
-                                uploadableElement: updated.uploadableElement,
+                                uploadableElement: updatedUploadable,
                             },
                             optimisticResponse: {
-                                update_content_UploadableElement_by_pk: updated.uploadableElement,
+                                update_content_UploadableElement_by_pk: updatedUploadable,
                             },
                         });
                     }

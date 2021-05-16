@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, AlertTitle, Box, Flex, useBreakpointValue, useToast, VStack } from "@chakra-ui/react";
+import { Alert, AlertIcon, AlertTitle, Box, Flex, useBreakpointValue, useToast } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
@@ -457,17 +457,10 @@ function VonageRoomInner({
         [registrant.id, camera, connected, participantWidth, state.microphoneIntendedEnabled]
     );
 
-    const preJoin = useMemo(
-        () =>
-            joining || connected ? (
-                <></>
-            ) : (
-                <VStack justifyContent="center" height="100%" width="100%">
-                    <PreJoin cameraPreviewRef={cameraPreviewRef} />
-                </VStack>
-            ),
-        [connected, joining]
-    );
+    const preJoin = useMemo(() => (joining || connected ? <></> : <PreJoin cameraPreviewRef={cameraPreviewRef} />), [
+        connected,
+        joining,
+    ]);
 
     const nobodyElseAlert = useMemo(
         () =>
@@ -529,13 +522,16 @@ function VonageRoomInner({
 
     return (
         <Box width="100%">
-            {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
-            <VonageRoomControlBar
-                onJoinRoom={joinRoom}
-                onLeaveRoom={leaveRoom}
-                joining={joining}
-                joinRoomButtonText={joinRoomButtonText}
-            />
+            <Flex mt={4} justifyContent="center" alignItems="center" flexWrap="wrap" w="100%">
+                {preJoin}
+                {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
+                <VonageRoomControlBar
+                    onJoinRoom={joinRoom}
+                    onLeaveRoom={leaveRoom}
+                    joining={joining}
+                    joinRoomButtonText={joinRoomButtonText}
+                />
+            </Flex>
             <Box position="relative" mb={8} width="100%">
                 {viewPublishedScreenShareEl}
 
@@ -558,8 +554,6 @@ function VonageRoomInner({
                 </Flex>
 
                 {nobodyElseAlert}
-
-                {preJoin}
             </Box>
         </Box>
     );

@@ -1,5 +1,5 @@
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
-import { Box, Button, Tag, TagLabel, TagLeftIcon, useToast, VStack, Wrap, WrapItem } from "@chakra-ui/react";
+import { Button, Stack, Tag, TagLabel, TagLeftIcon, useToast } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
@@ -204,131 +204,82 @@ export function VonageRoomControlBar({
     */
     return (
         <>
-            <VStack my={4}>
-                <Wrap p={2}>
-                    <WrapItem>
-                        <Box>
-                            {vonage.state.type === StateType.Connected ? (
-                                <Button colorScheme="green" onClick={onLeaveRoom}>
-                                    Leave Room
-                                </Button>
-                            ) : (
-                                <Button
-                                    colorScheme="green"
-                                    w="10em"
-                                    h="6ex"
-                                    fontSize="xl"
-                                    onClick={onJoinRoom}
-                                    isLoading={joining}
-                                >
-                                    {joinRoomButtonText}
-                                </Button>
-                            )}
-                        </Box>
-                    </WrapItem>
-                    <WrapItem>
-                        <Button isLoading={isOpening} leftIcon={<SettingsIcon />} onClick={() => onOpen(true, true)}>
-                            Settings
-                        </Button>
-                    </WrapItem>
-                    {state.cameraStream ? (
-                        <WrapItem>
-                            <Button onClick={stopCamera} colorScheme="purple">
-                                <FAIcon icon="video" iconStyle="s" />
-                                <span style={{ marginLeft: "1rem" }}>Stop camera</span>
-                            </Button>
-                        </WrapItem>
-                    ) : (
-                        <WrapItem>
-                            <Button isLoading={isOpening} onClick={startCamera}>
-                                <FAIcon icon="video-slash" iconStyle="s" />
-                                <span style={{ marginLeft: "1rem" }}>Start camera</span>
-                            </Button>
-                        </WrapItem>
-                    )}
-                    {state.microphoneStream ? (
-                        <WrapItem>
-                            <Button onClick={stopMicrophone} colorScheme="purple">
-                                <FAIcon icon="microphone" iconStyle="s" />
-                                <span style={{ marginLeft: "1rem" }}>Stop microphone</span>
-                            </Button>
-                        </WrapItem>
-                    ) : (
-                        <WrapItem>
-                            <Button isLoading={isOpening} onClick={startMicrophone}>
-                                <FAIcon icon="microphone-slash" iconStyle="s" />
-                                <span style={{ marginLeft: "1rem" }}>Start microphone</span>
-                            </Button>
-                        </WrapItem>
-                    )}
-                    {vonage.state.type === StateType.Connected && receivingScreenShare ? (
-                        <WrapItem>
-                            <Tag
-                                size="sm"
-                                variant="outline"
-                                colorScheme="blue"
-                                px={2}
-                                py="4px"
-                                ml={1}
-                                mr="auto"
-                                maxW="190px"
-                            >
-                                <TagLeftIcon as={CheckCircleIcon} />
-                                <TagLabel whiteSpace="normal">
-                                    Someone else is sharing their screen at the moment
-                                </TagLabel>
-                            </Tag>
-                        </WrapItem>
-                    ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
-                        <WrapItem>
-                            <Button onClick={stopScreenShare} mr="auto" colorScheme="red">
-                                <FAIcon icon="desktop" iconStyle="s" mr="auto" />
-                                <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
-                            </Button>
-                        </WrapItem>
-                    ) : vonage.state.type === StateType.Connected &&
-                      vonage.state.initialisedState.screenSharingSupported ? (
-                        <WrapItem>
-                            <Button onClick={startScreenShare} mr="auto">
-                                <FAIcon icon="desktop" iconStyle="s" mr="auto" />
-                                <span style={{ marginLeft: "1rem" }}>Share screen</span>
-                            </Button>
-                        </WrapItem>
-                    ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
-                        <WrapItem>
-                            <Tag
-                                size="sm"
-                                variant="outline"
-                                colorScheme="blue"
-                                px={2}
-                                py="4px"
-                                ml={1}
-                                mr="auto"
-                                maxW="170px"
-                            >
-                                <TagLeftIcon as={CheckCircleIcon} />
-                                <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
-                            </Tag>
-                        </WrapItem>
-                    ) : (
-                        <WrapItem>
-                            <Tag
-                                size="sm"
-                                variant="outline"
-                                colorScheme="red"
-                                px={2}
-                                py="4px"
-                                ml={1}
-                                mr="auto"
-                                maxW="190px"
-                            >
-                                <TagLeftIcon as={NotAllowedIcon} />
-                                <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
-                            </Tag>
-                        </WrapItem>
-                    )}
-                </Wrap>
-            </VStack>
+            <Stack
+                p={2}
+                direction={vonage.state.type === StateType.Connected ? "row" : "column"}
+                justifyContent="center"
+                alignItems="stretch"
+            >
+                <Button isLoading={isOpening} leftIcon={<SettingsIcon />} onClick={() => onOpen(true, true)}>
+                    Choose microphone / camera
+                </Button>
+                {state.microphoneStream ? (
+                    <Button onClick={stopMicrophone} colorScheme="purple">
+                        <FAIcon icon="microphone" iconStyle="s" />
+                        <span style={{ marginLeft: "1rem" }}>Mute</span>
+                    </Button>
+                ) : (
+                    <Button isLoading={isOpening} onClick={startMicrophone}>
+                        <FAIcon icon="microphone-slash" iconStyle="s" />
+                        <span style={{ marginLeft: "1rem" }}>Unmute</span>
+                    </Button>
+                )}
+                {state.cameraStream ? (
+                    <Button onClick={stopCamera} colorScheme="purple">
+                        <FAIcon icon="video" iconStyle="s" />
+                        <span style={{ marginLeft: "1rem" }}>Stop video</span>
+                    </Button>
+                ) : (
+                    <Button isLoading={isOpening} onClick={startCamera}>
+                        <FAIcon icon="video-slash" iconStyle="s" />
+                        <span style={{ marginLeft: "1rem" }}>Start video</span>
+                    </Button>
+                )}
+                {vonage.state.type === StateType.Connected && receivingScreenShare ? (
+                    <Tag size="sm" variant="outline" colorScheme="blue" px={2} py="4px" ml={1} mr="auto" maxW="190px">
+                        <TagLeftIcon as={CheckCircleIcon} />
+                        <TagLabel whiteSpace="normal">Someone else is sharing their screen at the moment</TagLabel>
+                    </Tag>
+                ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
+                    <Button onClick={stopScreenShare} mr="auto" colorScheme="red">
+                        <FAIcon icon="desktop" iconStyle="s" mr="auto" />
+                        <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
+                    </Button>
+                ) : vonage.state.type === StateType.Connected &&
+                  vonage.state.initialisedState.screenSharingSupported ? (
+                    <Button onClick={startScreenShare} mr="auto">
+                        <FAIcon icon="desktop" iconStyle="s" mr="auto" />
+                        <span style={{ marginLeft: "1rem" }}>Share screen</span>
+                    </Button>
+                ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
+                    <Tag size="md" variant="outline" colorScheme="blue">
+                        <TagLeftIcon as={CheckCircleIcon} />
+                        <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
+                    </Tag>
+                ) : (
+                    <Tag size="md" variant="outline" colorScheme="red">
+                        <TagLeftIcon as={NotAllowedIcon} />
+                        <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
+                    </Tag>
+                )}
+                {vonage.state.type === StateType.Connected ? (
+                    <Button colorScheme="green" onClick={onLeaveRoom}>
+                        Leave Room
+                    </Button>
+                ) : (
+                    <Button
+                        size="xl"
+                        colorScheme="green"
+                        h="auto"
+                        py={4}
+                        fontSize="xl"
+                        onClick={onJoinRoom}
+                        isLoading={joining}
+                    >
+                        {joinRoomButtonText}
+                    </Button>
+                )}
+            </Stack>
             <DeviceChooserModal
                 cameraId={
                     state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? state.preferredCameraId ?? null

@@ -60,7 +60,7 @@ export default function DeviceChooserModal({
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>
-                        <Heading as="h3" size="lg">
+                        <Heading as="h3" size="md">
                             {showMicrophone ? "Microphone" : ""}
                             {showMicrophone && showCamera ? " and " : ""}
                             {showCamera ? "Camera" : ""}

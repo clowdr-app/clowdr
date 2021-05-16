@@ -217,7 +217,7 @@ export function RoomBackstage({
                 ) : undefined}
             </Box>
         );
-    }, [activeEvents, selectedEventId]);
+    }, [activeEvents, roomChatId, selectedEventId]);
 
     const sharedRoomContext = useSharedRoomContext();
 

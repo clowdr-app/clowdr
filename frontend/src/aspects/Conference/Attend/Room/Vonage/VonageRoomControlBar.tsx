@@ -209,6 +209,8 @@ export function VonageRoomControlBar({
                 direction={vonage.state.type === StateType.Connected ? "row" : "column"}
                 justifyContent="center"
                 alignItems="stretch"
+                flexWrap="wrap"
+                gridRowGap={vonage.state.type === StateType.Connected ? 2 : undefined}
             >
                 <Button isLoading={isOpening} leftIcon={<SettingsIcon />} onClick={() => onOpen(true, true)}>
                     Choose microphone / camera

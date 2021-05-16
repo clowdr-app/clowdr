@@ -30,6 +30,7 @@ import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
+import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
@@ -244,7 +245,6 @@ function RoomInner({
     }, [currentRegistrant.id, currentRoomEvent, nonCurrentLiveEventsInNext20Mins]);
 
     const [watchStreamForEventId, setWatchStreamForEventId] = useState<string | null>(null);
-    const [backStageRoomJoined, setBackStageRoomJoined] = useState<boolean>(false);
     const alreadyBackstage = useRef<boolean>(false);
 
     const hasBackstage = !!roomEvents.some((event) =>
@@ -258,7 +258,7 @@ function RoomInner({
     const showBackstage =
         hasBackstage &&
         notExplicitlyWatchingCurrentOrNextEvent &&
-        (backStageRoomJoined || presentingCurrentOrUpcomingSoonEvent || alreadyBackstage.current);
+        (presentingCurrentOrUpcomingSoonEvent || alreadyBackstage.current);
 
     alreadyBackstage.current = showBackstage;
 
@@ -378,7 +378,6 @@ function RoomInner({
                 currentRoomEventId={currentRoomEvent?.id}
                 nextRoomEventId={nextRoomEvent?.id}
                 setWatchStreamForEventId={setWatchStreamForEventId}
-                onRoomJoined={setBackStageRoomJoined}
                 onEventSelected={setBackstageSelectedEventId}
                 roomChatId={roomDetails.chatId}
             />
@@ -392,6 +391,35 @@ function RoomInner({
             showBackstage,
         ]
     );
+
+    const raiseHand = useRaiseHandState();
+    useEffect(() => {
+        if (currentRegistrant.userId) {
+            if (
+                currentRoomEvent?.id &&
+                (currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                    currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.QAndA)
+            ) {
+                raiseHand.setCurrentEventId(currentRoomEvent.id, currentRegistrant.userId);
+            } else {
+                raiseHand.setCurrentEventId(null, currentRegistrant.userId);
+            }
+        }
+
+        return () => {
+            if (currentRegistrant.userId) {
+                raiseHand.setCurrentEventId(null, currentRegistrant.userId);
+            }
+        };
+    }, [raiseHand, currentRegistrant.userId, currentRoomEvent?.intendedRoomModeName, currentRoomEvent?.id]);
+    useEffect(() => {
+        raiseHand.setIsBackstage(showBackstage);
+        return () => {
+            raiseHand.setIsBackstage(false);
+        };
+    }, [raiseHand, showBackstage]);
+
+    // RAISE_HAND_TODO: setStartTimeOfNextBackstage
 
     const contentEl = useMemo(
         () => (

@@ -1,29 +1,19 @@
-import React, { PropsWithChildren, useMemo } from "react";
+import React, { ReactNode, useEffect } from "react";
+import { RaiseHandState, State } from "./RaiseHandState";
 
-interface RaiseHandContext {
-    // TODO
+export const RaiseHandStateContext = React.createContext<RaiseHandState>(State);
+
+export function useRaiseHandState(): RaiseHandState {
+    return React.useContext(RaiseHandStateContext);
 }
 
-const raiseHandContext = React.createContext<RaiseHandContext | undefined>(undefined);
+export function RaiseHandProvider({ children }: { children?: ReactNode }): JSX.Element {
+    useEffect(() => {
+        State.setup();
+        return () => {
+            State.teardown();
+        };
+    }, []);
 
-export function useRaiseHand(): RaiseHandContext {
-    const ctx = React.useContext(raiseHandContext);
-    if (!ctx) {
-        throw new Error("Context not available - are you outside the provider?");
-    }
-    return ctx;
-}
-
-export function RaiseHandProvider({
-    children,
-}: PropsWithChildren<{
-    // TODO
-}>): JSX.Element {
-    const ctx = useMemo(
-        () => ({
-            // TODO
-        }),
-        []
-    );
-    return <raiseHandContext.Provider value={ctx}>{children}</raiseHandContext.Provider>;
+    return <RaiseHandStateContext.Provider value={State}>{children}</RaiseHandStateContext.Provider>;
 }

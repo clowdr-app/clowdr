@@ -16,7 +16,15 @@ export function SharedRoomContextProvider({
     return (
         <>
             <portals.InPortal node={vonageNode}>
-                <VonageRoom getAccessToken={async () => ""} vonageSessionId="" disable={true} isBackstageRoom={false} />
+                <VonageRoom
+                    getAccessToken={async () => ""}
+                    vonageSessionId=""
+                    disable={true}
+                    isBackstageRoom={false}
+                    raiseHandPrejoinEventId={null}
+                    isRaiseHandWaiting={undefined}
+                    requireMicrophone={false}
+                />
             </portals.InPortal>
             <portals.InPortal node={chimeNode}>
                 <ChimeRoom disable={true} roomId="" />

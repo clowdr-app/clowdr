@@ -5,6 +5,7 @@ import { is } from "typescript-is";
 import {
     GetExistingProgramPersonDocument,
     InsertEventParticipantDocument,
+    Permissions_Permission_Enum,
     Room_ManagementMode_Enum,
     Schedule_EventProgramPersonRole_Enum,
 } from "../generated/graphql";
@@ -12,6 +13,7 @@ import { getEventInfo } from "../lib/cache/roomInfo";
 import { generateEventHandsRaisedKeyName, generateEventHandsRaisedRoomName } from "../lib/handRaise";
 import { canAccessEvent } from "../lib/permissions";
 import { redisClientP } from "../redis";
+import { socketServer } from "../servers/socket-server";
 import { testMode } from "../testMode";
 
 gql`
@@ -33,6 +35,9 @@ gql`
             on_conflict: { constraint: EventProgramPerson_eventId_personId_roleName_key, update_columns: [] }
         ) {
             id
+            person {
+                id
+            }
         }
     }
 `;
@@ -41,8 +46,8 @@ export function onRaiseHand(
     conferenceSlugs: string[],
     userId: string,
     socketId: string,
-    socket: Socket
-): (chatId: any) => Promise<void> {
+    _socket: Socket
+): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {
@@ -57,12 +62,11 @@ export function onRaiseHand(
                         "event:test-conference-id",
                         "event:test-room-id",
                         "event:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
+                        Room_ManagementMode_Enum.Public
                     )
                 ) {
                     await redisClientP.zadd(generateEventHandsRaisedKeyName(eventId), Date.now(), userId);
-                    socket
+                    socketServer
                         .in(generateEventHandsRaisedRoomName(eventId))
                         .emit("event.handRaise.raised", { eventId, userId });
                 }
@@ -77,8 +81,8 @@ export function onLowerHand(
     conferenceSlugs: string[],
     userId: string,
     socketId: string,
-    socket: Socket
-): (chatId: any) => Promise<void> {
+    _socket: Socket
+): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {
@@ -93,12 +97,11 @@ export function onLowerHand(
                         "event:test-conference-id",
                         "event:test-room-id",
                         "event:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
+                        Room_ManagementMode_Enum.Public
                     )
                 ) {
                     await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), userId);
-                    socket
+                    socketServer
                         .in(generateEventHandsRaisedRoomName(eventId))
                         .emit("event.handRaise.lowered", { eventId, userId });
                 }
@@ -114,7 +117,7 @@ export function onFetchHandsRaised(
     userId: string,
     socketId: string,
     socket: Socket
-): (chatId: any) => Promise<void> {
+): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {
@@ -129,15 +132,14 @@ export function onFetchHandsRaised(
                         "event:test-conference-id",
                         "event:test-room-id",
                         "event:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
+                        Room_ManagementMode_Enum.Public
                     )
                 ) {
-                    const userIds = redisClientP.zrange(generateEventHandsRaisedKeyName(eventId), 0, -1);
+                    const userIds = await redisClientP.zrange(generateEventHandsRaisedKeyName(eventId), 0, -1);
                     socket.emit("event.handRaise.listing", { eventId, userIds });
                 }
             } catch (e) {
-                console.error(`Error processing event.handRaise.check (socket: ${socketId}, eventId: ${eventId})`, e);
+                console.error(`Error processing event.handRaise.fetch (socket: ${socketId}, eventId: ${eventId})`, e);
             }
         }
     };
@@ -147,19 +149,20 @@ export function onAcceptHandRaised(
     conferenceSlugs: string[],
     userId: string,
     socketId: string,
-    socket: Socket
-): (chatId: any) => Promise<void> {
-    return async (eventId) => {
+    _socket: Socket
+): (eventId: any, targetUserId: any) => Promise<void> {
+    return async (eventId, targetUserId) => {
         if (eventId) {
             try {
                 assert(is<string>(eventId), "Data does not match expected type.");
+                assert(is<string>(targetUserId), "Data does not match expected type.");
 
                 const eventInfo = await getEventInfo(eventId, {
                     conference: { id: "event:test-conference-id", slug: conferenceSlugs[0] },
                     room: {
                         id: "event:test-room-id",
                         name: "event:test-room-name",
-                        people: [{ registrantId: "event:test-registrant-id", userId }],
+                        people: [{ registrantId: "event:test-registrant-id", userId: targetUserId }],
                         managementMode: Room_ManagementMode_Enum.Public,
                     },
                 });
@@ -175,7 +178,12 @@ export function onAcceptHandRaised(
                         "event:test-room-id",
                         "event:test-room-name",
                         Room_ManagementMode_Enum.Public,
-                        [],
+                        [
+                            Permissions_Permission_Enum.ConferenceViewAttendees,
+                            Permissions_Permission_Enum.ConferenceManageSchedule,
+                            Permissions_Permission_Enum.ConferenceModerateAttendees,
+                            Permissions_Permission_Enum.ConferenceManageAttendees,
+                        ],
                         eventInfo
                     ))
                 ) {
@@ -185,7 +193,7 @@ export function onAcceptHandRaised(
                                 query: GetExistingProgramPersonDocument,
                                 variables: {
                                     conferenceId: eventInfo.conference.id,
-                                    userId,
+                                    userId: targetUserId,
                                 },
                             });
 
@@ -229,10 +237,10 @@ export function onAcceptHandRaised(
                             async () => undefined
                         );
 
-                        await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), userId);
-                        socket
+                        await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), targetUserId);
+                        socketServer
                             .in(generateEventHandsRaisedRoomName(eventId))
-                            .emit("event.handRaise.accepted", { eventId, userId });
+                            .emit("event.handRaise.accepted", { eventId, userId: targetUserId });
                     }
                 }
             } catch (e) {
@@ -246,12 +254,13 @@ export function onRejectHandRaised(
     conferenceSlugs: string[],
     userId: string,
     socketId: string,
-    socket: Socket
-): (chatId: any) => Promise<void> {
-    return async (eventId) => {
+    _socket: Socket
+): (eventId: any, targetUserId: any) => Promise<void> {
+    return async (eventId, targetUserId) => {
         if (eventId) {
             try {
                 assert(is<string>(eventId), "Data does not match expected type.");
+                assert(is<string>(targetUserId), "Data does not match expected type.");
 
                 if (
                     // TODO: Enforce event person role
@@ -263,14 +272,13 @@ export function onRejectHandRaised(
                         "event:test-conference-id",
                         "event:test-room-id",
                         "event:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
+                        Room_ManagementMode_Enum.Public
                     )
                 ) {
-                    await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), userId);
-                    socket
+                    await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), targetUserId);
+                    socketServer
                         .in(generateEventHandsRaisedRoomName(eventId))
-                        .emit("event.handRaise.rejected", { eventId, userId });
+                        .emit("event.handRaise.rejected", { eventId, userId: targetUserId });
                 }
             } catch (e) {
                 console.error(`Error processing event.handRaise.reject (socket: ${socketId}, eventId: ${eventId})`, e);
@@ -284,7 +292,7 @@ export function onObserveEvent(
     userId: string,
     socketId: string,
     socket: Socket
-): (chatId: any) => Promise<void> {
+): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {
@@ -300,8 +308,7 @@ export function onObserveEvent(
                         "event:test-conference-id",
                         "event:test-room-id",
                         "event:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
+                        Room_ManagementMode_Enum.Public
                     )
                 ) {
                     await socket.join(generateEventHandsRaisedRoomName(eventId));
@@ -318,7 +325,7 @@ export function onUnobserveEvent(
     _userId: string,
     socketId: string,
     socket: Socket
-): (chatId: any) => Promise<void> {
+): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {

@@ -39,7 +39,15 @@ gql`
     }
 `;
 
-export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
+export function EventVonageRoom({
+    eventId,
+    isRaiseHandPreJoin = false,
+    isRaiseHandWaiting,
+}: {
+    eventId: string;
+    isRaiseHandPreJoin?: boolean;
+    isRaiseHandWaiting?: boolean;
+}): JSX.Element {
     const [getEventVonageToken] = useGetEventVonageTokenMutation({
         variables: {
             eventId: eventId,
@@ -67,7 +75,7 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
         <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
                 <VStack justifyContent="stretch" w="100%">
-                    <EventRoomControlPanel event={event} />
+                    {!isRaiseHandPreJoin ? <EventRoomControlPanel event={event} /> : undefined}
                     <Box w="100%">
                         {event.eventVonageSession && sharedRoomContext ? (
                             <portals.OutPortal
@@ -76,6 +84,9 @@ export function EventVonageRoom({ eventId }: { eventId: string }): JSX.Element {
                                 getAccessToken={getAccessToken}
                                 disable={false}
                                 isBackstageRoom={true}
+                                raiseHandPrejoinEventId={isRaiseHandPreJoin ? eventId : null}
+                                isRaiseHandWaiting={isRaiseHandWaiting}
+                                requireMicrophone={isRaiseHandPreJoin}
                             />
                         ) : (
                             <>No room session available.</>

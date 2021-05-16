@@ -28,7 +28,9 @@ import * as portals from "react-reverse-portal";
 import { Room_EventSummaryFragment, Room_Mode_Enum } from "../../../../generated/graphql";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Generic/useRealTime";
+import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
+import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
 import { formatRemainingTime } from "./Event/LiveIndicator";
 
@@ -144,7 +146,6 @@ export function RoomBackstage({
     currentRoomEventId,
     nextRoomEventId,
     setWatchStreamForEventId,
-    onRoomJoined,
     onEventSelected,
     roomChatId,
 }: {
@@ -154,12 +155,13 @@ export function RoomBackstage({
     currentRoomEventId: string | null;
     nextRoomEventId: string | null;
     setWatchStreamForEventId: (eventId: string | null) => void;
-    onRoomJoined: (joined: boolean) => void;
     onEventSelected: (eventId: string | null) => void;
     roomChatId: string | null | undefined;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
+    const raiseHand = useRaiseHandState();
+    const currentUser = useCurrentUser().user;
 
     const sortedEvents = useMemo(
         () =>
@@ -177,7 +179,9 @@ export function RoomBackstage({
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
     useEffect(() => {
         onEventSelected(selectedEventId);
-    }, [onEventSelected, selectedEventId]);
+
+        raiseHand.setIsBackstage(selectedEventId !== null);
+    }, [onEventSelected, selectedEventId, raiseHand]);
 
     const [activeEvents, setActiveEvents] = useState<Room_EventSummaryFragment[] | null>(null);
     useEffect(() => {
@@ -265,11 +269,10 @@ export function RoomBackstage({
                         getAccessToken={() => ""}
                         disable={true}
                         isBackstageRoom={true}
-                        onRoomJoined={onRoomJoined}
                     />
                 </Box>
             ) : undefined,
-        [onRoomJoined, selectedEventId, sharedRoomContext]
+        [selectedEventId, sharedRoomContext]
     );
 
     const streamAccess = useMemo(
@@ -331,6 +334,27 @@ export function RoomBackstage({
             ) : undefined,
         [currentRoomEventId, isWatchStreamConfirmOpen, nextRoomEventId, selectedEventId, setWatchStreamForEventId]
     );
+
+    useEffect(() => {
+        const unobserve = currentRoomEventId
+            ? raiseHand.observe(currentRoomEventId, (update) => {
+                  if ("userId" in update && update.userId === currentUser.id && update.wasAccepted) {
+                      // Note: Update is guaranteed to be for currentRoomEventId
+                      // RAISE_HAND_TODO: Force/auto join the vonage room - this callback happens first thing that the user has been accepted into the room
+                      //                  (need to check/test the ordering of when the vonage room disappears from the sidebar)
+                      // RAISE_HAND_TODO: Figure out how to tell the RoomInner code that the backstage needs to be shown now
+                      //                  (perhaps we just re-run the fetch event details query immediately, but that might not be compatible with the todo above)
+                      alert("Auto joining vonaage backstage room");
+                  }
+              })
+            : () => {
+                  // Intentionally empty
+              };
+
+        return () => {
+            unobserve();
+        };
+    }, [currentRoomEventId, currentUser.id, raiseHand]);
 
     return useMemo(
         () =>

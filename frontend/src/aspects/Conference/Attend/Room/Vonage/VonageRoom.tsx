@@ -5,6 +5,7 @@ import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useLocation } from "react-router-dom";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
+import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import PlaceholderImage from "../PlaceholderImage";
@@ -19,11 +20,17 @@ export function VonageRoom({
     getAccessToken,
     disable,
     isBackstageRoom,
+    raiseHandPrejoinEventId,
+    isRaiseHandWaiting,
+    requireMicrophone = false,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
     disable: boolean;
     isBackstageRoom: boolean;
+    raiseHandPrejoinEventId: string | null;
+    isRaiseHandWaiting?: boolean;
+    requireMicrophone?: boolean;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
 
@@ -34,6 +41,11 @@ export function VonageRoom({
     // Array(5) [ "conference", "demo2021", "room", "96b73184-a5ae-4356-81d7-5f99689d1413" ]
     const roomCouldBeInUse = locationParts[0] === "conference" && locationParts[2] === "room";
 
+    const raiseHand = useRaiseHandState();
+    const completeJoinRef: React.MutableRefObject<() => Promise<void>> = React.useRef(async () => {
+        // Intentionally empty
+    });
+
     return (
         <VonageRoomStateProvider>
             <ChatProfileModalProvider>
@@ -43,7 +55,32 @@ export function VonageRoom({
                         stop={!roomCouldBeInUse || disable}
                         getAccessToken={getAccessToken}
                         isBackstageRoom={isBackstageRoom}
-                        joinRoomButtonText={isBackstageRoom ? "Join the backstage" : undefined}
+                        requireMicrophone={requireMicrophone}
+                        joinRoomButtonText={
+                            isBackstageRoom ? (raiseHandPrejoinEventId ? "I'm ready" : "Join the backstage") : undefined
+                        }
+                        overrideJoining={
+                            isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
+                        }
+                        beginJoin={
+                            isBackstageRoom && raiseHandPrejoinEventId
+                                ? () => {
+                                      if (raiseHandPrejoinEventId) {
+                                          raiseHand.raise(raiseHandPrejoinEventId);
+                                      }
+                                  }
+                                : undefined
+                        }
+                        cancelJoin={
+                            isBackstageRoom && raiseHandPrejoinEventId
+                                ? () => {
+                                      if (raiseHandPrejoinEventId) {
+                                          raiseHand.lower(raiseHandPrejoinEventId);
+                                      }
+                                  }
+                                : undefined
+                        }
+                        completeJoin={completeJoinRef}
                     />
                 ) : undefined}
             </ChatProfileModalProvider>
@@ -58,6 +95,12 @@ function VonageRoomInner({
     isBackstageRoom,
     onRoomJoined,
     joinRoomButtonText,
+
+    requireMicrophone,
+    overrideJoining,
+    beginJoin,
+    cancelJoin,
+    completeJoin,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
@@ -65,6 +108,12 @@ function VonageRoomInner({
     isBackstageRoom: boolean;
     onRoomJoined?: (_joined: boolean) => void;
     joinRoomButtonText?: string;
+
+    requireMicrophone: boolean;
+    overrideJoining?: boolean;
+    beginJoin?: () => void;
+    cancelJoin?: () => void;
+    completeJoin?: React.MutableRefObject<() => Promise<void>>;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
@@ -80,7 +129,8 @@ function VonageRoomInner({
     const screenPublishContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
-    const [joining, setJoining] = useState<boolean>(false);
+    const [_joining, setJoining] = useState<boolean>(false);
+    const joining = overrideJoining !== undefined ? overrideJoining : _joining;
 
     const resolutionBP = useBreakpointValue<"low" | "normal" | "high">({
         base: "low",
@@ -93,29 +143,36 @@ function VonageRoomInner({
         screenSharingActive || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
     const participantWidth = cameraResolution === "low" ? 150 : 300;
 
-    const joinRoom = useCallback(async () => {
-        console.log("Joining room");
-        setJoining(true);
+    const joinRoom = useCallback(() => {
+        async function doJoinRoom() {
+            console.log("Joining room");
+            setJoining(true);
 
-        try {
-            await vonage.connectToSession();
-            if (onRoomJoined) {
-                onRoomJoined(true);
+            try {
+                await vonage.connectToSession();
+                onRoomJoined?.(true);
+                await vonage.publishCamera(
+                    cameraPublishContainerRef.current as HTMLElement,
+                    state.cameraIntendedEnabled ? state.preferredCameraId : null,
+                    state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null,
+                    isBackstageRoom ? "1280x720" : "640x480"
+                );
+            } catch (e) {
+                console.error("Failed to join room", e);
+                toast({
+                    status: "error",
+                    description: "Cannot connect to room",
+                });
+            } finally {
+                setJoining(false);
             }
-            await vonage.publishCamera(
-                cameraPublishContainerRef.current as HTMLElement,
-                state.cameraIntendedEnabled ? state.preferredCameraId : null,
-                state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null,
-                isBackstageRoom ? "1280x720" : "640x480"
-            );
-        } catch (e) {
-            console.error("Failed to join room", e);
-            toast({
-                status: "error",
-                description: "Cannot connect to room",
-            });
-        } finally {
-            setJoining(false);
+        }
+
+        if (beginJoin && cancelJoin && completeJoin) {
+            completeJoin.current = doJoinRoom;
+            beginJoin();
+        } else {
+            doJoinRoom();
         }
     }, [
         vonage,
@@ -126,15 +183,16 @@ function VonageRoomInner({
         state.preferredMicrophoneId,
         isBackstageRoom,
         toast,
+        beginJoin,
+        cancelJoin,
+        completeJoin,
     ]);
 
     const leaveRoom = useCallback(async () => {
         if (connected) {
             try {
                 await vonage.disconnect();
-                if (onRoomJoined) {
-                    onRoomJoined(false);
-                }
+                onRoomJoined?.(false);
             } catch (e) {
                 console.warn("Failed to leave room", e);
             }
@@ -457,10 +515,7 @@ function VonageRoomInner({
         [registrant.id, camera, connected, participantWidth, state.microphoneIntendedEnabled]
     );
 
-    const preJoin = useMemo(() => (joining || connected ? <></> : <PreJoin cameraPreviewRef={cameraPreviewRef} />), [
-        connected,
-        joining,
-    ]);
+    const preJoin = useMemo(() => (connected ? <></> : <PreJoin cameraPreviewRef={cameraPreviewRef} />), [connected]);
 
     const nobodyElseAlert = useMemo(
         () =>
@@ -528,8 +583,10 @@ function VonageRoomInner({
                 <VonageRoomControlBar
                     onJoinRoom={joinRoom}
                     onLeaveRoom={leaveRoom}
+                    onCancelJoinRoom={cancelJoin}
                     joining={joining}
                     joinRoomButtonText={joinRoomButtonText}
+                    requireMicrophone={requireMicrophone}
                 />
             </Flex>
             <Box position="relative" mb={8} width="100%">

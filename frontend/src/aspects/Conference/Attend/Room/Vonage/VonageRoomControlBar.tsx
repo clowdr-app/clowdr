@@ -1,5 +1,5 @@
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
-import { Button, Stack, Tag, TagLabel, TagLeftIcon, useToast } from "@chakra-ui/react";
+import { Box, Button, chakra, Stack, Tag, TagLabel, TagLeftIcon, Tooltip, useToast } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
@@ -10,13 +10,19 @@ import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 export function VonageRoomControlBar({
     onJoinRoom,
     onLeaveRoom,
+    onCancelJoinRoom,
     joining,
     joinRoomButtonText = "Join Room",
+    joiningRoomButtonText = "Waiting to be admitted",
+    requireMicrophone,
 }: {
     onJoinRoom: () => void;
     onLeaveRoom: () => void;
+    onCancelJoinRoom?: () => void;
     joining: boolean;
     joinRoomButtonText?: string;
+    joiningRoomButtonText?: string;
+    requireMicrophone: boolean;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const vonage = useVonageGlobalState();
@@ -212,27 +218,32 @@ export function VonageRoomControlBar({
                 flexWrap="wrap"
                 gridRowGap={vonage.state.type === StateType.Connected ? 2 : undefined}
             >
-                <Button isLoading={isOpening} leftIcon={<SettingsIcon />} onClick={() => onOpen(true, true)}>
+                <Button
+                    isLoading={isOpening}
+                    leftIcon={<SettingsIcon />}
+                    onClick={() => onOpen(true, !joining || !requireMicrophone)}
+                    isDisabled={joining}
+                >
                     Choose microphone / camera
                 </Button>
                 {state.microphoneStream ? (
-                    <Button onClick={stopMicrophone} colorScheme="purple">
+                    <Button onClick={stopMicrophone} colorScheme="purple" isDisabled={joining}>
                         <FAIcon icon="microphone" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Mute</span>
                     </Button>
                 ) : (
-                    <Button isLoading={isOpening} onClick={startMicrophone}>
+                    <Button isLoading={isOpening} onClick={startMicrophone} isDisabled={joining}>
                         <FAIcon icon="microphone-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Unmute</span>
                     </Button>
                 )}
                 {state.cameraStream ? (
-                    <Button onClick={stopCamera} colorScheme="purple">
+                    <Button onClick={stopCamera} colorScheme="purple" isDisabled={joining}>
                         <FAIcon icon="video" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Stop video</span>
                     </Button>
                 ) : (
-                    <Button isLoading={isOpening} onClick={startCamera}>
+                    <Button isLoading={isOpening} onClick={startCamera} isDisabled={joining}>
                         <FAIcon icon="video-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Start video</span>
                     </Button>
@@ -243,13 +254,13 @@ export function VonageRoomControlBar({
                         <TagLabel whiteSpace="normal">Someone else is sharing their screen at the moment</TagLabel>
                     </Tag>
                 ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
-                    <Button onClick={stopScreenShare} mr="auto" colorScheme="red">
+                    <Button onClick={stopScreenShare} mr="auto" colorScheme="red" isDisabled={joining}>
                         <FAIcon icon="desktop" iconStyle="s" mr="auto" />
                         <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
                     </Button>
                 ) : vonage.state.type === StateType.Connected &&
                   vonage.state.initialisedState.screenSharingSupported ? (
-                    <Button onClick={startScreenShare} mr="auto">
+                    <Button onClick={startScreenShare} mr="auto" isDisabled={joining}>
                         <FAIcon icon="desktop" iconStyle="s" mr="auto" />
                         <span style={{ marginLeft: "1rem" }}>Share screen</span>
                     </Button>
@@ -269,17 +280,33 @@ export function VonageRoomControlBar({
                         Leave Room
                     </Button>
                 ) : (
-                    <Button
-                        size="xl"
-                        colorScheme="green"
-                        h="auto"
-                        py={4}
-                        fontSize="xl"
-                        onClick={onJoinRoom}
-                        isLoading={joining}
-                    >
-                        {joinRoomButtonText}
-                    </Button>
+                    <Tooltip label={requireMicrophone ? "Microphone required" : undefined}>
+                        <Box w="100%">
+                            <Button
+                                w="100%"
+                                size="xl"
+                                colorScheme="green"
+                                h="auto"
+                                py={4}
+                                onClick={joining ? onCancelJoinRoom : onJoinRoom}
+                                isLoading={!onCancelJoinRoom && joining}
+                                isDisabled={requireMicrophone && !state.microphoneIntendedEnabled}
+                                whiteSpace="normal"
+                                overflow="hidden"
+                                display="inline-flex"
+                                flexDir="column"
+                            >
+                                <chakra.span fontSize="xl">
+                                    {joining ? joiningRoomButtonText : joinRoomButtonText}
+                                </chakra.span>
+                                {joining ? (
+                                    <chakra.span mt={2} fontSize="xs">
+                                        (Click to cancel)
+                                    </chakra.span>
+                                ) : undefined}
+                            </Button>
+                        </Box>
+                    </Tooltip>
                 )}
             </Stack>
             <DeviceChooserModal

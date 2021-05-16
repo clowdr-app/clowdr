@@ -32262,7 +32262,9 @@ export type InsertEventParticipantMutationVariables = Exact<{
 
 export type InsertEventParticipantMutation = { __typename?: "mutation_root" } & {
     insert_schedule_EventProgramPerson_one?: Maybe<
-        { __typename?: "schedule_EventProgramPerson" } & Pick<Schedule_EventProgramPerson, "id">
+        { __typename?: "schedule_EventProgramPerson" } & Pick<Schedule_EventProgramPerson, "id"> & {
+                person: { __typename?: "collection_ProgramPerson" } & Pick<Collection_ProgramPerson, "id">;
+            }
     >;
 };
 
@@ -33252,7 +33254,17 @@ export const InsertEventParticipantDocument: DocumentNode<
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "person" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                                    },
+                                },
+                            ],
                         },
                     },
                 ],

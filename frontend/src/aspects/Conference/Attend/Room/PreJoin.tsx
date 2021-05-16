@@ -1,7 +1,8 @@
 import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
-import { Box, Center, Heading, useToast, VStack } from "@chakra-ui/react";
+import { Box, Center, HStack, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
+import { FAIcon } from "../../../Icons/FAIcon";
 import { backgroundImage } from "../../../Vonage/resources";
 import { useVonageRoom } from "../../../Vonage/useVonageRoom";
 
@@ -20,8 +21,7 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
     }, [cameraPreviewRef, state.cameraStream, toast]);
 
     return (
-        <VStack>
-            <Heading fontSize="3xl">Preview</Heading>
+        <VStack w="auto">
             <Box position="relative">
                 <Box position="absolute" width="100%" height="100%">
                     <Box
@@ -52,19 +52,26 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                         transform: "rotateY(180deg)",
                     }}
                 />
-                <Box position="absolute" bottom="5" right="5">
+                <HStack position="absolute" bottom="10px" right="20px" w="auto" h="min-content">
                     {state.microphoneStream ? (
-                        <VolumeMeter
-                            audioContext={AudioContext}
-                            height={50}
-                            width={50}
-                            shape={VmShape.VM_STEPPED}
-                            stream={Optional.of(state.microphoneStream)}
-                        />
+                        <>
+                            <VolumeMeter
+                                audioContext={AudioContext}
+                                height={25}
+                                width={50}
+                                shape={VmShape.VM_FLAT}
+                                stream={Optional.of(state.microphoneStream)}
+                                blocks={10}
+                                css={{
+                                    w: "100%",
+                                }}
+                            />
+                            <FAIcon iconStyle="s" icon="volume-up" fontSize="lg" />
+                        </>
                     ) : (
-                        <></>
+                        <FAIcon iconStyle="s" icon="volume-mute" fontSize="xl" />
                     )}
-                </Box>
+                </HStack>
             </Box>
         </VStack>
     );

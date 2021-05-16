@@ -7447,6 +7447,10 @@
                         _in:
                         - CHAIR
                         - PRESENTER
+          - person:
+              registrant:
+                userId:
+                  _eq: X-Hasura-User-Id
   event_triggers:
   - name: EventPersonDeleted
     definition:

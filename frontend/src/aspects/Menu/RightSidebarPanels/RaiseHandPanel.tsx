@@ -1,5 +1,6 @@
 import { Box, Spinner } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { Schedule_EventProgramPersonRole_Enum } from "../../../generated/graphql";
 import { EventVonageRoom } from "../../Conference/Attend/Room/Event/EventVonageRoom";
 import { useRegistrants } from "../../Conference/RegistrantsContext";
 import type { Registrant } from "../../Conference/useCurrentRegistrant";
@@ -11,7 +12,10 @@ export function RaiseHandPanel(): JSX.Element {
     const raiseHand = useRaiseHandState();
     const currentUser = useCurrentUser().user;
 
-    const [currentEventId, setCurrentEventId] = useState<string | null>(null);
+    const [currentEventId, setCurrentEventId] = useState<{
+        eventId: string;
+        userRole: Schedule_EventProgramPersonRole_Enum;
+    } | null>(null);
     const [isBackstage, setIsBackstage] = useState<boolean>(false);
     const [startTimeOfNextBackstage, setStartTimeOfNextBackstage] = useState<number | null>(null);
     const [raisedHandUserIds, setRaisedHandUserIds] = useState<string[] | null>(null);
@@ -39,7 +43,7 @@ export function RaiseHandPanel(): JSX.Element {
 
     useEffect(() => {
         const unobserve = currentEventId
-            ? raiseHand.observe(currentEventId, (update) => {
+            ? raiseHand.observe(currentEventId.eventId, (update) => {
                   if ("userIds" in update) {
                       setRaisedHandUserIds([...update.userIds.values()]);
                   }
@@ -70,7 +74,7 @@ export function RaiseHandPanel(): JSX.Element {
     });
     useEffect(() => {
         const unobserve = currentEventId
-            ? raiseHand.observe(currentEventId, (update) => {
+            ? raiseHand.observe(currentEventId.eventId, (update) => {
                   if ("userId" in update && update.userId === currentUser.id && update.wasAccepted) {
                       // alert("Auto joining vonage backstage room");
                       completeJoinRef.current();
@@ -95,8 +99,12 @@ export function RaiseHandPanel(): JSX.Element {
                     searchedRegistrants={registrants as Registrant[]}
                     action={(registrantId) => {
                         const userId = registrants.find((x) => x.id === registrantId)?.userId;
-                        if (currentEventId && userId) {
-                            raiseHand.accept(currentEventId, userId);
+                        if (
+                            currentEventId &&
+                            userId &&
+                            currentEventId.userRole === Schedule_EventProgramPersonRole_Enum.Chair
+                        ) {
+                            raiseHand.accept(currentEventId.eventId, userId);
                         }
                     }}
                     // RAISE_HAND_TODO: Clone this component and customise the `action` property to enable accept/reject logic
@@ -122,7 +130,7 @@ export function RaiseHandPanel(): JSX.Element {
                 )}
 
                 <EventVonageRoom
-                    eventId={currentEventId}
+                    eventId={currentEventId.eventId}
                     isRaiseHandPreJoin={true}
                     isRaiseHandWaiting={raisedHandUserIds.includes(currentUser.id)}
                     completeJoinRef={completeJoinRef}

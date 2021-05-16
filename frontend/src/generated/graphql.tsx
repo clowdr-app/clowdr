@@ -33617,6 +33617,14 @@ export type VideoPlayer_GetElementQueryVariables = Exact<{
 
 export type VideoPlayer_GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly isHidden: boolean, readonly data: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
+export type DeleteEventParticipantMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type DeleteEventParticipantMutation = { readonly __typename?: 'mutation_root', readonly delete_schedule_EventProgramPerson?: Maybe<{ readonly __typename?: 'schedule_EventProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any }> }> };
+
 export type Schedule_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
 
 export type Schedule_EventTagFragment = { readonly __typename?: 'schedule_EventTag', readonly id: any, readonly tag: (
@@ -39048,6 +39056,44 @@ export function useVideoPlayer_GetElementLazyQuery(baseOptions?: Apollo.LazyQuer
 export type VideoPlayer_GetElementQueryHookResult = ReturnType<typeof useVideoPlayer_GetElementQuery>;
 export type VideoPlayer_GetElementLazyQueryHookResult = ReturnType<typeof useVideoPlayer_GetElementLazyQuery>;
 export type VideoPlayer_GetElementQueryResult = Apollo.QueryResult<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>;
+export const DeleteEventParticipantDocument = gql`
+    mutation DeleteEventParticipant($eventId: uuid!, $registrantId: uuid!) {
+  delete_schedule_EventProgramPerson(
+    where: {eventId: {_eq: $eventId}, person: {registrantId: {_eq: $registrantId}}, roleName: {_eq: PARTICIPANT}}
+  ) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type DeleteEventParticipantMutationFn = Apollo.MutationFunction<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>;
+
+/**
+ * __useDeleteEventParticipantMutation__
+ *
+ * To run a mutation, you first call `useDeleteEventParticipantMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEventParticipantMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteEventParticipantMutation, { data, loading, error }] = useDeleteEventParticipantMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useDeleteEventParticipantMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>(DeleteEventParticipantDocument, options);
+      }
+export type DeleteEventParticipantMutationHookResult = ReturnType<typeof useDeleteEventParticipantMutation>;
+export type DeleteEventParticipantMutationResult = Apollo.MutationResult<DeleteEventParticipantMutation>;
+export type DeleteEventParticipantMutationOptions = Apollo.BaseMutationOptions<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>;
 export const Schedule_SelectItemDocument = gql`
     query Schedule_SelectItem($id: uuid!) {
   content_Item_by_pk(id: $id) {

@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import {
     Content_ItemType_Enum,
@@ -23,6 +23,7 @@ import {
     Room_EventSummaryFragmentDoc,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
+    Schedule_EventProgramPersonRole_Enum,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
@@ -377,70 +378,109 @@ function RoomInner({
     const currentUser = useCurrentUser().user;
     useEffect(() => {
         if (currentRegistrant.userId) {
-            if (
+            if (showBackstage) {
+                const isPresenterOrChairOfCurrentEvent =
+                    currentRoomEvent !== null &&
+                    (currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                        currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+                    currentRoomEvent.eventPeople.some(
+                        (person) =>
+                            person.person.registrantId === currentRegistrant.id &&
+                            person.roleName !== Schedule_EventProgramPersonRole_Enum.Participant
+                    );
+
+                raiseHand.setCurrentEventId(
+                    backstageSelectedEventId === currentRoomEvent?.id ? backstageSelectedEventId : null,
+                    currentRegistrant.userId,
+                    isPresenterOrChairOfCurrentEvent
+                        ? Schedule_EventProgramPersonRole_Enum.Chair
+                        : Schedule_EventProgramPersonRole_Enum.Participant
+                );
+            } else if (
                 currentRoomEvent?.id &&
                 (currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Presentation ||
                     currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.QAndA)
             ) {
-                raiseHand.setCurrentEventId(currentRoomEvent.id, currentRegistrant.userId);
+                raiseHand.setCurrentEventId(
+                    currentRoomEvent.id,
+                    currentRegistrant.userId,
+                    Schedule_EventProgramPersonRole_Enum.Participant
+                );
             } else {
-                raiseHand.setCurrentEventId(null, currentRegistrant.userId);
+                raiseHand.setCurrentEventId(
+                    null,
+                    currentRegistrant.userId,
+                    Schedule_EventProgramPersonRole_Enum.Participant
+                );
             }
         }
 
         return () => {
             if (currentRegistrant.userId) {
-                raiseHand.setCurrentEventId(null, currentRegistrant.userId);
+                raiseHand.setCurrentEventId(
+                    null,
+                    currentRegistrant.userId,
+                    Schedule_EventProgramPersonRole_Enum.Participant
+                );
             }
         };
-    }, [raiseHand, currentRegistrant.userId, currentRoomEvent?.intendedRoomModeName, currentRoomEvent?.id]);
+    }, [
+        showBackstage,
+        backstageSelectedEventId,
+        currentRegistrant.id,
+        currentRegistrant.userId,
+        currentRoomEvent,
+        raiseHand,
+    ]);
+
+    // RAISE_HAND_TODO: setStartTimeOfNextBackstage
+
     useEffect(() => {
         raiseHand.setIsBackstage(showBackstage);
         return () => {
             raiseHand.setIsBackstage(false);
         };
-    }, [raiseHand, showBackstage]);
-
-    // RAISE_HAND_TODO: setStartTimeOfNextBackstage
-
-    useEffect(() => {
-        raiseHand.setIsBackstage(backstageSelectedEventId !== null);
-    }, [backstageSelectedEventId, raiseHand]);
+    }, [raiseHand, showBackstage, currentRoomEvent?.id, backstageSelectedEventId]);
     useEffect(() => {
         const unobserve = currentRoomEvent?.id
             ? raiseHand.observe(currentRoomEvent.id, (update) => {
                   if ("userId" in update && update.userId === currentUser.id && update.wasAccepted) {
-                      // alert("Auto revealing backstage room");
-                      const fragmentId = apolloClient.cache.identify({
-                          __typename: "schedule_Event",
-                          id: currentRoomEvent.id,
-                      });
-                      const eventFragment = apolloClient.cache.readFragment<Room_EventSummaryFragment>({
-                          fragment: Room_EventSummaryFragmentDoc,
-                          id: fragmentId,
-                          fragmentName: "Room_EventSummary",
-                      });
-                      if (eventFragment) {
-                          apolloClient.cache.writeFragment({
+                      setTimeout(() => {
+                          // alert("Auto revealing backstage room");
+                          const fragmentId = apolloClient.cache.identify({
+                              __typename: "schedule_Event",
+                              id: currentRoomEvent.id,
+                          });
+                          const eventFragment = apolloClient.cache.readFragment<Room_EventSummaryFragment>({
                               fragment: Room_EventSummaryFragmentDoc,
                               id: fragmentId,
                               fragmentName: "Room_EventSummary",
-                              data: {
-                                  ...eventFragment,
-                                  eventPeople: !eventFragment.eventPeople.some((x) => x.id === update.eventPerson.id)
-                                      ? [
-                                            ...eventFragment.eventPeople,
-                                            {
-                                                id: update.eventPerson.id,
-                                                roleName: update.eventPerson.roleName,
-                                                person: update.eventPerson.person,
-                                            },
-                                        ]
-                                      : eventFragment.eventPeople,
-                              },
                           });
-                      }
-                      setBackstageSelectedEventId(currentRoomEvent.id);
+                          if (eventFragment) {
+                              apolloClient.cache.writeFragment({
+                                  fragment: Room_EventSummaryFragmentDoc,
+                                  id: fragmentId,
+                                  fragmentName: "Room_EventSummary",
+                                  data: {
+                                      ...eventFragment,
+                                      eventPeople: !eventFragment.eventPeople.some(
+                                          (x) => x.id === update.eventPerson.id
+                                      )
+                                          ? [
+                                                ...eventFragment.eventPeople,
+                                                {
+                                                    id: update.eventPerson.id,
+                                                    roleName: update.eventPerson.roleName,
+                                                    person: update.eventPerson.person,
+                                                },
+                                            ]
+                                          : eventFragment.eventPeople,
+                                  },
+                              });
+                          }
+                          setWatchStreamForEventId(null);
+                          setBackstageSelectedEventId(currentRoomEvent.id);
+                      }, 150);
                   }
               })
             : () => {
@@ -451,6 +491,29 @@ function RoomInner({
             unobserve();
         };
     }, [apolloClient.cache, currentRoomEvent?.id, currentUser.id, raiseHand]);
+
+    const onLeaveBackstage = useCallback(() => {
+        const isParticipantOfCurrentEvent =
+            currentRoomEvent !== null &&
+            (currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+            currentRoomEvent.eventPeople.some(
+                (person) =>
+                    person.person.registrantId === currentRegistrant.id &&
+                    person.roleName === Schedule_EventProgramPersonRole_Enum.Participant
+            );
+
+        const isPresenterOfUpcomingSoonEvent = !!nonCurrentLiveEventsInNext20Mins?.some((event) =>
+            event?.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id)
+        );
+
+        if (isParticipantOfCurrentEvent && currentRoomEvent) {
+            setBackstageSelectedEventId(null);
+            if (!isPresenterOfUpcomingSoonEvent) {
+                setWatchStreamForEventId(currentRoomEvent.id);
+            }
+        }
+    }, [currentRegistrant.id, currentRoomEvent, nonCurrentLiveEventsInNext20Mins]);
 
     const backStageEl = useMemo(
         () => (
@@ -464,16 +527,18 @@ function RoomInner({
                 setWatchStreamForEventId={setWatchStreamForEventId}
                 onEventSelected={setBackstageSelectedEventId}
                 roomChatId={roomDetails.chatId}
+                onLeave={onLeaveBackstage}
             />
         ),
         [
-            currentRoomEvent?.id,
-            nextRoomEvent,
-            roomDetails.chatId,
-            roomDetails.name,
-            roomEventsForCurrentRegistrant,
             showBackstage,
+            roomDetails.name,
+            roomDetails.chatId,
+            roomEventsForCurrentRegistrant,
+            currentRoomEvent?.id,
+            nextRoomEvent?.id,
             backstageSelectedEventId,
+            onLeaveBackstage,
         ]
     );
 

@@ -48,11 +48,13 @@ function EventBackstage({
     selectedEventId,
     setSelectedEventId,
     roomChatId,
+    onLeave,
 }: {
     roomChatId: string | undefined | null;
     event: Room_EventSummaryFragment;
     selectedEventId: string | null;
     setSelectedEventId: (value: string | null) => void;
+    onLeave?: () => void;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const greyBorderColour = useColorModeValue(gray900, gray100);
@@ -107,7 +109,7 @@ function EventBackstage({
         [borderColour, category, event.id, event.startTime, isSelected, setSelectedEventId, title]
     );
 
-    const vonageRoom = useMemo(() => <EventVonageRoom eventId={event.id} />, [event.id]);
+    const vonageRoom = useMemo(() => <EventVonageRoom eventId={event.id} onLeave={onLeave} />, [event.id, onLeave]);
     const area = useMemo(
         () =>
             selectedEventId === event.id ? (
@@ -147,6 +149,7 @@ export function RoomBackstage({
     selectedEventId,
     onEventSelected,
     roomChatId,
+    onLeave,
 }: {
     showBackstage: boolean;
     roomName: string;
@@ -157,6 +160,7 @@ export function RoomBackstage({
     onEventSelected: React.Dispatch<React.SetStateAction<string | null>>;
     roomChatId: string | null | undefined;
     selectedEventId: string | null;
+    onLeave?: () => void;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
@@ -188,7 +192,7 @@ export function RoomBackstage({
         );
     }, [now, selectedEventId, sortedEvents]);
     useEffect(() => {
-        onEventSelected((oldId) => (activeEvents?.length === 1 ? activeEvents[0].id : oldId));
+        onEventSelected((oldId) => (!oldId && activeEvents?.length === 1 ? activeEvents[0].id : oldId));
     }, [activeEvents, onEventSelected]);
 
     const eventRooms = useMemo(() => {
@@ -201,6 +205,7 @@ export function RoomBackstage({
                             selectedEventId={selectedEventId}
                             setSelectedEventId={onEventSelected}
                             roomChatId={roomChatId}
+                            onLeave={onLeave}
                         />
                     </Box>
                 ))}
@@ -212,7 +217,7 @@ export function RoomBackstage({
                 ) : undefined}
             </Box>
         );
-    }, [activeEvents, roomChatId, selectedEventId, onEventSelected]);
+    }, [activeEvents, roomChatId, selectedEventId, onEventSelected, onLeave]);
 
     const sharedRoomContext = useSharedRoomContext();
 
@@ -252,9 +257,10 @@ export function RoomBackstage({
 
     const blankRoom = useMemo(
         () =>
-            !selectedEventId && sharedRoomContext ? (
+            showBackstage && !selectedEventId && sharedRoomContext ? (
                 <Box display="none">
                     <portals.OutPortal
+                        eventId={null}
                         node={sharedRoomContext.vonagePortalNode}
                         vonageSessionId=""
                         getAccessToken={() => ""}
@@ -263,7 +269,7 @@ export function RoomBackstage({
                     />
                 </Box>
             ) : undefined,
-        [selectedEventId, sharedRoomContext]
+        [selectedEventId, sharedRoomContext, showBackstage]
     );
 
     const streamAccess = useMemo(

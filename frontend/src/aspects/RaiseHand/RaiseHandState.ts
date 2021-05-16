@@ -218,8 +218,11 @@ export class RaiseHandState {
         };
     }
 
-    private currentEventId: string | null = null;
-    public CurrentEventId: Observable<string | null> = new Observable((observer) => {
+    private currentEventId: { eventId: string; userRole: Schedule_EventProgramPersonRole_Enum } | null = null;
+    public CurrentEventId: Observable<{
+        eventId: string;
+        userRole: Schedule_EventProgramPersonRole_Enum;
+    } | null> = new Observable((observer) => {
         observer(this.currentEventId);
     });
     /**
@@ -227,17 +230,27 @@ export class RaiseHandState {
      * @param eventId
      * @param userId
      */
-    public setCurrentEventId(eventId: string | null, userId: string): void {
-        if (this.currentEventId !== eventId) {
+    public setCurrentEventId(
+        eventId: string | null,
+        userId: string,
+        userRole: Schedule_EventProgramPersonRole_Enum
+    ): void {
+        if (this.currentEventId?.eventId !== eventId) {
             if (
                 this.currentEventId !== null &&
-                this.raisedHandsLists[this.currentEventId] &&
-                this.raisedHandsLists[this.currentEventId].has(userId)
+                this.raisedHandsLists[this.currentEventId.eventId] &&
+                this.raisedHandsLists[this.currentEventId.eventId].has(userId)
             ) {
-                this.lower(this.currentEventId);
+                this.lower(this.currentEventId.eventId);
             }
 
-            this.currentEventId = eventId;
+            this.currentEventId =
+                eventId !== null
+                    ? {
+                          eventId,
+                          userRole,
+                      }
+                    : null;
 
             this.CurrentEventId.publish(this.currentEventId);
         }

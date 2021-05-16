@@ -1,8 +1,14 @@
+import { gql, useApolloClient } from "@apollo/client";
 import { Alert, AlertIcon, AlertTitle, Box, Flex, useBreakpointValue, useToast } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useLocation } from "react-router-dom";
+import {
+    Room_EventSummaryFragment,
+    Room_EventSummaryFragmentDoc,
+    useDeleteEventParticipantMutation,
+} from "../../../../../generated/graphql";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
@@ -15,7 +21,24 @@ import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 import { VonageSubscriber } from "./VonageSubscriber";
 
+gql`
+    mutation DeleteEventParticipant($eventId: uuid!, $registrantId: uuid!) {
+        delete_schedule_EventProgramPerson(
+            where: {
+                eventId: { _eq: $eventId }
+                person: { registrantId: { _eq: $registrantId } }
+                roleName: { _eq: PARTICIPANT }
+            }
+        ) {
+            returning {
+                id
+            }
+        }
+    }
+`;
+
 export function VonageRoom({
+    eventId,
     vonageSessionId,
     getAccessToken,
     disable,
@@ -24,7 +47,9 @@ export function VonageRoom({
     isRaiseHandWaiting,
     requireMicrophone = false,
     completeJoinRef,
+    onLeave,
 }: {
+    eventId: string | null;
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
     disable: boolean;
@@ -33,6 +58,7 @@ export function VonageRoom({
     isRaiseHandWaiting?: boolean;
     requireMicrophone?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
+    onLeave?: () => void;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
 
@@ -44,6 +70,9 @@ export function VonageRoom({
     const roomCouldBeInUse = locationParts[0] === "conference" && locationParts[2] === "room";
 
     const raiseHand = useRaiseHandState();
+
+    const [deleteEventParticipant] = useDeleteEventParticipantMutation();
+    const apolloClient = useApolloClient();
 
     return (
         <VonageRoomStateProvider>
@@ -80,6 +109,57 @@ export function VonageRoom({
                                 : undefined
                         }
                         completeJoin={completeJoinRef}
+                        onRoomJoined={
+                            isBackstageRoom && eventId
+                                ? (joined) => {
+                                      if (!joined) {
+                                          if (eventId) {
+                                              deleteEventParticipant({
+                                                  variables: {
+                                                      eventId,
+                                                      registrantId: mRegistrant.id,
+                                                  },
+                                                  update: (cache, response) => {
+                                                      if (
+                                                          response.data?.delete_schedule_EventProgramPerson?.returning
+                                                      ) {
+                                                          const data =
+                                                              response.data.delete_schedule_EventProgramPerson
+                                                                  .returning;
+                                                          const fragmentId = apolloClient.cache.identify({
+                                                              __typename: "schedule_Event",
+                                                              id: eventId,
+                                                          });
+                                                          const eventFragment = apolloClient.cache.readFragment<Room_EventSummaryFragment>(
+                                                              {
+                                                                  fragment: Room_EventSummaryFragmentDoc,
+                                                                  id: fragmentId,
+                                                                  fragmentName: "Room_EventSummary",
+                                                              }
+                                                          );
+                                                          if (eventFragment) {
+                                                              apolloClient.cache.writeFragment({
+                                                                  fragment: Room_EventSummaryFragmentDoc,
+                                                                  id: fragmentId,
+                                                                  fragmentName: "Room_EventSummary",
+                                                                  data: {
+                                                                      ...eventFragment,
+                                                                      eventPeople: eventFragment.eventPeople.filter(
+                                                                          (x) => !data.some((y) => x.id === y.id)
+                                                                      ),
+                                                                  },
+                                                              });
+                                                          }
+                                                      }
+                                                  },
+                                              });
+                                          }
+
+                                          onLeave?.();
+                                      }
+                                  }
+                                : undefined
+                        }
                     />
                 ) : undefined}
             </ChatProfileModalProvider>
@@ -129,7 +209,7 @@ function VonageRoomInner({
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
     const [_joining, setJoining] = useState<boolean>(false);
-    const joining = overrideJoining !== undefined ? overrideJoining : _joining;
+    const joining = !!overrideJoining || _joining;
 
     const resolutionBP = useBreakpointValue<"low" | "normal" | "high">({
         base: "low",

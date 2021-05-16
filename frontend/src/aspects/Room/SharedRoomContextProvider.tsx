@@ -18,6 +18,7 @@ export function SharedRoomContextProvider({
             <portals.InPortal node={vonageNode}>
                 <VonageRoom
                     getAccessToken={async () => ""}
+                    eventId={null}
                     vonageSessionId=""
                     disable={true}
                     isBackstageRoom={false}

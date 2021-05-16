@@ -44,11 +44,13 @@ export function EventVonageRoom({
     isRaiseHandPreJoin = false,
     isRaiseHandWaiting,
     completeJoinRef,
+    onLeave,
 }: {
     eventId: string;
     isRaiseHandPreJoin?: boolean;
     isRaiseHandWaiting?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
+    onLeave?: () => void;
 }): JSX.Element {
     const [getEventVonageToken] = useGetEventVonageTokenMutation({
         variables: {
@@ -82,6 +84,7 @@ export function EventVonageRoom({
                         {event.eventVonageSession && sharedRoomContext ? (
                             <portals.OutPortal
                                 node={sharedRoomContext.vonagePortalNode}
+                                eventId={event.id}
                                 vonageSessionId={event.eventVonageSession.sessionId}
                                 getAccessToken={getAccessToken}
                                 disable={false}
@@ -90,6 +93,7 @@ export function EventVonageRoom({
                                 isRaiseHandWaiting={isRaiseHandWaiting}
                                 requireMicrophone={isRaiseHandPreJoin}
                                 completeJoinRef={completeJoinRef}
+                                onLeave={onLeave}
                             />
                         ) : (
                             <>No room session available.</>

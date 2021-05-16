@@ -32,6 +32,10 @@ export const redisClientP = {
     zadd: promisify((key: string, score: number, member: string, cb?: Callback<number>) =>
         redisClient.zadd(key, score, member, cb)
     ),
+    zrem: promisify((key: string, member: string, cb?: Callback<number>) => redisClient.zrem(key, member, cb)),
+    zrange: promisify((key: string, start: number, stop: number, cb?: Callback<string[]>) =>
+        redisClient.zrange(key, start, stop, cb)
+    ),
     zremrangebyrank: promisify((key: string, start: number, stop: number, cb?: Callback<number>) =>
         redisClient.zremrangebyrank(key, start, stop, cb)
     ),

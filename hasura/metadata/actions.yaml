@@ -110,6 +110,14 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
+- name: notifyEventEnded
+  definition:
+    kind: synchronous
+    handler: '{{REALTIME_BASE_URL}}/event/ended'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
 - name: presence_Flush
   definition:
     kind: synchronous
@@ -254,4 +262,5 @@ custom_types:
       field_mapping:
         roomId: id
   - name: SubmitUploadableElementOutput
+  - name: NotifyEventEnded
   scalars: []

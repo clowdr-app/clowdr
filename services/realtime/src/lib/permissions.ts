@@ -1,6 +1,7 @@
 import { Permissions_Permission_Enum, Room_ManagementMode_Enum } from "../generated/graphql";
 import { ChatInfo, getChatInfo, Item } from "./cache/chatInfo";
 import { getRegistrantInfo, RegistrantInfo } from "./cache/registrantInfo";
+import { EventInfo, getEventInfo } from "./cache/roomInfo";
 import { hasAtLeastOnePermissionForConfSlug } from "./cache/userPermission";
 
 export async function canSelectChat(
@@ -82,6 +83,79 @@ export async function canSelectChat(
         }
 
         return !!chatInfo && chatInfo.rooms.some((room) => room.people.some((x) => x.userId === userId));
+    }
+
+    return false;
+}
+
+export async function canAccessEvent(
+    userId: string,
+    eventId: string,
+    confSlugs: string[],
+    testMode_RegistrantId: string,
+    testMode_ConferenceId: string,
+    testMode_RoomId: string,
+    testMode_RoomName: string,
+    testMode_RoomManagementMode: Room_ManagementMode_Enum,
+    expectedPermissions = [
+        Permissions_Permission_Enum.ConferenceViewAttendees,
+        Permissions_Permission_Enum.ConferenceManageSchedule,
+        Permissions_Permission_Enum.ConferenceModerateAttendees,
+        Permissions_Permission_Enum.ConferenceManageAttendees,
+    ],
+    eventInfoPrior?: EventInfo,
+    refetchPermissionsNow = false
+): Promise<boolean> {
+    const hasPermissionForConfSlugs = await hasAtLeastOnePermissionForConfSlug(
+        userId,
+        expectedPermissions,
+        confSlugs,
+        refetchPermissionsNow
+    );
+    const testMode_Result = {
+        conference: { id: testMode_ConferenceId, slug: confSlugs[0] },
+        room: {
+            id: testMode_RoomId,
+            name: testMode_RoomName,
+            people: [{ registrantId: testMode_RegistrantId, userId }],
+            managementMode: testMode_RoomManagementMode,
+        },
+    };
+
+    if (hasPermissionForConfSlugs) {
+        let eventInfo = eventInfoPrior ?? (await getEventInfo(eventId, testMode_Result));
+
+        if (eventInfo) {
+            if (!hasPermissionForConfSlugs.includes(eventInfo.conference.slug)) {
+                if (!refetchPermissionsNow) {
+                    return canAccessEvent(
+                        userId,
+                        eventId,
+                        confSlugs,
+                        testMode_RegistrantId,
+                        testMode_ConferenceId,
+                        testMode_RoomId,
+                        testMode_RoomName,
+                        testMode_RoomManagementMode,
+                        expectedPermissions,
+                        eventInfo,
+                        true
+                    );
+                }
+
+                return false;
+            }
+
+            if (eventInfo.room && eventInfo.room.managementMode === Room_ManagementMode_Enum.Public) {
+                return true;
+            }
+
+            if (!eventInfo.room || !eventInfo.room.people.some((x) => x.userId === userId)) {
+                eventInfo = await getEventInfo(eventId, testMode_Result, true);
+            }
+        }
+
+        return !!eventInfo && eventInfo.room.people.some((x) => x.userId === userId);
     }
 
     return false;

@@ -5,6 +5,7 @@ import {
     Event_GetEventVonageSessionDocument,
     GetEventChatInfoDocument,
     GetEventTimingsDocument,
+    NotifyRealtimeEventEndedDocument,
     Room_Mode_Enum,
     StartChatDuplicationDocument,
     StartChatDuplicationMutationVariables,
@@ -151,6 +152,12 @@ gql`
         #     affected_rows
         # }
     }
+
+    mutation NotifyRealtimeEventEnded($eventId: uuid!) {
+        notifyEventEnded(eventId: $eventId) {
+            ok
+        }
+    }
 `;
 
 async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): Promise<void> {
@@ -210,6 +217,15 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
             }
         }
     }
+}
+
+async function notifyRealtimeServiceEventEnded(eventId: string): Promise<void> {
+    await apolloClient.mutate({
+        mutation: NotifyRealtimeEventEndedDocument,
+        variables: {
+            eventId,
+        },
+    });
 }
 
 gql`
@@ -331,31 +347,29 @@ export async function handleEventEndNotification(
         const conferenceId = result.data.schedule_Event_by_pk.conferenceId;
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
-        setTimeout(async () => {
-            try {
-                await insertChatDuplicationMarkers(eventId, false);
-            } catch (e) {
-                console.error("Failed to insert chat duplication end markers", eventId, e);
+        setTimeout(() => {
+            insertChatDuplicationMarkers(eventId, false).catch((e) => {
+                console.error("Failed to insert chat duplication end markers", { eventId, e });
+            });
+
+            if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
+                stopEventBroadcasts(eventId).catch((e) => {
+                    console.error("Failed to stop event broadcasts", { eventId, e });
+                });
             }
 
-            try {
-                if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
-                    await stopEventBroadcasts(eventId);
-                }
-            } catch (e) {
-                console.error("Failed to stop event broadcasts", eventId, e);
-            }
+            notifyRealtimeServiceEventEnded(eventId).catch((e) => {
+                console.error("Failed to notify real-time service event ended", { eventId, e });
+            });
         }, waitForMillis);
 
         const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
 
-        setTimeout(async () => {
-            try {
-                if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
-                    await createMediaPackageHarvestJob(eventId, conferenceId);
-                }
-            } catch (e) {
-                console.error("Failed to create MediaPackage harvest job", eventId, e);
+        setTimeout(() => {
+            if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
+                createMediaPackageHarvestJob(eventId, conferenceId).catch((e) => {
+                    console.error("Failed to create MediaPackage harvest job", { eventId, e });
+                });
             }
         }, harvestJobWaitForMillis);
     } else {

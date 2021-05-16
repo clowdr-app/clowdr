@@ -2,6 +2,7 @@ import assert from "assert";
 import express from "express";
 import path from "path";
 import { router as chatRouter } from "../http-routers/chat";
+import { router as eventRouter } from "../http-routers/event";
 import { router as presenceRouter } from "../http-routers/presence";
 import { router as pushNotificationSubscriptionRouter } from "../http-routers/pushNotifications";
 import { router as testRouter } from "../http-routers/test";
@@ -19,6 +20,7 @@ server.use("/test", testRouter);
 server.use("/chat", chatRouter);
 server.use("/vapid", vapidRouter);
 server.use("/pushNotificationSubscription", pushNotificationSubscriptionRouter);
+server.use("/event", eventRouter);
 
 const INDEX_FILE = "../resources/index.html";
 server.use((_req, res) => res.sendFile(path.resolve(path.join(__dirname, INDEX_FILE))));

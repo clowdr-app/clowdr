@@ -79,6 +79,13 @@ type Mutation {
 
 
 type Mutation {
+  notifyEventEnded (
+    eventId: uuid!
+  ): NotifyEventEnded!
+}
+
+
+type Mutation {
   presence_Flush : PresenceFlushOutput!
 }
 
@@ -304,5 +311,9 @@ type CreateItemRoomOutput {
 type SubmitUploadableElementOutput {
   success : Boolean!
   message : String!
+}
+
+type NotifyEventEnded {
+  ok : Boolean!
 }
 

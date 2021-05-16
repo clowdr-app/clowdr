@@ -6,8 +6,10 @@ import { notificationsRoomName } from "../lib/chat";
 import { redisClient } from "../redis";
 import { onConnect as onConnectAnalytics } from "../socket-events/analytics";
 import { onConnect as onConnectChat, onDisconnect as onDisconnectChat } from "../socket-events/chat";
+import { onConnect as onConnectHandRaise } from "../socket-events/handRaise";
 import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectAnalytics } from "../socket-handlers/analytics";
+import { onDisconnect as onDisconnectHandRaise } from "../socket-handlers/handRaise";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
 import { authorize } from "./authorize";
 import { httpServer } from "./http-server";
@@ -81,11 +83,13 @@ socketServer.on("connection", function (socket: Socket) {
             onDisconnectPresence(socketId, userId);
             onDisconnectChat(socketId, userId);
             onDisconnectAnalytics(socketId, userId);
+            onDisconnectHandRaise(socketId, userId);
         });
 
         onConnectPresence(socket, userId, conferenceSlugs);
         onConnectChat(socket, userId, conferenceSlugs);
         onConnectAnalytics(socket, userId, conferenceSlugs);
+        onConnectHandRaise(socket, userId, conferenceSlugs);
 
         socket.join(notificationsRoomName(userId));
     }

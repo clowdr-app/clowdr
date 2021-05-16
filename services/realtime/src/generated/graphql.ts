@@ -724,6 +724,11 @@ export type JoinRoomVonageSessionOutput = {
     sessionId: Scalars["String"];
 };
 
+export type NotifyEventEnded = {
+    __typename?: "NotifyEventEnded";
+    ok: Scalars["Boolean"];
+};
+
 export type PresenceFlushOutput = {
     __typename?: "PresenceFlushOutput";
     ok: Scalars["String"];
@@ -13641,6 +13646,8 @@ export type Mutation_Root = {
     joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
     joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
     joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
+    /** Notifies the realtime service that a given event has ended. */
+    notifyEventEnded: NotifyEventEnded;
     presence_Flush: PresenceFlushOutput;
     refreshYouTubeData?: Maybe<RefreshYouTubeDataOutput>;
     stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
@@ -15914,6 +15921,11 @@ export type Mutation_RootJoinRoomChimeSessionArgs = {
 /** mutation root */
 export type Mutation_RootJoinRoomVonageSessionArgs = {
     roomId: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootNotifyEventEndedArgs = {
+    eventId: Scalars["uuid"];
 };
 
 /** mutation root */
@@ -32189,6 +32201,31 @@ export type RegistrantInfoQuery = { __typename?: "query_root" } & {
     >;
 };
 
+export type EventInfoQueryVariables = Exact<{
+    eventId: Scalars["uuid"];
+}>;
+
+export type EventInfoQuery = { __typename?: "query_root" } & {
+    schedule_Event_by_pk?: Maybe<
+        { __typename?: "schedule_Event" } & Pick<Schedule_Event, "id"> & {
+                conference: { __typename?: "conference_Conference" } & Pick<
+                    Conference_Conference,
+                    "id" | "slug" | "shortName"
+                >;
+                room: { __typename?: "room_Room" } & Pick<Room_Room, "id" | "name" | "managementModeName"> & {
+                        roomPeople: Array<
+                            { __typename?: "room_RoomPerson" } & Pick<Room_RoomPerson, "id"> & {
+                                    registrant: { __typename?: "registrant_Registrant" } & Pick<
+                                        Registrant_Registrant,
+                                        "id" | "userId"
+                                    >;
+                                }
+                        >;
+                    };
+            }
+    >;
+};
+
 export type SubscriptionsQueryVariables = Exact<{
     chatId: Scalars["uuid"];
 }>;
@@ -32204,6 +32241,28 @@ export type UserPermissionsQueryVariables = Exact<{
 export type UserPermissionsQuery = { __typename?: "query_root" } & {
     FlatUserPermission: Array<
         { __typename?: "FlatUserPermission" } & Pick<FlatUserPermission, "slug" | "permission_name" | "user_id">
+    >;
+};
+
+export type GetExistingProgramPersonQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+    userId: Scalars["String"];
+}>;
+
+export type GetExistingProgramPersonQuery = { __typename?: "query_root" } & {
+    collection_ProgramPerson: Array<{ __typename?: "collection_ProgramPerson" } & Pick<Collection_ProgramPerson, "id">>;
+    registrant_Registrant: Array<
+        { __typename?: "registrant_Registrant" } & Pick<Registrant_Registrant, "id" | "displayName">
+    >;
+};
+
+export type InsertEventParticipantMutationVariables = Exact<{
+    eventPerson: Schedule_EventProgramPerson_Insert_Input;
+}>;
+
+export type InsertEventParticipantMutation = { __typename?: "mutation_root" } & {
+    insert_schedule_EventProgramPerson_one?: Maybe<
+        { __typename?: "schedule_EventProgramPerson" } & Pick<Schedule_EventProgramPerson, "id">
     >;
 };
 
@@ -32772,6 +32831,96 @@ export const RegistrantInfoDocument: DocumentNode<RegistrantInfoQuery, Registran
         },
     ],
 };
+export const EventInfoDocument: DocumentNode<EventInfoQuery, EventInfoQueryVariables> = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "EventInfo" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "eventId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "schedule_Event_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "eventId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "conference" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "slug" } },
+                                            { kind: "Field", name: { kind: "Name", value: "shortName" } },
+                                        ],
+                                    },
+                                },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "room" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "name" } },
+                                            { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "roomPeople" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        {
+                                                            kind: "Field",
+                                                            name: { kind: "Name", value: "registrant" },
+                                                            selectionSet: {
+                                                                kind: "SelectionSet",
+                                                                selections: [
+                                                                    {
+                                                                        kind: "Field",
+                                                                        name: { kind: "Name", value: "id" },
+                                                                    },
+                                                                    {
+                                                                        kind: "Field",
+                                                                        name: { kind: "Name", value: "userId" },
+                                                                    },
+                                                                ],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
 export const SubscriptionsDocument: DocumentNode<SubscriptionsQuery, SubscriptionsQueryVariables> = {
     kind: "Document",
     definitions: [
@@ -32888,6 +33037,222 @@ export const UserPermissionsDocument: DocumentNode<UserPermissionsQuery, UserPer
                                 { kind: "Field", name: { kind: "Name", value: "permission_name" } },
                                 { kind: "Field", name: { kind: "Name", value: "user_id" } },
                             ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+export const GetExistingProgramPersonDocument: DocumentNode<
+    GetExistingProgramPersonQuery,
+    GetExistingProgramPersonQueryVariables
+> = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetExistingProgramPerson" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "userId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "collection_ProgramPerson" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "conferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "registrant" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "userId" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_eq" },
+                                                                    value: {
+                                                                        kind: "Variable",
+                                                                        name: { kind: "Name", value: "userId" },
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "registrant_Registrant" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "conferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "userId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "userId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+export const InsertEventParticipantDocument: DocumentNode<
+    InsertEventParticipantMutation,
+    InsertEventParticipantMutationVariables
+> = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "InsertEventParticipant" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "eventPerson" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: {
+                            kind: "NamedType",
+                            name: { kind: "Name", value: "schedule_EventProgramPerson_insert_input" },
+                        },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_schedule_EventProgramPerson_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "eventPerson" } },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "on_conflict" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "constraint" },
+                                            value: {
+                                                kind: "EnumValue",
+                                                value: "EventProgramPerson_eventId_personId_roleName_key",
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "update_columns" },
+                                            value: { kind: "ListValue", values: [] },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
                         },
                     },
                 ],

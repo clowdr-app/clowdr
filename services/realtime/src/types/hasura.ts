@@ -42,3 +42,7 @@ export interface PushNotificationSubscription {
     auth: string;
     p256dh: string;
 }
+
+export interface EventEndedNotification {
+    eventId: string;
+}

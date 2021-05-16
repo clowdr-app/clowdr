@@ -78,6 +78,7 @@
         "exponential-backoff": "^3.1.0",
         "express": "^4.17.1",
         "express-jwt": "^6.0.0",
+        "get-stream": "^6.0.1",
         "google-auth-library": "^7.0.4",
         "googleapis": "^73.0.0",
         "graphql": "^15.5.0",

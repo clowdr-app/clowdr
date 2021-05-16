@@ -17,6 +17,7 @@ import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import LeftSidebar from "./aspects/Menu/LeftSidebar";
 import MainMenu, { MenuBar } from "./aspects/Menu/MainMenu";
 import RightSidebar from "./aspects/Menu/RightSidebar";
+import { RaiseHandProvider } from "./aspects/RaiseHand/RaiseHandProvider";
 import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
@@ -75,12 +76,14 @@ function AppInner({ confSlug, rootUrl }: AppProps): JSX.Element {
                         <ConferenceCurrentUserActivePermissionsProvider>
                             <CurrentRegistrantProvider>
                                 <GlobalChatStateProvider>
-                                    <AttendeesContextProvider>
-                                        <RoomParticipantsProvider>
-                                            {/* <ShuffleRoomsQueueMonitor /> */}
-                                            <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
-                                        </RoomParticipantsProvider>
-                                    </AttendeesContextProvider>
+                                    <RaiseHandProvider>
+                                        <AttendeesContextProvider>
+                                            <RoomParticipantsProvider>
+                                                {/* <ShuffleRoomsQueueMonitor /> */}
+                                                <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                            </RoomParticipantsProvider>
+                                        </AttendeesContextProvider>
+                                    </RaiseHandProvider>
                                 </GlobalChatStateProvider>
                             </CurrentRegistrantProvider>
                         </ConferenceCurrentUserActivePermissionsProvider>

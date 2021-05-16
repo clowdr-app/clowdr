@@ -1,6 +1,7 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Link, ListItem, OrderedList, UnorderedList, useToast } from "@chakra-ui/react";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
+import { PermissionInstructions } from "../Conference/Attend/Room/Chime/PermissionInstructions";
 import { useRestorableState } from "../Generic/useRestorableState";
 
 export interface VonageRoomState {
@@ -236,35 +237,7 @@ export function VonageRoomStateProvider({
                 console.error("Failed to start camera preview", e);
                 toast({
                     title: "Failed to start camera",
-                    description: (
-                        <OrderedList>
-                            <ListItem>
-                                Check that you have allowed permission to use the camera in your browser.
-                                <UnorderedList>
-                                    <ListItem>
-                                        <Link
-                                            isExternal
-                                            href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop"
-                                        >
-                                            Instructions for Google Chrome <ExternalLinkIcon />
-                                        </Link>
-                                    </ListItem>
-                                    <ListItem>
-                                        <Link
-                                            isExternal
-                                            href="https://support.mozilla.org/en-US/kb/how-manage-your-camera-and-microphone-permissions"
-                                        >
-                                            Instructions for Firefox <ExternalLinkIcon />
-                                        </Link>
-                                    </ListItem>
-                                </UnorderedList>
-                            </ListItem>
-                            <ListItem>
-                                Please also make sure you have fully quit/exited Zoom, Skype and any other tabs that may
-                                be using your camera.
-                            </ListItem>
-                        </OrderedList>
-                    ),
+                    description: <PermissionInstructions />,
                     status: "error",
                     isClosable: true,
                     duration: 30000,

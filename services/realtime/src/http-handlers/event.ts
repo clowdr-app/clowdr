@@ -2,15 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { generateEventHandsRaisedKeyName } from "../lib/handRaise";
 import { redisClientP } from "../redis";
-import { EventEndedNotification } from "../types/hasura";
+import { Action, EventEndedNotification } from "../types/hasura";
 
 export async function eventEnded(req: Request, res: Response, _next?: NextFunction): Promise<void> {
     try {
-        assertType<EventEndedNotification>(req.body);
+        assertType<Action<EventEndedNotification>>(req.body);
 
-        const data: EventEndedNotification = req.body;
+        const data: Action<EventEndedNotification> = req.body;
 
-        const keyName = generateEventHandsRaisedKeyName(data.eventId);
+        const keyName = generateEventHandsRaisedKeyName(data.input.eventId);
         await redisClientP.del(keyName);
 
         res.status(200).send({ ok: true });

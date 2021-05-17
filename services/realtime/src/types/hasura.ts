@@ -22,6 +22,14 @@ export interface Payload<T = any> {
     };
 }
 
+export interface Action<T = any> {
+    action: {
+        name: string;
+    };
+    input: T;
+    session_variables?: any;
+}
+
 export interface Subscription {
     chatId: string;
     registrantId: string;

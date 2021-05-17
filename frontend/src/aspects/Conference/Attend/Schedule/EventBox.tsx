@@ -61,7 +61,7 @@ function EventBoxPopover({
         (x) => x.typeName === Content_ElementType_Enum.Abstract
     )?.data;
     let abstractText: string | undefined;
-    if (abstractData) {
+    if (abstractData && abstractData.length > 0) {
         const innerAbstractData = abstractData[abstractData.length - 1];
         if (innerAbstractData.data.baseType === ElementBaseType.Text) {
             abstractText = innerAbstractData.data.text;
@@ -194,9 +194,11 @@ function EventBoxPopover({
                             </LinkButton>
                         </>
                     ) : undefined}
-                    <Box>
-                        <Markdown>{abstractText}</Markdown>
-                    </Box>
+                    {abstractText ? (
+                        <Box>
+                            <Markdown>{abstractText}</Markdown>
+                        </Box>
+                    ) : undefined}
                     {content?.itemPeople.length ? <AuthorList programPeopleData={content.itemPeople} /> : undefined}
                 </ModalBody>
             </ModalContent>

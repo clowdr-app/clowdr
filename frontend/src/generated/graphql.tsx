@@ -38481,7 +38481,9 @@ export const ImmediateSwitch_GetElementsDocument = gql`
     id
     item {
       id
-      elements(where: {typeName: {_eq: VIDEO_BROADCAST}}) {
+      elements(
+        where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH]}}
+      ) {
         id
         name
       }

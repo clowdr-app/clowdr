@@ -5,6 +5,7 @@ import {
     ElementDataBlob,
     isElementDataBlob,
     VideoBroadcastBlob,
+    VideoElementBlob,
 } from "@clowdr-app/shared-types/build/content";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
@@ -49,49 +50,65 @@ export class ContentElementDataService {
         };
     }
 
-    public getVideoKey(videoBroadcastData: VideoBroadcastBlob): string | null {
-        if (videoBroadcastData.broadcastTranscode?.s3Url) {
+    public getVideoKey(videoElementData: VideoElementBlob): string | null {
+        if (videoElementData.broadcastTranscode?.s3Url) {
             try {
-                const { key } = new AmazonS3URI(videoBroadcastData.broadcastTranscode.s3Url);
+                const { key } = new AmazonS3URI(videoElementData.broadcastTranscode.s3Url);
                 if (!key) {
                     throw new Error("Key in S3 URL was empty");
                 }
                 return key;
             } catch (err) {
                 this.logger.warn(
-                    { err, s3Url: videoBroadcastData.broadcastTranscode.s3Url },
+                    { err, s3Url: videoElementData.broadcastTranscode.s3Url },
                     "Could not parse S3 URL of broadcast transcode."
                 );
             }
         }
-        if (videoBroadcastData.transcode?.s3Url) {
+        if (videoElementData.transcode?.s3Url) {
             try {
-                const { key } = new AmazonS3URI(videoBroadcastData.transcode.s3Url);
+                const { key } = new AmazonS3URI(videoElementData.transcode.s3Url);
                 if (!key) {
                     throw new Error("Key in S3 URL was empty");
                 }
                 return key;
             } catch (err) {
                 this.logger.warn(
-                    { err, s3Url: videoBroadcastData.transcode.s3Url },
+                    { err, s3Url: videoElementData.transcode.s3Url },
                     "Could not parse S3 URL of preview transcode."
                 );
             }
         }
-        if (videoBroadcastData.s3Url) {
+        if (videoElementData.s3Url) {
             try {
-                const { key } = new AmazonS3URI(videoBroadcastData.s3Url);
+                const { key } = new AmazonS3URI(videoElementData.s3Url);
                 if (!key) {
                     throw new Error("Key in S3 URL was empty");
                 }
                 return key;
             } catch (err) {
-                this.logger.warn(
-                    { err, s3Url: videoBroadcastData.s3Url },
-                    "Could not parse S3 URL of original upload."
-                );
+                this.logger.warn({ err, s3Url: videoElementData.s3Url }, "Could not parse S3 URL of original upload.");
             }
         }
+        return null;
+    }
+
+    getLatestVideoData(contentItemData: unknown): VideoElementBlob | null {
+        if (!isElementDataBlob(contentItemData)) {
+            return null;
+        }
+        const contentItemDataBlob: ElementDataBlob = contentItemData as any;
+
+        const latestVersion = R.last(contentItemDataBlob);
+
+        if (!latestVersion) {
+            return null;
+        }
+
+        if (latestVersion.data.baseType === ElementBaseType.Video) {
+            return latestVersion.data;
+        }
+
         return null;
     }
 

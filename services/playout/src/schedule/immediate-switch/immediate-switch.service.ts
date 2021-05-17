@@ -143,7 +143,7 @@ export class ImmediateSwitchService {
                     );
                     return "Element belongs to another conference";
                 }
-                const broadcastVideoData = this.contentElementDataService.getLatestBroadcastVideoData(element.data);
+                const broadcastVideoData = this.contentElementDataService.getLatestVideoData(element.data);
                 if (!broadcastVideoData) {
                     this.logger.warn(
                         { switchData, element, conferenceId, broadcastVideoData },

@@ -33,7 +33,7 @@ export function ImmediateSwitch({
                 id
                 item {
                     id
-                    elements(where: { typeName: { _eq: VIDEO_BROADCAST } }) {
+                    elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
                         id
                         name
                     }
@@ -214,7 +214,7 @@ export function ImmediateSwitch({
                 </Formik>
             </>
         ),
-        [createImmediateSwitch, disable, enableSwitchButton, eventId, now, options, toast]
+        [conference.id, createImmediateSwitch, disable, enableSwitchButton, eventId, now, options, toast]
     );
 
     return form;

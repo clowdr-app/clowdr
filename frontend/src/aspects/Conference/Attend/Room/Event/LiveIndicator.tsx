@@ -145,8 +145,11 @@ export function LiveIndicator({
             case "rtmp_push":
                 return "rtmp_push";
             case "video": {
-                if (!latestImmediateSwitchData?.video_ImmediateSwitch?.[0]?.executedAt || !durationCurrentElement) {
+                if (!latestImmediateSwitchData?.video_ImmediateSwitch?.[0]?.executedAt) {
                     return null;
+                }
+                if (!durationCurrentElement) {
+                    return "video";
                 }
                 const switchedToVideoAt = Date.parse(latestImmediateSwitchData?.video_ImmediateSwitch[0].executedAt);
                 if (now - switchedToVideoAt > durationCurrentElement * 1000) {

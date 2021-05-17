@@ -15,7 +15,7 @@ export interface HandRaise_EventPerson {
 }
 
 export type RaisedHandUpdate =
-    | { userIds: Set<string> }
+    | { userIds: string[] }
     | { userId: string; wasAccepted: true; eventPerson: HandRaise_EventPerson }
     | { userId: string; wasAccepted: false };
 
@@ -54,7 +54,7 @@ export class RaiseHandState {
 
     private observersMutex = new Mutex();
     private raisedHandsLists: {
-        [k: string]: Set<string>;
+        [k: string]: string[];
     } = {};
     private raisedHandsObservers: {
         [k: string]: Observable<RaisedHandUpdate>;
@@ -63,9 +63,11 @@ export class RaiseHandState {
     private onRaised(data: { eventId: string; userId: string }) {
         console.log("Event:handRaise:onRaised", data);
         if (!this.raisedHandsLists[data.eventId]) {
-            this.raisedHandsLists[data.eventId] = new Set();
+            this.raisedHandsLists[data.eventId] = [];
         }
-        this.raisedHandsLists[data.eventId].add(data.userId);
+        if (!this.raisedHandsLists[data.eventId].includes(data.userId)) {
+            this.raisedHandsLists[data.eventId].push(data.userId);
+        }
         if (this.raisedHandsObservers[data.eventId]) {
             this.raisedHandsObservers[data.eventId].publish({
                 userIds: this.raisedHandsLists[data.eventId],
@@ -75,7 +77,7 @@ export class RaiseHandState {
     private onLowered(data: { eventId: string; userId: string }) {
         console.log("Event:handRaise:onLowered", data);
         if (this.raisedHandsLists[data.eventId]) {
-            this.raisedHandsLists[data.eventId].delete(data.userId);
+            this.raisedHandsLists[data.eventId] = this.raisedHandsLists[data.eventId].filter((x) => x !== data.userId);
             if (this.raisedHandsObservers[data.eventId]) {
                 this.raisedHandsObservers[data.eventId].publish({
                     userIds: this.raisedHandsLists[data.eventId],
@@ -85,7 +87,7 @@ export class RaiseHandState {
     }
     private onListing(data: { eventId: string; userIds: string[] }) {
         console.log("Event:handRaise:onListing", data);
-        this.raisedHandsLists[data.eventId] = new Set(data.userIds);
+        this.raisedHandsLists[data.eventId] = [...data.userIds];
         if (this.raisedHandsObservers[data.eventId]) {
             this.raisedHandsObservers[data.eventId].publish({
                 userIds: this.raisedHandsLists[data.eventId],
@@ -102,7 +104,7 @@ export class RaiseHandState {
             });
         }
         if (this.raisedHandsLists[data.eventId]) {
-            this.raisedHandsLists[data.eventId].delete(data.userId);
+            this.raisedHandsLists[data.eventId] = this.raisedHandsLists[data.eventId].filter((x) => x !== data.userId);
             if (this.raisedHandsObservers[data.eventId]) {
                 this.raisedHandsObservers[data.eventId].publish({
                     userIds: this.raisedHandsLists[data.eventId],
@@ -119,7 +121,7 @@ export class RaiseHandState {
             });
         }
         if (this.raisedHandsLists[data.eventId]) {
-            this.raisedHandsLists[data.eventId].delete(data.userId);
+            this.raisedHandsLists[data.eventId] = this.raisedHandsLists[data.eventId].filter((x) => x !== data.userId);
             if (this.raisedHandsObservers[data.eventId]) {
                 this.raisedHandsObservers[data.eventId].publish({
                     userIds: this.raisedHandsLists[data.eventId],
@@ -239,7 +241,7 @@ export class RaiseHandState {
             if (
                 this.currentEventId !== null &&
                 this.raisedHandsLists[this.currentEventId.eventId] &&
-                this.raisedHandsLists[this.currentEventId.eventId].has(userId)
+                this.raisedHandsLists[this.currentEventId.eventId].includes(userId)
             ) {
                 this.lower(this.currentEventId.eventId);
             }

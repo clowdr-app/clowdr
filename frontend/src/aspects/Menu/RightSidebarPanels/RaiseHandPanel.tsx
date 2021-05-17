@@ -1,11 +1,13 @@
-import { Box, Spinner } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Heading, Spinner, Text, useToast, VStack } from "@chakra-ui/react";
+import * as R from "ramda";
+import React, { useEffect, useMemo, useState } from "react";
 import { Schedule_EventProgramPersonRole_Enum } from "../../../generated/graphql";
 import { EventVonageRoom } from "../../Conference/Attend/Room/Event/EventVonageRoom";
 import { useRegistrants } from "../../Conference/RegistrantsContext";
 import type { Registrant } from "../../Conference/useCurrentRegistrant";
 import { useRaiseHandState } from "../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../Users/CurrentUser/useCurrentUser";
+import { RaisedHandsList } from "./RaisedHandsList";
 import { RegistrantsList } from "./RegistrantsList";
 
 export function RaiseHandPanel(): JSX.Element {
@@ -19,6 +21,7 @@ export function RaiseHandPanel(): JSX.Element {
     const [isBackstage, setIsBackstage] = useState<boolean>(false);
     const [startTimeOfNextBackstage, setStartTimeOfNextBackstage] = useState<number | null>(null);
     const [raisedHandUserIds, setRaisedHandUserIds] = useState<string[] | null>(null);
+    const toast = useToast();
 
     useEffect(() => {
         const unsubscribe = raiseHand.CurrentEventId.subscribe(setCurrentEventId);
@@ -45,7 +48,16 @@ export function RaiseHandPanel(): JSX.Element {
         const unobserve = currentEventId
             ? raiseHand.observe(currentEventId.eventId, (update) => {
                   if ("userIds" in update) {
-                      setRaisedHandUserIds([...update.userIds.values()]);
+                      setRaisedHandUserIds(update.userIds);
+                  } else if (!update.wasAccepted && update.userId === currentUser?.id) {
+                      toast({
+                          title: "Hand lowered",
+                          description: "The chair has lowered your hand.",
+                          position: "top-right",
+                          status: "warning",
+                          duration: 5000,
+                          isClosable: true,
+                      });
                   }
               })
             : () => {
@@ -55,7 +67,7 @@ export function RaiseHandPanel(): JSX.Element {
         return () => {
             unobserve();
         };
-    }, [currentEventId, raiseHand]);
+    }, [toast, currentEventId, raiseHand, currentUser?.id]);
 
     useEffect(() => {
         setRaisedHandUserIds(null);
@@ -67,6 +79,14 @@ export function RaiseHandPanel(): JSX.Element {
                   user,
               }))
             : []
+    );
+    const sortedRegistrants = useMemo(
+        () =>
+            R.sortBy(
+                (x) => (x.userId && raisedHandUserIds ? raisedHandUserIds.indexOf(x.userId) : -1),
+                registrants
+            ) as Registrant[],
+        [raisedHandUserIds, registrants]
     );
 
     const completeJoinRef: React.MutableRefObject<() => Promise<void>> = React.useRef(async () => {
@@ -90,26 +110,25 @@ export function RaiseHandPanel(): JSX.Element {
     }, [currentEventId, currentUser.id, raiseHand]);
 
     if (isBackstage) {
-        // RAISE_HAND_TODO: If is chair/presenter (yes let's include presenters!), give control to admit people
-        // RAISE_HAND_TODO: Else, just display the "you are already backstage"
-        return (
-            <>
-                <Box>Controls for managing raised hands</Box>
-                <RegistrantsList
-                    searchedRegistrants={registrants as Registrant[]}
-                    action={(registrantId) => {
-                        const userId = registrants.find((x) => x.id === registrantId)?.userId;
-                        if (
-                            currentEventId &&
-                            userId &&
-                            currentEventId.userRole === Schedule_EventProgramPersonRole_Enum.Chair
-                        ) {
-                            raiseHand.accept(currentEventId.eventId, userId);
-                        }
-                    }}
-                    // RAISE_HAND_TODO: Clone this component and customise the `action` property to enable accept/reject logic
-                />
-            </>
+        return currentEventId && currentEventId.userRole === Schedule_EventProgramPersonRole_Enum.Chair ? (
+            <VStack spacing={1} alignItems="flex-start" m={2}>
+                <Heading as="h3" fontSize="lg" textAlign="left">
+                    Manage raised hands
+                </Heading>
+                <RaisedHandsList searchedRegistrants={sortedRegistrants} currentEventId={currentEventId.eventId} />
+                {sortedRegistrants.length === 0 ? <Text>Nobody has raised their hand at the moment.</Text> : undefined}
+            </VStack>
+        ) : (
+            <VStack spacing={2} alignItems="flex-start" m={2}>
+                <Heading as="h3" fontSize="lg" textAlign="left">
+                    You are backstage
+                </Heading>
+                <Text fontWeight="bold" pt={4}>
+                    Raised hands
+                </Text>
+                <RegistrantsList searchedRegistrants={sortedRegistrants} />
+                {sortedRegistrants.length === 0 ? <Text>Nobody has raised their hand at the moment.</Text> : undefined}
+            </VStack>
         );
     } else if (currentEventId) {
         if (raisedHandUserIds === null) {
@@ -117,16 +136,27 @@ export function RaiseHandPanel(): JSX.Element {
         }
 
         return (
-            <>
+            <VStack spacing={2} alignItems="flex-start" m={2}>
+                <Heading as="h3" fontSize="lg">
+                    {raisedHandUserIds.includes(currentUser.id)
+                        ? "Waiting to be admitted"
+                        : "Prepare to join the stream"}
+                </Heading>
+
                 {raisedHandUserIds.includes(currentUser.id) ? (
                     <>
-                        <Box>Waiting to be admitted</Box>
+                        <Text fontSize="xs">The chair will decide whether to let you join the stream.</Text>
+                        <Text fontSize="xs">
+                            Please note when you join the backstage, you may find the conversation ahead of what you are
+                            currently watching in the stream (stream lag up to 30s is normal).
+                        </Text>
                     </>
                 ) : (
-                    <>
-                        {/* RAISE_HAND_TODO: Show recording consent*/}
-                        <Box>Pre-join screen</Box>
-                    </>
+                    <Text fontSize="xs">
+                        By clicking &ldquo;I&apos;m ready&rdquo; below, you agree to participate in the livestream. The
+                        stream may also be recorded and later published to Clowdr and external sites (such as YouTube)
+                        at the discretion of your conference organisers.
+                    </Text>
                 )}
 
                 <EventVonageRoom
@@ -135,14 +165,29 @@ export function RaiseHandPanel(): JSX.Element {
                     isRaiseHandWaiting={raisedHandUserIds.includes(currentUser.id)}
                     completeJoinRef={completeJoinRef}
                 />
-                <RegistrantsList searchedRegistrants={registrants as Registrant[]} />
-            </>
+                <Text fontWeight="bold" pt={4}>
+                    Raised hands
+                </Text>
+                <RegistrantsList searchedRegistrants={sortedRegistrants} />
+                {sortedRegistrants.length === 0 ? <Text>Nobody has raised their hand at the moment.</Text> : undefined}
+            </VStack>
         );
-    } else if (startTimeOfNextBackstage !== null) {
-        // RAISE_HAND_TODO: Show message explaining time until next backstage is available
-        return <>Time until next backstage</>;
-    } else {
-        // RAISE_HAND_TODO: Show message explaining no backstage is available for the current or next event
-        return <>No backstage available</>;
+    }
+    // else if (startTimeOfNextBackstage !== null) {
+    //     // RAISE_HAND_TODO: Show message explaining time until next backstage is available
+    //     return <>Time until next backstage</>;
+    // }
+    else {
+        return (
+            <VStack spacing={2} alignItems="flex-start" m={2}>
+                <Heading as="h3" fontSize="lg">
+                    Raise your hand to join the stream
+                </Heading>
+                <Text>
+                    No backstage is currently available. Please wait for a backstage to become available during a live
+                    presentation/Q&amp;A.
+                </Text>
+            </VStack>
+        );
     }
 }

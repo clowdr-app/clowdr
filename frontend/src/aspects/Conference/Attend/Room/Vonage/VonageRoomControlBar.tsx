@@ -1,5 +1,17 @@
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
-import { Box, Button, chakra, Stack, Tag, TagLabel, TagLeftIcon, Tooltip, useToast } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    chakra,
+    HStack,
+    Spinner,
+    Stack,
+    Tag,
+    TagLabel,
+    TagLeftIcon,
+    Tooltip,
+    useToast,
+} from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
@@ -280,25 +292,32 @@ export function VonageRoomControlBar({
                         Leave Room
                     </Button>
                 ) : (
-                    <Tooltip label={requireMicrophone ? "Microphone required" : undefined}>
+                    <Tooltip
+                        label={
+                            requireMicrophone && !state.microphoneIntendedEnabled ? "Microphone required" : undefined
+                        }
+                    >
                         <Box w="100%">
                             <Button
                                 w="100%"
                                 size="xl"
-                                colorScheme="green"
+                                colorScheme={joining ? "orange" : "green"}
                                 h="auto"
                                 py={4}
                                 onClick={joining ? onCancelJoinRoom : onJoinRoom}
                                 isLoading={!onCancelJoinRoom && joining}
-                                isDisabled={requireMicrophone && !state.microphoneIntendedEnabled}
+                                isDisabled={!joining && requireMicrophone && !state.microphoneIntendedEnabled}
                                 whiteSpace="normal"
                                 overflow="hidden"
                                 display="inline-flex"
                                 flexDir="column"
                             >
-                                <chakra.span fontSize="xl">
-                                    {joining ? joiningRoomButtonText : joinRoomButtonText}
-                                </chakra.span>
+                                <HStack alignItems="flex-end">
+                                    {joining ? <Spinner size="sm" speed="2.5s" thickness="4px" /> : undefined}
+                                    <chakra.span fontSize="xl">
+                                        {joining ? joiningRoomButtonText : joinRoomButtonText}
+                                    </chakra.span>
+                                </HStack>
                                 {joining ? (
                                     <chakra.span mt={2} fontSize="xs">
                                         (Click to cancel)

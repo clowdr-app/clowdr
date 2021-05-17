@@ -77,6 +77,9 @@ export function RoomContent({
                 <Box backgroundColor={bgColour} borderRadius={5} px={5} py={3} my={5}>
                     <HStack justifyContent="space-between">
                         <Text>Started {formatRelative(Date.parse(currentRoomEvent.startTime), now5s)}</Text>
+                        {currentRoomEvent.endTime ? (
+                            <Text>Ends {formatRelative(Date.parse(currentRoomEvent.endTime), now5s)}</Text>
+                        ) : undefined}
                         {currentEventRole ? (
                             <Tag colorScheme="green" my={2}>
                                 {currentEventRole}

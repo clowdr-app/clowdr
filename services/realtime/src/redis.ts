@@ -5,13 +5,40 @@ import { promisify } from "util";
 
 assert(process.env.REDIS_URL, "REDIS_URL env var not defined.");
 
-export const redisClient = redis.createClient(process.env.REDIS_URL, {});
+let redisExists = false;
+export const redisClient = redis.createClient(process.env.REDIS_URL, {
+    // TODO: retry_strategy
+    retry_strategy: (options) => {
+        // Waiting 75 attempts = ~3 hours of re-attempting to connect before giving up
+        if (options.error && options.error.code === "ECONNREFUSED" && (!redisExists || options.attempt >= 75)) {
+            return new Error("The server refused the connection");
+        }
+
+        redisExists = true;
+
+        if (options.total_retry_time > 1000 * 60 * 60 * 3) {
+            return new Error("Retry time exhausted");
+        }
+        if (options.attempt > 1000) {
+            return undefined;
+        }
+
+        // Every 5 attempts, wait a longer period
+        if (options.attempt % 5 === 0) {
+            return 10 * 60 * 1000; // 10 minutes
+        }
+        // Else, attempt several times in relatively quick succession
+        else {
+            return 30 * 1000; // 30 seconds
+        }
+    },
+});
 
 export const redlock = new Redlock([redisClient], {
     driftFactor: 0.01,
     retryCount: 10,
-    retryDelay: 200,
-    retryJitter: 200,
+    retryDelay: 1000,
+    retryJitter: 500,
 });
 
 export const redisClientP = {

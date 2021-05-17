@@ -30,14 +30,19 @@ export const redisSubClient = redisClient.duplicate();
 
 // Configure the websocket server's connection to redis
 socketServer.adapter(
-    createAdapter({ pubClient: redisPubClient, subClient: redisSubClient, key: process.env.REDIS_KEY })
+    createAdapter({
+        pubClient: redisPubClient,
+        subClient: redisSubClient,
+        key: process.env.REDIS_KEY,
+        requestsTimeout: 10000,
+    })
 );
 
 // Setup JWT authorization
 const jwksClient = jwksRsa({
     cache: true,
     rateLimit: true,
-    jwksRequestsPerMinute: 20,
+    jwksRequestsPerMinute: 1,
     jwksUri: `https://${process.env.AUTH0_API_DOMAIN}/.well-known/jwks.json`,
     getKeysInterceptor: async () => {
         return testJWKs as SigningKey[];

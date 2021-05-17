@@ -121,6 +121,7 @@ export interface EventData extends BaseData {
     itemId: string | null;
     originatingDataId: string | null;
     roomId: string;
+    timings_updated_at: string;
 }
 
 export interface RoomData extends BaseData {

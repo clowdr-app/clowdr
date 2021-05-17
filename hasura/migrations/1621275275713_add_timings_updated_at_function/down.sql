@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS schedule.set_current_timestamp_timings_updated_at

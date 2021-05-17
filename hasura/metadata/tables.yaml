@@ -6965,6 +6965,7 @@
     custom_column_names:
       updated_at: updatedAt
       created_at: createdAt
+      timings_updated_at: timingsUpdatedAt
   object_relationships:
   - name: conference
     using:
@@ -7188,16 +7189,7 @@
         columns: '*'
       update:
         columns:
-        - durationSeconds
-        - intendedRoomModeName
-        - name
-        - endTime
-        - startTime
-        - conferenceId
-        - id
-        - itemId
-        - originatingDataId
-        - roomId
+        - timings_updated_at
     retry_conf:
       num_retries: 0
       interval_sec: 10

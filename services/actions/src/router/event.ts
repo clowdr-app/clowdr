@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import {
@@ -15,7 +15,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/updated", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<EventData>>(req.body);
     } catch (e) {
@@ -33,7 +33,7 @@ router.post("/updated", bodyParser.json(), async (req: Request, res: Response) =
     res.status(200).json("OK");
 });
 
-router.post("/notifyStart", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/notifyStart", json(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
     try {
         assertType<ScheduledEventPayload<{ eventId: string; startTime: string }>>(req.body);
@@ -57,7 +57,7 @@ router.post("/notifyStart", bodyParser.json(), async (req: Request, res: Respons
     res.status(200).json("OK");
 });
 
-router.post("/notifyEnd", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/notifyEnd", json(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
     try {
         assertType<ScheduledEventPayload<{ eventId: string; endTime: string }>>(req.body);
@@ -81,7 +81,7 @@ router.post("/notifyEnd", bodyParser.json(), async (req: Request, res: Response)
     res.status(200).json("OK");
 });
 
-router.post("/stopBroadcasts", bodyParser.json(), async (req: Request, res: Response<StopEventBroadcastOutput>) => {
+router.post("/stopBroadcasts", json(), async (req: Request, res: Response<StopEventBroadcastOutput>) => {
     console.log(req.originalUrl);
     const params = req.body.input;
     try {

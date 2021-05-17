@@ -27,7 +27,6 @@ import { callWithRetry } from "../utils";
 import { createMediaPackageHarvestJob } from "./recording";
 
 export async function handleEventUpdated(payload: Payload<EventData>): Promise<void> {
-    const oldRow = payload.event.data.old;
     const newRow = payload.event.data.new;
 
     if (!newRow) {
@@ -36,26 +35,21 @@ export async function handleEventUpdated(payload: Payload<EventData>): Promise<v
     }
 
     try {
-        if (oldRow) {
-            // Event was updated
-            if (oldRow.startTime !== newRow.startTime) {
-                await createEventStartTrigger(newRow.id, newRow.startTime, Date.parse(newRow.updated_at));
-            }
-
-            if (oldRow.endTime !== newRow.endTime && newRow.endTime) {
-                await createEventEndTrigger(newRow.id, newRow.endTime, Date.parse(newRow.updated_at));
-            }
-        } else {
-            // Event was inserted
-            await createEventStartTrigger(newRow.id, newRow.startTime, Date.parse(newRow.updated_at));
+        if (newRow) {
+            await createEventStartTrigger(newRow.id, newRow.startTime, Date.parse(newRow.timings_updated_at));
             if (newRow.endTime) {
-                await createEventEndTrigger(newRow.id, newRow.endTime, Date.parse(newRow.updated_at));
+                await createEventEndTrigger(newRow.id, newRow.endTime, Date.parse(newRow.timings_updated_at));
+            } else {
+                console.error(
+                    "Event does not have end time (this should never happen). Didn't create event end trigger.",
+                    { eventId: newRow.id }
+                );
+                throw new Error("Event does not have end time.");
             }
         }
     } catch (err) {
         console.error("Could not insert event start/end triggers", { eventId: newRow.id, err });
-        await sendFailureEmail("Could not insert event start/end triggers", err);
-        throw err;
+        await sendFailureEmail("Could not insert event start/end triggers", JSON.stringify(err));
     }
 
     try {
@@ -65,7 +59,7 @@ export async function handleEventUpdated(payload: Payload<EventData>): Promise<v
         }
     } catch (err) {
         console.error("Could not create Vonage session for event", { eventId: newRow.id, err });
-        throw err;
+        await sendFailureEmail("Could not create Vonage session for event", JSON.stringify(err));
     }
 }
 
@@ -233,7 +227,7 @@ gql`
         schedule_Event_by_pk(id: $eventId) {
             id
             name
-            updatedAt
+            timingsUpdatedAt
             startTime
             endTime
             conferenceId
@@ -270,7 +264,7 @@ export async function handleEventStartNotification(
     if (
         result.data.schedule_Event_by_pk &&
         result.data.schedule_Event_by_pk.startTime === startTime &&
-        (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.updatedAt) === updatedAt)
+        (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
         console.log("Handling event start: matched expected startTime", result.data.schedule_Event_by_pk.id, startTime);
         const nowMillis = new Date().getTime();
@@ -336,7 +330,7 @@ export async function handleEventEndNotification(
     if (
         result.data.schedule_Event_by_pk &&
         result.data.schedule_Event_by_pk.endTime === endTime &&
-        (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.updatedAt) === updatedAt)
+        (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
         console.log("Handling event end: matched expected endTime", result.data.schedule_Event_by_pk.id, endTime);
         const nowMillis = new Date().getTime();

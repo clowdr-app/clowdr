@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS "set_schedule_Event_timings_updated_at" ON schedule."Event"

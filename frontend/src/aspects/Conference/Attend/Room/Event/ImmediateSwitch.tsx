@@ -1,5 +1,21 @@
 import { gql } from "@apollo/client";
-import { Button, FormControl, FormLabel, HStack, Select, useToast, VisuallyHidden } from "@chakra-ui/react";
+import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogCloseButton,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
+    Button,
+    FormControl,
+    FormLabel,
+    HStack,
+    Select,
+    useDisclosure,
+    useToast,
+    VisuallyHidden,
+} from "@chakra-ui/react";
 import type {
     FillerImmediateSwitchData,
     RtmpPushImmediateSwitchData,
@@ -7,7 +23,7 @@ import type {
 } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
 import { Field, FieldProps, Form, Formik } from "formik";
 import * as R from "ramda";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { validate } from "uuid";
 import {
     useImmediateSwitch_CreateMutation,
@@ -85,6 +101,96 @@ export function ImmediateSwitch({
 
     const disable = useMemo(() => !live || secondsUntilOffAir < 20, [live, secondsUntilOffAir]);
 
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const performSwitch = useCallback(
+        async (choice: string) => {
+            switch (choice) {
+                case "filler": {
+                    try {
+                        const data: FillerImmediateSwitchData = {
+                            kind: "filler",
+                        };
+                        await createImmediateSwitch({
+                            variables: {
+                                data,
+                                eventId,
+                                conferenceId: conference.id,
+                            },
+                        });
+                    } catch (err) {
+                        toast({
+                            status: "error",
+                            title: "Could not switch to filler video",
+                            description: err.message,
+                        });
+                        return;
+                    }
+                    break;
+                }
+                case "rtmp_push": {
+                    try {
+                        const data: RtmpPushImmediateSwitchData = {
+                            kind: "rtmp_push",
+                        };
+                        await createImmediateSwitch({
+                            variables: {
+                                data,
+                                eventId,
+                                conferenceId: conference.id,
+                            },
+                        });
+                    } catch (err) {
+                        toast({
+                            status: "error",
+                            title: "Could not switch to live presentation",
+                            description: err.message,
+                        });
+                        return;
+                    }
+                    break;
+                }
+                default: {
+                    try {
+                        const isValidUUID = validate(choice);
+                        if (!isValidUUID) {
+                            toast({
+                                status: "error",
+                                title: "Could not switch to chosen video",
+                                description: "Invalid ID",
+                            });
+                            return;
+                        }
+                        const data: VideoImmediateSwitchData = {
+                            kind: "video",
+                            elementId: choice,
+                        };
+                        await createImmediateSwitch({
+                            variables: {
+                                data,
+                                eventId,
+                                conferenceId: conference.id,
+                            },
+                        });
+                    } catch (err) {
+                        toast({
+                            status: "error",
+                            title: "Could not switch to chosen video",
+                            description: err.message,
+                        });
+                        return;
+                    }
+                    break;
+                }
+            }
+            setLastSwitched(now);
+        },
+        [conference.id, createImmediateSwitch, eventId, now, toast]
+    );
+
+    const cancelRef = useRef<HTMLButtonElement>(null);
+    const [switchAction, setSwitchAction] = useState<string | null>(null);
+
     const form = useMemo(
         () => (
             <>
@@ -93,85 +199,8 @@ export function ImmediateSwitch({
                         choice: "filler",
                     }}
                     onSubmit={async (values) => {
-                        switch (values.choice) {
-                            case "filler": {
-                                try {
-                                    const data: FillerImmediateSwitchData = {
-                                        kind: "filler",
-                                    };
-                                    await createImmediateSwitch({
-                                        variables: {
-                                            data,
-                                            eventId,
-                                            conferenceId: conference.id,
-                                        },
-                                    });
-                                } catch (err) {
-                                    toast({
-                                        status: "error",
-                                        title: "Could not switch to filler video",
-                                        description: err.message,
-                                    });
-                                    return;
-                                }
-                                break;
-                            }
-                            case "rtmp_push": {
-                                try {
-                                    const data: RtmpPushImmediateSwitchData = {
-                                        kind: "rtmp_push",
-                                    };
-                                    await createImmediateSwitch({
-                                        variables: {
-                                            data,
-                                            eventId,
-                                            conferenceId: conference.id,
-                                        },
-                                    });
-                                } catch (err) {
-                                    toast({
-                                        status: "error",
-                                        title: "Could not switch to live presentation",
-                                        description: err.message,
-                                    });
-                                    return;
-                                }
-                                break;
-                            }
-                            default: {
-                                try {
-                                    const isValidUUID = validate(values.choice);
-                                    if (!isValidUUID) {
-                                        toast({
-                                            status: "error",
-                                            title: "Could not switch to chosen video",
-                                            description: "Invalid ID",
-                                        });
-                                        return;
-                                    }
-                                    const data: VideoImmediateSwitchData = {
-                                        kind: "video",
-                                        elementId: values.choice,
-                                    };
-                                    await createImmediateSwitch({
-                                        variables: {
-                                            data,
-                                            eventId,
-                                            conferenceId: conference.id,
-                                        },
-                                    });
-                                } catch (err) {
-                                    toast({
-                                        status: "error",
-                                        title: "Could not switch to chosen video",
-                                        description: err.message,
-                                    });
-                                    return;
-                                }
-                                break;
-                            }
-                        }
-                        setLastSwitched(now);
+                        setSwitchAction(values.choice);
+                        onOpen();
                     }}
                 >
                     {({ dirty, ...props }) => (
@@ -212,9 +241,45 @@ export function ImmediateSwitch({
                         </>
                     )}
                 </Formik>
+                <AlertDialog
+                    motionPreset="slideInBottom"
+                    leastDestructiveRef={cancelRef}
+                    onClose={onClose}
+                    isOpen={isOpen}
+                    isCentered
+                >
+                    <AlertDialogOverlay />
+
+                    <AlertDialogContent>
+                        <AlertDialogHeader>Switch livestream input</AlertDialogHeader>
+                        <AlertDialogCloseButton />
+                        <AlertDialogBody>
+                            Are you sure you want to change what is being streamed? The audience will see this change.
+                        </AlertDialogBody>
+                        <AlertDialogFooter>
+                            <Button ref={cancelRef} onClick={onClose}>
+                                No
+                            </Button>
+                            <Button
+                                colorScheme="red"
+                                ml={3}
+                                isLoading={!switchAction}
+                                onClick={async () => {
+                                    if (switchAction) {
+                                        setSwitchAction(null);
+                                        await performSwitch(switchAction);
+                                        onClose();
+                                    }
+                                }}
+                            >
+                                Yes
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </>
         ),
-        [conference.id, createImmediateSwitch, disable, enableSwitchButton, eventId, now, options, toast]
+        [disable, enableSwitchButton, options, performSwitch]
     );
 
     return form;

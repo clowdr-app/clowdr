@@ -717,27 +717,22 @@ function RoomInner({
     const startsSoonEl = useMemo(
         () => (
             <>
-                {showDefaultBreakoutRoom &&
-                secondsUntilNonBreakoutEvent >= 180 &&
-                secondsUntilNonBreakoutEvent <= 300 ? (
+                {showDefaultBreakoutRoom && secondsUntilNonBreakoutEvent <= 180 ? (
                     <Alert status="warning">
                         <AlertIcon />
-                        Event starting soon. Breakout room closes in {Math.round(
-                            secondsUntilNonBreakoutEvent - 180
-                        )}{" "}
-                        seconds
+                        Event starting soon. Breakout room closes in {Math.round(secondsUntilNonBreakoutEvent)} seconds
                     </Alert>
                 ) : undefined}
                 {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
                     <Alert status="info">
                         <AlertIcon />
-                        Event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                        Zoom event starting in {Math.round(secondsUntilZoomEvent)} seconds
                     </Alert>
                 ) : undefined}
                 {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
                     <Alert status="info">
                         <AlertIcon />
-                        Event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
+                        Livestream event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
                     </Alert>
                 ) : undefined}
             </>

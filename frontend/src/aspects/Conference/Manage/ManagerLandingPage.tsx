@@ -191,16 +191,15 @@ export default function ManagerLandingPage(): JSX.Element {
                     ]}
                     colorScheme="green"
                 />
-                {/* <RestrictedDashboardButton
+                <RestrictedDashboardButton
                     to="analytics"
                     name="Analytics"
                     icon="chart-line"
-                    description="View live and historic data about activity at your conference."
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent, // TODO: View analytics permission
-                    ]}
-                    colorScheme="yellow"
+                    description="View activity at your conference."
+                    permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
+                    colorScheme="blue"
                 />
+                {/* 
                 <RestrictedDashboardButton
                     to="support"
                     name="Support"

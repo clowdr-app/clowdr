@@ -74,7 +74,8 @@ export function ChatsPanel({
                     unreadCountsRef.current.set(chat.Id, count);
 
                     const total = [...unreadCountsRef.current.values()].reduce(
-                        (acc, x) => (x.includes("+") ? Number.POSITIVE_INFINITY : acc + parseInt(x, 10)),
+                        (acc, x) =>
+                            !x?.length ? acc : x.includes("+") ? Number.POSITIVE_INFINITY : acc + parseInt(x, 10),
                         0
                     );
                     setUnread(total === Number.POSITIVE_INFINITY ? "10+" : total > 0 ? total.toString() : "");

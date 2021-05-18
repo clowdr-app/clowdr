@@ -340,6 +340,15 @@
                       userId:
                         _eq: X-Hasura-User-Id
 - table:
+    schema: analytics
+    name: mat_ElementTotalViews
+- table:
+    schema: analytics
+    name: mat_ItemTotalViews
+- table:
+    schema: analytics
+    name: mat_RoomPresence
+- table:
     schema: chat
     name: Chat
   object_relationships:

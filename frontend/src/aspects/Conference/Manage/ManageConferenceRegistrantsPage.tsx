@@ -374,7 +374,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                    return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
+                    return rows.filter((row) =>
+                        row.invitation?.invitedEmailAddress?.toLowerCase().includes(filterValue.toLowerCase())
+                    );
                 },
                 filterEl: TextColumnFilter,
                 cell: function InvitedEmailAddressCell(props: CellProps<Partial<RegistrantDescriptor>>) {

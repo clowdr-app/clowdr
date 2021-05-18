@@ -48,7 +48,8 @@ export function Participants({
             {R.sortBy((participant) => {
                 const highlightPerson = higlightPeople.find((x) => x.registrantId === participant.registrantId);
                 return highlightPerson
-                    ? highlightPerson.role.toUpperCase() === "AUTHOR"
+                    ? highlightPerson.role.toUpperCase() === "AUTHOR" ||
+                      highlightPerson.role.toUpperCase() === "PRESENTER"
                         ? -3
                         : highlightPerson.role.toUpperCase() === "CHAIR"
                         ? -1
@@ -65,7 +66,8 @@ export function Participants({
                             icon={highlightPerson ? "star" : undefined}
                             iconColor={
                                 highlightPerson
-                                    ? highlightPerson.role.toUpperCase() === "AUTHOR"
+                                    ? highlightPerson.role.toUpperCase() === "AUTHOR" ||
+                                      highlightPerson.role.toUpperCase() === "PRESENTER"
                                         ? "red.400"
                                         : highlightPerson.role.toUpperCase() === "CHAIR"
                                         ? "yellow.400"

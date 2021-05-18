@@ -26,7 +26,7 @@ export async function handleRoomCreated(payload: Payload<RoomData>): Promise<voi
     }
 
     // If room was created by a user, add them as an admin
-    if ("x-hasura-user-id" in payload.event.session_variables) {
+    if (payload.event.session_variables && "x-hasura-user-id" in payload.event.session_variables) {
         await addUserToRoomPeople(
             payload.event.session_variables["x-hasura-user-id"],
             payload.event.data.new.id,

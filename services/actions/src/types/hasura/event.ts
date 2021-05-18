@@ -12,7 +12,7 @@ import {
 
 export interface Payload<T = any> {
     event: {
-        session_variables: { [x: string]: string };
+        session_variables?: { [x: string]: string } | null;
         op: "INSERT" | "UPDATE" | "DELETE" | "MANUAL";
         data: {
             old: T | null;

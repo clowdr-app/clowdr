@@ -275,12 +275,6 @@ export async function handleEventStartNotification(
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
         setTimeout(async () => {
-            try {
-                await insertChatDuplicationMarkers(eventId, true);
-            } catch (e) {
-                console.error("Failed to insert chat duplication start markers", eventId, e);
-            }
-
             if (![Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
                 // No RTMP broadcast to be started
                 return;
@@ -288,6 +282,14 @@ export async function handleEventStartNotification(
 
             await startEventBroadcast(eventId);
         }, waitForMillis);
+
+        setTimeout(async () => {
+            try {
+                await insertChatDuplicationMarkers(eventId, true);
+            } catch (e) {
+                console.error("Failed to insert chat duplication start markers", eventId, e);
+            }
+        }, startTimeMillis - nowMillis + 500);
 
         if (
             [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName) &&
@@ -342,10 +344,6 @@ export async function handleEventEndNotification(
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
         setTimeout(() => {
-            insertChatDuplicationMarkers(eventId, false).catch((e) => {
-                console.error("Failed to insert chat duplication end markers", { eventId, e });
-            });
-
             if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
                 stopEventBroadcasts(eventId).catch((e) => {
                     console.error("Failed to stop event broadcasts", { eventId, e });
@@ -356,6 +354,12 @@ export async function handleEventEndNotification(
                 console.error("Failed to notify real-time service event ended", { eventId, e });
             });
         }, waitForMillis);
+
+        setTimeout(() => {
+            insertChatDuplicationMarkers(eventId, false).catch((e) => {
+                console.error("Failed to insert chat duplication end markers", { eventId, e });
+            });
+        }, endTimeMillis - nowMillis - 500);
 
         const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
 

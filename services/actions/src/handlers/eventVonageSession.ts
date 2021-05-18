@@ -264,7 +264,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
                     await Vonage.setBroadcastLayout(
                         startedBroadcastId,
                         "custom",
-                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0; z-index: 100;} stream.corner {display: block; position: absolute; width: 20%; height: 20%; right: 10%; bottom: 10%; z-index: 200;}",
+                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0; z-index: 100;} stream.corner {display: block; position: absolute; width: 15%; height: 15%; right: 2%; bottom: 3%; z-index: 200;}",
                         null
                     );
                 } catch (e) {

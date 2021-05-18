@@ -54,7 +54,7 @@ export default function AnalyticsDashboard(): JSX.Element {
         },
     });
 
-    const title = useTitle(`Manage schedule of ${conference.shortName}`);
+    const title = useTitle(`Analytics for ${conference.shortName}`);
 
     const totalItemViews = useMemo(
         () =>
@@ -99,7 +99,7 @@ export default function AnalyticsDashboard(): JSX.Element {
                 Analytics
             </Heading>
             <Text fontStyle="italic">Data updates every 24 hours.</Text>
-            <StatGroup w="100%" maxW="2xl" pt={8}>
+            <StatGroup w="100%" maxW="4xl" pt={8}>
                 <Stat>
                     <StatLabel fontSize="xl">Item views</StatLabel>
                     <StatNumber fontSize="4xl">

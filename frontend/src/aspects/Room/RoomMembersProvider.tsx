@@ -1,9 +1,8 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useState } from "react";
-import { RegistrantDataFragment, useGetRoomMembersQuery } from "../../generated/graphql";
-import { useRegistrantsContext } from "../Conference/RegistrantsContext";
+import React, { useMemo } from "react";
+import { useGetRoomMembersQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
-import { RoomMembersContext, RoomMembersInfo, RoomMembersInfos } from "./useRoomMembers";
+import { RoomMembersContext, RoomMembersInfos } from "./useRoomMembers";
 
 gql`
     query GetRoomMembers($roomId: uuid!) {
@@ -34,62 +33,10 @@ export default function RoomMembersProvider({
     });
     useQueryErrorToast(error, true, "RoomMembersProvider:GetRoomMembers");
 
-    const registrantsCtx = useRegistrantsContext();
-    const [value, setValue] = useState<RoomMembersInfos | false>(false);
-    const onRegistrantUpdated = useCallback((data: RegistrantDataFragment) => {
-        setValue((oldVals) => {
-            return oldVals
-                ? oldVals.map((x) =>
-                      x.member.registrantId === data.id
-                          ? {
-                                ...x,
-                                registrant: data,
-                            }
-                          : x
-                  )
-                : oldVals;
-        });
-    }, []);
-
-    useEffect(() => {
-        if (error) {
-            setValue(false);
-        } else if (!loading && data) {
-            data.room_RoomPerson.forEach((person) => {
-                if (person.registrantId) {
-                    registrantsCtx.subscribe({ registrant: person.registrantId }, onRegistrantUpdated);
-                }
-            });
-
-            setValue((oldVals) => {
-                if (oldVals) {
-                    const addedMembers = data.room_RoomPerson.filter((x) => !oldVals.some((y) => y.member.id === x.id));
-                    return [
-                        ...addedMembers.map((member) => ({ member })),
-                        ...(oldVals
-                            ? oldVals.reduce<RoomMembersInfo[]>((acc, member) => {
-                                  const updated = data.room_RoomPerson.find((y) => y.id === member.member.id);
-                                  if (updated) {
-                                      return [
-                                          ...acc,
-                                          {
-                                              registrant: member.registrant,
-                                              member: updated,
-                                          },
-                                      ];
-                                  }
-                                  return acc;
-                              }, [])
-                            : []),
-                    ];
-                } else {
-                    return data.room_RoomPerson.map((member) => ({
-                        member,
-                    }));
-                }
-            });
-        }
-    }, [registrantsCtx, data, error, loading, onRegistrantUpdated]);
+    const value: RoomMembersInfos = useMemo(() => (data ? data.room_RoomPerson : loading ? false : undefined), [
+        data,
+        loading,
+    ]);
 
     return <RoomMembersContext.Provider value={value}>{children}</RoomMembersContext.Provider>;
 }

@@ -11,16 +11,18 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
+    Spinner,
     Text,
     useDisclosure,
 } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import useRoomMembers from "../../../Room/useRoomMembers";
-import { maybeCompare } from "../../../Utils/maybeSort";
+import { useRegistrants } from "../../RegistrantsContext";
 import { useConference } from "../../useConference";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
@@ -81,38 +83,33 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
     const conference = useConference();
     const addMemberModal = useDisclosure();
 
+    const memberRegistrantIds = useMemo(
+        () => (roomMembers ? roomMembers.map((x) => ({ registrant: x.registrantId as string })) : []),
+        [roomMembers]
+    );
+    const registrants = useRegistrants(memberRegistrantIds);
+    const sortedRegistrants = useMemo(() => R.sortBy((x) => x.displayName, registrants), [registrants]);
+
     const roomMembersList = useMemo(
         () => (
             <List mb={2} spacing={2} maxH="40vh" overflowY="auto">
-                {roomMembers ? (
-                    roomMembers
-                        .sort((x, y) =>
-                            maybeCompare(x.registrant, y.registrant, (a, b) =>
-                                a.displayName.localeCompare(b.displayName)
-                            )
-                        )
-                        .map((person) => (
-                            <ListItem key={person.member.id} whiteSpace="normal">
-                                <LinkButton
-                                    justifyContent="flex-start"
-                                    to={`/conference/${conference.slug}/profile/view/${person.registrant?.id}`}
-                                    size="sm"
-                                    linkProps={{ width: "100%" }}
-                                    w="100%"
-                                >
-                                    <>
-                                        <FAIcon icon="user" iconStyle="s" mr={5} />
-                                        <Text>{person.registrant?.displayName ?? "<Loading name>"}</Text>
-                                    </>
-                                </LinkButton>
-                            </ListItem>
-                        ))
-                ) : (
-                    <></>
-                )}
+                {sortedRegistrants.map((registrant) => (
+                    <ListItem key={registrant.id} whiteSpace="normal">
+                        <LinkButton
+                            justifyContent="flex-start"
+                            to={`/conference/${conference.slug}/profile/view/${registrant.id}`}
+                            size="sm"
+                            linkProps={{ width: "100%" }}
+                            w="100%"
+                        >
+                            <FAIcon icon="user" iconStyle="s" mr={5} />
+                            <Text>{registrant.displayName}</Text>
+                        </LinkButton>
+                    </ListItem>
+                ))}
             </List>
         ),
-        [conference.slug, roomMembers]
+        [conference.slug, sortedRegistrants]
     );
 
     return (
@@ -122,7 +119,11 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                 isOpen={addMemberModal.isOpen}
                 onClose={addMemberModal.onClose}
             />
-            {roomMembersList}
+            {!roomMembers || sortedRegistrants.length !== roomMembers.length ? (
+                <Spinner label="Loading members" size="sm" />
+            ) : (
+                roomMembersList
+            )}
             {roomDetails.selfAdminPerson?.length ? (
                 <Box textAlign="right" mb={2}>
                     <Button

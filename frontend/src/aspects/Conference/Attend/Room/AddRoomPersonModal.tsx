@@ -10,7 +10,6 @@ import {
     useAddParticipantToRoomMutation,
 } from "../../../../generated/graphql";
 import useRoomMembers from "../../../Room/useRoomMembers";
-import { maybeCompare } from "../../../Utils/maybeSort";
 import { RegistrantSearch } from "./RegistrantSearch";
 
 export function AddRoomPersonModal({
@@ -26,14 +25,7 @@ export function AddRoomPersonModal({
     const members = useRoomMembers();
 
     const selectedRegistrantIds = useMemo(
-        () =>
-            members
-                ? members
-                      .sort((x, y) =>
-                          maybeCompare(x.registrant, y.registrant, (a, b) => a.displayName.localeCompare(b.displayName))
-                      )
-                      .map((person) => person.member.registrantId)
-                : [],
+        () => (members ? members.filter((person) => !!person.registrantId).map((person) => person.registrantId) : []),
         [members]
     );
 

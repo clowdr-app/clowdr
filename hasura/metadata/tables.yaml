@@ -3,6 +3,50 @@
     name: AppStats
 - table:
     schema: analytics
+    name: CompletedRegistrations
+  object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        column_mapping:
+          id: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - count
+      filter:
+        _or:
+        - _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_CONTENT
+                    - CONFERENCE_MANAGE_SCHEDULE
+                    - CONFERENCE_MANAGE_ATTENDEES
+                    - CONFERENCE_MANAGE_ROLES
+                    - CONFERENCE_MANAGE_GROUPS
+              _table:
+                schema: public
+                name: FlatUserPermission
+        - conference:
+            createdBy:
+              _eq: X-Hasura-User-Id
+- table:
+    schema: analytics
     name: ContentElementStats
   object_relationships:
   - name: element
@@ -91,6 +135,143 @@
                   name: FlatUnauthPermission
 - table:
     schema: analytics
+    name: ElementTotalViews
+  object_relationships:
+  - name: element
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: Element
+        column_mapping:
+          elementId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - elementId
+      - totalViewCount
+      filter:
+        element:
+          _or:
+          - _and:
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_CONTENT
+                      - CONFERENCE_MANAGE_SCHEDULE
+                      - CONFERENCE_MANAGE_ATTENDEES
+                      - CONFERENCE_MANAGE_ROLES
+                      - CONFERENCE_MANAGE_GROUPS
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+          - conference:
+              createdBy:
+                _eq: X-Hasura-User-Id
+- table:
+    schema: analytics
+    name: ItemTotalViews
+  object_relationships:
+  - name: item
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: Item
+        column_mapping:
+          itemId: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - itemId
+      - totalViewCount
+      filter:
+        item:
+          _or:
+          - _and:
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_CONTENT
+                      - CONFERENCE_MANAGE_SCHEDULE
+                      - CONFERENCE_MANAGE_ATTENDEES
+                      - CONFERENCE_MANAGE_ROLES
+                      - CONFERENCE_MANAGE_GROUPS
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+          - conference:
+              createdBy:
+                _eq: X-Hasura-User-Id
+- table:
+    schema: analytics
+    name: RoomPresence
+  object_relationships:
+  - name: room
+    using:
+      manual_configuration:
+        remote_table:
+          schema: room
+          name: Room
+        column_mapping:
+          id: id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - name
+      - created_at
+      - count
+      filter:
+        room:
+          _or:
+          - _and:
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_CONTENT
+                      - CONFERENCE_MANAGE_SCHEDULE
+                      - CONFERENCE_MANAGE_ATTENDEES
+                      - CONFERENCE_MANAGE_ROLES
+                      - CONFERENCE_MANAGE_GROUPS
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+          - conference:
+              createdBy:
+                _eq: X-Hasura-User-Id
+- table:
+    schema: analytics
     name: RoomStats
   object_relationships:
   - name: room
@@ -119,6 +300,7 @@
                   - permission_name:
                       _in:
                       - CONFERENCE_MANAGE_SCHEDULE
+                      - CONFERENCE_MANAGE_CONTENT
                 _table:
                   schema: public
                   name: FlatUserPermission
@@ -146,6 +328,7 @@
                           - CONFERENCE_VIEW
                           - CONFERENCE_VIEW_ATTENDEES
                           - CONFERENCE_MANAGE_SCHEDULE
+                          - CONFERENCE_MANAGE_CONTENT
                     _table:
                       schema: public
                       name: FlatUserPermission
@@ -522,7 +705,6 @@
         remote_table:
           schema: chat
           name: Message
-        insertion_order: null
         column_mapping:
           sId: duplicatedMessageSId
   - name: duplicateOutgoing
@@ -1352,6 +1534,14 @@
       updated_at: updatedAt
       created_at: createdAt
   object_relationships:
+  - name: completedRegistrationsStat
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: CompletedRegistrations
+        column_mapping:
+          id: id
   - name: creator
     using:
       foreign_key_constraint_on: createdBy
@@ -1414,7 +1604,6 @@
         remote_table:
           schema: public
           name: FlatUnauthPermission
-        insertion_order: null
         column_mapping:
           slug: slug
   - name: registrants
@@ -1458,7 +1647,6 @@
         remote_table:
           schema: public
           name: FlatUserPermission
-        insertion_order: null
         column_mapping:
           slug: slug
   insert_permissions:
@@ -1677,7 +1865,6 @@
         remote_table:
           schema: conference
           name: Conference
-        insertion_order: null
         column_mapping:
           id: demoCodeId
   - name: usedBy
@@ -1953,6 +2140,14 @@
   - name: originatingData
     using:
       foreign_key_constraint_on: originatingDataId
+  - name: totalViewsStat
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: ElementTotalViews
+        column_mapping:
+          id: elementId
   - name: type
     using:
       foreign_key_constraint_on: typeName
@@ -2559,9 +2754,16 @@
         remote_table:
           schema: room
           name: Room
-        insertion_order: null
         column_mapping:
           id: originatingItemId
+  - name: totalViewsStat
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: ItemTotalViews
+        column_mapping:
+          id: itemId
   - name: type
     using:
       foreign_key_constraint_on: typeName
@@ -3242,7 +3444,6 @@
         remote_table:
           schema: content
           name: Element
-        insertion_order: null
         column_mapping:
           id: uploadableId
   - name: item
@@ -4946,7 +5147,6 @@
         remote_table:
           schema: conference
           name: Conference
-        insertion_order: null
         column_mapping:
           slug: slug
   - name: permission
@@ -4955,7 +5155,6 @@
         remote_table:
           schema: permissions
           name: Permission
-        insertion_order: null
         column_mapping:
           permission_name: name
   - name: user
@@ -4964,7 +5163,6 @@
         remote_table:
           schema: public
           name: User
-        insertion_order: null
         column_mapping:
           user_id: id
   select_permissions:
@@ -5503,7 +5701,6 @@
         remote_table:
           schema: registrant
           name: Registrant
-        insertion_order: null
         column_mapping:
           registrantId: id
   select_permissions:
@@ -5571,7 +5768,6 @@
         remote_table:
           schema: registrant
           name: Invitation
-        insertion_order: null
         column_mapping:
           id: registrantId
   - name: profile
@@ -5580,7 +5776,6 @@
         remote_table:
           schema: registrant
           name: Profile
-        insertion_order: null
         column_mapping:
           id: registrantId
   - name: user
@@ -5593,7 +5788,6 @@
         remote_table:
           schema: registrant
           name: ProfileBadges
-        insertion_order: null
         column_mapping:
           id: registrantId
   - name: groupRegistrants
@@ -5796,7 +5990,6 @@
         remote_table:
           schema: conference
           name: Conference
-        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: room
@@ -5805,7 +5998,6 @@
         remote_table:
           schema: room
           name: Room
-        insertion_order: null
         column_mapping:
           roomId: id
   select_permissions:
@@ -5869,7 +6061,6 @@
         remote_table:
           schema: conference
           name: Conference
-        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: room
@@ -5878,7 +6069,6 @@
         remote_table:
           schema: room
           name: Room
-        insertion_order: null
         column_mapping:
           roomId: id
   select_permissions:
@@ -6051,7 +6241,6 @@
         remote_table:
           schema: video
           name: ChannelStack
-        insertion_order: null
         column_mapping:
           id: roomId
   - name: chat
@@ -6063,7 +6252,6 @@
         remote_table:
           schema: room
           name: ChimeMeeting
-        insertion_order: null
         column_mapping:
           id: roomId
   - name: conference
@@ -6078,7 +6266,6 @@
         remote_table:
           schema: room
           name: LivestreamDurations
-        insertion_order: null
         column_mapping:
           id: roomId
   - name: managementMode
@@ -6115,6 +6302,14 @@
         table:
           schema: room
           name: Participant
+  - name: presenceCounts
+    using:
+      manual_configuration:
+        remote_table:
+          schema: analytics
+          name: RoomPresence
+        column_mapping:
+          id: id
   - name: roomPeople
     using:
       foreign_key_constraint_on:
@@ -6976,7 +7171,6 @@
         remote_table:
           schema: video
           name: EventVonageSession
-        insertion_order: null
         column_mapping:
           id: eventId
   - name: exhibition
@@ -7598,7 +7792,6 @@
         remote_table:
           schema: conference
           name: Conference
-        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: eventX
@@ -7607,7 +7800,6 @@
         remote_table:
           schema: schedule
           name: Event
-        insertion_order: null
         column_mapping:
           xId: id
   - name: eventY
@@ -7616,7 +7808,6 @@
         remote_table:
           schema: schedule
           name: Event
-        insertion_order: null
         column_mapping:
           yId: id
   select_permissions:
@@ -7708,7 +7899,6 @@
         remote_table:
           schema: video
           name: MediaLiveChannelStatus
-        insertion_order: null
         column_mapping:
           id: channelStackId
   - name: room
@@ -7944,7 +8134,6 @@
         remote_table:
           schema: conference
           name: Conference
-        insertion_order: null
         column_mapping:
           conferenceId: id
   - name: event
@@ -7953,7 +8142,6 @@
         remote_table:
           schema: schedule
           name: Event
-        insertion_order: null
         column_mapping:
           eventId: id
   insert_permissions:
@@ -8121,7 +8309,6 @@
         remote_table:
           schema: conference
           name: Conference
-        insertion_order: null
         column_mapping:
           conferenceId: id
   select_permissions:
@@ -8177,7 +8364,6 @@
         remote_table:
           schema: content
           name: Element
-        insertion_order: null
         column_mapping:
           elementId: id
   - name: jobStatus

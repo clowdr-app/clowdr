@@ -281,8 +281,11 @@
   - role: user
     permission:
       columns:
+      - created_at
       - hlsViewCount
+      - id
       - roomId
+      - updated_at
       filter:
         room:
           _and:

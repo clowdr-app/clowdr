@@ -24,12 +24,14 @@ import {
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
+    useRoomPage_GetRoomChannelStackQuery,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
+import { roundToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
@@ -153,11 +155,15 @@ function Room({
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
     const now2m = useRealTime(120000);
-    const now2mStr = useMemo(() => new Date(now2m).toISOString(), [now2m]);
-    const now2mCutoffStr = useMemo(() => new Date(now2m + 60 * 60 * 1000).toISOString(), [now2m]);
+    const now2mStr = useMemo(() => new Date(roundToNearest(now2m, 2 * 60 * 1000)).toISOString(), [now2m]);
+    const now2mCutoffStr = useMemo(
+        () => new Date(roundToNearest(now2m + 60 * 60 * 1000, 2 * 60 * 1000)).toISOString(),
+        [now2m]
+    );
 
     const { loading: loadingEvents, data } = useRoom_GetEventsQuery({
         fetchPolicy: "cache-and-network",
+        nextFetchPolicy: "cache-first",
         variables: {
             roomId: roomDetails.id,
             now: now2mStr,
@@ -216,14 +222,35 @@ function RoomInner({
         secondsUntilZoomEvent,
     } = useCurrentRoomEvent(roomEvents);
 
+    const [refetchChannelStackInterval, setRefetchChannelStackInterval] = useState<number>(2 * 60 * 1000);
+    const [skipGetChannelStack, setSkipGetChannelStack] = useState<boolean>(true);
+    const roomChannelStackResponse = useRoomPage_GetRoomChannelStackQuery({
+        variables: {
+            roomId: roomDetails.id,
+        },
+        fetchPolicy: "network-only",
+        pollInterval: refetchChannelStackInterval,
+        skip: skipGetChannelStack,
+    });
+    useEffect(() => {
+        if (secondsUntilBroadcastEvent < 5 * 60 * 1000) {
+            setSkipGetChannelStack(false);
+        }
+    }, [secondsUntilBroadcastEvent]);
+    useEffect(() => {
+        if (roomChannelStackResponse.data?.video_ChannelStack?.[0]) {
+            setRefetchChannelStackInterval(5 * 60 * 1000);
+        }
+    }, [roomChannelStackResponse.data?.video_ChannelStack]);
+
     const hlsUri = useMemo(() => {
-        if (!roomDetails.channelStack) {
+        if (!roomChannelStackResponse.data?.video_ChannelStack?.[0]) {
             return null;
         }
-        const finalUri = new URL(roomDetails.channelStack.endpointUri);
-        finalUri.hostname = roomDetails.channelStack.cloudFrontDomain;
+        const finalUri = new URL(roomChannelStackResponse.data.video_ChannelStack[0].endpointUri);
+        finalUri.hostname = roomChannelStackResponse.data.video_ChannelStack[0].cloudFrontDomain;
         return finalUri.toString();
-    }, [roomDetails.channelStack]);
+    }, [roomChannelStackResponse.data?.video_ChannelStack]);
 
     const isPresenterOfUpcomingEvent = useMemo(
         () =>

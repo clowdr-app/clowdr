@@ -69,6 +69,7 @@ export default function ManageConferenceShufflePage(): JSX.Element {
         },
         pollInterval: 60000,
         fetchPolicy: "cache-and-network",
+        nextFetchPolicy: "cache-first",
     });
 
     const now = useRealTime(60000);

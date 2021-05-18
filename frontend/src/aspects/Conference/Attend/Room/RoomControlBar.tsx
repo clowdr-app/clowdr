@@ -15,12 +15,11 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { RoomPage_RoomDetailsFragment, Room_PersonRole_Enum } from "../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import useRoomMembers from "../../../Room/useRoomMembers";
-import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useConference } from "../../useConference";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
@@ -81,7 +80,6 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
     const roomMembers = useRoomMembers();
     const conference = useConference();
     const addMemberModal = useDisclosure();
-    const user = useCurrentUser();
 
     const roomMembersList = useMemo(
         () => (
@@ -125,11 +123,7 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                 onClose={addMemberModal.onClose}
             />
             {roomMembersList}
-            {roomDetails.roomPeople.find(
-                (person) =>
-                    user.user.registrants.find((myRegistrant) => myRegistrant.id === person.registrantId) &&
-                    person.personRoleName === Room_PersonRole_Enum.Admin
-            ) ? (
+            {roomDetails.selfAdminPerson?.length ? (
                 <Box textAlign="right" mb={2}>
                     <Button
                         mt={2}

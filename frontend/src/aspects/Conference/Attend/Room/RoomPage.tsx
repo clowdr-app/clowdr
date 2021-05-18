@@ -6,14 +6,14 @@ import {
     useRoomPage_GetRoomDetailsQuery,
 } from "../../../../generated/graphql";
 import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
-import usePolling from "../../../Generic/usePolling";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
 import Room from "./Room";
 
 gql`
-    query RoomPage_GetRoomDetails($roomId: uuid!) {
+    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             ...RoomPage_RoomDetails
         }
@@ -24,11 +24,6 @@ gql`
         name
         currentModeName
         isProgramRoom
-        channelStack {
-            cloudFrontDomain
-            endpointUri
-            id
-        }
         publicVonageSessionId
         chatId
         originatingItem {
@@ -45,7 +40,9 @@ gql`
             title
         }
         managementModeName
-        ...RoomPage_RoomPeople
+        selfAdminPerson: roomPeople(where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId } }) {
+            id
+        }
         shuffleRooms(limit: 1, order_by: { id: desc }) {
             id
             startedAt
@@ -55,12 +52,16 @@ gql`
         backendName
     }
 
-    fragment RoomPage_RoomPeople on room_Room {
-        roomPeople {
-            id
-            personRoleName
-            registrantId
+    query RoomPage_GetRoomChannelStack($roomId: uuid!) {
+        video_ChannelStack(where: { roomId: { _eq: $roomId } }) {
+            ...RoomPage_RoomChannelStack
         }
+    }
+
+    fragment RoomPage_RoomChannelStack on video_ChannelStack {
+        cloudFrontDomain
+        endpointUri
+        id
     }
 `;
 
@@ -79,20 +80,21 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 }
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
-    const result = useRoomPage_GetRoomDetailsQuery({
+    const registrant = useCurrentRegistrant();
+    const roomDetailsResponse = useRoomPage_GetRoomDetailsQuery({
         variables: {
             roomId,
+            registrantId: registrant.id,
         },
-        fetchPolicy: "network-only",
     });
-    const title = useTitle(result.loading ? "Loading room" : result.data?.room_Room_by_pk?.name ?? "Unknown room");
-
-    usePolling(result.refetch, 60000, true);
+    const title = useTitle(
+        roomDetailsResponse.loading ? "Loading room" : roomDetailsResponse.data?.room_Room_by_pk?.name ?? "Unknown room"
+    );
 
     return (
         <>
             {title}
-            <ApolloQueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={result}>
+            <ApolloQueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={roomDetailsResponse}>
                 {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
             </ApolloQueryWrapper>
         </>

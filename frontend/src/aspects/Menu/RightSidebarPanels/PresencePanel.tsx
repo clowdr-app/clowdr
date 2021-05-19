@@ -8,7 +8,6 @@ import { useMaybeConference } from "../../Conference/useConference";
 import type { Registrant } from "../../Conference/useCurrentRegistrant";
 import FAIcon from "../../Icons/FAIcon";
 import { usePresenceState } from "../../Realtime/PresenceStateProvider";
-import RoomParticipantsProvider from "../../Room/RoomParticipantsProvider";
 import useRoomParticipants from "../../Room/useRoomParticipants";
 import { RegistrantsList } from "./RegistrantsList";
 
@@ -138,11 +137,7 @@ export function PresencePanel({ roomId, isOpen }: { roomId?: string; isOpen: boo
         if (isOpen && roomId && roomId !== panelContents?.roomId) {
             setPanelContents({
                 roomId,
-                element: (
-                    <RoomParticipantsProvider roomId={roomId}>
-                        <PresencePanel_WithConnectedParticipants roomId={roomId} />
-                    </RoomParticipantsProvider>
-                ),
+                element: <PresencePanel_WithConnectedParticipants roomId={roomId} />,
             });
         }
     }, [isOpen, roomId, panelContents]);

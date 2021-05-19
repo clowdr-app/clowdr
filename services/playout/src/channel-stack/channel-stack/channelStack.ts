@@ -544,8 +544,8 @@ export class ChannelStack extends cdk.Stack {
                             h264Settings: {
                                 ...defaultH264Settings,
                                 rateControlMode: H264RateControlMode.QVBR,
-                                maxBitrate: 3000000,
-                                qvbrQualityLevel: 6,
+                                maxBitrate: 2500000,
+                                qvbrQualityLevel: 7,
                             },
                         },
                         height: 720,

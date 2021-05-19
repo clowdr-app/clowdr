@@ -183,7 +183,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
 
     return (
         <>
-            {limitedElements.length > 0 ? (
+            {limitedElements.length > 0 || s.length ? (
                 <>
                     {children}
                     {layout.type === "grid" ? (

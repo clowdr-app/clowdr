@@ -72,6 +72,7 @@ gql`
         endTime
         itemId
         exhibitionId
+        shufflePeriodId
     }
 
     fragment EventProgramPersonInfo on schedule_EventProgramPerson {

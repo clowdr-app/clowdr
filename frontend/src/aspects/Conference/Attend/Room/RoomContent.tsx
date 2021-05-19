@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Tag, Text, useColorModeValue, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, Center, chakra, Heading, HStack, Tag, Text, useColorModeValue, Wrap, WrapItem } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
 import {
@@ -7,7 +7,10 @@ import {
     Room_EventSummaryFragment,
     Room_Mode_Enum,
 } from "../../../../generated/graphql";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
+import FAIcon from "../../../Icons/FAIcon";
+import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { ItemElementsWrapper } from "../Content/ItemElements";
 import { ExhibitionLayoutWrapper } from "../Exhibition/ExhibitionLayout";
@@ -67,8 +70,8 @@ export function RoomContent({
     );
 
     const now5s = useRealTime(5000);
+    const conference = useConference();
 
-    // TODO: Exhibition layout if in exhibition mode, else content layout
     return (
         <Box flexGrow={1}>
             <RoomTitle roomDetails={roomDetails} />
@@ -89,12 +92,35 @@ export function RoomContent({
                     <Heading as="h3" textAlign="left" size="lg" mb={2}>
                         {currentRoomEvent.name}
                     </Heading>
-                    {currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
-                        <ItemElementsWrapper itemId={currentRoomEvent.itemId} linkToItem={true} />
-                    ) : undefined}
+                    {currentRoomEvent.shufflePeriod ? (
+                        <Center>
+                            <LinkButton
+                                to={`/conference/${conference.slug}/shuffle`}
+                                flexDir="column"
+                                py={4}
+                                h="auto"
+                                colorScheme="blue"
+                            >
+                                <HStack>
+                                    <FAIcon iconStyle="s" icon="hand-pointer" />
+                                    <chakra.span fontWeight="bold" mb={2}>
+                                        Participate in shuffle queue
+                                    </chakra.span>
+                                </HStack>
+                                <chakra.span mt={2} fontSize="lg" fontStyle="italic">
+                                    {currentRoomEvent.shufflePeriod.name}
+                                </chakra.span>
+                            </LinkButton>
+                        </Center>
+                    ) : (
+                        <></>
+                    )}
                     {currentRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoPlayer
                         ? currentEventVideosEl
                         : undefined}
+                    {currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Exhibition && currentRoomEvent.itemId ? (
+                        <ItemElementsWrapper itemId={currentRoomEvent.itemId} linkToItem={true} />
+                    ) : undefined}
                     {currentRoomEvent.exhibitionId ? (
                         <ExhibitionLayoutWrapper
                             exhibitionId={currentRoomEvent.exhibitionId}

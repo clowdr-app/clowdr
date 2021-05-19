@@ -43,8 +43,10 @@ import {
     RoomInfoFragment,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
+    ShufflePeriodInfoFragment,
     useDeleteEventInfosMutation,
     useInsertEventInfoMutation,
+    useManageSchedule_ShufflePeriodsQuery,
     useSelectWholeScheduleQuery,
     useUpdateEventInfoMutation,
 } from "../../../generated/graphql";
@@ -74,6 +76,17 @@ import BatchAddEventPeople from "./Schedule/BatchAddEventPeople";
 import { EventProgramPersonsModal, requiresEventPeople } from "./Schedule/EventProgramPersonsModal";
 
 gql`
+    query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
+        room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId }, endAt: { _gt: $now } }) {
+            ...ShufflePeriodInfo
+        }
+    }
+
+    fragment ShufflePeriodInfo on room_ShufflePeriod {
+        id
+        name
+    }
+
     mutation InsertEventInfo(
         $id: uuid!
         $roomId: uuid!
@@ -85,6 +98,7 @@ gql`
         $durationSeconds: Int!
         $itemId: uuid = null
         $exhibitionId: uuid = null
+        $shufflePeriodId: uuid = null
     ) {
         insert_schedule_Event_one(
             object: {
@@ -98,6 +112,7 @@ gql`
                 durationSeconds: $durationSeconds
                 itemId: $itemId
                 exhibitionId: $exhibitionId
+                shufflePeriodId: $shufflePeriodId
             }
         ) {
             ...EventInfo
@@ -114,6 +129,7 @@ gql`
         $durationSeconds: Int!
         $itemId: uuid = null
         $exhibitionId: uuid = null
+        $shufflePeriodId: uuid = null
     ) {
         update_schedule_Event_by_pk(
             pk_columns: { id: $eventId }
@@ -126,6 +142,7 @@ gql`
                 durationSeconds: $durationSeconds
                 itemId: $itemId
                 exhibitionId: $exhibitionId
+                shufflePeriodId: $shufflePeriodId
             }
         ) {
             ...EventInfo
@@ -149,6 +166,7 @@ enum ColumnId {
     Name = "name",
     Content = "content",
     Exhibition = "exhibition",
+    ShufflePeriod = "shufflePeriod",
 }
 
 function rowWarning(row: EventInfoFragment) {
@@ -182,6 +200,27 @@ function EditableScheduleTable(): JSX.Element {
         nextFetchPolicy: "cache-first",
     });
     const data = useMemo(() => [...(wholeSchedule.data?.schedule_Event ?? [])], [wholeSchedule.data?.schedule_Event]);
+
+    const shufflePeriodsNow = useMemo(() => new Date().toISOString(), []);
+    const shufflePeriodsResponse = useManageSchedule_ShufflePeriodsQuery({
+        variables: {
+            conferenceId: conference.id,
+            now: shufflePeriodsNow,
+        },
+    });
+    const shufflePeriodOptions = useMemo(
+        () =>
+            shufflePeriodsResponse.data?.room_ShufflePeriod
+                ? [...shufflePeriodsResponse.data.room_ShufflePeriod]
+                      .sort((x, y) => x.name.localeCompare(y.name))
+                      .map((period) => (
+                          <option key={period.id} value={period.id}>
+                              {period.name}
+                          </option>
+                      ))
+                : [],
+        [shufflePeriodsResponse.data?.room_ShufflePeriod]
+    );
 
     const roomOptions = useMemo(
         () =>
@@ -738,16 +777,107 @@ function EditableScheduleTable(): JSX.Element {
                     );
                 },
             },
+            {
+                id: ColumnId.ShufflePeriod,
+                header: function ShufflePeriodHeader(props: ColumnHeaderProps<EventInfoFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Shuffle Period (optional)</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Shuffle Period{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) =>
+                    shufflePeriodsResponse.data?.room_ShufflePeriod.find(
+                        (shufflePeriod) => shufflePeriod.id === data.shufflePeriodId
+                    ),
+                set: (record, value: ShufflePeriodInfoFragment | undefined) => {
+                    record.shufflePeriodId = value?.id;
+                },
+                sortType: (rowA: ShufflePeriodInfoFragment, rowB: ShufflePeriodInfoFragment) => {
+                    const compared = rowA && rowB ? rowA.name.localeCompare(rowB.name) : rowA ? 1 : rowB ? -1 : 0;
+                    return compared;
+                },
+                filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
+                    return rows.filter((row) => {
+                        return (
+                            (row.shufflePeriodId &&
+                                shufflePeriodsResponse.data?.room_ShufflePeriod
+                                    .find((shufflePeriod) => shufflePeriod.id === row.shufflePeriodId)
+                                    ?.name.toLowerCase()
+                                    .includes(filterValue.toLowerCase())) ??
+                            false
+                        );
+                    });
+                },
+                filterEl: TextColumnFilter,
+                cell: function ShufflePeriodCell(
+                    props: CellProps<Partial<EventInfoFragment>, ShufflePeriodInfoFragment | undefined>
+                ) {
+                    const now = useRealTime(10000);
+                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const startLeeway = 10 * 60 * 1000;
+                    const endLeeway = 1 * 60 * 1000;
+                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                    const past = end < now - endLeeway;
+                    const isLivestream = props.staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                        : false;
+
+                    return (
+                        <HStack>
+                            {props.value ? (
+                                <LinkButton
+                                    linkProps={{ target: "_blank" }}
+                                    to={`/conference/${conference.slug}/manage/shuffle`}
+                                    size="xs"
+                                    aria-label="Go to shuffle period in new tab"
+                                >
+                                    <Tooltip label="Go to shuffle period in new tab">
+                                        <FAIcon iconStyle="s" icon="link" />
+                                    </Tooltip>
+                                </LinkButton>
+                            ) : undefined}
+                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                                <Tooltip label="You cannot edit the shuffle period of an ongoing or past livestream event.">
+                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                </Tooltip>
+                            ) : undefined}
+                            <Select
+                                value={props.value?.id ?? ""}
+                                onChange={(ev) =>
+                                    props.onChange?.(
+                                        shufflePeriodsResponse.data?.room_ShufflePeriod.find(
+                                            (room) => room.id === ev.target.value
+                                        )
+                                    )
+                                }
+                                onBlur={props.onBlur}
+                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
+                                ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                maxW={400}
+                            >
+                                <option value={""}>{"<None selected>"}</option>
+                                {shufflePeriodOptions}
+                            </Select>
+                        </HStack>
+                    );
+                },
+            },
         ],
         [
+            wholeSchedule.data?.room_Room,
+            wholeSchedule.data?.content_Item,
+            wholeSchedule.data?.collection_Exhibition,
+            shufflePeriodsResponse.data?.room_ShufflePeriod,
             conference.slug,
+            roomOptions,
+            roomModeOptions,
             itemOptions,
             exhibitionOptions,
-            roomModeOptions,
-            roomOptions,
-            wholeSchedule.data?.content_Item,
-            wholeSchedule.data?.room_Room,
-            wholeSchedule.data?.collection_Exhibition,
+            shufflePeriodOptions,
         ]
     );
 
@@ -898,6 +1028,7 @@ function EditableScheduleTable(): JSX.Element {
                               .toISO(),
                           itemId: null,
                           exhibitionId: null,
+                          shufflePeriodId: null,
                           originatingDataId: null,
                       }),
                       makeWhole: (d) => d as EventInfoFragment,
@@ -1025,7 +1156,7 @@ function EditableScheduleTable(): JSX.Element {
 
     return (
         <>
-            <HStack>
+            <HStack flexWrap="wrap" maxW="100%" justifyContent="center" gridRowGap={2}>
                 <Center borderStyle="solid" borderWidth={1} borderColor={grey} borderRadius={5} p={2}>
                     <FAIcon icon="clock" iconStyle="s" mr={2} />
                     <Text as="span">Timezone: {localTimeZone}</Text>

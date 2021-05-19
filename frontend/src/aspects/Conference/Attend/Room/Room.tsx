@@ -62,6 +62,10 @@ gql`
         intendedRoomModeName
         itemId
         exhibitionId
+        shufflePeriod {
+            id
+            name
+        }
         item {
             id
             title

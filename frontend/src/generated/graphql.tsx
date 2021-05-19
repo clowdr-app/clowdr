@@ -37591,7 +37591,7 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
 
 export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
   originatingItemId: Scalars['uuid'];
@@ -39093,6 +39093,19 @@ export type InsertRoomPeopleMutation = { readonly __typename?: 'mutation_root', 
       & RoomPersonInfoFragment
     )> }> };
 
+export type ManageSchedule_ShufflePeriodsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  now: Scalars['timestamptz'];
+}>;
+
+
+export type ManageSchedule_ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<(
+    { readonly __typename?: 'room_ShufflePeriod' }
+    & ShufflePeriodInfoFragment
+  )> };
+
+export type ShufflePeriodInfoFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string };
+
 export type InsertEventInfoMutationVariables = Exact<{
   id: Scalars['uuid'];
   roomId: Scalars['uuid'];
@@ -39104,6 +39117,7 @@ export type InsertEventInfoMutationVariables = Exact<{
   durationSeconds: Scalars['Int'];
   itemId?: Maybe<Scalars['uuid']>;
   exhibitionId?: Maybe<Scalars['uuid']>;
+  shufflePeriodId?: Maybe<Scalars['uuid']>;
 }>;
 
 
@@ -39122,6 +39136,7 @@ export type UpdateEventInfoMutationVariables = Exact<{
   durationSeconds: Scalars['Int'];
   itemId?: Maybe<Scalars['uuid']>;
   exhibitionId?: Maybe<Scalars['uuid']>;
+  shufflePeriodId?: Maybe<Scalars['uuid']>;
 }>;
 
 
@@ -39283,7 +39298,7 @@ export type RoomInfoFragment = { readonly __typename?: 'room_Room', readonly cap
 
 export type RoomParticipantInfoFragment = { readonly __typename?: 'room_Participant', readonly registrantId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
 
-export type EventInfoFragment = { readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly eventPeople: ReadonlyArray<(
+export type EventInfoFragment = { readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly eventPeople: ReadonlyArray<(
     { readonly __typename?: 'schedule_EventProgramPerson' }
     & EventProgramPersonInfoFragment
   )>, readonly eventTags: ReadonlyArray<(
@@ -40257,6 +40272,10 @@ export const Room_EventSummaryFragmentDoc = gql`
   intendedRoomModeName
   itemId
   exhibitionId
+  shufflePeriod {
+    id
+    name
+  }
   item {
     id
     title
@@ -41012,6 +41031,12 @@ export const RoomPersonInfoFragmentDoc = gql`
   personRoleName
 }
     `;
+export const ShufflePeriodInfoFragmentDoc = gql`
+    fragment ShufflePeriodInfo on room_ShufflePeriod {
+  id
+  name
+}
+    `;
 export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
   id
@@ -41151,6 +41176,7 @@ export const EventInfoFragmentDoc = gql`
   endTime
   itemId
   exhibitionId
+  shufflePeriodId
 }
     ${EventProgramPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
@@ -48086,10 +48112,48 @@ export function useInsertRoomPeopleMutation(baseOptions?: Apollo.MutationHookOpt
 export type InsertRoomPeopleMutationHookResult = ReturnType<typeof useInsertRoomPeopleMutation>;
 export type InsertRoomPeopleMutationResult = Apollo.MutationResult<InsertRoomPeopleMutation>;
 export type InsertRoomPeopleMutationOptions = Apollo.BaseMutationOptions<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
+export const ManageSchedule_ShufflePeriodsDocument = gql`
+    query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
+  room_ShufflePeriod(
+    where: {conferenceId: {_eq: $conferenceId}, endAt: {_gt: $now}}
+  ) {
+    ...ShufflePeriodInfo
+  }
+}
+    ${ShufflePeriodInfoFragmentDoc}`;
+
+/**
+ * __useManageSchedule_ShufflePeriodsQuery__
+ *
+ * To run a query within a React component, call `useManageSchedule_ShufflePeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageSchedule_ShufflePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageSchedule_ShufflePeriodsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      now: // value for 'now'
+ *   },
+ * });
+ */
+export function useManageSchedule_ShufflePeriodsQuery(baseOptions: Apollo.QueryHookOptions<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>(ManageSchedule_ShufflePeriodsDocument, options);
+      }
+export function useManageSchedule_ShufflePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>(ManageSchedule_ShufflePeriodsDocument, options);
+        }
+export type ManageSchedule_ShufflePeriodsQueryHookResult = ReturnType<typeof useManageSchedule_ShufflePeriodsQuery>;
+export type ManageSchedule_ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useManageSchedule_ShufflePeriodsLazyQuery>;
+export type ManageSchedule_ShufflePeriodsQueryResult = Apollo.QueryResult<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>;
 export const InsertEventInfoDocument = gql`
-    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null) {
+    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null) {
   insert_schedule_Event_one(
-    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId}
+    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId}
   ) {
     ...EventInfo
   }
@@ -48120,6 +48184,7 @@ export type InsertEventInfoMutationFn = Apollo.MutationFunction<InsertEventInfoM
  *      durationSeconds: // value for 'durationSeconds'
  *      itemId: // value for 'itemId'
  *      exhibitionId: // value for 'exhibitionId'
+ *      shufflePeriodId: // value for 'shufflePeriodId'
  *   },
  * });
  */
@@ -48131,10 +48196,10 @@ export type InsertEventInfoMutationHookResult = ReturnType<typeof useInsertEvent
 export type InsertEventInfoMutationResult = Apollo.MutationResult<InsertEventInfoMutation>;
 export type InsertEventInfoMutationOptions = Apollo.BaseMutationOptions<InsertEventInfoMutation, InsertEventInfoMutationVariables>;
 export const UpdateEventInfoDocument = gql`
-    mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null) {
+    mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null) {
   update_schedule_Event_by_pk(
     pk_columns: {id: $eventId}
-    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId}
+    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId}
   ) {
     ...EventInfo
   }
@@ -48164,6 +48229,7 @@ export type UpdateEventInfoMutationFn = Apollo.MutationFunction<UpdateEventInfoM
  *      durationSeconds: // value for 'durationSeconds'
  *      itemId: // value for 'itemId'
  *      exhibitionId: // value for 'exhibitionId'
+ *      shufflePeriodId: // value for 'shufflePeriodId'
  *   },
  * });
  */

@@ -59,15 +59,15 @@ export class RealtimeService {
 
             this.socket.on("time", this.onTime.bind(this));
 
-            setTimeout(() => {
-                this.RealTimeOffsetSync(true);
-            }, 1000);
-            this.realTimeSyncIntervalId = setInterval(
-                (() => {
-                    this.RealTimeOffsetSync();
-                }) as TimerHandler,
-                5 * 60000
-            );
+            // setTimeout(() => {
+            //     this.RealTimeOffsetSync(true);
+            // }, 1000);
+            // this.realTimeSyncIntervalId = setInterval(
+            //     (() => {
+            //         this.RealTimeOffsetSync();
+            //     }) as TimerHandler,
+            //     5 * 60000
+            // );
         } catch (e) {
             console.error("Failed to create socket for realtime service.");
             this.socket = undefined;
@@ -139,7 +139,7 @@ export class RealtimeService {
     private realTimeSyncIntervalId: number | undefined;
     private realTimeSyncPacketIdGenerator = 1;
     public RealTimeOffsetSync(isInitial = false): void {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 2; i++) {
             setTimeout(() => {
                 this.socket?.emit("time", {
                     id: this.realTimeSyncPacketIdGenerator++,
@@ -162,16 +162,16 @@ export class RealtimeService {
         this._realTimeOffsets.push((clientReceiveTime - syncPacket.clientSendTime) / 2);
 
         const realTimeOffset = this.realTimeOffset;
-        console.log("Offset values", this._realTimeOffsets);
-        console.log(`Time sync:
-    Client -> Server: ${syncPacket.serverSendTime - syncPacket.clientSendTime}ms
-    Server -> Client: ${clientReceiveTime - syncPacket.serverSendTime}ms
-    Overall: ${clientReceiveTime - syncPacket.clientSendTime}ms
-    Offset: ${(clientReceiveTime - syncPacket.clientSendTime) / 2}ms
-    Is initial: ${syncPacket.isInitial}
-    ------
-    Overall offset: ${realTimeOffset}
-`);
+        //         console.log("Offset values", this._realTimeOffsets);
+        //         console.log(`Time sync:
+        //     Client -> Server: ${syncPacket.serverSendTime - syncPacket.clientSendTime}ms
+        //     Server -> Client: ${clientReceiveTime - syncPacket.serverSendTime}ms
+        //     Overall: ${clientReceiveTime - syncPacket.clientSendTime}ms
+        //     Offset: ${(clientReceiveTime - syncPacket.clientSendTime) / 2}ms
+        //     Is initial: ${syncPacket.isInitial}
+        //     ------
+        //     Overall offset: ${realTimeOffset}
+        // `);
 
         if (syncPacket.isInitial && realTimeOffset >= 10) {
             this.RealTimeOffsetSync();

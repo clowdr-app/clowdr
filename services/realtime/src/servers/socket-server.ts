@@ -96,6 +96,17 @@ socketServer.on("connection", function (socket: Socket) {
         onConnectAnalytics(socket, userId, conferenceSlugs);
         onConnectHandRaise(socket, userId, conferenceSlugs);
 
+        socket.on("time", (syncPacket: any) => {
+            try {
+                socket.emit("time", { ...syncPacket, serverSendTime: Date.now() });
+                if (syncPacket?.clientSendTime && typeof syncPacket.clientSendTime === "number") {
+                    console.log("Client time sync. Time offset=" + (Date.now() - syncPacket.clientSendTime) + "ms");
+                }
+            } catch {
+                // Do nothing
+            }
+        });
+
         socket.join(notificationsRoomName(userId));
     }
 });

@@ -1,5 +1,5 @@
 import { Mutex } from "async-mutex";
-import { Observable, Observer } from "../Chat/ChatGlobalState";
+import { Observable, Observer } from "../Observable";
 import { realtimeService } from "./RealtimeService";
 
 export class PresenceState {

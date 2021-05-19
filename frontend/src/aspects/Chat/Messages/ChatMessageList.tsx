@@ -2,8 +2,8 @@ import { Box, BoxProps, Button, Center, Flex, Heading, useColorModeValue } from 
 import Observer from "@researchgate/react-intersection-observer";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
+import { Observable } from "../../Observable";
 import type { MessageState } from "../ChatGlobalState";
-import { Observable } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
 import MessageBox from "./MessageBox";
 

@@ -22,7 +22,7 @@ export default function LoggedOutPage(): JSX.Element {
             <>
                 {title}
                 <FAIcon iconStyle="s" icon="door-open" fontSize="6xl" />
-                <Heading as="h1" fontSize="4xl" lineHeight="revert">
+                <Heading as="h1" id="page-heading" fontSize="4xl" lineHeight="revert">
                     You have been logged out.
                 </Heading>
                 <Text fontSize="xl" lineHeight="revert" fontWeight="light">

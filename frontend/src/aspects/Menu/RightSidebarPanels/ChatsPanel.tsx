@@ -298,7 +298,12 @@ export function ChatsPanel({
                         <Chat
                             customHeadingElements={[
                                 <Tooltip key="back-button" label="Back to chats list">
-                                    <Button size="xs" colorScheme="purple" onClick={() => setCurrentChatId(null)}>
+                                    <Button
+                                        size="xs"
+                                        colorScheme="purple"
+                                        onClick={() => setCurrentChatId(null)}
+                                        aria-label="Return to all chats list"
+                                    >
                                         <FAIcon iconStyle="s" icon="chevron-left" mr={1} /> All chats
                                     </Button>
                                 </Tooltip>,
@@ -311,6 +316,7 @@ export function ChatsPanel({
                                             onClick={() =>
                                                 history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
                                             }
+                                            aria-label="Go to video room for this chat"
                                         >
                                             <FAIcon iconStyle="s" icon="video" />
                                         </Button>

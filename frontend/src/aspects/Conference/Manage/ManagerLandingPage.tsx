@@ -20,7 +20,9 @@ export default function ManagerLandingPage(): JSX.Element {
     return (
         <>
             {title}
-            <Heading as="h1">Manage {conference.shortName}</Heading>
+            <Heading as="h1" id="page-heading">
+                Manage {conference.shortName}
+            </Heading>
             <Flex
                 flexDirection="row"
                 flexWrap="wrap"

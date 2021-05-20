@@ -122,7 +122,11 @@ function ConferenceLandingPageInner(): JSX.Element {
     return (
         <>
             {title}
-            {!hasAbstract ? <Heading as="h1">{conference.shortName}</Heading> : undefined}
+            {!hasAbstract ? (
+                <Heading as="h1" id="page-heading">
+                    {conference.shortName}
+                </Heading>
+            ) : undefined}
             <ConferenceLandingContent group={group} />
         </>
     );

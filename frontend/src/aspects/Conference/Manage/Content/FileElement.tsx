@@ -122,7 +122,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
                                             Current file
                                         </Heading>
                                         <Center>
-                                            <Image src={imageSrc} maxH={200} />
+                                            <Image src={imageSrc} maxH={200} alt="No caption provided." />
                                         </Center>
                                     </>
                                 ) : (

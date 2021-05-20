@@ -195,8 +195,8 @@ function ManageTagsModalBody(): JSX.Element {
                         >
                             <NumberInputField ref={props.ref as LegacyRef<HTMLInputElement>} />
                             <NumberInputStepper>
-                                <NumberIncrementStepper />
-                                <NumberDecrementStepper />
+                                <NumberIncrementStepper aria-label="Increment" />
+                                <NumberDecrementStepper aria-label="Decrement" />
                             </NumberInputStepper>
                         </NumberInput>
                     );

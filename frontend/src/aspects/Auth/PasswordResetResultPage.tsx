@@ -13,7 +13,7 @@ export default function PasswordResetResultPage({
     return (
         <>
             <FAIcon iconStyle="s" icon={success ? "check" : "times"} fontSize="6xl" />
-            <Heading as="h1" fontSize="4xl" lineHeight="revert">
+            <Heading as="h1" id="page-heading" fontSize="4xl" lineHeight="revert">
                 {success ? "Your password was reset" : message ?? "Password reset - status unknown"}
             </Heading>
             <LoginButton size="lg" asMenuItem={false} />

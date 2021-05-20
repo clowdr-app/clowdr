@@ -225,7 +225,9 @@ function CookiePolicyCompliance({
         <Center mt={10}>
             <Container>
                 <VStack spacing={4}>
-                    <Heading as="h1">Cookies</Heading>
+                    <Heading as="h1" id="page-heading">
+                        Cookies
+                    </Heading>
                     <Text>
                         The Clowdr software (hosted by {hostOrganisationName}) requires the use of cookies in order to
                         deliver the software service to you. Please{" "}
@@ -291,7 +293,9 @@ function TermsAndPPCompliance({
         <Center mt={10}>
             <Container>
                 <VStack spacing={4}>
-                    <Heading as="h1">Terms of Service</Heading>
+                    <Heading as="h1" id="page-heading">
+                        Terms of Service
+                    </Heading>
                     <Text>
                         Please read and agree to the{" "}
                         <Link isExternal href={termsURL}>

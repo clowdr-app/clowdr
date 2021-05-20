@@ -78,7 +78,13 @@ function ElementInner({
                     </Box>
                 );
             case Content_ElementType_Enum.ImageUrl:
-                return <Image src={latestVersion.data.url} style={{ maxWidth: "100%" }} />;
+                return (
+                    <Image
+                        src={latestVersion.data.url}
+                        style={{ maxWidth: "100%" }}
+                        alt="External image - no caption provided"
+                    />
+                );
             case Content_ElementType_Enum.ImageFile:
                 try {
                     const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
@@ -90,6 +96,7 @@ function ElementInner({
                             src={`https://${bucket}.s3-${
                                 import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
                             }.amazonaws.com/${key}`}
+                            alt="No caption provided"
                         />
                     );
                 } catch (e) {
@@ -166,7 +173,7 @@ function ElementInner({
                         key.endsWith(".jpeg") ||
                         key.endsWith(".webp")
                     ) {
-                        return <Image src={url} />;
+                        return <Image src={url} alt="No caption provided" />;
                     } else {
                         return (
                             <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">

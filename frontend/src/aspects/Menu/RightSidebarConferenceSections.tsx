@@ -133,7 +133,7 @@ function RightSidebarConferenceSections_Inner({
             height="100%"
             onChange={onChangeTab}
         >
-            <TabList py={2}>
+            <TabList py={2} flexWrap="wrap">
                 <ToggleChatsButton ml={2} mr="auto" size="xs" />
                 <Tab
                     ml={2}

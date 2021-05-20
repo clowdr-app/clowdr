@@ -67,6 +67,7 @@ function QuickSendEmojiButton({
             p="3px"
             minW={0}
             onClick={() => send(emoji)}
+            aria-label={`Send ${emoji} emote`}
             {...props}
         >
             <Twemoji className="twemoji" text={emoji} />

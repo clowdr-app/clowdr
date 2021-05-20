@@ -296,8 +296,8 @@ export default function CreatePollOptionsModal({
                                 >
                                     <NumberInputField />
                                     <NumberInputStepper>
-                                        <NumberIncrementStepper />
-                                        <NumberDecrementStepper />
+                                        <NumberIncrementStepper aria-label="Increment" />
+                                        <NumberDecrementStepper aria-label="Decrement" />
                                     </NumberInputStepper>
                                 </NumberInput>
                                 <FormHelperText>

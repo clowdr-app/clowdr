@@ -29,7 +29,12 @@ export function PermissionInstructionsChrome(): JSX.Element {
                 settings by clicking the icon in the address bar and setting the Camera and Microphone permissions to
                 Allow.
             </Text>
-            <Image m={2} src={chromeImage} maxH="50vh" />
+            <Image
+                m={2}
+                src={chromeImage}
+                maxH="50vh"
+                alt="Use the permissions controls in the left end of the Chrome address bar to manage camera and microphone permissions."
+            />
             <Text>
                 If you need more help, see the{" "}
                 <Link isExternal href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop">
@@ -49,7 +54,11 @@ export function PermissionInstructionsFirefox(): JSX.Element {
                 It seems that your web browser is not allowing Clowdr to access the camera or microphone. Remove any
                 blocked devices by clicking the icon in the address bar and then the appropriate x button.
             </Text>
-            <Image m={2} src={firefoxImage} />
+            <Image
+                m={2}
+                src={firefoxImage}
+                alt="Use the permissions controls in the left end of the Firefox address bar to manage camera and microphone permissions."
+            />
             <Text>
                 If you need more help, see the{" "}
                 <Link

@@ -120,6 +120,7 @@ export function ItemChatPanel({
                             size="xs"
                             colorScheme="blue"
                             onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
+                            aria-label="Go to video room for this chat"
                         >
                             <FAIcon iconStyle="s" icon="video" />
                         </Button>

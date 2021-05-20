@@ -7,7 +7,7 @@ export default function RightSidebar({ rootUrl, confSlug }: { rootUrl: string; c
     const { onRightBarClose } = useMainMenu();
 
     return (
-        <Flex id="right-bar" w="100%" h="100%" overflow="hidden">
+        <Flex id="right-bar" w="100%" h="100%" overflow="hidden" role="region" aria-label="Chat sidebar">
             <Sections rootUrl={rootUrl} confSlug={confSlug} onClose={onRightBarClose} />
         </Flex>
     );

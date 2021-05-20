@@ -10,7 +10,7 @@ export default function NewUserLandingPage({ conferenceName }: { conferenceName?
     return (
         <>
             {title}
-            <Heading as="h1" fontSize="4.25rem" lineHeight="4.25rem" fontWeight="thin">
+            <Heading as="h1" id="page-heading" fontSize="4.25rem" lineHeight="4.25rem" fontWeight="thin">
                 Clowdr
             </Heading>
             <FormControl textAlign="center">

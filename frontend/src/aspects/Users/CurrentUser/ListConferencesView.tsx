@@ -115,7 +115,9 @@ export default function ListConferencesView(): JSX.Element {
             alignItems="center"
             spacing={5}
         >
-            <Heading as="h1">Attend</Heading>
+            <Heading as="h1" id="page-heading">
+                Attend
+            </Heading>
             <Text maxW="300px" fontSize="sm">
                 Choose a conference to attend or use an invite code to join a new one.
             </Text>

@@ -79,7 +79,7 @@ function ExhibitionPageInner({ exhibition }: { exhibition: ExhibitionWithContent
     return (
         <>
             {title}
-            <Heading as="h1" pt={2}>
+            <Heading as="h1" id="page-heading" pt={2}>
                 <Circle size="0.7em" bg={exhibition.colour} display="inline-block" verticalAlign="middle" mr="0.4em" />
                 <chakra.span verticalAlign="text-bottom" mr="1.1em">
                     {exhibition.name}

@@ -210,7 +210,7 @@ export default function SubmitItemPage({
             <VStack spacing={4}>
                 <Container centerContent maxW="100%">
                     <VStack spacing={4}>
-                        <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+                        <Heading as="h1" id="page-heading" fontSize="2.3rem" lineHeight="3rem">
                             Content Submission
                         </Heading>
                         {uploadableElement && (

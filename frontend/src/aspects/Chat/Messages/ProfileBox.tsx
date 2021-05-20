@@ -24,6 +24,7 @@ export default function ProfilePictureBox({
             p={0}
             m={0}
             background="none"
+            aria-label={`View ${registrant?.displayName ?? "unknown"} profile`}
             {...props}
             onClick={() => {
                 if (registrant && registrant.profile) {
@@ -52,8 +53,8 @@ export default function ProfilePictureBox({
                     objectFit="cover"
                     objectPosition="center"
                     src={registrant.profile.photoURL_50x50}
-                    aria-label={`Profile picture of ${registrant.displayName}`}
                     overflow="hidden"
+                    alt={`Profile picture of ${registrant.displayName}`}
                 />
             ) : config.messageConfig.showPlaceholderProfilePictures && registrant !== null ? (
                 <FAIcon iconStyle="s" icon="cat" fontSize={((props.w ?? 35) as number) * 0.8 + "px"} />

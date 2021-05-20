@@ -252,8 +252,8 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             >
                                 <NumberInputField />
                                 <NumberInputStepper>
-                                    <NumberIncrementStepper />
-                                    <NumberDecrementStepper />
+                                    <NumberIncrementStepper aria-label="Increment" />
+                                    <NumberDecrementStepper aria-label="Decrement" />
                                 </NumberInputStepper>
                             </NumberInput>
                         </InputGroup>
@@ -448,7 +448,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                         </Button>
                     </VStack>
                 ) : (
-                    <Heading as="h1">
+                    <Heading as="h1" id="page-heading">
                         <Text as="span" mr={2}>
                             {editingRegistrant.displayName}
                         </Text>

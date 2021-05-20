@@ -84,6 +84,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                                 h="100%"
                                 src={registrant.profile.photoURL_350x350}
                                 fallbackSrc="https://via.placeholder.com/350"
+                                alt={`Profile picture of ${registrant.displayName}`}
                             />
                         ) : (
                             <FAIcon iconStyle="s" icon="cat" fontSize="150px" />
@@ -97,7 +98,9 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                         spacing={4}
                         flex="1 1 50%"
                     >
-                        <Heading as="h1">{registrant.displayName}</Heading>
+                        <Heading as="h1" id="page-heading">
+                            {registrant.displayName}
+                        </Heading>
                         {registrant.profile.pronouns ? (
                             <Box>
                                 <PronounList pronouns={registrant.profile.pronouns} />

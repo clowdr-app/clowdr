@@ -7,7 +7,17 @@ export default function LeftSidebar({ rootUrl, confSlug }: { rootUrl: string; co
     const { onLeftBarClose } = useMainMenu();
 
     return (
-        <VStack id="left-bar" align="stretch" spacing={0} w="100%" h="100%" overflowX="hidden" overflowY="auto">
+        <VStack
+            id="left-bar"
+            align="stretch"
+            spacing={0}
+            w="100%"
+            h="100%"
+            overflowX="hidden"
+            overflowY="auto"
+            role="navigation"
+            aria-label="Main navigation"
+        >
             <Sections rootUrl={rootUrl} confSlug={confSlug} onClose={onLeftBarClose} />
         </VStack>
     );

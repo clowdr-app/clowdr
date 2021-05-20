@@ -21,7 +21,7 @@ export function ManageConferenceEmailPage(): JSX.Element {
                 <Heading as="h1" size="xl">
                     Manage {conference.shortName}
                 </Heading>
-                <Heading as="h2" size="lg" fontStyle="italic">
+                <Heading id="page-heading" as="h2" size="lg" fontStyle="italic">
                     Email
                 </Heading>
                 <ConfigureEmailTemplates />

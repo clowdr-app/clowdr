@@ -38,6 +38,7 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     messageType={Chat_MessageType_Enum.Message}
                     shouldHighlight={composeCtx.newMessageType === Chat_MessageType_Enum.Message}
                     fontSize="inherit"
+                    aria-label="Compose an ordinary message"
                     onClick={() => {
                         if (composeCtx.newMessageType !== Chat_MessageType_Enum.Message) {
                             composeCtx.setNewMessageType(Chat_MessageType_Enum.Message);
@@ -51,6 +52,7 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     messageType={Chat_MessageType_Enum.Question}
                     shouldHighlight={composeCtx.newMessageType === Chat_MessageType_Enum.Question}
                     fontSize="inherit"
+                    aria-label="Compose a question"
                     onClick={() => {
                         if (composeCtx.newMessageType !== Chat_MessageType_Enum.Question) {
                             composeCtx.setNewMessageType(Chat_MessageType_Enum.Question);
@@ -77,6 +79,7 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     messageType={Chat_MessageType_Enum.Poll}
                     shouldHighlight={composeCtx.newMessageType === Chat_MessageType_Enum.Poll}
                     fontSize="inherit"
+                    aria-label="Compose a poll"
                     onClick={() => {
                         if (composeCtx.newMessageType !== Chat_MessageType_Enum.Poll) {
                             composeCtx.setNewMessageType(Chat_MessageType_Enum.Poll);

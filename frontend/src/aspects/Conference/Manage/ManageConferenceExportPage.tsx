@@ -22,7 +22,7 @@ export default function ManageConferenceExportPage(): JSX.Element {
             <Heading as="h1" fontSize="4xl">
                 Manage {conference.shortName}
             </Heading>
-            <Heading as="h2" fontSize="2xl" fontStyle="italic">
+            <Heading id="page-heading" as="h2" fontSize="2xl" fontStyle="italic">
                 Exports
             </Heading>
             <Tabs width="100%">

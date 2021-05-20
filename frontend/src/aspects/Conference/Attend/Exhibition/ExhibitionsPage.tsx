@@ -128,7 +128,7 @@ export default function ExhibitionsPage(): JSX.Element {
                 <CenteredSpinner spinnerProps={{ label: "Loading exhibitions" }} />
             ) : (
                 <>
-                    <Heading as="h1" py={6}>
+                    <Heading as="h1" id="page-heading" py={6}>
                         Exhibitions
                     </Heading>
                     <Grid templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={4}>

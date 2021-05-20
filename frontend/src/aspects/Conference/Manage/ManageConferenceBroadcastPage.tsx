@@ -40,7 +40,7 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
             <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
-            <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
+            <Heading as="h2" id="page-heading" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Broadcasts
             </Heading>
             <Tabs>

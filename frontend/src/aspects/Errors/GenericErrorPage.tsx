@@ -12,7 +12,7 @@ export default function GenericErrorPage({
     return (
         <>
             <FAIcon iconStyle="s" icon="cat" fontSize="6xl" />
-            <Heading as="h1" fontSize="4xl" lineHeight="revert">
+            <Heading as="h1" id="page-heading" fontSize="4xl" lineHeight="revert">
                 {heading}
             </Heading>
             {typeof children === "string" ? (

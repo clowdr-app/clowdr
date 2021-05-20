@@ -48,7 +48,16 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
     return roomDetails.originatingItem ? (
         <>
             {sponsorLogoUrl ? (
-                <Image src={sponsorLogoUrl} ml={5} maxWidth="20rem" mt={5} bgColor="white" p={5} borderRadius="md" />
+                <Image
+                    src={sponsorLogoUrl}
+                    alt={`${roomDetails.originatingItem.title} logo`}
+                    ml={5}
+                    maxWidth="20rem"
+                    mt={5}
+                    bgColor="white"
+                    p={5}
+                    borderRadius="md"
+                />
             ) : (
                 <Heading as="h2" textAlign="left" mt={5} ml={5}>
                     <Twemoji className="twemoji" text={roomDetails.originatingItem.title} />
@@ -56,7 +65,7 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
             )}
         </>
     ) : (
-        <Heading as="h2" textAlign="left" mt={5} ml={5}>
+        <Heading as="h1" id="page-heading" textAlign="left" mt={5} ml={5}>
             {roomDetails.name}
         </Heading>
     );

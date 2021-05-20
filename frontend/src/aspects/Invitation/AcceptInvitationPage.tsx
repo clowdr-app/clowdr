@@ -107,7 +107,14 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
 
     return (
         <>
-            <Heading as="h1" fontSize="4.25rem" lineHeight="4.25rem" fontWeight="thin" marginBottom="2rem">
+            <Heading
+                as="h1"
+                id="page-heading"
+                fontSize="4.25rem"
+                lineHeight="4.25rem"
+                fontWeight="thin"
+                marginBottom="2rem"
+            >
                 {loading && !error ? "Accepting invitation..." : "Failed to accept invitation"}
             </Heading>
             {loading && !error ? (
@@ -207,7 +214,14 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
         return (
             <>
                 {title}
-                <Heading as="h1" fontSize="4.25rem" lineHeight="4.25rem" fontWeight="thin" marginBottom="2rem">
+                <Heading
+                    as="h1"
+                    id="page-heading"
+                    fontSize="4.25rem"
+                    lineHeight="4.25rem"
+                    fontWeight="thin"
+                    marginBottom="2rem"
+                >
                     Welcome to Clowdr
                 </Heading>
                 <Heading as="h2" fontSize="2.25rem" lineHeight="2.75rem" fontWeight="thin">

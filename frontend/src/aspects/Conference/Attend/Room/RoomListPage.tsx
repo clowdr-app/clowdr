@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, HStack, useDisclosure } from "@chakra-ui/react";
+import { Button, Heading, HStack, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import {
@@ -137,6 +137,9 @@ export default function RoomListPage(): JSX.Element {
         >
             {title}
             <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
+            <Heading as="h1" id="page-heading" display="none">
+                Rooms
+            </Heading>
             <HStack flexWrap="wrap" justifyContent="center" mt={2} w="100%">
                 <LinkButton
                     to={`/conference/${conference.slug}/shuffle`}

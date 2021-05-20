@@ -106,7 +106,9 @@ export default function MyBackstages(): JSX.Element {
     return (
         <>
             {title}
-            <Heading as="h1">My Backstages</Heading>
+            <Heading as="h1" id="page-heading">
+                My Backstages
+            </Heading>
             <Heading as="h2" fontSize="lg" fontStyle="italic">
                 ({registrant.displayName})
             </Heading>

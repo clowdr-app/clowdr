@@ -328,8 +328,8 @@ export default function CreateQueueModal(): JSX.Element {
                                 >
                                     <NumberInputField />
                                     <NumberInputStepper>
-                                        <NumberIncrementStepper />
-                                        <NumberDecrementStepper />
+                                        <NumberIncrementStepper aria-label="Increment" />
+                                        <NumberDecrementStepper aria-label="Decrement" />
                                     </NumberInputStepper>
                                 </NumberInput>
                                 <FormHelperText>
@@ -351,8 +351,8 @@ export default function CreateQueueModal(): JSX.Element {
                                         >
                                             <NumberInputField />
                                             <NumberInputStepper>
-                                                <NumberIncrementStepper />
-                                                <NumberDecrementStepper />
+                                                <NumberIncrementStepper aria-label="Increment" />
+                                                <NumberDecrementStepper aria-label="Decrement" />
                                             </NumberInputStepper>
                                         </NumberInput>
                                         <FormHelperText>
@@ -369,8 +369,8 @@ export default function CreateQueueModal(): JSX.Element {
                                         >
                                             <NumberInputField />
                                             <NumberInputStepper>
-                                                <NumberIncrementStepper />
-                                                <NumberDecrementStepper />
+                                                <NumberIncrementStepper aria-label="Increment" />
+                                                <NumberDecrementStepper aria-label="Decrement" />
                                             </NumberInputStepper>
                                         </NumberInput>
                                         <FormHelperText>
@@ -388,8 +388,8 @@ export default function CreateQueueModal(): JSX.Element {
                                         >
                                             <NumberInputField />
                                             <NumberInputStepper>
-                                                <NumberIncrementStepper />
-                                                <NumberDecrementStepper />
+                                                <NumberIncrementStepper aria-label="Increment" />
+                                                <NumberDecrementStepper aria-label="Decrement" />
                                             </NumberInputStepper>
                                         </NumberInput>
                                         <FormHelperText>

@@ -12,7 +12,9 @@ export default function UseInviteOrCreateView(): JSX.Element {
             alignItems="center"
             spacing={5}
         >
-            <Heading as="h1">Join a conference</Heading>
+            <Heading as="h1" id="page-heading">
+                Join a conference
+            </Heading>
             <InviteCodeInput />
             {/* TODO: Show a "Find a (public) conference" button */}
         </VStack>

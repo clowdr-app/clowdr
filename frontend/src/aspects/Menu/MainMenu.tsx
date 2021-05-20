@@ -64,7 +64,7 @@ export function MenuBar(): JSX.Element {
                 </LinkButton>
             ) : (
                 <LinkButton to="/" size="sm" w="3ex" aria-label="Clowdr home" p={0}>
-                    <Image src="/android-chrome-192x192.png" objectFit="contain" />
+                    <Image src="/android-chrome-192x192.png" objectFit="contain" aria-hidden />
                 </LinkButton>
             ),
         [conference]
@@ -101,6 +101,7 @@ export function MenuBar(): JSX.Element {
                                 src={registrant.profile.photoURL_50x50}
                                 aria-hidden={true}
                                 overflow="hidden"
+                                alt="Your current profile picture"
                             />
                         ) : (
                             <FAIcon iconStyle="s" icon="cat" fontSize="23px" aria-hidden={true} />

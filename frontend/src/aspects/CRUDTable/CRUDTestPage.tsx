@@ -169,7 +169,7 @@ export default function CRUDTestPage(): JSX.Element {
 
     return (
         <>
-            <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+            <Heading as="h1" id="page-heading" fontSize="2.3rem" lineHeight="3rem">
                 CRUD Table Testing
             </Heading>
             <Heading as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">

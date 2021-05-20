@@ -137,7 +137,9 @@ export default function RegistrantListPage(): JSX.Element {
     return (
         <>
             {title}
-            <Heading as="h1">People</Heading>
+            <Heading as="h1" id="page-heading">
+                People
+            </Heading>
             <FormControl maxW={400}>
                 <InputGroup>
                     <InputLeftAddon as="label" id="registrants-search">

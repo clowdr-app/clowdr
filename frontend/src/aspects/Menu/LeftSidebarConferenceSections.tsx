@@ -43,44 +43,42 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
 
     return (
         <>
-            <AccordionPanel pb={4} px={"3px"}>
-                <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
-                    {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                        <RoomList
-                            rooms={rooms}
-                            layout={{ type: "list" }}
-                            noRoomsMessage={"Rooms for sessions will show here each day."}
-                        />
-                    )}
-                </ApolloQueryWrapper>
-                <ApolloQueryWrapper getter={(data) => data.socialOrDiscussionRooms} queryResult={result} noSpinner>
-                    {(rooms: readonly RoomListRoomDetailsFragment[]) => (
-                        <RoomList rooms={rooms} layout={{ type: "list" }} limit={5}>
-                            <Flex mb={2} mt={4} ml={1} mr={1}>
-                                <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
-                                    Active social &amp; discussion rooms
-                                </Heading>
-                                {/* <ButtonGroup ml="auto">
+            <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
+                {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                    <RoomList
+                        rooms={rooms}
+                        layout={{ type: "list" }}
+                        noRoomsMessage={"Rooms for sessions will show here each day."}
+                    />
+                )}
+            </ApolloQueryWrapper>
+            <ApolloQueryWrapper getter={(data) => data.socialOrDiscussionRooms} queryResult={result} noSpinner>
+                {(rooms: readonly RoomListRoomDetailsFragment[]) => (
+                    <RoomList rooms={rooms} layout={{ type: "list" }} limit={5}>
+                        <Flex mb={2} mt={4} ml={1} mr={1}>
+                            <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
+                                Active social &amp; discussion rooms
+                            </Heading>
+                            {/* <ButtonGroup ml="auto">
                                     <Button onClick={onCreateRoomOpen} colorScheme="green" size="xs">
                                         <FAIcon icon="plus-square" iconStyle="s" />
                                     </Button>
                                 </ButtonGroup> */}
-                            </Flex>
-                        </RoomList>
-                    )}
-                </ApolloQueryWrapper>
-                <LinkButton
-                    size="xs"
-                    to={`/conference/${confSlug}/rooms`}
-                    linkProps={{ width: "100%", mt: 2, px: 1 }}
-                    width="100%"
-                    colorScheme="green"
-                    borderRadius={0}
-                >
-                    <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
-                    All rooms
-                </LinkButton>
-            </AccordionPanel>
+                        </Flex>
+                    </RoomList>
+                )}
+            </ApolloQueryWrapper>
+            <LinkButton
+                size="xs"
+                to={`/conference/${confSlug}/rooms`}
+                linkProps={{ width: "100%", mt: 2, px: 1 }}
+                width="100%"
+                colorScheme="green"
+                borderRadius={0}
+            >
+                <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
+                All rooms
+            </LinkButton>
             {/* <CreateRoomModal
                 isOpen={isCreateRoomOpen}
                 onClose={onCreateRoomClose}
@@ -114,11 +112,7 @@ function LazyRoomsPanel({
 }
 
 function SchedulePanel(): JSX.Element {
-    return (
-        <AccordionPanel pb={4} px={"3px"} pt={"3px"}>
-            <MainMenuProgram />
-        </AccordionPanel>
-    );
+    return <MainMenuProgram />;
 }
 
 function LazySchedulePanel({
@@ -225,11 +219,13 @@ export function LeftSidebarConferenceSections_Inner({
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>
-                            <LazyRoomsPanel
-                                isExpanded={isExpanded}
-                                setDefaultIndex={setDefaultIndex}
-                                confSlug={confSlug}
-                            />
+                            <AccordionPanel pb={4} px={"3px"}>
+                                <LazyRoomsPanel
+                                    isExpanded={isExpanded}
+                                    setDefaultIndex={setDefaultIndex}
+                                    confSlug={confSlug}
+                                />
+                            </AccordionPanel>
                         </>
                     )}
                 </AccordionItem>
@@ -248,7 +244,9 @@ export function LeftSidebarConferenceSections_Inner({
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>
-                            <LazySchedulePanel isExpanded={isExpanded} setDefaultIndex={setDefaultIndex} />
+                            <AccordionPanel pb={4} px={"3px"} pt={"3px"}>
+                                <LazySchedulePanel isExpanded={isExpanded} setDefaultIndex={setDefaultIndex} />
+                            </AccordionPanel>
                         </>
                     )}
                 </AccordionItem>
@@ -267,7 +265,9 @@ export function LeftSidebarConferenceSections_Inner({
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>
-                            <LazySponsorsPanel isExpanded={isExpanded} setDefaultIndex={setDefaultIndex} />
+                            <AccordionPanel pb={4} px={"3px"}>
+                                <LazySponsorsPanel isExpanded={isExpanded} setDefaultIndex={setDefaultIndex} />
+                            </AccordionPanel>
                         </>
                     )}
                 </AccordionItem>

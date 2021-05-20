@@ -207,7 +207,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                     isDisabled={composeCtx.isSending}
                 />
                 <Tooltip label={composeCtx.blockedReason}>
-                    <Box m="3px">
+                    <Box m="3px" tabIndex={0}>
                         {composeCtx.newMessageType === Chat_MessageType_Enum.Poll ? (
                             <CreatePollOptionsButton
                                 sendFailed={sendFailed !== null}

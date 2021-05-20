@@ -572,56 +572,53 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
               ongoing: boolean;
           }
         | undefined = useMemo(
-        () =>
-            tagOptions && tagOptions.length > 0
-                ? {
-                      ongoing: insertItemResponse.loading,
-                      generateDefaults: () =>
-                          ({
-                              id: uuidv4(),
-                              conferenceId: conference.id,
-                              itemTags: [],
-                              title: "",
-                              typeName: Content_ItemType_Enum.Paper,
-                          } as ManageContent_ItemFragment),
-                      makeWhole: (d) => d as ManageContent_ItemFragment,
-                      start: (record) => {
-                          insertItem({
-                              variables: {
-                                  item: {
-                                      conferenceId: record.conferenceId,
-                                      id: record.id,
-                                      title: record.title,
-                                      shortTitle: record.shortTitle,
-                                      typeName: record.typeName,
-                                  },
-                                  itemTags: record.itemTags,
-                              },
-                              update: (cache, response) => {
-                                  if (response.data?.insert_content_Item_one) {
-                                      const data = response.data?.insert_content_Item_one;
-                                      cache.modify({
-                                          fields: {
-                                              content_Item(existingRefs: Reference[] = [], { readField }) {
-                                                  const newRef = cache.writeFragment({
-                                                      data,
-                                                      fragment: ManageContent_ItemFragmentDoc,
-                                                      fragmentName: "ManageContent_Item",
-                                                  });
-                                                  if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                                      return existingRefs;
-                                                  }
-                                                  return [...existingRefs, newRef];
-                                              },
-                                          },
-                                      });
-                                  }
-                              },
-                          });
-                      },
-                  }
-                : undefined,
-        [conference.id, insertItem, insertItemResponse.loading, tagOptions]
+        () => ({
+            ongoing: insertItemResponse.loading,
+            generateDefaults: () =>
+                ({
+                    id: uuidv4(),
+                    conferenceId: conference.id,
+                    itemTags: [],
+                    title: "",
+                    typeName: Content_ItemType_Enum.Paper,
+                } as ManageContent_ItemFragment),
+            makeWhole: (d) => d as ManageContent_ItemFragment,
+            start: (record) => {
+                insertItem({
+                    variables: {
+                        item: {
+                            conferenceId: record.conferenceId,
+                            id: record.id,
+                            title: record.title,
+                            shortTitle: record.shortTitle,
+                            typeName: record.typeName,
+                        },
+                        itemTags: record.itemTags,
+                    },
+                    update: (cache, response) => {
+                        if (response.data?.insert_content_Item_one) {
+                            const data = response.data?.insert_content_Item_one;
+                            cache.modify({
+                                fields: {
+                                    content_Item(existingRefs: Reference[] = [], { readField }) {
+                                        const newRef = cache.writeFragment({
+                                            data,
+                                            fragment: ManageContent_ItemFragmentDoc,
+                                            fragmentName: "ManageContent_Item",
+                                        });
+                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                            return existingRefs;
+                                        }
+                                        return [...existingRefs, newRef];
+                                    },
+                                },
+                            });
+                        }
+                    },
+                });
+            },
+        }),
+        [conference.id, insertItem, insertItemResponse.loading]
     );
 
     const [updateItem, updateItemResponse] = useManageContent_UpdateItemMutation();

@@ -409,7 +409,7 @@ export function UploadYouTubeVideos(): JSX.Element {
         const length = new TextEncoder().encode(description).length;
         const invalid = description.includes("<") || description.includes(">");
         const errors = [
-            ...(length > 5000 ? ["Description is too long."] : []),
+            ...(length > 4950 ? ["Description is too long."] : []),
             ...(invalid ? ["Description cannot contain '<' or '>'."] : []),
         ];
         return errors.join(" ");

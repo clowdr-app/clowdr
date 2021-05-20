@@ -199,6 +199,13 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
             },
         });
 
+        const clowdrTagline = "\n\nUploaded with Clowdr https://clowdr.org/";
+        const description =
+            job.videoDescription.length > 5000 - clowdrTagline.length
+                ? `${job.videoDescription.substring(0, 5000 - clowdrTagline.length)}${clowdrTagline}`
+                : `${job.videoDescription}${clowdrTagline}`;
+        const title = job.videoTitle.length > 100 ? job.videoTitle.substring(0, 100) : job.videoTitle;
+
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         youtubeClient.videos
             .insert({
@@ -212,8 +219,8 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                         privacyStatus: job.videoPrivacyStatus,
                     },
                     snippet: {
-                        title: job.videoTitle,
-                        description: job.videoDescription,
+                        title,
+                        description,
                     },
                 },
             })

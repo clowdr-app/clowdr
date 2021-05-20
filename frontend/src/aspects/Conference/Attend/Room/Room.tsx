@@ -646,13 +646,16 @@ function RoomInner({
                         if (showBackstage && backstageSelectedEventId === existingCurrentRoomEvent.id) {
                             toast({
                                 status: "info",
-                                duration: 5000,
+                                duration: 60000,
                                 position: "bottom-right",
                                 isClosable: true,
-                                title: "Going to the discussion room",
+                                title: "Your event has ended!",
                                 description: (
                                     <VStack alignItems="flex-start">
-                                        <Text>You will be redirected to the discussion room in a few seconds.</Text>
+                                        <Text>
+                                            This event is coming to an end. You can join the discussion room to continue
+                                            talking with the audience.
+                                        </Text>
                                         <Button
                                             onClick={() =>
                                                 history.push(
@@ -660,17 +663,13 @@ function RoomInner({
                                                 )
                                             }
                                             colorScheme="green"
+                                            fontSize="lg"
                                         >
-                                            Join the discussion room immediately
+                                            Go to the discussion room
                                         </Button>
                                     </VStack>
                                 ),
                             });
-                            setTimeout(() => {
-                                history.push(
-                                    `/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`
-                                );
-                            }, 5000);
                         } else {
                             toast({
                                 status: "info",

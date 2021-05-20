@@ -117,8 +117,7 @@ function EventBackstage({
                     {vonageRoom}
                     <Alert status="info" mb={8}>
                         <AlertIcon />
-                        Once this event ends, you will be automatically taken to a breakout room to continue the
-                        conversation.
+                        Once this event ends, you can continue to a discussion room to continue the conversation.
                     </Alert>
                     <EmojiFloatContainer chatId={roomChatId ?? ""} xDurationMs={4000} yDurationMs={10000} />
                 </Box>

@@ -30,6 +30,7 @@ interface TextElementVersionData {
 
 export const TextElementTemplate: ElementBaseTemplate = {
     supported: true,
+    allowCreate: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Text],
     createDefault: (type, required, conferenceId, itemId) => {
         assert(
             type === Content_ElementType_Enum.Abstract || type === Content_ElementType_Enum.Text,

@@ -41,6 +41,13 @@ interface UrlElementVersionData {
 
 export const URLElementTemplate: ElementBaseTemplate = {
     supported: true,
+    allowCreate: [
+        Content_ElementType_Enum.ImageUrl,
+        Content_ElementType_Enum.PaperUrl,
+        Content_ElementType_Enum.VideoUrl,
+        Content_ElementType_Enum.PosterUrl,
+        Content_ElementType_Enum.Zoom,
+    ],
     createDefault: (type, required, conferenceId, itemId) => {
         assert(
             type === Content_ElementType_Enum.ImageUrl ||

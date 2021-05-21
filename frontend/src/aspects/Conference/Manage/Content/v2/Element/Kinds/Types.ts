@@ -39,6 +39,7 @@ export type ElementBaseTemplate =
 
 export type SupportedElementBaseTemplate = {
     supported: true;
+    allowCreate: Content_ElementType_Enum[];
     createDefault: (
         itemType: Content_ElementType_Enum,
         required: boolean,

@@ -6,6 +6,7 @@ import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 
 export const ComponentElementTemplate: ElementBaseTemplate = {
     supported: true,
+    allowCreate: [Content_ElementType_Enum.ContentGroupList, Content_ElementType_Enum.WholeSchedule],
     createDefault: (type, _required) => {
         assert(
             type === Content_ElementType_Enum.ContentGroupList || type === Content_ElementType_Enum.WholeSchedule,

@@ -25,6 +25,11 @@ function createDefaultFile(
 
 export const FileElementTemplate: ElementBaseTemplate = {
     supported: true,
+    allowCreate: [
+        Content_ElementType_Enum.ImageFile,
+        Content_ElementType_Enum.PaperFile,
+        Content_ElementType_Enum.PosterFile,
+    ],
     createDefault: (type, required, conferenceId, itemId) => {
         assert(
             type === Content_ElementType_Enum.ImageFile ||

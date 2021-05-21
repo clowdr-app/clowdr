@@ -34,6 +34,7 @@ function createDefaultVideo(
 
 export const VideoElementTemplate: SupportedElementBaseTemplate = {
     supported: true,
+    allowCreate: [Content_ElementType_Enum.VideoBroadcast, Content_ElementType_Enum.VideoFile],
     createDefault: (type, required, conferenceId, itemId) => {
         assert(
             type === Content_ElementType_Enum.VideoBroadcast ||
@@ -48,11 +49,11 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
 
         const name =
             type === Content_ElementType_Enum.VideoBroadcast
-                ? "Livestream video"
+                ? "Video for live-stream"
                 : type === Content_ElementType_Enum.VideoCountdown
                 ? "Timer countdown video"
                 : type === Content_ElementType_Enum.VideoFile
-                ? "Video"
+                ? "Video (cannot be live-streamed)"
                 : type === Content_ElementType_Enum.VideoFiller
                 ? "Filler video"
                 : type === Content_ElementType_Enum.VideoPrepublish

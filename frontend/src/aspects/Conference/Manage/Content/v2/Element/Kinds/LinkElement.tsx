@@ -40,6 +40,11 @@ interface LinkElementVersionData {
 
 export const LinkElementTemplate: ElementBaseTemplate = {
     supported: true,
+    allowCreate: [
+        Content_ElementType_Enum.LinkButton,
+        Content_ElementType_Enum.PaperLink,
+        Content_ElementType_Enum.VideoLink,
+    ],
     createDefault: (type, required, conferenceId, itemId) => {
         assert(
             type === Content_ElementType_Enum.Link ||

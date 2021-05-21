@@ -45,13 +45,14 @@ export function AddContentMenu({
     const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = useMemo(
         () =>
             Object.keys(Content_ElementType_Enum)
-                .filter(
-                    (key) =>
-                        typeof (Content_ElementType_Enum as any)[key] === "string" &&
-                        ElementBaseTemplates[
-                            ElementBaseTypes[(Content_ElementType_Enum as any)[key] as Content_ElementType_Enum]
-                        ].supported
-                )
+                .filter((key) => {
+                    if (typeof (Content_ElementType_Enum as any)[key] === "string") {
+                        const t = (Content_ElementType_Enum as any)[key] as Content_ElementType_Enum;
+                        const baseT = ElementBaseTemplates[ElementBaseTypes[t]];
+                        return baseT.supported && baseT.allowCreate.includes(t);
+                    }
+                    return false;
+                })
                 .map((key) => {
                     const v = (Content_ElementType_Enum as any)[key] as string;
                     return {

@@ -31,7 +31,7 @@ import {
 } from "../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
-import { roundToNearest } from "../../../Generic/MathUtils";
+import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
@@ -159,9 +159,21 @@ function Room({
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
     const now2m = useRealTime(120000);
-    const now2mStr = useMemo(() => new Date(roundToNearest(now2m, 2 * 60 * 1000)).toISOString(), [now2m]);
+    // Load events from the nearest 2 minute boundary onwards
+    // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
+    //       so re-renders don't cause multiple (very slightly offset) queries to the database in
+    //       quick succession.
+    // Note: Rounding _down_ is necessary so that any currently ongoing event doesn't accidentally get
+    //       excluded from the results if this query happens to re-run in the last 59 seconds of an event!
+    //       This was identified after the issue caused some people to be ejected from the backstage at the wrong time.
+    const now2mStr = useMemo(() => new Date(roundDownToNearest(now2m, 2 * 60 * 1000)).toISOString(), [now2m]);
     const now2mCutoffStr = useMemo(
-        () => new Date(roundToNearest(now2m + 60 * 60 * 1000, 2 * 60 * 1000)).toISOString(),
+        // Load events up to 1 hour in the future
+        // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
+        //       so re-renders don't cause spam to the database.
+        // Note: Rounding up makes sense as it's the dual of the round down above, but it's not strictly
+        //       necessary - any rounding would do.
+        () => new Date(roundUpToNearest(now2m + 60 * 60 * 1000, 2 * 60 * 1000)).toISOString(),
         [now2m]
     );
 

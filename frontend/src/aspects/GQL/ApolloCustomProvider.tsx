@@ -6,7 +6,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import AppLoadingScreen from "../../AppLoadingScreen";
 import { PresenceStateProvider } from "../Realtime/PresenceStateProvider";
 import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
 
@@ -372,7 +371,7 @@ function ApolloCustomProviderInner({
     );
 
     if (!client || client.slug !== conferenceSlug) {
-        return <AppLoadingScreen />;
+        return <></>;
     }
 
     return (
@@ -402,7 +401,7 @@ export default function ApolloCustomProvider({
     const conferenceSlug = matches && matches.length > 1 ? matches[1] : undefined;
 
     if (isLoading) {
-        return <AppLoadingScreen />;
+        return <></>;
     }
 
     return (

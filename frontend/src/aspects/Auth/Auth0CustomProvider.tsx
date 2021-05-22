@@ -2,7 +2,6 @@ import { AppState as Auth0State, Auth0Provider, useAuth0 } from "@auth0/auth0-re
 import assert from "assert";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import AppLoadingScreen from "../../AppLoadingScreen";
 
 export default function Auth0CustomProvider({ children }: { children: JSX.Element | Array<JSX.Element> }): JSX.Element {
     const domain = import.meta.env.SNOWPACK_PUBLIC_AUTH_DOMAIN;
@@ -43,7 +42,7 @@ function WaitForAuth0({ children }: { children: JSX.Element | Array<JSX.Element>
     const { isLoading } = useAuth0();
 
     if (isLoading) {
-        return <AppLoadingScreen />;
+        return <></>;
     }
 
     return <>{children}</>;

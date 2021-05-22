@@ -43,23 +43,28 @@ export default function App(): JSX.Element {
     //     return <DownForMaintenancePage />;
     // }
 
+    const routed = useMemo(
+        () => (
+            <Switch>
+                <Route
+                    path="/conference/:confSlug"
+                    component={(
+                        props: RouteComponentProps<{
+                            confSlug: string;
+                        }>
+                    ) => <AppInner rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
+                />
+                <Route path="/">
+                    <AppInner rootUrl={undefined} confSlug={undefined} />
+                </Route>
+            </Switch>
+        ),
+        []
+    );
+
     return (
         <ThemeProvider theme={chimeTheme}>
-            <MeetingProvider>
-                <Switch>
-                    <Route
-                        path="/conference/:confSlug"
-                        component={(
-                            props: RouteComponentProps<{
-                                confSlug: string;
-                            }>
-                        ) => <AppInner rootUrl={props.match.url} confSlug={props.match.params.confSlug} />}
-                    />
-                    <Route path="/">
-                        <AppInner rootUrl={undefined} confSlug={undefined} />
-                    </Route>
-                </Switch>
-            </MeetingProvider>
+            <MeetingProvider>{routed}</MeetingProvider>
         </ThemeProvider>
     );
 }

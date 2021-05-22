@@ -14,13 +14,13 @@ ReactDOM.render(
         <VonageGlobalStateProvider>
             <HelmetProvider>
                 <BrowserRouter>
-                    <ChakraCustomProvider>
-                        <Auth0CustomProvider>
-                            <ApolloCustomProvider>
+                    <Auth0CustomProvider>
+                        <ApolloCustomProvider>
+                            <ChakraCustomProvider>
                                 <App />
-                            </ApolloCustomProvider>
-                        </Auth0CustomProvider>
-                    </ChakraCustomProvider>
+                            </ChakraCustomProvider>
+                        </ApolloCustomProvider>
+                    </Auth0CustomProvider>
                 </BrowserRouter>
             </HelmetProvider>
         </VonageGlobalStateProvider>

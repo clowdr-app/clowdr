@@ -48,7 +48,7 @@ import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 //             }}
 //             onClick={infoModal}
 //         >
-//             <Tag colorScheme="orange" variant="solid" borderRightRadius={0} fontSize="inherit">
+//             <Tag colorScheme="yellow" variant="solid" borderRightRadius={0} fontSize="inherit">
 //                 {children}
 //             </Tag>
 //             <Tag
@@ -235,7 +235,7 @@ function MessageBody({
                         fontSize={smallFontSize}
                         p={config.spacing}
                         m={config.spacing}
-                        colorScheme="green"
+                        colorScheme="purple"
                         w="auto"
                         h="auto"
                         onClick={() => {
@@ -325,7 +325,7 @@ function MessageBody({
         //         flexDir={data.type === "start" ? "column" : "column-reverse"}
         //         alignItems="center"
         //     >
-        //         <Divider my={config.spacing} borderColor="orange.400" w="100%" height="1px" />
+        //         <Divider my={config.spacing} borderColor="yellow.400" w="100%" height="1px" />
         //         {data.type === "start" ? (
         //             <ReflectionButton>Reflection started</ReflectionButton>
         //         ) : (
@@ -377,9 +377,9 @@ function MessageBody({
         //             </LinkButton>
         //         </HStack>
         //         {data.type === "start" ? (
-        //             <FAIcon iconStyle="s" icon="angle-double-down" color="orange.400" aria-hidden />
+        //             <FAIcon iconStyle="s" icon="angle-double-down" color="yellow.400" aria-hidden />
         //         ) : (
-        //             <FAIcon iconStyle="s" icon="angle-double-up" color="orange.400" aria-hidden />
+        //             <FAIcon iconStyle="s" icon="angle-double-up" color="yellow.400" aria-hidden />
         //         )}
         //     </Flex>
         // );

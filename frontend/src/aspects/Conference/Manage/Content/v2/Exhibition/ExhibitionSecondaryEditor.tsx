@@ -196,7 +196,7 @@ function AddItemExhibitionBody({
             </PopoverBody>
             <PopoverFooter>
                 <Button
-                    colorScheme="green"
+                    colorScheme="purple"
                     isDisabled={!selectedItemId}
                     isLoading={insertItemExhibitionResponse.loading}
                     onClick={async () => {
@@ -250,12 +250,12 @@ function AddItemExhibitionBody({
 function AddItemExhibition(props: { exhibitionId: string; existingItemIds: string[] }): JSX.Element {
     const { onOpen, onClose, isOpen } = useDisclosure();
 
-    const bgColor = useColorModeValue("green.50", "green.900");
+    const bgColor = useColorModeValue("purple.50", "purple.900");
 
     return (
         <Popover placement="bottom-start" isLazy isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <PopoverTrigger>
-                <Button size="sm" colorScheme="green">
+                <Button size="sm" colorScheme="purple">
                     <FAIcon iconStyle="s" icon="plus-square" mr={2} />
                     <chakra.span>Link item</chakra.span>
                     <ChevronDownIcon ml={1} />

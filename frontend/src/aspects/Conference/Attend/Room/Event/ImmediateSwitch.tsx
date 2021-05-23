@@ -226,7 +226,7 @@ export function ImmediateSwitch({
                                     </Field>
                                     <Button
                                         mt={4}
-                                        colorScheme="green"
+                                        colorScheme="purple"
                                         isLoading={props.isSubmitting || !enableSwitchButton}
                                         type="submit"
                                         isDisabled={!props.isValid || disable}

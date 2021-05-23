@@ -155,7 +155,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                                     h="auto"
                                     minH="100%"
                                     borderRadius="0"
-                                    colorScheme="orange"
+                                    colorScheme="yellow"
                                     fontSize="1em"
                                     m={0}
                                 />

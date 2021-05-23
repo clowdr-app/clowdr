@@ -191,7 +191,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                 <WrapItem>
                     <Box>
                         {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button colorScheme="green" onClick={onLeaveRoom}>
+                            <Button colorScheme="purple" onClick={onLeaveRoom}>
                                 Leave Room
                             </Button>
                         ) : undefined}

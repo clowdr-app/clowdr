@@ -236,7 +236,7 @@ export default function CRUDTestPage(): JSX.Element {
                             footerButtons: [
                                 {
                                     type: "ordinary",
-                                    colorScheme: "green",
+                                    colorScheme: "purple",
                                     action: () => {
                                         alert("TODO");
                                         onClose();

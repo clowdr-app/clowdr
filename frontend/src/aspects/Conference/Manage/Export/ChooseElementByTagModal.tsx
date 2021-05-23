@@ -201,7 +201,7 @@ export function ChooseElementByTagModal({
                                         (elementsResult.data && elementsResult.data.content_Element.length === 0)
                                     }
                                     mt={4}
-                                    colorScheme="green"
+                                    colorScheme="purple"
                                 >
                                     Add videos
                                 </Button>

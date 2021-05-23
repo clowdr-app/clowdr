@@ -254,7 +254,7 @@ export default function UploadFileForm_Subtitles({
                             <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
                             <Button
                                 mt={2}
-                                colorScheme="green"
+                                colorScheme="purple"
                                 isLoading={isSubmitting}
                                 type="submit"
                                 isDisabled={!isValid || files.length !== 1 || srtProblems.length > 0}

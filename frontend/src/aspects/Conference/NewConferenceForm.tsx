@@ -546,7 +546,7 @@ Please contact our tech support to investigate the issue shown below: support@cl
                     </Field>
                     <Button
                         mt={4}
-                        colorScheme="green"
+                        colorScheme="purple"
                         isLoading={props.isSubmitting}
                         type="submit"
                         isDisabled={!props.isValid}

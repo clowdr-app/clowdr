@@ -266,7 +266,7 @@ export function CombineVideosModal({
                                             <Heading as="h4" fontSize="sm">
                                                 Ongoing job
                                             </Heading>
-                                            <Badge colorScheme="green">
+                                            <Badge colorScheme="purple">
                                                 {data?.job_queues_CombineVideosJob_by_pk?.jobStatusName}
                                             </Badge>
                                             {data.job_queues_CombineVideosJob_by_pk?.jobStatusName ===
@@ -282,7 +282,7 @@ export function CombineVideosModal({
                             </ModalBody>
                             <ModalFooter>
                                 <Button
-                                    colorScheme="green"
+                                    colorScheme="purple"
                                     isLoading={isSubmitting}
                                     type="submit"
                                     isDisabled={!isValid || !dirty}

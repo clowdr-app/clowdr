@@ -411,7 +411,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     </Alert>
                 ) : (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
+                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="purple">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
@@ -443,7 +443,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                 }}
                             />
                         </FormControl>
-                        <Button colorScheme="green" onClick={() => setIsEditingName(false)}>
+                        <Button colorScheme="purple" onClick={() => setIsEditingName(false)}>
                             Save
                         </Button>
                     </VStack>
@@ -499,7 +499,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {githubField}
                 {registrant.profile.hasBeenEdited ? (
                     <ButtonGroup variant="solid">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="green">
+                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="purple">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton

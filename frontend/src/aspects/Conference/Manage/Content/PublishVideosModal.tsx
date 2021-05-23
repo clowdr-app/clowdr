@@ -181,7 +181,7 @@
 //                                 }
 //                             }}
 //                             isLoading={publishing}
-//                             colorScheme="green"
+//                             colorScheme="purple"
 //                             mt={5}
 //                         >
 //                             Publish

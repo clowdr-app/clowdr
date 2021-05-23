@@ -150,7 +150,7 @@ export function Author({
                     ml="2"
                     colorScheme={
                         badgeColour ?? programPersonData.roleName.toUpperCase() === "AUTHOR"
-                            ? "green"
+                            ? "purple"
                             : programPersonData.roleName.toUpperCase() === "CHAIR"
                             ? "yellow"
                             : "red"

@@ -112,7 +112,7 @@ function ItemTile({
                         <PageCountText path={discussionRoomUrl} fontSize="inherit" />
                     </LinkButton>
                 ) : undefined}
-                <LinkButton size="xs" colorScheme="green" to={itemUrl} textDecoration="none">
+                <LinkButton size="xs" colorScheme="purple" to={itemUrl} textDecoration="none">
                     <FAIcon iconStyle="s" icon="link" mr={2} />
                     <Text as="span" ml={1} mr={2}>
                         View full item

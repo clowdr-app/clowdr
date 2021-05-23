@@ -129,7 +129,7 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                     <Button
                         mt={2}
                         size="sm"
-                        colorScheme="green"
+                        colorScheme="purple"
                         aria-label="Add people to room"
                         title="Add people to room"
                         onClick={addMemberModal.onOpen}

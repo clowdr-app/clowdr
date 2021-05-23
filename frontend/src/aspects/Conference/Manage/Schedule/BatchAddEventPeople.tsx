@@ -248,7 +248,7 @@ function AddEventPeople_FromContentPanel({
                         </VStack>
                     </Alert>
                 ) : undefined}
-                <Button colorScheme="green" onClick={copy} isLoading={copying}>
+                <Button colorScheme="purple" onClick={copy} isLoading={copying}>
                     Copy
                 </Button>
             </AccordionPanel>
@@ -401,7 +401,7 @@ function AddEventPeople_SingleProgramPersonPanel({
                 >
                     {roleOptions}
                 </Select>
-                <Button colorScheme="green" isDisabled={selectedPersonId === ""} isLoading={adding} onClick={add}>
+                <Button colorScheme="purple" isDisabled={selectedPersonId === ""} isLoading={adding} onClick={add}>
                     Add
                 </Button>
             </AccordionPanel>
@@ -568,7 +568,7 @@ function AddEventPeople_FromGroupPanel({
                 >
                     {roleOptions}
                 </Select>
-                <Button colorScheme="green" isDisabled={selectedGroupId === ""} isLoading={adding} onClick={add}>
+                <Button colorScheme="purple" isDisabled={selectedGroupId === ""} isLoading={adding} onClick={add}>
                     Add
                 </Button>
             </AccordionPanel>
@@ -724,7 +724,7 @@ function AddEventPeople_SingleRegistrantPanel({
                 >
                     {roleOptions}
                 </Select>
-                <Button colorScheme="green" isDisabled={selectedRegistrantId === ""} isLoading={adding} onClick={add}>
+                <Button colorScheme="purple" isDisabled={selectedRegistrantId === ""} isLoading={adding} onClick={add}>
                     Add
                 </Button>
             </AccordionPanel>

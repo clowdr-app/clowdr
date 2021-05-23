@@ -85,7 +85,7 @@ export function EditUploaders({ uploadableElementId }: { uploadableElementId: st
         },
     });
 
-    const bgColor = useColorModeValue("green.50", "green.900");
+    const bgColor = useColorModeValue("purple.50", "purple.900");
 
     const { isOpen: addUploader_IsOpen, onOpen: addUploader_OnOpen, onClose: addUploader_OnClose } = useDisclosure();
     const addUploader_InitialRef = useRef(null);
@@ -154,7 +154,7 @@ export function EditUploaders({ uploadableElementId }: { uploadableElementId: st
                                 size="xs"
                                 aria-label="Add uploader"
                                 mr={2}
-                                colorScheme="green"
+                                colorScheme="purple"
                                 onClick={addUploader_OnOpen}
                             >
                                 <FAIcon iconStyle="s" icon="plus" />
@@ -193,7 +193,7 @@ export function EditUploaders({ uploadableElementId }: { uploadableElementId: st
                                         Cancel
                                     </Button>
                                     <Button
-                                        colorScheme="green"
+                                        colorScheme="purple"
                                         size="sm"
                                         onClick={async () => {
                                             try {
@@ -379,7 +379,7 @@ function EditUploader({ uploader }: { uploader: ManageContent_UploaderFragment }
                                         });
                                     }
                                 }}
-                                colorScheme="green"
+                                colorScheme="purple"
                                 isDisabled={newName === "" || newEmail === "" || !newEmailIsValid}
                                 isLoading={updateUploaderResponse.loading}
                             >
@@ -396,7 +396,7 @@ function EditUploader({ uploader }: { uploader: ManageContent_UploaderFragment }
                                     setIsEditing(false);
                                 }}
                                 mr={2}
-                                colorScheme="orange"
+                                colorScheme="yellow"
                                 isLoading={updateUploaderResponse.loading}
                             >
                                 <FAIcon iconStyle="s" icon="ban" />

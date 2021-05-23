@@ -73,7 +73,7 @@ export default function SocialiseModal(props: Omit<ModalProps, "children">): JSX
                                     <ActiveSocialRooms excludeLiveEventRooms />
                                     <InactiveSocialRooms />
                                     <Flex mt={4} justifyContent="center">
-                                        <Button onClick={createRoom_OnOpen} colorScheme="green">
+                                        <Button onClick={createRoom_OnOpen} colorScheme="purple">
                                             Create new room
                                         </Button>
                                     </Flex>

@@ -263,7 +263,7 @@ function RoomSecondaryEditor({
                                 <ButtonGroup>
                                     <LinkButton
                                         to={`/conference/${conference.slug}/room/${room.id}`}
-                                        colorScheme="green"
+                                        colorScheme="purple"
                                         mb={4}
                                         isExternal={true}
                                         aria-label={`View ${room.name} as an registrant`}

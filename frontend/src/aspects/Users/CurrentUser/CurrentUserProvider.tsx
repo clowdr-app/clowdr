@@ -245,7 +245,7 @@ function CookiePolicyCompliance({
                         </Link>
                         .
                     </Text>
-                    <Button colorScheme="green" onClick={() => setAcceptedCookiesAt(Date.now())}>
+                    <Button colorScheme="purple" onClick={() => setAcceptedCookiesAt(Date.now())}>
                         <FAIcon iconStyle="r" icon="check-square" aria-hidden mr={2} />
                         Agree and continue
                     </Button>
@@ -336,7 +336,7 @@ function TermsAndPPCompliance({
                     >
                         <Box>
                             <Button
-                                colorScheme="green"
+                                colorScheme="purple"
                                 onClick={() => agreeAndContinue()}
                                 isDisabled={!termsChecked || !ppChecked}
                                 isLoading={agreeToTermsResponse.loading}

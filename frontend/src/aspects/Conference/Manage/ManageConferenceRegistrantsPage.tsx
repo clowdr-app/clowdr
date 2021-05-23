@@ -653,7 +653,10 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton colorScheme="green" to={`/conference/${conference.slug}/manage/import/registrants`}>
+                        <LinkButton
+                            colorScheme="purple"
+                            to={`/conference/${conference.slug}/manage/import/registrants`}
+                        >
                             Import
                         </LinkButton>
                     );
@@ -707,7 +710,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                         return (
                             <Menu>
                                 <Tooltip label={tooltip("all registrants (from a chosen group)")}>
-                                    <MenuButton as={Button} colorScheme="green" rightIcon={<ChevronDownIcon />}>
+                                    <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                         Export
                                     </MenuButton>
                                 </Tooltip>
@@ -760,7 +763,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                             <Tooltip label={tooltip("selected registrants")}>
                                 <Box>
                                     <Button
-                                        colorScheme="green"
+                                        colorScheme="purple"
                                         isDisabled={selectedData.length === 0}
                                         onClick={() => doExport(selectedData)}
                                     >

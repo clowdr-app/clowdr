@@ -185,7 +185,7 @@ export function ItemElements({
                     maxW="100%"
                 >
                     <VStack alignItems="flex-start" maxW="100%">
-                        <Text colorScheme="green">{formatItemTypeNameForDisplay(itemData.typeName)}</Text>
+                        <Text colorScheme="purple">{formatItemTypeNameForDisplay(itemData.typeName)}</Text>
                         <Heading
                             as="h2"
                             size="md"
@@ -200,7 +200,7 @@ export function ItemElements({
                 </LinkButton>
             ) : (
                 <>
-                    <Text colorScheme="green">{formatItemTypeNameForDisplay(itemData.typeName)}</Text>
+                    <Text colorScheme="purple">{formatItemTypeNameForDisplay(itemData.typeName)}</Text>
                     <Heading as="h2" size="md" mb={5} textAlign="left">
                         <Twemoji className="twemoji" text={itemData.title} />
                     </Heading>

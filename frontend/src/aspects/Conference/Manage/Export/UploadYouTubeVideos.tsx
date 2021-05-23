@@ -1056,7 +1056,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                         isLoading={isSubmitting}
                                         isDisabled={!isValid || !touched}
                                         mt={4}
-                                        colorScheme="green"
+                                        colorScheme="purple"
                                     >
                                         Upload videos
                                     </Button>

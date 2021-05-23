@@ -47,7 +47,7 @@ export function DeviceSetup(): JSX.Element {
                     isLoading={isLoading}
                     my={4}
                     mx="auto"
-                    colorScheme="green"
+                    colorScheme="purple"
                     w="10em"
                     h="6ex"
                     fontSize="xl"

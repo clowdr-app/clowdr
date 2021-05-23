@@ -288,7 +288,7 @@ export function VonageRoomControlBar({
                     </Tag>
                 )}
                 {vonage.state.type === StateType.Connected ? (
-                    <Button colorScheme="green" onClick={onLeaveRoom}>
+                    <Button colorScheme="purple" onClick={onLeaveRoom}>
                         Leave Room
                     </Button>
                 ) : (
@@ -301,7 +301,7 @@ export function VonageRoomControlBar({
                             <Button
                                 w="100%"
                                 size="xl"
-                                colorScheme={joining ? "orange" : "green"}
+                                colorScheme={joining ? "yellow" : "purple"}
                                 h="auto"
                                 py={4}
                                 onClick={joining ? onCancelJoinRoom : onJoinRoom}

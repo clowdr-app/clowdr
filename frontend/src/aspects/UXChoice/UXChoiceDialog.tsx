@@ -68,7 +68,7 @@ export default function UXChoiceDialog(): JSX.Element {
                                 Stick with the old
                             </Button>
                             <Button
-                                colorScheme="green"
+                                colorScheme="purple"
                                 ref={leastDestructiveRef}
                                 onClick={() => {
                                     setChoice(UXChoice.V2);

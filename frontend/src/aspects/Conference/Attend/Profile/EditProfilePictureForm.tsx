@@ -333,7 +333,7 @@ export default function EditProfilePitureForm({
 
                             <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
                             <Button
-                                colorScheme="green"
+                                colorScheme="purple"
                                 isLoading={props.isSubmitting}
                                 type="submit"
                                 isDisabled={!props.isValid || files.length !== 1}

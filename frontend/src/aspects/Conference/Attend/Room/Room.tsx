@@ -373,7 +373,7 @@ function RoomInner({
                 isClosable: true,
                 title: "You are a presenter of an event starting now",
                 description: (
-                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
+                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="purple" mt={2}>
                         Go to the backstage
                     </Button>
                 ),
@@ -392,7 +392,7 @@ function RoomInner({
                 isClosable: true,
                 title: "You are a presenter of the next event",
                 description: (
-                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="green" mt={2}>
+                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="purple" mt={2}>
                         Go to the backstage
                     </Button>
                 ),
@@ -676,7 +676,7 @@ function RoomInner({
                                                     `/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`
                                                 )
                                             }
-                                            colorScheme="green"
+                                            colorScheme="purple"
                                             fontSize="lg"
                                         >
                                             Go to the discussion room
@@ -702,7 +702,7 @@ function RoomInner({
                                                     `/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`
                                                 )
                                             }
-                                            colorScheme="green"
+                                            colorScheme="purple"
                                         >
                                             Join the discussion room
                                         </Button>
@@ -838,7 +838,7 @@ function RoomInner({
                             <ExternalLinkButton
                                 to={maybeZoomUrl.url}
                                 isExternal={true}
-                                colorScheme="green"
+                                colorScheme="purple"
                                 size="lg"
                                 w="100%"
                                 mt={4}

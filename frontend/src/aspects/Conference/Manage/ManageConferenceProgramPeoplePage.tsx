@@ -532,8 +532,8 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
         [refetch, data, toast, registrants, startUpdate]
     );
 
-    const green = useColorModeValue("green.100", "green.700");
-    const greenAlt = useColorModeValue("green.200", "green.600");
+    const green = useColorModeValue("purple.100", "purple.700");
+    const greenAlt = useColorModeValue("purple.200", "purple.600");
     const buttons = useMemo(
         () => [
             {

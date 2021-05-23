@@ -189,7 +189,7 @@ export default function UploadFileForm_Element({
                             </UnorderedList>
                             <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
                             <Button
-                                colorScheme="green"
+                                colorScheme="purple"
                                 isLoading={isSubmitting}
                                 type="submit"
                                 isDisabled={!isValid || files.length !== 1}

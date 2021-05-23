@@ -93,7 +93,7 @@ function EventBackstage({
                     </Text>
                 </VStack>
                 <Button
-                    colorScheme={isSelected ? "red" : "green"}
+                    colorScheme={isSelected ? "red" : "purple"}
                     onClick={() => (isSelected ? setSelectedEventId(null) : setSelectedEventId(event.id))}
                     height="min-content"
                     py={4}

@@ -63,7 +63,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     icon="align-left"
                     description="Import content such as papers, posters and authors."
                     permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-                    colorScheme="green"
+                    colorScheme="purple"
                 />
                 <RestrictedDashboardButton
                     to="import/schedule"
@@ -71,7 +71,7 @@ function InnerManageConferenceImportPage(): JSX.Element {
                     icon="calendar"
                     description="Import your schedule including rooms and events."
                     permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-                    colorScheme="green"
+                    colorScheme="purple"
                 />
                 <RestrictedDashboardButton
                     to="import/registrants"

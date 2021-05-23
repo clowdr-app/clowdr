@@ -68,7 +68,7 @@ export default function SendLockoutButton({
             <Box>
                 <Button
                     {...props}
-                    color={showingCheckMark ? (showCheckMarkParams.error ? "red.300" : "green.300") : props.color}
+                    color={showingCheckMark ? (showCheckMarkParams.error ? "red.300" : "purple.300") : props.color}
                     isDisabled={showingCheckMark || props.isDisabled || isLockedOut}
                     _disabled={{
                         opacity: false, // showingCheckMark && showCheckMarkProgress < 0.95 ? 1 : 0.4,

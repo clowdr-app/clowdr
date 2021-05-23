@@ -125,7 +125,7 @@ export function ChooseElementModal({
                                 </Field>
                             </ModalBody>
                             <ModalFooter>
-                                <Button type="submit" isLoading={isSubmitting} mt={4} colorScheme="green">
+                                <Button type="submit" isLoading={isSubmitting} mt={4} colorScheme="purple">
                                     Choose video
                                 </Button>
                             </ModalFooter>

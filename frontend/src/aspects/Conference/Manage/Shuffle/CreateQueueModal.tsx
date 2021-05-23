@@ -248,7 +248,7 @@ export default function CreateQueueModal(): JSX.Element {
 
     return (
         <>
-            <Button colorScheme="green" mb={2} onClick={onOpen}>
+            <Button colorScheme="purple" mb={2} onClick={onOpen}>
                 New queue
             </Button>
             <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="outside">
@@ -414,7 +414,7 @@ export default function CreateQueueModal(): JSX.Element {
                                         isLoading={insertResponse.loading}
                                         isDisabled={insertResponse.loading || name.length === 0}
                                         onClick={onCreate}
-                                        colorScheme="green"
+                                        colorScheme="purple"
                                     >
                                         Create
                                     </Button>

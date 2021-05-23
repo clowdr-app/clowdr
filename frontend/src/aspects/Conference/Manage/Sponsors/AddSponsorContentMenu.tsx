@@ -116,7 +116,7 @@ export function AddSponsorContentMenu({
                         ? `/conference/${conference.slug}/room/${roomId}`
                         : `/conference/${conference.slug}/item/${itemId}`
                 }
-                colorScheme="green"
+                colorScheme="purple"
                 mb={4}
                 isExternal={true}
                 aria-label={"View sponsor"}

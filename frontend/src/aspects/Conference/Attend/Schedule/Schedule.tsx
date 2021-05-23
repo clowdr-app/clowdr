@@ -385,7 +385,7 @@ function ScheduleFrame({
                     isNewDay
                         ? colorMode === "dark"
                             ? "rgba(230, 200, 50, 0.3)"
-                            : "orange.100"
+                            : "yellow.100"
                         : colorMode === "dark"
                         ? "gray.700"
                         : "gray.200"

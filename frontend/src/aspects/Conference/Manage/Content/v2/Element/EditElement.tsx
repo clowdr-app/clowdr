@@ -423,7 +423,7 @@ export function EditElement({
                                         />
                                         <Tooltip label="Save element name">
                                             <Button
-                                                colorScheme="green"
+                                                colorScheme="purple"
                                                 size="xs"
                                                 aria-label="Save element name"
                                                 mx={2}
@@ -466,7 +466,7 @@ export function EditElement({
                                         </Tooltip>
                                         <Tooltip label="Discard name changes">
                                             <Button
-                                                colorScheme="orange"
+                                                colorScheme="yellow"
                                                 size="xs"
                                                 aria-label="Discard name changes"
                                                 mx={2}

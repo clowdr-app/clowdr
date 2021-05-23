@@ -71,7 +71,7 @@ export function BroadcastControlPanel({
                             <AccordionButton>Auto layout</AccordionButton>
                             <AccordionPanel>
                                 <Button
-                                    colorScheme="green"
+                                    colorScheme="purple"
                                     aria-label="Set stream layout to automatic mode"
                                     onClick={() => setLayout({ type: VonageSessionLayoutType.BestFit })}
                                 >

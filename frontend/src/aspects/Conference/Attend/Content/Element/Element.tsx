@@ -64,7 +64,7 @@ function ElementInner({
                 );
             case Content_ElementType_Enum.Zoom:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="green">
+                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="purple">
                         Go to {name}
                     </ExternalLinkButton>
                 );
@@ -118,7 +118,7 @@ function ElementInner({
             case Content_ElementType_Enum.LinkButton:
                 return (
                     <HStack>
-                        <ExternalLinkButton colorScheme="green" to={latestVersion.data.url} linkProps={{ mx: "auto" }}>
+                        <ExternalLinkButton colorScheme="purple" to={latestVersion.data.url} linkProps={{ mx: "auto" }}>
                             {latestVersion.data.text}
                         </ExternalLinkButton>
                     </HStack>

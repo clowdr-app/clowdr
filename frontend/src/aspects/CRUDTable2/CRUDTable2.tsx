@@ -341,7 +341,7 @@ function CRUDRow<T>({
         [dependentData, onOpen, onUpdate, record, row]
     );
 
-    const green = useColorModeValue("green.100", "green.700");
+    const green = useColorModeValue("purple.100", "purple.700");
     const red = useColorModeValue("red.100", "red.700");
 
     const cellEls = useMemo(
@@ -414,7 +414,7 @@ function CRUDRow<T>({
                                 aria-label="Edit hidden fields"
                                 size="xs"
                                 onClick={() => onSecondaryEdit()}
-                                colorScheme={warning ? "orange" : "blue"}
+                                colorScheme={warning ? "yellow" : "blue"}
                             >
                                 {warning ? (
                                     <>
@@ -503,7 +503,7 @@ function CRUDRow<T>({
                             </Button>
                             <Button
                                 id="continue-editing"
-                                colorScheme="green"
+                                colorScheme="purple"
                                 onClick={() => onCloseAlert(false)}
                                 ref={leastDestructiveRef}
                             >

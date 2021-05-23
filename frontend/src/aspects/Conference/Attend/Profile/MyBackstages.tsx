@@ -108,8 +108,8 @@ function MyBackstages(): JSX.Element {
     );
 
     const redBg = useColorModeValue("red.300", "red.600");
-    const greenBg = useColorModeValue("green.300", "green.600");
-    const orangeBg = useColorModeValue("orange.300", "orange.600");
+    const greenBg = useColorModeValue("purple.300", "purple.600");
+    const orangeBg = useColorModeValue("yellow.300", "yellow.600");
     return (
         <>
             <Box pb={4}>
@@ -195,7 +195,7 @@ function MyBackstages(): JSX.Element {
                                                                                     maxW: "100%",
                                                                                 }}
                                                                                 textAlign="center"
-                                                                                colorScheme={isLive ? "red" : "green"}
+                                                                                colorScheme={isLive ? "red" : "purple"}
                                                                                 size="lg"
                                                                                 p={2}
                                                                                 flexDir="column"

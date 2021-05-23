@@ -154,7 +154,7 @@ function EventBoxPopover({
                                     ml={1}
                                     mr={1}
                                     size="xs"
-                                    colorScheme="green"
+                                    colorScheme="purple"
                                     to={itemUrl}
                                     title={content ? "View item" : `Go to room ${roomName}`}
                                     textDecoration="none"
@@ -191,7 +191,7 @@ function EventBoxPopover({
                         <>
                             <Text>This event is an exhibition of multiple items.</Text>
                             <LinkButton
-                                colorScheme="green"
+                                colorScheme="purple"
                                 size="lg"
                                 to={exhibitionUrl}
                                 title="View the exhibition"

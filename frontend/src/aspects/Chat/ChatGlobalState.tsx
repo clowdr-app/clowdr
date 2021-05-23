@@ -1241,7 +1241,7 @@ export class GlobalChatState {
                                             <ButtonGroup isAttached>
                                                 {openChatInSidebar && notification.chatId ? (
                                                     <Button
-                                                        colorScheme="green"
+                                                        colorScheme="purple"
                                                         onClick={() => {
                                                             props.onClose();
                                                             if (notification.chatId) {

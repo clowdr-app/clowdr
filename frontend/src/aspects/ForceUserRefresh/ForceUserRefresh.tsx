@@ -91,7 +91,7 @@ export default function ForceUserRefresh(): JSX.Element {
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            colorScheme="green"
+            colorScheme="purple"
             closeOnOverlayClick={false}
             isCentered
             closeOnEsc={false}

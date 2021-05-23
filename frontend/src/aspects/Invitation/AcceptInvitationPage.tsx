@@ -491,7 +491,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
 //                                                                 borderBottomLeftRadius={0}
 //                                                                 aria-label="Submit confirmation code"
 //                                                                 isDisabled={!form.isValid}
-//                                                                 colorScheme="green"
+//                                                                 colorScheme="purple"
 //                                                             >
 //                                                                 Submit
 //                                                             </Button>

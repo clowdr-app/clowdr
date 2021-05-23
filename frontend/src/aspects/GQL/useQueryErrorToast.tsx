@@ -71,7 +71,7 @@ export default function useQueryErrorToast(
                                 render: function QueryError(_props): JSX.Element {
                                     return (
                                         <Box w="100%" textAlign="right">
-                                            <FAIcon color="green.500" opacity={0.8} iconStyle="s" icon="heartbeat" />
+                                            <FAIcon color="purple.500" opacity={0.8} iconStyle="s" icon="heartbeat" />
                                         </Box>
                                     );
                                 },

@@ -135,7 +135,7 @@ export default function ProfileModal({
                                             <Button
                                                 onClick={createDM}
                                                 isLoading={creatingDM}
-                                                colorScheme="green"
+                                                colorScheme="purple"
                                                 size="sm"
                                             >
                                                 <FAIcon icon="comment" iconStyle="s" mr={3} /> DM
@@ -145,7 +145,7 @@ export default function ProfileModal({
                                             to={`/conference/${conference.slug}/profile/view/${registrant.id}`}
                                             size="sm"
                                             variant="outline"
-                                            colorScheme="green"
+                                            colorScheme="purple"
                                         >
                                             <FAIcon iconStyle="s" icon="link" mr={2} />
                                             View profile

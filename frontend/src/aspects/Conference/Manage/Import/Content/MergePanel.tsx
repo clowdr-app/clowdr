@@ -319,7 +319,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                         }
                         setIsSaving(false);
                     }}
-                    colorScheme="green"
+                    colorScheme="purple"
                 >
                     Save merged data
                 </Button>

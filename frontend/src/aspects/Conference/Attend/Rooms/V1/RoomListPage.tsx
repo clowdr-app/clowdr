@@ -169,7 +169,7 @@ export default function RoomListPage(): JSX.Element {
                 )}
             </ApolloQueryWrapper>
             <HStack flexWrap="wrap" justifyContent="center" mt={2}>
-                <Button onClick={onOpen} colorScheme="green">
+                <Button onClick={onOpen} colorScheme="purple">
                     Create new room
                 </Button>
             </HStack>

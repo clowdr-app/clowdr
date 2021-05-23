@@ -31,7 +31,7 @@ export function RoomContent({
     currentlySelectedVideoElementId?: string;
     onChooseVideo?: (elementId: string) => void;
 }): JSX.Element {
-    const bgColour = useColorModeValue("green.200", "green.700");
+    const bgColour = useColorModeValue("purple.200", "purple.700");
     const nextBgColour = useColorModeValue("gray.200", "gray.700");
 
     const currentRegistrant = useCurrentRegistrant();
@@ -84,7 +84,7 @@ export function RoomContent({
                             <Text>Ends {formatRelative(Date.parse(currentRoomEvent.endTime), now5s)}</Text>
                         ) : undefined}
                         {currentEventRole ? (
-                            <Tag colorScheme="green" my={2}>
+                            <Tag colorScheme="purple" my={2}>
                                 {currentEventRole}
                             </Tag>
                         ) : undefined}

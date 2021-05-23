@@ -6,8 +6,8 @@ import SendLockoutButton from "./SendLockoutButton";
 
 export function SendMessageButton({ sendFailed, ...props }: { sendFailed: boolean } & ButtonProps): JSX.Element {
     const colour = useColorModeValue("blue.600", "blue.200");
-    const focusColour = "green.400";
-    const activeColour = useColorModeValue("green.600", "green.200");
+    const focusColour = "purple.400";
+    const activeColour = useColorModeValue("purple.600", "purple.200");
     const finishingTransform = "translate(100%, -50%) rotate(50deg) scale(0%)";
     const [wasJustClicked, setWasJustClicked] = useState<boolean>(false);
 

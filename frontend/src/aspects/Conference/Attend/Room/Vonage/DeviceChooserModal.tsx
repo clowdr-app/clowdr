@@ -112,7 +112,7 @@ export default function DeviceChooserModal({
                         ) : undefined}
                     </ModalBody>
                     <ModalFooter>
-                        <Button onClick={doClose} colorScheme="green" mt={5}>
+                        <Button onClick={doClose} colorScheme="purple" mt={5}>
                             Save
                         </Button>
                     </ModalFooter>

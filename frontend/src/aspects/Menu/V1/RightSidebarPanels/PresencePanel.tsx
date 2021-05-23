@@ -61,7 +61,7 @@ function ParticipantListItem({ registrantId }: { registrantId: string }): JSX.El
     const registrant = useRegistrant(idObj);
     return (
         <ListItem fontWeight="light">
-            <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="green.400" mr={2} mb={1} />
+            <FAIcon icon="circle" iconStyle="s" fontSize="0.5rem" color="purple.400" mr={2} mb={1} />
             {registrant?.displayName ?? "Loading"}
         </ListItem>
     );

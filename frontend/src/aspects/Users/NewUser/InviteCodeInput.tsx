@@ -65,8 +65,8 @@ export default function InviteCodeInput({
                                 borderBottomRightRadius={0}
                                 aria-label="Enter your invite code"
                                 isInvalid={inviteCode.length > 0 && !isInviteCodeValid}
-                                focusBorderColor={inviteCode.length > 0 && isInviteCodeValid ? "green.200" : undefined}
-                                borderColor={inviteCode.length > 0 && isInviteCodeValid ? "green.200" : undefined}
+                                focusBorderColor={inviteCode.length > 0 && isInviteCodeValid ? "purple.200" : undefined}
+                                borderColor={inviteCode.length > 0 && isInviteCodeValid ? "purple.200" : undefined}
                                 value={inviteCode}
                                 onChange={(ev) => setInviteCode(ev.target.value)}
                                 _placeholder={{
@@ -78,7 +78,7 @@ export default function InviteCodeInput({
                                     <FAIcon
                                         iconStyle="s"
                                         icon={isInviteCodeValid ? "check" : "times"}
-                                        color={isInviteCodeValid ? "green.200" : "red.300"}
+                                        color={isInviteCodeValid ? "purple.200" : "red.300"}
                                     />
                                 ) : undefined}
                             </InputRightElement>
@@ -91,7 +91,7 @@ export default function InviteCodeInput({
                                 borderBottomLeftRadius={0}
                                 aria-label="Use invite code"
                                 isDisabled={!isInviteCodeValid}
-                                colorScheme="green"
+                                colorScheme="purple"
                                 ref={inviteCodeButtonRef}
                             >
                                 Use invite code

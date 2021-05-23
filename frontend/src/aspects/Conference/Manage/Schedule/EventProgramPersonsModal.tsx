@@ -263,7 +263,7 @@ export function AddEventProgramPerson_RegistrantModal({
                         <ButtonGroup>
                             <Button onClick={onClose}>Cancel</Button>
                             <Button
-                                colorScheme="green"
+                                colorScheme="purple"
                                 isDisabled={selectRegistrantsQuery.loading || selectedRegistrantId === ""}
                                 isLoading={adding}
                                 onClick={add}
@@ -436,7 +436,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
         <>
             <Box>
                 <Center flexDir="column">
-                    <Button onClick={onOpen} colorScheme={eventPeopleRequired ? "orange" : "blue"}>
+                    <Button onClick={onOpen} colorScheme={eventPeopleRequired ? "yellow" : "blue"}>
                         {eventPeopleRequired ? <FAIcon iconStyle="s" icon="exclamation-triangle" mr={1} /> : undefined}{" "}
                         Manage Event People
                     </Button>

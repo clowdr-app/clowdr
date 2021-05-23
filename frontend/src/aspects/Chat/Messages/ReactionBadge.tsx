@@ -52,7 +52,7 @@ export default function ReactionBadge({
                 userSelect="none"
                 _hover={{
                     backgroundColor:
-                        currentRegistrantId && senderIds.includes(currentRegistrantId) ? "red.400" : "green.400",
+                        currentRegistrantId && senderIds.includes(currentRegistrantId) ? "red.400" : "purple.400",
                 }}
                 _focus={
                     onClick
@@ -64,7 +64,7 @@ export default function ReactionBadge({
                               backgroundColor:
                                   currentRegistrantId && senderIds.includes(currentRegistrantId)
                                       ? "red.400"
-                                      : "green.400",
+                                      : "purple.400",
                           } as any)
                         : undefined
                 }

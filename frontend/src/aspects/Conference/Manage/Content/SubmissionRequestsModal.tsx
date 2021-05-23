@@ -348,7 +348,7 @@ export function SendSubmissionRequestsModalInner({
                                     isLoading={isSubmitting}
                                     isDisabled={!isValid || uploaderIds.length === 0}
                                     mt={4}
-                                    colorScheme="green"
+                                    colorScheme="purple"
                                 >
                                     Send {uploaderIds.length} emails ({uploadableElements.length} items)
                                 </Button>

@@ -202,7 +202,7 @@ export default function ImportPanel({
             </Alert>
             <HStack>
                 <Button
-                    colorScheme="green"
+                    colorScheme="purple"
                     isDisabled={!!groupsError || !!registrantsError || noName || noEmail || noGroup}
                     isLoading={groupsLoading || importLoading || registrantsLoading}
                     onClick={() => {

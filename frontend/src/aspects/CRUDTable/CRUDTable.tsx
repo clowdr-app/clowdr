@@ -424,7 +424,7 @@ const defaultRenderers: {
             );
         } else {
             if (value) {
-                return <FAIcon iconStyle="s" icon="check" color="green.400" />;
+                return <FAIcon iconStyle="s" icon="check" color="purple.400" />;
             } else {
                 return <FAIcon iconStyle="s" icon="times" color="red.400" />;
             }
@@ -1231,7 +1231,7 @@ function CRUDCreateButton<T, PK extends keyof T>({
                         <Button colorScheme="red" mr={3} onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button colorScheme="green" onClick={onCreate}>
+                        <Button colorScheme="purple" onClick={onCreate}>
                             Create
                         </Button>
                     </ModalFooter>
@@ -1686,7 +1686,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                 >
                     {isBatchEditMode ? (
                         <Button
-                            colorScheme="green"
+                            colorScheme="purple"
                             aria-label="Save changes"
                             disabled={ongoingEdits.size > 0 || (!externalUnsavedChanges && dirtyKeys.size === 0)}
                             onClick={async () => {

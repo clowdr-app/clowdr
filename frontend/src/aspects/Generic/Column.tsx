@@ -58,7 +58,7 @@ export default function Column<I extends Item>({
                         aria-label="Create new"
                         borderTopRightRadius={0}
                         borderBottomRightRadius={0}
-                        colorScheme="green"
+                        colorScheme="purple"
                         onClick={handleCreate}
                     >
                         <FAIcon icon="plus" iconStyle="s" />

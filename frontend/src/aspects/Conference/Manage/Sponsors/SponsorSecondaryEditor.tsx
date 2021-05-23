@@ -312,7 +312,7 @@ function AddSponsorRepBody({
             </PopoverBody>
             <PopoverFooter>
                 <Button
-                    colorScheme="green"
+                    colorScheme="purple"
                     isDisabled={!selectedPersonId}
                     isLoading={insertItemPersonResponse.loading}
                     onClick={async () => {
@@ -368,7 +368,7 @@ function AddSponsorRep(props: { itemId: string; existingPeopleIds: string[] }): 
     return (
         <Popover placement="bottom-start" isLazy isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <PopoverTrigger>
-                <Button size="sm" colorScheme="green">
+                <Button size="sm" colorScheme="purple">
                     <FAIcon iconStyle="s" icon="plus-square" mr={2} />
                     <chakra.span>Link representative</chakra.span>
                 </Button>

@@ -78,7 +78,7 @@ export function PairLayoutForm({
                     </Field>
                     <Button
                         mt={4}
-                        colorScheme="green"
+                        colorScheme="purple"
                         isLoading={props.isSubmitting}
                         type="submit"
                         isDisabled={!props.isValid}

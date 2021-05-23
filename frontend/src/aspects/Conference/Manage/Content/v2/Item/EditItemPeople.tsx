@@ -185,7 +185,7 @@ function AddItemPersonBody({
                     </Button>
                     <Button
                         size="sm"
-                        colorScheme="green"
+                        colorScheme="purple"
                         isDisabled={!selectedPersonId}
                         isLoading={insertItemPersonResponse.loading}
                         onClick={async () => {
@@ -241,11 +241,11 @@ function AddItemPersonBody({
 function AddItemPerson(props: { itemId: string; existingPeopleIds: string[] }): JSX.Element {
     const { onOpen, onClose, isOpen } = useDisclosure();
 
-    const bgColor = useColorModeValue("green.50", "green.900");
+    const bgColor = useColorModeValue("purple.50", "purple.900");
     return (
         <Popover placement="bottom-start" isLazy isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <PopoverTrigger>
-                <Button size="sm" colorScheme="green">
+                <Button size="sm" colorScheme="purple">
                     <FAIcon iconStyle="s" icon="plus-square" mr={2} />
                     <chakra.span>Link person</chakra.span>
                     <ChevronDownIcon ml={1} />
@@ -462,7 +462,7 @@ function ItemPersonsList({
                                     icon={
                                         itemProgramPerson.person.registrantId ? "check-circle" : "exclamation-triangle"
                                     }
-                                    color={itemProgramPerson.person.registrantId ? "green.400" : "orange.400"}
+                                    color={itemProgramPerson.person.registrantId ? "purple.400" : "yellow.400"}
                                 />
                             </Tooltip>
                             <Flex

@@ -29,7 +29,7 @@ export default function LoginButton({
     };
 
     return asMenuItem ? (
-        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme="green">
+        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme="purple">
             Log In
         </MenuItem>
     ) : (
@@ -37,7 +37,7 @@ export default function LoginButton({
             isLoading={isLoading}
             size={size ?? "sm"}
             onClick={() => loginWithRedirect(opts)}
-            colorScheme="green"
+            colorScheme="purple"
             role="menuitem"
         >
             Log In

@@ -342,7 +342,7 @@ export default function ManageConferenceContentPage(): JSX.Element {
                 Content
             </Heading>
             <VStack spacing={4}>
-                <LinkButton colorScheme="orange" to={`/conference/${conference.slug}/manage/content/v2`}>
+                <LinkButton colorScheme="yellow" to={`/conference/${conference.slug}/manage/content/v2`}>
                     <FAIcon iconStyle="s" icon="hand-point-right" mr={2} />
                     Try the new version of this UI &nbsp;
                     <FAIcon iconStyle="s" icon="link" />

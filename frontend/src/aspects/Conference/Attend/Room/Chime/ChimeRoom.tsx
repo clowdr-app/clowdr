@@ -118,7 +118,7 @@ function ChimeRoomInner({
                     {!meetingManager.meetingSession ? (
                         <Box textAlign="center">
                             <Button
-                                colorScheme="green"
+                                colorScheme="purple"
                                 w="10em"
                                 h="6ex"
                                 fontSize="xl"

@@ -10,7 +10,7 @@ function MessageTypeButton({
     shouldHighlight,
     ...props
 }: ButtonProps & { messageType: Chat_MessageType_Enum; shouldHighlight: boolean }): JSX.Element {
-    const highlightColour = "green.400";
+    const highlightColour = "purple.400";
 
     return (
         <Button minW="auto" minH="auto" w="auto" h="auto" p={0} m={0} background="none" borderRadius={0} {...props}>

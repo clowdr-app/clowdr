@@ -185,7 +185,7 @@ export function ItemSecondaryEditor(
                 <LinkButton
                     size="sm"
                     to={`/conference/${conferenceSlug}/item/${group.id}`}
-                    colorScheme="green"
+                    colorScheme="purple"
                     isExternal={true}
                     aria-label={`View ${group.title} in the registrant view`}
                     title={`View ${group.title} in the registrant view`}
@@ -202,7 +202,7 @@ export function ItemSecondaryEditor(
                     <LinkButton
                         size="sm"
                         to={`/conference/${conferenceSlug}/room/${group.rooms[0].id}`}
-                        colorScheme="green"
+                        colorScheme="purple"
                         isExternal={true}
                         aria-label={"View discussion room in the registrant view"}
                         title={"View discussion room in the registrant view"}

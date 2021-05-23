@@ -48,7 +48,7 @@ export default function ListConferencesView(): JSX.Element {
                                 <ListItem key={registrant.id} display="list-item">
                                     <LinkButton
                                         leftIcon={
-                                            <Icon as={icon} color="green.500" fontSize="50%" verticalAlign="middle" />
+                                            <Icon as={icon} color="purple.500" fontSize="50%" verticalAlign="middle" />
                                         }
                                         to={`/conference/${registrant.conference.slug}/${subPath}`}
                                         background="none"

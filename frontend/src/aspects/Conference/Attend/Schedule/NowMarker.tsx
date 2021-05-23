@@ -48,7 +48,7 @@ export default function NowMarker({
                     top: percent + "%",
                     width: "auto",
                     height: "auto",
-                    left: "20px",
+                    left: "0px",
                     borderTopColor: "#ff3333",
                     borderTopWidth: "2px",
                     borderTopStyle: "solid",

@@ -155,7 +155,7 @@ export function SendEmailModal({
                                     isLoading={isSubmitting}
                                     isDisabled={!isValid || registrants.length === 0}
                                     mt={4}
-                                    colorScheme="green"
+                                    colorScheme="purple"
                                 >
                                     Send {registrants.length} emails
                                 </Button>

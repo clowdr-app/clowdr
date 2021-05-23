@@ -66,7 +66,9 @@ export default function MoreOptionsMenuButton({
                 </MenuButton>
             </Tooltip>
             <Portal>
-                <MenuList zIndex={2}>{children}</MenuList>
+                <MenuList zIndex={2} maxH="100vh" overflow="auto">
+                    {children}
+                </MenuList>
             </Portal>
         </Menu>
     );

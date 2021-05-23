@@ -16,7 +16,7 @@ import {
 import assert from "assert";
 import { DateTime } from "luxon";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
 import {
@@ -289,7 +289,7 @@ function ScheduleFrame({
     roomColWidth,
     timeBarWidth,
     scrollToEventCbs,
-    scrollToNow,
+    setScrollToNow,
     items,
     isNewDay,
 }: {
@@ -301,7 +301,7 @@ function ScheduleFrame({
     roomColWidth: number;
     timeBarWidth: number;
     scrollToEventCbs: Map<string, () => void>;
-    scrollToNow: React.MutableRefObject<(() => void) | undefined>;
+    setScrollToNow: (f: { f: () => void } | null) => void;
     isNewDay: boolean;
 }): JSX.Element {
     const roomNameBoxes = useMemo(
@@ -331,7 +331,7 @@ function ScheduleFrame({
 
     // const roomMarkers = useGenerateMarkers("100%", "", true, false, false);
 
-    const labeledNowMarker = useMemo(() => <NowMarker showLabel scrollToNow={scrollToNow} />, [scrollToNow]);
+    const labeledNowMarker = useMemo(() => <NowMarker showLabel setScrollToNow={setScrollToNow} />, [setScrollToNow]);
 
     const roomTimelines = useMemo(
         () =>
@@ -491,7 +491,7 @@ function ScheduleInner({
 
     const scrollToEventCbs = useMemo(() => new Map(), []);
 
-    const scrollToNow = useRef<() => void>();
+    const [scrollToNow, setScrollToNow] = useState<{ f: () => void } | null>(null);
 
     const maxParallelRooms = useMemo(() => frames.reduce((acc, frame) => Math.max(acc, frame.items.length), 0), [
         frames,
@@ -546,7 +546,7 @@ function ScheduleInner({
                             borderColour={borderColour}
                             maxParallelRooms={maxParallelRooms}
                             scrollToEventCbs={scrollToEventCbs}
-                            scrollToNow={scrollToNow}
+                            setScrollToNow={setScrollToNow}
                             items={items}
                             roomColWidth={roomColWidth}
                             timeBarWidth={timeBarWidth}
@@ -556,7 +556,7 @@ function ScheduleInner({
                 </TimelineParameters>
             );
         });
-    }, [alternateBgColor, borderColour, items, frames, maxParallelRooms, roomColWidth, scrollToEventCbs, scrollToNow]);
+    }, [alternateBgColor, borderColour, frames, items, maxParallelRooms, roomColWidth, scrollToEventCbs]);
 
     const scrollToEvent = useCallback(
         (ev: Schedule_EventSummaryFragment) => {
@@ -568,14 +568,11 @@ function ScheduleInner({
 
     const dayList = useMemo(
         () => (
-            <TimelineParameters
-                earliestEventStart={frames.reduce((acc, x) => Math.min(acc, x.startTimeMs), Number.POSITIVE_INFINITY)}
-                latestEventEnd={frames.reduce((acc, x) => Math.max(acc, x.endTimeMs), Number.NEGATIVE_INFINITY)}
-            >
+            <TimelineParameters earliestEventStart={0} latestEventEnd={0}>
                 <DayList rooms={rooms} events={rawEvents} scrollToEvent={scrollToEvent} scrollToNow={scrollToNow} />
             </TimelineParameters>
         ),
-        [frames, rawEvents, rooms, scrollToEvent]
+        [rawEvents, rooms, scrollToEvent, scrollToNow]
     );
 
     /*Plus 30 to the width to account for scrollbars!*/

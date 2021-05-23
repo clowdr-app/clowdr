@@ -4,10 +4,10 @@ import useTimelineParameters from "./useTimelineParameters";
 
 export default function NowMarker({
     showLabel = false,
-    scrollToNow,
+    setScrollToNow,
 }: {
     showLabel?: boolean;
-    scrollToNow?: React.MutableRefObject<(() => void) | undefined>;
+    setScrollToNow?: (f: { f: () => void } | null) => void;
 }): JSX.Element | null {
     const now = useRealTime(60000);
     const timelineParams = useTimelineParameters();
@@ -27,12 +27,12 @@ export default function NowMarker({
         }
     }, [offsetSeconds, timelineParams.fullTimeSpanSeconds]);
     useEffect(() => {
-        if (scrollToNow && offsetSeconds >= 0 && offsetSeconds < timelineParams.fullTimeSpanSeconds) {
-            scrollToNow.current = scrollToNowF;
+        if (setScrollToNow && offsetSeconds >= 0 && offsetSeconds < timelineParams.fullTimeSpanSeconds) {
+            setScrollToNow({ f: scrollToNowF });
 
             scrollToNowF();
         }
-    }, [offsetSeconds, scrollToNow, scrollToNowF, timelineParams.fullTimeSpanSeconds]);
+    }, [offsetSeconds, setScrollToNow, scrollToNowF, timelineParams.fullTimeSpanSeconds]);
 
     if (offsetSeconds < 0 || offsetSeconds > timelineParams.fullTimeSpanSeconds) {
         return <></>;

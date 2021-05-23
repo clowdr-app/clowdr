@@ -6,7 +6,6 @@ import type {
     Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
 } from "../../../../generated/graphql";
-import { useRealTime } from "../../../Generic/useRealTime";
 import useTimelineParameters from "./useTimelineParameters";
 
 type FirstEventInfo = {
@@ -31,7 +30,7 @@ export default function DayList({
     rooms: readonly Schedule_RoomSummaryFragment[];
     events: readonly Schedule_EventSummaryFragment[];
     scrollToEvent: (event: Schedule_EventSummaryFragment) => void;
-    scrollToNow: React.MutableRefObject<(() => void) | undefined>;
+    scrollToNow: { f: () => void } | null;
 }): JSX.Element {
     const timelineParams = useTimelineParameters();
 
@@ -74,10 +73,6 @@ export default function DayList({
             );
     }, [events, rooms, timelineParams.timezone]);
 
-    const now = useRealTime(60000);
-    const nowOffsetMs = now - timelineParams.earliestMs;
-    const nowOffsetSeconds = nowOffsetMs / 1000;
-
     return (
         <ButtonGroup
             role="navigation"
@@ -90,7 +85,7 @@ export default function DayList({
             borderTopRightRadius={5}
             overflow="hidden"
         >
-            {nowOffsetSeconds >= 0 && nowOffsetSeconds < timelineParams.fullTimeSpanSeconds ? (
+            {scrollToNow ? (
                 <Button
                     m={0}
                     borderRadius={0}
@@ -105,7 +100,7 @@ export default function DayList({
                     flexDirection="column"
                     justifyContent="flex-end"
                     onClick={() => {
-                        scrollToNow.current?.();
+                        scrollToNow?.f();
                     }}
                     aria-label="Scroll schedule to now"
                 >

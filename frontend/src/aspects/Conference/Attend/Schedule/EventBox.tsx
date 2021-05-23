@@ -263,8 +263,10 @@ export default function EventBox({
     }, []);
 
     useEffect(() => {
-        scrollToEventCbs.set(event.id, scrollToEvent);
-    }, [event.id, scrollToEvent, scrollToEventCbs]);
+        sortedEvents.forEach((x) => {
+            scrollToEventCbs.set(x.id, scrollToEvent);
+        });
+    }, [sortedEvents, scrollToEvent, scrollToEventCbs]);
 
     const [getContent, content] = useSchedule_SelectItemLazyQuery();
     useEffect(() => {

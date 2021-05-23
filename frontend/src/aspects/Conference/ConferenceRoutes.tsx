@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import ConferencePageNotFound from "../Errors/ConferencePageNotFound";
@@ -15,8 +15,8 @@ import EditProfilePage from "./Attend/Profile/EditProfilePage";
 import MyBackstages from "./Attend/Profile/MyBackstages";
 import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RegistrantListPage from "./Attend/Registrant/RegistrantListPage";
-import RoomListPage from "./Attend/Room/RoomListPage";
 import RoomPage from "./Attend/Room/RoomPage";
+import RoomListPageV1 from "./Attend/Rooms/V1/RoomListPage";
 import Schedule from "./Attend/Schedule/Schedule";
 import AnalyticsDashboard from "./Manage/Analytics/AnalyticsDashboard";
 import ChecklistPage from "./Manage/Checklist/ChecklistPage";
@@ -40,36 +40,38 @@ import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWra
 import { useConference } from "./useConference";
 import { useMaybeCurrentRegistrant } from "./useCurrentRegistrant";
 
-export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.Element {
+export default function ConferenceRoutes(): JSX.Element {
     const conference = useConference();
     const mUser = useMaybeCurrentUser();
     const mRegistrant = useMaybeCurrentRegistrant();
 
+    const { path } = useRouteMatch();
+
     return (
         <Switch>
-            <Route exact path={`${rootUrl}/profile/edit`} component={EditProfilePage} />
+            <Route exact path={`${path}/profile/edit`} component={EditProfilePage} />
 
-            <Route exact path={`${rootUrl}/profile/view`} component={ViewProfilePage} />
+            <Route exact path={`${path}/profile/view`} component={ViewProfilePage} />
 
             {mUser.user ? (
-                <Route exact path={`${rootUrl}/profile`}>
-                    <Redirect to={`${rootUrl}/profile/edit`} />
-                </Route>
-            ) : undefined}
-
-            {mRegistrant && mRegistrant.profile && !mRegistrant.profile.hasBeenEdited ? (
-                <Route path={rootUrl}>
+                <Route exact path={`${path}/profile`}>
                     <Redirect to={`/conference/${conference.slug}/profile/edit`} />
                 </Route>
             ) : undefined}
 
-            {mRegistrant && <Route exact path={`${rootUrl}/profile/backstages`} component={MyBackstages} />}
+            {mRegistrant && mRegistrant.profile && !mRegistrant.profile.hasBeenEdited ? (
+                <Route path={path}>
+                    <Redirect to={`/conference/${conference.slug}/profile/edit`} />
+                </Route>
+            ) : undefined}
 
-            <Route exact path={`${rootUrl}`}>
+            {mRegistrant && <Route exact path={`${path}/profile/backstages`} component={MyBackstages} />}
+
+            <Route exact path={`${path}`}>
                 <ConferenceLandingPage />
             </Route>
 
-            <Route exact path={`${rootUrl}/manage`}>
+            <Route exact path={`${path}/manage`}>
                 <RequireAtLeastOnePermissionWrapper
                     permissions={[
                         Permissions_Permission_Enum.ConferenceManageAttendees,
@@ -86,89 +88,86 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                     <ManagerLandingPage />
                 </RequireAtLeastOnePermissionWrapper>
             </Route>
-            <Route path={`${rootUrl}/manage/name`}>
+            <Route path={`${path}/manage/name`}>
                 <ManageConferenceNamePage />
             </Route>
-            <Route path={`${rootUrl}/manage/roles`}>
+            <Route path={`${path}/manage/roles`}>
                 <ManageConferenceRolesPage />
             </Route>
-            <Route path={`${rootUrl}/manage/groups`}>
+            <Route path={`${path}/manage/groups`}>
                 <ManageConferenceGroupsPage />
             </Route>
-            <Route path={`${rootUrl}/manage/registrants`}>
+            <Route path={`${path}/manage/registrants`}>
                 <ManageConferenceRegistrantsPage />
             </Route>
-            <Route path={`${rootUrl}/manage/people`}>
+            <Route path={`${path}/manage/people`}>
                 <ManageConferenceProgramPeoplePage />
             </Route>
-            <Route path={`${rootUrl}/manage/content/v2`}>
+            <Route path={`${path}/manage/content/v2`}>
                 <ManageConferenceContentPageV2 />
             </Route>
-            <Route path={`${rootUrl}/manage/content`}>
+            <Route path={`${path}/manage/content`}>
                 <ManageConferenceContentPage />
             </Route>
-            <Route
-                path={`${rootUrl}/manage/import`}
-                component={(props: RouteComponentProps<any>) => (
-                    <ManageConferenceImportPage rootUrl={props.match.url} />
-                )}
-            />
-            <Route path={`${rootUrl}/manage/rooms`}>
+            <Route path={`${path}/manage/import`}>
+                <ManageConferenceImportPage />
+            </Route>
+            <Route path={`${path}/manage/rooms`}>
                 <ManageConferenceRoomsPage />
             </Route>
-            <Route path={`${rootUrl}/manage/shuffle`}>
+            <Route path={`${path}/manage/shuffle`}>
                 <ManageConferenceShufflePage />
             </Route>
-            <Route path={`${rootUrl}/manage/broadcasts`}>
+            <Route path={`${path}/manage/broadcasts`}>
                 <ManageConferenceBroadcastPage />
             </Route>
 
-            <Route path={`${rootUrl}/manage/export`}>
+            <Route path={`${path}/manage/export`}>
                 <ManageConferenceExportPage />
             </Route>
-            <Route path={`${rootUrl}/manage/schedule`}>
+            <Route path={`${path}/manage/schedule`}>
                 <ManageConferenceSchedulePage />
             </Route>
-            <Route path={`${rootUrl}/manage/chats`}>
+            <Route path={`${path}/manage/chats`}>
                 <PageNotImplemented />
             </Route>
-            <Route path={`${rootUrl}/manage/email`}>
+            <Route path={`${path}/manage/email`}>
                 <ManageConferenceEmailPage />
             </Route>
-            <Route path={`${rootUrl}/manage/sponsors`}>
+            <Route path={`${path}/manage/sponsors`}>
                 <ManageConferenceSponsorsPage />
             </Route>
-            <Route path={`${rootUrl}/manage/checklist`}>
+            <Route path={`${path}/manage/checklist`}>
                 <ChecklistPage />
             </Route>
-            <Route path={`${rootUrl}/manage/analytics`}>
+            <Route path={`${path}/manage/analytics`}>
                 <AnalyticsDashboard />
             </Route>
-            <Route path={`${rootUrl}/manage/support`}>
+            <Route path={`${path}/manage/support`}>
                 <PageNotImplemented />
             </Route>
 
             <Route
-                path={`${rootUrl}/item/:itemId`}
+                path={`${path}/item/:itemId`}
                 component={(props: RouteComponentProps<{ itemId: string }>) => (
                     <ItemPage itemId={props.match.params.itemId} />
                 )}
             />
-            <Route path={`${rootUrl}/exhibitions`}>
+            <Route path={`${path}/exhibitions`}>
                 <ExhibitionsPage />
             </Route>
             <Route
-                path={`${rootUrl}/exhibition/:exhibitionId`}
+                path={`${path}/exhibition/:exhibitionId`}
                 component={(props: RouteComponentProps<{ exhibitionId: string }>) => (
                     <ExhibitionPage exhibitionId={props.match.params.exhibitionId} />
                 )}
             />
 
-            <Route path={`${rootUrl}/rooms`}>
-                <RoomListPage />
+            <Route path={`${path}/rooms`}>
+                <RoomListPageV1 />
             </Route>
 
-            <Route path={`${rootUrl}/registrants`}>
+            <Route path={`${path}/registrants`}>
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
                     permissions={[
@@ -183,7 +182,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
             </Route>
 
             <Route
-                path={`${rootUrl}/room/:roomId`}
+                path={`${path}/room/:roomId`}
                 component={(
                     props: RouteComponentProps<{
                         roomId: string;
@@ -192,7 +191,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 ) => <RoomPage roomId={props.match.params.roomId} />}
             />
 
-            <Route path={`${rootUrl}/schedule`}>
+            <Route path={`${path}/schedule`}>
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
                     permissions={[
@@ -204,7 +203,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 </RequireAtLeastOnePermissionWrapper>
             </Route>
 
-            <Route exact path={`${rootUrl}/profile/edit/:registrantId`}>
+            <Route exact path={`${path}/profile/edit/:registrantId`}>
                 {(props) =>
                     props.match?.params.registrantId ? (
                         <EditProfilePage
@@ -220,7 +219,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 }
             </Route>
 
-            <Route exact path={`${rootUrl}/profile/view/:registrantId`}>
+            <Route exact path={`${path}/profile/view/:registrantId`}>
                 {(props) =>
                     props.match?.params.registrantId ? (
                         <ViewProfilePage
@@ -236,7 +235,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 }
             </Route>
 
-            <Route path={`${rootUrl}/chat/:chatId`}>
+            <Route path={`${path}/chat/:chatId`}>
                 {(props) =>
                     props.match?.params.chatId ? (
                         <ChatRedirectPage chatId={props.match.params.chatId} />
@@ -245,7 +244,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                     )
                 }
             </Route>
-            <Route path={`${rootUrl}/shuffle`}>
+            <Route path={`${path}/shuffle`}>
                 <RequireAtLeastOnePermissionWrapper
                     componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
                     permissions={[
@@ -259,7 +258,7 @@ export default function ConferenceRoutes({ rootUrl }: { rootUrl: string }): JSX.
                 </RequireAtLeastOnePermissionWrapper>
             </Route>
 
-            <Route path={rootUrl}>
+            <Route path={path}>
                 <ConferencePageNotFound />
             </Route>
         </Switch>

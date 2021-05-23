@@ -138,7 +138,11 @@ export function AddContentMenu({
                         .filter(
                             (x) =>
                                 x.value !== Content_ElementType_Enum.ContentGroupList &&
-                                x.value !== Content_ElementType_Enum.WholeSchedule
+                                x.value !== Content_ElementType_Enum.WholeSchedule &&
+                                x.value !== Content_ElementType_Enum.LiveProgramRooms &&
+                                x.value !== Content_ElementType_Enum.ActiveSocialRooms &&
+                                x.value !== Content_ElementType_Enum.Divider &&
+                                x.value !== Content_ElementType_Enum.SponsorBooths
                         )
                         .map((typeOpt) => (
                             <MenuItem

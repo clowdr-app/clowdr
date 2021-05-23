@@ -371,7 +371,7 @@ function ApolloCustomProviderInner({
     );
 
     if (!client || client.slug !== conferenceSlug) {
-        return <></>;
+        return <>Loading...</>;
     }
 
     return (
@@ -401,7 +401,7 @@ export default function ApolloCustomProvider({
     const conferenceSlug = matches && matches.length > 1 ? matches[1] : undefined;
 
     if (isLoading) {
-        return <></>;
+        return <>Loading...</>;
     }
 
     return (

@@ -7,7 +7,7 @@ export default function NowMarker({
     scrollToNow,
 }: {
     showLabel?: boolean;
-    scrollToNow?: { f: () => void };
+    scrollToNow?: React.MutableRefObject<(() => void) | undefined>;
 }): JSX.Element | null {
     const now = useRealTime(60000);
     const timelineParams = useTimelineParameters();
@@ -28,7 +28,9 @@ export default function NowMarker({
     }, [offsetSeconds, timelineParams.fullTimeSpanSeconds]);
     useEffect(() => {
         if (scrollToNow && offsetSeconds >= 0 && offsetSeconds < timelineParams.fullTimeSpanSeconds) {
-            scrollToNow.f = scrollToNowF;
+            scrollToNow.current = scrollToNowF;
+
+            scrollToNowF();
         }
     }, [offsetSeconds, scrollToNow, scrollToNowF, timelineParams.fullTimeSpanSeconds]);
 

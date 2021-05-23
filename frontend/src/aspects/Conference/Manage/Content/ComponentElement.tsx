@@ -8,7 +8,12 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
     supported: true,
     createDefault: (type, _required) => {
         assert(
-            type === Content_ElementType_Enum.ContentGroupList || type === Content_ElementType_Enum.WholeSchedule,
+            type === Content_ElementType_Enum.ContentGroupList ||
+                type === Content_ElementType_Enum.WholeSchedule ||
+                type === Content_ElementType_Enum.LiveProgramRooms ||
+                type === Content_ElementType_Enum.ActiveSocialRooms ||
+                type === Content_ElementType_Enum.Divider ||
+                type === Content_ElementType_Enum.SponsorBooths,
             `Component Element Template mistakenly used for type ${type}.`
         );
 
@@ -34,7 +39,11 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
             if (
                 !(
                     data.element.typeName === Content_ElementType_Enum.ContentGroupList ||
-                    data.element.typeName === Content_ElementType_Enum.WholeSchedule
+                    data.element.typeName === Content_ElementType_Enum.WholeSchedule ||
+                    data.element.typeName === Content_ElementType_Enum.LiveProgramRooms ||
+                    data.element.typeName === Content_ElementType_Enum.ActiveSocialRooms ||
+                    data.element.typeName === Content_ElementType_Enum.Divider ||
+                    data.element.typeName === Content_ElementType_Enum.SponsorBooths
                 )
             ) {
                 return <>Component Element Template mistakenly used for type {data.type}.</>;

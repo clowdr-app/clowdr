@@ -1,6 +1,6 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useTitle } from "../../Utils/useTitle";
@@ -11,19 +11,20 @@ import ImportRegistrantsPage from "./Import/Registrants/ImportRegistrantsPage";
 import ImportSchedulePage from "./Import/Schedule/ImportSchedulePage";
 import RestrictedDashboardButton from "./RestrictedDashboardButton";
 
-export default function ManageConferenceImportPage({ rootUrl }: { rootUrl: string }): JSX.Element {
+export default function ManageConferenceImportPage(): JSX.Element {
+    const { path } = useRouteMatch();
     return (
         <Switch>
-            <Route path={`${rootUrl}/content`}>
+            <Route path={`${path}/content`}>
                 <ImportContentPage />
             </Route>
-            <Route path={`${rootUrl}/schedule`}>
+            <Route path={`${path}/schedule`}>
                 <ImportSchedulePage />
             </Route>
-            <Route path={`${rootUrl}/registrants`}>
+            <Route path={`${path}/registrants`}>
                 <ImportRegistrantsPage />
             </Route>
-            <Route path={`${rootUrl}/`}>
+            <Route path={`${path}/`}>
                 <InnerManageConferenceImportPage />
             </Route>
         </Switch>

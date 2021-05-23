@@ -10,6 +10,14 @@ import {
     Heading,
     HStack,
     Link,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    ModalProps,
     Table,
     Tbody,
     Td,
@@ -20,7 +28,7 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { MyBackstages_EventFragment, useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -60,9 +68,8 @@ gql`
     }
 `;
 
-export default function MyBackstages(): JSX.Element {
+function MyBackstages(): JSX.Element {
     const conference = useConference();
-    const title = useTitle("My Backstages");
     const registrant = useCurrentRegistrant();
 
     const myBackstagesResponse = useRegistrantEventsWithBackstagesQuery({
@@ -105,16 +112,9 @@ export default function MyBackstages(): JSX.Element {
     const orangeBg = useColorModeValue("orange.300", "orange.600");
     return (
         <>
-            {title}
-            <Heading as="h1" id="page-heading">
-                My Backstages
-            </Heading>
-            <Heading as="h2" fontSize="lg" fontStyle="italic">
-                ({registrant.displayName})
-            </Heading>
-            <Box>
-                On this page, authors, presenters and chairs of events can find the list of backstages (for current and
-                future events). You should join your backstage when it is available.
+            <Box pb={4}>
+                If you are an author, chair or presenter, below is the list of your backstages for current and future
+                events. You should join your backstage when it is available.
             </Box>
             {myBackstagesResponse.loading && !eventsGroupedByDay ? (
                 <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} />
@@ -268,6 +268,44 @@ export default function MyBackstages(): JSX.Element {
                     )}
                 </>
             ) : undefined}
+        </>
+    );
+}
+
+export function MyBackstagesModal(props: Omit<ModalProps, "children">): JSX.Element {
+    const closeRef = useRef<HTMLButtonElement | null>(null);
+
+    const registrant = useCurrentRegistrant();
+
+    return (
+        <Modal initialFocusRef={closeRef} size="6xl" isCentered scrollBehavior="inside" {...props}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>My Backstages ({registrant.displayName})</ModalHeader>
+                <ModalCloseButton ref={closeRef} />
+                <ModalBody>
+                    <MyBackstages />
+                </ModalBody>
+                <ModalFooter></ModalFooter>
+            </ModalContent>
+        </Modal>
+    );
+}
+
+export default function MyBackstagesPage(): JSX.Element {
+    const title = useTitle("My Backstages");
+    const registrant = useCurrentRegistrant();
+
+    return (
+        <>
+            {title}
+            <Heading as="h1" id="page-heading">
+                My Backstages
+            </Heading>
+            <Heading as="h2" fontSize="lg" fontStyle="italic">
+                ({registrant.displayName})
+            </Heading>
+            <MyBackstages />
         </>
     );
 }

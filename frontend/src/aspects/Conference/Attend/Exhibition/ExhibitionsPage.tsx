@@ -1,6 +1,23 @@
 import { gql } from "@apollo/client";
-import { Grid, GridItem, Heading, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import {
+    Grid,
+    GridItem,
+    Heading,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    ModalProps,
+    Spinner,
+    Text,
+    useColorMode,
+    useColorModeValue,
+    useToken,
+} from "@chakra-ui/react";
+import React, { useMemo, useRef } from "react";
 import Color from "tinycolor2";
 import { ExhibitionSummaryFragment, useSelectAllExhibitionsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
@@ -99,6 +116,48 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
                 <PageCountText path={`/conference/${conference.slug}/exhibition/${exhibition.id}`} />
             </LinkButton>
         </GridItem>
+    );
+}
+
+export function ExhibitionsModal(props: Omit<ModalProps, "children">): JSX.Element {
+    const closeRef = useRef<HTMLButtonElement | null>(null);
+
+    const conference = useConference();
+    const exhibitionsResponse = useSelectAllExhibitionsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+
+    const exhibitions = useMemo(
+        () =>
+            exhibitionsResponse.loading && !exhibitionsResponse.data
+                ? undefined
+                : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
+        [exhibitionsResponse.data, exhibitionsResponse.loading]
+    );
+    const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);
+
+    return (
+        <Modal initialFocusRef={closeRef} size="6xl" isCentered scrollBehavior="inside" {...props}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>Exhibitions</ModalHeader>
+                <ModalCloseButton ref={closeRef} />
+                <ModalBody>
+                    {sortedExhibitions ? (
+                        <Grid templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={4}>
+                            {sortedExhibitions.map((exhibition) => (
+                                <ExhibitionTile key={exhibition.id} exhibition={exhibition} />
+                            ))}
+                        </Grid>
+                    ) : (
+                        <Spinner label="Loading exhibitions" />
+                    )}
+                </ModalBody>
+                <ModalFooter></ModalFooter>
+            </ModalContent>
+        </Modal>
     );
 }
 

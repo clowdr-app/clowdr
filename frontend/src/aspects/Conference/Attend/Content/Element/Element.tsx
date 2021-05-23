@@ -1,4 +1,4 @@
-import { Box, HStack, Image, Link } from "@chakra-ui/react";
+import { Box, Divider, HStack, Image, Link } from "@chakra-ui/react";
 import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -7,6 +7,9 @@ import ReactPlayer from "react-player";
 import type { ElementDataFragment } from "../../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../../Chakra/LinkButton";
 import { Markdown } from "../../../../Text/Markdown";
+import ActiveSocialRooms from "../../Rooms/V2/ActiveSocialRooms";
+import LiveProgramRooms from "../../Rooms/V2/LiveProgramRooms";
+import SponsorBooths from "../../Rooms/V2/SponsorBooths";
 import Schedule from "../../Schedule/Schedule";
 import ItemList from "../ItemList";
 import { VideoElement } from "./VideoElement";
@@ -38,6 +41,14 @@ function ElementInner({
                 return <ItemList />;
             case Content_ElementType_Enum.WholeSchedule:
                 return <Schedule />;
+            case Content_ElementType_Enum.LiveProgramRooms:
+                return <LiveProgramRooms />;
+            case Content_ElementType_Enum.ActiveSocialRooms:
+                return <ActiveSocialRooms excludeLiveEventRooms={true} />;
+            case Content_ElementType_Enum.Divider:
+                return <Divider />;
+            case Content_ElementType_Enum.SponsorBooths:
+                return <SponsorBooths />;
         }
 
         if (!latestVersion) {
@@ -195,7 +206,7 @@ function ElementInner({
         }
 
         return <Box>Cannot {name} content.</Box>;
-    }, [blob, type, name]);
+    }, [blob, type, name, elementId]);
 
     return el;
 }

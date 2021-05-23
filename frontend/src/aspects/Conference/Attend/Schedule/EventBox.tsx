@@ -14,6 +14,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import type { FocusableElement } from "@chakra-ui/utils";
 import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
@@ -41,6 +42,7 @@ function EventBoxPopover({
     content,
     isOpen,
     onClose,
+    finalFocusRef,
 }: {
     eventStartMs: number;
     durationSeconds: number;
@@ -49,6 +51,7 @@ function EventBoxPopover({
     content: Schedule_ItemFragment | null | undefined;
     isOpen: boolean;
     onClose: () => void;
+    finalFocusRef: React.MutableRefObject<FocusableElement | null>;
 }): JSX.Element {
     const conference = useConference();
     const event0 = events[0];
@@ -92,15 +95,17 @@ function EventBoxPopover({
 
     const timelineParams = useTimelineParameters();
 
+    const initialFocusRef = useRef<HTMLAnchorElement | null>(null);
     return (
         <Modal
-            closeOnEsc={true}
             isOpen={isOpen}
             onClose={onClose}
-            returnFocusOnClose={false}
-            autoFocus={true}
             scrollBehavior="inside"
             size="4xl"
+            isCentered
+            initialFocusRef={initialFocusRef}
+            finalFocusRef={finalFocusRef}
+            returnFocusOnClose={false}
         >
             <ModalOverlay />
             <ModalContent pb={4}>
@@ -153,6 +158,7 @@ function EventBoxPopover({
                                     to={itemUrl}
                                     title={content ? "View item" : `Go to room ${roomName}`}
                                     textDecoration="none"
+                                    ref={initialFocusRef}
                                 >
                                     <FAIcon iconStyle="s" icon="link" />
                                     <Text as="span" ml={1}>
@@ -169,6 +175,7 @@ function EventBoxPopover({
                                     to={roomUrl}
                                     title={`Event is happening now. Go to room ${roomName}`}
                                     textDecoration="none"
+                                    ref={initialFocusRef}
                                 >
                                     <FAIcon iconStyle="s" icon="link" mr={2} />
                                     <Text as="span" ml={1}>
@@ -239,7 +246,13 @@ export default function EventBox({
     }, [eventTitle]);
 
     const eventFocusRef = React.useRef<HTMLButtonElement>(null);
-    const { isOpen, onClose, onOpen } = useDisclosure();
+    const { isOpen, onClose: _onClose, onOpen } = useDisclosure();
+    const onClose = useCallback(() => {
+        _onClose();
+        setTimeout(() => {
+            eventFocusRef.current?.focus();
+        }, 100);
+    }, [_onClose]);
 
     const scrollToEvent = useCallback(() => {
         eventFocusRef.current?.scrollIntoView({
@@ -288,6 +301,8 @@ export default function EventBox({
                 onClick={onOpen}
                 onKeyDown={(ev) => {
                     if (ev.key === "Enter") {
+                        ev.stopPropagation();
+                        ev.preventDefault();
                         onOpen();
                     }
                 }}
@@ -318,6 +333,7 @@ export default function EventBox({
                     content={content.data?.content_Item_by_pk}
                     isOpen={isOpen}
                     onClose={onClose}
+                    finalFocusRef={eventFocusRef}
                 />
             ) : undefined}
         </>

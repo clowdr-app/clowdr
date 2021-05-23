@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Container, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
@@ -12,6 +13,7 @@ import {
 import { LinkButton } from "../../../Chakra/LinkButton";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
+import { maybeCompare } from "../../../Utils/maybeSort";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import { AuthorList } from "./AuthorList";
@@ -116,6 +118,10 @@ export function ItemElements({
         const contentSortOrder = [
             Content_ElementType_Enum.Abstract,
             Content_ElementType_Enum.VideoUrl,
+            Content_ElementType_Enum.LiveProgramRooms,
+            Content_ElementType_Enum.ActiveSocialRooms,
+            Content_ElementType_Enum.Divider,
+            Content_ElementType_Enum.SponsorBooths,
             Content_ElementType_Enum.Text,
             Content_ElementType_Enum.PaperFile,
             Content_ElementType_Enum.PaperLink,
@@ -154,10 +160,17 @@ export function ItemElements({
                         Content_ElementType_Enum.VideoFile,
                     ].includes(element.typeName)
             )
+            .sort((x, y) => contentSortOrder.indexOf(x.typeName) - contentSortOrder.indexOf(y.typeName))
+            .sort((x, y) =>
+                maybeCompare(
+                    (x.layoutData as LayoutDataBlob | undefined)?.priority,
+                    (y.layoutData as LayoutDataBlob | undefined)?.priority,
+                    (a, b) => a - b
+                )
+            )
             .map((item) => {
                 return <Element key={item.id} element={item} />;
-            })
-            .sort((x, y) => contentSortOrder.indexOf(x.type) - contentSortOrder.indexOf(y.type));
+            });
     }, [itemData.elements]);
 
     return (

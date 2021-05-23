@@ -19,7 +19,7 @@ import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 
-export default function Routing({ rootUrl }: { rootUrl?: string }): JSX.Element {
+export default function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
     return (
         <Switch>
             <ProtectedRoute component={PushNotificationSettings} exact path="/user/pushNotifications" />
@@ -131,7 +131,7 @@ export default function Routing({ rootUrl }: { rootUrl?: string }): JSX.Element 
 
             <ProtectedRoute altIfNotAuthed={<Redirect to="/" />} exact path="/googleoauth2" component={GoogleOAuth} />
 
-            {rootUrl && <ConferenceRoutes rootUrl={rootUrl} />}
+            {confSlug && <ConferenceRoutes />}
 
             <Route
                 path="/upload/:id/:token"

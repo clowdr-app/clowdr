@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Box, Heading, Spinner } from "@chakra-ui/react";
 import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useMemo } from "react";
 import {
     Content_ElementType_Enum,
@@ -11,6 +12,7 @@ import {
 import ConferencePageNotFound from "../../Errors/ConferencePageNotFound";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
@@ -28,6 +30,10 @@ function ConferenceLandingContent({ group }: { group: ItemDataFragment }): JSX.E
     const conferenceLandingContentSortOrder = [
         Content_ElementType_Enum.Abstract,
         Content_ElementType_Enum.VideoUrl,
+        Content_ElementType_Enum.LiveProgramRooms,
+        Content_ElementType_Enum.ActiveSocialRooms,
+        Content_ElementType_Enum.Divider,
+        Content_ElementType_Enum.SponsorBooths,
         Content_ElementType_Enum.Text,
         Content_ElementType_Enum.PaperFile,
         Content_ElementType_Enum.PaperLink,
@@ -52,11 +58,16 @@ function ConferenceLandingContent({ group }: { group: ItemDataFragment }): JSX.E
     ];
 
     const elements = group.elements
-        .map((item) => ({ el: <Element key={item.id} element={item} />, type: item.typeName }))
+        .map((item) => ({
+            el: <Element key={item.id} element={item} />,
+            type: item.typeName,
+            priority: (item.layoutData as LayoutDataBlob | undefined)?.priority,
+        }))
         .sort(
             (x, y) =>
                 conferenceLandingContentSortOrder.indexOf(x.type) - conferenceLandingContentSortOrder.indexOf(y.type)
-        );
+        )
+        .sort((x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b));
     return <>{elements.map((x) => x.el)}</>;
 }
 

@@ -8,8 +8,11 @@ export interface LinkButtonProps extends ButtonProps {
     linkProps?: Omit<LinkProps, "to" | "isExternal" | "tabIndex">;
 }
 
-export function LinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnchorElement> }): JSX.Element {
-    const { to, children, isExternal, linkProps, ref, ...remaining } = props;
+export const LinkButton = React.forwardRef<HTMLAnchorElement, LinkButtonProps>(function LinkButton(
+    props: LinkButtonProps,
+    ref
+): JSX.Element {
+    const { to, children, isExternal, linkProps, ...remaining } = props;
 
     return (
         <Link
@@ -26,7 +29,7 @@ export function LinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnchorElemen
             </Button>
         </Link>
     );
-}
+});
 
 export function ExternalLinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnchorElement> }): JSX.Element {
     const { to, children, isExternal, linkProps, ref, ...remaining } = props;

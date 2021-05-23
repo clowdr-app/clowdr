@@ -225,6 +225,10 @@ async function createBlob(
         }
         case Content_ElementType_Enum.ContentGroupList:
         case Content_ElementType_Enum.WholeSchedule:
+        case Content_ElementType_Enum.LiveProgramRooms:
+        case Content_ElementType_Enum.ActiveSocialRooms:
+        case Content_ElementType_Enum.Divider:
+        case Content_ElementType_Enum.SponsorBooths:
             return { error: "Component elements cannot be uploaded." };
     }
 }
@@ -619,6 +623,14 @@ function generateContentTypeFriendlyName(type: Content_ElementType_Enum) {
             return "Whole schedule";
         case Content_ElementType_Enum.Zoom:
             return "Zoom";
+        case Content_ElementType_Enum.ActiveSocialRooms:
+            return "Active social rooms";
+        case Content_ElementType_Enum.LiveProgramRooms:
+            return "Live program rooms";
+        case Content_ElementType_Enum.Divider:
+            return "Divider";
+        case Content_ElementType_Enum.SponsorBooths:
+            return "Sponsor booths";
     }
 }
 

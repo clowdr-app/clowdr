@@ -34,7 +34,11 @@ export type LayoutDataBlob =
     | VideoTitlesLayoutDataBlob
     | VideoUrlLayoutDataBlob
     | WholeScheduleLayoutDataBlob
-    | ZoomLayoutDataBlob;
+    | ZoomLayoutDataBlob
+    | LiveProgramRoomsLayoutDataBlob
+    | ActiveSocialRoomsLayoutDataBlob
+    | SponsorBoothsLayoutDataBlob
+    | DividerLayoutDataBlob;
 
 export interface BaseLayoutDataBlob {
     wide: boolean;
@@ -134,4 +138,20 @@ export interface WholeScheduleLayoutDataBlob extends BaseLayoutDataBlob {
 
 export interface ZoomLayoutDataBlob extends BaseLayoutDataBlob {
     contentType: Content_ElementType_Enum.Zoom;
+}
+
+export interface LiveProgramRoomsLayoutDataBlob extends BaseLayoutDataBlob {
+    contentType: Content_ElementType_Enum.LiveProgramRooms;
+}
+
+export interface ActiveSocialRoomsLayoutDataBlob extends BaseLayoutDataBlob {
+    contentType: Content_ElementType_Enum.ActiveSocialRooms;
+}
+
+export interface SponsorBoothsLayoutDataBlob extends BaseLayoutDataBlob {
+    contentType: Content_ElementType_Enum.SponsorBooths;
+}
+
+export interface DividerLayoutDataBlob extends BaseLayoutDataBlob {
+    contentType: Content_ElementType_Enum.Divider;
 }

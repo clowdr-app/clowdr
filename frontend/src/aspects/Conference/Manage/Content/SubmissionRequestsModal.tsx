@@ -91,6 +91,14 @@ function generateElementTypeFriendlyName(type: Content_ElementType_Enum) {
             return "Whole schedule";
         case Content_ElementType_Enum.Zoom:
             return "Zoom";
+        case Content_ElementType_Enum.ActiveSocialRooms:
+            return "Active social rooms";
+        case Content_ElementType_Enum.LiveProgramRooms:
+            return "Live program rooms";
+        case Content_ElementType_Enum.Divider:
+            return "Horizontal divider";
+        case Content_ElementType_Enum.SponsorBooths:
+            return "Sponsor booths";
     }
 }
 

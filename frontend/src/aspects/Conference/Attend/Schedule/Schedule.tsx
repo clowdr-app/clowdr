@@ -1,9 +1,22 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import {
+    Box,
+    Flex,
+    Heading,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalOverlay,
+    ModalProps,
+    useColorMode,
+    useColorModeValue,
+    useToken,
+} from "@chakra-ui/react";
 import assert from "assert";
 import { DateTime } from "luxon";
 import * as R from "ramda";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
 import {
@@ -288,7 +301,7 @@ function ScheduleFrame({
     roomColWidth: number;
     timeBarWidth: number;
     scrollToEventCbs: Map<string, () => void>;
-    scrollToNow: { f: () => void };
+    scrollToNow: React.MutableRefObject<(() => void) | undefined>;
     isNewDay: boolean;
 }): JSX.Element {
     const roomNameBoxes = useMemo(
@@ -478,14 +491,7 @@ function ScheduleInner({
 
     const scrollToEventCbs = useMemo(() => new Map(), []);
 
-    const scrollToNow: { f: () => void } = useMemo(
-        () => ({
-            f: () => {
-                /*EMPTY*/
-            },
-        }),
-        []
-    );
+    const scrollToNow = useRef<() => void>();
 
     const maxParallelRooms = useMemo(() => frames.reduce((acc, frame) => Math.max(acc, frame.items.length), 0), [
         frames,
@@ -552,9 +558,6 @@ function ScheduleInner({
         });
     }, [alternateBgColor, borderColour, items, frames, maxParallelRooms, roomColWidth, scrollToEventCbs, scrollToNow]);
 
-    const conference = useConference();
-    const title = useTitle(`Schedule of ${conference.shortName}`);
-
     const scrollToEvent = useCallback(
         (ev: Schedule_EventSummaryFragment) => {
             const cb = scrollToEventCbs.get(ev.id);
@@ -563,44 +566,48 @@ function ScheduleInner({
         [scrollToEventCbs]
     );
 
+    const dayList = useMemo(
+        () => (
+            <TimelineParameters
+                earliestEventStart={frames.reduce((acc, x) => Math.min(acc, x.startTimeMs), Number.POSITIVE_INFINITY)}
+                latestEventEnd={frames.reduce((acc, x) => Math.max(acc, x.endTimeMs), Number.NEGATIVE_INFINITY)}
+            >
+                <DayList rooms={rooms} events={rawEvents} scrollToEvent={scrollToEvent} scrollToNow={scrollToNow} />
+            </TimelineParameters>
+        ),
+        [frames, rawEvents, rooms, scrollToEvent]
+    );
+
+    /*Plus 30 to the width to account for scrollbars!*/
     return (
-        <>
-            {title}
-            {/*Plus 30 to the width to account for scrollbars!*/}
-            <Flex h="100%" w="100%" maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30} flexDir="column">
-                <Flex w="100%" direction="row" justify="center" alignItems="center">
-                    <Heading as="h1" id="page-heading" mr={4}>
-                        Schedule
-                    </Heading>
-                    <DayList
-                        rooms={rooms}
-                        events={rawEvents}
-                        scrollToEvent={scrollToEvent}
-                        scrollToNow={scrollToNow.f}
-                    />
-                </Flex>
-                <Box
-                    cursor="pointer"
-                    as={ScrollContainer}
-                    w="100%"
-                    borderColor={borderColour}
-                    borderWidth={1}
-                    borderStyle="solid"
-                    hideScrollbars={false}
-                >
-                    <Flex
-                        direction="column"
-                        w={timeBarWidth + maxParallelRooms * roomColWidth}
-                        justifyContent="stretch"
-                        alignItems="flex-start"
-                        role="region"
-                        aria-label="Conference schedule"
-                    >
-                        {frameEls}
-                    </Flex>
-                </Box>
+        <Flex h="100%" w="100%" maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30} flexDir="column">
+            <Flex w="100%" direction="row" justify="center" alignItems="center">
+                <Heading as="h1" id="page-heading" mr={4}>
+                    Schedule
+                </Heading>
+                {dayList}
             </Flex>
-        </>
+            <Box
+                cursor="pointer"
+                as={ScrollContainer}
+                w="100%"
+                borderColor={borderColour}
+                borderWidth={1}
+                borderStyle="solid"
+                hideScrollbars={false}
+            >
+                <Flex
+                    direction="column"
+                    w={timeBarWidth + maxParallelRooms * roomColWidth}
+                    justifyContent="stretch"
+                    alignItems="flex-start"
+                    role="region"
+                    aria-label="Conference schedule"
+                >
+                    {frameEls}
+                </Flex>
+            </Box>
+        </Flex>
     );
 }
 
@@ -629,7 +636,35 @@ function ScheduleFetchWrapper(): JSX.Element {
     );
 }
 
+export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element {
+    const closeRef = useRef<HTMLButtonElement | null>(null);
+
+    return (
+        <Modal
+            initialFocusRef={closeRef}
+            size="6xl"
+            isCentered
+            autoFocus={false}
+            returnFocusOnClose={false}
+            trapFocus={true}
+            scrollBehavior="inside"
+            {...props}
+        >
+            <ModalOverlay />
+            <ModalContent>
+                <ModalCloseButton ref={closeRef} />
+                <ModalBody display="flex" justifyContent="center">
+                    <ScheduleFetchWrapper />
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    );
+}
+
 export default function Schedule(): JSX.Element {
+    const conference = useConference();
+    const title = useTitle(`Schedule of ${conference.shortName}`);
+
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[
@@ -637,6 +672,7 @@ export default function Schedule(): JSX.Element {
                 Permissions_Permission_Enum.ConferenceManageSchedule,
             ]}
         >
+            {title}
             <ScheduleFetchWrapper />
         </RequireAtLeastOnePermissionWrapper>
     );

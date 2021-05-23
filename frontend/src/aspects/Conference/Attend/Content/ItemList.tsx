@@ -115,6 +115,7 @@ function TagButton({
         expandedBgColour,
     ]);
 
+    const shadow = useColorModeValue("md", "light-md");
     return (
         <Button
             colorScheme="blue"
@@ -141,6 +142,7 @@ function TagButton({
             _active={{
                 backgroundColor: isExpanded ? expandedBgColour : collapsedBgColour,
             }}
+            boxShadow={shadow}
         >
             <Center m={0} p={0}>
                 <Text as="span" fontSize="sm" fontWeight={600} m={0}>

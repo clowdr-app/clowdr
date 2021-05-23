@@ -41,11 +41,13 @@ import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissio
 import { useConference } from "../../useConference";
 
 gql`
-    query PreshowChecklist($conferenceId: uuid!) {
+    query PreshowChecklist($conferenceId: uuid!, $now: timestamptz!) {
         requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                eventPeople: { event: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] } } }
+                eventPeople: {
+                    event: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }, endTime: { _gte: $now } }
+                }
                 registrantId: { _is_null: true }
             }
         ) {
@@ -58,7 +60,9 @@ gql`
         requiredProgramPeopleNotRegistered: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                eventPeople: { event: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] } } }
+                eventPeople: {
+                    event: { intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }, endTime: { _gte: $now } }
+                }
                 registrant: { userId: { _is_null: true } }
             }
         ) {
@@ -82,6 +86,7 @@ gql`
 
         livestreamEventsWithoutRegisteredPresenter: schedule_Event(
             where: {
+                endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
                 _not: { eventPeople: { roleName: { _eq: PRESENTER }, person: { registrantId: { _is_null: false } } } }
@@ -103,6 +108,7 @@ gql`
 
         livestreamEventsWithoutRegisteredChair: schedule_Event(
             where: {
+                endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
                 _not: { eventPeople: { roleName: { _eq: CHAIR }, person: { registrantId: { _is_null: false } } } }
@@ -124,6 +130,7 @@ gql`
 
         prerecordedEventsWithoutVideo: schedule_Event(
             where: {
+                endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _eq: PRERECORDED }
                 _not: { item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } } }
@@ -145,6 +152,7 @@ gql`
 
         prerecordedEventsWithVideo: schedule_Event(
             where: {
+                endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _eq: PRERECORDED }
                 item: { elements: { typeName: { _eq: VIDEO_BROADCAST } } }
@@ -170,7 +178,11 @@ gql`
         }
 
         allLiveEventsWithPeople: schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] } }
+            where: {
+                endTime: { _gte: $now }
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+            }
         ) {
             id
             name
@@ -213,6 +225,7 @@ gql`
 
         exhibitionEventsWithoutExhibition: schedule_Event(
             where: {
+                endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [EXHIBITION] }
                 exhibitionId: { _is_null: true }
@@ -230,6 +243,7 @@ gql`
 
         exhibitionEventsWithoutDiscussionRooms: schedule_Event(
             where: {
+                endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [EXHIBITION, NONE] }
                 exhibition: { items: { item: { _not: { rooms: {} } } } }
@@ -258,6 +272,7 @@ gql`
 
         liveEventsWithoutContent: schedule_Event(
             where: {
+                endTime: { _gte: $now }
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
                 itemId: { _is_null: true }
@@ -296,7 +311,9 @@ gql`
             }
         }
 
-        shortEvents: schedule_Event(where: { conferenceId: { _eq: $conferenceId }, durationSeconds: { _lte: 60 } }) {
+        shortEvents: schedule_Event(
+            where: { endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId }, durationSeconds: { _lte: 60 } }
+        ) {
             id
             name
             startTime
@@ -320,7 +337,7 @@ gql`
         }
 
         eventsWithNegativeDuration: schedule_Event(
-            where: { conferenceId: { _eq: $conferenceId }, durationSeconds: { _lt: 0 } }
+            where: { endTime: { _gte: $now }, conferenceId: { _eq: $conferenceId }, durationSeconds: { _lt: 0 } }
         ) {
             id
             name
@@ -353,8 +370,10 @@ export default function ChecklistPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Pre-conference checklist at ${conference.shortName}`);
 
+    const now = useMemo(() => new Date().toISOString(), []);
     const checklistResponse = usePreshowChecklistQuery({
         variables: {
+            now,
             conferenceId: conference.id,
         },
     });

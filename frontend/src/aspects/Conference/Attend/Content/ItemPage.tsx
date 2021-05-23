@@ -101,7 +101,6 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                         <HStack w="100%" flexWrap="wrap" alignItems="stretch">
                             <VStack
                                 textAlign="left"
-                                p={2}
                                 flexGrow={2.5}
                                 alignItems="stretch"
                                 flexBasis={0}
@@ -116,11 +115,11 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                     flexWrap={stackColumns ? "wrap" : "nowrap"}
                                     maxW="100%"
                                 >
-                                    <Box maxW="100%" textAlign="center" flexGrow={1} style={{ scrollbarWidth: "thin" }}>
+                                    <Box maxW="100%" textAlign="center" flexGrow={1}>
                                         <Box>
                                             <ItemVideos itemData={itemData} />
                                         </Box>
-                                        <Box ml={5} maxW="100%">
+                                        <Box maxW="100%">
                                             <ItemElements itemData={itemData}>
                                                 <RequireAtLeastOnePermissionWrapper
                                                     permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}

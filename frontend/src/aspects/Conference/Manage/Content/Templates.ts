@@ -72,7 +72,14 @@ export const ItemTemplates: { [K in Content_ItemType_Enum]: ItemTemplate } = {
     [Content_ItemType_Enum.LandingPage]: {
         supported: true,
         uploadableElementTypes: [],
-        itemTypes: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.ContentGroupList],
+        itemTypes: [
+            Content_ElementType_Enum.Abstract,
+            Content_ElementType_Enum.LiveProgramRooms,
+            Content_ElementType_Enum.ActiveSocialRooms,
+            Content_ElementType_Enum.ContentGroupList,
+            Content_ElementType_Enum.Divider,
+            Content_ElementType_Enum.SponsorBooths,
+        ],
     },
     [Content_ItemType_Enum.Presentation]: {
         supported: true,

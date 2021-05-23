@@ -10004,8 +10004,12 @@ export enum Content_ElementType_Constraint {
 export enum Content_ElementType_Enum {
   /** Abstract Markdown text. */
   Abstract = 'ABSTRACT',
+  /** Show a summary of the currently active social and discussion rooms */
+  ActiveSocialRooms = 'ACTIVE_SOCIAL_ROOMS',
   /** List of content groups in the system. */
   ContentGroupList = 'CONTENT_GROUP_LIST',
+  /** A horizontal divider */
+  Divider = 'DIVIDER',
   /** File for an image (stored by Clowdr). */
   ImageFile = 'IMAGE_FILE',
   /** URL to an image (embedded in Clowdr UI). */
@@ -10014,6 +10018,8 @@ export enum Content_ElementType_Enum {
   Link = 'LINK',
   /** A URL for a link button. */
   LinkButton = 'LINK_BUTTON',
+  /** Show a summary of the currently live program rooms */
+  LiveProgramRooms = 'LIVE_PROGRAM_ROOMS',
   /** File for a paper (stored by Clowdr). */
   PaperFile = 'PAPER_FILE',
   /** Link for a paper (preview is not embedded in Clowdr UI). */
@@ -10024,6 +10030,8 @@ export enum Content_ElementType_Enum {
   PosterFile = 'POSTER_FILE',
   /** URL to a poster image (embedded in Clowdr UI). */
   PosterUrl = 'POSTER_URL',
+  /** Show a summary of the sponsor booths */
+  SponsorBooths = 'SPONSOR_BOOTHS',
   /** General-purpose Markdown text. */
   Text = 'TEXT',
   /** Video file to be broadcast. */
@@ -37613,36 +37621,6 @@ export type AddParticipantToRoomMutationVariables = Exact<{
 
 export type AddParticipantToRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_room_RoomPerson_one?: Maybe<{ readonly __typename?: 'room_RoomPerson', readonly id: any }> };
 
-export type GetAllRoomsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<(
-    { readonly __typename?: 'room_Room' }
-    & RoomListRoomDetailsFragment
-  )>, readonly programRooms: ReadonlyArray<(
-    { readonly __typename?: 'room_Room' }
-    & RoomListRoomDetailsFragment
-  )> };
-
-export type GetAllTodaysRoomsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  todayStart: Scalars['timestamptz'];
-  todayEnd: Scalars['timestamptz'];
-}>;
-
-
-export type GetAllTodaysRoomsQuery = { readonly __typename?: 'query_root', readonly socialOrDiscussionRooms: ReadonlyArray<(
-    { readonly __typename?: 'room_Room' }
-    & RoomListRoomDetailsFragment
-  )>, readonly programRooms: ReadonlyArray<(
-    { readonly __typename?: 'room_Room' }
-    & RoomListRoomDetailsFragment
-  )> };
-
-export type RoomListRoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
-
 export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
   registrantId: Scalars['uuid'];
@@ -37706,6 +37684,79 @@ export type DeleteEventParticipantMutationVariables = Exact<{
 
 
 export type DeleteEventParticipantMutation = { readonly __typename?: 'mutation_root', readonly delete_schedule_EventProgramPerson?: Maybe<{ readonly __typename?: 'schedule_EventProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any }> }> };
+
+export type GetAllRoomsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetAllRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & RoomListRoomDetailsFragment
+  )>, readonly programRooms: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & RoomListRoomDetailsFragment
+  )> };
+
+export type GetAllTodaysRoomsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  todayStart: Scalars['timestamptz'];
+  todayEnd: Scalars['timestamptz'];
+}>;
+
+
+export type GetAllTodaysRoomsQuery = { readonly __typename?: 'query_root', readonly socialOrDiscussionRooms: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & RoomListRoomDetailsFragment
+  )>, readonly programRooms: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & RoomListRoomDetailsFragment
+  )> };
+
+export type RoomListRoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
+
+export type GetSocialRoomsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetSocialRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & SocialRoomFragment
+  )> };
+
+export type SocialRoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number };
+
+export type RoomTile_GetRoomQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+  withEvent: Scalars['Boolean'];
+  eventId?: Maybe<Scalars['uuid']>;
+}>;
+
+
+export type RoomTile_GetRoomQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<(
+    { readonly __typename?: 'room_Room' }
+    & RoomTile_RoomFragment
+  )> };
+
+export type RoomTile_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }>, readonly events?: Maybe<ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & RoomTile_EventFragment
+  )>> };
+
+export type RoomTile_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
+
+export type GetSponsorBoothsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetSponsorBoothsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<(
+    { readonly __typename?: 'content_Item' }
+    & SponsorBoothsList_ItemFragment
+  )> };
+
+export type SponsorBoothsList_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
 
 export type Schedule_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
 
@@ -37830,6 +37881,7 @@ export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename
 
 export type PreshowChecklistQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
+  now: Scalars['timestamptz'];
 }>;
 
 
@@ -39739,6 +39791,20 @@ export type SendRepeatConfirmationEmailMutationVariables = Exact<{
 
 export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendRepeatEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
 
+export type GetEventsInNextHourQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  now: Scalars['timestamptz'];
+  cutoff: Scalars['timestamptz'];
+}>;
+
+
+export type GetEventsInNextHourQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & MinimalEventInfoFragment
+  )> };
+
+export type MinimalEventInfoFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
+
 export type MenuScheduleQueryVariables = Exact<{
   now: Scalars['timestamptz'];
   inOneHour: Scalars['timestamptz'];
@@ -40306,26 +40372,6 @@ export const Room_EventSummaryFragmentDoc = gql`
   }
 }
     `;
-export const RoomListRoomDetailsFragmentDoc = gql`
-    fragment RoomListRoomDetails on room_Room {
-  id
-  name
-  priority
-  managementModeName
-  originatingItem {
-    id
-    itemPeople {
-      id
-      roleName
-      person {
-        id
-        registrantId
-      }
-    }
-  }
-  originatingEventId
-}
-    `;
 export const RoomPage_RoomDetailsFragmentDoc = gql`
     fragment RoomPage_RoomDetails on room_Room {
   id
@@ -40387,6 +40433,104 @@ export const RoomSponsorContent_ItemDataFragmentDoc = gql`
   }
 }
     ${RoomSponsorContent_ElementDataFragmentDoc}`;
+export const RoomListRoomDetailsFragmentDoc = gql`
+    fragment RoomListRoomDetails on room_Room {
+  id
+  name
+  priority
+  managementModeName
+  originatingItem {
+    id
+    itemPeople {
+      id
+      roleName
+      person {
+        id
+        registrantId
+      }
+    }
+  }
+  originatingEventId
+}
+    `;
+export const SocialRoomFragmentDoc = gql`
+    fragment SocialRoom on room_Room {
+  id
+  name
+  priority
+}
+    `;
+export const RoomTile_EventFragmentDoc = gql`
+    fragment RoomTile_Event on schedule_Event {
+  id
+  name
+  intendedRoomModeName
+  startTime
+  endTime
+  exhibition {
+    id
+    name
+  }
+  item {
+    id
+    title
+  }
+}
+    `;
+export const RoomTile_RoomFragmentDoc = gql`
+    fragment RoomTile_Room on room_Room {
+  id
+  name
+  priority
+  managementModeName
+  originatingItem {
+    id
+    title
+    itemPeople {
+      id
+      roleName
+      person {
+        id
+        registrantId
+      }
+    }
+  }
+  originatingEventId
+  events(where: {id: {_eq: $eventId}}) @include(if: $withEvent) {
+    ...RoomTile_Event
+  }
+}
+    ${RoomTile_EventFragmentDoc}`;
+export const SponsorBoothsList_ItemFragmentDoc = gql`
+    fragment SponsorBoothsList_Item on content_Item {
+  id
+  rooms(
+    limit: 1
+    order_by: {created_at: asc}
+    where: {conferenceId: {_eq: $conferenceId}}
+  ) {
+    id
+    priority
+  }
+  logo: elements(
+    where: {typeName: {_in: [IMAGE_URL, IMAGE_FILE]}, layoutData: {_contains: {isLogo: true}}}
+    order_by: {updatedAt: desc}
+    limit: 1
+  ) {
+    id
+    data
+  }
+  title
+  itemPeople {
+    id
+    person {
+      id
+      registrantId
+    }
+    roleName
+  }
+}
+    `;
 export const Schedule_TagFragmentDoc = gql`
     fragment Schedule_Tag on collection_Tag {
   id
@@ -41315,6 +41459,17 @@ export const UploadableItemFieldsFragmentDoc = gql`
     name
   }
   itemTitle
+}
+    `;
+export const MinimalEventInfoFragmentDoc = gql`
+    fragment MinimalEventInfo on schedule_Event {
+  id
+  startTime
+  endTime
+  room {
+    id
+    name
+  }
 }
     `;
 export const MenuSchedule_EventFragmentDoc = gql`
@@ -42917,96 +43072,6 @@ export function useAddParticipantToRoomMutation(baseOptions?: Apollo.MutationHoo
 export type AddParticipantToRoomMutationHookResult = ReturnType<typeof useAddParticipantToRoomMutation>;
 export type AddParticipantToRoomMutationResult = Apollo.MutationResult<AddParticipantToRoomMutation>;
 export type AddParticipantToRoomMutationOptions = Apollo.BaseMutationOptions<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>;
-export const GetAllRoomsDocument = gql`
-    query GetAllRooms($conferenceId: uuid!) {
-  socialRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
-    order_by: {name: asc}
-  ) {
-    ...RoomListRoomDetails
-  }
-  programRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, events: {}, managementModeName: {_in: [PUBLIC, PRIVATE]}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}]}
-    order_by: {name: asc}
-  ) {
-    ...RoomListRoomDetails
-  }
-}
-    ${RoomListRoomDetailsFragmentDoc}`;
-
-/**
- * __useGetAllRoomsQuery__
- *
- * To run a query within a React component, call `useGetAllRoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllRoomsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useGetAllRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetAllRoomsQuery, GetAllRoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllRoomsQuery, GetAllRoomsQueryVariables>(GetAllRoomsDocument, options);
-      }
-export function useGetAllRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRoomsQuery, GetAllRoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllRoomsQuery, GetAllRoomsQueryVariables>(GetAllRoomsDocument, options);
-        }
-export type GetAllRoomsQueryHookResult = ReturnType<typeof useGetAllRoomsQuery>;
-export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLazyQuery>;
-export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
-export const GetAllTodaysRoomsDocument = gql`
-    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
-  socialOrDiscussionRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatorySubscribe: {_eq: true}}}]}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}], managementModeName: {_in: [PUBLIC, PRIVATE]}}
-    order_by: {name: asc}
-  ) {
-    ...RoomListRoomDetails
-  }
-  programRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, events: {startTime: {_lte: $todayEnd}, endTime: {_gte: $todayStart}}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}], managementModeName: {_in: [PUBLIC, PRIVATE]}}
-    order_by: {name: asc}
-  ) {
-    ...RoomListRoomDetails
-  }
-}
-    ${RoomListRoomDetailsFragmentDoc}`;
-
-/**
- * __useGetAllTodaysRoomsQuery__
- *
- * To run a query within a React component, call `useGetAllTodaysRoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllTodaysRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllTodaysRoomsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      todayStart: // value for 'todayStart'
- *      todayEnd: // value for 'todayEnd'
- *   },
- * });
- */
-export function useGetAllTodaysRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>(GetAllTodaysRoomsDocument, options);
-      }
-export function useGetAllTodaysRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>(GetAllTodaysRoomsDocument, options);
-        }
-export type GetAllTodaysRoomsQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsQuery>;
-export type GetAllTodaysRoomsLazyQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsLazyQuery>;
-export type GetAllTodaysRoomsQueryResult = Apollo.QueryResult<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>;
 export const RoomPage_GetRoomDetailsDocument = gql`
     query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
   room_Room_by_pk(id: $roomId) {
@@ -43233,6 +43298,209 @@ export function useDeleteEventParticipantMutation(baseOptions?: Apollo.MutationH
 export type DeleteEventParticipantMutationHookResult = ReturnType<typeof useDeleteEventParticipantMutation>;
 export type DeleteEventParticipantMutationResult = Apollo.MutationResult<DeleteEventParticipantMutation>;
 export type DeleteEventParticipantMutationOptions = Apollo.BaseMutationOptions<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>;
+export const GetAllRoomsDocument = gql`
+    query GetAllRooms($conferenceId: uuid!) {
+  socialRooms: room_Room(
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    order_by: {name: asc}
+  ) {
+    ...RoomListRoomDetails
+  }
+  programRooms: room_Room(
+    where: {conferenceId: {_eq: $conferenceId}, events: {}, managementModeName: {_in: [PUBLIC, PRIVATE]}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}]}
+    order_by: {name: asc}
+  ) {
+    ...RoomListRoomDetails
+  }
+}
+    ${RoomListRoomDetailsFragmentDoc}`;
+
+/**
+ * __useGetAllRoomsQuery__
+ *
+ * To run a query within a React component, call `useGetAllRoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllRoomsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetAllRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetAllRoomsQuery, GetAllRoomsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllRoomsQuery, GetAllRoomsQueryVariables>(GetAllRoomsDocument, options);
+      }
+export function useGetAllRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRoomsQuery, GetAllRoomsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllRoomsQuery, GetAllRoomsQueryVariables>(GetAllRoomsDocument, options);
+        }
+export type GetAllRoomsQueryHookResult = ReturnType<typeof useGetAllRoomsQuery>;
+export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLazyQuery>;
+export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
+export const GetAllTodaysRoomsDocument = gql`
+    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
+  socialOrDiscussionRooms: room_Room(
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatorySubscribe: {_eq: true}}}]}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}], managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    order_by: {name: asc}
+  ) {
+    ...RoomListRoomDetails
+  }
+  programRooms: room_Room(
+    where: {conferenceId: {_eq: $conferenceId}, events: {startTime: {_lte: $todayEnd}, endTime: {_gte: $todayStart}}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}], managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    order_by: {name: asc}
+  ) {
+    ...RoomListRoomDetails
+  }
+}
+    ${RoomListRoomDetailsFragmentDoc}`;
+
+/**
+ * __useGetAllTodaysRoomsQuery__
+ *
+ * To run a query within a React component, call `useGetAllTodaysRoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllTodaysRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllTodaysRoomsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      todayStart: // value for 'todayStart'
+ *      todayEnd: // value for 'todayEnd'
+ *   },
+ * });
+ */
+export function useGetAllTodaysRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>(GetAllTodaysRoomsDocument, options);
+      }
+export function useGetAllTodaysRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>(GetAllTodaysRoomsDocument, options);
+        }
+export type GetAllTodaysRoomsQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsQuery>;
+export type GetAllTodaysRoomsLazyQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsLazyQuery>;
+export type GetAllTodaysRoomsQueryResult = Apollo.QueryResult<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>;
+export const GetSocialRoomsDocument = gql`
+    query GetSocialRooms($conferenceId: uuid!) {
+  socialRooms: room_Room(
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    order_by: {name: asc}
+  ) {
+    ...SocialRoom
+  }
+}
+    ${SocialRoomFragmentDoc}`;
+
+/**
+ * __useGetSocialRoomsQuery__
+ *
+ * To run a query within a React component, call `useGetSocialRoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSocialRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSocialRoomsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetSocialRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>(GetSocialRoomsDocument, options);
+      }
+export function useGetSocialRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>(GetSocialRoomsDocument, options);
+        }
+export type GetSocialRoomsQueryHookResult = ReturnType<typeof useGetSocialRoomsQuery>;
+export type GetSocialRoomsLazyQueryHookResult = ReturnType<typeof useGetSocialRoomsLazyQuery>;
+export type GetSocialRoomsQueryResult = Apollo.QueryResult<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>;
+export const RoomTile_GetRoomDocument = gql`
+    query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) {
+  room_Room_by_pk(id: $roomId) {
+    ...RoomTile_Room
+  }
+}
+    ${RoomTile_RoomFragmentDoc}`;
+
+/**
+ * __useRoomTile_GetRoomQuery__
+ *
+ * To run a query within a React component, call `useRoomTile_GetRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoomTile_GetRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomTile_GetRoomQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *      withEvent: // value for 'withEvent'
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useRoomTile_GetRoomQuery(baseOptions: Apollo.QueryHookOptions<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>(RoomTile_GetRoomDocument, options);
+      }
+export function useRoomTile_GetRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>(RoomTile_GetRoomDocument, options);
+        }
+export type RoomTile_GetRoomQueryHookResult = ReturnType<typeof useRoomTile_GetRoomQuery>;
+export type RoomTile_GetRoomLazyQueryHookResult = ReturnType<typeof useRoomTile_GetRoomLazyQuery>;
+export type RoomTile_GetRoomQueryResult = Apollo.QueryResult<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>;
+export const GetSponsorBoothsDocument = gql`
+    query GetSponsorBooths($conferenceId: uuid!) {
+  content_Item(
+    where: {conferenceId: {_eq: $conferenceId}, typeName: {_eq: SPONSOR}}
+    order_by: {title: asc}
+  ) {
+    ...SponsorBoothsList_Item
+  }
+}
+    ${SponsorBoothsList_ItemFragmentDoc}`;
+
+/**
+ * __useGetSponsorBoothsQuery__
+ *
+ * To run a query within a React component, call `useGetSponsorBoothsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSponsorBoothsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSponsorBoothsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetSponsorBoothsQuery(baseOptions: Apollo.QueryHookOptions<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>(GetSponsorBoothsDocument, options);
+      }
+export function useGetSponsorBoothsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>(GetSponsorBoothsDocument, options);
+        }
+export type GetSponsorBoothsQueryHookResult = ReturnType<typeof useGetSponsorBoothsQuery>;
+export type GetSponsorBoothsLazyQueryHookResult = ReturnType<typeof useGetSponsorBoothsLazyQuery>;
+export type GetSponsorBoothsQueryResult = Apollo.QueryResult<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>;
 export const Schedule_SelectItemDocument = gql`
     query Schedule_SelectItem($id: uuid!) {
   content_Item_by_pk(id: $id) {
@@ -43645,9 +43913,9 @@ export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apo
 export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
 export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
 export const PreshowChecklistDocument = gql`
-    query PreshowChecklist($conferenceId: uuid!) {
+    query PreshowChecklist($conferenceId: uuid!, $now: timestamptz!) {
   requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
-    where: {conferenceId: {_eq: $conferenceId}, eventPeople: {event: {intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}}, registrantId: {_is_null: true}}
+    where: {conferenceId: {_eq: $conferenceId}, eventPeople: {event: {intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, endTime: {_gte: $now}}}, registrantId: {_is_null: true}}
   ) {
     id
     name
@@ -43655,7 +43923,7 @@ export const PreshowChecklistDocument = gql`
     email
   }
   requiredProgramPeopleNotRegistered: collection_ProgramPerson(
-    where: {conferenceId: {_eq: $conferenceId}, eventPeople: {event: {intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}}, registrant: {userId: {_is_null: true}}}
+    where: {conferenceId: {_eq: $conferenceId}, eventPeople: {event: {intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, endTime: {_gte: $now}}}, registrant: {userId: {_is_null: true}}}
   ) {
     id
     name
@@ -43674,7 +43942,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   livestreamEventsWithoutRegisteredPresenter: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: PRESENTER}, person: {registrantId: {_is_null: false}}}}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: PRESENTER}, person: {registrantId: {_is_null: false}}}}}
   ) {
     id
     name
@@ -43690,7 +43958,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   livestreamEventsWithoutRegisteredChair: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: CHAIR}, person: {registrantId: {_is_null: false}}}}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, _not: {eventPeople: {roleName: {_eq: CHAIR}, person: {registrantId: {_is_null: false}}}}}
   ) {
     id
     name
@@ -43706,7 +43974,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   prerecordedEventsWithoutVideo: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_eq: PRERECORDED}, _not: {item: {elements: {typeName: {_eq: VIDEO_BROADCAST}}}}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_eq: PRERECORDED}, _not: {item: {elements: {typeName: {_eq: VIDEO_BROADCAST}}}}}
   ) {
     id
     name
@@ -43722,7 +43990,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   prerecordedEventsWithVideo: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_eq: PRERECORDED}, item: {elements: {typeName: {_eq: VIDEO_BROADCAST}}}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_eq: PRERECORDED}, item: {elements: {typeName: {_eq: VIDEO_BROADCAST}}}}
   ) {
     id
     name
@@ -43743,7 +44011,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   allLiveEventsWithPeople: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}
   ) {
     id
     name
@@ -43790,7 +44058,7 @@ export const PreshowChecklistDocument = gql`
     name
   }
   exhibitionEventsWithoutExhibition: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [EXHIBITION]}, exhibitionId: {_is_null: true}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [EXHIBITION]}, exhibitionId: {_is_null: true}}
   ) {
     id
     name
@@ -43802,7 +44070,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   exhibitionEventsWithoutDiscussionRooms: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [EXHIBITION, NONE]}, exhibition: {items: {item: {_not: {rooms: {}}}}}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [EXHIBITION, NONE]}, exhibition: {items: {item: {_not: {rooms: {}}}}}}
   ) {
     id
     name
@@ -43825,7 +44093,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   liveEventsWithoutContent: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, itemId: {_is_null: true}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, itemId: {_is_null: true}}
   ) {
     id
     name
@@ -43861,7 +44129,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   shortEvents: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, durationSeconds: {_lte: 60}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, durationSeconds: {_lte: 60}}
   ) {
     id
     name
@@ -43886,7 +44154,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   eventsWithNegativeDuration: schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, durationSeconds: {_lt: 0}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, durationSeconds: {_lt: 0}}
   ) {
     id
     name
@@ -43917,6 +44185,7 @@ export const PreshowChecklistDocument = gql`
  * const { data, loading, error } = usePreshowChecklistQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
+ *      now: // value for 'now'
  *   },
  * });
  */
@@ -50323,6 +50592,45 @@ export function useSendRepeatConfirmationEmailMutation(baseOptions?: Apollo.Muta
 export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof useSendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
 export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
+export const GetEventsInNextHourDocument = gql`
+    query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
+  schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}, endTime: {_gte: $now}, startTime: {_lte: $cutoff}}
+  ) {
+    ...MinimalEventInfo
+  }
+}
+    ${MinimalEventInfoFragmentDoc}`;
+
+/**
+ * __useGetEventsInNextHourQuery__
+ *
+ * To run a query within a React component, call `useGetEventsInNextHourQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventsInNextHourQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventsInNextHourQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      now: // value for 'now'
+ *      cutoff: // value for 'cutoff'
+ *   },
+ * });
+ */
+export function useGetEventsInNextHourQuery(baseOptions: Apollo.QueryHookOptions<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>(GetEventsInNextHourDocument, options);
+      }
+export function useGetEventsInNextHourLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>(GetEventsInNextHourDocument, options);
+        }
+export type GetEventsInNextHourQueryHookResult = ReturnType<typeof useGetEventsInNextHourQuery>;
+export type GetEventsInNextHourLazyQueryHookResult = ReturnType<typeof useGetEventsInNextHourLazyQuery>;
+export type GetEventsInNextHourQueryResult = Apollo.QueryResult<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>;
 export const MenuScheduleDocument = gql`
     query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
   schedule_Event(

@@ -9,8 +9,12 @@ export enum ContentRole {
 export enum Content_ElementType_Enum {
     /** Abstract Markdown text. */
     Abstract = "ABSTRACT",
+    /** Show a summary of the currently active social and discussion rooms */
+    ActiveSocialRooms = "ACTIVE_SOCIAL_ROOMS",
     /** List of content groups in the system. */
     ContentGroupList = "CONTENT_GROUP_LIST",
+    /** A horizontal divider */
+    Divider = "DIVIDER",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -19,6 +23,8 @@ export enum Content_ElementType_Enum {
     Link = "LINK",
     /** A URL for a link button. */
     LinkButton = "LINK_BUTTON",
+    /** Show a summary of the currently live program rooms */
+    LiveProgramRooms = "LIVE_PROGRAM_ROOMS",
     /** File for a paper (stored by Clowdr). */
     PaperFile = "PAPER_FILE",
     /** Link for a paper (preview is not embedded in Clowdr UI). */
@@ -29,6 +35,8 @@ export enum Content_ElementType_Enum {
     PosterFile = "POSTER_FILE",
     /** URL to a poster image (embedded in Clowdr UI). */
     PosterUrl = "POSTER_URL",
+    /** Show a summary of the sponsor booths */
+    SponsorBooths = "SPONSOR_BOOTHS",
     /** General-purpose Markdown text. */
     Text = "TEXT",
     /** Video file to be broadcast. */
@@ -96,7 +104,11 @@ export type ElementBlob =
     | VideoTitlesBlob
     | VideoUrlBlob
     | WholeScheduleBlob
-    | ZoomBlob;
+    | ZoomBlob
+    | ActiveSocialRoomsBlob
+    | LiveProgramRoomsBlob
+    | DividerBlob
+    | SponsorBoothsBlob;
 
 export interface AbstractBlob extends TextualElementBlob {
     type: Content_ElementType_Enum.Abstract;
@@ -190,6 +202,22 @@ export interface ZoomBlob extends UrlElementBlob {
     type: Content_ElementType_Enum.Zoom;
 }
 
+export interface ActiveSocialRoomsBlob extends ComponentBlob {
+    type: Content_ElementType_Enum.ActiveSocialRooms;
+}
+
+export interface LiveProgramRoomsBlob extends ComponentBlob {
+    type: Content_ElementType_Enum.LiveProgramRooms;
+}
+
+export interface DividerBlob extends ComponentBlob {
+    type: Content_ElementType_Enum.Divider;
+}
+
+export interface SponsorBoothsBlob extends ComponentBlob {
+    type: Content_ElementType_Enum.SponsorBooths;
+}
+
 /* Meta content types */
 
 export enum ElementBaseType {
@@ -225,6 +253,10 @@ export const ElementBaseTypes: { [K in Content_ElementType_Enum]: ElementBaseTyp
     [Content_ElementType_Enum.VideoUrl]: ElementBaseType.URL,
     [Content_ElementType_Enum.Zoom]: ElementBaseType.URL,
     [Content_ElementType_Enum.WholeSchedule]: ElementBaseType.Component,
+    [Content_ElementType_Enum.ActiveSocialRooms]: ElementBaseType.Component,
+    [Content_ElementType_Enum.LiveProgramRooms]: ElementBaseType.Component,
+    [Content_ElementType_Enum.Divider]: ElementBaseType.Component,
+    [Content_ElementType_Enum.SponsorBooths]: ElementBaseType.Component,
 };
 
 export interface ComponentBlob extends BaseElementBlob {

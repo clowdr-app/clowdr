@@ -42,7 +42,7 @@ function WaitForAuth0({ children }: { children: JSX.Element | Array<JSX.Element>
     const { isLoading } = useAuth0();
 
     if (isLoading) {
-        return <></>;
+        return <>Loading...</>;
     }
 
     return <>{children}</>;

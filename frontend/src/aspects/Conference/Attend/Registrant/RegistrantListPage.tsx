@@ -48,11 +48,10 @@ gql`
     }
 `;
 
-export default function RegistrantListPage(): JSX.Element {
+export function AllRegistrantsList(): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
-    const title = useTitle(`People at ${conference.shortName}`);
 
     const [
         searchQuery,
@@ -136,10 +135,6 @@ export default function RegistrantListPage(): JSX.Element {
 
     return (
         <>
-            {title}
-            <Heading as="h1" id="page-heading">
-                People
-            </Heading>
             <FormControl maxW={400}>
                 <InputGroup>
                     <InputLeftAddon as="label" id="registrants-search">
@@ -175,6 +170,21 @@ export default function RegistrantListPage(): JSX.Element {
             ) : (
                 <Text fontStyle="italic">(End of list)</Text>
             )}
+        </>
+    );
+}
+
+export default function RegistrantListPage(): JSX.Element {
+    const conference = useConference();
+    const title = useTitle(`People at ${conference.shortName}`);
+
+    return (
+        <>
+            {title}
+            <Heading as="h1" id="page-heading">
+                People
+            </Heading>
+            <AllRegistrantsList />
         </>
     );
 }

@@ -366,10 +366,8 @@ function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JS
     );
 }
 
-export default function WaitingPage(): JSX.Element {
+export function ShuffleWaiting(): JSX.Element {
     const conference = useConference();
-    const title = useTitle("Shuffle queues");
-
     const now = useMemo(() => new Date(), []);
     const vars = useMemo(
         () => ({
@@ -405,7 +403,6 @@ export default function WaitingPage(): JSX.Element {
 
     return (
         <>
-            {title}
             {periods.loading && !periods.data ? (
                 <Spinner label="Loading shuffle room times" />
             ) : (
@@ -421,6 +418,17 @@ export default function WaitingPage(): JSX.Element {
                     ) : undefined}
                 </Grid>
             )}
+        </>
+    );
+}
+
+export default function WaitingPage(): JSX.Element {
+    const title = useTitle("Shuffle queues");
+
+    return (
+        <>
+            {title}
+            <ShuffleWaiting />
         </>
     );
 }

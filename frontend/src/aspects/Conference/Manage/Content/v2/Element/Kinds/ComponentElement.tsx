@@ -6,10 +6,22 @@ import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 
 export const ComponentElementTemplate: ElementBaseTemplate = {
     supported: true,
-    allowCreate: [Content_ElementType_Enum.ContentGroupList, Content_ElementType_Enum.WholeSchedule],
+    allowCreate: [
+        Content_ElementType_Enum.ContentGroupList,
+        Content_ElementType_Enum.WholeSchedule,
+        Content_ElementType_Enum.LiveProgramRooms,
+        Content_ElementType_Enum.ActiveSocialRooms,
+        Content_ElementType_Enum.Divider,
+        Content_ElementType_Enum.SponsorBooths,
+    ],
     createDefault: (type, _required) => {
         assert(
-            type === Content_ElementType_Enum.ContentGroupList || type === Content_ElementType_Enum.WholeSchedule,
+            type === Content_ElementType_Enum.ContentGroupList ||
+                type === Content_ElementType_Enum.WholeSchedule ||
+                type === Content_ElementType_Enum.LiveProgramRooms ||
+                type === Content_ElementType_Enum.ActiveSocialRooms ||
+                type === Content_ElementType_Enum.Divider ||
+                type === Content_ElementType_Enum.SponsorBooths,
             `Component Element Template mistakenly used for type ${type}.`
         );
 
@@ -36,7 +48,11 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
             if (
                 !(
                     data.element.typeName === Content_ElementType_Enum.ContentGroupList ||
-                    data.element.typeName === Content_ElementType_Enum.WholeSchedule
+                    data.element.typeName === Content_ElementType_Enum.WholeSchedule ||
+                    data.element.typeName === Content_ElementType_Enum.LiveProgramRooms ||
+                    data.element.typeName === Content_ElementType_Enum.ActiveSocialRooms ||
+                    data.element.typeName === Content_ElementType_Enum.Divider ||
+                    data.element.typeName === Content_ElementType_Enum.SponsorBooths
                 )
             ) {
                 return <>Component Element Template mistakenly used for type {data.type}.</>;

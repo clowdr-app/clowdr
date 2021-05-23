@@ -5,6 +5,7 @@ import {
     AspectRatio,
     Box,
     Button,
+    Center,
     HStack,
     Spinner,
     Text,
@@ -151,6 +152,7 @@ export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomD
     return <Room roomDetails={roomDetails} defaultVideoBackend={defaultVideoBackend} />;
 }
 
+const refetchEventsInterval = 10 * 60 * 1000;
 function Room({
     roomDetails,
     defaultVideoBackend,
@@ -158,23 +160,23 @@ function Room({
     roomDetails: RoomPage_RoomDetailsFragment;
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
-    const now2m = useRealTime(120000);
-    // Load events from the nearest 2 minute boundary onwards
+    const now = useRealTime(refetchEventsInterval);
+    // Load events from the nearest N-minute boundary onwards
     // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
     //       so re-renders don't cause multiple (very slightly offset) queries to the database in
     //       quick succession.
     // Note: Rounding _down_ is necessary so that any currently ongoing event doesn't accidentally get
     //       excluded from the results if this query happens to re-run in the last 59 seconds of an event!
     //       This was identified after the issue caused some people to be ejected from the backstage at the wrong time.
-    const now2mStr = useMemo(() => new Date(roundDownToNearest(now2m, 2 * 60 * 1000)).toISOString(), [now2m]);
-    const now2mCutoffStr = useMemo(
+    const nowStr = useMemo(() => new Date(roundDownToNearest(now, refetchEventsInterval)).toISOString(), [now]);
+    const nowCutoffStr = useMemo(
         // Load events up to 1 hour in the future
         // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
         //       so re-renders don't cause spam to the database.
         // Note: Rounding up makes sense as it's the dual of the round down above, but it's not strictly
         //       necessary - any rounding would do.
-        () => new Date(roundUpToNearest(now2m + 60 * 60 * 1000, 2 * 60 * 1000)).toISOString(),
-        [now2m]
+        () => new Date(roundUpToNearest(now + 60 * 60 * 1000, refetchEventsInterval)).toISOString(),
+        [now]
     );
 
     const { loading: loadingEvents, data } = useRoom_GetEventsQuery({
@@ -182,8 +184,8 @@ function Room({
         nextFetchPolicy: "cache-first",
         variables: {
             roomId: roomDetails.id,
-            now: now2mStr,
-            cutoff: now2mCutoffStr,
+            now: nowStr,
+            cutoff: nowCutoffStr,
         },
     });
 
@@ -772,12 +774,21 @@ function RoomInner({
                     {selectedVideoElementId ? (
                         <VideoPlayer elementId={selectedVideoElementId} />
                     ) : (
-                        <AspectRatio maxW="100%" ratio={16 / 9}>
-                            <VStack>
-                                <Text fontSize="2xl">Select a video below</Text>
-                                <FAIcon icon="hand-point-down" aria-hidden="true" iconStyle="r" fontSize="6xl" />
-                            </VStack>
-                        </AspectRatio>
+                        <Center>
+                            <AspectRatio
+                                w="100%"
+                                maxW="600px"
+                                ratio={16 / 9}
+                                border="3px solid"
+                                borderColor="gray.400"
+                                borderRadius="lg"
+                            >
+                                <VStack>
+                                    <Text fontSize="2xl">Select a video below</Text>
+                                    <FAIcon icon="hand-point-down" aria-hidden="true" iconStyle="r" fontSize="6xl" />
+                                </VStack>
+                            </AspectRatio>
+                        </Center>
                     )}
                     <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
                 </Box>
@@ -823,7 +834,7 @@ function RoomInner({
                         {isPresenterOfUpcomingEvent ? (
                             <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
                         ) : undefined}
-                        {maybeZoomUrl && !currentEventModeIsNone ? (
+                        {maybeZoomUrl && currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom ? (
                             <ExternalLinkButton
                                 to={maybeZoomUrl.url}
                                 isExternal={true}

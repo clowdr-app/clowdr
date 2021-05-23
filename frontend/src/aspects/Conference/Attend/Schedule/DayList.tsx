@@ -31,7 +31,7 @@ export default function DayList({
     rooms: readonly Schedule_RoomSummaryFragment[];
     events: readonly Schedule_EventSummaryFragment[];
     scrollToEvent: (event: Schedule_EventSummaryFragment) => void;
-    scrollToNow: () => void;
+    scrollToNow: React.MutableRefObject<(() => void) | undefined>;
 }): JSX.Element {
     const timelineParams = useTimelineParameters();
 
@@ -105,7 +105,7 @@ export default function DayList({
                     flexDirection="column"
                     justifyContent="flex-end"
                     onClick={() => {
-                        scrollToNow();
+                        scrollToNow.current?.();
                     }}
                     aria-label="Scroll schedule to now"
                 >

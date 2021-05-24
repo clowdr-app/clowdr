@@ -68,6 +68,10 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
         };
     }, [registrantId, audioVideo]);
 
+    const connectionData = useMemo(() => JSON.stringify({ registrantId: roster[registrantId]?.externalUserId }), [
+        registrantId,
+        roster,
+    ]);
     return (
         <Box
             data-testid="video-tile"
@@ -78,10 +82,7 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
         >
             <video ref={videoEl} style={{ zIndex: 200, position: "relative", height: "100%" }} />
             <Box position="absolute" left="1" bottom="1" zIndex="200" w="100%">
-                <VonageOverlay
-                    connectionData={JSON.stringify({ registrantId: roster[registrantId]?.externalUserId })}
-                    microphoneEnabled={!muted}
-                />
+                <VonageOverlay connectionData={connectionData} microphoneEnabled={!muted} />
             </Box>
             <Box
                 position="absolute"
@@ -93,7 +94,7 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
                 pointerEvents="none"
                 ref={borderEl}
             />
-            <PlaceholderImage />
+            <PlaceholderImage connectionData={connectionData} />
         </Box>
     );
 }

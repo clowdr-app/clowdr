@@ -1,9 +1,39 @@
-import { Box } from "@chakra-ui/react";
-import React from "react";
+import { Box, Image } from "@chakra-ui/react";
+import React, { useMemo } from "react";
 import { backgroundImage } from "../../../Vonage/resources";
+import { useRegistrant } from "../../RegistrantsContext";
 
-export default function PlaceholderImage(): JSX.Element {
-    return (
+export default function PlaceholderImage({ connectionData }: { connectionData?: string }): JSX.Element {
+    const registrantIdObj = useMemo(() => {
+        if (!connectionData) {
+            return null;
+        }
+        try {
+            const data = JSON.parse(connectionData);
+            return data["registrantId"] ? { registrant: data["registrantId"] } : null;
+        } catch (e) {
+            console.warn("Couldn't parse registrant ID from Vonage subscriber data");
+            return null;
+        }
+    }, [connectionData]);
+
+    const registrant = useRegistrant(registrantIdObj);
+
+    return registrant?.profile?.photoURL_350x350 ? (
+        <Image
+            position="absolute"
+            width="100%"
+            height="100%"
+            borderRadius={5}
+            objectFit="cover"
+            objectPosition="center"
+            top="0"
+            left="0"
+            src={registrant?.profile.photoURL_350x350}
+            alt={`Profile picture of ${registrant?.displayName}`}
+            opacity={0.8}
+        />
+    ) : (
         <Box
             position="absolute"
             width="100%"

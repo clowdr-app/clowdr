@@ -537,22 +537,24 @@ function VonageRoomInner({
         [fullScreenHandle, receivingScreenShare, streams]
     );
 
+    const connectionData = useMemo(() => JSON.stringify({ registrantId: registrant.id }), [registrant.id]);
+
     const viewPublishedPlaceholder = useMemo(
         () =>
             connected && !camera ? (
                 <Box position="relative" flex={`0 0 ${participantWidth}px`} w={participantWidth} h={participantWidth}>
                     <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
                         <VonageOverlay
-                            connectionData={JSON.stringify({ registrantId: registrant.id })}
+                            connectionData={connectionData}
                             microphoneEnabled={state.microphoneIntendedEnabled}
                         />
                     </Box>
-                    <PlaceholderImage />
+                    <PlaceholderImage connectionData={connectionData} />
                 </Box>
             ) : (
                 <></>
             ),
-        [registrant.id, camera, connected, participantWidth, state.microphoneIntendedEnabled]
+        [connected, camera, participantWidth, connectionData, state.microphoneIntendedEnabled]
     );
 
     const viewPublishedCamera = useMemo(
@@ -648,7 +650,7 @@ function VonageRoomInner({
                     <Box position="absolute" left="0.4rem" bottom="0.2rem" zIndex="200" width="100%" overflow="hidden">
                         <VonageOverlay connectionData={connection.data} microphoneEnabled={false} />
                     </Box>
-                    <PlaceholderImage />
+                    <PlaceholderImage connectionData={connection.data} />
                 </Box>
             )),
         [otherUnpublishedConnections, participantWidth]

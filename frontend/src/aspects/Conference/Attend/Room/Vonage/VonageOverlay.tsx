@@ -32,6 +32,7 @@ export function VonageOverlay({
             h="auto"
             p={0}
             m="3px"
+            ml={2}
             size="xs"
             maxW="calc(100% - 6px - 0.8rem)"
             background="none"

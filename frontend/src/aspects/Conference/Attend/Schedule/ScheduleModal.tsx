@@ -111,7 +111,7 @@ export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element 
             <ModalContent minH="70vh" overflow="hidden">
                 <ModalCloseButton ref={closeRef} />
                 <ModalBody display="flex" justifyContent="center" overflow="hidden">
-                    <Tabs isLazy w="100%" h="100%" display="flex" flexDir="column">
+                    <Tabs isLazy w="100%" display="flex" flexDir="column">
                         <TabList justifyContent="center">
                             <Tab>
                                 <FAIcon iconStyle="s" icon="clock" />

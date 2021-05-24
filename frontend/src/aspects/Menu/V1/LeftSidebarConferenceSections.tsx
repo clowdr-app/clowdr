@@ -18,6 +18,7 @@ import {
 import { LinkButton } from "../../Chakra/LinkButton";
 import { RoomList } from "../../Conference/Attend/Rooms/V1/RoomList";
 import { useConference } from "../../Conference/useConference";
+import useCurrentRegistrant from "../../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import ApolloQueryWrapper from "../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../Icons/FAIcon";
@@ -29,12 +30,14 @@ import { ToggleNavButton } from "./ToggleNavButton";
 
 function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     const conference = useConference();
+    const registrant = useCurrentRegistrant();
 
     const result = useGetAllTodaysRoomsQuery({
         variables: {
             conferenceId: conference.id,
             todayStart: DateTime.local().startOf("day").minus({ minutes: 10 }).toISO(),
             todayEnd: DateTime.local().endOf("day").plus({ minutes: 10 }).toISO(),
+            registrantId: registrant.id,
         },
         pollInterval: 5 * 60 * 1000,
         fetchPolicy: "network-only",

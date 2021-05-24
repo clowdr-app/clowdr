@@ -14,18 +14,22 @@ import FAIcon from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../../useConference";
+import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { CreateRoomModal } from "../../Room/CreateRoomModal";
 import { RoomList } from "./RoomList";
 
 gql`
-    query GetAllRooms($conferenceId: uuid!) {
+    query GetAllRooms($conferenceId: uuid!, $registrantId: uuid!) {
         socialRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
                 originatingItemId: { _is_null: true }
                 originatingEventId: { _is_null: true }
-                managementModeName: { _in: [PUBLIC, PRIVATE] }
+                _or: [
+                    { managementModeName: { _eq: PUBLIC } }
+                    { managementModeName: { _eq: PRIVATE }, roomPeople: { registrantId: { _eq: $registrantId } } }
+                ]
             }
             order_by: { name: asc }
         ) {
@@ -56,13 +60,33 @@ gql`
         }
     }
 
-    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
+    query GetAllTodaysRooms(
+        $conferenceId: uuid!
+        $todayStart: timestamptz!
+        $todayEnd: timestamptz!
+        $registrantId: uuid!
+    ) {
         socialOrDiscussionRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatorySubscribe: { _eq: true } } }] }
-                _or: [{ originatingItemId: { _is_null: true } }, { originatingItem: { typeName: { _neq: SPONSOR } } }]
-                managementModeName: { _in: [PUBLIC, PRIVATE] }
+                _and: [
+                    {
+                        _or: [
+                            { originatingItemId: { _is_null: true } }
+                            { originatingItem: { typeName: { _neq: SPONSOR } } }
+                        ]
+                    }
+                    {
+                        _or: [
+                            { managementModeName: { _eq: PUBLIC } }
+                            {
+                                managementModeName: { _eq: PRIVATE }
+                                roomPeople: { registrantId: { _eq: $registrantId } }
+                            }
+                        ]
+                    }
+                ]
             }
             order_by: { name: asc }
         ) {
@@ -103,12 +127,14 @@ gql`
 
 export default function RoomListPage(): JSX.Element {
     const conference = useConference();
+    const registrant = useCurrentRegistrant();
 
     const title = useTitle(`Rooms - ${conference.shortName}`);
 
     const result = useGetAllRoomsQuery({
         variables: {
             conferenceId: conference.id,
+            registrantId: registrant.id,
         },
         pollInterval: 2.5 * 60 * 1000,
         fetchPolicy: "cache-and-network",

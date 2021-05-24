@@ -37687,6 +37687,7 @@ export type DeleteEventParticipantMutation = { readonly __typename?: 'mutation_r
 
 export type GetAllRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
+  registrantId: Scalars['uuid'];
 }>;
 
 
@@ -37702,6 +37703,7 @@ export type GetAllTodaysRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   todayStart: Scalars['timestamptz'];
   todayEnd: Scalars['timestamptz'];
+  registrantId: Scalars['uuid'];
 }>;
 
 
@@ -37717,6 +37719,7 @@ export type RoomListRoomDetailsFragment = { readonly __typename?: 'room_Room', r
 
 export type GetSocialRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
+  registrantId: Scalars['uuid'];
 }>;
 
 
@@ -43406,9 +43409,9 @@ export type DeleteEventParticipantMutationHookResult = ReturnType<typeof useDele
 export type DeleteEventParticipantMutationResult = Apollo.MutationResult<DeleteEventParticipantMutation>;
 export type DeleteEventParticipantMutationOptions = Apollo.BaseMutationOptions<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>;
 export const GetAllRoomsDocument = gql`
-    query GetAllRooms($conferenceId: uuid!) {
+    query GetAllRooms($conferenceId: uuid!, $registrantId: uuid!) {
   socialRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, _or: [{managementModeName: {_eq: PUBLIC}}, {managementModeName: {_eq: PRIVATE}, roomPeople: {registrantId: {_eq: $registrantId}}}]}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
@@ -43435,6 +43438,7 @@ export const GetAllRoomsDocument = gql`
  * const { data, loading, error } = useGetAllRoomsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
+ *      registrantId: // value for 'registrantId'
  *   },
  * });
  */
@@ -43450,9 +43454,9 @@ export type GetAllRoomsQueryHookResult = ReturnType<typeof useGetAllRoomsQuery>;
 export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLazyQuery>;
 export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
 export const GetAllTodaysRoomsDocument = gql`
-    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
+    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!, $registrantId: uuid!) {
   socialOrDiscussionRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatorySubscribe: {_eq: true}}}]}, _or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}], managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatorySubscribe: {_eq: true}}}]}, _and: [{_or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}]}, {_or: [{managementModeName: {_eq: PUBLIC}}, {managementModeName: {_eq: PRIVATE}, roomPeople: {registrantId: {_eq: $registrantId}}}]}]}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
@@ -43481,6 +43485,7 @@ export const GetAllTodaysRoomsDocument = gql`
  *      conferenceId: // value for 'conferenceId'
  *      todayStart: // value for 'todayStart'
  *      todayEnd: // value for 'todayEnd'
+ *      registrantId: // value for 'registrantId'
  *   },
  * });
  */
@@ -43496,9 +43501,9 @@ export type GetAllTodaysRoomsQueryHookResult = ReturnType<typeof useGetAllTodays
 export type GetAllTodaysRoomsLazyQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsLazyQuery>;
 export type GetAllTodaysRoomsQueryResult = Apollo.QueryResult<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>;
 export const GetSocialRoomsDocument = gql`
-    query GetSocialRooms($conferenceId: uuid!) {
+    query GetSocialRooms($conferenceId: uuid!, $registrantId: uuid!) {
   socialRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, managementModeName: {_in: [PUBLIC, PRIVATE]}}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, _or: [{managementModeName: {_eq: PUBLIC}}, {managementModeName: {_eq: PRIVATE}, roomPeople: {registrantId: {_eq: $registrantId}}}]}
     order_by: {name: asc}
   ) {
     ...SocialRoom
@@ -43519,6 +43524,7 @@ export const GetSocialRoomsDocument = gql`
  * const { data, loading, error } = useGetSocialRoomsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
+ *      registrantId: // value for 'registrantId'
  *   },
  * });
  */

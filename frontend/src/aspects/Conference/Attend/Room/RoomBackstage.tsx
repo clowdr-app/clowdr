@@ -65,7 +65,7 @@ function EventBackstage({
     const isActive = isNow || isSoon;
     const category = isNow ? "Happening now" : isSoon ? "Starting soon" : "Ended";
     const borderColour = isNow ? "red" : greyBorderColour;
-    const title = event?.item ? `${event.item.title} (${event.name})` : event.name;
+    const title = event?.item ? `${event.item.title}${event.name.length ? ` (${event.name})` : ""}` : event.name;
     const isSelected = event.id === selectedEventId;
     const summaryInfo = useMemo(
         () => (

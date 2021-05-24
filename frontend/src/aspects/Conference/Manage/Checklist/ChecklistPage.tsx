@@ -177,6 +177,32 @@ gql`
             }
         }
 
+        zoomEvents: schedule_Event(
+            where: {
+                endTime: { _gte: $now }
+                conferenceId: { _eq: $conferenceId }
+                intendedRoomModeName: { _eq: ZOOM }
+            }
+        ) {
+            id
+            name
+            startTime
+            endTime
+            room {
+                id
+                name
+            }
+            item {
+                id
+                title
+                elements(where: { typeName: { _eq: ZOOM } }) {
+                    id
+                    name
+                    data
+                }
+            }
+        }
+
         allLiveEventsWithPeople: schedule_Event(
             where: {
                 endTime: { _gte: $now }
@@ -831,6 +857,45 @@ export default function ChecklistPage(): JSX.Element {
         );
     }, [checklistResponse.data?.allLiveEventsWithPeople]);
 
+    const zoomEventsHaveZoom = useMemo(() => {
+        const filteredEvents = checklistResponse.data?.zoomEvents.filter(
+            (event) =>
+                !event.item ||
+                !event.item.elements.some((ev) => {
+                    if (ev.data && isElementDataBlob(ev.data)) {
+                        const lastData = R.last(ev.data as ElementDataBlob)?.data;
+                        if (lastData) {
+                            return lastData.type === Content_ElementType_Enum.Zoom && !!lastData.url?.length;
+                        }
+                    }
+                    return false;
+                })
+        );
+        return (
+            <ChecklistItem
+                title="All Zoom events have been assigned a content item with a valid Zoom element"
+                status="error"
+                description="Zoom events show a button that links to Zoom. The link is found from a Zoom element on the event's content item. All Zoom events must have a content item with a Zoom element that contains a valid Zoom link."
+                action={{
+                    title: "Manage Content",
+                    url: "content",
+                }}
+                ok={!!filteredEvents && filteredEvents.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                    {(x) => (
+                        <>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.zoomEvents]);
+
     const exhibitionEventsWithoutExhibition = useMemo(() => {
         return (
             <ChecklistItem
@@ -1154,6 +1219,14 @@ export default function ChecklistPage(): JSX.Element {
                             </Heading>
                         </GridItem>
                         <GridItem colSpan={defaultColSpan}>{videoPlayerEventsHaveItem}</GridItem>
+                        <GridItem colSpan={2} rowSpan={2}></GridItem>
+
+                        <GridItem colSpan={defaultColSpan}>
+                            <Heading as="h4" fontSize="md" textAlign="left">
+                                Zoom events
+                            </Heading>
+                        </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{zoomEventsHaveZoom}</GridItem>
                         <GridItem colSpan={2} rowSpan={2}></GridItem>
 
                         <GridItem colSpan={defaultColSpan}>

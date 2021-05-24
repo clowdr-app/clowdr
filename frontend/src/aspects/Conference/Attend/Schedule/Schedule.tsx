@@ -431,7 +431,6 @@ export function ScheduleInner({
         () =>
             R.groupBy<Schedule_EventSummaryExt>(
                 (x) => x.roomId,
-                // TODO: Merge neighbouring events of same content group id
                 R.map((event) => {
                     const startTimeMs = Date.parse(event.startTime);
                     const durationMs = event.durationSeconds * 1000;

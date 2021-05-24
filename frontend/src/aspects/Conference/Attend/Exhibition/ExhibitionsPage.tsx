@@ -75,9 +75,13 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
             <LinkButton
                 to={`/conference/${conference.slug}/exhibition/${exhibition.id}`}
                 w="100%"
+                h="auto"
+                minH="100%"
                 py={8}
                 linkProps={{
                     w: "100%",
+                    h: "auto",
+                    minH: "100%",
                     bgColor: bgColour.toRgbString(),
                     color: textColour,
                     border: "1px solid",
@@ -112,7 +116,9 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
                     color: "inherit",
                 }}
             >
-                <Text px={5}>{exhibition.name}</Text>
+                <Text whiteSpace="normal" px={5}>
+                    {exhibition.name}
+                </Text>
                 <PageCountText path={`/conference/${conference.slug}/exhibition/${exhibition.id}`} />
             </LinkButton>
         </GridItem>
@@ -146,7 +152,13 @@ export function ExhibitionsModal(props: Omit<ModalProps, "children">): JSX.Eleme
                 <ModalCloseButton ref={closeRef} />
                 <ModalBody>
                     {sortedExhibitions ? (
-                        <Grid templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={4}>
+                        <Grid
+                            templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
+                            gap={4}
+                            w="100%"
+                            h="auto"
+                            overflow="hidden"
+                        >
                             {sortedExhibitions.map((exhibition) => (
                                 <ExhibitionTile key={exhibition.id} exhibition={exhibition} />
                             ))}
@@ -190,7 +202,13 @@ export default function ExhibitionsPage(): JSX.Element {
                     <Heading as="h1" id="page-heading" py={6}>
                         Exhibitions
                     </Heading>
-                    <Grid templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={4}>
+                    <Grid
+                        templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
+                        gap={4}
+                        w="100%"
+                        h="auto"
+                        overflow="hidden"
+                    >
                         {sortedExhibitions.map((exhibition) => (
                             <ExhibitionTile key={exhibition.id} exhibition={exhibition} />
                         ))}

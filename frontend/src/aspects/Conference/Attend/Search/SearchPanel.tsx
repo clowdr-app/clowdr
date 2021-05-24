@@ -357,8 +357,8 @@ export default function SearchPanel(): JSX.Element {
                                             </Link>
                                         ) : (
                                             <>
-                                                {person.name}&nbsp;
-                                                {person.affiliation ? `(${person.affiliation})` : ""}
+                                                {person.name}
+                                                {person.affiliation ? ` (${person.affiliation})` : ""}
                                             </>
                                         )}
                                     </Text>

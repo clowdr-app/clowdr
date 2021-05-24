@@ -160,7 +160,7 @@ export default function SearchPanel(): JSX.Element {
     const bgColor = useColorModeValue("gray.200", "gray.600");
     const now = new Date(useRealTime(60 * 1000));
     return (
-        <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center" overflow="hidden">
+        <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center" overflowX="hidden" overflowY="auto">
             <VStack maxW={400} spacing={3}>
                 <Heading as="h3" fontSize="xl">
                     Search the program
@@ -243,7 +243,7 @@ export default function SearchPanel(): JSX.Element {
             {searchType === "events" && eventsResponse.data ? (
                 <>
                     <Divider my={2} />
-                    <List spacing={3} w="100%" overflowY="auto" flex="0 1 100%" px={2}>
+                    <List spacing={3} w="100%" px={2}>
                         {eventsResponse.data.schedule_Event.map((event) => (
                             <ListItem key={event.id} w="100%">
                                 <LinkButton
@@ -268,7 +268,8 @@ export default function SearchPanel(): JSX.Element {
                                                 Starts {formatRelative(new Date(event.startTime), now)}
                                             </Text>
                                             <Text whiteSpace="normal" fontSize="xs">
-                                                Ends {formatRelative(new Date(event.startTime), now)}
+                                                {event.endTime &&
+                                                    `Ends ${formatRelative(new Date(event.endTime), now)}`}
                                             </Text>
                                             <Text whiteSpace="normal" pl={4}>
                                                 {event.name}

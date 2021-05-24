@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    Divider,
     Flex,
     Link,
     Modal,
@@ -17,6 +18,7 @@ import {
 import type { FocusableElement } from "@chakra-ui/utils";
 import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { DateTime } from "luxon";
+import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
@@ -31,6 +33,7 @@ import FAIcon from "../../../Icons/FAIcon";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 import { AuthorList } from "../Content/AuthorList";
+import { EventModeIcon } from "../Rooms/V2/EventHighlight";
 import type { TimelineEvent } from "./DayList";
 import useTimelineParameters from "./useTimelineParameters";
 
@@ -239,11 +242,48 @@ export default function EventBox({
     const eventTitle = event.item ? (sortedEvents.length > 1 ? event.item.title : `${event.item.title}`) : event.name;
     const buttonContents = useMemo(() => {
         return (
-            <Box overflow="hidden" w="100%" textOverflow="ellipsis" maxH="100%" whiteSpace="normal">
-                <Twemoji className="twemoji" text={eventTitle} />
-            </Box>
+            <>
+                <VStack
+                    overflow="hidden"
+                    w="100%"
+                    textOverflow="ellipsis"
+                    maxH="100%"
+                    whiteSpace="normal"
+                    justifyContent="flex-start"
+                    alignItems="flex-start"
+                >
+                    <Text fontSize="sm" fontWeight="bold">
+                        {R.intersperse(
+                            <>&nbsp;/&nbsp;</>,
+                            sortedEvents.map((ev, idx) => (
+                                <EventModeIcon key={idx} mode={ev.intendedRoomModeName} fontSize="inherit" />
+                            ))
+                        )}
+                        &nbsp;&nbsp;
+                        <Twemoji className="twemoji" text={eventTitle} />
+                    </Text>
+                    <Text fontSize="sm">
+                        {new Date(eventStartMs).toLocaleTimeString(undefined, {
+                            hour: "2-digit",
+                            hour12: false,
+                            minute: "2-digit",
+                        })}{" "}
+                        for {Math.round(durationSeconds / 60)} minutes
+                    </Text>
+                </VStack>
+                {sortedEvents.slice(1).map((ev) => (
+                    <Divider
+                        pos="absolute"
+                        key={ev.id}
+                        top={(100 * (Date.parse(ev.startTime) - eventStartMs)) / (1000 * durationSeconds) + "%"}
+                        left={0}
+                        w="100%"
+                        borderStyle="dashed"
+                    />
+                ))}
+            </>
         );
-    }, [eventTitle]);
+    }, [eventTitle, sortedEvents, eventStartMs, durationSeconds]);
 
     const eventFocusRef = React.useRef<HTMLButtonElement>(null);
     const { isOpen, onClose: _onClose, onOpen } = useDisclosure();

@@ -37817,6 +37817,63 @@ export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root'
     & Schedule_ItemElementsFragment
   )> };
 
+export type Schedule_HappeningSoonQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  startBefore: Scalars['timestamptz'];
+  endAfter: Scalars['timestamptz'];
+}>;
+
+
+export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & Schedule_RoomSummaryFragment
+  )>, readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event', readonly item?: Maybe<(
+      { readonly __typename?: 'content_Item' }
+      & Schedule_ItemElementsFragment
+    )> }
+    & Schedule_EventSummaryFragment
+  )> };
+
+export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> };
+
+export type SearchPanel_ItemsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  search: Scalars['String'];
+}>;
+
+
+export type SearchPanel_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<(
+    { readonly __typename?: 'content_Item' }
+    & SearchPanel_ItemFragment
+  )> };
+
+export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
+
+export type SearchPanel_EventsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  search: Scalars['String'];
+}>;
+
+
+export type SearchPanel_EventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & SearchPanel_EventFragment
+  )> };
+
+export type SearchPanel_PersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+
+export type SearchPanel_PeopleQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  search: Scalars['String'];
+}>;
+
+
+export type SearchPanel_PeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<(
+    { readonly __typename?: 'collection_ProgramPerson' }
+    & SearchPanel_PersonFragment
+  )> };
+
 export type ConferenceStatsQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
@@ -40617,6 +40674,56 @@ export const Schedule_RoomSummaryFragmentDoc = gql`
   currentModeName
   priority
   managementModeName
+}
+    `;
+export const SearchPanel_ItemFragmentDoc = gql`
+    fragment SearchPanel_Item on content_Item {
+  id
+  itemPeople(order_by: {priority: asc}) {
+    id
+    person {
+      id
+      name
+      affiliation
+    }
+  }
+  title
+}
+    `;
+export const SearchPanel_EventFragmentDoc = gql`
+    fragment SearchPanel_Event on schedule_Event {
+  id
+  startTime
+  endTime
+  exhibition {
+    id
+    name
+  }
+  intendedRoomModeName
+  item {
+    id
+    title
+  }
+  name
+  room {
+    id
+    name
+  }
+}
+    `;
+export const SearchPanel_PersonFragmentDoc = gql`
+    fragment SearchPanel_Person on collection_ProgramPerson {
+  id
+  name
+  affiliation
+  registrantId
+  itemPeople {
+    id
+    item {
+      id
+      title
+    }
+  }
 }
     `;
 export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
@@ -43581,6 +43688,170 @@ export function useSchedule_SelectSummariesLazyQuery(baseOptions?: Apollo.LazyQu
 export type Schedule_SelectSummariesQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesQuery>;
 export type Schedule_SelectSummariesLazyQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesLazyQuery>;
 export type Schedule_SelectSummariesQueryResult = Apollo.QueryResult<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>;
+export const Schedule_HappeningSoonDocument = gql`
+    query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
+  room_Room(
+    where: {conferenceId: {_eq: $conferenceId}, managementModeName: {_in: [PUBLIC, PRIVATE]}, events: {startTime: {_lte: $startBefore}, endTime: {_gte: $endAfter}}}
+  ) {
+    ...Schedule_RoomSummary
+  }
+  schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $startBefore}, endTime: {_gte: $endAfter}}
+  ) {
+    ...Schedule_EventSummary
+    item {
+      ...Schedule_ItemElements
+    }
+  }
+}
+    ${Schedule_RoomSummaryFragmentDoc}
+${Schedule_EventSummaryFragmentDoc}
+${Schedule_ItemElementsFragmentDoc}`;
+
+/**
+ * __useSchedule_HappeningSoonQuery__
+ *
+ * To run a query within a React component, call `useSchedule_HappeningSoonQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSchedule_HappeningSoonQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSchedule_HappeningSoonQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      startBefore: // value for 'startBefore'
+ *      endAfter: // value for 'endAfter'
+ *   },
+ * });
+ */
+export function useSchedule_HappeningSoonQuery(baseOptions: Apollo.QueryHookOptions<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>(Schedule_HappeningSoonDocument, options);
+      }
+export function useSchedule_HappeningSoonLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>(Schedule_HappeningSoonDocument, options);
+        }
+export type Schedule_HappeningSoonQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonQuery>;
+export type Schedule_HappeningSoonLazyQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonLazyQuery>;
+export type Schedule_HappeningSoonQueryResult = Apollo.QueryResult<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>;
+export const SearchPanel_ItemsDocument = gql`
+    query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
+  content_Item(
+    where: {conferenceId: {_eq: $conferenceId}, _or: [{itemExhibitions: {exhibition: {name: {_ilike: $search}}}}, {itemTags: {tag: {name: {_ilike: $search}}}}, {itemPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}, {title: {_ilike: $search}}]}
+  ) {
+    ...SearchPanel_Item
+  }
+}
+    ${SearchPanel_ItemFragmentDoc}`;
+
+/**
+ * __useSearchPanel_ItemsQuery__
+ *
+ * To run a query within a React component, call `useSearchPanel_ItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPanel_ItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchPanel_ItemsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useSearchPanel_ItemsQuery(baseOptions: Apollo.QueryHookOptions<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>(SearchPanel_ItemsDocument, options);
+      }
+export function useSearchPanel_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>(SearchPanel_ItemsDocument, options);
+        }
+export type SearchPanel_ItemsQueryHookResult = ReturnType<typeof useSearchPanel_ItemsQuery>;
+export type SearchPanel_ItemsLazyQueryHookResult = ReturnType<typeof useSearchPanel_ItemsLazyQuery>;
+export type SearchPanel_ItemsQueryResult = Apollo.QueryResult<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>;
+export const SearchPanel_EventsDocument = gql`
+    query SearchPanel_Events($conferenceId: uuid!, $search: String!) {
+  schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}, _or: [{eventPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}, {exhibition: {name: {_ilike: $search}}}, {item: {_or: [{title: {_ilike: $search}}, {itemPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {name: {_ilike: $search}}]}
+    order_by: [{startTime: asc}, {endTime: asc}, {room: {name: asc}}]
+  ) {
+    ...SearchPanel_Event
+  }
+}
+    ${SearchPanel_EventFragmentDoc}`;
+
+/**
+ * __useSearchPanel_EventsQuery__
+ *
+ * To run a query within a React component, call `useSearchPanel_EventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPanel_EventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchPanel_EventsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useSearchPanel_EventsQuery(baseOptions: Apollo.QueryHookOptions<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>(SearchPanel_EventsDocument, options);
+      }
+export function useSearchPanel_EventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>(SearchPanel_EventsDocument, options);
+        }
+export type SearchPanel_EventsQueryHookResult = ReturnType<typeof useSearchPanel_EventsQuery>;
+export type SearchPanel_EventsLazyQueryHookResult = ReturnType<typeof useSearchPanel_EventsLazyQuery>;
+export type SearchPanel_EventsQueryResult = Apollo.QueryResult<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>;
+export const SearchPanel_PeopleDocument = gql`
+    query SearchPanel_People($conferenceId: uuid!, $search: String!) {
+  collection_ProgramPerson(
+    where: {conferenceId: {_eq: $conferenceId}, _or: [{affiliation: {_ilike: $search}}, {name: {_ilike: $search}}]}
+  ) {
+    ...SearchPanel_Person
+  }
+}
+    ${SearchPanel_PersonFragmentDoc}`;
+
+/**
+ * __useSearchPanel_PeopleQuery__
+ *
+ * To run a query within a React component, call `useSearchPanel_PeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPanel_PeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchPanel_PeopleQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useSearchPanel_PeopleQuery(baseOptions: Apollo.QueryHookOptions<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>(SearchPanel_PeopleDocument, options);
+      }
+export function useSearchPanel_PeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>(SearchPanel_PeopleDocument, options);
+        }
+export type SearchPanel_PeopleQueryHookResult = ReturnType<typeof useSearchPanel_PeopleQuery>;
+export type SearchPanel_PeopleLazyQueryHookResult = ReturnType<typeof useSearchPanel_PeopleLazyQuery>;
+export type SearchPanel_PeopleQueryResult = Apollo.QueryResult<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>;
 export const ConferenceStatsDocument = gql`
     query ConferenceStats($id: uuid!) {
   conference_Conference_by_pk(id: $id) {

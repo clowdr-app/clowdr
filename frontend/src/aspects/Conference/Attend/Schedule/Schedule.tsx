@@ -1,22 +1,9 @@
 import { gql } from "@apollo/client";
-import {
-    Box,
-    Flex,
-    Heading,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalOverlay,
-    ModalProps,
-    useColorMode,
-    useColorModeValue,
-    useToken,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import assert from "assert";
 import { DateTime } from "luxon";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
 import {
@@ -429,14 +416,16 @@ function ScheduleFrame({
     );
 }
 
-function ScheduleInner({
+export function ScheduleInner({
     rooms,
     events: rawEvents,
     items,
+    titleStr,
 }: {
     rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
     items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    titleStr?: string;
 }): JSX.Element {
     const eventsByRoom = useMemo(
         () =>
@@ -579,8 +568,8 @@ function ScheduleInner({
     return (
         <Flex h="100%" w="100%" maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30} flexDir="column">
             <Flex w="100%" direction="row" justify="center" alignItems="center">
-                <Heading as="h1" id="page-heading" mr={4}>
-                    Schedule
+                <Heading as="h1" id="page-heading" mr={4} mb={2}>
+                    {titleStr ?? "Schedule"}
                 </Heading>
                 {dayList}
             </Flex>
@@ -604,11 +593,12 @@ function ScheduleInner({
                     {frameEls}
                 </Flex>
             </Box>
+            {!rawEvents.length ? <Box>No events {titleStr ? titleStr.toLowerCase() : ""}</Box> : undefined}
         </Flex>
     );
 }
 
-function ScheduleFetchWrapper(): JSX.Element {
+export function ScheduleFetchWrapper(): JSX.Element {
     const conference = useConference();
     const roomsResult = useSchedule_SelectSummariesQuery({
         variables: {
@@ -630,31 +620,6 @@ function ScheduleFetchWrapper(): JSX.Element {
         >
             {(data) => <ScheduleInner {...data} />}
         </ApolloQueryWrapper>
-    );
-}
-
-export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element {
-    const closeRef = useRef<HTMLButtonElement | null>(null);
-
-    return (
-        <Modal
-            initialFocusRef={closeRef}
-            size="6xl"
-            isCentered
-            autoFocus={false}
-            returnFocusOnClose={false}
-            trapFocus={true}
-            scrollBehavior="inside"
-            {...props}
-        >
-            <ModalOverlay />
-            <ModalContent>
-                <ModalCloseButton ref={closeRef} />
-                <ModalBody display="flex" justifyContent="center">
-                    <ScheduleFetchWrapper />
-                </ModalBody>
-            </ModalContent>
-        </Modal>
     );
 }
 

@@ -149,7 +149,7 @@ const theme = extendTheme({
     colors,
     shadows: {
         outline: defaultOutline_AsBoxShadow,
-        "light-md": "0 4px 6px -1px rgba(190, 190, 190, 0.2),0 2px 4px -1px rgba(190, 190, 190, 0.1)",
+        "light-md": "0 4px 6px -1px rgba(255, 255, 255, 0.1),0 2px 4px -1px rgba(255, 255, 255, 0.04)",
     },
     components: {
         Heading: {

@@ -41,8 +41,7 @@ export default function EventHighlight({ event }: { event: RoomTile_EventFragmen
     );
 }
 
-function EventModeIcon({ mode }: { mode: Room_Mode_Enum }): JSX.Element {
-    const fontSize = "3xl";
+export function EventModeIcon({ mode, fontSize = "3xl" }: { mode: Room_Mode_Enum; fontSize?: string }): JSX.Element {
     switch (mode) {
         case Room_Mode_Enum.Breakout:
             return <FAIcon iconStyle="s" icon="users" fontSize={fontSize} />;

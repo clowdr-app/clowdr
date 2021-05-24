@@ -1,4 +1,5 @@
 import { As, Button, PropsOf, Tooltip, useBreakpointValue } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { forwardRef } from "react";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/ChakraCustomProvider";
 import { FAIcon } from "../../Icons/FAIcon";
@@ -6,7 +7,7 @@ import { FAIcon } from "../../Icons/FAIcon";
 type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
     label: string;
     iconStyle: "b" | "s" | "r";
-    icon: string;
+    icon: string | string[];
     side: "left" | "right";
     noTooltip?: boolean;
 };
@@ -49,7 +50,14 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
             ref={ref}
             {...props}
         >
-            <FAIcon iconStyle={iconStyle} icon={icon} />
+            {typeof icon === "string" ? (
+                <FAIcon iconStyle={iconStyle} icon={icon} />
+            ) : (
+                R.intersperse(
+                    <>&nbsp;/&nbsp;</>,
+                    icon.map((ic, idx) => <FAIcon key={idx} iconStyle={iconStyle} icon={ic} />)
+                )
+            )}
             {children}
         </Button>
     );

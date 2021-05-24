@@ -350,7 +350,7 @@ export default function SearchPanel(): JSX.Element {
                                         {person.registrantId ? (
                                             <Link
                                                 as={ReactLink}
-                                                to={`/conference/${conference.slug}/profile/${person.registrantId}`}
+                                                to={`/conference/${conference.slug}/profile/view/${person.registrantId}`}
                                             >
                                                 {person.name}
                                                 {person.affiliation ? ` (${person.affiliation})` : ""}

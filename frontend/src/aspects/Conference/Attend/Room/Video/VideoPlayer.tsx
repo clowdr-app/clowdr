@@ -77,7 +77,9 @@ export function VideoPlayer({ elementId }: { elementId: string }): JSX.Element {
     }, [data?.content_Element_by_pk]);
 
     const conference = useConference();
-    const itemPath = data?.content_Element_by_pk?.item ? `/conference/${conference.id}/` : undefined;
+    const itemPath = data?.content_Element_by_pk?.item
+        ? `/conference/${conference.slug}/item/${data.content_Element_by_pk.item.id}`
+        : undefined;
 
     const popoverRef = useRef<HTMLDivElement>(null);
     const [finished, setFinished] = useState<boolean>(false);

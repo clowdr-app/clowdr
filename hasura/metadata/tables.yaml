@@ -7988,9 +7988,11 @@
                 - user_id:
                     _eq: X-Hasura-User-Id
                 - slug:
-                    _eq: CONFERENCE_MANAGE_SCHEDULE
+                    _eq: X-Hasura-Conference-Slug
                 - permission_name:
-                    _eq: CONFERENCE_MANAGE_CONTENT
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+                    - CONFERENCE_MANAGE_CONTENT
               _table:
                 schema: public
                 name: FlatUserPermission

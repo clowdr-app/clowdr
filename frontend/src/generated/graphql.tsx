@@ -28941,7 +28941,6 @@ export type Room_ShuffleQueueEntry = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['bigint'];
-  readonly isExpired: Scalars['Boolean'];
   /** An object relationship */
   readonly registrant: Registrant_Registrant;
   readonly registrantId: Scalars['uuid'];
@@ -29025,7 +29024,6 @@ export type Room_ShuffleQueueEntry_Bool_Exp = {
   readonly allocatedShuffleRoomId?: Maybe<Int_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Bigint_Comparison_Exp>;
-  readonly isExpired?: Maybe<Boolean_Comparison_Exp>;
   readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
@@ -29039,7 +29037,7 @@ export enum Room_ShuffleQueueEntry_Constraint {
   /** unique or primary key constraint */
   ShuffleQueueEntryPkey = 'ShuffleQueueEntry_pkey',
   /** unique or primary key constraint */
-  RoomShuffleQueueEntryIsWaiting = 'room_ShuffleQueueEntry_isWaiting'
+  IndexIswaiting = 'index_iswaiting'
 }
 
 /** input type for incrementing integer column in table "room.ShuffleQueueEntry" */
@@ -29053,7 +29051,6 @@ export type Room_ShuffleQueueEntry_Insert_Input = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['bigint']>;
-  readonly isExpired?: Maybe<Scalars['Boolean']>;
   readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
@@ -29131,7 +29128,6 @@ export type Room_ShuffleQueueEntry_Order_By = {
   readonly allocatedShuffleRoomId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly isExpired?: Maybe<Order_By>;
   readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
   readonly registrantId?: Maybe<Order_By>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
@@ -29154,8 +29150,6 @@ export enum Room_ShuffleQueueEntry_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  IsExpired = 'isExpired',
-  /** column name */
   RegistrantId = 'registrantId',
   /** column name */
   ShufflePeriodId = 'shufflePeriodId',
@@ -29168,7 +29162,6 @@ export type Room_ShuffleQueueEntry_Set_Input = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['bigint']>;
-  readonly isExpired?: Maybe<Scalars['Boolean']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -29234,8 +29227,6 @@ export enum Room_ShuffleQueueEntry_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
-  /** column name */
-  IsExpired = 'isExpired',
   /** column name */
   RegistrantId = 'registrantId',
   /** column name */
@@ -37925,6 +37916,20 @@ export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
 
 export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
 
+export type MonitorLiveBackstagesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  now: Scalars['timestamptz'];
+  later: Scalars['timestamptz'];
+}>;
+
+
+export type MonitorLiveBackstagesQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & MonitorLiveBackstages_EventFragment
+  )> };
+
+export type MonitorLiveBackstages_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } }>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string }>, readonly participantStreams: ReadonlyArray<{ readonly __typename?: 'video_EventParticipantStream', readonly id: any, readonly registrantId: any, readonly vonageStreamType: string }> };
+
 export type CreateConferencePrepareJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -40734,6 +40739,44 @@ export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
   id
   key
   value
+}
+    `;
+export const MonitorLiveBackstages_EventFragmentDoc = gql`
+    fragment MonitorLiveBackstages_Event on schedule_Event {
+  id
+  name
+  startTime
+  endTime
+  room {
+    id
+    name
+  }
+  item {
+    id
+    title
+  }
+  eventPeople {
+    id
+    roleName
+    person {
+      id
+      name
+      affiliation
+      registrant {
+        id
+        userId
+      }
+    }
+  }
+  eventVonageSession {
+    id
+    sessionId
+  }
+  participantStreams {
+    id
+    registrantId
+    vonageStreamType
+  }
 }
     `;
 export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
@@ -44111,6 +44154,46 @@ export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: 
 export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
+export const MonitorLiveBackstagesDocument = gql`
+    query MonitorLiveBackstages($conferenceId: uuid!, $now: timestamptz!, $later: timestamptz!) {
+  schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $later}, endTime: {_gte: $now}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}
+    order_by: [{startTime: asc}, {endTime: asc}, {room: {name: asc}}]
+  ) {
+    ...MonitorLiveBackstages_Event
+  }
+}
+    ${MonitorLiveBackstages_EventFragmentDoc}`;
+
+/**
+ * __useMonitorLiveBackstagesQuery__
+ *
+ * To run a query within a React component, call `useMonitorLiveBackstagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMonitorLiveBackstagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMonitorLiveBackstagesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      now: // value for 'now'
+ *      later: // value for 'later'
+ *   },
+ * });
+ */
+export function useMonitorLiveBackstagesQuery(baseOptions: Apollo.QueryHookOptions<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>(MonitorLiveBackstagesDocument, options);
+      }
+export function useMonitorLiveBackstagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>(MonitorLiveBackstagesDocument, options);
+        }
+export type MonitorLiveBackstagesQueryHookResult = ReturnType<typeof useMonitorLiveBackstagesQuery>;
+export type MonitorLiveBackstagesLazyQueryHookResult = ReturnType<typeof useMonitorLiveBackstagesLazyQuery>;
+export type MonitorLiveBackstagesQueryResult = Apollo.QueryResult<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>;
 export const CreateConferencePrepareJobDocument = gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
   insert_conference_PrepareJob_one(object: {conferenceId: $conferenceId}) {

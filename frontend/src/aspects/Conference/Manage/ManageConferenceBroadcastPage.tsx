@@ -21,6 +21,7 @@ import { useConference } from "../useConference";
 import { BroadcastRooms } from "./Broadcast/BroadcastRooms";
 import { Configuration as ConferenceConfiguration } from "./Broadcast/ConferenceConfiguration";
 import { EventVonageControls } from "./Broadcast/EventVonageControls";
+import LiveBackstageMonitoring from "./Broadcast/LiveBackstageMonitoring";
 import { PrepareJobsList } from "./Broadcast/PrepareJobsList";
 
 export default function ManageConferenceBroadcastPage(): JSX.Element {
@@ -43,13 +44,17 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
             <Heading as="h2" id="page-heading" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Broadcasts
             </Heading>
-            <Tabs>
+            <Tabs isLazy>
                 <TabList>
+                    <Tab>Monitor backstages</Tab>
                     <Tab>Configuration</Tab>
                     <Tab>Prepare broadcasts</Tab>
                     <Tab>RTMP broadcast recovery</Tab>
                 </TabList>
                 <TabPanels>
+                    <TabPanel>
+                        <LiveBackstageMonitoring />
+                    </TabPanel>
                     <TabPanel>
                         <ConferenceConfiguration conferenceId={conference.id} />
                     </TabPanel>

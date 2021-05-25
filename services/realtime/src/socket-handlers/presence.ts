@@ -6,44 +6,46 @@ import { socketServer } from "../servers/socket-server";
 
 const ALL_SESSION_USER_IDS_KEY = "Presence.SessionAndUserIds";
 
-function invalidateSessions() {
-    redisClient.SMEMBERS(ALL_SESSION_USER_IDS_KEY, async (err, sessionListsKeys) => {
-        if (err) {
-            console.error("Error invalidating sessions", err);
-            return;
-        }
+export function invalidateSessions(): void {
+    try {
+        redisClient.SMEMBERS(ALL_SESSION_USER_IDS_KEY, async (err, sessionListsKeys) => {
+            if (err) {
+                console.error("Error invalidating sessions", err);
+                return;
+            }
 
-        if (!sessionListsKeys) {
-            return;
-        }
+            if (!sessionListsKeys) {
+                return;
+            }
 
-        const socketIds = await socketServer.allSockets();
-        for (const sessionListsKey of sessionListsKeys) {
-            const parts = sessionListsKey.split("¬");
-            const sessionId = parts[0];
-            const userId = parts[1];
-            if (!socketIds.has(sessionId)) {
-                console.log("Found dangling session", sessionListsKey);
-                try {
-                    exitAllPresences(userId, sessionId, (err) => {
-                        if (err) {
-                            console.error(
-                                `Error exiting all presences of dangling session ${sessionId} / ${userId}`,
-                                err
-                            );
-                        } else {
-                            redisClient.SREM(ALL_SESSION_USER_IDS_KEY, sessionListsKey);
-                        }
-                    });
-                } catch (e) {
-                    console.error(`Error exiting all presences of dangling session ${sessionId} / ${userId}`, e);
+            const socketIds = await socketServer.allSockets();
+            for (const sessionListsKey of sessionListsKeys) {
+                const parts = sessionListsKey.split("¬");
+                const sessionId = parts[0];
+                const userId = parts[1];
+                if (!socketIds.has(sessionId)) {
+                    console.log("Found dangling session", sessionListsKey);
+                    try {
+                        exitAllPresences(userId, sessionId, (err) => {
+                            if (err) {
+                                console.error(
+                                    `Error exiting all presences of dangling session ${sessionId} / ${userId}`,
+                                    err
+                                );
+                            } else {
+                                redisClient.SREM(ALL_SESSION_USER_IDS_KEY, sessionListsKey);
+                            }
+                        });
+                    } catch (e) {
+                        console.error(`Error exiting all presences of dangling session ${sessionId} / ${userId}`, e);
+                    }
                 }
             }
-        }
-    });
+        });
+    } catch (e) {
+        console.warn("Could not list all sockets to try to exit presences", e);
+    }
 }
-
-setInterval(invalidateSessions, 60 * 1000);
 
 function getPageKey(confSlugs: string[], path: string): string | undefined {
     if (path.startsWith("/conference/")) {

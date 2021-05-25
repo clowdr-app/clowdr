@@ -34,7 +34,7 @@ socketServer.adapter(
         pubClient: redisPubClient,
         subClient: redisSubClient,
         key: process.env.REDIS_KEY,
-        requestsTimeout: 10000,
+        requestsTimeout: 30000,
     })
 );
 

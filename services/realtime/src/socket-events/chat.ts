@@ -60,13 +60,15 @@ async function exitChats(socketId: string, userId: string, log = false) {
     }
 }
 
-async function invalidateSessions() {
-    const socketInfos = await allSocketsAndUserIds();
-    const currentSocketIds = await socketServer.allSockets();
-    const deadSocketInfos = socketInfos.filter((x) => !currentSocketIds.has(x.socketId));
-    await Promise.all(
-        deadSocketInfos.map(async (socketInfo) => exitChats(socketInfo.socketId, socketInfo.userId, true))
-    );
+export async function invalidateSessions(): Promise<void> {
+    try {
+        const socketInfos = await allSocketsAndUserIds();
+        const currentSocketIds = await socketServer.allSockets();
+        const deadSocketInfos = socketInfos.filter((x) => !currentSocketIds.has(x.socketId));
+        await Promise.all(
+            deadSocketInfos.map(async (socketInfo) => exitChats(socketInfo.socketId, socketInfo.userId, true))
+        );
+    } catch (e) {
+        console.warn("Could not list all sockets to try to exit chats", e);
+    }
 }
-
-invalidateSessions();

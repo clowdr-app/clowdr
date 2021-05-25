@@ -37923,10 +37923,15 @@ export type MonitorLiveBackstagesQueryVariables = Exact<{
 }>;
 
 
-export type MonitorLiveBackstagesQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
+export type MonitorLiveBackstagesQuery = { readonly __typename?: 'query_root', readonly liveEvents: ReadonlyArray<(
     { readonly __typename?: 'schedule_Event' }
     & MonitorLiveBackstages_EventFragment
+  )>, readonly prerecordedEvents: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & MonitorLiveBackstages_PrerecEventFragment
   )> };
+
+export type MonitorLiveBackstages_PrerecEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
 
 export type MonitorLiveBackstages_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } }>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string }>, readonly participantStreams: ReadonlyArray<{ readonly __typename?: 'video_EventParticipantStream', readonly id: any, readonly registrantId: any, readonly vonageStreamType: string }> };
 
@@ -40739,6 +40744,16 @@ export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
   id
   key
   value
+}
+    `;
+export const MonitorLiveBackstages_PrerecEventFragmentDoc = gql`
+    fragment MonitorLiveBackstages_PrerecEvent on schedule_Event {
+  id
+  startTime
+  room {
+    id
+    name
+  }
 }
     `;
 export const MonitorLiveBackstages_EventFragmentDoc = gql`
@@ -44156,14 +44171,21 @@ export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.Mutati
 export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
 export const MonitorLiveBackstagesDocument = gql`
     query MonitorLiveBackstages($conferenceId: uuid!, $now: timestamptz!, $later: timestamptz!) {
-  schedule_Event(
+  liveEvents: schedule_Event(
     where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $later}, endTime: {_gte: $now}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}
     order_by: [{startTime: asc}, {endTime: asc}, {room: {name: asc}}]
   ) {
     ...MonitorLiveBackstages_Event
   }
+  prerecordedEvents: schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $later}, endTime: {_gte: $now}, intendedRoomModeName: {_in: [PRERECORDED]}}
+    order_by: [{startTime: asc}, {endTime: asc}, {room: {name: asc}}]
+  ) {
+    ...MonitorLiveBackstages_PrerecEvent
+  }
 }
-    ${MonitorLiveBackstages_EventFragmentDoc}`;
+    ${MonitorLiveBackstages_EventFragmentDoc}
+${MonitorLiveBackstages_PrerecEventFragmentDoc}`;
 
 /**
  * __useMonitorLiveBackstagesQuery__

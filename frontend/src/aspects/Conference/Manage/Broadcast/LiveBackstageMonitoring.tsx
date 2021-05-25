@@ -38,7 +38,7 @@ import { useConference } from "../../useConference";
 
 gql`
     query MonitorLiveBackstages($conferenceId: uuid!, $now: timestamptz!, $later: timestamptz!) {
-        schedule_Event(
+        liveEvents: schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 startTime: { _lte: $later }
@@ -48,6 +48,26 @@ gql`
             order_by: [{ startTime: asc }, { endTime: asc }, { room: { name: asc } }]
         ) {
             ...MonitorLiveBackstages_Event
+        }
+        prerecordedEvents: schedule_Event(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                startTime: { _lte: $later }
+                endTime: { _gte: $now }
+                intendedRoomModeName: { _in: [PRERECORDED] }
+            }
+            order_by: [{ startTime: asc }, { endTime: asc }, { room: { name: asc } }]
+        ) {
+            ...MonitorLiveBackstages_PrerecEvent
+        }
+    }
+
+    fragment MonitorLiveBackstages_PrerecEvent on schedule_Event {
+        id
+        startTime
+        room {
+            id
+            name
         }
     }
 
@@ -106,29 +126,40 @@ export default function LiveBackstageMonitoring(): JSX.Element {
     const shadow = useColorModeValue("md", "light-md");
     const bgColor = useColorModeValue("gray.200", "gray.600");
 
+    const [liveEvents, setLiveEvents] = useState<readonly MonitorLiveBackstages_EventFragment[]>([]);
+
+    useEffect(() => {
+        if (response.data?.liveEvents) {
+            setLiveEvents(response.data.liveEvents);
+        }
+    }, [response.data?.liveEvents]);
+
     const listEl = useMemo(
         () => (
             <List spacing={4} w="100%">
-                {response.data?.schedule_Event.map((event) => (
+                {liveEvents.map((event) => (
                     <ListItem key={event.id} bgColor={bgColor} shadow={shadow} p={4}>
                         <BackstageTile event={event} />
                     </ListItem>
                 ))}
             </List>
         ),
-        [bgColor, response.data?.schedule_Event, shadow]
+        [bgColor, liveEvents, shadow]
     );
 
     const secondsToNextRefresh = Math.round((nowRoundedDown + 2 * 60 * 1000 - now) / 1000);
 
     const [liveRooms, setLiveRooms] = useState<{ id: string; name: string }[]>([]);
     useEffect(() => {
-        if (response.data?.schedule_Event) {
-            const newLiveRoomsIds = R.uniq(
-                response.data?.schedule_Event
+        if (response.data?.liveEvents) {
+            const newLiveRoomsIds = R.uniq([
+                ...response.data?.liveEvents
                     .filter((x) => Date.parse(x.startTime) <= now + 10 * 60 * 1000)
-                    .map((x) => x.room)
-            ).sort((x, y) => x.name.localeCompare(y.name));
+                    .map((x) => x.room),
+                ...response.data?.prerecordedEvents
+                    .filter((x) => Date.parse(x.startTime) <= now + 10 * 60 * 1000)
+                    .map((x) => x.room),
+            ]).sort((x, y) => x.name.localeCompare(y.name));
             setLiveRooms((oldIds) =>
                 !oldIds ||
                 oldIds.length !== newLiveRoomsIds.length ||
@@ -137,7 +168,7 @@ export default function LiveBackstageMonitoring(): JSX.Element {
                     : oldIds
             );
         }
-    }, [now, response.data?.schedule_Event]);
+    }, [now, response.data?.liveEvents, response.data?.prerecordedEvents]);
 
     return (
         <VStack w="100%" spacing={4}>

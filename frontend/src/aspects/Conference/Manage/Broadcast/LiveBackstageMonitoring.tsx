@@ -9,6 +9,8 @@ import {
     Code,
     Divider,
     Flex,
+    Grid,
+    GridItem,
     HStack,
     Link,
     List,
@@ -20,12 +22,18 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import * as R from "ramda";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
-import { MonitorLiveBackstages_EventFragment, useMonitorLiveBackstagesQuery } from "../../../../generated/graphql";
+import {
+    MonitorLiveBackstages_EventFragment,
+    useMonitorLiveBackstagesQuery,
+    useRoomPage_GetRoomChannelStackQuery,
+} from "../../../../generated/graphql";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
 import FAIcon from "../../../Icons/FAIcon";
+import { HlsPlayer } from "../../Attend/Room/Video/HlsPlayer";
 import { useConference } from "../../useConference";
 
 gql`
@@ -113,8 +121,33 @@ export default function LiveBackstageMonitoring(): JSX.Element {
 
     const secondsToNextRefresh = Math.round((nowRoundedDown + 2 * 60 * 1000 - now) / 1000);
 
+    const [liveRooms, setLiveRooms] = useState<{ id: string; name: string }[]>([]);
+    useEffect(() => {
+        if (response.data?.schedule_Event) {
+            const newLiveRoomsIds = R.uniq(
+                response.data?.schedule_Event
+                    .filter((x) => Date.parse(x.startTime) <= now + 10 * 60 * 1000)
+                    .map((x) => x.room)
+            ).sort((x, y) => x.name.localeCompare(y.name));
+            setLiveRooms((oldIds) =>
+                !oldIds ||
+                oldIds.length !== newLiveRoomsIds.length ||
+                newLiveRoomsIds.some((x, idx) => idx >= oldIds.length || oldIds[idx].id !== x.id)
+                    ? newLiveRoomsIds
+                    : oldIds
+            );
+        }
+    }, [now, response.data?.schedule_Event]);
+
     return (
         <VStack w="100%" spacing={4}>
+            <Grid w="100%" templateColumns="repeat(auto-fill, 300px)" gap={1}>
+                {liveRooms.map((room) => (
+                    <GridItem key={room.id}>
+                        <RoomTile id={room.id as string} name={room.name} />
+                    </GridItem>
+                ))}
+            </Grid>
             <Center h="60px">
                 {response.loading ? (
                     <Spinner label="Loading backstage info" size="sm" />
@@ -139,6 +172,32 @@ export default function LiveBackstageMonitoring(): JSX.Element {
             </Center>
             {listEl}
         </VStack>
+    );
+}
+
+function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
+    const roomChannelStackResponse = useRoomPage_GetRoomChannelStackQuery({
+        variables: {
+            roomId: id,
+        },
+    });
+
+    const hlsUri = useMemo(() => {
+        if (!roomChannelStackResponse.data?.video_ChannelStack?.[0]) {
+            return null;
+        }
+        const finalUri = new URL(roomChannelStackResponse.data.video_ChannelStack[0].endpointUri);
+        finalUri.hostname = roomChannelStackResponse.data.video_ChannelStack[0].cloudFrontDomain;
+        return finalUri.toString();
+    }, [roomChannelStackResponse.data?.video_ChannelStack]);
+
+    return (
+        <Box pos="relative" maxW="300px" border="3px solid" borderColor="gray.400">
+            <Text p={1} fontSize="sm">
+                {name}
+            </Text>
+            {hlsUri ? <HlsPlayer roomId={id} canPlay={true} hlsUri={hlsUri} isMuted={true} /> : <Spinner />}
+        </Box>
     );
 }
 

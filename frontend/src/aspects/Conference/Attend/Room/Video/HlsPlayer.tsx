@@ -9,12 +9,15 @@ export function HlsPlayer({
     roomId,
     hlsUri,
     canPlay,
+    isMuted,
 }: {
     roomId: string;
     hlsUri: string;
     canPlay: boolean;
+    isMuted?: boolean;
 }): JSX.Element {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
     useTrackView(isPlaying, roomId, "Room.HLSStream");
 
     const playerRef = useRef<ReactPlayer | null>(null);
@@ -40,6 +43,7 @@ export function HlsPlayer({
                     ref={playerRef}
                     playing={canPlay && intendPlayStream}
                     controls={true}
+                    muted={isMuted}
                     onEnded={() => {
                         setIsPlaying(false);
                     }}
@@ -57,7 +61,7 @@ export function HlsPlayer({
                 />
             </Box>
         );
-    }, [canPlay, hlsUri, intendPlayStream]);
+    }, [canPlay, hlsUri, intendPlayStream, isMuted]);
 
     useEffect(() => {
         if (playerRef.current) {

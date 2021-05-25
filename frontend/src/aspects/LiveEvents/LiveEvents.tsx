@@ -99,7 +99,10 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
 
     const ctx = useMemo<LiveEventsContext>(
         () => ({
-            liveEventsByRoom: R.groupBy((x) => x.room.id, liveEvents),
+            liveEventsByRoom: R.groupBy(
+                (x) => x.room.id,
+                liveEvents.filter((x) => !!x.room)
+            ),
         }),
         [liveEvents]
     );

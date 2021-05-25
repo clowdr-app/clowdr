@@ -14,6 +14,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
@@ -844,6 +845,20 @@ function RoomInner({
                                 mt={4}
                             >
                                 Go to {maybeZoomUrl.name}
+                            </ExternalLinkButton>
+                        ) : maybeZoomUrl &&
+                          nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom &&
+                          Date.parse(nextRoomEvent.startTime) - now5s < 10 * 60 * 1000 ? (
+                            <ExternalLinkButton
+                                to={maybeZoomUrl.url}
+                                isExternal={true}
+                                colorScheme="purple"
+                                size="lg"
+                                w="100%"
+                                mt={4}
+                            >
+                                Coming up: Go to {maybeZoomUrl.name} (starts{" "}
+                                {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)})
                             </ExternalLinkButton>
                         ) : undefined}
                     </>

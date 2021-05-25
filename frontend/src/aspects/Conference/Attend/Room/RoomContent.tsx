@@ -1,4 +1,17 @@
-import { Box, Center, chakra, Heading, HStack, Tag, Text, useColorModeValue, Wrap, WrapItem } from "@chakra-ui/react";
+import {
+    Alert,
+    AlertIcon,
+    Box,
+    Center,
+    chakra,
+    Heading,
+    HStack,
+    Tag,
+    Text,
+    useColorModeValue,
+    Wrap,
+    WrapItem,
+} from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
 import {
@@ -65,7 +78,12 @@ export function RoomContent({
                         </WrapItem>
                     ))}
                 </Wrap>
-            ) : undefined,
+            ) : (
+                <Alert status="warning" mt={3}>
+                    <AlertIcon />
+                    No videos have been added to this content item yet.
+                </Alert>
+            ),
         [currentRoomEvent?.item?.videoElements, currentlySelectedVideoElementId, onChooseVideo]
     );
 

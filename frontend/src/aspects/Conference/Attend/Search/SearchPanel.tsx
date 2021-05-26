@@ -160,7 +160,7 @@ export default function SearchPanel(): JSX.Element {
     const bgColor = useColorModeValue("gray.200", "gray.600");
     const now = new Date(useRealTime(60 * 1000));
     return (
-        <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center" overflowX="hidden" overflowY="auto">
+        <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center">
             <VStack maxW={400} spacing={3}>
                 <Heading as="h3" fontSize="xl">
                     Search the program
@@ -290,7 +290,7 @@ export default function SearchPanel(): JSX.Element {
             {searchType === "items" && itemsResponse.data ? (
                 <>
                     <Divider my={2} />
-                    <List spacing={3} w="100%" overflowY="auto" flex="0 1 100%" px={2}>
+                    <List spacing={3} w="100%" px={2}>
                         {itemsResponse.data.content_Item.map((item) => (
                             <ListItem key={item.id} w="100%">
                                 <LinkButton

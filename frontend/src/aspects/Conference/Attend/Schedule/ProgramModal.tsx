@@ -25,6 +25,7 @@ import { useRealTime } from "../../../Generic/useRealTime";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
+import ItemList from "../Content/ItemList";
 import SearchPanel from "../Search/SearchPanel";
 import { ScheduleFetchWrapper, ScheduleInner } from "./Schedule";
 
@@ -115,7 +116,11 @@ export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element 
                         <TabList justifyContent="center">
                             <Tab>
                                 <FAIcon iconStyle="s" icon="clock" />
-                                &nbsp;&nbsp;Happening Soon
+                                &nbsp;&nbsp;Happening soon
+                            </Tab>
+                            <Tab>
+                                <FAIcon iconStyle="s" icon="tags" />
+                                &nbsp;&nbsp;Browse content
                             </Tab>
                             <Tab>
                                 <FAIcon iconStyle="s" icon="search" />
@@ -130,7 +135,10 @@ export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element 
                             <TabPanel w="100%" h="100%" display="flex" justifyContent="center">
                                 <HappeningSoonFetchWrapper />
                             </TabPanel>
-                            <TabPanel w="100%" h="100%">
+                            <TabPanel w="100%" h="100%" display="flex" justifyContent="center" overflowY="auto">
+                                <ItemList />
+                            </TabPanel>
+                            <TabPanel w="100%" h="100%" overflowY="auto">
                                 <SearchPanel />
                             </TabPanel>
                             <TabPanel w="100%" h="100%" display="flex" justifyContent="center">

@@ -13,6 +13,7 @@ import {
     InputRightElement,
     SimpleGrid,
     Spinner,
+    StackProps,
     Text,
     useColorMode,
     useColorModeValue,
@@ -142,7 +143,7 @@ function TagButton({
             _active={{
                 backgroundColor: isExpanded ? expandedBgColour : collapsedBgColour,
             }}
-            boxShadow={shadow}
+            shadow={shadow}
         >
             <Center m={0} p={0}>
                 <Text as="span" fontSize="sm" fontWeight={600} m={0}>
@@ -157,6 +158,7 @@ function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Elemen
     const conference = useConference();
     const bgColour = useColorModeValue("gray.200", "gray.700");
     const textColour = useColorModeValue("gray.500", "gray.400");
+    const shadow = useColorModeValue("md", "light-md");
     return (
         <LinkButton
             to={`/conference/${conference.slug}/item/${group.id}`}
@@ -167,6 +169,7 @@ function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Elemen
             width="100%"
             height="100%"
             background={bgColour}
+            shadow={shadow}
         >
             <Text as="p" whiteSpace="normal" fontSize="1.2em" fontWeight="600" textAlign="left" mb={4}>
                 <Twemoji className="twemoji" text={group.title} />
@@ -286,7 +289,7 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
     );
 }
 
-export default function ItemList(): JSX.Element {
+export default function ItemList(props: StackProps): JSX.Element {
     const conference = useConference();
     const { loading, data, error } = useTagsQuery({
         variables: {
@@ -326,7 +329,8 @@ export default function ItemList(): JSX.Element {
     }
 
     return (
-        <VStack px={4} pt="3ex" spacing={4}>
+        <VStack px={4} spacing={4} {...props}>
+            <Text>Select a tag to browse papers, posters, keynotes, and more.</Text>
             <Center flexDirection="column">
                 <SimpleGrid
                     aria-describedby="content-groups-accordion-header"

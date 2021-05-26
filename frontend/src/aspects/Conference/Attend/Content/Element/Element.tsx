@@ -38,7 +38,7 @@ function ElementInner({
 
         switch (type) {
             case Content_ElementType_Enum.ContentGroupList:
-                return <ItemList />;
+                return <ItemList pt="3ex" />;
             case Content_ElementType_Enum.WholeSchedule:
                 return <Schedule />;
             case Content_ElementType_Enum.LiveProgramRooms:

@@ -7,7 +7,7 @@ import { ExhibitionsModal } from "../../Conference/Attend/Exhibition/Exhibitions
 import LiveProgramRoomsModal from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import SocialiseModal from "../../Conference/Attend/Rooms/V2/SocialiseModal";
 import SponsorBoothsModal from "../../Conference/Attend/Rooms/V2/SponsorBoothsModal";
-import { ScheduleModal } from "../../Conference/Attend/Schedule/ScheduleModal";
+import { ScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
 import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../Conference/useConference";
 import FAIcon from "../../Icons/FAIcon";

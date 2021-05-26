@@ -156,8 +156,6 @@ function TagButton({
 
 function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Element {
     const conference = useConference();
-    const bgColour = useColorModeValue("gray.200", "gray.700");
-    const textColour = useColorModeValue("gray.500", "gray.400");
     const shadow = useColorModeValue("md", "light-md");
     return (
         <LinkButton
@@ -168,13 +166,13 @@ function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Elemen
             flexDir="column"
             width="100%"
             height="100%"
-            background={bgColour}
+            colorScheme="gray"
             shadow={shadow}
         >
             <Text as="p" whiteSpace="normal" fontSize="1.2em" fontWeight="600" textAlign="left" mb={4}>
                 <Twemoji className="twemoji" text={group.title} />
             </Text>
-            <Text as="p" fontSize="0.9em" textColor={textColour} whiteSpace="normal" lineHeight="3ex">
+            <Text as="p" fontSize="0.9em" whiteSpace="normal" lineHeight="3ex">
                 {[...group.itemPeople]
                     .sort(sortAuthors)
                     .reduce((acc, person) => `${acc}, ${person.person.name}`, "")

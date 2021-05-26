@@ -126,6 +126,18 @@ function EventBoxPopover({
                         fontSize="sm"
                         fontStyle="italic"
                     >
+                        {R.intersperse(
+                            <>&nbsp;/&nbsp;</>,
+                            events.map((ev, idx) => (
+                                <EventModeIcon
+                                    key={idx}
+                                    mode={ev.intendedRoomModeName}
+                                    durationSeconds={ev.durationSeconds}
+                                    fontSize="inherit"
+                                />
+                            ))
+                        )}
+                        &nbsp;&nbsp;
                         {DateTime.fromMillis(eventStartMs).setZone(timelineParams.timezone).toLocaleString({
                             weekday: "short",
                             month: "short",
@@ -256,7 +268,12 @@ export default function EventBox({
                         {R.intersperse(
                             <>&nbsp;/&nbsp;</>,
                             sortedEvents.map((ev, idx) => (
-                                <EventModeIcon key={idx} mode={ev.intendedRoomModeName} fontSize="inherit" />
+                                <EventModeIcon
+                                    key={idx}
+                                    mode={ev.intendedRoomModeName}
+                                    durationSeconds={ev.durationSeconds}
+                                    fontSize="inherit"
+                                />
                             ))
                         )}
                         &nbsp;&nbsp;

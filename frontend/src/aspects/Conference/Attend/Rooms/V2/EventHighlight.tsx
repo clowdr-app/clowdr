@@ -1,4 +1,5 @@
 import { AspectRatio, Box, Spacer, Text, Tooltip, VStack } from "@chakra-ui/react";
+import { formatDuration, intervalToDuration } from "date-fns";
 import React from "react";
 import { RoomTile_EventFragment, Room_Mode_Enum } from "../../../../../generated/graphql";
 import { FAIcon } from "../../../../Icons/FAIcon";
@@ -41,7 +42,15 @@ export default function EventHighlight({ event }: { event: RoomTile_EventFragmen
     );
 }
 
-export function EventModeIcon({ mode, fontSize = "3xl" }: { mode: Room_Mode_Enum; fontSize?: string }): JSX.Element {
+export function EventModeIcon({
+    mode,
+    fontSize = "3xl",
+    durationSeconds,
+}: {
+    mode: Room_Mode_Enum;
+    fontSize?: string;
+    durationSeconds?: number;
+}): JSX.Element {
     const iconEl = (() => {
         switch (mode) {
             case Room_Mode_Enum.Breakout:
@@ -63,7 +72,7 @@ export function EventModeIcon({ mode, fontSize = "3xl" }: { mode: Room_Mode_Enum
         }
     })();
 
-    return <Tooltip label={EventModeNameString(mode)}>{iconEl}</Tooltip>;
+    return <Tooltip label={EventModeNameString(mode, durationSeconds)}>{iconEl}</Tooltip>;
 }
 
 function EventModeName({ mode }: { mode: Room_Mode_Enum }): JSX.Element {
@@ -75,23 +84,45 @@ function EventModeName({ mode }: { mode: Room_Mode_Enum }): JSX.Element {
     );
 }
 
-function EventModeNameString(mode: Room_Mode_Enum): string {
+function EventModeNameString(mode: Room_Mode_Enum, durationSeconds?: number): string {
+    const durationStr = durationSeconds
+        ? " for " +
+          formatDuration(
+              intervalToDuration({
+                  start: 0,
+                  end: durationSeconds * 1000,
+              })
+          )
+        : "";
+
+    let result = "";
     switch (mode) {
         case Room_Mode_Enum.Breakout:
-            return "Video-chat";
+            result = "Video-chat";
+            break;
         case Room_Mode_Enum.Exhibition:
-            return "Exhibition";
+            result = "Exhibition";
+            break;
         case Room_Mode_Enum.None:
-            return "External";
+            result = "External";
+            break;
         case Room_Mode_Enum.Prerecorded:
         case Room_Mode_Enum.Presentation:
         case Room_Mode_Enum.QAndA:
-            return `Live-stream (${mode === Room_Mode_Enum.QAndA ? "Q&A" : "Presentation"})`;
+            result = `Live-stream (${
+                mode === Room_Mode_Enum.Prerecorded ? "Video" : mode === Room_Mode_Enum.QAndA ? "Q&A" : "Presentation"
+            })`;
+            break;
         case Room_Mode_Enum.Shuffle:
-            return "Social";
+            result = "Social";
+            break;
         case Room_Mode_Enum.VideoPlayer:
-            return "Video";
+            result = "Video";
+            break;
         case Room_Mode_Enum.Zoom:
-            return "External video-call";
+            result = "External video-call";
+            break;
     }
+
+    return result + durationStr;
 }

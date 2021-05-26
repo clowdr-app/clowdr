@@ -1,4 +1,4 @@
-import { Heading, Spinner, Text } from "@chakra-ui/react";
+import { Heading, Text } from "@chakra-ui/react";
 import type { VideoElementBlob } from "@clowdr-app/shared-types/build/content";
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
 import AmazonS3URI from "amazon-s3-uri";
@@ -25,14 +25,11 @@ export function VideoElement({
     onPause?: () => void;
     onFinish?: () => void;
 }): JSX.Element {
-    const previewTranscodeUrl = useMemo(() => {
-        let s3Url;
+    const videoURL = useMemo(() => {
+        let s3Url = videoElementData.transcode?.s3Url;
 
-        // Special case to handle recordings for now
-        if (videoElementData.s3Url.endsWith(".m3u8")) {
+        if (!s3Url && videoElementData.s3Url) {
             s3Url = videoElementData.s3Url;
-        } else {
-            s3Url = videoElementData.transcode?.s3Url;
         }
 
         if (!s3Url) {
@@ -87,7 +84,7 @@ export function VideoElement({
         return {
             file: {
                 tracks: [track],
-                hlsVersion: "1.0.1",
+                hlsVersion: "1.0.4",
                 hlsOptions,
             },
         };
@@ -100,9 +97,9 @@ export function VideoElement({
     const player = useMemo(() => {
         // Only render the player once both the video URL and the subtitles config are available
         // react-player memoizes internally and only re-renders if the url or key props change.
-        return !previewTranscodeUrl || !config ? undefined : (
+        return !videoURL || !config ? undefined : (
             <ReactPlayer
-                url={previewTranscodeUrl}
+                url={videoURL}
                 controls={true}
                 width="100%"
                 height="auto"
@@ -136,7 +133,7 @@ export function VideoElement({
                 style={{ borderRadius: "10px", overflow: "hidden" }}
             />
         );
-    }, [previewTranscodeUrl, config, onPause, onPlay, onFinish]);
+    }, [videoURL, config, onPause, onPlay, onFinish]);
 
     useEffect(() => {
         if (playerRef.current) {
@@ -149,18 +146,11 @@ export function VideoElement({
         <>
             {title ? (
                 <Heading as="h3" fontSize="2xl" mb={2} color="gray.50">
-                    {title === "Livestream broadcast video"
-                        ? "Lightning talk"
-                        : title === "Pre-published video"
-                        ? "Presentation"
-                        : title}
+                    {title === "Livestream broadcast video" || title === "Pre-published video" ? "Presentation" : title}
                 </Heading>
             ) : undefined}
-            {videoElementData.s3Url && (!previewTranscodeUrl || !config) && !loading ? (
-                <>
-                    <Spinner />
-                    <Text mb={2}>Video is still being processed.</Text>
-                </>
+            {!videoURL && !loading ? (
+                <Text mb={2}>Video not currently available. Please come back later.</Text>
             ) : undefined}
             {player}
         </>

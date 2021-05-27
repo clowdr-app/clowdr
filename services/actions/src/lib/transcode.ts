@@ -1,4 +1,4 @@
-import { Captions, InputCaptions } from "@aws-sdk/client-elastic-transcoder";
+import { Captions, InputCaptions, paginateListPipelines, Pipeline } from "@aws-sdk/client-elastic-transcoder";
 import {
     AacCodingMode,
     AacRateControlMode,
@@ -133,8 +133,21 @@ export async function startElasticBroadcastTranscode(
 
     // Get or create the existing Elastic Transcoder pipeline (CloudFormation/CDK doesn't support ET)
     let pipeline;
-    const allPipelines = await ElasticTranscoder.listPipelines({});
-    pipeline = allPipelines.Pipelines?.find((pipeline) => pipeline.Name === process.env.AWS_PREFIX);
+    const allPipelines: Pipeline[] = [];
+
+    const paginator = paginateListPipelines(
+        {
+            client: ElasticTranscoder,
+            pageSize: 50,
+        },
+        {}
+    );
+
+    for await (const page of paginator) {
+        allPipelines.push(...(page.Pipelines ?? []));
+    }
+
+    pipeline = allPipelines.find((pipeline) => pipeline.Name === process.env.AWS_PREFIX);
 
     if (!pipeline) {
         const output = await ElasticTranscoder.createPipeline({

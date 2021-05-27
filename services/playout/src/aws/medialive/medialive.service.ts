@@ -3,9 +3,9 @@ import {
     ChannelState,
     DescribeChannelCommand,
     DescribeChannelResponse,
-    DescribeScheduleCommand,
     ListChannelsCommand,
     MediaLive,
+    paginateDescribeSchedule,
     ScheduleAction,
     StartChannelCommand,
     StopChannelCommand,
@@ -13,6 +13,7 @@ import {
 import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Inject, Injectable } from "@nestjs/common";
+import { DescribeScheduleRequest } from "aws-sdk/clients/medialive";
 import { AWS_MODULE_OPTIONS } from "../../constants";
 import { AwsModuleOptions } from "../aws.module";
 
@@ -47,12 +48,20 @@ export class MediaLiveService {
     }
 
     public async describeSchedule(channelId: string): Promise<ScheduleAction[]> {
-        const action = new DescribeScheduleCommand({ ChannelId: channelId });
-        const result = await this._mediaLive.send(action);
-        if (!result.ScheduleActions) {
-            throw new Error("Could not retrieve MediaLive schedule");
+        const request: DescribeScheduleRequest = { ChannelId: channelId };
+        const paginatorConfig = {
+            client: this._mediaLive,
+            pageSize: 50,
+        };
+        const paginator = paginateDescribeSchedule(paginatorConfig, request);
+        const scheduleActions: ScheduleAction[] = [];
+        for await (const page of paginator) {
+            if (!page.ScheduleActions) {
+                throw new Error("Could not retrieve MediaLive schedule");
+            }
+            scheduleActions.push(...page.ScheduleActions);
         }
-        return result.ScheduleActions;
+        return scheduleActions;
     }
 
     public async updateSchedule(

@@ -436,7 +436,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                         );
                     })}
                 </Grid>
-                <List spacing={4} w="100%">
+                <List spacing={4}>
                     {liveEvents.map((event) => (
                         <ListItem key={event.event.id} bgColor={bgColor} shadow={shadow} p={4}>
                             <BackstageTile event={event.event} />

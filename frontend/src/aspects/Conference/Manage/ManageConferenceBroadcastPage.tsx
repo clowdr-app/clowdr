@@ -10,6 +10,7 @@ import {
     Tabs,
     Text,
     useToast,
+    VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { Permissions_Permission_Enum, useCreateConferencePrepareJobMutation } from "../../../generated/graphql";
@@ -44,7 +45,7 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
             <Heading as="h2" id="page-heading" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Broadcasts
             </Heading>
-            <Tabs isLazy>
+            <Tabs isLazy w="100%">
                 <TabList>
                     <Tab>Monitor streams</Tab>
                     <Tab>Configuration</Tab>
@@ -59,36 +60,38 @@ export default function ManageConferenceBroadcastPage(): JSX.Element {
                         <ConferenceConfiguration conferenceId={conference.id} />
                     </TabPanel>
                     <TabPanel>
-                        <Button
-                            mt={5}
-                            aria-label="Prepare broadcasts"
-                            onClick={async () => {
-                                await create({
-                                    variables: {
-                                        conferenceId: conference.id,
-                                    },
-                                });
-                                toast({
-                                    status: "success",
-                                    description: "Started preparing broadcasts.",
-                                });
-                            }}
-                        >
-                            Prepare broadcasts
-                        </Button>
-                        {loading ? (
-                            <Spinner />
-                        ) : error ? (
-                            <Text mt={3}>Failed to start broadcast preparation.</Text>
-                        ) : (
-                            <></>
-                        )}
-                        <Box mt={5}>
-                            <PrepareJobsList conferenceId={conference.id} />
-                        </Box>
-                        <Box mt={5}>
-                            <BroadcastRooms conferenceId={conference.id} />
-                        </Box>
+                        <VStack>
+                            <Button
+                                mt={5}
+                                aria-label="Prepare broadcasts"
+                                onClick={async () => {
+                                    await create({
+                                        variables: {
+                                            conferenceId: conference.id,
+                                        },
+                                    });
+                                    toast({
+                                        status: "success",
+                                        description: "Started preparing broadcasts.",
+                                    });
+                                }}
+                            >
+                                Prepare broadcasts
+                            </Button>
+                            {loading ? (
+                                <Spinner />
+                            ) : error ? (
+                                <Text mt={3}>Failed to start broadcast preparation.</Text>
+                            ) : (
+                                <></>
+                            )}
+                            <Box mt={5}>
+                                <PrepareJobsList conferenceId={conference.id} />
+                            </Box>
+                            <Box mt={5}>
+                                <BroadcastRooms conferenceId={conference.id} />
+                            </Box>
+                        </VStack>
                     </TabPanel>
                     <TabPanel>
                         <EventVonageControls conferenceId={conference.id} />

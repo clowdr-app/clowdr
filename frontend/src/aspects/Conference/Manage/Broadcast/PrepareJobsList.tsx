@@ -42,7 +42,7 @@ export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX
     ) : error ? (
         <>Error while loading list of jobs.</>
     ) : (
-        <Table variant="simple">
+        <Table variant="simple" w="auto">
             <TableCaption>Ongoing and past broadcast preparation jobs</TableCaption>
             <Thead>
                 <Tr>

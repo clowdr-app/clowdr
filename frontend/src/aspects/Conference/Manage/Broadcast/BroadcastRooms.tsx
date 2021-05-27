@@ -64,7 +64,7 @@ export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.
                     <FAIcon icon="sync" iconStyle="s" />
                 </Button>
             </Center>
-            <Table variant="simple">
+            <Table variant="simple" w="auto">
                 <TableCaption>Rooms that are set up for broadcast</TableCaption>
                 <Thead>
                     <Tr>

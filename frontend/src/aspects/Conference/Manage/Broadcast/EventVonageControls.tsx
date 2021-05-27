@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, FormControl, FormLabel, Select, useToast } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Select, useToast, VStack } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo } from "react";
 import {
@@ -82,19 +82,26 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
         >
             {({ isSubmitting }) => (
                 <Form>
-                    <Field name="eventId">
-                        {({ field, form }: FieldProps<string>) => (
-                            <FormControl isInvalid={!!form.errors.eventId && !!form.touched.eventId} isRequired>
-                                <FormLabel htmlFor="eventId">Event</FormLabel>
-                                <Select {...field} id="eventId" placeholder="Choose event">
-                                    {options}
-                                </Select>
-                            </FormControl>
-                        )}
-                    </Field>
-                    <Button type="submit" isLoading={isSubmitting} mt={4}>
-                        Stop any ongoing broadcasts
-                    </Button>
+                    <VStack alignItems="center">
+                        <Field name="eventId">
+                            {({ field, form }: FieldProps<string>) => (
+                                <FormControl
+                                    w="auto"
+                                    maxW="400px"
+                                    isInvalid={!!form.errors.eventId && !!form.touched.eventId}
+                                    isRequired
+                                >
+                                    <FormLabel htmlFor="eventId">Event</FormLabel>
+                                    <Select {...field} id="eventId" placeholder="Choose event">
+                                        {options}
+                                    </Select>
+                                </FormControl>
+                            )}
+                        </Field>
+                        <Button type="submit" isLoading={isSubmitting} mt={4}>
+                            Stop any ongoing broadcasts
+                        </Button>
+                    </VStack>
                 </Form>
             )}
         </Formik>

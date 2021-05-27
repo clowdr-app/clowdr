@@ -143,9 +143,9 @@ interface EventStatus {
 export default function LivestreamMonitoring(): JSX.Element {
     const conference = useConference();
     const now = useRealTime(1000);
-    const nowRoundedDown = roundDownToNearest(now - 60 * 1000, 60 * 1000);
-    const nowRoundedUp = roundUpToNearest(now + 60 * 1000, 60 * 1000);
-    const nowStr = useMemo(() => new Date(nowRoundedDown).toISOString(), [nowRoundedDown]);
+    const nowRoundedDown = roundDownToNearest(now, 60 * 1000);
+    const nowRoundedUp = roundUpToNearest(now, 60 * 1000);
+    const nowStr = useMemo(() => new Date(nowRoundedDown + 3000).toISOString(), [nowRoundedDown]);
     const laterStr = useMemo(() => new Date(roundUpToNearest(now + 20 * 60 * 1000, 60 * 1000)).toISOString(), [now]);
     const response = useMonitorLivestreamsQuery({
         variables: {
@@ -199,7 +199,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                         const peopleForSeverity = people.filter((x) => !!x.userId);
                         const oldEvent = oldLiveEvents.find((x) => x.event.id === event.id);
                         const previouslyIsLive = !!oldEvent?.isLive;
-                        const isLive = startTimeMs <= nowRoundedDown && nowRoundedUp < endTimeMs;
+                        const isLive = startTimeMs <= nowRoundedUp && nowRoundedUp < endTimeMs;
                         const previousSeverityLevel = oldEvent?.severityLevel;
                         let currentSeverityLevel: number;
 
@@ -279,7 +279,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                 )
             );
         }
-    }, [nowRoundedUp, nowRoundedDown, response.data?.liveEvents]);
+    }, [nowRoundedUp, response.data?.liveEvents]);
 
     const listEl = useMemo(() => {
         const eventsByRoom = R.groupBy(

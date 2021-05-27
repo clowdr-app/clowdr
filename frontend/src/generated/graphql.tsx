@@ -37759,6 +37759,24 @@ export type Schedule_EventTagFragment = { readonly __typename?: 'schedule_EventT
     & Schedule_TagFragment
   ) };
 
+export type Schedule_HappeningSoonQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  startBefore: Scalars['timestamptz'];
+  endAfter: Scalars['timestamptz'];
+}>;
+
+
+export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & Schedule_RoomSummaryFragment
+  )>, readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event', readonly item?: Maybe<(
+      { readonly __typename?: 'content_Item' }
+      & Schedule_ItemElementsFragment
+    )> }
+    & Schedule_EventSummaryFragment
+  )> };
+
 export type Schedule_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
 
 export type Schedule_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> };
@@ -37809,24 +37827,6 @@ export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root'
   )>, readonly content_Item: ReadonlyArray<(
     { readonly __typename?: 'content_Item' }
     & Schedule_ItemElementsFragment
-  )> };
-
-export type Schedule_HappeningSoonQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  startBefore: Scalars['timestamptz'];
-  endAfter: Scalars['timestamptz'];
-}>;
-
-
-export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
-    { readonly __typename?: 'room_Room' }
-    & Schedule_RoomSummaryFragment
-  )>, readonly schedule_Event: ReadonlyArray<(
-    { readonly __typename?: 'schedule_Event', readonly item?: Maybe<(
-      { readonly __typename?: 'content_Item' }
-      & Schedule_ItemElementsFragment
-    )> }
-    & Schedule_EventSummaryFragment
   )> };
 
 export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> };
@@ -37916,24 +37916,29 @@ export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
 
 export type EventVonageControls_StopEventBroadcastMutation = { readonly __typename?: 'mutation_root', readonly stopEventBroadcast?: Maybe<{ readonly __typename?: 'StopEventBroadcastOutput', readonly broadcastsStopped: number }> };
 
-export type MonitorLiveBackstagesQueryVariables = Exact<{
+export type MonitorLivestreamsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   now: Scalars['timestamptz'];
   later: Scalars['timestamptz'];
 }>;
 
 
-export type MonitorLiveBackstagesQuery = { readonly __typename?: 'query_root', readonly liveEvents: ReadonlyArray<(
+export type MonitorLivestreamsQuery = { readonly __typename?: 'query_root', readonly liveEvents: ReadonlyArray<(
     { readonly __typename?: 'schedule_Event' }
-    & MonitorLiveBackstages_EventFragment
+    & MonitorLivestreams_EventFragment
   )>, readonly prerecordedEvents: ReadonlyArray<(
     { readonly __typename?: 'schedule_Event' }
-    & MonitorLiveBackstages_PrerecEventFragment
+    & MonitorLivestreams_PrerecEventFragment
   )> };
 
-export type MonitorLiveBackstages_PrerecEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
+export type MonitorLivestreams_PrerecEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number } };
 
-export type MonitorLiveBackstages_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } }>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string }>, readonly participantStreams: ReadonlyArray<{ readonly __typename?: 'video_EventParticipantStream', readonly id: any, readonly registrantId: any, readonly vonageStreamType: string }> };
+export type MonitorLivestreams_PersonFragment = { readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } };
+
+export type MonitorLivestreams_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<(
+    { readonly __typename?: 'schedule_EventProgramPerson' }
+    & MonitorLivestreams_PersonFragment
+  )>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string }>, readonly participantStreams: ReadonlyArray<{ readonly __typename?: 'video_EventParticipantStream', readonly id: any, readonly registrantId: any, readonly vonageStreamType: string }> };
 
 export type CreateConferencePrepareJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -40746,18 +40751,34 @@ export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
   value
 }
     `;
-export const MonitorLiveBackstages_PrerecEventFragmentDoc = gql`
-    fragment MonitorLiveBackstages_PrerecEvent on schedule_Event {
+export const MonitorLivestreams_PrerecEventFragmentDoc = gql`
+    fragment MonitorLivestreams_PrerecEvent on schedule_Event {
   id
   startTime
   room {
     id
     name
+    priority
   }
 }
     `;
-export const MonitorLiveBackstages_EventFragmentDoc = gql`
-    fragment MonitorLiveBackstages_Event on schedule_Event {
+export const MonitorLivestreams_PersonFragmentDoc = gql`
+    fragment MonitorLivestreams_Person on schedule_EventProgramPerson {
+  id
+  roleName
+  person {
+    id
+    name
+    affiliation
+    registrant {
+      id
+      userId
+    }
+  }
+}
+    `;
+export const MonitorLivestreams_EventFragmentDoc = gql`
+    fragment MonitorLivestreams_Event on schedule_Event {
   id
   name
   startTime
@@ -40765,23 +40786,14 @@ export const MonitorLiveBackstages_EventFragmentDoc = gql`
   room {
     id
     name
+    priority
   }
   item {
     id
     title
   }
   eventPeople {
-    id
-    roleName
-    person {
-      id
-      name
-      affiliation
-      registrant {
-        id
-        userId
-      }
-    }
+    ...MonitorLivestreams_Person
   }
   eventVonageSession {
     id
@@ -40793,7 +40805,7 @@ export const MonitorLiveBackstages_EventFragmentDoc = gql`
     vonageStreamType
   }
 }
-    `;
+    ${MonitorLivestreams_PersonFragmentDoc}`;
 export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
     fragment SubmissionRequestsModal_ConferenceConfiguration on conference_Configuration {
   id
@@ -43672,6 +43684,55 @@ export function useGetSponsorBoothsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetSponsorBoothsQueryHookResult = ReturnType<typeof useGetSponsorBoothsQuery>;
 export type GetSponsorBoothsLazyQueryHookResult = ReturnType<typeof useGetSponsorBoothsLazyQuery>;
 export type GetSponsorBoothsQueryResult = Apollo.QueryResult<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>;
+export const Schedule_HappeningSoonDocument = gql`
+    query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
+  room_Room(
+    where: {conferenceId: {_eq: $conferenceId}, managementModeName: {_in: [PUBLIC, PRIVATE]}, events: {startTime: {_lte: $startBefore}, endTime: {_gte: $endAfter}}}
+  ) {
+    ...Schedule_RoomSummary
+  }
+  schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $startBefore}, endTime: {_gte: $endAfter}}
+  ) {
+    ...Schedule_EventSummary
+    item {
+      ...Schedule_ItemElements
+    }
+  }
+}
+    ${Schedule_RoomSummaryFragmentDoc}
+${Schedule_EventSummaryFragmentDoc}
+${Schedule_ItemElementsFragmentDoc}`;
+
+/**
+ * __useSchedule_HappeningSoonQuery__
+ *
+ * To run a query within a React component, call `useSchedule_HappeningSoonQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSchedule_HappeningSoonQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSchedule_HappeningSoonQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      startBefore: // value for 'startBefore'
+ *      endAfter: // value for 'endAfter'
+ *   },
+ * });
+ */
+export function useSchedule_HappeningSoonQuery(baseOptions: Apollo.QueryHookOptions<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>(Schedule_HappeningSoonDocument, options);
+      }
+export function useSchedule_HappeningSoonLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>(Schedule_HappeningSoonDocument, options);
+        }
+export type Schedule_HappeningSoonQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonQuery>;
+export type Schedule_HappeningSoonLazyQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonLazyQuery>;
+export type Schedule_HappeningSoonQueryResult = Apollo.QueryResult<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>;
 export const Schedule_SelectItemDocument = gql`
     query Schedule_SelectItem($id: uuid!) {
   content_Item_by_pk(id: $id) {
@@ -43752,55 +43813,6 @@ export function useSchedule_SelectSummariesLazyQuery(baseOptions?: Apollo.LazyQu
 export type Schedule_SelectSummariesQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesQuery>;
 export type Schedule_SelectSummariesLazyQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesLazyQuery>;
 export type Schedule_SelectSummariesQueryResult = Apollo.QueryResult<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>;
-export const Schedule_HappeningSoonDocument = gql`
-    query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
-  room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, managementModeName: {_in: [PUBLIC, PRIVATE]}, events: {startTime: {_lte: $startBefore}, endTime: {_gte: $endAfter}}}
-  ) {
-    ...Schedule_RoomSummary
-  }
-  schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $startBefore}, endTime: {_gte: $endAfter}}
-  ) {
-    ...Schedule_EventSummary
-    item {
-      ...Schedule_ItemElements
-    }
-  }
-}
-    ${Schedule_RoomSummaryFragmentDoc}
-${Schedule_EventSummaryFragmentDoc}
-${Schedule_ItemElementsFragmentDoc}`;
-
-/**
- * __useSchedule_HappeningSoonQuery__
- *
- * To run a query within a React component, call `useSchedule_HappeningSoonQuery` and pass it any options that fit your needs.
- * When your component renders, `useSchedule_HappeningSoonQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSchedule_HappeningSoonQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      startBefore: // value for 'startBefore'
- *      endAfter: // value for 'endAfter'
- *   },
- * });
- */
-export function useSchedule_HappeningSoonQuery(baseOptions: Apollo.QueryHookOptions<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>(Schedule_HappeningSoonDocument, options);
-      }
-export function useSchedule_HappeningSoonLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>(Schedule_HappeningSoonDocument, options);
-        }
-export type Schedule_HappeningSoonQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonQuery>;
-export type Schedule_HappeningSoonLazyQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonLazyQuery>;
-export type Schedule_HappeningSoonQueryResult = Apollo.QueryResult<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>;
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
   content_Item(
@@ -44169,35 +44181,35 @@ export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: 
 export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
 export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
-export const MonitorLiveBackstagesDocument = gql`
-    query MonitorLiveBackstages($conferenceId: uuid!, $now: timestamptz!, $later: timestamptz!) {
+export const MonitorLivestreamsDocument = gql`
+    query MonitorLivestreams($conferenceId: uuid!, $now: timestamptz!, $later: timestamptz!) {
   liveEvents: schedule_Event(
     where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $later}, endTime: {_gte: $now}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}
     order_by: [{startTime: asc}, {endTime: asc}, {room: {name: asc}}]
   ) {
-    ...MonitorLiveBackstages_Event
+    ...MonitorLivestreams_Event
   }
   prerecordedEvents: schedule_Event(
     where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $later}, endTime: {_gte: $now}, intendedRoomModeName: {_in: [PRERECORDED]}}
     order_by: [{startTime: asc}, {endTime: asc}, {room: {name: asc}}]
   ) {
-    ...MonitorLiveBackstages_PrerecEvent
+    ...MonitorLivestreams_PrerecEvent
   }
 }
-    ${MonitorLiveBackstages_EventFragmentDoc}
-${MonitorLiveBackstages_PrerecEventFragmentDoc}`;
+    ${MonitorLivestreams_EventFragmentDoc}
+${MonitorLivestreams_PrerecEventFragmentDoc}`;
 
 /**
- * __useMonitorLiveBackstagesQuery__
+ * __useMonitorLivestreamsQuery__
  *
- * To run a query within a React component, call `useMonitorLiveBackstagesQuery` and pass it any options that fit your needs.
- * When your component renders, `useMonitorLiveBackstagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMonitorLivestreamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMonitorLivestreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useMonitorLiveBackstagesQuery({
+ * const { data, loading, error } = useMonitorLivestreamsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *      now: // value for 'now'
@@ -44205,17 +44217,17 @@ ${MonitorLiveBackstages_PrerecEventFragmentDoc}`;
  *   },
  * });
  */
-export function useMonitorLiveBackstagesQuery(baseOptions: Apollo.QueryHookOptions<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>) {
+export function useMonitorLivestreamsQuery(baseOptions: Apollo.QueryHookOptions<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>(MonitorLiveBackstagesDocument, options);
+        return Apollo.useQuery<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>(MonitorLivestreamsDocument, options);
       }
-export function useMonitorLiveBackstagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>) {
+export function useMonitorLivestreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>(MonitorLiveBackstagesDocument, options);
+          return Apollo.useLazyQuery<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>(MonitorLivestreamsDocument, options);
         }
-export type MonitorLiveBackstagesQueryHookResult = ReturnType<typeof useMonitorLiveBackstagesQuery>;
-export type MonitorLiveBackstagesLazyQueryHookResult = ReturnType<typeof useMonitorLiveBackstagesLazyQuery>;
-export type MonitorLiveBackstagesQueryResult = Apollo.QueryResult<MonitorLiveBackstagesQuery, MonitorLiveBackstagesQueryVariables>;
+export type MonitorLivestreamsQueryHookResult = ReturnType<typeof useMonitorLivestreamsQuery>;
+export type MonitorLivestreamsLazyQueryHookResult = ReturnType<typeof useMonitorLivestreamsLazyQuery>;
+export type MonitorLivestreamsQueryResult = Apollo.QueryResult<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>;
 export const CreateConferencePrepareJobDocument = gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
   insert_conference_PrepareJob_one(object: {conferenceId: $conferenceId}) {

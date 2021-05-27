@@ -27,6 +27,7 @@ export function HlsPlayer({
             liveSyncDurationCount: 5,
             enableCEA708Captions: false,
             enableWebVTT: true,
+            backBufferLength: 180,
         };
         return (
             <Box>

@@ -85,7 +85,11 @@ export function VonageRoom({
                         isBackstageRoom={isBackstageRoom}
                         requireMicrophone={requireMicrophone}
                         joinRoomButtonText={
-                            isBackstageRoom ? (raiseHandPrejoinEventId ? "I'm ready" : "Join the backstage") : undefined
+                            isBackstageRoom
+                                ? raiseHandPrejoinEventId
+                                    ? "I'm ready"
+                                    : "Connect to the backstage"
+                                : undefined
                         }
                         overrideJoining={
                             isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined

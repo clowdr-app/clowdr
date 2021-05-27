@@ -1,6 +1,7 @@
 import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
+import { Observable } from "../../../../Observable";
 
 export type CameraResolutions = "640x480" | "1280x720";
 
@@ -48,7 +49,22 @@ interface ConnectedStateData {
 export class VonageGlobalState {
     private mutex: Mutex = new Mutex();
 
-    public state: StateData = { type: StateType.Uninitialised };
+    private _state: StateData = { type: StateType.Uninitialised };
+    public get state(): StateData {
+        return this._state;
+    }
+    public set state(value: StateData) {
+        const wasConnected = this._state.type === StateType.Connected;
+        this._state = value;
+        const isConnected = this._state.type === StateType.Connected;
+
+        if (wasConnected !== isConnected) {
+            this.IsConnected.publish(isConnected);
+        }
+    }
+    public IsConnected = new Observable<boolean>((observer) => {
+        observer(this.state.type === StateType.Connected);
+    });
 
     public get camera(): OT.Publisher | null {
         return this.state.type === StateType.Connected ? this.state.camera?.publisher ?? null : null;
@@ -316,7 +332,7 @@ export class VonageGlobalState {
                     });
                 });
                 publisher.on("streamDestroyed", (event) =>
-                    this.onCameraStreamDestroyed(event).catch((e) =>
+                    this.onCameraStreamDestroyed(event).catch((_e) =>
                         console.error("VonageGlobalState: error handling streamDestroyed")
                     )
                 );

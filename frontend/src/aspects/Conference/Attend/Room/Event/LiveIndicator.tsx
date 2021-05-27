@@ -20,10 +20,11 @@ import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immedi
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../generated/graphql";
 import { roundDownToNearest } from "../../../../Generic/MathUtils";
 import { FAIcon } from "../../../../Icons/FAIcon";
+import { useVonageGlobalState } from "../Vonage/VonageGlobalStateProvider";
 
 export function formatRemainingTime(seconds: number): string {
     const NearestHoursInS = roundDownToNearest(seconds, 60 * 60);
@@ -51,6 +52,7 @@ export function LiveIndicator({
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
+    const vonageGlobalState = useVonageGlobalState();
 
     gql`
         query LiveIndicator_GetLatest($eventId: uuid!) {
@@ -73,11 +75,7 @@ export function LiveIndicator({
         }
     `;
 
-    const {
-        data: latestImmediateSwitchData,
-        loading: latestImmediateSwitchLoading,
-        error: latestImmediateSwitchError,
-    } = useLiveIndicator_GetLatestQuery({
+    const { data: latestImmediateSwitchData } = useLiveIndicator_GetLatestQuery({
         variables: {
             eventId,
         },
@@ -103,11 +101,7 @@ export function LiveIndicator({
         return transformed;
     }, [latestImmediateSwitchData]);
 
-    const {
-        data: currentElementData,
-        loading: currentElementLoading,
-        error: currentElementError,
-    } = useLiveIndicator_GetElementQuery({
+    const { data: currentElementData } = useLiveIndicator_GetElementQuery({
         variables: {
             elementId: latestSwitchData?.data.kind === "video" ? latestSwitchData.data.elementId : null,
         },
@@ -165,6 +159,16 @@ export function LiveIndicator({
         return null;
     }, [durationCurrentElement, latestImmediateSwitchData?.video_ImmediateSwitch, latestSwitchData, now]);
 
+    const [isConnected, setIsConnected] = useState<boolean>(false);
+    useEffect(() => {
+        const unobserve = vonageGlobalState.IsConnected.subscribe((isConn) => {
+            setIsConnected(isConn);
+        });
+        return () => {
+            unobserve();
+        };
+    }, [vonageGlobalState]);
+
     const whatIsLiveText = useMemo(() => {
         switch (currentInput) {
             case null:
@@ -185,7 +189,10 @@ export function LiveIndicator({
                 return (
                     <>
                         <FAIcon icon="broadcast-tower" iconStyle="s" fontSize="lg" />
-                        <Text>You are live</Text>
+                        <VStack>
+                            <Text fontSize={!isConnected ? "xs" : undefined}>Backstage is live</Text>
+                            {!isConnected ? <Text>You are not connected</Text> : undefined}
+                        </VStack>
                     </>
                 );
             case "video":
@@ -203,7 +210,7 @@ export function LiveIndicator({
                     </>
                 );
         }
-    }, [currentInput]);
+    }, [currentInput, isConnected]);
 
     return (
         <>
@@ -213,7 +220,7 @@ export function LiveIndicator({
                     <ModalBody>
                         <VStack>
                             <Heading>
-                                You will be live the moment the indicator says &ldquo;You are live&rdquo;.
+                                You will be live the moment the indicator says &ldquo;Backstage is live&rdquo;.
                             </Heading>
                             <Text>DO NOT ASK THE AUDIENCE WHEN YOU ARE LIVE!</Text>
                             <Text>
@@ -223,9 +230,9 @@ export function LiveIndicator({
                                 can trust that the audience will quickly start telling you via the chat!
                             </Text>
                             <Text>
-                                So please trust the countdown - it is accurate and reliable. If it says you are live,
-                                then you are live in front of the entire conference and should start your presentation
-                                or Q&amp;A session (or whatever it is you&apos;re here to do).
+                                So please trust the countdown - it is accurate and reliable. If it says the backstage is
+                                live, then you are live in front of the entire conference and should start your
+                                presentation or Q&amp;A session (or whatever it is you&apos;re here to do).
                             </Text>
                             <Text>
                                 Please try not to be &ldquo;that person&rdquo; that wastes the first 2 minutes of their
@@ -239,8 +246,16 @@ export function LiveIndicator({
                 </ModalContent>
             </Modal>
             {live ? (
-                <HStack alignItems="flex-start" justifyContent="flex-start" mx="auto">
-                    <Badge fontSize="lg" colorScheme="red" fontWeight="bold" p={4}>
+                <HStack alignItems="stretch" justifyContent="flex-start" mx="auto" flexWrap="wrap">
+                    <Badge
+                        fontSize={isConnected ? "lg" : "md"}
+                        colorScheme="red"
+                        fontWeight="bold"
+                        p="1em"
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
                         <HStack>{whatIsLiveText}</HStack>
                     </Badge>
                     <Stat fontSize="md" ml="auto" flexGrow={1} textAlign="center">
@@ -249,7 +264,7 @@ export function LiveIndicator({
                     </Stat>
                 </HStack>
             ) : (
-                <HStack alignItems="stretch" justifyContent="flex-start" mx="auto">
+                <HStack alignItems="stretch" justifyContent="flex-start" mx="auto" flexWrap="wrap">
                     {secondsUntilLive > 0 ? (
                         <>
                             <Badge
@@ -265,7 +280,10 @@ export function LiveIndicator({
                                 justifyContent="center"
                                 alignItems="center"
                             >
-                                <Text>You are off-air</Text>
+                                <VStack>
+                                    <Text fontSize={!isConnected ? "xs" : undefined}>Backstage is off-air</Text>
+                                    {!isConnected ? <Text>You are not connected</Text> : undefined}
+                                </VStack>
                             </Badge>
                             {secondsUntilLive < 1200 ? (
                                 <Stat
@@ -283,7 +301,7 @@ export function LiveIndicator({
                                             : undefined
                                     }
                                 >
-                                    <StatLabel>Time remaining until you are live</StatLabel>
+                                    <StatLabel>Time remaining until backstage is live</StatLabel>
                                     <StatNumber>{formatRemainingTime(secondsUntilLive)}</StatNumber>
                                 </Stat>
                             ) : (
@@ -299,7 +317,7 @@ export function LiveIndicator({
                         </>
                     ) : (
                         <Badge fontSize="lg" colorScheme="blue" fontWeight="bold" p={4}>
-                            <Text>You are off air</Text>
+                            <Text>Backstage is off air</Text>
                         </Badge>
                     )}
                 </HStack>

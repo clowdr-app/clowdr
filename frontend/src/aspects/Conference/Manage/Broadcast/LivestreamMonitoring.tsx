@@ -199,7 +199,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                         const peopleForSeverity = people.filter((x) => !!x.userId);
                         const oldEvent = oldLiveEvents.find((x) => x.event.id === event.id);
                         const previouslyIsLive = !!oldEvent?.isLive;
-                        const isLive = startTimeMs <= nowRoundedUp && nowRoundedUp < endTimeMs;
+                        const isLive = startTimeMs <= nowRoundedUp && nowRoundedUp <= endTimeMs;
                         const previousSeverityLevel = oldEvent?.severityLevel;
                         let currentSeverityLevel: number;
 
@@ -302,138 +302,150 @@ export default function LivestreamMonitoring(): JSX.Element {
                 <Grid w="100%" templateColumns="repeat(auto-fit, 300px)" gap={2} justifyContent="center">
                     {sortedRooms.map((room) => {
                         const events = eventsByRoom[room.id];
-                        const sortedEvents = R.sortBy((x) => x.startTimeMs, events);
-                        const shouldHighlight = events.some(
-                            (x) => x.startTimeMs < nowRoundedDown + 10 * 60 * 1000 && x.severityLevel >= 2
-                        );
-                        return (
-                            <GridItem
-                                key={room.id}
-                                bgColor={bgColor}
-                                shadow={shadow}
-                                p={2}
-                                border={shouldHighlight ? "3px solid" : undefined}
-                                borderColor={shouldHighlight ? "red.400" : undefined}
-                            >
-                                <VStack w="100%" alignItems="flex-start" spacing={1}>
-                                    <HStack w="100%">
-                                        <Text fontSize="sm" mr="auto">
-                                            <FAIcon iconStyle="s" icon="link" mb={1} fontSize="80%" />
-                                            &nbsp;
-                                            <Link as={ReactLink} to={`/conference/${conference.slug}/room/${room.id}`}>
-                                                {room.name}
-                                            </Link>
-                                        </Text>
-                                        {shouldHighlight ? (
-                                            <Tooltip label="Urgent: An event in this room is not ready.">
-                                                <FAIcon
-                                                    iconStyle="s"
-                                                    icon="exclamation-triangle"
-                                                    color="red.400"
-                                                    mb={1}
-                                                    pr={1}
-                                                    fontSize="xl"
-                                                />
-                                            </Tooltip>
-                                        ) : undefined}
-                                    </HStack>
-                                    <HStack w="100%" p={0} m={0} pl={3} overflowX="auto" overflowY="hidden">
-                                        {!sortedEvents[0]?.isLive ? (
-                                            <Tooltip label="No currently live backstage">
-                                                <FAIcon
-                                                    iconStyle="r"
-                                                    icon={"dot-circle"}
-                                                    color={"gray.400"}
-                                                    fontSize={"4xl"}
-                                                    lineHeight={0}
-                                                />
-                                            </Tooltip>
-                                        ) : undefined}
-                                        {sortedEvents.map((event, idx) => (
-                                            <Link href={`#${event.event.id}`} key={event.event.id}>
-                                                <Tooltip
-                                                    label={
-                                                        <>
-                                                            <Text mb={1}>
-                                                                <chakra.span fontWeight="bold" mr={3}>
-                                                                    {new Date(event.event.startTime).toLocaleTimeString(
-                                                                        undefined,
-                                                                        {
-                                                                            hour: "2-digit",
-                                                                            minute: "2-digit",
-                                                                        }
-                                                                    )}
-                                                                </chakra.span>
-                                                                {event.severityLevel === -2
-                                                                    ? "Backstage appears to have ended early."
-                                                                    : event.severityLevel === -1
-                                                                    ? "Backstage appears to be ok. Chair may have chosen to leave."
-                                                                    : event.severityLevel === 0
-                                                                    ? "Backstage is ok."
-                                                                    : event.severityLevel === 1
-                                                                    ? "Presenter is ready but the chair is not."
-                                                                    : event.severityLevel === 2
-                                                                    ? "No presenter is available but the chair is ready."
-                                                                    : event.severityLevel === 3
-                                                                    ? "Neither a presenter nor a chair is ready."
-                                                                    : "No registered people are listed!"}
-                                                            </Text>
-                                                            <Text>
-                                                                {event.event.name +
-                                                                    (event.event.item
-                                                                        ? `: ${event.event.item.title}`
-                                                                        : "")}
-                                                            </Text>
-                                                        </>
-                                                    }
+                        if (events) {
+                            const sortedEvents = R.sortBy((x) => x.startTimeMs, events);
+                            const shouldHighlight = events.some(
+                                (x) => x.startTimeMs < nowRoundedDown + 10 * 60 * 1000 && x.severityLevel >= 2
+                            );
+                            return (
+                                <GridItem
+                                    key={room.id}
+                                    bgColor={bgColor}
+                                    shadow={shadow}
+                                    p={2}
+                                    border={shouldHighlight ? "3px solid" : undefined}
+                                    borderColor={shouldHighlight ? "red.400" : undefined}
+                                >
+                                    <VStack w="100%" alignItems="flex-start" spacing={1}>
+                                        <HStack w="100%">
+                                            <Text fontSize="sm" mr="auto">
+                                                <FAIcon iconStyle="s" icon="link" mb={1} fontSize="80%" />
+                                                &nbsp;
+                                                <Link
+                                                    as={ReactLink}
+                                                    to={`/conference/${conference.slug}/room/${room.id}`}
                                                 >
+                                                    {room.name}
+                                                </Link>
+                                            </Text>
+                                            {shouldHighlight ? (
+                                                <Tooltip label="Urgent: An event in this room is not ready.">
                                                     <FAIcon
-                                                        lineHeight={0}
                                                         iconStyle="s"
-                                                        icon={
-                                                            event.severityLevel === -2
-                                                                ? "stop-circle"
-                                                                : event.severityLevel === -1
-                                                                ? "play-circle"
-                                                                : event.severityLevel === 0
-                                                                ? "check-circle"
-                                                                : event.severityLevel === 1
-                                                                ? "question-circle"
-                                                                : event.severityLevel === 2
-                                                                ? "exclamation-triangle"
-                                                                : event.severityLevel === 3
-                                                                ? "times-circle"
-                                                                : "exclamation"
-                                                        }
-                                                        color={
-                                                            event.severityLevel === -2
-                                                                ? "gray.400"
-                                                                : event.severityLevel === -1
-                                                                ? "green.400"
-                                                                : event.severityLevel === 0
-                                                                ? "green.400"
-                                                                : event.severityLevel === 1
-                                                                ? "yellow.400"
-                                                                : event.severityLevel === 2
-                                                                ? "yellow.400"
-                                                                : event.severityLevel === 3
-                                                                ? "red.400"
-                                                                : "red.400"
-                                                        }
-                                                        fontSize={idx === 0 && event.isLive ? "4xl" : "lg"}
+                                                        icon="exclamation-triangle"
+                                                        color="red.400"
+                                                        mb={1}
+                                                        pr={1}
+                                                        fontSize="xl"
                                                     />
                                                 </Tooltip>
-                                            </Link>
-                                        ))}
-                                    </HStack>
-                                    {shouldHighlight ? (
-                                        <Text pt={1} color="red" fontSize="sm" textAlign="center" w="100%">
-                                            Urgent: An event in this room is not ready.
-                                        </Text>
-                                    ) : undefined}
-                                </VStack>
-                            </GridItem>
-                        );
+                                            ) : undefined}
+                                        </HStack>
+                                        <HStack w="100%" p={0} m={0} pl={3} overflowX="auto" overflowY="hidden">
+                                            {!sortedEvents[0]?.isLive ? (
+                                                <Tooltip label="No currently live backstage">
+                                                    <FAIcon
+                                                        iconStyle="r"
+                                                        icon={"dot-circle"}
+                                                        color={"gray.400"}
+                                                        fontSize={"4xl"}
+                                                        lineHeight={0}
+                                                    />
+                                                </Tooltip>
+                                            ) : undefined}
+                                            {sortedEvents.map((event, idx) => (
+                                                <Link href={`#${event.event.id}`} key={event.event.id}>
+                                                    <Tooltip
+                                                        label={
+                                                            <>
+                                                                <Text mb={1}>
+                                                                    <chakra.span fontWeight="bold" mr={3}>
+                                                                        {new Date(
+                                                                            event.event.startTime
+                                                                        ).toLocaleTimeString(undefined, {
+                                                                            hour: "2-digit",
+                                                                            minute: "2-digit",
+                                                                        })}
+                                                                        {" to "}
+                                                                        {new Date(
+                                                                            event.event.endTime
+                                                                        ).toLocaleTimeString(undefined, {
+                                                                            hour: "2-digit",
+                                                                            minute: "2-digit",
+                                                                        })}
+                                                                    </chakra.span>
+                                                                    {event.severityLevel === -2
+                                                                        ? "Backstage appears to have ended early."
+                                                                        : event.severityLevel === -1
+                                                                        ? "Backstage appears to be ok. Chair may have chosen to leave."
+                                                                        : event.severityLevel === 0
+                                                                        ? "Backstage is ok."
+                                                                        : event.severityLevel === 1
+                                                                        ? "Presenter is ready but the chair is not."
+                                                                        : event.severityLevel === 2
+                                                                        ? "No presenter is available but the chair is ready."
+                                                                        : event.severityLevel === 3
+                                                                        ? "Neither a presenter nor a chair is ready."
+                                                                        : "No registered people are listed!"}
+                                                                </Text>
+                                                                <Text>
+                                                                    {event.event.name +
+                                                                        (event.event.item
+                                                                            ? `: ${event.event.item.title}`
+                                                                            : "")}
+                                                                </Text>
+                                                            </>
+                                                        }
+                                                    >
+                                                        <FAIcon
+                                                            lineHeight={0}
+                                                            iconStyle="s"
+                                                            icon={
+                                                                event.severityLevel === -2
+                                                                    ? "stop-circle"
+                                                                    : event.severityLevel === -1
+                                                                    ? "play-circle"
+                                                                    : event.severityLevel === 0
+                                                                    ? "check-circle"
+                                                                    : event.severityLevel === 1
+                                                                    ? "question-circle"
+                                                                    : event.severityLevel === 2
+                                                                    ? "exclamation-triangle"
+                                                                    : event.severityLevel === 3
+                                                                    ? "times-circle"
+                                                                    : "exclamation"
+                                                            }
+                                                            color={
+                                                                event.severityLevel === -2
+                                                                    ? "gray.400"
+                                                                    : event.severityLevel === -1
+                                                                    ? "green.400"
+                                                                    : event.severityLevel === 0
+                                                                    ? "green.400"
+                                                                    : event.severityLevel === 1
+                                                                    ? "yellow.600"
+                                                                    : event.severityLevel === 2
+                                                                    ? "yellow.600"
+                                                                    : event.severityLevel === 3
+                                                                    ? "red.400"
+                                                                    : "red.400"
+                                                            }
+                                                            fontSize={idx === 0 && event.isLive ? "4xl" : "lg"}
+                                                        />
+                                                    </Tooltip>
+                                                </Link>
+                                            ))}
+                                        </HStack>
+                                        {shouldHighlight ? (
+                                            <Text pt={1} color="red" fontSize="sm" textAlign="center" w="100%">
+                                                Urgent: An event in this room is not ready.
+                                            </Text>
+                                        ) : undefined}
+                                    </VStack>
+                                </GridItem>
+                            );
+                        }
+                        return <></>;
                     })}
                 </Grid>
                 <List spacing={4}>

@@ -447,7 +447,7 @@ export default function LivestreamMonitoring(): JSX.Element {
         );
     }, [bgColor, conference.slug, liveEvents, nowRoundedDown, nowRoundedUp, shadow]);
 
-    const secondsToNextRefresh = Math.round((nowRoundedDown + 2 * 60 * 1000 - now) / 1000);
+    const secondsToNextRefresh = Math.round((nowRoundedUp - now) / 1000);
 
     const [liveRooms, setLiveRooms] = useState<{ id: string; name: string }[]>([]);
     useEffect(() => {

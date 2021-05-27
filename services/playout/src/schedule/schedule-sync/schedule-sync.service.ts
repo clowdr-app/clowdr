@@ -429,7 +429,13 @@ export class ScheduleSyncService {
                     ])
             ).filter(ScheduleSyncService.notEmpty)
         );
-        await this.mediaLiveService.updateSchedule(channelId, actionsToRemove, []);
+        if (actionsToRemove.length) {
+            this.logger.warn(
+                { count: actionsToRemove.length, actionsToRemove, channelId },
+                "Removing invalid actions from schedule"
+            );
+            await this.mediaLiveService.updateSchedule(channelId, actionsToRemove, []);
+        }
         return actionsToRemove;
     }
 

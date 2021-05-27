@@ -1,11 +1,12 @@
 import {
     BatchUpdateScheduleCommand,
     ChannelState,
+    ChannelSummary,
     DescribeChannelCommand,
     DescribeChannelResponse,
-    ListChannelsCommand,
     MediaLive,
     paginateDescribeSchedule,
+    paginateListChannels,
     ScheduleAction,
     StartChannelCommand,
     StopChannelCommand,
@@ -82,9 +83,17 @@ export class MediaLiveService {
     }
 
     public async channelExists(channelId: string): Promise<boolean> {
-        const command = new ListChannelsCommand({});
-        const result = await this._mediaLive.send(command);
-        return !!result.Channels?.find((channel) => channel.Id === channelId);
+        const channels: ChannelSummary[] = [];
+        const paginator = paginateListChannels(
+            {
+                client: this._mediaLive,
+            },
+            {}
+        );
+        for await (const page of paginator) {
+            channels.push(...(page.Channels ?? []));
+        }
+        return !!channels?.find((channel) => channel.Id === channelId);
     }
 
     public async startChannel(channelId: string): Promise<void> {

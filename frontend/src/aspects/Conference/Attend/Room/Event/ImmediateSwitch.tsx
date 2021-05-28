@@ -203,7 +203,7 @@ export function ImmediateSwitch({
                         onOpen();
                     }}
                 >
-                    {({ dirty, ...props }) => (
+                    {({ ...props }) => (
                         <>
                             <Form>
                                 <HStack>
@@ -279,7 +279,7 @@ export function ImmediateSwitch({
                 </AlertDialog>
             </>
         ),
-        [disable, enableSwitchButton, options, performSwitch]
+        [disable, enableSwitchButton, isOpen, onClose, onOpen, options, performSwitch, switchAction]
     );
 
     return form;

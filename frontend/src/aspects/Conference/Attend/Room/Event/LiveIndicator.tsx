@@ -20,11 +20,10 @@ import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immedi
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../generated/graphql";
 import { roundDownToNearest } from "../../../../Generic/MathUtils";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { useVonageGlobalState } from "../Vonage/VonageGlobalStateProvider";
 
 export function formatRemainingTime(seconds: number): string {
     const NearestHoursInS = roundDownToNearest(seconds, 60 * 60);
@@ -43,16 +42,17 @@ export function LiveIndicator({
     secondsUntilLive,
     secondsUntilOffAir,
     eventId,
+    isConnected,
 }: {
     live: boolean;
     now: number;
     secondsUntilLive: number;
     secondsUntilOffAir: number;
     eventId: string;
+    isConnected: boolean;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
-    const vonageGlobalState = useVonageGlobalState();
 
     gql`
         query LiveIndicator_GetLatest($eventId: uuid!) {
@@ -158,16 +158,6 @@ export function LiveIndicator({
 
         return null;
     }, [durationCurrentElement, latestImmediateSwitchData?.video_ImmediateSwitch, latestSwitchData, now]);
-
-    const [isConnected, setIsConnected] = useState<boolean>(false);
-    useEffect(() => {
-        const unobserve = vonageGlobalState.IsConnected.subscribe((isConn) => {
-            setIsConnected(isConn);
-        });
-        return () => {
-            unobserve();
-        };
-    }, [vonageGlobalState]);
 
     const whatIsLiveText = useMemo(() => {
         switch (currentInput) {

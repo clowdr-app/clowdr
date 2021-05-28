@@ -37842,7 +37842,7 @@ export type SearchPanel_ItemsQuery = { readonly __typename?: 'query_root', reado
     & SearchPanel_ItemFragment
   )> };
 
-export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
+export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
 
 export type SearchPanel_EventsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -40723,6 +40723,7 @@ export const SearchPanel_EventFragmentDoc = gql`
     title
   }
   name
+  roomId
   room {
     id
     name

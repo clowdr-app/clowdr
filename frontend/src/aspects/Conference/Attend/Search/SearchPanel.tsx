@@ -80,6 +80,7 @@ gql`
             title
         }
         name
+        roomId
         room {
             id
             name
@@ -256,7 +257,7 @@ export default function SearchPanel(): JSX.Element {
                                     to={
                                         event.item
                                             ? `/conference/${conference.slug}/item/${event.item.id}`
-                                            : `/conference/${conference.slug}/room/${event.room.id}`
+                                            : `/conference/${conference.slug}/room/${event.roomId}`
                                     }
                                     shadow={shadow}
                                     size="md"
@@ -276,7 +277,7 @@ export default function SearchPanel(): JSX.Element {
                                                 {event.item ? `: ${event.item.title}` : ""}
                                             </Text>
                                             <Text whiteSpace="normal" pl={4} fontSize="sm">
-                                                In {event.room.name}
+                                                In {event.room ? event.room.name : "a private room"}
                                             </Text>
                                         </VStack>
                                     </HStack>

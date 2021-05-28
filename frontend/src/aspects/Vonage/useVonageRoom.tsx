@@ -1,5 +1,4 @@
-import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Link, ListItem, OrderedList, UnorderedList, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
 import { PermissionInstructions } from "../Conference/Attend/Room/Chime/PermissionInstructions";
 import { useRestorableState } from "../Generic/useRestorableState";
@@ -7,9 +6,11 @@ import { useRestorableState } from "../Generic/useRestorableState";
 export interface VonageRoomState {
     preferredCameraId: string | null;
     cameraIntendedEnabled: boolean;
+    cameraOnError: (() => void) | undefined;
     cameraStream: MediaStream | null;
     preferredMicrophoneId: string | null;
     microphoneIntendedEnabled: boolean;
+    microphoneOnError: (() => void) | undefined;
     microphoneStream: MediaStream | null;
     screenShareIntendedEnabled: boolean;
 }
@@ -17,16 +18,20 @@ export interface VonageRoomState {
 const initialRoomState: VonageRoomState = {
     preferredCameraId: null,
     cameraIntendedEnabled: false,
+    cameraOnError: undefined,
     cameraStream: null,
     preferredMicrophoneId: null,
     microphoneIntendedEnabled: false,
+    microphoneOnError: undefined,
     microphoneStream: null,
     screenShareIntendedEnabled: false,
 };
 
 type VonageRoomStateAction =
     | SetPreferredCamera
+    | ClearPreferredCamera
     | SetPreferredMicrophone
+    | ClearPreferredMicrophone
     | SetCameraIntendedState
     | SetCameraMediaStream
     | SetMicrophoneIntendedState
@@ -35,9 +40,11 @@ type VonageRoomStateAction =
 
 export enum VonageRoomStateActionType {
     SetPreferredCamera,
+    ClearPreferredCamera,
     SetCameraIntendedState,
     SetCameraMediaStream,
     SetPreferredMicrophone,
+    ClearPreferredMicrophone,
     SetMicrophoneIntendedState,
     SetMicrophoneMediaStream,
     SetScreenShareIntendedState,
@@ -48,9 +55,14 @@ interface SetPreferredCamera {
     cameraId: string;
 }
 
+interface ClearPreferredCamera {
+    type: VonageRoomStateActionType.ClearPreferredCamera;
+}
+
 interface SetCameraIntendedState {
     type: VonageRoomStateActionType.SetCameraIntendedState;
     cameraEnabled: boolean;
+    onError: (() => void) | undefined;
 }
 
 interface SetCameraMediaStream {
@@ -63,9 +75,14 @@ interface SetPreferredMicrophone {
     microphoneId: string;
 }
 
+interface ClearPreferredMicrophone {
+    type: VonageRoomStateActionType.ClearPreferredMicrophone;
+}
+
 interface SetMicrophoneIntendedState {
     type: VonageRoomStateActionType.SetMicrophoneIntendedState;
     microphoneEnabled: boolean;
+    onError: (() => void) | undefined;
 }
 
 interface SetMicrophoneMediaStream {
@@ -109,8 +126,11 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             }
             return { ...state, preferredCameraId: action.cameraId };
 
+        case VonageRoomStateActionType.ClearPreferredCamera:
+            return { ...state, preferredCameraId: null };
+
         case VonageRoomStateActionType.SetCameraIntendedState:
-            return { ...state, cameraIntendedEnabled: action.cameraEnabled };
+            return { ...state, cameraIntendedEnabled: action.cameraEnabled, cameraOnError: action.onError };
 
         case VonageRoomStateActionType.SetCameraMediaStream:
             if (action.mediaStream === null) {
@@ -125,8 +145,11 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             }
             return { ...state, preferredMicrophoneId: action.microphoneId };
 
+        case VonageRoomStateActionType.ClearPreferredMicrophone:
+            return { ...state, preferredMicrophoneId: null };
+
         case VonageRoomStateActionType.SetMicrophoneIntendedState:
-            return { ...state, microphoneIntendedEnabled: action.microphoneEnabled };
+            return { ...state, microphoneIntendedEnabled: action.microphoneEnabled, microphoneOnError: action.onError };
 
         case VonageRoomStateActionType.SetMicrophoneMediaStream:
             if (action.mediaStream === null) {
@@ -233,15 +256,21 @@ export function VonageRoomStateProvider({
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraIntendedState,
                     cameraEnabled: false,
+                    onError: undefined,
                 });
-                console.error("Failed to start camera preview", e);
-                toast({
-                    title: "Failed to start camera",
-                    description: <PermissionInstructions />,
-                    status: "error",
-                    isClosable: true,
-                    duration: 30000,
-                });
+
+                if (state.cameraOnError) {
+                    state.cameraOnError();
+                } else {
+                    console.error("Failed to start camera", e);
+                    toast({
+                        title: "Failed to start camera",
+                        description: <PermissionInstructions />,
+                        status: "error",
+                        isClosable: true,
+                        duration: 30000,
+                    });
+                }
                 return;
             }
         }
@@ -249,6 +278,7 @@ export function VonageRoomStateProvider({
         if (state.cameraIntendedEnabled) {
             enableCamera();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.cameraIntendedEnabled, state.preferredCameraId, toast]);
 
     useEffect(() => {
@@ -285,43 +315,20 @@ export function VonageRoomStateProvider({
                 dispatch({
                     type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                     microphoneEnabled: false,
+                    onError: undefined,
                 });
-                console.error("Failed to start microphone preview", e);
-                toast({
-                    title: "Failed to start microphone",
-                    description: (
-                        <OrderedList>
-                            <ListItem>
-                                Check that you have allowed permission to use the microphone in your browser.
-                                <UnorderedList>
-                                    <ListItem>
-                                        <Link
-                                            isExternal
-                                            href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop"
-                                        >
-                                            Instructions for Google Chrome <ExternalLinkIcon />
-                                        </Link>
-                                    </ListItem>
-                                    <ListItem>
-                                        <Link
-                                            isExternal
-                                            href="https://support.mozilla.org/en-US/kb/how-manage-your-camera-and-microphone-permissions"
-                                        >
-                                            Instructions for Firefox <ExternalLinkIcon />
-                                        </Link>
-                                    </ListItem>
-                                </UnorderedList>
-                            </ListItem>
-                            <ListItem>
-                                Please also make sure you have fully quit/exited Zoom, Skype and any other tabs that may
-                                be using your microphone.
-                            </ListItem>
-                        </OrderedList>
-                    ),
-                    status: "error",
-                    isClosable: true,
-                    duration: 30000,
-                });
+                if (state.microphoneOnError) {
+                    state.microphoneOnError();
+                } else {
+                    console.error("Failed to start microphone", e);
+                    toast({
+                        title: "Failed to start microphone",
+                        description: <PermissionInstructions />,
+                        status: "error",
+                        isClosable: true,
+                        duration: 30000,
+                    });
+                }
                 return;
             }
         }
@@ -329,6 +336,7 @@ export function VonageRoomStateProvider({
         if (state.microphoneIntendedEnabled) {
             enableMicrophone();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.microphoneIntendedEnabled, state.preferredMicrophoneId, toast]);
 
     useEffect(() => {

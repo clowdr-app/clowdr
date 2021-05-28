@@ -67,18 +67,27 @@ export function VonageRoomControlBar({
     const onClose = useCallback(
         (madeSelection: boolean, cameraId: string | null = null, microphoneId: string | null = null) => {
             if (madeSelection) {
-                if (cameraId && cameraId !== state.preferredCameraId) {
-                    dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId });
+                if (cameraId) {
+                    if (cameraId !== state.preferredCameraId) {
+                        dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId });
+                    }
+                } else {
+                    dispatch({ type: VonageRoomStateActionType.ClearPreferredCamera });
                 }
 
-                if (microphoneId && microphoneId !== state.preferredMicrophoneId) {
-                    dispatch({ type: VonageRoomStateActionType.SetPreferredMicrophone, microphoneId });
+                if (microphoneId) {
+                    if (microphoneId !== state.preferredMicrophoneId) {
+                        dispatch({ type: VonageRoomStateActionType.SetPreferredMicrophone, microphoneId });
+                    }
+                } else {
+                    dispatch({ type: VonageRoomStateActionType.ClearPreferredMicrophone });
                 }
 
                 if (startCameraOnClose && cameraId) {
                     dispatch({
                         type: VonageRoomStateActionType.SetCameraIntendedState,
                         cameraEnabled: true,
+                        onError: undefined,
                     });
                 }
 
@@ -86,6 +95,7 @@ export function VonageRoomControlBar({
                     dispatch({
                         type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                         microphoneEnabled: true,
+                        onError: undefined,
                     });
                 }
             }
@@ -164,6 +174,17 @@ export function VonageRoomControlBar({
             dispatch({
                 type: VonageRoomStateActionType.SetCameraIntendedState,
                 cameraEnabled: true,
+                onError: () => {
+                    dispatch({
+                        type: VonageRoomStateActionType.ClearPreferredCamera,
+                    });
+                    dispatch({
+                        type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                    });
+
+                    setStartCameraOnClose(true);
+                    onOpen(true, false);
+                },
             });
         }
     }, [dispatch, onOpen, state.preferredCameraId]);
@@ -172,6 +193,7 @@ export function VonageRoomControlBar({
         dispatch({
             type: VonageRoomStateActionType.SetCameraIntendedState,
             cameraEnabled: false,
+            onError: undefined,
         });
     }, [dispatch]);
 
@@ -183,6 +205,17 @@ export function VonageRoomControlBar({
             dispatch({
                 type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                 microphoneEnabled: true,
+                onError: () => {
+                    dispatch({
+                        type: VonageRoomStateActionType.ClearPreferredCamera,
+                    });
+                    dispatch({
+                        type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                    });
+
+                    setStartMicrophoneOnClose(true);
+                    onOpen(false, true);
+                },
             });
         }
     }, [dispatch, onOpen, state.preferredMicrophoneId]);
@@ -191,6 +224,7 @@ export function VonageRoomControlBar({
         dispatch({
             type: VonageRoomStateActionType.SetMicrophoneIntendedState,
             microphoneEnabled: false,
+            onError: undefined,
         });
     }, [dispatch]);
 

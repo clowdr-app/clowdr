@@ -30,10 +30,12 @@ export function useVonageComputedState(
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraIntendedState,
                     cameraEnabled: false,
+                    onError: undefined,
                 });
                 dispatch({
                     type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                     microphoneEnabled: false,
+                    onError: undefined,
                 });
             }
         },

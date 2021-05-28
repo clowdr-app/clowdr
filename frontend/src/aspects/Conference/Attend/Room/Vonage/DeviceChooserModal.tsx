@@ -10,7 +10,7 @@ import {
     ModalOverlay,
     Select,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 interface Props {
     isOpen: boolean;
@@ -54,6 +54,13 @@ export default function DeviceChooserModal({
         setSelectedMicrophone(microphoneId);
     }
 
+    const availableCams = useMemo(() => mediaDevices.filter((device) => device.kind === "videoinput" && device.label), [
+        mediaDevices,
+    ]);
+    const availableMics = useMemo(() => mediaDevices.filter((device) => device.kind === "audioinput" && device.label), [
+        mediaDevices,
+    ]);
+
     return (
         <>
             <Modal scrollBehavior="inside" onClose={doCancel} isOpen={isOpen} motionPreset="scale">
@@ -76,15 +83,17 @@ export default function DeviceChooserModal({
                                 <Select
                                     placeholder="Choose camera"
                                     value={selectedCamera ?? undefined}
-                                    onChange={(e) => (e.target.value === "" ? null : setSelectedCamera(e.target.value))}
+                                    onChange={(e) =>
+                                        e.target.value === ""
+                                            ? setSelectedCamera(null)
+                                            : setSelectedCamera(e.target.value)
+                                    }
                                 >
-                                    {mediaDevices
-                                        .filter((device) => device.kind === "videoinput")
-                                        .map((device) => (
-                                            <option key={device.deviceId} value={device.deviceId}>
-                                                {device.label}
-                                            </option>
-                                        ))}
+                                    {availableCams.map((device) => (
+                                        <option key={device.deviceId} value={device.deviceId}>
+                                            {device.label}
+                                        </option>
+                                    ))}
                                 </Select>
                             </>
                         ) : undefined}
@@ -97,16 +106,16 @@ export default function DeviceChooserModal({
                                     placeholder="Choose microphone"
                                     value={selectedMicrophone ?? undefined}
                                     onChange={(e) =>
-                                        e.target.value === "" ? null : setSelectedMicrophone(e.target.value)
+                                        e.target.value === ""
+                                            ? setSelectedMicrophone(null)
+                                            : setSelectedMicrophone(e.target.value)
                                     }
                                 >
-                                    {mediaDevices
-                                        .filter((device) => device.kind === "audioinput")
-                                        .map((device) => (
-                                            <option key={device.deviceId} value={device.deviceId}>
-                                                {device.label}
-                                            </option>
-                                        ))}
+                                    {availableMics.map((device) => (
+                                        <option key={device.deviceId} value={device.deviceId}>
+                                            {device.label}
+                                        </option>
+                                    ))}
                                 </Select>
                             </>
                         ) : undefined}

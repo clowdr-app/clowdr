@@ -284,10 +284,12 @@ function VonageRoomInner({
         dispatch({
             type: VonageRoomStateActionType.SetMicrophoneIntendedState,
             microphoneEnabled: false,
+            onError: undefined,
         });
         dispatch({
             type: VonageRoomStateActionType.SetCameraIntendedState,
             cameraEnabled: false,
+            onError: undefined,
         });
     }, [connected, dispatch, onRoomJoined, vonage]);
 

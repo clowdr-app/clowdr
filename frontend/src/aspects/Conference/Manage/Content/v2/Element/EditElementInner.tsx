@@ -127,6 +127,7 @@ export function EditElementInner(
                         const updatedUploadable = {
                             ...updated.uploadableElement,
                         };
+                        delete updatedUploadable.__typename;
                         delete updatedUploadable.conferenceId;
                         delete updatedUploadable.hasBeenUploaded;
                         updateUploadableElement({
@@ -135,7 +136,10 @@ export function EditElementInner(
                                 uploadableElement: updatedUploadable,
                             },
                             optimisticResponse: {
-                                update_content_UploadableElement_by_pk: updatedUploadable,
+                                update_content_UploadableElement_by_pk: {
+                                    ...updatedUploadable,
+                                    __typename: "content_UploadableElement",
+                                },
                             },
                         });
                     }

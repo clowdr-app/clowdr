@@ -62,6 +62,7 @@ type Context = {
     originatingDatas: OriginatingDataDescriptor[];
     people: ProgramPersonDescriptor[];
     tags: TagDescriptor[];
+    exhibitions: ExhibitionDescriptor[];
 };
 
 function findUploader(
@@ -290,6 +291,7 @@ function mergeElement(
     mergeFieldInPlace(context, changes, result, "typeName", element1, element2);
     mergeFieldInPlace(context, changes, result, "isHidden", element1, element2);
     mergeFieldInPlace(context, changes, result, "data", element1, element2);
+    mergeFieldInPlace(context, changes, result, "uploadableId", element1, element2);
 
     changes.push({
         location: "Element",
@@ -307,7 +309,8 @@ function mergeElement(
 
 function convertElement(
     context: Context,
-    element: IntermediaryElementDescriptor | ElementDescriptor
+    element: IntermediaryElementDescriptor | ElementDescriptor,
+    uploadableElements: UploadableElementDescriptor[]
 ): ElementDescriptor {
     const result = {
         id: element.id ?? uuidv4(),
@@ -326,13 +329,20 @@ function convertElement(
         result.originatingDataId = context.originatingDatas[origDataIdx].id;
     }
 
+    if (!result.uploadableId) {
+        result.uploadableId = uploadableElements.find(
+            (x) => x.typeName === result.typeName && x.name === result.name
+        )?.id;
+    }
+
     return result;
 }
 
 function mergeElements(
     context: Context,
     elements1: ElementDescriptor[],
-    elements2: (IntermediaryElementDescriptor | ElementDescriptor)[]
+    elements2: (IntermediaryElementDescriptor | ElementDescriptor)[],
+    uploadableElements: UploadableElementDescriptor[]
 ): {
     changes: ChangeSummary[];
     result: ElementDescriptor[];
@@ -343,7 +353,7 @@ function mergeElements(
         elements1,
         elements2,
         findExistingNamedItem("Element"),
-        convertElement,
+        (a, b) => convertElement(a, b, uploadableElements),
         mergeElement
     );
 }
@@ -356,6 +366,22 @@ function convertTagName(context: Context, tagName: string): string {
         return context.tags[r].id;
     } else {
         throw new Error(`Tag ${tagName} not found!`);
+    }
+}
+
+function convertExhibitionName(context: Context, exhibitionName: string, itemId: string): ItemExhibitionDescriptor {
+    const r = findMatch(context, context.exhibitions, exhibitionName, (ctx, element1, element2) =>
+        isMatch_String_Exact()(ctx, element1.name, element2)
+    );
+    if (r !== undefined) {
+        return {
+            isNew: true,
+            id: uuidv4(),
+            itemId,
+            exhibitionId: context.exhibitions[r].id,
+        };
+    } else {
+        throw new Error(`Exhibition ${exhibitionName} not found!`);
     }
 }
 
@@ -558,15 +584,15 @@ function convertItem(context: Context, item: IntermediaryItemDescriptor | ItemDe
         result.originatingDataId = context.originatingDatas[origDataIdx].id;
     }
 
-    if (item.elements) {
-        for (const x of item.elements) {
-            result.elements.push(convertElement(context, x));
-        }
-    }
-
     if (item.uploadableElements) {
         for (const x of item.uploadableElements) {
             result.uploadableElements.push(convertUploadableElement(context, x));
+        }
+    }
+
+    if (item.elements) {
+        for (const x of item.elements) {
+            result.elements.push(convertElement(context, x, result.uploadableElements));
         }
     }
 
@@ -592,6 +618,12 @@ function convertItem(context: Context, item: IntermediaryItemDescriptor | ItemDe
         }
     }
 
+    if ("exhibitionNames" in item && item.exhibitionNames) {
+        for (const x of item.exhibitionNames) {
+            result.exhibitions.push(convertExhibitionName(context, x, result.id));
+        }
+    }
+
     return result;
 }
 
@@ -612,8 +644,10 @@ function mergeItem(
     mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "title", item1, item2);
     mergeFieldInPlace(context, changes, result, "typeName", item1, item2);
-    mergeFieldInPlace(context, changes, result, "elements", item1, item2, true, mergeElements);
     mergeFieldInPlace(context, changes, result, "uploadableElements", item1, item2, true, mergeUploadableElements);
+    mergeFieldInPlace(context, changes, result, "elements", item1, item2, true, (a, b, c) =>
+        mergeElements(a, b, c, result.uploadableElements)
+    );
     mergeFieldInPlace(context, changes, result, "tagIds", item1, item2, true, (_ctx, items1, items2, _prefer) => {
         const tagIdsMerged = new Set(items1);
         items2.forEach((id) => tagIdsMerged.add(id));

@@ -83,7 +83,7 @@ export type ItemExhibitionDescriptor = {
     isNew?: boolean;
 
     id: string;
-    conferenceId: string;
+    conferenceId?: string;
     itemId: string;
     exhibitionId: string;
     priority?: number | null;

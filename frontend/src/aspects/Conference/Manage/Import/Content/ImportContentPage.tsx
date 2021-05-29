@@ -20,7 +20,7 @@ const defaultReviewQuery = "";
 const presetJSONata_UnknownQuery = `
 {
     "originatingDatas": [],
-    "groups": [],
+    "items": [],
     "exhibitions": [],
     "tags": [],
     "people": []
@@ -38,12 +38,12 @@ const presetJSONata_CSVQuery_ProgramPeople = `
                 "sourceId": $ContentId,
                 "data": [$items.{
                     "sourceId": $ContentId,
-                    "originName": "Content People.csv",
+                    "originName": "People.csv",
                     "data": $
                 }]
             }
         )],
-        "groups": [$distinctIds.$@$ContentId.(
+        "items": [$distinctIds.$@$ContentId.(
             $people := $all[$."Content Id" = $ContentId];
             {
                 "originatingDataSourceId": $ContentId,
@@ -77,12 +77,12 @@ const presetJSONata_CSVQuery_Content = `
                 "data": $
             }]
         }],
-        "groups": [$all.{
+        "items": [$all.{
             "originatingDataSourceId": $."Content Id",
             "title": Title,
             "shortTitle": $."Short title",
             "typeName": $uppercase(Type),
-            "items": [
+            "elements": [
                 {
                     "typeName": "ABSTRACT",
                     "isHidden": false,
@@ -93,44 +93,44 @@ const presetJSONata_CSVQuery_Content = `
                         "data": {
                             "type": "ABSTRACT",
                             "baseType": "text",
-                            "text": Abstract
+                            "text": $."Abstract?"
                         }
                     }]
                 }
             ] 
-            ~> $append($."Link to webpage - Text" != "" ? [{
+            ~> $append($."Link to webpage - name?" != "" ? [{
                 "typeName": "PAPER_LINK",
                 "isHidden": false,
-                "name": "Link to webpage",
+                "name": $."Link to webpage - name?",
                 "data": [{
                     "createdAt": $millis(),
                     "createdBy": "importer",
                     "data": {
                         "type": "PAPER_LINK",
                         "baseType": "link",
-                        "text": $."Link to webpage - Text",
-                        "url": $."Link to webpage - URL"
+                        "text": $."Link to webpage - name?",
+                        "url": $."Link to webpage - url?"
                     }
                 }]
             }] : [])
-            ~> $append($."Link to PDF - Text" != "" ? [{
+            ~> $append($."Link to PDF - name?" != "" ? [{
                 "typeName": "PAPER_LINK",
                 "isHidden": false,
-                "name": "Link to PDF",
+                "name": $."Link to PDF - name?",
                 "data": [{
                     "createdAt": $millis(),
                     "createdBy": "importer",
                     "data": {
                         "type": "PAPER_LINK",
                         "baseType": "link",
-                        "text": $."Link to PDF - Text",
-                        "url": $."Link to PDF - URL"
+                        "text": $."Link to PDF - name?",
+                        "url": $."Link to PDF - URL?"
                     }
                 }]
             }] : [])
-            ~> $append($."Zoom URL" != "" ? [{
+            ~> $append($."Zoom URL?" != "" ? [{
                 "typeName": "ZOOM",
-                "isHidden": false,
+                "isHidden": true,
                 "name": "Zoom",
                 "data": [{
                     "createdAt": $millis(),
@@ -138,33 +138,39 @@ const presetJSONata_CSVQuery_Content = `
                     "data": {
                         "type": "ZOOM",
                         "baseType": "url",
-                        "url": $."Zoom URL"
+                        "url": $."Zoom URL?"
                     }
                 }]
             }] : []),
-            "uploadableElements": ($."Uploadable video for pre-publication" != "" ? [{
-                "typeName": "VIDEO_PREPUBLISH",
-                "name": $."Uploadable video for pre-publication",
-                "uploadsRemaining": 3
-            }] : [])
-            ~> $append($."Uploadable video for broadcast" != "" ? [{
+            "uploadableElements": ($."Video 1 (Name)" != "" ? [{
                 "typeName": "VIDEO_BROADCAST",
-                "name": $."Uploadable video for broadcast",
+                "name": $."Video 1 (Name)",
                 "uploadsRemaining": 3
             }] : [])
-            ~> $append($."Uploadable slides" != "" ? [{
-                "typeName": "PAPER_FILE",
-                "name": $."Uploadable slides",
+            ~> $append($."Video 2 (Name)" != "" ? [{
+                "typeName": "VIDEO_BROADCAST",
+                "name": $."Video 2 (Name)",
                 "uploadsRemaining": 3
             }] : [])
-            ~> $append($."Uploadable PDF" != "" ? [{
+            ~> $append($."Slides?" != "" ? [{
                 "typeName": "PAPER_FILE",
-                "name": $."Uploadable PDF",
+                "name": $."Slides?",
+                "uploadsRemaining": 3
+            }] : [])
+            ~> $append($."Uploadable PDF name?" != "" ? [{
+                "typeName": "PAPER_FILE",
+                "name": $."Uploadable PDF name?",
+                "uploadsRemaining": 3
+            }] : [])
+            ~> $append($."Is abstract uploadable" = "Yes" ? [{
+                "typeName": "ABSTRACT",
+                "name": "Abstract",
                 "uploadsRemaining": 3
             }] : []),
-            "tagNames": ($."Tag 1" != "" ? [$."Tag 1"] : [])
-            ~> $append($."Tag 2" != "" ? [$."Tag 2"] : [])
-            ~> $append($."Tag 3" != "" ? [$."Tag 3"] : [])
+            "tagNames": ($."Tag 1?" != "" ? [$."Tag 1?"] : [])
+            ~> $append($."Tag 2?" != "" ? [$."Tag 2?"] : [])
+            ~> $append($."Tag 3?" != "" ? [$."Tag 3?"] : []),
+            "exhibitionNames": ($."Exhibition?" != "" ? [$."Exhibition?"] : [])
         }],
         "exhibitions": [],
         "tags": [],
@@ -176,12 +182,27 @@ const presetJSONata_CSVQuery_Content = `
 const presetJSONata_CSVQuery_Tags = `
 {
     "originatingDatas": [],
-    "groups": [],
+    "items": [],
     "exhibitions": [],
     "tags": [$.{
         "name": $.Name,
+        "priority": $.Priority,
         "colour": $.Colour
     }],
+    "people": []
+}
+`;
+
+const presetJSONata_CSVQuery_Exhibitions = `
+{
+    "originatingDatas": [],
+    "items": [],
+    "exhibitions": [$.{
+        "name": $.Name,
+        "priority": $.Priority,
+        "colour": $.Colour
+    }],
+    "tags": [],
     "people": []
 }
 `;
@@ -200,7 +221,7 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
             }]
         }
     ],
-    "groups": $.{
+    "items": $.{
         "originatingDataSourceId": $string(pid),
         "title": title,
         "uploadableElements": [
@@ -272,6 +293,8 @@ export default function ImportContentPage(): JSX.Element {
                             return presetJSONata_CSVQuery_Content;
                         } else if (name.endsWith("Tags.csv")) {
                             return presetJSONata_CSVQuery_Tags;
+                        } else if (name.endsWith("Exhibitions.csv")) {
+                            return presetJSONata_CSVQuery_Exhibitions;
                         }
                         return presetJSONata_UnknownQuery;
                     }}

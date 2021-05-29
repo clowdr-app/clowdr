@@ -171,6 +171,7 @@ export interface IntermediaryItemDescriptor {
     elements?: Array<IntermediaryElementDescriptor>;
     uploadableElements?: Array<IntermediaryUploadableElementDescriptor>;
     tagNames?: Array<string>;
+    exhibitionNames?: Array<string>;
     people?: Array<IntermediaryItemPersonDescriptor>;
     exhibitions?: Array<IntermediaryItemExhibitionDescriptor>;
 }

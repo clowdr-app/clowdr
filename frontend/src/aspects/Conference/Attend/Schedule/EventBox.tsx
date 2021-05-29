@@ -1,8 +1,10 @@
 import {
     Box,
     Button,
+    chakra,
     Divider,
     Flex,
+    HStack,
     Link,
     Modal,
     ModalBody,
@@ -251,7 +253,11 @@ export default function EventBox({
     const topPc = (100 * offsetSeconds) / timelineParams.fullTimeSpanSeconds;
     const heightPc = (100 * durationSeconds) / timelineParams.fullTimeSpanSeconds;
 
-    const eventTitle = event.item ? (sortedEvents.length > 1 ? event.item.title : `${event.item.title}`) : event.name;
+    const eventTitle = event.item
+        ? sortedEvents.length > 1
+            ? event.item.title
+            : `${event.name}: ${event.item.title}`
+        : event.name;
     const buttonContents = useMemo(() => {
         return (
             <>
@@ -264,21 +270,34 @@ export default function EventBox({
                     justifyContent="flex-start"
                     alignItems="flex-start"
                 >
-                    <Text fontSize="sm" fontWeight="bold">
-                        {R.intersperse(
-                            <>&nbsp;/&nbsp;</>,
-                            sortedEvents.map((ev, idx) => (
-                                <EventModeIcon
-                                    key={idx}
-                                    mode={ev.intendedRoomModeName}
-                                    durationSeconds={ev.durationSeconds}
-                                    fontSize="inherit"
-                                />
-                            ))
+                    <HStack alignItems="flex-start" justifyContent="flex-start">
+                        <Text fontSize="sm" fontWeight="bold">
+                            {R.intersperse(
+                                <>&nbsp;/&nbsp;</>,
+                                sortedEvents.map((ev, idx) => (
+                                    <EventModeIcon
+                                        key={idx}
+                                        mode={ev.intendedRoomModeName}
+                                        durationSeconds={ev.durationSeconds}
+                                        fontSize="inherit"
+                                    />
+                                ))
+                            )}
+                        </Text>
+                        {event.item ? (
+                            <Text fontSize="sm" fontWeight="bold" lineHeight="130%">
+                                <Twemoji className="twemoji" text={event.item.title} />
+                                <br />
+                                <chakra.span fontStyle="italic" fontSize="xs">
+                                    <Twemoji className="twemoji" text={event.name} />
+                                </chakra.span>
+                            </Text>
+                        ) : (
+                            <Text fontSize="sm" fontWeight="bold" pt="0.6ex">
+                                <Twemoji className="twemoji" text={event.name} />
+                            </Text>
                         )}
-                        &nbsp;&nbsp;
-                        <Twemoji className="twemoji" text={eventTitle} />
-                    </Text>
+                    </HStack>
                     <Text fontSize="sm">
                         {new Date(eventStartMs).toLocaleTimeString(undefined, {
                             hour: "2-digit",

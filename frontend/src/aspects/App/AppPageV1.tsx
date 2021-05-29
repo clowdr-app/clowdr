@@ -148,7 +148,7 @@ export default function AppPageV1(): JSX.Element {
                 flex={isSchedulePage ? "0 1 100%" : undefined}
                 overflow={isSchedulePage ? "hidden" : undefined}
                 role="region"
-                aria-labelledBy="page-heading"
+                aria-labelledby="page-heading"
             >
                 {center}
                 {!isSchedulePage ? (

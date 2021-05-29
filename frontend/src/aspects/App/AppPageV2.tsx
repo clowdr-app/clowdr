@@ -106,7 +106,7 @@ export default function AppPageV2(): JSX.Element {
                 mb="40px"
                 overflow="hidden"
                 role="region"
-                aria-labelledBy="page-heading"
+                aria-labelledby="page-heading"
             >
                 {center}
             </VStack>

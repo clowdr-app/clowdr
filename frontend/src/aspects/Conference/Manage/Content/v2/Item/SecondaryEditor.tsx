@@ -56,7 +56,7 @@ export function SecondaryEditor({
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="lg">
                 <DrawerOverlay />
                 <DrawerContent>
-                    <DrawerHeader pb={0} pr="3em">
+                    <DrawerHeader pb={1} pr="3em">
                         <Text fontSize="lg" overflow="wrap">
                             Edit item: {itemTitle}
                         </Text>

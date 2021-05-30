@@ -1,13 +1,10 @@
-import { gql } from "@apollo/client";
 import {
-    Badge,
     Box,
     Button,
     FormControl,
     FormErrorMessage,
     FormHelperText,
     FormLabel,
-    Heading,
     Input,
     Modal,
     ModalBody,
@@ -16,51 +13,19 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Spinner,
-    Text,
     useToast,
 } from "@chakra-ui/react";
 import type { CombineVideosJobDataBlob, InputElement } from "@clowdr-app/shared-types/build/combineVideosJob";
 import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import Select from "react-select";
 import {
     Content_ElementType_Enum,
     useCombineVideosModal_CreateCombineVideosJobMutation,
-    useCombineVideosModal_GetCombineVideosJobQuery,
-    Video_JobStatus_Enum,
 } from "../../../../generated/graphql";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useConference } from "../../useConference";
 import type { ItemDescriptor } from "./Types";
-
-gql`
-    mutation CombineVideosModal_CreateCombineVideosJob(
-        $conferenceId: uuid!
-        $createdByRegistrantId: uuid!
-        $outputName: String!
-        $data: jsonb!
-    ) {
-        insert_job_queues_CombineVideosJob_one(
-            object: {
-                conferenceId: $conferenceId
-                createdByRegistrantId: $createdByRegistrantId
-                outputName: $outputName
-                data: $data
-            }
-        ) {
-            id
-        }
-    }
-
-    query CombineVideosModal_GetCombineVideosJob($id: uuid!) {
-        job_queues_CombineVideosJob_by_pk(id: $id) {
-            id
-            message
-            jobStatusName
-        }
-    }
-`;
 
 export function CombineVideosModal({
     isOpen,
@@ -96,21 +61,21 @@ export function CombineVideosModal({
     const conference = useConference();
     const user = useCurrentUser();
 
-    const [currentJobId, setCurrentJobId] = useState<string | null>(null);
-    const { data, startPolling, stopPolling } = useCombineVideosModal_GetCombineVideosJobQuery({
-        variables: {
-            id: currentJobId,
-        },
-        skip: !currentJobId,
-    });
-    useEffect(() => {
-        if (currentJobId) {
-            startPolling(10000);
-        } else {
-            stopPolling();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentJobId]);
+    // const [currentJobId, setCurrentJobId] = useState<string | null>(null);
+    // const { data, startPolling, stopPolling } = useCombineVideosModal_GetCombineVideosJobQuery({
+    //     variables: {
+    //         id: currentJobId,
+    //     },
+    //     skip: !currentJobId,
+    // });
+    // useEffect(() => {
+    //     if (currentJobId) {
+    //         startPolling(10000);
+    //     } else {
+    //         stopPolling();
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [currentJobId]);
 
     const [mutate] = useCombineVideosModal_CreateCombineVideosJobMutation();
 
@@ -142,7 +107,7 @@ export function CombineVideosModal({
                             throw new Error("Failed to create CombineVideosJob");
                         }
 
-                        setCurrentJobId(result.data.insert_job_queues_CombineVideosJob_one.id);
+                        // setCurrentJobId(result.data.insert_job_queues_CombineVideosJob_one.id);
                     } catch (e) {
                         console.error("Failed to submit CombineVideosJob", e);
                         toast({
@@ -254,7 +219,7 @@ export function CombineVideosModal({
                                             </FormControl>
                                         )}
                                     </FieldArray>
-                                    {data ? (
+                                    {/* {data ? (
                                         <Box
                                             borderRadius="md"
                                             border="1px solid white"
@@ -277,7 +242,7 @@ export function CombineVideosModal({
                                                 <Text>Message: {data?.job_queues_CombineVideosJob_by_pk?.message}</Text>
                                             ) : undefined}
                                         </Box>
-                                    ) : undefined}
+                                    ) : undefined} */}
                                 </Box>
                             </ModalBody>
                             <ModalFooter>

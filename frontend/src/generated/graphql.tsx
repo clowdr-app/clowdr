@@ -37962,23 +37962,6 @@ export type PreshowChecklistQueryVariables = Exact<{
 
 export type PreshowChecklistQuery = { readonly __typename?: 'query_root', readonly requiredProgramPeopleNotLinkedToRegistrant: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly requiredProgramPeopleNotRegistered: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly submissionsNotReceived: ReadonlyArray<{ readonly __typename?: 'content_UploadableElement', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }>, readonly livestreamEventsWithoutRegisteredPresenter: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly livestreamEventsWithoutRegisteredChair: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithoutVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly zoomEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly allLiveEventsWithPeople: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeopleWithRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }>, readonly itemPeopleWithoutRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly personId: any }> }>, readonly emptyExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly emptyTags: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }>, readonly exhibitionEventsWithoutExhibition: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly exhibitionEventsWithoutDiscussionRooms: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> }>, readonly liveEventsWithoutContent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly overlappingEvents: ReadonlyArray<{ readonly __typename?: 'schedule_OverlappingEvents', readonly eventX?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly eventY?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any> }> }>, readonly shortEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly roomsWithStreams: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly livestreamDuration?: Maybe<{ readonly __typename?: 'room_LivestreamDurations', readonly sum?: Maybe<any> }> }>, readonly eventsWithNegativeDuration: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
 
-export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-  createdByRegistrantId: Scalars['uuid'];
-  outputName: Scalars['String'];
-  data: Scalars['jsonb'];
-}>;
-
-
-export type CombineVideosModal_CreateCombineVideosJobMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_CombineVideosJob_one?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any }> };
-
-export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
-  id: Scalars['uuid'];
-}>;
-
-
-export type CombineVideosModal_GetCombineVideosJobQuery = { readonly __typename?: 'query_root', readonly job_queues_CombineVideosJob_by_pk?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any, readonly message?: Maybe<string>, readonly jobStatusName: Video_JobStatus_Enum }> };
-
 export type Item_CreateRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   itemId: Scalars['uuid'];
@@ -38300,6 +38283,31 @@ export type UpdateExhibitionMutation = { readonly __typename?: 'mutation_root', 
     { readonly __typename?: 'collection_Exhibition' }
     & ExhibitionInfoFragment
   )> };
+
+export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  createdByRegistrantId: Scalars['uuid'];
+  outputName: Scalars['String'];
+  data: Scalars['jsonb'];
+}>;
+
+
+export type CombineVideosModal_CreateCombineVideosJobMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_CombineVideosJob_one?: Maybe<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any }> };
+
+export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CombineVideosModal_GetCombineVideosJobQuery = { readonly __typename?: 'query_root', readonly job_queues_CombineVideosJob: ReadonlyArray<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any, readonly message?: Maybe<string>, readonly jobStatusName: Video_JobStatus_Enum, readonly data: any }> };
+
+export type CombineVideosModal_GetElementsQueryVariables = Exact<{
+  itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type CombineVideosModal_GetElementsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly createdAt: any, readonly itemId: any, readonly data: any, readonly name: string }> };
 
 export type SEoUm_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
 
@@ -44616,81 +44624,6 @@ export function usePreshowChecklistLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type PreshowChecklistQueryHookResult = ReturnType<typeof usePreshowChecklistQuery>;
 export type PreshowChecklistLazyQueryHookResult = ReturnType<typeof usePreshowChecklistLazyQuery>;
 export type PreshowChecklistQueryResult = Apollo.QueryResult<PreshowChecklistQuery, PreshowChecklistQueryVariables>;
-export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
-    mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByRegistrantId: uuid!, $outputName: String!, $data: jsonb!) {
-  insert_job_queues_CombineVideosJob_one(
-    object: {conferenceId: $conferenceId, createdByRegistrantId: $createdByRegistrantId, outputName: $outputName, data: $data}
-  ) {
-    id
-  }
-}
-    `;
-export type CombineVideosModal_CreateCombineVideosJobMutationFn = Apollo.MutationFunction<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
-
-/**
- * __useCombineVideosModal_CreateCombineVideosJobMutation__
- *
- * To run a mutation, you first call `useCombineVideosModal_CreateCombineVideosJobMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCombineVideosModal_CreateCombineVideosJobMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [combineVideosModalCreateCombineVideosJobMutation, { data, loading, error }] = useCombineVideosModal_CreateCombineVideosJobMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      createdByRegistrantId: // value for 'createdByRegistrantId'
- *      outputName: // value for 'outputName'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useCombineVideosModal_CreateCombineVideosJobMutation(baseOptions?: Apollo.MutationHookOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>(CombineVideosModal_CreateCombineVideosJobDocument, options);
-      }
-export type CombineVideosModal_CreateCombineVideosJobMutationHookResult = ReturnType<typeof useCombineVideosModal_CreateCombineVideosJobMutation>;
-export type CombineVideosModal_CreateCombineVideosJobMutationResult = Apollo.MutationResult<CombineVideosModal_CreateCombineVideosJobMutation>;
-export type CombineVideosModal_CreateCombineVideosJobMutationOptions = Apollo.BaseMutationOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
-export const CombineVideosModal_GetCombineVideosJobDocument = gql`
-    query CombineVideosModal_GetCombineVideosJob($id: uuid!) {
-  job_queues_CombineVideosJob_by_pk(id: $id) {
-    id
-    message
-    jobStatusName
-  }
-}
-    `;
-
-/**
- * __useCombineVideosModal_GetCombineVideosJobQuery__
- *
- * To run a query within a React component, call `useCombineVideosModal_GetCombineVideosJobQuery` and pass it any options that fit your needs.
- * When your component renders, `useCombineVideosModal_GetCombineVideosJobQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCombineVideosModal_GetCombineVideosJobQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useCombineVideosModal_GetCombineVideosJobQuery(baseOptions: Apollo.QueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, options);
-      }
-export function useCombineVideosModal_GetCombineVideosJobLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, options);
-        }
-export type CombineVideosModal_GetCombineVideosJobQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobQuery>;
-export type CombineVideosModal_GetCombineVideosJobLazyQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobLazyQuery>;
-export type CombineVideosModal_GetCombineVideosJobQueryResult = Apollo.QueryResult<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>;
 export const Item_CreateRoomDocument = gql`
     mutation Item_CreateRoom($conferenceId: uuid!, $itemId: uuid!) {
   createItemRoom(conferenceId: $conferenceId, itemId: $itemId) {
@@ -45606,6 +45539,128 @@ export function useUpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateExhibitionMutationHookResult = ReturnType<typeof useUpdateExhibitionMutation>;
 export type UpdateExhibitionMutationResult = Apollo.MutationResult<UpdateExhibitionMutation>;
 export type UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>;
+export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
+    mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByRegistrantId: uuid!, $outputName: String!, $data: jsonb!) {
+  insert_job_queues_CombineVideosJob_one(
+    object: {conferenceId: $conferenceId, createdByRegistrantId: $createdByRegistrantId, outputName: $outputName, data: $data}
+  ) {
+    id
+  }
+}
+    `;
+export type CombineVideosModal_CreateCombineVideosJobMutationFn = Apollo.MutationFunction<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
+
+/**
+ * __useCombineVideosModal_CreateCombineVideosJobMutation__
+ *
+ * To run a mutation, you first call `useCombineVideosModal_CreateCombineVideosJobMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCombineVideosModal_CreateCombineVideosJobMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [combineVideosModalCreateCombineVideosJobMutation, { data, loading, error }] = useCombineVideosModal_CreateCombineVideosJobMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      createdByRegistrantId: // value for 'createdByRegistrantId'
+ *      outputName: // value for 'outputName'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCombineVideosModal_CreateCombineVideosJobMutation(baseOptions?: Apollo.MutationHookOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>(CombineVideosModal_CreateCombineVideosJobDocument, options);
+      }
+export type CombineVideosModal_CreateCombineVideosJobMutationHookResult = ReturnType<typeof useCombineVideosModal_CreateCombineVideosJobMutation>;
+export type CombineVideosModal_CreateCombineVideosJobMutationResult = Apollo.MutationResult<CombineVideosModal_CreateCombineVideosJobMutation>;
+export type CombineVideosModal_CreateCombineVideosJobMutationOptions = Apollo.BaseMutationOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
+export const CombineVideosModal_GetCombineVideosJobDocument = gql`
+    query CombineVideosModal_GetCombineVideosJob($conferenceId: uuid!) {
+  job_queues_CombineVideosJob(
+    where: {conferenceId: {_eq: $conferenceId}, jobStatusName: {_in: [NEW, IN_PROGRESS]}}
+  ) {
+    id
+    message
+    jobStatusName
+    data
+  }
+}
+    `;
+
+/**
+ * __useCombineVideosModal_GetCombineVideosJobQuery__
+ *
+ * To run a query within a React component, call `useCombineVideosModal_GetCombineVideosJobQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCombineVideosModal_GetCombineVideosJobQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCombineVideosModal_GetCombineVideosJobQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCombineVideosModal_GetCombineVideosJobQuery(baseOptions: Apollo.QueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, options);
+      }
+export function useCombineVideosModal_GetCombineVideosJobLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, options);
+        }
+export type CombineVideosModal_GetCombineVideosJobQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobQuery>;
+export type CombineVideosModal_GetCombineVideosJobLazyQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobLazyQuery>;
+export type CombineVideosModal_GetCombineVideosJobQueryResult = Apollo.QueryResult<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>;
+export const CombineVideosModal_GetElementsDocument = gql`
+    query CombineVideosModal_GetElements($itemIds: [uuid!]!, $elementIds: [uuid!]!) {
+  content_Item(where: {id: {_in: $itemIds}}) {
+    id
+    title
+  }
+  content_Element(where: {id: {_in: $elementIds}}) {
+    id
+    createdAt
+    itemId
+    data
+    name
+  }
+}
+    `;
+
+/**
+ * __useCombineVideosModal_GetElementsQuery__
+ *
+ * To run a query within a React component, call `useCombineVideosModal_GetElementsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCombineVideosModal_GetElementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCombineVideosModal_GetElementsQuery({
+ *   variables: {
+ *      itemIds: // value for 'itemIds'
+ *      elementIds: // value for 'elementIds'
+ *   },
+ * });
+ */
+export function useCombineVideosModal_GetElementsQuery(baseOptions: Apollo.QueryHookOptions<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>(CombineVideosModal_GetElementsDocument, options);
+      }
+export function useCombineVideosModal_GetElementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>(CombineVideosModal_GetElementsDocument, options);
+        }
+export type CombineVideosModal_GetElementsQueryHookResult = ReturnType<typeof useCombineVideosModal_GetElementsQuery>;
+export type CombineVideosModal_GetElementsLazyQueryHookResult = ReturnType<typeof useCombineVideosModal_GetElementsLazyQuery>;
+export type CombineVideosModal_GetElementsQueryResult = Apollo.QueryResult<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>;
 export const SEoUm_InfosDocument = gql`
     query SEoUM_Infos($itemIds: [uuid!]!) {
   content_Element(

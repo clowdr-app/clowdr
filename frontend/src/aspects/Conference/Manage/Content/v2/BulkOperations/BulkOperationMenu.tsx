@@ -14,12 +14,17 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useState } from "react";
-import type { ManageContent_ItemFragment, ManageContent_TagFragment } from "../../../../../../generated/graphql";
+import {
+    Content_ElementType_Enum,
+    ManageContent_ItemFragment,
+    ManageContent_TagFragment,
+} from "../../../../../../generated/graphql";
 import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
 import { AddElementsModal } from "./AddElementsModal";
 import { AddRemoveExhibitionsModal } from "./AddRemoveExhibitionsModal";
 import { AddRemoveTagsModal } from "./AddRemoveTagsModal";
 import { AddUploadablesModal } from "./AddUploadablesModal";
+import { CombineVideosModal } from "./CombineVideosModal";
 import { LinkUnlinkPeopleModal } from "./LinkUnlinkPeopleModal";
 import { RemoveElementsOrUploadablesModal } from "./RemoveElementsOrUploadablesModal";
 import { SelectElementsOrUploadablesModal } from "./SelectElementsOrUploadablesModal";
@@ -44,17 +49,38 @@ export function BulkOperationMenu({
         operation: string;
         items: readonly ManageContent_ItemFragment[];
         step: string;
-        elementIds: string[];
-        uploadableIds: {
-            uploadableId: string;
-            elementId?: string;
+        elementsByItem: {
+            itemId: string;
+            elementIds: string[];
+            uploadables: {
+                uploadableId: string;
+                elementId?: string;
+            }[];
         }[];
+        restrictToTypes: Content_ElementType_Enum[] | null;
     } | null>(null);
     const operations: {
         label: string;
         value: string;
         operation: (items: readonly ManageContent_ItemFragment[]) => void;
     }[] = [
+        {
+            label: "Combine videos",
+            value: "COMBINE_VIDEOS",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "COMBINE_VIDEOS",
+                    items: items,
+                    step: "SELECT",
+                    elementsByItem: [],
+                    restrictToTypes: [
+                        Content_ElementType_Enum.VideoFile,
+                        Content_ElementType_Enum.VideoBroadcast,
+                        Content_ElementType_Enum.VideoPrepublish,
+                    ],
+                });
+            },
+        },
         {
             label: "Manage security",
             value: "SECURITY",
@@ -63,8 +89,8 @@ export function BulkOperationMenu({
                     operation: "SECURITY",
                     items,
                     step: "SELECT",
-                    elementIds: [],
-                    uploadableIds: [],
+                    elementsByItem: [],
+                    restrictToTypes: null,
                 });
             },
         },
@@ -76,8 +102,8 @@ export function BulkOperationMenu({
         //             operation: "COPY_UPLOADERS",
         //             items: items,
         //             step: "SELECT",
-        //             elementIds: [],
-        //             uploadableIds: [],
+        //             elementsByItem: [],
+        //             restrictToTypes: null,
         //         });
         //     },
         // },
@@ -89,8 +115,8 @@ export function BulkOperationMenu({
         //             operation: "TAGS",
         //             items: items,
         //             step: "ACT",
-        //             elementIds: [],
-        //             uploadableIds: [],
+        //             elementsByItem: [],
+        //             restrictToTypes: null,
         //         });
         //     },
         // },
@@ -102,8 +128,8 @@ export function BulkOperationMenu({
         //             operation: "EXHIBITIONS",
         //             items: items,
         //             step: "ACT",
-        //             elementIds: [],
-        //             uploadableIds: [],
+        //             elementsByItem: [],
+        //             restrictToTypes: null,
         //         });
         //     },
         // },
@@ -115,8 +141,8 @@ export function BulkOperationMenu({
         //             operation: "PEOPLE",
         //             items: items,
         //             step: "ACT",
-        //             elementIds: [],
-        //             uploadableIds: [],
+        //             elementsByItem: [],
+        //             restrictToTypes: null,
         //         });
         //     },
         // },
@@ -128,8 +154,8 @@ export function BulkOperationMenu({
         //             operation: "ELEMENTS_ADD",
         //             items: items,
         //             step: "ACT",
-        //             elementIds: [],
-        //             uploadableIds: [],
+        //             elementsByItem: [],
+        //             restrictToTypes: null,
         //         });
         //     },
         // },
@@ -141,8 +167,8 @@ export function BulkOperationMenu({
         //             operation: "UPLOADABLES_ADD",
         //             items: items,
         //             step: "ACT",
-        //             elementIds: [],
-        //             uploadableIds: [],
+        //             elementsByItem: [],
+        //             restrictToTypes: null,
         //         });
         //     },
         // },
@@ -154,8 +180,8 @@ export function BulkOperationMenu({
         //             operation: "ELEMENTS_REMOVE",
         //             items: items,
         //             step: "SELECT",
-        //             elementIds: [],
-        //             uploadableIds: [],
+        //             elementsByItem: [],
+        //             restrictToTypes: null,
         //         });
         //     },
         // },
@@ -302,6 +328,7 @@ export function BulkOperationMenu({
             <SelectElementsOrUploadablesModal
                 isOpen={
                     (activeOperation?.operation === "SECURITY" ||
+                        activeOperation?.operation === "COMBINE_VIDEOS" ||
                         activeOperation?.operation === "COPY_UPLOADERS" ||
                         activeOperation?.operation === "ELEMENTS_REMOVE") &&
                     activeOperation?.step === "SELECT"
@@ -310,27 +337,43 @@ export function BulkOperationMenu({
                     setActiveOperation(null);
                 }}
                 items={activeOperation?.items ?? []}
-                onSelect={(elementIds, uploadableIds) => {
+                onSelect={(elementsByItem) => {
                     if (activeOperation?.operation === "SECURITY" || activeOperation?.operation === "ELEMENTS_REMOVE") {
                         setActiveOperation({
-                            elementIds,
+                            elementsByItem,
                             items: activeOperation.items,
                             operation: activeOperation.operation,
                             step: "ACT",
-                            uploadableIds,
+                            restrictToTypes: activeOperation.restrictToTypes,
+                        });
+                    } else if (activeOperation?.operation === "COMBINE_VIDEOS") {
+                        setActiveOperation({
+                            elementsByItem,
+                            items: [],
+                            operation: activeOperation.operation,
+                            step: "ACT",
+                            restrictToTypes: activeOperation.restrictToTypes,
                         });
                     } else if (activeOperation?.operation === "COPY_UPLOADERS") {
                         // TODO: Copy uploaders
                     }
                 }}
+                restrictToTypes={activeOperation?.restrictToTypes ?? null}
             />
             <EditElementsPermissionGrantsModal
                 isOpen={activeOperation?.operation === "SECURITY" && activeOperation?.step === "ACT"}
                 onClose={() => {
                     setActiveOperation(null);
                 }}
-                elementIds={activeOperation?.elementIds ?? []}
-                uploadableIds={activeOperation?.uploadableIds ?? []}
+                elementIds={R.flatten(activeOperation?.elementsByItem.map((x) => x.elementIds) ?? [])}
+                uploadableIds={R.flatten(activeOperation?.elementsByItem.map((x) => x.uploadables) ?? [])}
+            />
+            <CombineVideosModal
+                isOpen={activeOperation?.operation === "COMBINE_VIDEOS" && activeOperation?.step === "ACT"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                elementsByItem={activeOperation?.elementsByItem ?? []}
             />
         </>
     );

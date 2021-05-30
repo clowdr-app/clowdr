@@ -9,6 +9,7 @@ import {
     FormLabel,
     Heading,
     HStack,
+    Input,
     ListItem,
     Modal,
     ModalBody,
@@ -76,17 +77,22 @@ export function SelectElementsOrUploadablesModal({
     onClose,
     items,
     onSelect,
+    restrictToTypes,
 }: {
     isOpen: boolean;
     onClose: () => void;
     items: readonly ManageContent_ItemFragment[];
     onSelect: (
-        elementIds: string[],
-        uploadableIds: {
-            uploadableId: string;
-            elementId?: string;
+        elementsByItem: {
+            itemId: string;
+            elementIds: string[];
+            uploadables: {
+                uploadableId: string;
+                elementId?: string;
+            }[];
         }[]
     ) => void;
+    restrictToTypes: Content_ElementType_Enum[] | null;
 }): JSX.Element {
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="6xl">
@@ -94,7 +100,9 @@ export function SelectElementsOrUploadablesModal({
             <ModalContent>
                 <ModalHeader>Select elements and uploadables</ModalHeader>
                 <ModalCloseButton />
-                {isOpen ? <ModalInner items={items} onClose={onClose} onSelect={onSelect} /> : undefined}
+                {isOpen ? (
+                    <ModalInner items={items} onClose={onClose} onSelect={onSelect} restrictToTypes={restrictToTypes} />
+                ) : undefined}
             </ModalContent>
         </Modal>
     );
@@ -104,16 +112,21 @@ function ModalInner({
     onClose,
     items,
     onSelect,
+    restrictToTypes,
 }: {
     onClose: () => void;
     items: readonly ManageContent_ItemFragment[];
     onSelect: (
-        elementIds: string[],
-        uploadableIds: {
-            uploadableId: string;
-            elementId?: string;
+        elementsByItem: {
+            itemId: string;
+            elementIds: string[];
+            uploadables: {
+                uploadableId: string;
+                elementId?: string;
+            }[];
         }[]
     ) => void;
+    restrictToTypes: Content_ElementType_Enum[] | null;
 }): JSX.Element {
     const itemIds = useMemo(() => items.map((x) => x.id), [items]);
     const infos = useSEoUm_InfosQuery({
@@ -124,24 +137,27 @@ function ModalInner({
 
     const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = useMemo(
         () =>
-            Object.keys(Content_ElementType_Enum).map((key) => {
-                const v = (Content_ElementType_Enum as any)[key] as string;
-                return {
-                    label: v
-                        .split("_")
-                        .map((x) => x[0] + x.substr(1).toLowerCase())
-                        .reduce((acc, x) => `${acc} ${x}`),
-                    value: v as Content_ElementType_Enum,
-                };
-            }),
-        []
+            Object.keys(Content_ElementType_Enum).reduce((acc, key) => {
+                const v = (Content_ElementType_Enum as any)[key] as Content_ElementType_Enum;
+                if (restrictToTypes === null || restrictToTypes.includes(v)) {
+                    acc.push({
+                        label: v
+                            .split("_")
+                            .map((x) => x[0] + x.substr(1).toLowerCase())
+                            .reduce((acc, x) => `${acc} ${x}`),
+                        value: v as Content_ElementType_Enum,
+                    });
+                }
+                return acc;
+            }, [] as { label: string; value: Content_ElementType_Enum }[]),
+        [restrictToTypes]
     );
 
     const [typeFilter, setTypeFilter] = useState<readonly { label: string; value: string }[]>([]);
     const typeSelect = useMemo(() => {
         return (
             <FormControl>
-                <FormLabel>Filter by type</FormLabel>
+                <FormLabel>Filter by element type</FormLabel>
                 <MultiSelect options={contentTypeOptions} value={typeFilter} onChange={(vs) => setTypeFilter(vs)} />
                 <FormHelperText>Leave blank to include all types.</FormHelperText>
             </FormControl>
@@ -161,11 +177,22 @@ function ModalInner({
         [infos.data]
     );
 
+    const [titleFilter, setTitleFilter] = useState<string>("");
+    const titleInput = useMemo(() => {
+        return (
+            <FormControl>
+                <FormLabel>Filter by item title</FormLabel>
+                <Input value={titleFilter} onChange={(ev) => setTitleFilter(ev.target.value)} />
+                <FormHelperText>Leave blank to include all titles.</FormHelperText>
+            </FormControl>
+        );
+    }, [titleFilter]);
+
     const [nameFilter, setNameFilter] = useState<readonly { label: string; value: string }[]>([]);
     const nameSelect = useMemo(() => {
         return (
             <FormControl>
-                <FormLabel>Filter by name</FormLabel>
+                <FormLabel>Filter by element name</FormLabel>
                 <MultiSelect options={nameOptions} value={nameFilter} onChange={(vs) => setNameFilter(vs)} />
                 <FormHelperText>Leave blank to include all names.</FormHelperText>
             </FormControl>
@@ -233,51 +260,72 @@ function ModalInner({
         );
     }, [includeUploadersFilter, includeUploadablesFilter]);
 
-    const filteredElements = useMemo(
-        () =>
-            infos.data && includeUploadablesFilter !== "UPLOADABLES"
-                ? R.filter(
-                      R.allPass([
-                          (x) => typeFilter.length === 0 || typeFilter.some((y) => y.value === x.typeName),
-                          (x) => nameFilter.length === 0 || nameFilter.some((y) => y.value === x.name),
-                      ]),
-                      infos.data.content_Element
-                  )
-                : [],
-        [infos.data, includeUploadablesFilter, typeFilter, nameFilter]
-    );
+    const filteredElements = useMemo(() => {
+        const titleFilterLC = titleFilter.toLowerCase();
+        return infos.data?.content_Element && includeUploadablesFilter !== "UPLOADABLES"
+            ? R.filter(
+                  R.allPass([
+                      (x) => restrictToTypes === null || restrictToTypes.some((y) => y === x.typeName),
+                      (x) => typeFilter.length === 0 || typeFilter.some((y) => y.value === x.typeName),
+                      (x) => nameFilter.length === 0 || nameFilter.some((y) => y.value === x.name),
+                      (x: SEoUm_ElementFragment) =>
+                          titleFilterLC.length === 0 || !!x.item?.title.toLowerCase().includes(titleFilterLC),
+                  ]),
+                  infos.data.content_Element
+              )
+            : [];
+    }, [infos.data?.content_Element, includeUploadablesFilter, typeFilter, nameFilter, restrictToTypes, titleFilter]);
 
-    const filteredUploadables = useMemo(
-        () =>
-            infos.data && includeUploadablesFilter !== "ELEMENTS"
-                ? R.filter(
-                      R.allPass([
-                          (x) => typeFilter.length === 0 || typeFilter.some((y) => y.value === x.typeName),
-                          (x) => nameFilter.length === 0 || nameFilter.some((y) => y.value === x.name),
-                          (x) =>
-                              includeUploadedFilter === "BOTH" ||
-                              (includeUploadedFilter === "WITH" && x.hasBeenUploaded) ||
-                              (includeUploadedFilter === "WITHOUT" && !x.hasBeenUploaded),
-                          (x) =>
-                              includeUploadersFilter === "BOTH" ||
-                              (includeUploadersFilter === "WITH" && x.uploaders.length) ||
-                              (includeUploadersFilter === "WITHOUT" && !x.uploaders.length),
-                      ]),
-                      infos.data.content_UploadableElement
-                  )
-                : [],
-        [infos.data, includeUploadablesFilter, typeFilter, nameFilter, includeUploadedFilter, includeUploadersFilter]
-    );
+    const filteredUploadables = useMemo(() => {
+        const titleFilterLC = titleFilter.toLowerCase();
+        return infos.data?.content_UploadableElement && includeUploadablesFilter !== "ELEMENTS"
+            ? R.filter(
+                  R.allPass([
+                      (x) => restrictToTypes === null || restrictToTypes.some((y) => y === x.typeName),
+                      (x) => typeFilter.length === 0 || typeFilter.some((y) => y.value === x.typeName),
+                      (x) => nameFilter.length === 0 || nameFilter.some((y) => y.value === x.name),
+                      (x: SEoUm_UploadableFragment) =>
+                          titleFilterLC.length === 0 || !!x.itemTitle?.toLowerCase().includes(titleFilterLC),
+                      (x) =>
+                          includeUploadedFilter === "BOTH" ||
+                          (includeUploadedFilter === "WITH" && x.hasBeenUploaded) ||
+                          (includeUploadedFilter === "WITHOUT" && !x.hasBeenUploaded),
+                      (x) =>
+                          includeUploadersFilter === "BOTH" ||
+                          (includeUploadersFilter === "WITH" && x.uploaders.length) ||
+                          (includeUploadersFilter === "WITHOUT" && !x.uploaders.length),
+                  ]),
+                  infos.data.content_UploadableElement
+              )
+            : [];
+    }, [
+        infos.data?.content_UploadableElement,
+        includeUploadablesFilter,
+        typeFilter,
+        nameFilter,
+        includeUploadedFilter,
+        includeUploadersFilter,
+        restrictToTypes,
+        titleFilter,
+    ]);
 
-    const displayResult: (SEoUm_ElementFragment | SEoUm_UploadableFragment)[][] = useMemo(() => {
+    const displayResult: {
+        itemId: string;
+        elements: (SEoUm_ElementFragment | SEoUm_UploadableFragment)[];
+    }[] = useMemo(() => {
+        const intermediary = R.groupBy((x) => x.itemId, [...filteredElements, ...filteredUploadables] as (
+            | SEoUm_ElementFragment
+            | SEoUm_UploadableFragment
+        )[]);
+
         return R.sortBy(
-            (x) => ("itemTitle" in x[0] ? x[0].itemTitle ?? "" : "item" in x[0] ? x[0].item.title : ""),
-            Object.values(
-                R.groupBy((x) => x.itemId, [...filteredElements, ...filteredUploadables] as (
-                    | SEoUm_ElementFragment
-                    | SEoUm_UploadableFragment
-                )[])
-            )
+            (x) =>
+                "itemTitle" in x.elements[0]
+                    ? x.elements[0].itemTitle ?? ""
+                    : "item" in x.elements[0]
+                    ? x.elements[0].item.title
+                    : "",
+            Object.entries(intermediary).map(([itemId, elements]) => ({ itemId, elements }))
         );
     }, [filteredElements, filteredUploadables]);
 
@@ -291,8 +339,9 @@ function ModalInner({
                             <Heading as="h3" fontSize="md">
                                 Filter options
                             </Heading>
-                            {typeSelect}
+                            {titleInput}
                             {nameSelect}
+                            {typeSelect}
                             {includeUploadables}
                             {includeUploaded}
                             {includeUploaders}
@@ -307,7 +356,7 @@ function ModalInner({
                                 elements &amp; uploadables)
                             </Text>
                             <UnorderedList listStyleType="none" maxH="70vh" overflow="auto">
-                                {displayResult.map((elements) => (
+                                {displayResult.map(({ elements }) => (
                                     <ListItem key={elements[0].itemId} mb={2}>
                                         <chakra.span noOfLines={1}>
                                             {"itemTitle" in elements[0]
@@ -347,11 +396,21 @@ function ModalInner({
                         mr={3}
                         onClick={() => {
                             onSelect(
-                                filteredElements.map((x) => x.id),
-                                filteredUploadables.map((x) => ({
-                                    uploadableId: x.id,
-                                    elementId: x.element?.id,
-                                }))
+                                displayResult.map(
+                                    (x: {
+                                        itemId: string;
+                                        elements: (SEoUm_ElementFragment | SEoUm_UploadableFragment)[];
+                                    }) => ({
+                                        itemId: x.itemId,
+                                        elementIds: x.elements.filter((y) => "item" in y).map((y) => y.id),
+                                        uploadables: x.elements
+                                            .filter((y) => "itemTitle" in y)
+                                            .map((y) => ({
+                                                uploadableId: y.id,
+                                                elementId: "itemTitle" in y ? y.element?.id : undefined,
+                                            })),
+                                    })
+                                )
                             );
                         }}
                     >

@@ -92,7 +92,10 @@ export async function handleCombineVideosJobInserted(payload: Payload<CombineVid
                 }
 
                 const input: Input = {
-                    FileInput: latestVersion.data.broadcastTranscode?.s3Url ?? latestVersion.data.s3Url,
+                    FileInput:
+                        latestVersion.data.broadcastTranscode?.s3Url ??
+                        latestVersion.data.transcode?.s3Url ??
+                        latestVersion.data.s3Url,
                     AudioSelectors: {
                         "Audio Selector 1": {
                             SelectorType: AudioSelectorType.TRACK,

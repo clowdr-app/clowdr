@@ -76,6 +76,7 @@ export function EditElement({
     nextElement,
     refetchElements,
     defaultOpenSecurity,
+    openSendSubmissionRequests,
 }: {
     element: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
     idx: number;
@@ -83,6 +84,7 @@ export function EditElement({
     nextElement?: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
     refetchElements: () => void;
     defaultOpenSecurity: boolean;
+    openSendSubmissionRequests: (uploaderIds: string[]) => void;
 }): JSX.Element {
     const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
         update: (cache, response) => {
@@ -566,6 +568,7 @@ export function EditElement({
                                             ? (element as ManageContent_UploadableElementFragment)
                                             : null) as any
                                     }
+                                    openSendSubmissionRequests={openSendSubmissionRequests}
                                 />
                             ) : undefined}
                         </AccordionPanel>

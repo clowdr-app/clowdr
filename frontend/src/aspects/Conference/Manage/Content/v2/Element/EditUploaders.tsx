@@ -90,6 +90,7 @@ export function EditUploaders({
     uploadsRemaining,
     isUpdatingUploadable,
     updateUploadableElement,
+    openSendSubmissionRequests,
 }: {
     uploadableElementId: string;
     uploadsRemaining: number | null;
@@ -100,6 +101,7 @@ export function EditUploaders({
             ManageContent_UpdateUploadableElementMutationVariables
         >
     ) => Promise<FetchResult<ManageContent_UpdateUploadableElementMutation>>;
+    openSendSubmissionRequests: (uploaderIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
     const uploadersResponse = useManageContent_SelectUploadersQuery({
@@ -150,20 +152,21 @@ export function EditUploaders({
         return (
             <>
                 <Flex w="100%" mt={4} mb={2} alignItems="center">
-                    <Tooltip label="Coming soon: Send submission request emails to all uploaders of this element.">
-                        <Box mr={3} display="inline-block">
-                            <Button
-                                size="xs"
-                                aria-label="Send submission request emails to all uploaders of this element."
-                                onClick={() => {
-                                    // TODO: Send multiple submission request email
-                                }}
-                                isLoading={insertUploadersResponse.loading}
-                                isDisabled={true}
-                            >
-                                <FAIcon iconStyle="s" icon="envelope" />
-                            </Button>
-                        </Box>
+                    <Tooltip label="Send submission request emails to all uploaders of this element.">
+                        <Button
+                            mr={3}
+                            size="xs"
+                            aria-label="Send submission request emails to all uploaders of this element."
+                            onClick={() => {
+                                openSendSubmissionRequests(
+                                    uploadersResponse.data?.content_Uploader.map((x) => x.id) ?? []
+                                );
+                            }}
+                            isLoading={insertUploadersResponse.loading}
+                            isDisabled={uploadersResponse.data.content_Uploader.length === 0}
+                        >
+                            <FAIcon iconStyle="s" icon="envelope" />
+                        </Button>
                     </Tooltip>
                     <Popover
                         placement="bottom-start"
@@ -302,7 +305,11 @@ export function EditUploaders({
                 <Box overflow="auto" w="100%">
                     <List minW="max-content">
                         {R.sortBy((x) => x.name, uploadersResponse.data.content_Uploader).map((uploader) => (
-                            <EditUploader key={uploader.id} uploader={uploader} />
+                            <EditUploader
+                                key={uploader.id}
+                                uploader={uploader}
+                                openSendSubmissionRequests={openSendSubmissionRequests}
+                            />
                         ))}
                         {uploadersResponse.data.content_Uploader.length === 0 ? (
                             <ListItem>No uploaders listed. Use the plus button above to add an uploader.</ListItem>
@@ -314,7 +321,13 @@ export function EditUploaders({
     }
 }
 
-function EditUploader({ uploader }: { uploader: ManageContent_UploaderFragment }): JSX.Element {
+function EditUploader({
+    uploader,
+    openSendSubmissionRequests,
+}: {
+    uploader: ManageContent_UploaderFragment;
+    openSendSubmissionRequests: (uploaderIds: string[]) => void;
+}): JSX.Element {
     const [updateUploader, updateUploaderResponse] = useManageContent_UpdateUploaderMutation({
         update: (cache, { data: _data }) => {
             if (_data?.update_content_Uploader_by_pk) {
@@ -370,16 +383,16 @@ function EditUploader({ uploader }: { uploader: ManageContent_UploaderFragment }
         <ListItem w="100%" mb={1}>
             <Flex w="100%" alignItems="flex-start">
                 <Tooltip
-                    label={`Coming soon: Send submission request email to ${uploader.email}. ${uploader.emailsSentCount} previously sent.`}
+                    label={`Send submission request email to ${uploader.email}. ${uploader.emailsSentCount} previously sent.`}
                 >
                     <Box mr={2} display="inline-block">
                         <Button
                             size="xs"
                             aria-label={`Send submission request email to ${uploader.email}. ${uploader.emailsSentCount} previously sent.`}
                             onClick={() => {
-                                // TODO: Send single submission request email
+                                openSendSubmissionRequests([uploader.id]);
                             }}
-                            isDisabled={true}
+                            mr={2}
                         >
                             <FAIcon iconStyle="s" icon="envelope" />
                             &nbsp;&nbsp;{uploader.emailsSentCount}

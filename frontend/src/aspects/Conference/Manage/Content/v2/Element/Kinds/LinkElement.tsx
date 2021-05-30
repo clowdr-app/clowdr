@@ -74,6 +74,7 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                     isHidden: false,
                     typeName: type,
                     uploaders: [],
+                    uploadsRemaining: 3,
                 },
             };
         } else {

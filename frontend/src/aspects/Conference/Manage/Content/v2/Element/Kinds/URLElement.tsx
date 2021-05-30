@@ -80,6 +80,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
                     isHidden: type === Content_ElementType_Enum.Zoom,
                     typeName: type,
                     uploaders: [],
+                    uploadsRemaining: 3,
                 },
             };
         } else {

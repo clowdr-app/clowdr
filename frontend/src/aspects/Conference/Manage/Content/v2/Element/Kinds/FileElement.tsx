@@ -58,6 +58,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
                     uploaders: [],
                     conferenceId,
                     itemId,
+                    uploadsRemaining: 3,
                 },
             };
         } else {

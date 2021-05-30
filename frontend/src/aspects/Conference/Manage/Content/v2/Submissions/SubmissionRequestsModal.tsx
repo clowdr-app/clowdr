@@ -151,15 +151,19 @@ export function SendSubmissionRequestsModal({
     isOpen,
     onClose,
     itemIds,
+    uploaderIds,
 }: {
     isOpen: boolean;
     onClose: () => void;
     itemIds: string[];
+    uploaderIds: string[] | null;
 }): JSX.Element {
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
             <ModalOverlay />
-            {isOpen ? <SendSubmissionRequestsModalLazyInner onClose={onClose} itemIds={itemIds} /> : undefined}
+            {isOpen ? (
+                <SendSubmissionRequestsModalLazyInner onClose={onClose} itemIds={itemIds} uploaderIds={uploaderIds} />
+            ) : undefined}
         </Modal>
     );
 }
@@ -167,9 +171,11 @@ export function SendSubmissionRequestsModal({
 function SendSubmissionRequestsModalLazyInner({
     onClose,
     itemIds,
+    uploaderIds,
 }: {
     onClose: () => void;
     itemIds: string[];
+    uploaderIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
     const result = useSubmissionRequestsModalDataQuery({
@@ -206,6 +212,7 @@ function SendSubmissionRequestsModalLazyInner({
                         onClose={onClose}
                         uploadableElements={content_UploadableElement}
                         existingTemplate={existingTemplate}
+                        uploaderIds={uploaderIds}
                     />
                 );
             }}
@@ -217,10 +224,12 @@ export function SendSubmissionRequestsModalInner({
     onClose,
     uploadableElements,
     existingTemplate,
+    uploaderIds: filterToUploaderIds,
 }: {
     onClose: () => void;
     uploadableElements: readonly SubmissionRequestsModal_UploadableElementFragment[];
     existingTemplate: EmailTemplate_BaseConfig;
+    uploaderIds: string[] | null;
 }): JSX.Element {
     const types = useMemo(() => Object.values(Content_ElementType_Enum), []);
     const [selectedType, setSelectedType] = useState<string>();
@@ -241,36 +250,46 @@ export function SendSubmissionRequestsModalInner({
                     <Text>No matching files.</Text>
                 ) : (
                     <List spacing={2} maxH="40vh" overflowY="auto">
-                        {filteredUploadableElements.map((upElement) => (
-                            <ListItem key={upElement.id}>
-                                <HStack>
-                                    <FAIcon icon="file" iconStyle="r" mr={2} />
-                                    <VStack alignItems="flex-start" spacing={0}>
-                                        <Text fontWeight="bold" fontSize="sm">
-                                            {upElement.itemTitle}
-                                        </Text>
-                                        <Text fontSize="sm">
-                                            {upElement.name} ({generateElementTypeFriendlyName(upElement.typeName)}) -{" "}
-                                            {upElement.uploaders.length} uploader
-                                            {upElement.uploaders.length > 1 ? "s" : undefined}
-                                        </Text>
-                                    </VStack>
-                                </HStack>
-                            </ListItem>
-                        ))}
+                        {filteredUploadableElements.map((upElement) => {
+                            const filteredUploaders =
+                                filterToUploaderIds === null
+                                    ? upElement.uploaders
+                                    : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id));
+                            return (
+                                <ListItem key={upElement.id}>
+                                    <HStack>
+                                        <FAIcon icon="file" iconStyle="r" mr={2} />
+                                        <VStack alignItems="flex-start" spacing={0}>
+                                            <Text fontWeight="bold" fontSize="sm">
+                                                {upElement.itemTitle}
+                                            </Text>
+                                            <Text fontSize="sm">
+                                                {upElement.name} ({generateElementTypeFriendlyName(upElement.typeName)})
+                                                - {filteredUploaders.length} uploader
+                                                {filteredUploaders.length > 1 ? "s" : undefined}
+                                            </Text>
+                                        </VStack>
+                                    </HStack>
+                                </ListItem>
+                            );
+                        })}
                     </List>
                 )}
             </Box>
         ),
-        [filteredUploadableElements]
+        [filteredUploadableElements, filterToUploaderIds]
     );
 
     const uploaderIds = useMemo(
         () =>
             R.flatten(
-                filteredUploadableElements.map((upElement) => upElement.uploaders.map((uploader) => uploader.id))
+                filteredUploadableElements.map((upElement) =>
+                    filterToUploaderIds === null
+                        ? upElement.uploaders
+                        : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id))
+                )
             ),
-        [filteredUploadableElements]
+        [filteredUploadableElements, filterToUploaderIds]
     );
 
     const toast = useToast();

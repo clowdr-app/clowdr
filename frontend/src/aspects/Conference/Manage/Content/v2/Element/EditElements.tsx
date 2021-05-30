@@ -31,11 +31,13 @@ export function EditElements({
     refetchElements,
     defaultOpenSecurityForId,
     isSponsor,
+    openSendSubmissionRequests,
 }: {
     itemId: string;
     refetchElements: () => void;
     defaultOpenSecurityForId?: string;
     isSponsor: boolean;
+    openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
 } & ManageContent_ItemSecondaryFragment & {
         elements: readonly ManageContent_ElementFragment[];
         uploadableElements: readonly ManageContent_UploadableElementFragment[];
@@ -148,6 +150,7 @@ export function EditElements({
                     nextElement={sortedElements[idx + 1]}
                     refetchElements={refetchElements}
                     defaultOpenSecurity={item.id === defaultOpenSecurityForId}
+                    openSendSubmissionRequests={(uploaderIds) => openSendSubmissionRequests(itemId, uploaderIds)}
                 />
             ))}
         </Accordion>

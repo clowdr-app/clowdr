@@ -39,12 +39,14 @@ export function SecondaryEditor({
     isOpen,
     onClose,
     isSponsor,
+    openSendSubmissionRequests,
 }: {
     itemId: string | null;
     itemTitle: string | null;
     isOpen: boolean;
     onClose: () => void;
     isSponsor: boolean;
+    openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
 }): JSX.Element {
     return (
         <>
@@ -59,14 +61,30 @@ export function SecondaryEditor({
                     </DrawerHeader>
                     <DrawerCloseButton />
 
-                    <DrawerBody>{itemId && <SecondaryEditorInner itemId={itemId} isSponsor={isSponsor} />}</DrawerBody>
+                    <DrawerBody>
+                        {itemId && (
+                            <SecondaryEditorInner
+                                itemId={itemId}
+                                isSponsor={isSponsor}
+                                openSendSubmissionRequests={openSendSubmissionRequests}
+                            />
+                        )}
+                    </DrawerBody>
                 </DrawerContent>
             </Drawer>
         </>
     );
 }
 
-function SecondaryEditorInner({ itemId, isSponsor }: { itemId: string; isSponsor: boolean }): JSX.Element {
+function SecondaryEditorInner({
+    itemId,
+    isSponsor,
+    openSendSubmissionRequests,
+}: {
+    itemId: string;
+    isSponsor: boolean;
+    openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
+}): JSX.Element {
     const conference = useConference();
     const itemResponse = useManageContent_SelectItemQuery({
         variables: {
@@ -156,6 +174,7 @@ function SecondaryEditorInner({ itemId, isSponsor }: { itemId: string; isSponsor
                         }}
                         defaultOpenSecurityForId={defaultOpenSecurityForId ?? undefined}
                         isSponsor={isSponsor}
+                        openSendSubmissionRequests={openSendSubmissionRequests}
                         {...result}
                     />
                 )}

@@ -24,10 +24,12 @@ export function EditElementInner(
         | {
               element: ManageContent_ElementFragment | null;
               uploadableElement: ManageContent_UploadableElementFragment;
+              openSendSubmissionRequests: (uploaderIds: string[]) => void;
           }
         | {
               element: null;
               uploadableElement: ManageContent_UploadableElementFragment;
+              openSendSubmissionRequests: (uploaderIds: string[]) => void;
           }
 ): JSX.Element {
     const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
@@ -169,6 +171,7 @@ export function EditElementInner(
             {props.uploadableElement ? (
                 <>
                     <EditUploaders
+                        openSendSubmissionRequests={props.openSendSubmissionRequests}
                         uploadableElementId={props.uploadableElement.id}
                         uploadsRemaining={props.uploadableElement.uploadsRemaining ?? null}
                         updateUploadableElement={updateUploadableElement}

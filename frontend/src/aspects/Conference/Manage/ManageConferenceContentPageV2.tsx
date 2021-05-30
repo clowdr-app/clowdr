@@ -731,7 +731,16 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
         onClose: submissionsReview_OnClose,
     } = useDisclosure();
     const [sendSubmissionRequests_ItemIds, setSendSubmissionRequests_ItemIds] = useState<string[]>([]);
+    const [sendSubmissionRequests_UploaderIds, setSendSubmissionRequests_UploaderIds] = useState<string[] | null>(null);
     const [submissionsReview_ItemIds, setSubmissionsReview_ItemIds] = useState<string[]>([]);
+    const openSendSubmissionRequests = useCallback(
+        (itemId: string, uploaderIds: string[]) => {
+            setSendSubmissionRequests_ItemIds([itemId]);
+            setSendSubmissionRequests_UploaderIds(uploaderIds);
+            sendSubmissionRequests_OnOpen();
+        },
+        [setSendSubmissionRequests_ItemIds, sendSubmissionRequests_OnOpen, setSendSubmissionRequests_UploaderIds]
+    );
     const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(
         () => [
             {
@@ -750,6 +759,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                             <Button
                                 onClick={() => {
                                     setSendSubmissionRequests_ItemIds(items.map((x) => x.id));
+                                    setSendSubmissionRequests_UploaderIds(null);
                                     sendSubmissionRequests_OnOpen();
                                 }}
                             >
@@ -769,6 +779,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                     onClick={() => {
                                         if (allItems?.content_Item) {
                                             setSendSubmissionRequests_ItemIds(allItems.content_Item.map((x) => x.id));
+                                            setSendSubmissionRequests_UploaderIds(null);
                                             sendSubmissionRequests_OnOpen();
                                         }
                                     }}
@@ -791,6 +802,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                                                                   )
                                                                   .map((x) => x.id)
                                                           );
+                                                          setSendSubmissionRequests_UploaderIds(null);
                                                           sendSubmissionRequests_OnOpen();
                                                       }
                                                   }}
@@ -981,11 +993,13 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 isSponsor={editingIsSponsor ?? false}
                 onClose={onSecondaryPanelClose}
                 isOpen={isSecondaryPanelOpen}
+                openSendSubmissionRequests={openSendSubmissionRequests}
             />
             <SendSubmissionRequestsModal
                 isOpen={sendSubmissionRequests_IsOpen}
                 onClose={sendSubmissionRequests_OnClose}
                 itemIds={sendSubmissionRequests_ItemIds}
+                uploaderIds={sendSubmissionRequests_UploaderIds}
             />
             <SubmissionsReviewModal
                 isOpen={submissionsReview_IsOpen}

@@ -2,6 +2,7 @@ import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Button,
+    Flex,
     FormLabel,
     Heading,
     Input,
@@ -10,6 +11,7 @@ import {
     MenuItem,
     MenuList,
     Select,
+    useClipboard,
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
@@ -39,6 +41,7 @@ import CRUDTable, {
 } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { FAIcon } from "../../Icons/FAIcon";
 import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
@@ -186,16 +189,23 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 cell: function ProgramPersonCell(
                     props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
                 ) {
+                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
                     return (
-                        <Input
-                            type="text"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
-                            border="1px solid"
-                            borderColor="rgba(255, 255, 255, 0.16)"
-                            ref={props.ref as LegacyRef<HTMLInputElement>}
-                        />
+                        <Flex alignItems="center">
+                            <Input
+                                type="text"
+                                value={props.value ?? ""}
+                                onChange={(ev) => props.onChange?.(ev.target.value)}
+                                onBlur={props.onBlur}
+                                border="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.16)"
+                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                mr={2}
+                            />
+                            <Button onClick={onCopy} size="xs" ml="auto">
+                                <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                            </Button>
+                        </Flex>
                     );
                 },
             },
@@ -230,16 +240,23 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 cell: function ProgramPersonCell(
                     props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
                 ) {
+                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
                     return (
-                        <Input
-                            type="text"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
-                            border="1px solid"
-                            borderColor="rgba(255, 255, 255, 0.16)"
-                            ref={props.ref as LegacyRef<HTMLInputElement>}
-                        />
+                        <Flex alignItems="center">
+                            <Input
+                                type="text"
+                                value={props.value ?? ""}
+                                onChange={(ev) => props.onChange?.(ev.target.value)}
+                                onBlur={props.onBlur}
+                                border="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.16)"
+                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                mr={2}
+                            />
+                            <Button onClick={onCopy} size="xs" ml="auto">
+                                <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                            </Button>
+                        </Flex>
                     );
                 },
             },
@@ -271,16 +288,23 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 cell: function ProgramPersonCell(
                     props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
                 ) {
+                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
                     return (
-                        <Input
-                            type="email"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
-                            border="1px solid"
-                            borderColor="rgba(255, 255, 255, 0.16)"
-                            ref={props.ref as LegacyRef<HTMLInputElement>}
-                        />
+                        <Flex alignItems="center">
+                            <Input
+                                type="email"
+                                value={props.value ?? ""}
+                                onChange={(ev) => props.onChange?.(ev.target.value)}
+                                onBlur={props.onBlur}
+                                border="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.16)"
+                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                mr={2}
+                            />
+                            <Button onClick={onCopy} size="xs" ml="auto">
+                                <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                            </Button>
+                        </Flex>
                     );
                 },
             },

@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Center,
+    Flex,
     FormLabel,
     Heading,
     Input,
@@ -14,6 +15,7 @@ import {
     MenuList,
     Text,
     Tooltip,
+    useClipboard,
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
@@ -270,16 +272,23 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 filterEl: TextColumnFilter,
                 cell: function NameCell(props: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
                     return (
-                        <Input
-                            type="text"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
-                            border="1px solid"
-                            borderColor="rgba(255, 255, 255, 0.16)"
-                            ref={props.ref as LegacyRef<HTMLInputElement>}
-                        />
+                        <Flex alignItems="center">
+                            <Input
+                                type="text"
+                                value={props.value ?? ""}
+                                onChange={(ev) => props.onChange?.(ev.target.value)}
+                                onBlur={props.onBlur}
+                                border="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.16)"
+                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                mr={2}
+                            />
+                            <Button onClick={onCopy} size="xs" ml="auto">
+                                <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                            </Button>
+                        </Flex>
                     );
                 },
             },
@@ -380,6 +389,7 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 filterEl: TextColumnFilter,
                 cell: function InvitedEmailAddressCell(props: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
                     if (props.isInCreate) {
                         return (
                             <Input
@@ -393,7 +403,16 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                             />
                         );
                     } else {
-                        return <Text px={2}>{props.value}</Text>;
+                        return (
+                            <Flex alignItems="center">
+                                <Text px={2}>{props.value}</Text>
+                                {props.value ? (
+                                    <Button onClick={onCopy} size="xs" ml="auto">
+                                        <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                                    </Button>
+                                ) : undefined}
+                            </Flex>
+                        );
                     }
                 },
             },
@@ -416,13 +435,21 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 filterEl: TextColumnFilter,
                 cell: function InviteCodeCell(props: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
                     if (props.isInCreate) {
                         return undefined;
                     } else {
                         return (
-                            <Text fontFamily="monospace" px={2}>
-                                {props.value}
-                            </Text>
+                            <Flex alignItems="center">
+                                <Text fontFamily="monospace" px={2}>
+                                    {props.value}
+                                </Text>
+                                {props.value ? (
+                                    <Button onClick={onCopy} size="xs" ml="auto">
+                                        <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                                    </Button>
+                                ) : undefined}
+                            </Flex>
                         );
                     }
                 },

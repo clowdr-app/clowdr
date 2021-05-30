@@ -539,6 +539,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
     } = useDisclosure();
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editingTitle, setEditingTitle] = useState<string | null>(null);
+    const [editingIsSponsor, setEditingIsSponsor] = useState<boolean | null>(null);
     const edit:
         | {
               open: (key: string) => void;
@@ -551,7 +552,14 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                     const item = data.find((x) => x.id === key);
                     if (item) {
                         setEditingTitle(item.title);
+                        setEditingIsSponsor(item.typeName === Content_ItemType_Enum.Sponsor);
+                    } else {
+                        setEditingTitle(null);
+                        setEditingIsSponsor(null);
                     }
+                } else {
+                    setEditingTitle(null);
+                    setEditingIsSponsor(null);
                 }
                 if (key !== null) {
                     onSecondaryPanelOpen();
@@ -970,6 +978,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
             <SecondaryEditor
                 itemId={editingId}
                 itemTitle={editingTitle}
+                isSponsor={editingIsSponsor ?? false}
                 onClose={onSecondaryPanelClose}
                 isOpen={isSecondaryPanelOpen}
             />

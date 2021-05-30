@@ -1,4 +1,4 @@
-import { FormControl, FormHelperText, FormLabel, HStack, Switch } from "@chakra-ui/react";
+import { FormControl, FormHelperText, FormLabel, HStack, Switch, VStack } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useCallback, useMemo } from "react";
 import { Content_ElementType_Enum } from "../../../../../../generated/graphql";
@@ -45,7 +45,7 @@ export function LayoutEditor({
     // }, [layoutData.priority]);
 
     return (
-        <HStack alignItems="flex-start" mt={4}>
+        <VStack alignItems="flex-start" mt={4}>
             <FormControl as={HStack} spacing={2}>
                 <FormLabel m={0}>Wide</FormLabel>
                 <Switch
@@ -61,41 +61,24 @@ export function LayoutEditor({
                 />
                 <FormHelperText m={0}>Display this content across both columns.</FormHelperText>
             </FormControl>
-            {/* <FormControl>
-                <FormLabel>Order</FormLabel>
-                {layoutDataBlob ? (
-                    <NumberInput
-                        value={priority ?? layoutData.priority}
-                        onChange={(_, value) => setPriority(value)}
-                        onBlur={() => {
-                            if (priority !== null && priority !== layoutData.priority) {
-                                update({
-                                    ...layoutData,
-                                    priority: priority,
-                                });
-                            }
-                        }}
-                    >
-                        <NumberInputField />
-                        <NumberInputStepper>
-                            <NumberIncrementStepper aria-label="Increment" />
-                            <NumberDecrementStepper aria-label="Decrement" />
-                        </NumberInputStepper>
-                    </NumberInput>
-                ) : (
-                    <Button
-                        onClick={() => {
+            {layoutData.contentType === Content_ElementType_Enum.ImageUrl ||
+            layoutData.contentType === Content_ElementType_Enum.ImageFile ? (
+                <FormControl as={HStack} spacing={2}>
+                    <FormLabel m={0}>Use as logo?</FormLabel>
+                    <Switch
+                        m={0}
+                        size="sm"
+                        isChecked={layoutData.isLogo}
+                        onChange={(event) => {
                             update({
                                 ...layoutData,
+                                isLogo: event.target.checked,
                             });
                         }}
-                        size="sm"
-                    >
-                        Set order
-                    </Button>
-                )}
-                <FormHelperText>The order in which to display this content (lower numbers come first).</FormHelperText>
-            </FormControl> */}
-        </HStack>
+                    />
+                    <FormHelperText m={0}>Use this image as the sponsor logo.</FormHelperText>
+                </FormControl>
+            ) : undefined}
+        </VStack>
     );
 }

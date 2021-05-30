@@ -1,10 +1,15 @@
+import { InfoIcon } from "@chakra-ui/icons";
 import {
     Accordion,
     AccordionButton,
     AccordionIcon,
     AccordionItem,
     AccordionPanel,
+    Box,
+    chakra,
     Code,
+    ListItem,
+    OrderedList,
     Text,
     useColorModeValue,
 } from "@chakra-ui/react";
@@ -14,6 +19,7 @@ import type {
     ManageContent_ItemSecondaryFragment,
     ManageContent_UploadableElementFragment,
 } from "../../../../../../generated/graphql";
+import { FAIcon } from "../../../../../Icons/FAIcon";
 import { EditItemPeoplePanel } from "../Item/EditItemPeople";
 import { EditElement } from "./EditElement";
 
@@ -24,10 +30,12 @@ export function EditElements({
     originatingData,
     refetchElements,
     defaultOpenSecurityForId,
+    isSponsor,
 }: {
     itemId: string;
     refetchElements: () => void;
     defaultOpenSecurityForId?: string;
+    isSponsor: boolean;
 } & ManageContent_ItemSecondaryFragment & {
         elements: readonly ManageContent_ElementFragment[];
         uploadableElements: readonly ManageContent_UploadableElementFragment[];
@@ -85,7 +93,7 @@ export function EditElements({
                 )}
             </AccordionItem>
             {originatingData ? (
-                <AccordionItem>
+                <AccordionItem w="100%">
                     <AccordionButton bgColor={bgColor}>
                         Originating data
                         <AccordionIcon ml="auto" />
@@ -105,6 +113,29 @@ export function EditElements({
                                 {JSON.stringify(originatingData.data, null, 2)}
                             </Code>
                         </Text>
+                    </AccordionPanel>
+                </AccordionItem>
+            ) : undefined}
+            {isSponsor ? (
+                <AccordionItem w="100%">
+                    <AccordionButton bgColor={bgColor}>
+                        <Box flex="1" textAlign="left">
+                            <InfoIcon mr={2} verticalAlign="middle" mb={1} />
+                            <chakra.span>How to add a sponsor&apos;s logo</chakra.span>
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                        <OrderedList>
+                            <ListItem>Add content of type &ldquo;Image file&rdquo;</ListItem>
+                            <ListItem>Enable the &ldquo;Logo&rdquo; option</ListItem>
+                            <ListItem>
+                                For correct display, please also &ldquo;Hide
+                                <FAIcon iconStyle="s" icon="eye-slash" fontSize="xs" mb={1} ml={1} />
+                                &rdquo; the element
+                            </ListItem>
+                            <ListItem>Upload the logo file</ListItem>
+                        </OrderedList>
                     </AccordionPanel>
                 </AccordionItem>
             ) : undefined}

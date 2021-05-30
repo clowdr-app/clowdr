@@ -319,7 +319,7 @@ export default function EventBox({
                 ))}
             </>
         );
-    }, [eventTitle, sortedEvents, eventStartMs, durationSeconds]);
+    }, [sortedEvents, event.item, event.name, eventStartMs, durationSeconds]);
 
     const eventFocusRef = React.useRef<HTMLButtonElement>(null);
     const { isOpen, onClose: _onClose, onOpen } = useDisclosure();

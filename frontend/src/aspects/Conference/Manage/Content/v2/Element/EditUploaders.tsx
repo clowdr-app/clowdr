@@ -1,8 +1,9 @@
-import { gql, Reference } from "@apollo/client";
+import { FetchResult, gql, MutationFunctionOptions, Reference } from "@apollo/client";
 import {
     Box,
     Button,
     ButtonGroup,
+    chakra,
     Flex,
     FormControl,
     FormLabel,
@@ -12,6 +13,11 @@ import {
     Link,
     List,
     ListItem,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
     Popover,
     PopoverBody,
     PopoverContent,
@@ -28,6 +34,8 @@ import {
 import * as R from "ramda";
 import React, { useRef, useState } from "react";
 import {
+    ManageContent_UpdateUploadableElementMutation,
+    ManageContent_UpdateUploadableElementMutationVariables,
     ManageContent_UploaderFragment,
     ManageContent_UploaderFragmentDoc,
     useManageContent_DeleteUploadersMutation,
@@ -77,7 +85,22 @@ gql`
     }
 `;
 
-export function EditUploaders({ uploadableElementId }: { uploadableElementId: string }): JSX.Element {
+export function EditUploaders({
+    uploadableElementId,
+    uploadsRemaining,
+    isUpdatingUploadable,
+    updateUploadableElement,
+}: {
+    uploadableElementId: string;
+    uploadsRemaining: number | null;
+    isUpdatingUploadable: boolean;
+    updateUploadableElement: (
+        options?: MutationFunctionOptions<
+            ManageContent_UpdateUploadableElementMutation,
+            ManageContent_UpdateUploadableElementMutationVariables
+        >
+    ) => Promise<FetchResult<ManageContent_UpdateUploadableElementMutation>>;
+}): JSX.Element {
     const conference = useConference();
     const uploadersResponse = useManageContent_SelectUploadersQuery({
         variables: {
@@ -126,7 +149,7 @@ export function EditUploaders({ uploadableElementId }: { uploadableElementId: st
     } else {
         return (
             <>
-                <HStack w="100%" mt={4} mb={2}>
+                <Flex w="100%" mt={4} mb={2} alignItems="center">
                     <Tooltip label="Coming soon: Send submission request emails to all uploaders of this element.">
                         <Box mr={3} display="inline-block">
                             <Button
@@ -234,10 +257,48 @@ export function EditUploaders({ uploadableElementId }: { uploadableElementId: st
                             </PopoverFooter>
                         </PopoverContent>
                     </Popover>
-                    <Heading as="h4" fontSize="sm" textAlign="left" pl={1}>
+                    <Heading as="h4" fontSize="sm" textAlign="left" pl={1} mr="auto">
                         Uploaders
                     </Heading>
-                </HStack>
+                    {uploadsRemaining !== null ? (
+                        <FormControl as={HStack} spacing={0} fontSize="sm" w="auto" alignItems="center">
+                            <FormLabel m={0} pr={1} pb={1}>
+                                Attempts remaining:
+                            </FormLabel>
+                            <NumberInput
+                                size="xs"
+                                minW={0}
+                                w="50px"
+                                isDisabled={isUpdatingUploadable}
+                                value={uploadsRemaining}
+                                onChange={(_valAsStr, valAsNum) => {
+                                    const newVal = Math.max(valAsNum, 0);
+                                    if (newVal !== uploadsRemaining) {
+                                        updateUploadableElement({
+                                            variables: {
+                                                uploadableElementId,
+                                                uploadableElement: {
+                                                    uploadsRemaining: newVal,
+                                                },
+                                            },
+                                        });
+                                    }
+                                }}
+                            >
+                                <NumberInputField />
+                                <NumberInputStepper>
+                                    <NumberIncrementStepper aria-label="Increment" />
+                                    <NumberDecrementStepper aria-label="Decrement" />
+                                </NumberInputStepper>
+                            </NumberInput>
+                        </FormControl>
+                    ) : (
+                        <>
+                            <chakra.span fontSize="sm">Attempts remaining:</chakra.span>
+                            <FAIcon iconStyle="s" icon="infinity" fontSize="xs" ml={2} />
+                        </>
+                    )}
+                </Flex>
                 <Box overflow="auto" w="100%">
                     <List minW="max-content">
                         {R.sortBy((x) => x.name, uploadersResponse.data.content_Uploader).map((uploader) => (

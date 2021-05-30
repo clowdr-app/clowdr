@@ -38,11 +38,13 @@ export function SecondaryEditor({
     itemTitle,
     isOpen,
     onClose,
+    isSponsor,
 }: {
     itemId: string | null;
     itemTitle: string | null;
     isOpen: boolean;
     onClose: () => void;
+    isSponsor: boolean;
 }): JSX.Element {
     return (
         <>
@@ -57,14 +59,14 @@ export function SecondaryEditor({
                     </DrawerHeader>
                     <DrawerCloseButton />
 
-                    <DrawerBody>{itemId && <SecondaryEditorInner itemId={itemId} />}</DrawerBody>
+                    <DrawerBody>{itemId && <SecondaryEditorInner itemId={itemId} isSponsor={isSponsor} />}</DrawerBody>
                 </DrawerContent>
             </Drawer>
         </>
     );
 }
 
-function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
+function SecondaryEditorInner({ itemId, isSponsor }: { itemId: string; isSponsor: boolean }): JSX.Element {
     const conference = useConference();
     const itemResponse = useManageContent_SelectItemQuery({
         variables: {
@@ -153,6 +155,7 @@ function SecondaryEditorInner({ itemId }: { itemId: string }): JSX.Element {
                             itemResponse.refetch();
                         }}
                         defaultOpenSecurityForId={defaultOpenSecurityForId ?? undefined}
+                        isSponsor={isSponsor}
                         {...result}
                     />
                 )}

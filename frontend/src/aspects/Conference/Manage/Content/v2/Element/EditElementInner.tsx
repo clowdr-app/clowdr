@@ -168,7 +168,12 @@ export function EditElementInner(
             ) : undefined}
             {props.uploadableElement ? (
                 <>
-                    <EditUploaders uploadableElementId={props.uploadableElement.id} />
+                    <EditUploaders
+                        uploadableElementId={props.uploadableElement.id}
+                        uploadsRemaining={props.uploadableElement.uploadsRemaining ?? null}
+                        updateUploadableElement={updateUploadableElement}
+                        isUpdatingUploadable={updateUploadableElementResponse.loading}
+                    />
                     <Divider my={2} />
                 </>
             ) : undefined}

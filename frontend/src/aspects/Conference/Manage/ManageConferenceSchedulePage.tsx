@@ -12,6 +12,7 @@ import {
     Box,
     Button,
     Center,
+    Code,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -25,6 +26,7 @@ import {
     Select,
     Text,
     Tooltip,
+    useClipboard,
     useColorModeValue,
     useDisclosure,
     VisuallyHidden,
@@ -174,6 +176,18 @@ function rowWarning(row: EventInfoFragment) {
         return "This event will be live streamed but no Event People have been assigned to manage it.";
     }
     return undefined;
+}
+
+function isOngoingNearBoundary(
+    now: number,
+    startLeeway: number,
+    endLeeway: number,
+    start: number,
+    end: number
+): boolean {
+    return (
+        (start - startLeeway <= now && now <= start + startLeeway) || (end - endLeeway <= now && now <= end + endLeeway)
+    );
 }
 
 function isOngoing(now: number, startLeeway: number, endLeeway: number, start: number, end: number): boolean {
@@ -330,8 +344,8 @@ function EditableScheduleTable(): JSX.Element {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
                     const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
-                    const startLeeway = 10 * 60 * 1000;
-                    const endLeeway = 1 * 60 * 1000;
+                    const startLeeway = 5 * 60 * 1000;
+                    const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                     const past = end < now - endLeeway;
                     const isLivestream = props.staleRecord.intendedRoomModeName
@@ -386,9 +400,9 @@ function EditableScheduleTable(): JSX.Element {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
                     const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
-                    const startLeeway = 10 * 60 * 1000;
-                    const endLeeway = 1 * 60 * 1000;
-                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
+                    const startLeeway = 5 * 60 * 1000;
+                    const endLeeway = 4 * 60 * 1000;
+                    const ongoing = isOngoingNearBoundary(now, startLeeway, endLeeway, start, end);
                     const past = end < now - endLeeway;
                     const isLivestream = props.staleRecord.intendedRoomModeName
                         ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
@@ -396,8 +410,13 @@ function EditableScheduleTable(): JSX.Element {
 
                     return (
                         <HStack>
+                            {!props.isInCreate && past && isLivestream ? (
+                                <Tooltip label="You cannot edit the end time of a past livestream event.">
+                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
+                                </Tooltip>
+                            ) : undefined}
                             {!props.isInCreate && (ongoing || past) && isLivestream ? (
-                                <Tooltip label="You cannot edit the end time of an ongoing or past livestream event.">
+                                <Tooltip label="You cannot edit the end time of an ongoing livestream event within 5 minutes of its start or 4 minutes of its end.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
@@ -449,8 +468,8 @@ function EditableScheduleTable(): JSX.Element {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
                     const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
-                    const startLeeway = 10 * 60 * 1000;
-                    const endLeeway = 1 * 60 * 1000;
+                    const startLeeway = 5 * 60 * 1000;
+                    const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                     const past = end < now - endLeeway;
                     const isLivestream = props.staleRecord.intendedRoomModeName
@@ -522,13 +541,9 @@ function EditableScheduleTable(): JSX.Element {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
                     const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
-                    const startLeeway = 10 * 60 * 1000;
-                    const endLeeway = 1 * 60 * 1000;
+                    const startLeeway = 5 * 60 * 1000;
+                    const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
-                    const past = end < now - endLeeway;
-                    const isLivestream = props.staleRecord.intendedRoomModeName
-                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
-                        : false;
 
                     return (
                         <HStack>
@@ -537,16 +552,10 @@ function EditableScheduleTable(): JSX.Element {
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
-                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
-                                <Tooltip label="You cannot edit the mode of an ongoing or past livestream event.">
-                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
-                                </Tooltip>
-                            ) : undefined}
                             <Select
                                 value={props.value ?? ""}
                                 onChange={(ev) => props.onChange?.(ev.target.value as Room_Mode_Enum)}
                                 onBlur={props.onBlur}
-                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
                                 maxW={400}
                             >
@@ -644,8 +653,8 @@ function EditableScheduleTable(): JSX.Element {
                     const now = useRealTime(10000);
                     const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
                     const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
-                    const startLeeway = 10 * 60 * 1000;
-                    const endLeeway = 1 * 60 * 1000;
+                    const startLeeway = 5 * 60 * 1000;
+                    const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                     const past = end < now - endLeeway;
                     const isLivestream = props.staleRecord.intendedRoomModeName
@@ -726,17 +735,6 @@ function EditableScheduleTable(): JSX.Element {
                 cell: function ExhibitionCell(
                     props: CellProps<Partial<EventInfoFragment>, ExhibitionInfoFragment | undefined>
                 ) {
-                    const now = useRealTime(10000);
-                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
-                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
-                    const startLeeway = 10 * 60 * 1000;
-                    const endLeeway = 1 * 60 * 1000;
-                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
-                    const past = end < now - endLeeway;
-                    const isLivestream = props.staleRecord.intendedRoomModeName
-                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
-                        : false;
-
                     return (
                         <HStack>
                             {props.value ? (
@@ -751,11 +749,6 @@ function EditableScheduleTable(): JSX.Element {
                                     </Tooltip>
                                 </LinkButton>
                             ) : undefined}
-                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
-                                <Tooltip label="You cannot edit the exhibition of an ongoing or past livestream event.">
-                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
-                                </Tooltip>
-                            ) : undefined}
                             <Select
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
@@ -766,7 +759,6 @@ function EditableScheduleTable(): JSX.Element {
                                     )
                                 }
                                 onBlur={props.onBlur}
-                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
                                 maxW={400}
                             >
@@ -815,17 +807,6 @@ function EditableScheduleTable(): JSX.Element {
                 cell: function ShufflePeriodCell(
                     props: CellProps<Partial<EventInfoFragment>, ShufflePeriodInfoFragment | undefined>
                 ) {
-                    const now = useRealTime(10000);
-                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
-                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
-                    const startLeeway = 10 * 60 * 1000;
-                    const endLeeway = 1 * 60 * 1000;
-                    const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
-                    const past = end < now - endLeeway;
-                    const isLivestream = props.staleRecord.intendedRoomModeName
-                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
-                        : false;
-
                     return (
                         <HStack>
                             {props.value ? (
@@ -840,11 +821,6 @@ function EditableScheduleTable(): JSX.Element {
                                     </Tooltip>
                                 </LinkButton>
                             ) : undefined}
-                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
-                                <Tooltip label="You cannot edit the shuffle period of an ongoing or past livestream event.">
-                                    <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
-                                </Tooltip>
-                            ) : undefined}
                             <Select
                                 value={props.value?.id ?? ""}
                                 onChange={(ev) =>
@@ -855,7 +831,6 @@ function EditableScheduleTable(): JSX.Element {
                                     )
                                 }
                                 onBlur={props.onBlur}
-                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
                                 ref={props.ref as LegacyRef<HTMLSelectElement>}
                                 maxW={400}
                             >
@@ -891,8 +866,8 @@ function EditableScheduleTable(): JSX.Element {
                 const start = record.startTime ? Date.parse(record.startTime) : Date.now();
                 const end = start + 1000 * (record.durationSeconds ?? 300);
                 const now = Date.now();
-                const startLeeway = 10 * 60 * 1000;
-                const endLeeway = 1 * 60 * 1000;
+                const startLeeway = 9.9 * 60 * 1000;
+                const endLeeway = 4 * 60 * 1000;
                 const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                 const past = end < now - endLeeway;
                 const isLivestream = record.intendedRoomModeName
@@ -936,8 +911,8 @@ function EditableScheduleTable(): JSX.Element {
                 const start = record.startTime ? Date.parse(record.startTime) : Date.now();
                 const end = start + 1000 * (record.durationSeconds ?? 300);
                 const now = Date.now();
-                const startLeeway = 10 * 60 * 1000;
-                const endLeeway = 1 * 60 * 1000;
+                const startLeeway = 5 * 60 * 1000;
+                const endLeeway = 4 * 60 * 1000;
                 const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                 const isLivestream = record.intendedRoomModeName
                     ? liveStreamRoomModes.includes(record.intendedRoomModeName)
@@ -948,8 +923,8 @@ function EditableScheduleTable(): JSX.Element {
                 const start = record.startTime ? Date.parse(record.startTime) : Date.now();
                 const end = start + 1000 * (record.durationSeconds ?? 300);
                 const now = Date.now();
-                const startLeeway = 10 * 60 * 1000;
-                const endLeeway = 1 * 60 * 1000;
+                const startLeeway = 5 * 60 * 1000;
+                const endLeeway = 4 * 60 * 1000;
                 const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                 const isLivestream = record.intendedRoomModeName
                     ? liveStreamRoomModes.includes(record.intendedRoomModeName)
@@ -1262,6 +1237,9 @@ function EventSecondaryEditor({
 }): JSX.Element {
     const event = index !== null ? events[index] : null;
 
+    const { onCopy: onCopyEventId, hasCopied: hasCopiedEventId } = useClipboard(event?.id ?? "");
+    const { onCopy: onCopyItemId, hasCopied: hasCopiedItemId } = useClipboard(event?.itemId ?? "");
+
     return (
         <Drawer
             isOpen={isSecondaryPanelOpen}
@@ -1273,7 +1251,59 @@ function EventSecondaryEditor({
             <DrawerOverlay>
                 <DrawerContent>
                     <DrawerCloseButton />
-                    <DrawerHeader>Edit</DrawerHeader>
+                    <DrawerHeader pb={0} pr="3em">
+                        {event ? (
+                            <>
+                                <Text fontSize="lg" overflow="wrap">
+                                    Edit event: {event.name}
+                                </Text>
+                                <Text fontSize="xs" mt={2}>
+                                    Event: <Code fontSize="xs">{event.id}</Code>
+                                    <Button
+                                        onClick={onCopyEventId}
+                                        size="xs"
+                                        ml="auto"
+                                        variant="ghost"
+                                        p={0}
+                                        h="auto"
+                                        minH={0}
+                                        aria-label="Copy event id"
+                                    >
+                                        <FAIcon
+                                            iconStyle="s"
+                                            icon={hasCopiedEventId ? "check-circle" : "clipboard"}
+                                            m={0}
+                                            p={0}
+                                        />
+                                    </Button>
+                                </Text>
+                                {event.itemId ? (
+                                    <Text fontSize="xs" mt={1}>
+                                        Item:&nbsp;&nbsp;&nbsp;<Code fontSize="xs">{event.itemId}</Code>
+                                        <Button
+                                            onClick={onCopyItemId}
+                                            size="xs"
+                                            ml="auto"
+                                            variant="ghost"
+                                            p={0}
+                                            h="auto"
+                                            minH={0}
+                                            aria-label="Copy item id"
+                                        >
+                                            <FAIcon
+                                                iconStyle="s"
+                                                icon={hasCopiedItemId ? "check-circle" : "clipboard"}
+                                                m={0}
+                                                p={0}
+                                            />
+                                        </Button>
+                                    </Text>
+                                ) : undefined}
+                            </>
+                        ) : (
+                            "No event"
+                        )}
+                    </DrawerHeader>
 
                     <DrawerBody>
                         {event ? (

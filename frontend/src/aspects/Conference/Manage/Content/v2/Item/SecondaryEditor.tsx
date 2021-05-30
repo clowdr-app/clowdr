@@ -16,6 +16,7 @@ import {
     MenuItem,
     MenuList,
     Text,
+    useClipboard,
     VStack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -48,6 +49,8 @@ export function SecondaryEditor({
     isSponsor: boolean;
     openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
 }): JSX.Element {
+    const { onCopy: onCopyItemId, hasCopied: hasCopiedItemId } = useClipboard(itemId ?? "");
+
     return (
         <>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="lg">
@@ -57,7 +60,26 @@ export function SecondaryEditor({
                         <Text fontSize="lg" overflow="wrap">
                             Edit item: {itemTitle}
                         </Text>
-                        <Code fontSize="xs">{itemId}</Code>
+                        <Text fontSize="xs" mt={2}>
+                            <Code fontSize="xs">{itemId}</Code>
+                            <Button
+                                onClick={onCopyItemId}
+                                size="xs"
+                                ml="auto"
+                                variant="ghost"
+                                p={0}
+                                h="auto"
+                                minH={0}
+                                aria-label="Copy item id"
+                            >
+                                <FAIcon
+                                    iconStyle="s"
+                                    icon={hasCopiedItemId ? "check-circle" : "clipboard"}
+                                    m={0}
+                                    p={0}
+                                />
+                            </Button>
+                        </Text>
                     </DrawerHeader>
                     <DrawerCloseButton />
 

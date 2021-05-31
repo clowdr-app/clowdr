@@ -61,6 +61,7 @@ gql`
             where: {
                 eventPeople: { person: { registrantId: { _eq: $registrantId } } }
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
+                room: {}
             }
         ) {
             ...MyBackstages_Event

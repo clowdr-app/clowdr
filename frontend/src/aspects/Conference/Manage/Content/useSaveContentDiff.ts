@@ -735,6 +735,7 @@ export function useSaveContentDiff():
                                         id: tag.id,
                                         name: tag.name,
                                         colour: tag.colour,
+                                        priority: tag.priority,
                                         conferenceId: conference.id,
                                         originatingDataId: tag.originatingDataId,
                                     })

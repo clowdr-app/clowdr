@@ -761,6 +761,7 @@ function convertTag(context: Context, element: IntermediaryTagDescriptor | TagDe
 
         name: element.name,
         colour: element.colour ?? "rgba(0,0,0,0)",
+        priority: element.priority,
     } as TagDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, element);
@@ -788,6 +789,7 @@ function mergeTag(
     mergeOriginatingDataIdInPlace(context, changes, result, element1, element2);
     mergeFieldInPlace(context, changes, result, "name", element1, element2);
     mergeFieldInPlace(context, changes, result, "colour", element1, element2);
+    mergeFieldInPlace(context, changes, result, "priority", element1, element2);
 
     changes.push({
         location: "Tag",

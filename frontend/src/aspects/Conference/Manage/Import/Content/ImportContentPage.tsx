@@ -186,7 +186,7 @@ const presetJSONata_CSVQuery_Tags = `
     "exhibitions": [],
     "tags": [$.{
         "name": $.Name,
-        "priority": $.Priority,
+        "priority": $number($.Priority),
         "colour": $.Colour
     }],
     "people": []
@@ -199,7 +199,7 @@ const presetJSONata_CSVQuery_Exhibitions = `
     "items": [],
     "exhibitions": [$.{
         "name": $.Name,
-        "priority": $.Priority,
+        "priority": $number($.Priority),
         "colour": $.Colour
     }],
     "tags": [],

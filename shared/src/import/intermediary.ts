@@ -189,6 +189,7 @@ export interface IntermediaryTagDescriptor {
 
     name?: string;
     colour?: string;
+    priority?: number;
 }
 
 export interface IntermediaryPersonDescriptor {

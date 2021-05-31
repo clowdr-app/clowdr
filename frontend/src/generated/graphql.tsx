@@ -42568,7 +42568,7 @@ export type SubmitProfilePhotoMutationOptions = Apollo.BaseMutationOptions<Submi
 export const RegistrantEventsWithBackstagesDocument = gql`
     query RegistrantEventsWithBackstages($registrantId: uuid!) {
   schedule_Event(
-    where: {eventPeople: {person: {registrantId: {_eq: $registrantId}}}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}}
+    where: {eventPeople: {person: {registrantId: {_eq: $registrantId}}}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, room: {}}
   ) {
     ...MyBackstages_Event
   }

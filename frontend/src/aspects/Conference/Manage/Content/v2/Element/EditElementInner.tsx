@@ -3,6 +3,7 @@ import { Alert, AlertDescription, AlertIcon, AlertTitle, Divider, Text } from "@
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
+    Content_UploadableElement_Set_Input,
     ManageContent_ElementFragment,
     ManageContent_ElementFragmentDoc,
     ManageContent_UploadableElementFragment,
@@ -126,12 +127,12 @@ export function EditElementInner(
                     }
 
                     if (updated.type === "required-and-element" || updated.type === "required-only") {
-                        const updatedUploadable = {
-                            ...updated.uploadableElement,
+                        const updatedUploadable: Content_UploadableElement_Set_Input = {
+                            isHidden: updated.uploadableElement.isHidden,
+                            name: updated.uploadableElement.name,
+                            typeName: updated.uploadableElement.typeName,
+                            uploadsRemaining: updated.uploadableElement.uploadsRemaining,
                         };
-                        delete updatedUploadable.__typename;
-                        delete updatedUploadable.conferenceId;
-                        delete updatedUploadable.hasBeenUploaded;
                         updateUploadableElement({
                             variables: {
                                 uploadableElementId: updated.uploadableElement.id,
@@ -139,9 +140,9 @@ export function EditElementInner(
                             },
                             optimisticResponse: {
                                 update_content_UploadableElement_by_pk: {
-                                    ...updatedUploadable,
+                                    ...updated.uploadableElement,
                                     __typename: "content_UploadableElement",
-                                },
+                                } as any,
                             },
                         });
                     }

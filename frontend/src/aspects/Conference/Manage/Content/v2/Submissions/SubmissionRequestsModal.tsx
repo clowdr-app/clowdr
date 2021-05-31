@@ -236,12 +236,18 @@ export function SendSubmissionRequestsModalInner({
     const [onlyReminders, setOnlyReminders] = useState<boolean>(true);
     const filteredUploadableElements = useMemo(
         () =>
-            uploadableElements.filter(
-                (upElement) =>
+            uploadableElements.filter((upElement) => {
+                const filteredUploaders =
+                    filterToUploaderIds === null
+                        ? upElement.uploaders
+                        : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id));
+                return (
                     (!selectedType || upElement.typeName === selectedType) &&
-                    (!onlyReminders || !upElement.hasBeenUploaded)
-            ),
-        [uploadableElements, onlyReminders, selectedType]
+                    (!onlyReminders || !upElement.hasBeenUploaded) &&
+                    filteredUploaders.length > 0
+                );
+            }),
+        [uploadableElements, onlyReminders, selectedType, filterToUploaderIds]
     );
     const uploadableElementsEl = useMemo(
         () => (
@@ -285,8 +291,8 @@ export function SendSubmissionRequestsModalInner({
             R.flatten(
                 filteredUploadableElements.map((upElement) =>
                     filterToUploaderIds === null
-                        ? upElement.uploaders
-                        : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id))
+                        ? upElement.uploaders.map((x) => x.id)
+                        : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id)).map((x) => x.id)
                 )
             ),
         [filteredUploadableElements, filterToUploaderIds]

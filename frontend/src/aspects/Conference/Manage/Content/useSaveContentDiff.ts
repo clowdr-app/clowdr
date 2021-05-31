@@ -20,6 +20,7 @@ import {
     useDeleteProgramPeopleMutation,
     useDeleteTagsMutation,
     useInsertDeleteItemsMutation,
+    useInsertElementsMutation,
     useInsertExhibitionsMutation,
     useInsertOriginatingDatasMutation,
     useInsertProgramPeopleMutation,
@@ -199,6 +200,14 @@ gql`
         delete_content_Item(where: { id: { _in: $deleteGroupIds } }) {
             returning {
                 id
+            }
+        }
+    }
+
+    mutation InsertElements($newElements: [content_Element_insert_input!]!) {
+        insert_content_Element(objects: $newElements) {
+            returning {
+                ...ElementInfo
             }
         }
     }
@@ -552,6 +561,7 @@ export function useSaveContentDiff():
     const [updateTagMutation] = useUpdateTagMutation();
 
     const [insertDeleteItemsMutation] = useInsertDeleteItemsMutation();
+    const [insertElementsMutation] = useInsertElementsMutation();
     const [updateItemMutation] = useUpdateItemMutation();
     const [updateElementMutation] = useUpdateElementMutation();
     const [updateUploadableElementMutation] = useUpdateUploadableElementMutation();
@@ -887,6 +897,8 @@ export function useSaveContentDiff():
                     }
 
                     if (deletedGroupKeys.size > 0 || newGroups.size > 0) {
+                        const elementsToPostInsert: Content_Element_Insert_Input[] = [];
+
                         await insertDeleteItemsMutation({
                             variables: {
                                 deleteGroupIds: Array.from(deletedGroupKeys.values()),
@@ -901,23 +913,31 @@ export function useSaveContentDiff():
                                         },
                                         typeName: group.typeName,
                                         elements: {
-                                            data: group.elements.map((item) => {
-                                                const itemResult: Content_Element_Insert_Input = {
-                                                    id: item.id,
-                                                    conferenceId: conference.id,
-                                                    typeName: item.typeName,
-                                                    data: item.data,
-                                                    layoutData: item.layoutData,
-                                                    name: item.name,
-                                                    isHidden: item.isHidden,
-                                                    uploadableId: item.uploadableId,
-                                                    originatingDataId: item.originatingDataId,
-                                                };
-                                                return itemResult;
-                                            }),
+                                            data: group.elements
+                                                .filter((x) => !x.uploadableId)
+                                                .map((item) => {
+                                                    const itemResult: Content_Element_Insert_Input = {
+                                                        id: item.id,
+                                                        conferenceId: conference.id,
+                                                        typeName: item.typeName,
+                                                        data: item.data,
+                                                        layoutData: item.layoutData,
+                                                        name: item.name,
+                                                        isHidden: item.isHidden,
+                                                        originatingDataId: item.originatingDataId,
+                                                    };
+                                                    return itemResult;
+                                                }),
                                         },
                                         uploadableElements: {
                                             data: group.uploadableElements.map((item) => {
+                                                const element = group.elements.find((x) => x.uploadableId === item.id);
+                                                if (element) {
+                                                    elementsToPostInsert.push({
+                                                        ...element,
+                                                        itemId: group.id,
+                                                    });
+                                                }
                                                 const itemResult: Content_UploadableElement_Insert_Input = {
                                                     id: item.id,
                                                     conferenceId: conference.id,
@@ -979,6 +999,25 @@ export function useSaveContentDiff():
                             },
                         });
 
+                        if (elementsToPostInsert.length > 0) {
+                            await insertElementsMutation({
+                                variables: {
+                                    newElements: elementsToPostInsert.map((item) => ({
+                                        id: item.id,
+                                        conferenceId: conference.id,
+                                        typeName: item.typeName,
+                                        data: item.data,
+                                        layoutData: item.layoutData,
+                                        name: item.name,
+                                        isHidden: item.isHidden,
+                                        uploadableId: item.uploadableId,
+                                        originatingDataId: item.originatingDataId,
+                                        itemId: item.itemId,
+                                    })),
+                                },
+                            });
+                        }
+
                         for (const key of newGroups.keys()) {
                             groupResults.set(key, true);
                         }
@@ -1005,6 +1044,7 @@ export function useSaveContentDiff():
                                 const newItems = new Map<string, ElementDescriptor>();
                                 const updatedItems = new Map<string, ElementDescriptor>();
                                 const deleteItemKeys = new Set<string>();
+                                const newItemsForUploadables = new Map<string, ElementDescriptor[]>();
 
                                 const newUploadableItems = new Map<string, UploadableElementDescriptor>();
                                 const updatedUploadableItems = new Map<string, UploadableElementDescriptor>();
@@ -1027,18 +1067,6 @@ export function useSaveContentDiff():
 
                                 const existingGroup = original.items.get(group.id);
                                 assert(existingGroup);
-                                for (const item of group.elements) {
-                                    if (item.isNew) {
-                                        newItems.set(item.id, item);
-                                    } else {
-                                        updatedItems.set(item.id, item);
-                                    }
-                                }
-                                for (const existingItem of existingGroup.elements) {
-                                    if (!updatedItems.has(existingItem.id)) {
-                                        deleteItemKeys.add(existingItem.id);
-                                    }
-                                }
 
                                 for (const item of group.uploadableElements) {
                                     if (item.isNew) {
@@ -1064,6 +1092,57 @@ export function useSaveContentDiff():
                                         if (!updatedUploaders.has(existingUploader.id)) {
                                             deleteUploaderKeys.add(existingUploader.id);
                                         }
+                                    }
+                                }
+
+                                for (const item of group.elements) {
+                                    if (item.isNew) {
+                                        if (item.uploadableId) {
+                                            const uploadable =
+                                                newUploadableItems.get(item.uploadableId) ??
+                                                updatedUploadableItems.get(item.uploadableId);
+                                            if (!uploadable) {
+                                                throw new Error(
+                                                    "Could not find uploadable for new element: " +
+                                                        JSON.stringify(
+                                                            {
+                                                                elementId: item.id,
+                                                                uploadableId: item.uploadableId,
+                                                            },
+                                                            null,
+                                                            2
+                                                        )
+                                                );
+                                            } else if (!uploadable.isNew) {
+                                                throw new Error(
+                                                    "Cannot add new element to existing uploadable: " +
+                                                        JSON.stringify(
+                                                            {
+                                                                elementId: item.id,
+                                                                uploadableId: item.uploadableId,
+                                                            },
+                                                            null,
+                                                            2
+                                                        )
+                                                );
+                                            } else {
+                                                const existing = newItemsForUploadables.get(item.uploadableId);
+                                                if (existing) {
+                                                    existing.push(item);
+                                                } else {
+                                                    newItemsForUploadables.set(item.uploadableId, [item]);
+                                                }
+                                            }
+                                        } else {
+                                            newItems.set(item.id, item);
+                                        }
+                                    } else {
+                                        updatedItems.set(item.id, item);
+                                    }
+                                }
+                                for (const existingItem of existingGroup.elements) {
+                                    if (!updatedItems.has(existingItem.id)) {
+                                        deleteItemKeys.add(existingItem.id);
                                     }
                                 }
 
@@ -1208,27 +1287,53 @@ export function useSaveContentDiff():
                                             uploadableId: item.uploadableId,
                                             originatingDataId: item.originatingDataId,
                                         })),
-                                        newUploadableItems: Array.from(newUploadableItems.values()).map((item) => ({
-                                            accessToken: uuidv4(),
-                                            conferenceId: conference.id,
-                                            itemId: group.id,
-                                            typeName: item.typeName,
-                                            id: item.id,
-                                            name: item.name,
-                                            isHidden: item.isHidden,
-                                            uploadsRemaining: item.uploadsRemaining,
-                                            originatingDataId: item.originatingDataId,
-                                            uploaders: {
-                                                data: item.uploaders.map(
-                                                    (uploader): Content_Uploader_Insert_Input => ({
-                                                        id: uploader.id,
-                                                        email: uploader.email,
-                                                        name: uploader.name,
-                                                        conferenceId: conference.id,
-                                                    })
-                                                ),
-                                            },
-                                        })),
+                                        newUploadableItems: Array.from(newUploadableItems.values()).map((item) => {
+                                            const elements = newItemsForUploadables.get(item.id) ?? [];
+                                            if (elements.length > 1) {
+                                                throw new Error(
+                                                    "Cannot create more than one element for the same uploadable! Uploadable id: " +
+                                                        item.id +
+                                                        "; Element ids: " +
+                                                        JSON.stringify(elements, null, 2)
+                                                );
+                                            }
+                                            return {
+                                                accessToken: uuidv4(),
+                                                conferenceId: conference.id,
+                                                itemId: group.id,
+                                                typeName: item.typeName,
+                                                id: item.id,
+                                                name: item.name,
+                                                isHidden: item.isHidden,
+                                                uploadsRemaining: item.uploadsRemaining,
+                                                originatingDataId: item.originatingDataId,
+                                                uploaders: {
+                                                    data: item.uploaders.map(
+                                                        (uploader): Content_Uploader_Insert_Input => ({
+                                                            id: uploader.id,
+                                                            email: uploader.email,
+                                                            name: uploader.name,
+                                                            conferenceId: conference.id,
+                                                        })
+                                                    ),
+                                                },
+                                                element:
+                                                    elements.length === 1
+                                                        ? {
+                                                              data: {
+                                                                  conferenceId: conference.id,
+                                                                  data: elements[0].data,
+                                                                  isHidden: elements[0].isHidden,
+                                                                  itemId: group.id,
+                                                                  layoutData: elements[0].layoutData,
+                                                                  name: elements[0].name,
+                                                                  originatingDataId: elements[0].originatingDataId,
+                                                                  typeName: elements[0].typeName,
+                                                              },
+                                                          }
+                                                        : undefined,
+                                            };
+                                        }),
                                         newUploaders: Array.from(newUploaders.values()).map((uploader) => ({
                                             conferenceId: conference.id,
                                             email: uploader.email,

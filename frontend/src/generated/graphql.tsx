@@ -38062,6 +38062,16 @@ export type InsertDeleteItemsMutation = { readonly __typename?: 'mutation_root',
       & ItemFullNestedInfoFragment
     )> }>, readonly delete_content_Item?: Maybe<{ readonly __typename?: 'content_Item_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any }> }> };
 
+export type InsertElementsMutationVariables = Exact<{
+  newElements: ReadonlyArray<Content_Element_Insert_Input> | Content_Element_Insert_Input;
+}>;
+
+
+export type InsertElementsMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'content_Element' }
+      & ElementInfoFragment
+    )> }> };
+
 export type InsertOriginatingDatasMutationVariables = Exact<{
   newDatas: ReadonlyArray<Conference_OriginatingData_Insert_Input> | Conference_OriginatingData_Insert_Input;
 }>;
@@ -44821,6 +44831,41 @@ export function useInsertDeleteItemsMutation(baseOptions?: Apollo.MutationHookOp
 export type InsertDeleteItemsMutationHookResult = ReturnType<typeof useInsertDeleteItemsMutation>;
 export type InsertDeleteItemsMutationResult = Apollo.MutationResult<InsertDeleteItemsMutation>;
 export type InsertDeleteItemsMutationOptions = Apollo.BaseMutationOptions<InsertDeleteItemsMutation, InsertDeleteItemsMutationVariables>;
+export const InsertElementsDocument = gql`
+    mutation InsertElements($newElements: [content_Element_insert_input!]!) {
+  insert_content_Element(objects: $newElements) {
+    returning {
+      ...ElementInfo
+    }
+  }
+}
+    ${ElementInfoFragmentDoc}`;
+export type InsertElementsMutationFn = Apollo.MutationFunction<InsertElementsMutation, InsertElementsMutationVariables>;
+
+/**
+ * __useInsertElementsMutation__
+ *
+ * To run a mutation, you first call `useInsertElementsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertElementsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertElementsMutation, { data, loading, error }] = useInsertElementsMutation({
+ *   variables: {
+ *      newElements: // value for 'newElements'
+ *   },
+ * });
+ */
+export function useInsertElementsMutation(baseOptions?: Apollo.MutationHookOptions<InsertElementsMutation, InsertElementsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertElementsMutation, InsertElementsMutationVariables>(InsertElementsDocument, options);
+      }
+export type InsertElementsMutationHookResult = ReturnType<typeof useInsertElementsMutation>;
+export type InsertElementsMutationResult = Apollo.MutationResult<InsertElementsMutation>;
+export type InsertElementsMutationOptions = Apollo.BaseMutationOptions<InsertElementsMutation, InsertElementsMutationVariables>;
 export const InsertOriginatingDatasDocument = gql`
     mutation InsertOriginatingDatas($newDatas: [conference_OriginatingData_insert_input!]!) {
   insert_conference_OriginatingData(objects: $newDatas) {

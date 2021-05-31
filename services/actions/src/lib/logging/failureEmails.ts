@@ -1,4 +1,3 @@
-import { htmlToText } from "html-to-text";
 import { insertEmails } from "../../handlers/email";
 
 export async function sendFailureEmail(failureReason: string, stackTrace?: string): Promise<void> {
@@ -13,11 +12,10 @@ ${stackTrace ? `<p>Stack trace: ${stackTrace}</p>` : ""}`;
                 reason: "item_transcode_failed",
                 subject: `URGENT: SYSTEM ERROR: Failure due to ${failureReason}`,
                 htmlContents,
-                plainTextContents: htmlToText(htmlContents),
             },
         ];
 
-        await insertEmails(emails);
+        await insertEmails(emails, undefined);
     } catch (e) {
         console.error("Failed to send failure email!", failureReason, e);
     }

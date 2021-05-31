@@ -7,7 +7,6 @@ import {
 import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
 import { EmailView_SubtitlesGenerated, EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
 import assert from "assert";
-import { htmlToText } from "html-to-text";
 import Mustache from "mustache";
 import R from "ramda";
 import {
@@ -247,20 +246,17 @@ async function trySendTranscriptionEmail(elementId: string) {
                 view
             );
             const htmlContents = `${htmlBody}
-<p>You are receiving this email because you are listed as an uploader for this item.
-This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
             return {
                 emailAddress: uploader.email,
                 reason: "item_transcription_succeeded",
                 subject,
                 htmlContents,
-                plainTextContents: htmlToText(htmlContents),
             };
         });
 
-        await insertEmails(emails);
+        await insertEmails(emails, element.conference.id);
     } catch (e) {
         console.error("Error while sending transcription emails", elementId, e);
         return;
@@ -310,16 +306,13 @@ async function trySendTranscriptionFailedEmail(elementId: string, elementName: s
 <p>Thank you,<br/>
 The Clowdr team
 </p>
-<p>You are receiving this email because you are listed as an uploader for this item.
-This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         return {
             emailAddress: uploader.email,
             reason: "item_transcription_failed",
             subject: `Clowdr: Submission ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
-            plainTextContents: htmlToText(htmlContents),
         };
     });
 
@@ -333,11 +326,10 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
             reason: "item_transcription_failed",
             subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
-            plainTextContents: htmlToText(htmlContents),
         });
     }
 
-    await insertEmails(emails);
+    await insertEmails(emails, elementDetails.data.content_Element_by_pk?.conference.id);
 }
 
 async function trySendTranscodeFailedEmail(elementId: string, elementName: string, message: string) {
@@ -381,16 +373,13 @@ async function trySendTranscodeFailedEmail(elementId: string, elementName: strin
 <p>Thank you,<br/>
 The Clowdr team
 </p>
-<p>You are receiving this email because you are listed as an uploader for this item.
-This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         return {
             emailAddress: uploader.email,
             reason: "item_transcode_failed",
             subject: `Clowdr: Submission ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
-            plainTextContents: htmlToText(htmlContents),
         };
     });
 
@@ -404,11 +393,10 @@ email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_AD
             reason: "item_transcode_failed",
             subject: `URGENT: SYSTEM ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
-            plainTextContents: htmlToText(htmlContents),
         });
     }
 
-    await insertEmails(emails);
+    await insertEmails(emails, elementDetails.data.content_Element_by_pk?.conference.id);
 }
 
 gql`

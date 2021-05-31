@@ -93,3 +93,33 @@ A string.
 ```json
 "1.0.0"
 ```
+
+## Email and contact addresses
+
+### Key
+
+`SUPPORT_ADDRESS`
+
+### Value
+
+A string representing a valid email address for contacting the conference organisers.
+
+### Example
+
+```json
+"conf2021@conference.com"
+```
+
+### Key
+
+`TECH_SUPPORT_ADDRESS`
+
+### Value
+
+A string representing a valid email address for contacting the service hosting company for technical support related to the conference.
+
+### Example
+
+```json
+"conf2021-support@host.org"
+```

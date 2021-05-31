@@ -1,4 +1,3 @@
-import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import bodyParser from "body-parser";
 import express, { Request, Response } from "express";
@@ -41,19 +40,9 @@ if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_AUDIENCE, "AUTH0_AUDIENCE environment variable not provided.");
     assert(process.env.AUTH0_ISSUER_DOMAIN, "AUTH0_ISSUER_DOMAIN environment variable not provided.");
 
-    assert(process.env.SENDGRID_API_KEY, "SENDGRID_API_KEY environment variable not provided.");
-    assert(process.env.SENDGRID_SENDER, "SENDGRID_SENDER environment variable not provided.");
-
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
     assert(process.env.FRONTEND_DOMAIN, "FRONTEND_DOMAIN environment variable not provided.");
     process.env.FRONTEND_PROTOCOL =
         process.env.FRONTEND_PROTOCOL || (process.env.FRONTEND_DOMAIN.startsWith("localhost") ? "http" : "https");
-
-    assert(
-        process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS,
-        "STOP_EMAILS_CONTACT_EMAIL_ADDRESS environment variable not provided."
-    );
 }
 
 assert(

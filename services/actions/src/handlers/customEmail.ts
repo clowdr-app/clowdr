@@ -1,6 +1,5 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
-import { htmlToText } from "html-to-text";
 import * as R from "ramda";
 import {
     CustomEmail_SelectRegistrantsDocument,
@@ -23,15 +22,6 @@ gql`
             user {
                 id
                 email
-            }
-        }
-    }
-
-    mutation CustomEmail_SendEmails($objects: [Email_insert_input!]!) {
-        insert_Email(objects: $objects) {
-            affected_rows
-            returning {
-                id
             }
         }
     }
@@ -70,14 +60,13 @@ async function sendCustomEmails(
         emailsToSend.push({
             emailAddress: email,
             htmlContents: htmlBody,
-            plainTextContents: htmlToText(htmlBody),
             reason: "custom-email",
             userId: registrant?.user?.id ?? null,
             subject,
         });
     }
 
-    await insertEmails(emailsToSend);
+    await insertEmails(emailsToSend, conferenceId);
 }
 
 gql`
@@ -114,8 +103,8 @@ export async function processCustomEmailsJobQueue(): Promise<void> {
     for (const job of jobs.data.update_job_queues_CustomEmailJob.returning) {
         try {
             await sendCustomEmails(job.registrantIds, job.conferenceId, job.htmlBody, job.subject);
-        } catch (e) {
-            console.error("Failed to process send custom email job", job.id);
+        } catch (error) {
+            console.error("Failed to process send custom email job", { jobId: job.id, error: error.message ?? error });
             failedJobIds.push(job.id);
         }
     }

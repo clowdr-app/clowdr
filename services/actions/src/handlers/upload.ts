@@ -16,7 +16,6 @@ import {
 import { EmailView_SubmissionRequest, EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
-import { htmlToText } from "html-to-text";
 import Mustache from "mustache";
 import R from "ramda";
 import { is } from "typescript-is";
@@ -276,6 +275,7 @@ gql`
             name
             id
             email
+            conferenceId
         }
     }
 `;
@@ -293,8 +293,9 @@ async function sendSubmittedEmail(
         },
     });
 
-    const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
-        const htmlContents = `<p>Dear ${uploader.name},</p>
+    if (uploaders.data.content_Uploader.length > 0) {
+        const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
+            const htmlContents = `<p>Dear ${uploader.name},</p>
 <p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName}.</p>
 <p>Our systems will now start processing your content. For videos, we will process your video and then auto-generate subtitles.</p>
 <p>For video submissions, you will receive two further emails:</p>
@@ -308,20 +309,18 @@ async function sendSubmittedEmail(
 <p>Thank you,<br/>
 The Clowdr team
 </p>
-<p>You are receiving this email because you are listed as an uploader for this item.
-This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
-        return {
-            emailAddress: uploader.email,
-            reason: "item_submitted",
-            subject: `Clowdr: Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
-            htmlContents,
-            plainTextContents: htmlToText(htmlContents),
-        };
-    });
+            return {
+                emailAddress: uploader.email,
+                reason: "item_submitted",
+                subject: `Clowdr: Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
+                htmlContents,
+            };
+        });
 
-    await insertEmails(emails);
+        await insertEmails(emails, uploaders.data.content_Uploader[0].conferenceId);
+    }
 }
 
 export async function handleElementSubmitted(args: submitElementArgs): Promise<SubmitElementOutput> {
@@ -565,10 +564,7 @@ gql`
         }
     }
 
-    mutation InsertSubmissionRequestEmails($emails: [Email_insert_input!]!, $uploaderIds: [uuid!]!) {
-        insert_Email(objects: $emails) {
-            affected_rows
-        }
+    mutation InsertSubmissionRequestEmails($uploaderIds: [uuid!]!) {
         update_content_Uploader(where: { id: { _in: $uploaderIds } }, _inc: { emailsSentCount: 1 }) {
             affected_rows
         }
@@ -661,8 +657,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
     });
     assert(jobsToProcess.data?.update_job_queues_SubmissionRequestEmailJob, "Failed to fetch jobs to process.");
 
-    const emails: Email_Insert_Input[] = [];
-    const uploaderIds: string[] = [];
+    const emails = new Map<string, { email: Email_Insert_Input; uploaderId: string; jobId: string }[]>();
     for (const job of jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning) {
         const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.uploadableElement.typeName);
 
@@ -714,49 +709,55 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
         );
 
         const htmlContents = `${htmlBody}
-<p>You are receiving this email because you are listed as an uploader for this item.
-This is an automated email sent on behalf of Clowdr CIC. If you believe you have received this
-email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}.</p>`;
+<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         const newEmail: Email_Insert_Input = {
             emailAddress: job.uploader.email,
             htmlContents,
-            plainTextContents: htmlToText(htmlContents),
             reason: "upload-request",
             subject,
         };
-        emails.push(newEmail);
-        uploaderIds.push(job.uploader.id);
+
+        let arr = emails.get(job.uploader.conference.id);
+        if (!arr) {
+            arr = [];
+            emails.set(job.uploader.conference.id, arr);
+        }
+        arr.push({ email: newEmail, uploaderId: job.uploader.id, jobId: job.id });
     }
 
-    try {
-        await apolloClient.mutate({
-            mutation: InsertSubmissionRequestEmailsDocument,
-            variables: {
-                emails: emails,
-                uploaderIds: uploaderIds,
-            },
-        });
-    } catch (e) {
-        console.error(
-            `Could not process jobs: ${jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning.reduce(
-                (acc, x) => `${acc}, ${x}`,
-                ""
-            )}:\n${e.toString()}`
-        );
-
+    emails.forEach(async (emailsRecords, conferenceId) => {
         try {
-            const jobIds = jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning.map((x) => x.id);
-            await callWithRetry(async () => {
-                await apolloClient.mutate({
-                    mutation: UnmarkSubmissionRequestEmailJobsDocument,
-                    variables: {
-                        ids: jobIds,
-                    },
-                });
+            await insertEmails(
+                emailsRecords.map((x) => x.email),
+                conferenceId
+            );
+            await apolloClient.mutate({
+                mutation: InsertSubmissionRequestEmailsDocument,
+                variables: {
+                    uploaderIds: emailsRecords.map((x) => x.uploaderId),
+                },
             });
         } catch (e) {
-            console.error(`Could not unmark failed emails: ${e.toString()}`);
+            console.error(
+                `Could not process jobs: ${emailsRecords
+                    .map((x) => x.jobId)
+                    .reduce((acc, x) => `${acc}, ${x}`, "")}:\n${e.toString()}`
+            );
+
+            try {
+                const jobIds = emailsRecords.map((x) => x.jobId);
+                await callWithRetry(async () => {
+                    await apolloClient.mutate({
+                        mutation: UnmarkSubmissionRequestEmailJobsDocument,
+                        variables: {
+                            ids: jobIds,
+                        },
+                    });
+                });
+            } catch (e) {
+                console.error(`Could not unmark failed emails: ${e.toString()}`);
+            }
         }
-    }
+    });
 }

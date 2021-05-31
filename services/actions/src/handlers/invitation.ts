@@ -162,6 +162,10 @@ async function sendInviteEmails(
     registrantIds: Array<string>,
     shouldSend: (registrant: RegistrantWithInvitePartsFragment) => "INITIAL" | "REPEAT" | false
 ): Promise<void> {
+    if (registrantIds.length === 0) {
+        return;
+    }
+
     const registrants = await apolloClient.query({
         query: SelectRegistrantsWithInvitationDocument,
         variables: {
@@ -175,13 +179,14 @@ async function sendInviteEmails(
         throw new Error(registrants.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
     }
 
-    const emailsToSend: Map<string, Email_Insert_Input> = new Map();
+    if (registrants.data.registrant_Registrant.length > 0) {
+        const emailsToSend: Map<string, Email_Insert_Input> = new Map();
 
-    for (const registrant of registrants.data.registrant_Registrant) {
-        if (!registrant.userId && registrant.invitation) {
-            const sendType = shouldSend(registrant);
-            if (sendType) {
-                const htmlContents = `<p>Dear ${registrant.displayName},</p>
+        for (const registrant of registrants.data.registrant_Registrant) {
+            if (!registrant.userId && registrant.invitation) {
+                const sendType = shouldSend(registrant);
+                if (sendType) {
+                    const htmlContents = `<p>Dear ${registrant.displayName},</p>
 
 <p>You are invited to attend ${registrant.conference.name} on Clowdr: the virtual
 conferencing platform. Please use the link and invite code below to create
@@ -193,29 +198,27 @@ your profile and access the conference.</p>
 <p>If you are asked for an invitation code, enter ${registrant.invitation.inviteCode}</p>
 
 <p>We hope you enjoy your conference,<br />
-The Clowdr team</p>
+The Clowdr team</p>`;
+                    // Or enter it on the Clowdr home page at ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}
 
-<p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
-received this email in error, please contact us via ${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</p>`;
-                // Or enter it on the Clowdr home page at ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}
+                    const plainTextContents = htmlToText(htmlContents);
 
-                const plainTextContents = htmlToText(htmlContents);
-
-                emailsToSend.set(registrant.id, {
-                    emailAddress: registrant.invitation.invitedEmailAddress,
-                    invitationId: registrant.invitation.id,
-                    reason: "invite",
-                    subject: `Clowdr: ${sendType === "REPEAT" ? "[Reminder] " : ""}Your invitation to ${
-                        registrant.conference.shortName
-                    }`,
-                    htmlContents,
-                    plainTextContents,
-                });
+                    emailsToSend.set(registrant.id, {
+                        emailAddress: registrant.invitation.invitedEmailAddress,
+                        invitationId: registrant.invitation.id,
+                        reason: "invite",
+                        subject: `Clowdr: ${sendType === "REPEAT" ? "[Reminder] " : ""}Your invitation to ${
+                            registrant.conference.shortName
+                        }`,
+                        htmlContents,
+                        plainTextContents,
+                    });
+                }
             }
         }
-    }
 
-    await insertEmails(Array.from(emailsToSend.values()));
+        await insertEmails(Array.from(emailsToSend.values()), registrants.data.registrant_Registrant[0].conference.id);
+    }
 }
 
 export async function processInvitationEmailsQueue(): Promise<void> {
@@ -240,7 +243,7 @@ export async function processInvitationEmailsQueue(): Promise<void> {
                 return false;
             });
         } catch (e) {
-            console.error("Failed to process send invite emails job", job.id);
+            console.error("Failed to process send invite emails job", { jobId: job.id, error: e.message ?? e });
             failedJobIds.push(job.id);
         }
     }
@@ -403,10 +406,7 @@ Page to enter the code: <a href="${process.env.FRONTEND_PROTOCOL}://${process.en
 (You will need to be logged in as ${user.email} in order to enter the confirmation code.)</p>
 
 <p>We hope you enjoy your conference,<br/>
-The Clowdr team</p>
-
-<p>This is an automated email sent on behalf of Clowdr CIC. If you believe you have
-received this email in error, please contact us via <a href="mailto:${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}">${process.env.STOP_EMAILS_CONTACT_EMAIL_ADDRESS}</a></p>`;
+The Clowdr team</p>`;
 
     const plainTextContents = htmlToText(htmlContents);
     return {

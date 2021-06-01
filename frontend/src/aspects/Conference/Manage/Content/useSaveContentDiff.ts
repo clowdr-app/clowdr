@@ -1076,9 +1076,12 @@ export function useSaveContentDiff():
 
                                         for (const uploader of item.uploaders) {
                                             if (uploader.isNew) {
-                                                newUploaders.set(uploader.id, uploader);
+                                                newUploaders.set(uploader.id, { ...uploader, uploadableId: item.id });
                                             } else {
-                                                updatedUploaders.set(uploader.id, uploader);
+                                                updatedUploaders.set(uploader.id, {
+                                                    ...uploader,
+                                                    uploadableId: item.id,
+                                                });
                                             }
                                         }
                                     }

@@ -44,7 +44,7 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
     htmlBodyTemplate: `<p>Dear {{uploader.name}},</p>
 <p>
     The organisers of {{conference.name}} are requesting that you or
-    your co-authors/co-presenters upload the following file: {{file.name}} [{{file.typeName}}] for
+    your co-authors/co-presenters upload the following file: {{file.name}} for
     "{{item.title}}".
 </p>
 <p>
@@ -52,10 +52,10 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
     herein can use it to upload content to your conference item.
 </p>
 <p>
-    Please <a href="{{{uploadLink}}}">submit your content on this page</a>.
+    Please <a href="{{{uploadLink}}}">submit your content on this page</a> by 23:59 UTC on DD MMMM.
 </p>
 <p>
-    Please <a href="https://youtu.be/l0SqCISybqk">watch this 6 minute instructional video</a> to learn how to use Clowdr's content upload system. This video also shows how to edit subtitles.
+    Please <a href="https://clowdr.org/resources/video-subtitles">watch this 6 minute instructional video</a> to learn how to use Clowdr's content upload system. This video also shows how to edit subtitles.
 </p>
 <p>
     Please do not leave submitting to the last moment - this can be risky! If we are unable to automatically process your upload, it may not be possible to prepare it in time for the conference.
@@ -66,8 +66,7 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
 <p>We hope you enjoy your conference,<br/>
 The Clowdr team
 </p>`,
-    subjectTemplate:
-        "Clowdr: You are requested to submit {{file.name}} [{{file.typeName}}] for {{item.title}} at {{conference.name}}",
+    subjectTemplate: "Clowdr: You are requested to submit {{file.name}} for {{item.title}} at {{conference.name}}",
 };
 
 /**

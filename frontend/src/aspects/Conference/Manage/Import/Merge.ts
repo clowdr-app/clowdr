@@ -381,16 +381,23 @@ export function isMatch_String_Exact<C, T, S extends T>(k?: keyof (S | T)): (ctx
     };
 }
 
+function escapeRegExp(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
 export function isMatch_String_EditDistance<C, T, S extends T>(
     k?: keyof (S | T)
 ): (ctx: C, item1: S, item2: T) => boolean {
     return (_ctx, item1, item2) => {
-        const v1 = k ? item1[k] : item1;
-        const v2 = k ? item2[k] : item2;
+        const _v1 = k ? item1[k] : item1;
+        const _v2 = k ? item2[k] : item2;
 
-        if (v1 === undefined || v2 === undefined || typeof v1 !== "string" || typeof v2 !== "string") {
+        if (_v1 === undefined || _v2 === undefined || typeof _v1 !== "string" || typeof _v2 !== "string") {
             return false;
         }
+
+        const v1: string = _v1;
+        const v2: string = _v2;
 
         const lengthDiff = Math.abs(v1.length - v2.length);
         const longerLength = Math.max(v1.length, v2.length);
@@ -401,7 +408,13 @@ export function isMatch_String_EditDistance<C, T, S extends T>(
         }
 
         const editDistance = levenshtein(v1.toLowerCase(), v2.toLowerCase());
-        return editDistance / longerLength < threshhold;
+        if (editDistance / longerLength >= threshhold) {
+            return false;
+        }
+
+        // Ignore purely numeric differences such as "XYZ Part 1" // "XYZ Part 2"
+        const testStr = "^" + escapeRegExp(v1).replace(/[0-9]/g, "[0-9]+") + "$";
+        return !new RegExp(testStr).test(v2);
     };
 }
 

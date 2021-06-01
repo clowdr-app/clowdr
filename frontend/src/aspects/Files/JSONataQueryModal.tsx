@@ -17,6 +17,7 @@ import {
     Text,
     Textarea,
     useDisclosure,
+    VStack,
 } from "@chakra-ui/react";
 import jsonata from "jsonata";
 import React, { useEffect, useState } from "react";
@@ -78,46 +79,48 @@ export default function JSONataQueryModal({
                     <ModalHeader>JSONata Query Tool</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <FormControl pb={4}>
-                            <FormLabel>Query script (JSONata)</FormLabel>
-                            <FormHelperText>Provide a JSONata script to query the data.</FormHelperText>
-                            <Textarea
-                                transition="none"
-                                fontFamily={
-                                    // eslint-disable-next-line quotes
-                                    'SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace'
-                                }
-                                minH="400px"
-                                value={query ?? ""}
-                                onChange={(ev) => {
-                                    setQuery(ev.target.value);
-                                }}
-                            />
-                        </FormControl>
-                        {error ? (
-                            <Alert status="error">
-                                <AlertIcon />
-                                <AlertTitle mr={2}>An error occurred</AlertTitle>
-                                <AlertDescription>{error}</AlertDescription>
-                            </Alert>
-                        ) : undefined}
-                        <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" position="relative">
-                            <Button
-                                aria-label="Copy output data"
-                                position="absolute"
-                                top={2}
-                                right={2}
-                                colorScheme="purple"
-                                onClick={() => {
-                                    navigator.clipboard.writeText(JSON.stringify(result, Set_toJSON, 2));
-                                }}
-                            >
-                                <FAIcon iconStyle="r" icon="clipboard" />
-                            </Button>
-                            <Code w="100%" p={2}>
-                                {JSON.stringify(result, Set_toJSON, 2)}
-                            </Code>
-                        </Text>
+                        <VStack>
+                            <FormControl pb={4}>
+                                <FormLabel>Query script (JSONata)</FormLabel>
+                                <FormHelperText>Provide a JSONata script to query the data.</FormHelperText>
+                                <Textarea
+                                    transition="none"
+                                    fontFamily={
+                                        // eslint-disable-next-line quotes
+                                        'SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace'
+                                    }
+                                    minH="400px"
+                                    value={query ?? ""}
+                                    onChange={(ev) => {
+                                        setQuery(ev.target.value);
+                                    }}
+                                />
+                            </FormControl>
+                            {error ? (
+                                <Alert status="error">
+                                    <AlertIcon />
+                                    <AlertTitle mr={2}>An error occurred</AlertTitle>
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            ) : undefined}
+                            <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" position="relative">
+                                <Button
+                                    aria-label="Copy output data"
+                                    position="absolute"
+                                    top={2}
+                                    right={2}
+                                    colorScheme="purple"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(JSON.stringify(result, Set_toJSON, 2));
+                                    }}
+                                >
+                                    <FAIcon iconStyle="r" icon="clipboard" />
+                                </Button>
+                                <Code w="100%" p={2}>
+                                    {JSON.stringify(result, Set_toJSON, 2)}
+                                </Code>
+                            </Text>
+                        </VStack>
                     </ModalBody>
                 </ModalContent>
             </Modal>

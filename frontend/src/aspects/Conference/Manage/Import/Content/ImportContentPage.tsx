@@ -48,7 +48,7 @@ const presetJSONata_CSVQuery_ProgramPeople = `
             {
                 "originatingDataSourceId": $ContentId,
                 "people": [$people#$Priority.{
-                    "name_affiliation": $."First Name" & ' ' & $."Last Name" & ' (' & $."Affiliation" & ')',
+                    "name_affiliation": $."First Name" & ' ' & $."Last Name" & '¦' & ($."Affiliation" ? $."Affiliation" : 'No affiliation'),
                     "role": $uppercase(Role),
                     "priority": $Priority
                 }]
@@ -250,13 +250,6 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
                 ]
             }
         ]
-        /* "people": [$@$people. */
-        /*     authors#$personIdx.{ */
-        /*         "name_affiliation": first & ' ' & last & ' (' & affiliation & ')', */
-        /*         "role": "AUTHOR", */
-        /*         "priority": $personIdx */
-        /*     } */
-        /* ] */
     },
     "people": [
         $.$@$group.**.authors.{

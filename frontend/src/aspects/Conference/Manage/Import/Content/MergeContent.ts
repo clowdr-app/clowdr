@@ -107,10 +107,11 @@ function convertUploader(
     uploadableId: string
 ): (context: Context, element: IntermediaryUploaderDescriptor | UploaderDescriptor) => UploaderDescriptor {
     return (_context, element) => {
-        const result = { ...element } as UploaderDescriptor;
-        if ("isNew" in element) {
-            result.isNew = element.isNew;
-        }
+        const result = {
+            isNew: ("isNew" in element && element.isNew) || !element.id,
+            ...element,
+        } as UploaderDescriptor;
+
         if ("emailsSentCount" in element) {
             result.emailsSentCount = element.emailsSentCount;
         } else {
@@ -645,6 +646,7 @@ function mergeItem(
     mergeFieldInPlace(context, changes, result, "title", item1, item2);
     mergeFieldInPlace(context, changes, result, "typeName", item1, item2);
     mergeFieldInPlace(context, changes, result, "uploadableElements", item1, item2, true, mergeUploadableElements);
+    result.uploadableElements = result.uploadableElements.filter((x) => !!x.typeName);
     mergeFieldInPlace(context, changes, result, "elements", item1, item2, true, (a, b, c) =>
         mergeElements(a, b, c, result.uploadableElements)
     );
@@ -925,9 +927,9 @@ function findExistingPersonForItem(
             return undefined;
         }
         if (x.affiliation) {
-            return `${x.name} (${x.affiliation})`;
+            return `${x.name}¦${x.affiliation}`;
         }
-        return `${x.name} (No affiliation)`;
+        return `${x.name}¦No affiliation`;
     };
     const generateMatchableNameB = (x: ItemPersonDescriptor | IntermediaryItemPersonDescriptor): string | undefined => {
         if ("name_affiliation" in x) {
@@ -942,7 +944,7 @@ function findExistingPersonForItem(
         if (!p) {
             return undefined;
         }
-        return `${p.name} (${p.affiliation ?? "No affiliation"})`;
+        return `${p.name}¦${p.affiliation ? p.affiliation : "No affiliation"}`;
     };
     const matchExact = isMatch_String_Exact();
     const matchDistance = isMatch_String_EditDistance();
@@ -984,8 +986,8 @@ function findExistingPersonForItem(
             }
             // Match affiliation separately - long affiliation can skew the result unexpectedly
             return (
-                matchDistance(ctxInner, left.split("(")[0], right.split("(")[0]) &&
-                matchDistance(ctxInner, left.split("(")[1], right.split("(")[1])
+                matchDistance(ctxInner, left.split("¦")[0].trim(), right.split("¦")[0].trim()) &&
+                matchDistance(ctxInner, left.split("¦")[1].trim(), right.split("¦")[1].trim())
             );
         })
     );

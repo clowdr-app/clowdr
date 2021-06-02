@@ -689,10 +689,10 @@ function findExistingItem(
     item: IntermediaryItemDescriptor | ItemDescriptor
 ): number | undefined {
     return (
-        findMatch(ctx, items, item, isMatch_Id("Item")) ??
-        findMatch(ctx, items, item, isMatch_OriginatingDataId) ??
-        findMatch(ctx, items, item, isMatch_String_Exact("title")) ??
-        findMatch(ctx, items, item, isMatch_String_EditDistance("title"))
+        findMatch(ctx, items, item, isMatch_Id("Item")) ?? findMatch(ctx, items, item, isMatch_OriginatingDataId)
+        // ??
+        // findMatch(ctx, items, item, isMatch_String_Exact("title")) ??
+        // findMatch(ctx, items, item, isMatch_String_EditDistance("title"))
     );
 }
 

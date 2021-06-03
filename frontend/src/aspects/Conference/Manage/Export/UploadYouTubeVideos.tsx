@@ -417,13 +417,33 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
         "clowdr-youTubeTitleTemplate",
-        "{{fileName}}",
+        "{{itemTitle}} ({{fileName}})",
         (x) => x,
         (x) => x
     );
     const [youTubeDescriptionTemplate, setYouTubeDescriptionTemplate] = useRestorableState(
-        "clowdr-youTubeDescriptionTemplate",
-        "{{abstract}}",
+        "clowdr-youTubeDescriptionTemplate-v2",
+        `{{#abstract}}{{abstract}}
+
+{{/abstract}}
+{{#authors.length}}
+{{#authors}}
+{{name}}{{#affiliation}} ({{affiliation}}){{/affiliation}}, 
+{{/authors}}
+
+{{/authors.length}}
+{{#paperLinks.length}}
+{{#paperLinks}}{{#url}}
+* {{text}}: {{url}}
+{{/url}}{{/paperLinks}}
+
+{{/paperLinks.length}}
+{{#paperUrls.length}}
+{{#paperUrls}}{{#.}}* {{.}}
+{{/.}}{{/paperUrls}}
+
+{{/paperUrls.length}}
+`,
         (x) => x,
         (x) => x
     );
@@ -934,7 +954,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
                                     <FieldArray
                                         name="titleCorrections"
-                                        render={(arrayHelpers) =>
+                                        render={(_arrayHelpers) =>
                                             values.titleCorrections &&
                                             Object.keys(values.titleCorrections).length > 0 ? (
                                                 <>
@@ -942,7 +962,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         Corrected video titles
                                                     </Heading>
                                                     {R.toPairs<string>(values.titleCorrections).map(
-                                                        ([elementId, title]) => (
+                                                        ([elementId, _title]) => (
                                                             <Field
                                                                 key={elementId}
                                                                 name={`titleCorrections.${elementId}`}

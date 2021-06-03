@@ -116,3 +116,11 @@
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
+- name: ProcessCombineVideosobQueue
+  webhook: '{{ACTION_BASE_URL}}/combineVideosJob/process'
+  schedule: '*/5 * * * *'
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET

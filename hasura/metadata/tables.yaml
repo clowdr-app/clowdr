@@ -4047,28 +4047,6 @@
                   _eq: X-Hasura-User-Id
               - permission_name:
                   _eq: CONFERENCE_MANAGE_CONTENT
-  event_triggers:
-  - name: CombineVideosJobCreated
-    definition:
-      enable_manual: true
-      insert:
-        columns: '*'
-      update:
-        columns:
-        - data
-        - jobStatusName
-        - message
-        - conferenceId
-        - createdByRegistrantId
-        - id
-    retry_conf:
-      num_retries: 0
-      interval_sec: 10
-      timeout_sec: 60
-    webhook: '{{ACTION_BASE_URL}}/combineVideosJob/inserted'
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
 - table:
     schema: job_queues
     name: CustomEmailJob

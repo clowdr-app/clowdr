@@ -16,6 +16,7 @@ import {
     ElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
 import assert from "assert";
 import * as R from "ramda";
 import { assertType } from "typescript-is";
@@ -25,6 +26,7 @@ import {
     CombineVideosJob_CreateElementDocument,
     CombineVideosJob_FailJobDocument,
     CombineVideosJob_GetElementsDocument,
+    CombineVideosJob_GetJobsDocument,
     CombineVideosJob_StartJobDocument,
     MediaConvert_GetCombineVideosJobDocument,
     Video_JobStatus_Enum,
@@ -32,10 +34,23 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { MediaConvert } from "../lib/aws/awsClient";
 import { audioDescription, videoDescription } from "../lib/transcode";
-import { CombineVideosJobData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`
+    query CombineVideosJob_GetJobs {
+        job_queues_CombineVideosJob(
+            where: { jobStatusName: { _in: [NEW, IN_PROGRESS] } }
+            order_by: { created_at: asc }
+            limit: 10
+        ) {
+            id
+            created_at
+            conferenceId
+            data
+            jobStatusName
+        }
+    }
+
     query CombineVideosJob_GetElements($conferenceId: uuid!, $elementIds: [uuid!]!) {
         content_Element(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $elementIds } }) {
             id
@@ -45,140 +60,152 @@ gql`
     }
 `;
 
-export async function handleCombineVideosJobInserted(payload: Payload<CombineVideosJobData>): Promise<void> {
-    assert(payload.event.data.new, "Payload must contain new row data");
-    const newRow = payload.event.data.new;
+export async function processCombineVideosJobQueue(): Promise<void> {
+    const jobsResponse = await apolloClient.query({
+        query: CombineVideosJob_GetJobsDocument,
+    });
 
-    if (newRow.jobStatusName !== Video_JobStatus_Enum.New) {
-        return;
-    }
-
-    try {
-        const result = await apolloClient.query({
-            query: CombineVideosJob_GetElementsDocument,
-            variables: {
-                conferenceId: newRow.conferenceId,
-                elementIds: newRow.data.inputElements.map((item) => item.elementId),
-            },
-        });
-
-        const itemIds = R.uniq(result.data.content_Element.map((item) => item.itemId));
-
-        if (itemIds.length > 1 || itemIds.length === 0) {
-            console.error("Can only combine content items from exactly one content group", newRow.id, itemIds);
-            throw new Error("Can only combine content items from exactly one content group");
+    jobsResponse.data.job_queues_CombineVideosJob.forEach(async (row) => {
+        if (row.jobStatusName !== Video_JobStatus_Enum.New) {
+            if (Date.now() - Date.parse(row.created_at) > 6 * 60 * 60 * 1000) {
+                console.error(
+                    "Error: CombineVideosJob timed out after 6 hours (failing the job to avoid queue starvation)"
+                );
+                await failCombineVideosJob(row.id, "Timed out after 6 hours");
+            }
+            return;
         }
 
-        const inputs = R.sortBy(
-            (x) => newRow.data.inputElements.findIndex((y) => y.elementId === x.id),
-            result.data.content_Element
-        )
-            .sort((a, b) => {
-                const aIndex = newRow.data.inputElements.findIndex((x) => x.elementId === a.id);
-                const bIndex = newRow.data.inputElements.findIndex((x) => x.elementId === b.id);
-                return aIndex - bIndex;
-            })
-            .map((item) => {
-                const blob = assertType<ElementDataBlob>(item.data);
+        try {
+            assertType<CombineVideosJobDataBlob>(row.data);
+            const data: CombineVideosJobDataBlob = row.data;
 
-                const latestVersion = R.last(blob);
-
-                if (!latestVersion) {
-                    throw new Error(`Missing latest version of content item ${item.id}`);
-                }
-
-                if (latestVersion.data.baseType !== ElementBaseType.Video) {
-                    throw new Error(`Content item ${item.id} is not a video`);
-                }
-
-                const input: Input = {
-                    FileInput:
-                        latestVersion.data.broadcastTranscode?.s3Url ??
-                        latestVersion.data.transcode?.s3Url ??
-                        latestVersion.data.s3Url,
-                    AudioSelectors: {
-                        "Audio Selector 1": {
-                            SelectorType: AudioSelectorType.TRACK,
-                        },
-                    },
-                    CaptionSelectors: {
-                        "Caption Selector 1": {
-                            SourceSettings: {
-                                EmbeddedSourceSettings: {
-                                    Convert608To708: EmbeddedConvert608To708.UPCONVERT,
-                                },
-                                SourceType: CaptionSourceType.EMBEDDED,
-                            },
-                        },
-                    },
-                };
-
-                return input;
+            const result = await apolloClient.query({
+                query: CombineVideosJob_GetElementsDocument,
+                variables: {
+                    conferenceId: row.conferenceId,
+                    elementIds: data.inputElements.map((item) => item.elementId),
+                },
             });
 
-        const destinationKey = uuidv4();
+            const itemIds = R.uniq(result.data.content_Element.map((item) => item.itemId));
 
-        assert(MediaConvert, "AWS MediaConvert client is not initialised");
-        const mediaConvertJobResult = await MediaConvert.createJob({
-            Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
-            UserMetadata: {
-                mode: TranscodeMode.COMBINE,
-                combineVideosJobId: newRow.id,
-                itemId: itemIds[0],
-                environment: process.env.AWS_PREFIX ?? "unknown",
-            },
-            Settings: {
-                Inputs: inputs,
-                OutputGroups: [
-                    {
-                        CustomName: "File Group",
-                        OutputGroupSettings: {
-                            FileGroupSettings: {
-                                Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${destinationKey}`,
+            if (itemIds.length > 1 || itemIds.length === 0) {
+                console.error("Can only combine content items from exactly one content group", row.id, itemIds);
+                throw new Error("Can only combine content items from exactly one content group");
+            }
+
+            const inputs = R.sortBy(
+                (x) => data.inputElements.findIndex((y) => y.elementId === x.id),
+                result.data.content_Element
+            )
+                .sort((a, b) => {
+                    const aIndex = data.inputElements.findIndex((x) => x.elementId === a.id);
+                    const bIndex = data.inputElements.findIndex((x) => x.elementId === b.id);
+                    return aIndex - bIndex;
+                })
+                .map((item) => {
+                    const blob = assertType<ElementDataBlob>(item.data);
+
+                    const latestVersion = R.last(blob);
+
+                    if (!latestVersion) {
+                        throw new Error(`Missing latest version of content item ${item.id}`);
+                    }
+
+                    if (latestVersion.data.baseType !== ElementBaseType.Video) {
+                        throw new Error(`Content item ${item.id} is not a video`);
+                    }
+
+                    const input: Input = {
+                        FileInput:
+                            latestVersion.data.broadcastTranscode?.s3Url ??
+                            latestVersion.data.transcode?.s3Url ??
+                            latestVersion.data.s3Url,
+                        AudioSelectors: {
+                            "Audio Selector 1": {
+                                SelectorType: AudioSelectorType.TRACK,
                             },
-                            Type: OutputGroupType.FILE_GROUP_SETTINGS,
                         },
-                        Outputs: [
-                            {
-                                ContainerSettings: {
-                                    Mp4Settings: {},
-                                    Container: ContainerType.MP4,
-                                },
-                                AudioDescriptions: [audioDescription],
-                                VideoDescription: videoDescription,
-                            },
-                            {
-                                ContainerSettings: {
-                                    Container: ContainerType.RAW,
-                                },
-                                CaptionDescriptions: [
-                                    {
-                                        CaptionSelectorName: "Caption Selector 1",
-                                        DestinationSettings: {
-                                            DestinationType: CaptionDestinationType.SRT,
-                                        },
-                                        LanguageCode: LanguageCode.ENG,
+                        CaptionSelectors: {
+                            "Caption Selector 1": {
+                                SourceSettings: {
+                                    EmbeddedSourceSettings: {
+                                        Convert608To708: EmbeddedConvert608To708.UPCONVERT,
                                     },
-                                ],
+                                    SourceType: CaptionSourceType.EMBEDDED,
+                                },
                             },
-                        ],
-                    },
-                ],
-            },
-        });
+                        },
+                    };
 
-        assert(
-            mediaConvertJobResult.Job?.Id && mediaConvertJobResult.Job.CreatedAt,
-            `Failed to create MediaConvert job for CombineVideosJob, ${newRow.id}`
-        );
+                    return input;
+                });
 
-        await startCombineVideosJob(newRow.id, mediaConvertJobResult.Job.Id);
+            const destinationKey = uuidv4();
 
-        console.log("Started CombineVideosJob MediaConvert job", newRow.id, mediaConvertJobResult.Job.Id);
-    } catch (e) {
-        console.error("Error while handling CombineVideosJob inserted", e);
-        await failCombineVideosJob(newRow.id, e.message);
-    }
+            assert(MediaConvert, "AWS MediaConvert client is not initialised");
+            const mediaConvertJobResult = await MediaConvert.createJob({
+                Role: process.env.AWS_MEDIACONVERT_SERVICE_ROLE_ARN,
+                UserMetadata: {
+                    mode: TranscodeMode.COMBINE,
+                    combineVideosJobId: row.id,
+                    itemId: itemIds[0],
+                    environment: process.env.AWS_PREFIX ?? "unknown",
+                },
+                Settings: {
+                    Inputs: inputs,
+                    OutputGroups: [
+                        {
+                            CustomName: "File Group",
+                            OutputGroupSettings: {
+                                FileGroupSettings: {
+                                    Destination: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${destinationKey}`,
+                                },
+                                Type: OutputGroupType.FILE_GROUP_SETTINGS,
+                            },
+                            Outputs: [
+                                {
+                                    ContainerSettings: {
+                                        Mp4Settings: {},
+                                        Container: ContainerType.MP4,
+                                    },
+                                    AudioDescriptions: [audioDescription],
+                                    VideoDescription: videoDescription,
+                                },
+                                {
+                                    ContainerSettings: {
+                                        Container: ContainerType.RAW,
+                                    },
+                                    CaptionDescriptions: [
+                                        {
+                                            CaptionSelectorName: "Caption Selector 1",
+                                            DestinationSettings: {
+                                                DestinationType: CaptionDestinationType.SRT,
+                                            },
+                                            LanguageCode: LanguageCode.ENG,
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            });
+
+            assert(
+                mediaConvertJobResult.Job?.Id && mediaConvertJobResult.Job.CreatedAt,
+                `Failed to create MediaConvert job for CombineVideosJob, ${row.id}`
+            );
+
+            await startCombineVideosJob(row.id, mediaConvertJobResult.Job.Id);
+
+            console.log("Started CombineVideosJob MediaConvert job", row.id, mediaConvertJobResult.Job.Id);
+        } catch (e) {
+            console.error("Error while handling process CombineVideosJob", e);
+            await failCombineVideosJob(row.id, e.message);
+        }
+    });
 }
 
 gql`

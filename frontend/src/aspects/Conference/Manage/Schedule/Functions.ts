@@ -1,6 +1,6 @@
 import type { SelectWholeScheduleQuery } from "../../../../generated/graphql";
 import { convertItemToDescriptor } from "../Content/Functions";
-import type { ItemDescriptor, ProgramPersonDescriptor } from "../Content/Types";
+import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
 import type { EventDescriptor, RoomDescriptor } from "./Types";
 
@@ -10,6 +10,7 @@ export function convertScheduleToDescriptors(
     rooms: Map<string, RoomDescriptor>;
     events: Map<string, EventDescriptor>;
     tags: Map<string, TagDescriptor>;
+    exhibitions: Map<string, ExhibitionDescriptor>;
     originatingDatas: Map<string, OriginatingDataDescriptor>;
     people: Map<string, ProgramPersonDescriptor>;
     items: ItemDescriptor[];
@@ -41,6 +42,17 @@ export function convertScheduleToDescriptors(
                     colour: tag.colour,
                     name: tag.name,
                     originatingDataId: tag.originatingDataId,
+                    priority: tag.priority,
+                },
+            ])
+        ),
+        exhibitions: new Map(
+            schedule.collection_Exhibition.map((tag): [string, ExhibitionDescriptor] => [
+                tag.id,
+                {
+                    id: tag.id,
+                    colour: tag.colour,
+                    name: tag.name,
                     priority: tag.priority,
                 },
             ])

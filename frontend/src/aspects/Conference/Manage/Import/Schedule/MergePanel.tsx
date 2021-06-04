@@ -9,7 +9,7 @@ import {
     Spinner,
     useToast,
 } from "@chakra-ui/react";
-import type { IntermediaryContentData } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryScheduleData } from "@clowdr-app/shared-types/build/import/intermediary";
 import assert from "assert";
 import React, { useEffect, useState } from "react";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
@@ -21,7 +21,7 @@ import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Type
 import { ChangeSummary, Set_toJSON } from "../Merge";
 import mergeSchedule from "./MergeSchedule";
 
-export default function MergePanel({ data }: { data: Record<string, IntermediaryContentData> }): JSX.Element {
+export default function MergePanel({ data }: { data: Record<string, IntermediaryScheduleData> }): JSX.Element {
     const conference = useConference();
     const saveContentDiff = useSaveScheduleDiff();
     const {
@@ -32,6 +32,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
         originalRooms,
         originalOriginatingDatas,
         originalTags,
+        originalExhibitions,
     } = saveContentDiff;
 
     const [mergedEventsMap, setMergedEventsMap] = useState<Map<string, EventDescriptor>>();
@@ -44,7 +45,14 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (items && originalEvents && originalRooms && originalOriginatingDatas && originalTags) {
+        if (
+            items &&
+            originalEvents &&
+            originalRooms &&
+            originalOriginatingDatas &&
+            originalTags &&
+            originalExhibitions
+        ) {
             try {
                 setError(null);
                 const merged = mergeSchedule(
@@ -54,6 +62,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                     originalRooms,
                     originalOriginatingDatas,
                     originalTags,
+                    originalExhibitions,
                     items
                 );
                 setMergedEventsMap(merged.newEvents);
@@ -71,7 +80,16 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                 setError(e.message);
             }
         }
-    }, [conference.id, data, originalEvents, originalRooms, originalOriginatingDatas, originalTags, items]);
+    }, [
+        conference.id,
+        data,
+        originalEvents,
+        originalRooms,
+        originalOriginatingDatas,
+        originalTags,
+        originalExhibitions,
+        items,
+    ]);
 
     const finalData = {
         events: Array.from(mergedEventsMap?.values() ?? []),

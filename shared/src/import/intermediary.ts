@@ -252,6 +252,7 @@ export interface IntermediaryEventDescriptor {
     durationSeconds?: number;
     people?: IntermediaryEventPersonDescriptor[];
     tagNames?: Array<string>;
+    exhibitionName?: string | null;
 }
 
 export interface IntermediaryEventPersonDescriptor {

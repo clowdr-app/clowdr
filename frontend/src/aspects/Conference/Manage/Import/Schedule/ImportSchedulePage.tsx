@@ -30,8 +30,8 @@ const presetJSONata_ScheduleCSVQuery = `
         "events": [$all.(
             $timeZoneOffset := '+00:00';
             $timeFormat := "[Y0001]-[M01]-[D01]T[H01]:[m01] [Z]";
-            $startAt := $."Start Time" & ' ' & $timeZoneOffset;
-            $endAt := $."End Time" & ' ' & $timeZoneOffset;
+            $startAt := $."Start Time (UTC)" & ' ' & $timeZoneOffset;
+            $endAt := $."End Time (UTC)" & ' ' & $timeZoneOffset;
             $startTime := $toMillis($startAt, $timeFormat);
             $endTime := $toMillis($endAt, $timeFormat);
             $durationSeconds := ($endTime - $startTime) / 1000;
@@ -45,9 +45,10 @@ const presetJSONata_ScheduleCSVQuery = `
                 "startTime": $startTime,
                 "durationSeconds": $durationSeconds,
 
-                "itemSourceId": $."Content Id",
                 "intendedRoomModeName": $modeName,
                 "name": $name,
+                "itemSourceId": $."Content Id",
+                "exhibitionName": $."Exhibition Name",
 
                 "roomName": $roomName
             }
@@ -65,21 +66,6 @@ const presetJSONata_ScheduleCSVQuery = `
     }
 )
 `;
-
-// TODO: At some point in the future, import sessions from Researchr
-//
-// "sessions": $.{
-//     "originatingDataSourceId": subevent_id._text,
-//     "title": title._text,
-//     "researchrLink": { "url": url._text, "label": url_link_display._text },
-//     "roomName": $match(room._text, /[^|]*\\| ?(.*)/).groups[0],
-//     "chair":
-//         timeslot[$not($exists(event_id))].persons.person[role._text="Session Chair"].
-//             {
-//                 "name": $trim(first_name._text & ' ' & last_name._text),
-//                 "affiliation": affiliation._text
-//             }
-// }
 
 export default function ImportSchedulePage(): JSX.Element {
     const conference = useConference();

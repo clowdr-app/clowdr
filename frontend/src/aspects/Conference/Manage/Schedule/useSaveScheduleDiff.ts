@@ -21,7 +21,7 @@ import {
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
-import type { ItemDescriptor, ProgramPersonDescriptor } from "../Content/Types";
+import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
 import { convertScheduleToDescriptors } from "./Functions";
 import type { EventDescriptor, RoomDescriptor } from "./Types";
@@ -202,6 +202,7 @@ export type WholeScheduleStateT =
     | {
           events: Map<string, EventDescriptor>;
           tags: Map<string, TagDescriptor>;
+          exhibitions: Map<string, ExhibitionDescriptor>;
           rooms: Map<string, RoomDescriptor>;
           originatingDatas: Map<string, OriginatingDataDescriptor>;
           people: Map<string, ProgramPersonDescriptor>;
@@ -215,6 +216,7 @@ export function useSaveScheduleDiff():
           errorContent: ApolloError | undefined;
           originalEvents: undefined;
           originalTags: undefined;
+          originalExhibitions: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
           originalPeople: undefined;
@@ -225,6 +227,7 @@ export function useSaveScheduleDiff():
           errorContent: ApolloError;
           originalEvents: undefined;
           originalTags: undefined;
+          originalExhibitions: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
           originalPeople: undefined;
@@ -235,6 +238,7 @@ export function useSaveScheduleDiff():
           errorContent: undefined;
           originalEvents: undefined;
           originalTags: undefined;
+          originalExhibitions: undefined;
           originalOriginatingDatas: undefined;
           originalRooms: undefined;
           originalPeople: undefined;
@@ -245,6 +249,7 @@ export function useSaveScheduleDiff():
           errorContent: undefined;
           originalEvents: Map<string, EventDescriptor>;
           originalTags: Map<string, TagDescriptor>;
+          originalExhibitions: Map<string, ExhibitionDescriptor>;
           originalOriginatingDatas: Map<string, OriginatingDataDescriptor>;
           originalRooms: Map<string, RoomDescriptor>;
           originalPeople: Map<string, ProgramPersonDescriptor>;
@@ -303,6 +308,7 @@ export function useSaveScheduleDiff():
             errorContent: errorContent,
             originalEvents: undefined,
             originalTags: undefined,
+            originalExhibitions: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
             originalPeople: undefined,
@@ -314,6 +320,7 @@ export function useSaveScheduleDiff():
             errorContent: errorContent,
             originalEvents: undefined,
             originalTags: undefined,
+            originalExhibitions: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
             originalPeople: undefined,
@@ -325,6 +332,7 @@ export function useSaveScheduleDiff():
             errorContent: errorContent,
             originalEvents: undefined,
             originalTags: undefined,
+            originalExhibitions: undefined,
             originalOriginatingDatas: undefined,
             originalRooms: undefined,
             originalPeople: undefined,
@@ -337,6 +345,7 @@ export function useSaveScheduleDiff():
             originalEvents: original.events,
             originalOriginatingDatas: original.originatingDatas,
             originalTags: original.tags,
+            originalExhibitions: original.exhibitions,
             originalRooms: original.rooms,
             originalPeople: original.people,
             items: original.items,

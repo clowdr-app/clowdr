@@ -5,7 +5,7 @@ import type {
     IntermediaryTagDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
-import type { ItemDescriptor } from "../../Content/Types";
+import type { ExhibitionDescriptor, ItemDescriptor } from "../../Content/Types";
 import type { EventDescriptor, RoomDescriptor } from "../../Schedule/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import {
@@ -40,18 +40,30 @@ type Context = {
     conferenceId: string;
     originatingDatas: OriginatingDataDescriptor[];
     tags: TagDescriptor[];
+    exhibitions: ExhibitionDescriptor[];
     rooms: RoomDescriptor[];
     items: ItemDescriptor[];
 };
 
-function convertTagName(context: Context, tagName: string): string {
-    const r = findMatch(context, context.tags, tagName, (ctx, item1, item2) =>
+function convertTagName(context: Context, name: string): string {
+    const r = findMatch(context, context.tags, name, (ctx, item1, item2) =>
         isMatch_String_Exact()(ctx, item1.name, item2)
     );
     if (r !== undefined) {
         return context.tags[r].id;
     } else {
-        throw new Error(`Tag ${tagName} not found!`);
+        throw new Error(`Tag ${name} not found!`);
+    }
+}
+
+function convertExhibitionName(context: Context, name: string): string {
+    const r = findMatch(context, context.exhibitions, name, (ctx, item1, item2) =>
+        isMatch_String_Exact()(ctx, item1.name, item2)
+    );
+    if (r !== undefined) {
+        return context.exhibitions[r].id;
+    } else {
+        throw new Error(`Exhibition ${name} not found!`);
     }
 }
 
@@ -68,6 +80,7 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         durationSeconds: item.durationSeconds,
         people: [],
         tagIds: new Set(),
+        exhibitionId: "exhibitionId" in item && item.exhibitionId ? item.exhibitionId : undefined,
     } as EventDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
@@ -85,6 +98,10 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         }
     }
 
+    if ("exhibitionName" in item && item.exhibitionName) {
+        result.exhibitionId = convertExhibitionName(context, item.exhibitionName);
+    }
+
     if ("roomName" in item && item.roomName && !item.roomId) {
         const r = findMatch(context, context.rooms, item.roomName, (ctx, item1, item2) =>
             isMatch_String_Exact()(ctx, item1.name, item2)
@@ -94,7 +111,7 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         }
     }
 
-    if ("itemSourceId" in item && item.itemSourceId && !item.itemId) {
+    if ("itemSourceId" in item && item.itemSourceId && item.itemSourceId !== "" && !item.itemId) {
         const srcId = item.itemSourceId;
         const groups = context.items.filter((g) => {
             if (g.originatingDataId) {
@@ -146,6 +163,7 @@ function mergeEvent(
     mergeFieldInPlace(context, changes, result, "name", item1, item2);
     mergeFieldInPlace(context, changes, result, "startTime", item1, item2);
     mergeFieldInPlace(context, changes, result, "durationSeconds", item1, item2);
+    mergeFieldInPlace(context, changes, result, "exhibitionId", item1, item2);
     mergeFieldInPlace(context, changes, result, "tagIds", item1, item2, true, (_ctx, items1, items2, _prefer) => {
         const tagIdsMerged = new Set(items1);
         items2.forEach((id) => tagIdsMerged.add(id));
@@ -345,6 +363,7 @@ function mergeData(
     originalRooms: RoomDescriptor[],
     originalOriginatingDatas: OriginatingDataDescriptor[],
     originalTags: TagDescriptor[],
+    originalExhibitions: ExhibitionDescriptor[],
     items: ItemDescriptor[]
 ): {
     newEvents: EventDescriptor[];
@@ -370,6 +389,7 @@ function mergeData(
         conferenceId: string;
         events: EventDescriptor[];
         tags: TagDescriptor[];
+        exhibitions: ExhibitionDescriptor[];
         originatingDatas: OriginatingDataDescriptor[];
         rooms: RoomDescriptor[];
         items: ItemDescriptor[];
@@ -384,6 +404,7 @@ function mergeData(
         conferenceId,
         events: [...originalEvents],
         tags: [...originalTags],
+        exhibitions: [...originalExhibitions],
         originatingDatas: [...originalOriginatingDatas],
         rooms: [...originalRooms],
         items: [...items],
@@ -470,6 +491,7 @@ export default function mergeSchedule(
     originalRooms: Map<string, RoomDescriptor>,
     originalOriginatingDatas: Map<string, OriginatingDataDescriptor>,
     originalTags: Map<string, TagDescriptor>,
+    originalExhibitions: Map<string, ExhibitionDescriptor>,
     items: ItemDescriptor[]
 ): {
     changes: ChangeSummary[];
@@ -487,6 +509,7 @@ export default function mergeSchedule(
         Array.from(originalRooms.values()),
         Array.from(originalOriginatingDatas.values()),
         Array.from(originalTags.values()),
+        Array.from(originalExhibitions.values()),
         items
     );
     changes.push(...result.changes);

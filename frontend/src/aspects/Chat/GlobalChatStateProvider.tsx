@@ -6,6 +6,10 @@ import { GlobalChatState } from "./ChatGlobalState";
 
 export const GlobalChatStateContext = React.createContext<GlobalChatState | undefined>(undefined);
 
+export function useMaybeGlobalChatState(): GlobalChatState | undefined {
+    return React.useContext(GlobalChatStateContext);
+}
+
 export function useGlobalChatState(): GlobalChatState {
     const ctx = React.useContext(GlobalChatStateContext);
     if (!ctx) {

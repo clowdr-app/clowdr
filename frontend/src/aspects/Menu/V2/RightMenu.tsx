@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Link as ReactLink, Route, useLocation, useRouteMatch } from "react-router-dom";
 import { MyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import { useMaybeConference } from "../../Conference/useConference";
+import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import FAIcon from "../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import { useUXChoice } from "../../UXChoice/UXChoice";
@@ -17,6 +18,7 @@ const colorScheme = "purple";
 export default function RightMenu(): JSX.Element {
     const { isRightBarOpen, onRightBarOpen, onRightBarClose } = useMainMenu();
     const maybeConference = useMaybeConference();
+    const maybeRegistrant = useMaybeCurrentRegistrant();
     const { path } = useRouteMatch();
     const { onOpen: onOpenUXChoice } = useUXChoice();
 
@@ -43,15 +45,15 @@ export default function RightMenu(): JSX.Element {
     });
     const rightSections = useMemo(
         () =>
-            maybeConference?.slug ? (
+            maybeConference?.slug && maybeRegistrant ? (
                 <RightSidebarSections confSlug={maybeConference.slug} onClose={onRightBarClose} />
             ) : undefined,
-        [maybeConference?.slug, onRightBarClose]
+        [maybeConference?.slug, maybeRegistrant, onRightBarClose]
     );
     return (
         <HStack h="100%" w="100%" justifyContent="stretch">
             <Box
-                display={isRightBarOpen && maybeConference ? "block" : "none"}
+                display={isRightBarOpen && maybeRegistrant ? "block" : "none"}
                 h="100%"
                 w={`calc(100% - ${barWidth})`}
                 zIndex={0}
@@ -62,7 +64,7 @@ export default function RightMenu(): JSX.Element {
                 <Text fontSize="xs" textAlign="right" mr={1} mb={2}>
                     Participate
                 </Text>
-                {maybeConference ? (
+                {maybeConference?.slug && maybeRegistrant ? (
                     <>
                         <MenuButton
                             label="My profile"
@@ -186,7 +188,7 @@ export default function RightMenu(): JSX.Element {
                     </MoreOptionsMenuButton>
                 ) : undefined}
             </Flex>
-            {maybeConference ? (
+            {maybeRegistrant ? (
                 <MyBackstagesModal
                     isOpen={myBackstages_IsOpen}
                     onClose={myBackstages_OnClose}

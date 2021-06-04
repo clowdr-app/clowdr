@@ -22,7 +22,7 @@ import React, { useCallback } from "react";
 import { useCreateDmMutation } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
+import { useMaybeGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
@@ -41,12 +41,12 @@ export default function ProfileModal({
 }): JSX.Element {
     const conference = useConference();
     const mCurrentRegistrant = useMaybeCurrentRegistrant();
-    const chatState = useGlobalChatState();
+    const mChatState = useMaybeGlobalChatState();
 
     const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
     const toast = useToast();
     const createDM = useCallback(async () => {
-        if (registrant && chatState.openChatInSidebar) {
+        if (registrant && mChatState?.openChatInSidebar) {
             try {
                 const result = await createDmMutation({
                     variables: {
@@ -65,7 +65,7 @@ export default function ProfileModal({
                         });
                     }
 
-                    chatState.openChatInSidebar(result.data.createRoomDm.chatId);
+                    mChatState.openChatInSidebar(result.data.createRoomDm.chatId);
 
                     onClose();
                 }
@@ -77,7 +77,7 @@ export default function ProfileModal({
                 console.error("Could not create DM", e);
             }
         }
-    }, [registrant, chatState, createDmMutation, conference.id, onClose, toast]);
+    }, [registrant, mChatState, createDmMutation, conference.id, onClose, toast]);
 
     return (
         <Portal>

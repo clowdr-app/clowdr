@@ -13,14 +13,14 @@ import { useConference } from "../../Conference/useConference";
 import FAIcon from "../../Icons/FAIcon";
 import { useLiveEvents } from "../../LiveEvents/LiveEvents";
 import useRoomParticipants from "../../Room/useRoomParticipants";
-import useCurrentUser from "../../Users/CurrentUser/useCurrentUser";
+import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import MenuButton from "./MenuButton";
 import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
 
 const colorScheme = "blue";
 export default function LeftMenu(): JSX.Element {
     const conference = useConference();
-    const user = useCurrentUser().user;
+    const maybeUser = useMaybeCurrentUser()?.user;
     const history = useHistory();
 
     const { liveEventsByRoom } = useLiveEvents();
@@ -211,30 +211,33 @@ export default function LeftMenu(): JSX.Element {
                         </MenuItem>
                     </MoreOptionsMenuButton>
                 </RequireAtLeastOnePermissionWrapper>
-                <MoreOptionsMenuButton
-                    label="My conferences"
-                    iconStyle="s"
-                    icon="ticket-alt"
-                    borderRadius={0}
-                    colorScheme="gray"
-                    side="left"
-                >
-                    {R.sortBy((registrant) => registrant.conference.shortName, user.registrants).map((registrant) =>
-                        registrant.conferenceId === conference.id ? (
-                            <Fragment key={registrant.conferenceId} />
-                        ) : (
-                            <MenuItem
-                                key={registrant.conferenceId}
-                                as={ReactLink}
-                                to={`/conference/${registrant.conference.slug}`}
-                            >
-                                <FAIcon iconStyle="s" icon="link" />
-                                &nbsp;&nbsp;
-                                {registrant.conference.shortName}
-                            </MenuItem>
-                        )
-                    )}
-                </MoreOptionsMenuButton>
+                {maybeUser ? (
+                    <MoreOptionsMenuButton
+                        label="My conferences"
+                        iconStyle="s"
+                        icon="ticket-alt"
+                        borderRadius={0}
+                        colorScheme="gray"
+                        side="left"
+                    >
+                        {R.sortBy((registrant) => registrant.conference.shortName, maybeUser.registrants).map(
+                            (registrant) =>
+                                registrant.conferenceId === conference.id ? (
+                                    <Fragment key={registrant.conferenceId} />
+                                ) : (
+                                    <MenuItem
+                                        key={registrant.conferenceId}
+                                        as={ReactLink}
+                                        to={`/conference/${registrant.conference.slug}`}
+                                    >
+                                        <FAIcon iconStyle="s" icon="link" />
+                                        &nbsp;&nbsp;
+                                        {registrant.conference.shortName}
+                                    </MenuItem>
+                                )
+                        )}
+                    </MoreOptionsMenuButton>
+                ) : undefined}
                 <MenuButton
                     label="Feedback"
                     iconStyle="s"

@@ -88,7 +88,7 @@ function TagButton({
 }: {
     tag: ItemList_TagInfoFragment;
     isExpanded: boolean;
-    setOpenId: (id: string) => void;
+    setOpenId: (id: string | null) => void;
 }): JSX.Element {
     const colour = tag.colour.replace(/\s/g, "").endsWith("0)") ? undefined : tag.colour;
     const defaultCollapsedBgColour = useColorModeValue("blue.200", "blue.700");
@@ -132,7 +132,7 @@ function TagButton({
             variant="outline"
             id={`content-groups-accordion-button-${tag.id}`}
             aria-controls={`content-groups-accordion-panel-${tag.id}`}
-            onClick={() => setOpenId(tag.id)}
+            onClick={() => (isExpanded ? setOpenId(null) : setOpenId(tag.id))}
             backgroundColor={isExpanded ? expandedBgColour : collapsedBgColour}
             _hover={{
                 backgroundColor: isExpanded ? collapsedBgColour : expandedBgColour,

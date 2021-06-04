@@ -10,6 +10,7 @@ import SponsorBoothsModal from "../../Conference/Attend/Rooms/V2/SponsorBoothsMo
 import { ScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
 import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../Conference/useConference";
+import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import FAIcon from "../../Icons/FAIcon";
 import { useLiveEvents } from "../../LiveEvents/LiveEvents";
 import useRoomParticipants from "../../Room/useRoomParticipants";
@@ -21,6 +22,7 @@ const colorScheme = "blue";
 export default function LeftMenu(): JSX.Element {
     const conference = useConference();
     const maybeUser = useMaybeCurrentUser()?.user;
+    const maybeRegistrant = useMaybeCurrentRegistrant();
     const history = useHistory();
 
     const { liveEventsByRoom } = useLiveEvents();
@@ -93,41 +95,49 @@ export default function LeftMenu(): JSX.Element {
                         </Box>
                     </MenuButton>
                 ) : undefined}
-                <MenuButton
-                    label="Sponsors"
-                    iconStyle="s"
-                    icon="star"
-                    borderTopRadius={showLive ? 0 : undefined}
-                    borderBottomRadius={0}
-                    colorScheme={colorScheme}
-                    bgColor="gold"
-                    side="left"
-                    ref={sponsorBoothsButtonRef}
-                    onClick={sponsorBooths_OnOpen}
-                />
-                <MenuButton
-                    label={
-                        roomParticipants !== undefined && roomParticipants !== false && roomParticipants.length > 0
-                            ? `Socialise: ${roomParticipants.length} ${
-                                  roomParticipants.length === 1 ? "person" : "people"
-                              } connected`
-                            : "Socialise"
-                    }
-                    iconStyle="s"
-                    icon="mug-hot"
-                    borderRadius={0}
-                    colorScheme={colorScheme}
-                    side="left"
-                    pos="relative"
-                    ref={socialiseButtonRef}
-                    onClick={socialise_OnOpen}
-                >
-                    {roomParticipants !== undefined && roomParticipants !== false && roomParticipants.length > 0 ? (
-                        <Box pos="absolute" top={1} right={1} fontSize="xs">
-                            {roomParticipants.length}
-                        </Box>
-                    ) : undefined}
-                </MenuButton>
+                {maybeRegistrant ? (
+                    <>
+                        <MenuButton
+                            label="Sponsors"
+                            iconStyle="s"
+                            icon="star"
+                            borderTopRadius={showLive ? 0 : undefined}
+                            borderBottomRadius={0}
+                            colorScheme={colorScheme}
+                            bgColor="gold"
+                            side="left"
+                            ref={sponsorBoothsButtonRef}
+                            onClick={sponsorBooths_OnOpen}
+                        />
+                        <MenuButton
+                            label={
+                                roomParticipants !== undefined &&
+                                roomParticipants !== false &&
+                                roomParticipants.length > 0
+                                    ? `Socialise: ${roomParticipants.length} ${
+                                          roomParticipants.length === 1 ? "person" : "people"
+                                      } connected`
+                                    : "Socialise"
+                            }
+                            iconStyle="s"
+                            icon="mug-hot"
+                            borderRadius={0}
+                            colorScheme={colorScheme}
+                            side="left"
+                            pos="relative"
+                            ref={socialiseButtonRef}
+                            onClick={socialise_OnOpen}
+                        >
+                            {roomParticipants !== undefined &&
+                            roomParticipants !== false &&
+                            roomParticipants.length > 0 ? (
+                                <Box pos="absolute" top={1} right={1} fontSize="xs">
+                                    {roomParticipants.length}
+                                </Box>
+                            ) : undefined}
+                        </MenuButton>
+                    </>
+                ) : undefined}
                 <MenuButton
                     label="Explore program"
                     iconStyle="s"
@@ -256,12 +266,20 @@ export default function LeftMenu(): JSX.Element {
                 finalFocusRef={exhibitionsButtonRef}
             />
             <ScheduleModal isOpen={schedule_IsOpen} onClose={schedule_OnClose} finalFocusRef={scheduleButtonRef} />
-            <SocialiseModal isOpen={socialise_IsOpen} onClose={socialise_OnClose} finalFocusRef={socialiseButtonRef} />
-            <SponsorBoothsModal
-                isOpen={sponsorBooths_IsOpen}
-                onClose={sponsorBooths_OnClose}
-                finalFocusRef={sponsorBoothsButtonRef}
-            />
+            {maybeRegistrant ? (
+                <>
+                    <SocialiseModal
+                        isOpen={socialise_IsOpen}
+                        onClose={socialise_OnClose}
+                        finalFocusRef={socialiseButtonRef}
+                    />
+                    <SponsorBoothsModal
+                        isOpen={sponsorBooths_IsOpen}
+                        onClose={sponsorBooths_OnClose}
+                        finalFocusRef={sponsorBoothsButtonRef}
+                    />
+                </>
+            ) : undefined}
         </>
     );
 }

@@ -1,8 +1,7 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useDisclosure } from "@chakra-ui/react";
+import { Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
-import { MyBackstagesModal } from "../../../Conference/Attend/Profile/MyBackstages";
 import { FAIcon } from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
@@ -100,15 +99,6 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
         []
     );
 
-    const location = useLocation();
-
-    const { isOpen: myBackstages_IsOpen, onOpen: myBackstages_OnOpen, onClose: myBackstages_OnClose } = useDisclosure();
-    const myBackstagesButtonRef = useRef<HTMLButtonElement | null>(null);
-
-    useEffect(() => {
-        myBackstages_OnClose();
-    }, [location.pathname, myBackstages_OnClose]);
-
     return (
         <>
             <Tabs
@@ -145,7 +135,6 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                         <Tab
                             ml={2}
                             px={2}
-                            mr="auto"
                             isDisabled={!roomId}
                             _disabled={{
                                 opacity: 0.5,
@@ -167,6 +156,7 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                         <Tab
                             mx={2}
                             px={2}
+                            mr="auto"
                             fontSize="lg"
                             borderRadius="full"
                             aria-label="List of users viewing this page"
@@ -208,12 +198,6 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                     </TabPanel>
                 </TabPanels>
             </Tabs>
-
-            <MyBackstagesModal
-                isOpen={myBackstages_IsOpen}
-                onClose={myBackstages_OnClose}
-                finalFocusRef={myBackstagesButtonRef}
-            />
         </>
     );
 }

@@ -1,8 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Box, Flex, HStack, MenuItem, Text, useBreakpointValue, useColorMode, useDisclosure } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useRef } from "react";
-import { Link as ReactLink, Route, useLocation, useRouteMatch } from "react-router-dom";
-import { MyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
+import { Box, Flex, HStack, MenuItem, Text, useBreakpointValue, useColorMode } from "@chakra-ui/react";
+import React, { useMemo } from "react";
+import { Link as ReactLink, Route, useRouteMatch } from "react-router-dom";
 import { useMaybeConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import FAIcon from "../../Icons/FAIcon";
@@ -29,15 +28,6 @@ export default function RightMenu(): JSX.Element {
     const logoutReturnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-out";
 
     const { setCurrentTab } = useRightSidebarCurrentTab();
-
-    const location = useLocation();
-
-    const { isOpen: myBackstages_IsOpen, onOpen: myBackstages_OnOpen, onClose: myBackstages_OnClose } = useDisclosure();
-    const myBackstagesButtonRef = useRef<HTMLButtonElement | null>(null);
-
-    useEffect(() => {
-        myBackstages_OnClose();
-    }, [location.pathname, myBackstages_OnClose]);
 
     const barWidth = useBreakpointValue({
         base: "3em",
@@ -66,26 +56,6 @@ export default function RightMenu(): JSX.Element {
                 </Text>
                 {maybeConference?.slug && maybeRegistrant ? (
                     <>
-                        <MenuButton
-                            label="My profile"
-                            iconStyle="s"
-                            icon="user"
-                            borderBottomRadius={0}
-                            colorScheme={colorScheme}
-                            side="right"
-                            as={ReactLink}
-                            to={`/conference/${maybeConference.slug}/profile`}
-                        />
-                        <MenuButton
-                            label="My backstages"
-                            iconStyle="s"
-                            icon="person-booth"
-                            borderRadius={0}
-                            colorScheme={colorScheme}
-                            side="left"
-                            ref={myBackstagesButtonRef}
-                            onClick={myBackstages_OnOpen}
-                        />
                         <Route path={`${path}/item/`}>
                             <MenuButton
                                 label="Chat for this page"
@@ -152,18 +122,6 @@ export default function RightMenu(): JSX.Element {
                         />
                     </>
                 ) : undefined}
-                <MenuButton
-                    label="Toggle dark mode"
-                    iconStyle="s"
-                    icon="moon"
-                    borderTopRadius={maybeConference ? 0 : undefined}
-                    borderBottomRadius={0}
-                    colorScheme="gray"
-                    side="right"
-                    onClick={() => {
-                        colorMode.toggleColorMode();
-                    }}
-                />
                 {maybeUser ? (
                     <MoreOptionsMenuButton
                         label="More options"
@@ -173,6 +131,14 @@ export default function RightMenu(): JSX.Element {
                         colorScheme="gray"
                         side="right"
                     >
+                        <MenuItem
+                            onClick={() => {
+                                colorMode.toggleColorMode();
+                            }}
+                        >
+                            <FAIcon iconStyle="s" icon="moon" />
+                            &nbsp;&nbsp;Toggle dark mode
+                        </MenuItem>
                         <MenuItem as={ReactLink} to="/user/pushNotifications">
                             <FAIcon iconStyle="s" icon="envelope-open-text" />
                             &nbsp;&nbsp;Push notifications
@@ -188,13 +154,6 @@ export default function RightMenu(): JSX.Element {
                     </MoreOptionsMenuButton>
                 ) : undefined}
             </Flex>
-            {maybeRegistrant ? (
-                <MyBackstagesModal
-                    isOpen={myBackstages_IsOpen}
-                    onClose={myBackstages_OnClose}
-                    finalFocusRef={myBackstagesButtonRef}
-                />
-            ) : undefined}
         </HStack>
     );
 }

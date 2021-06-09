@@ -4,6 +4,7 @@ import React, { Fragment, useEffect, useRef } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../../generated/graphql";
 import { ExhibitionsModal } from "../../Conference/Attend/Exhibition/ExhibitionsPage";
+import { MyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import LiveProgramRoomsModal from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import SocialiseModal from "../../Conference/Attend/Rooms/V2/SocialiseModal";
 import SponsorBoothsModal from "../../Conference/Attend/Rooms/V2/SponsorBoothsModal";
@@ -47,6 +48,8 @@ export default function LeftMenu(): JSX.Element {
         onClose: sponsorBooths_OnClose,
     } = useDisclosure();
     const sponsorBoothsButtonRef = useRef<HTMLButtonElement | null>(null);
+    const { isOpen: myBackstages_IsOpen, onOpen: myBackstages_OnOpen, onClose: myBackstages_OnClose } = useDisclosure();
+    const myBackstagesButtonRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
         liveNow_OnClose();
@@ -62,6 +65,8 @@ export default function LeftMenu(): JSX.Element {
         socialise_OnClose,
         sponsorBooths_OnClose,
     ]);
+        myBackstages_OnClose();
+    }, [location.pathname, liveNow_OnClose, schedule_OnClose, socialise_OnClose, myBackstages_OnClose]);
 
     const roomParticipants = useRoomParticipants();
 
@@ -95,6 +100,17 @@ export default function LeftMenu(): JSX.Element {
                         </Box>
                     </MenuButton>
                 ) : undefined}
+                <MenuButton
+                    label="Explore program"
+                    iconStyle="s"
+                    icon={["calendar", "search"]}
+                    px={0}
+                    borderRadius={0}
+                    colorScheme={colorScheme}
+                    side="left"
+                    ref={scheduleButtonRef}
+                    onClick={schedule_OnOpen}
+                />
                 {maybeRegistrant ? (
                     <>
                         <MenuButton
@@ -136,6 +152,23 @@ export default function LeftMenu(): JSX.Element {
                                 </Box>
                             ) : undefined}
                         </MenuButton>
+                        <MoreOptionsMenuButton
+                            label="My stuff"
+                            iconStyle="s"
+                            icon="user"
+                            borderRadius={0}
+                            colorScheme={colorScheme}
+                            side="left"
+                        >
+                            <MenuItem as={ReactLink} to={`/conference/${conference.slug}/profile`}>
+                                <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
+                                My profile
+                            </MenuItem>
+                            <MenuItem ref={myBackstagesButtonRef} onClick={myBackstages_OnOpen}>
+                                <FAIcon iconStyle="s" icon="person-booth" mr={2} aria-hidden={true} w="1.2em" /> My
+                                backstages
+                            </MenuItem>
+                        </MoreOptionsMenuButton>
                     </>
                 ) : undefined}
                 <MenuButton
@@ -277,6 +310,10 @@ export default function LeftMenu(): JSX.Element {
                         isOpen={sponsorBooths_IsOpen}
                         onClose={sponsorBooths_OnClose}
                         finalFocusRef={sponsorBoothsButtonRef}
+                    <MyBackstagesModal
+                        isOpen={myBackstages_IsOpen}
+                        onClose={myBackstages_OnClose}
+                        finalFocusRef={myBackstagesButtonRef}
                     />
                 </>
             ) : undefined}

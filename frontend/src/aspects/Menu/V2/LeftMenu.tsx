@@ -225,6 +225,11 @@ export default function LeftMenu(): JSX.Element {
                                     </MenuItem>
                                 )
                         )}
+                        {maybeUser.registrants.length ? <MenuDivider /> : undefined}
+                        <MenuItem as={ReactLink} to="/join">
+                            <FAIcon iconStyle="s" icon="ticket-alt" />
+                            &nbsp;&nbsp; Use invite code
+                        </MenuItem>
                     </MoreOptionsMenuButton>
                 ) : undefined}
                 <MenuButton

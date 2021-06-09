@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleEventPersonDeleted } from "../handlers/eventProgramPerson";
@@ -10,7 +10,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/deleted", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/deleted", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<EventPersonData>>(req.body);
     } catch (e) {

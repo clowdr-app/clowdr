@@ -1,5 +1,5 @@
 import { MediaPackageEvent } from "@clowdr-app/shared-types/build/sns/mediaPackage";
-import bodyParser from "body-parser";
+import { text } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { completeMediaPackageHarvestJob, failMediaPackageHarvestJob } from "../handlers/recording";
@@ -8,7 +8,7 @@ import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns"
 export const router = express.Router();
 
 // Unprotected routes
-router.post("/harvest/notify", bodyParser.text(), async (req: Request, res: Response) => {
+router.post("/harvest/notify", text(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
 
     try {

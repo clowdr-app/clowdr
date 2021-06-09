@@ -9,139 +9,6 @@ import { useLocation } from "react-router-dom";
 import { PresenceStateProvider } from "../Realtime/PresenceStateProvider";
 import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
 
-interface ConferenceAuthCtx {
-    setConferenceId: (value: string | null) => void;
-    currentConferenceId: string | null;
-}
-
-export const ConferenceAuthContext = React.createContext<ConferenceAuthCtx>({
-    setConferenceId: () => {
-        /* EMPTY */
-    },
-    currentConferenceId: null,
-});
-
-interface TokenCacheEntry {
-    token: string;
-    expiresAt: number;
-}
-
-class AuthTokenCache {
-    static readonly CacheVersion = "1.2";
-    static readonly CacheKey = "CLOWDR_AUTH_CACHE";
-    static readonly TokenExpiryTime = (36000 - 60) * 1000;
-
-    mutex: Mutex;
-    tokens: Map<string, TokenCacheEntry>;
-
-    constructor() {
-        this.tokens = new Map();
-        this.mutex = new Mutex();
-
-        try {
-            if (this.validateCache()) {
-                const tokenCacheStr = window.localStorage.getItem(AuthTokenCache.CacheKey);
-                if (tokenCacheStr) {
-                    const tokenCache = JSON.parse(tokenCacheStr);
-                    this.tokens = new Map<string, TokenCacheEntry>(tokenCache);
-                } else {
-                    this.clearAllLocalStorage();
-                }
-            } else {
-                console.log("Token cache version out of date. Clearing cache to upgrade...");
-                this.clearAllLocalStorage();
-            }
-        } catch (e) {
-            console.warn("Failed to initialise token cache!");
-            this.clearAllLocalStorage();
-        }
-
-        // This is a dirty hack for now
-        setTimeout(() => {
-            window.location.reload();
-        }, AuthTokenCache.TokenExpiryTime);
-    }
-
-    validateCache() {
-        const version = window.localStorage.getItem(AuthTokenCache.CacheKey + "_VERSION");
-        if (!version || version !== AuthTokenCache.CacheVersion) {
-            return false;
-        }
-        return true;
-    }
-
-    clearAllLocalStorage() {
-        window.localStorage.clear();
-        this.tokens = new Map<string, TokenCacheEntry>();
-        this.saveCache();
-    }
-
-    saveCache() {
-        const serialisableCache = [...this.tokens.entries()];
-        window.localStorage.setItem(AuthTokenCache.CacheKey, JSON.stringify(serialisableCache));
-        window.localStorage.setItem(AuthTokenCache.CacheKey + "_VERSION", AuthTokenCache.CacheVersion);
-    }
-
-    async sha256(message: string): Promise<string> {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map((b) => ("00" + b.toString(16)).slice(-2)).join("");
-        return hashHex;
-    }
-
-    public async getToken(
-        userId: string | null,
-        conferenceSlug: string | null | undefined,
-        getAccessTokenSilently: (options?: any) => Promise<string>
-    ) {
-        const release = await this.mutex.acquire();
-
-        try {
-            const cacheKey = (await this.sha256(conferenceSlug ?? "<<NO-CONF>>")) + ">" + (userId ?? "<<NO-USER>>");
-            let cacheEntry = this.tokens.get(cacheKey);
-            if (cacheEntry) {
-                if (cacheEntry.expiresAt < Date.now()) {
-                    this.tokens.delete(cacheKey);
-                    cacheEntry = undefined;
-                }
-            }
-
-            if (!cacheEntry) {
-                console.log("Getting access token silently", { conferenceSlug });
-                const token = await getAccessTokenSilently({
-                    ignoreCache: true,
-                    "conference-slug": conferenceSlug ?? "/NONE",
-                });
-                cacheEntry = {
-                    token,
-                    expiresAt: Date.now() + AuthTokenCache.TokenExpiryTime,
-                };
-            }
-
-            this.tokens.set(cacheKey, cacheEntry);
-            this.saveCache();
-
-            return cacheEntry.token;
-        } catch (e) {
-            // Probably the Auth0 cookie got blocked
-            // However, it's possible the error has originated from an Auth0 rule
-            // Use the "Real-time Webtask Logs" Auth0 extension to check
-
-            console.error("Major error! Failed to get authentication token!", e);
-            this.saveCache();
-
-            // Nuke everything and hope Auth0 recovers the state
-            localStorage.clear();
-            sessionStorage.clear();
-
-            throw e;
-        } finally {
-            release();
-        }
-    }
-}
-
 const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
 const httpProtocol = useSecureProtocols ? "https" : "http";
 const wsProtocol = useSecureProtocols ? "wss" : "ws";
@@ -151,8 +18,7 @@ async function createApolloClient(
     isAuthenticated: boolean,
     conferenceSlug: string | undefined,
     userId: string | undefined,
-    getAccessTokenSilently: (options?: any) => Promise<string>,
-    tokenCache: AuthTokenCache
+    getAccessTokenSilently: (options?: any) => Promise<string>
 ): Promise<ApolloClient<NormalizedCacheObject>> {
     const authLink = setContext(async (_, { headers }) => {
         const newHeaders: any = { ...headers };
@@ -161,27 +27,11 @@ async function createApolloClient(
         delete newHeaders["SEND-WITHOUT-AUTH"];
 
         if (isAuthenticated && !sendRequestUnauthenticated) {
-            const magicToken = headers ? headers["x-hasura-magic-token"] : undefined;
-            delete newHeaders["x-hasura-magic-token"];
-
-            let token: string;
-            if (magicToken) {
-                token = await getAccessTokenSilently({
-                    ignoreCache: true,
-                    "magic-token": magicToken,
-                });
-                newHeaders["X-Hasura-Role"] = "unauthenticated";
-            } else {
-                token = await tokenCache.getToken(userId ?? null, conferenceSlug, getAccessTokenSilently);
-            }
-
+            const token = await getAccessTokenSilently();
             newHeaders.Authorization = `Bearer ${token}`;
-        } else {
-            const slugs = conferenceSlug ? [conferenceSlug] : [];
-            newHeaders["X-Hasura-Conference-Slugs"] =
-                "{" + slugs.reduce((acc, x) => `${acc},"${x}"`, "").substr(1) + "}";
-            newHeaders["X-Hasura-Conference-Slug"] = conferenceSlug ?? "";
         }
+
+        newHeaders["x-hasura-conference-slug"] = conferenceSlug;
 
         return {
             headers: newHeaders,
@@ -194,7 +44,7 @@ async function createApolloClient(
 
     const wsConnectionParams = await (async () => {
         if (isAuthenticated) {
-            const token = await tokenCache.getToken(userId ?? null, conferenceSlug, getAccessTokenSilently);
+            const token = await getAccessTokenSilently();
             return {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -296,14 +146,12 @@ function ApolloCustomProviderInner({
     isAuthenticated,
     getAccessTokenSilently,
     user,
-    tokenCache,
     conferenceSlug,
 }: {
     children: string | JSX.Element | Array<JSX.Element>;
     isAuthenticated: boolean;
     getAccessTokenSilently: (options?: any) => Promise<string>;
     user: any;
-    tokenCache: AuthTokenCache;
     conferenceSlug: string | undefined;
 }): JSX.Element {
     const [client, setClient] = useState<{
@@ -325,17 +173,12 @@ function ApolloCustomProviderInner({
                         isAuthenticated,
                         conferenceSlug,
                         user?.sub,
-                        getAccessTokenSilently,
-                        tokenCache
+                        getAccessTokenSilently
                     );
                     setClient({ slug: conferenceSlug, client: newClient });
 
                     if (isAuthenticated) {
-                        const newPresenceToken = await tokenCache.getToken(
-                            user?.sub,
-                            conferenceSlug,
-                            getAccessTokenSilently
-                        );
+                        const newPresenceToken = await getAccessTokenSilently();
                         setPresenceToken(newPresenceToken);
                     } else {
                         setPresenceToken(null);
@@ -350,7 +193,7 @@ function ApolloCustomProviderInner({
                 }
             }
         },
-        [conferenceSlug, getAccessTokenSilently, isAuthenticated, tokenCache, user?.sub]
+        [conferenceSlug, getAccessTokenSilently, isAuthenticated, user?.sub]
     );
 
     useEffect(() => {
@@ -395,7 +238,6 @@ export default function ApolloCustomProvider({
     children: string | JSX.Element | Array<JSX.Element>;
 }): JSX.Element {
     const { isLoading, isAuthenticated, user, getAccessTokenSilently } = useAuth0();
-    const tokenCache = useRef<AuthTokenCache>(new AuthTokenCache());
     const location = useLocation();
     const matches = location.pathname.match(/^\/conference\/([^/]+)/);
     const conferenceSlug = matches && matches.length > 1 ? matches[1] : undefined;
@@ -409,7 +251,6 @@ export default function ApolloCustomProvider({
             isAuthenticated={isAuthenticated}
             getAccessTokenSilently={getAccessTokenSilently}
             user={user}
-            tokenCache={tokenCache.current}
             conferenceSlug={conferenceSlug}
         >
             {children}

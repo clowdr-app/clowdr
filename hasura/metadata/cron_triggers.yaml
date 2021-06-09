@@ -6,6 +6,14 @@
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
+- name: ProcessCombineVideosobQueue
+  webhook: '{{ACTION_BASE_URL}}/combineVideosJob/process'
+  schedule: '*/5 * * * *'
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
 - name: ProcessCustomEmailsJobQueue
   webhook: '{{ACTION_BASE_URL}}/queues/processCustomEmailsJobQueue'
   schedule: '* * * * *'
@@ -111,14 +119,6 @@
 - name: SyncChannels
   webhook: '{{PLAYOUT_BASE_URL}}/hasura/events'
   schedule: '*/2 * * * *'
-  include_in_metadata: true
-  payload: {}
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-- name: ProcessCombineVideosobQueue
-  webhook: '{{ACTION_BASE_URL}}/combineVideosJob/process'
-  schedule: '*/5 * * * *'
   include_in_metadata: true
   payload: {}
   headers:

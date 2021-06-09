@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleEventVonageSessionUpdated } from "../handlers/eventVonageSession";
@@ -10,7 +10,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/updated", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<EventVonageSessionData>>(req.body);
     } catch (e) {

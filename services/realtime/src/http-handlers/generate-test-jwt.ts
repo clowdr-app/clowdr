@@ -25,11 +25,6 @@ export async function generateTestJWT(req: Request, res: Response, _next?: NextF
                             "x-hasura-default-role": "user",
                             "x-hasura-allowed-roles": ["user"],
                             "x-hasura-user-id": req.query.userId,
-                            "x-hasura-conference-slugs":
-                                "{" +
-                                [req.query.confSlug].reduce<string>((acc, x) => `${acc},"${x}"`, "").substr(1) +
-                                "}",
-                            "x-hasura-conference-slug": req.query.confSlug,
                         },
                     },
                     testPEM,

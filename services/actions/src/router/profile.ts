@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import crypto from "crypto";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
@@ -26,7 +26,7 @@ export const router = express.Router();
 
 // Protected routes
 router.use(checkEventSecret);
-router.use(bodyParser.json());
+router.use(json());
 router.use(checkJwt);
 router.use(checkUserScopes);
 

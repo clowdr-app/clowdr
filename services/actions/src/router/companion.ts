@@ -1,6 +1,6 @@
 import companion from "@uppy/companion";
 import assert from "assert";
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import cors from "cors";
 import express from "express";
 import { extname } from "path";
@@ -22,7 +22,7 @@ router.use(
         origin: "*",
     })
 );
-router.use(bodyParser.json());
+router.use(json());
 router.use(
     companion.app({
         providerOptions: {

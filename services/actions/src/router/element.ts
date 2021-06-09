@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleElementUpdated, handleGetUploadAgreement } from "../handlers/content";
@@ -11,7 +11,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/updated", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ElementData>>(req.body);
     } catch (e) {
@@ -29,7 +29,7 @@ router.post("/updated", bodyParser.json(), async (req: Request, res: Response) =
     res.status(200).json("OK");
 });
 
-router.post("/submit", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/submit", json(), async (req: Request, res: Response) => {
     const params = req.body.input;
     try {
         assertType<submitElementArgs>(params);
@@ -54,7 +54,7 @@ router.post("/submit", bodyParser.json(), async (req: Request, res: Response) =>
     }
 });
 
-router.post("/updateSubtitles", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/updateSubtitles", json(), async (req: Request, res: Response) => {
     try {
         const params = req.body.input;
         assertType<updateSubtitlesArgs>(params);
@@ -69,24 +69,20 @@ router.post("/updateSubtitles", bodyParser.json(), async (req: Request, res: Res
     }
 });
 
-router.post(
-    "/getUploadAgreement",
-    bodyParser.json(),
-    async (req: Request, res: Response<GetUploadAgreementOutput | string>) => {
-        const params = req.body.input;
-        try {
-            assertType<getUploadAgreementArgs>(params);
-        } catch (e) {
-            console.error(`${req.path}: Invalid request:`, req.body.input);
-            return res.status(500).json("Invalid request");
-        }
-
-        try {
-            const result = await handleGetUploadAgreement(params);
-            return res.status(200).json(result);
-        } catch (e) {
-            console.error(`${req.path}: Failed to retrieve agreement text`, e);
-            return res.status(500).json("Failed to retrieve agreement text");
-        }
+router.post("/getUploadAgreement", json(), async (req: Request, res: Response<GetUploadAgreementOutput | string>) => {
+    const params = req.body.input;
+    try {
+        assertType<getUploadAgreementArgs>(params);
+    } catch (e) {
+        console.error(`${req.path}: Invalid request:`, req.body.input);
+        return res.status(500).json("Invalid request");
     }
-);
+
+    try {
+        const result = await handleGetUploadAgreement(params);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.error(`${req.path}: Failed to retrieve agreement text`, e);
+        return res.status(500).json("Failed to retrieve agreement text");
+    }
+});

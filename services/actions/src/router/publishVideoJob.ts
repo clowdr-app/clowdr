@@ -1,4 +1,4 @@
-// import bodyParser from "body-parser";
+// import { json } from "body-parser";
 // import express, { Request, Response } from "express";
 // import { assertType } from "typescript-is";
 // import { handlePublishVideoJobInserted } from "../handlers/publishVideoJob";
@@ -10,7 +10,7 @@
 // // Protected routes
 // router.use(checkEventSecret);
 
-// router.post("/created", bodyParser.json(), async (req: Request, res: Response) => {
+// router.post("/created", json(), async (req: Request, res: Response) => {
 //     try {
 //         assertType<Payload<PublishVideoJobData>>(req.body);
 //     } catch (e) {

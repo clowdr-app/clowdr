@@ -8,7 +8,7 @@ import {
     useGetAllRoomsQuery,
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
-import ConferencePageNotFound from "../../../../Errors/ConferencePageNotFound";
+import PageNotFound from "../../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
@@ -157,7 +157,7 @@ export default function RoomListPage(): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<ConferencePageNotFound />}
+            componentIfDenied={<PageNotFound />}
             permissions={[
                 Permissions_Permission_Enum.ConferenceViewAttendees,
                 Permissions_Permission_Enum.ConferenceView,

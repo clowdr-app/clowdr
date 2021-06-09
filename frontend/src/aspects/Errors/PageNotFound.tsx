@@ -1,7 +1,11 @@
-import { Link, Text } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Flex, Link, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
-import { LinkButton } from "../Chakra/LinkButton";
+import { Link as ReactLink, Route, Switch, useLocation } from "react-router-dom";
+import { ExternalLinkButton, LinkButton } from "../Chakra/LinkButton";
+import { useMaybeConference } from "../Conference/useConference";
+import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
+import { FAIcon } from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useTitle } from "../Utils/useTitle";
 import GenericErrorPage from "./GenericErrorPage";
@@ -16,26 +20,72 @@ export default function PageNotFound(): JSX.Element {
         }
         return undefined;
     }, [location.pathname]);
-    const currentUser = useMaybeCurrentUser();
-    const loggedIn = !!currentUser?.user;
-    // conferenceSlug ? `/conference/${conferenceSlug}` :
+    const maybeCurrentUser = useMaybeCurrentUser();
+    const loggedIn = !!maybeCurrentUser?.user;
+    const maybeConference = useMaybeConference();
+    const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
+    const registered = !!maybeCurrentRegistrant;
 
     return (
-        <GenericErrorPage heading="Sorry, we couldn't find that page.">
+        <GenericErrorPage
+            heading={
+                maybeConference && !registered
+                    ? `Welcome to ${maybeConference.shortName}`
+                    : "Sorry, this is not available at the moment."
+            }
+        >
             <>
                 {title}
-                {conferenceSlug && loggedIn ? (
+                {maybeConference && registered ? (
                     <>
-                        <Text fontSize="xl" lineHeight="revert" fontWeight="light" fontStyle="italic" maxW={600}>
-                            You are logged in but...
+                        <Switch>
+                            <Route path={`/conference/${maybeConference.slug}/room/`}>
+                                <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                                    You need to be a member of this room to access it. Please ask the room&apos;s owner
+                                    or your conference organiser to add you to the room.
+                                </Text>
+                            </Route>
+                            <Route path="/">
+                                <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                                    You are logged in and registered for this conference but you cannot access this
+                                    page. Either you do not have permission to access this page or the URL is invalid.
+                                    Please contact your conference organiser for further information and assistance.
+                                </Text>
+                            </Route>
+                        </Switch>
+                    </>
+                ) : conferenceSlug && loggedIn ? (
+                    <>
+                        <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                            You are logged into Clowdr but you will need an invitation code to access the full
+                            conference.
+                        </Text>
+                        <Text
+                            textAlign="center"
+                            fontSize="xl"
+                            lineHeight="revert"
+                            fontWeight="light"
+                            maxW={600}
+                            fontStyle="italic"
+                        >
+                            Already received your invite code? Great!
+                            <br />
+                            <Link as={ReactLink} to="/join">
+                                Join your conference <FAIcon iconStyle="s" icon="link" mb={1} fontSize="sm" />
+                            </Link>
+                            .
                         </Text>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                            ...you may not have received or accepted your invitation to the conference you&apos;re
-                            trying to access. You are logged into Clowdr but you will need the invitation code sent via
-                            email by your conference to access its private pages.
+                            When the conference starts, invite codes are sent via email by your conference organisers
+                            within 24hrs.
                         </Text>
                     </>
-                ) : !loggedIn ? (
+                ) : loggedIn ? (
+                    <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
+                        Please double check the URL, and if this error persists, please either contact your conference
+                        organiser.
+                    </Text>
+                ) : (
                     <>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" fontStyle="italic" maxW={600}>
                             You are not logged in
@@ -44,17 +94,45 @@ export default function PageNotFound(): JSX.Element {
                             Please try going to the home page and logging in before returning to this URL.
                         </Text>
                     </>
-                ) : (
-                    <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                        Please double check the URL, and if this error persists, please either contact your conference
-                        organiser or{" "}
-                        <Link isExternal href="https://github.com/clowdr-app/">
-                            our technical team
-                        </Link>
-                        .
-                    </Text>
                 )}
-                <LinkButton to="/">Go to home page</LinkButton>
+                <Flex w="100%" flexWrap="wrap" alignItems="center" justifyContent="center">
+                    {!registered && maybeConference?.registrationURL.length ? (
+                        <ExternalLinkButton
+                            mb={2}
+                            to={maybeConference.registrationURL[0].value}
+                            colorScheme="purple"
+                            mr={2}
+                        >
+                            <FAIcon iconStyle="s" icon="link" mr={2} />
+                            Go to registration
+                            <ExternalLinkIcon ml={1} />
+                        </ExternalLinkButton>
+                    ) : undefined}
+                    <LinkButton
+                        mb={2}
+                        to={maybeConference ? `/conference/${maybeConference.slug}/` : "/"}
+                        colorScheme={
+                            (!registered && maybeConference?.registrationURL.length) ||
+                            maybeConference?.supportAddress.length
+                                ? "gray"
+                                : "purple"
+                        }
+                    >
+                        <FAIcon iconStyle="s" icon="home" mr={2} />
+                        Go to home page
+                    </LinkButton>
+                    {maybeConference?.supportAddress.length ? (
+                        <ExternalLinkButton
+                            mb={2}
+                            to={`mailto:${maybeConference.supportAddress[0].value}`}
+                            colorScheme={!registered && maybeConference?.registrationURL.length ? "gray" : "purple"}
+                            ml={2}
+                        >
+                            <FAIcon iconStyle="s" icon="envelope" mr={2} />
+                            Contact organisers
+                        </ExternalLinkButton>
+                    ) : undefined}
+                </Flex>
             </>
         </GenericErrorPage>
     );

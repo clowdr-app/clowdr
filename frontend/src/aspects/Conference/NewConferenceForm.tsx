@@ -535,7 +535,7 @@ Please contact our tech support to investigate the issue shown below: support@cl
                                 <InputGroup>
                                     <Input {...field} id="new_conf_demo_code" placeholder="Demo code" />
                                     <InputRightAddon>
-                                        <Tooltip label="To create a conference, please contact us at demo@clowdr.org to receive your demo code.">
+                                        <Tooltip label="To create a conference, please contact us at welcome@clowdr.org to receive your demo code.">
                                             {"What's this?"}
                                         </Tooltip>
                                     </InputRightAddon>

@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { gatherPresenceStats } from "../lib/analytics";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
@@ -8,7 +8,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/gatherPresenceStats", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/gatherPresenceStats", json(), async (req: Request, res: Response) => {
     try {
         console.log(`${req.originalUrl}: gathering presence stats`);
         await gatherPresenceStats();

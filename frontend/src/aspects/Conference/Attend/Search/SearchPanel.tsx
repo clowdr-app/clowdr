@@ -257,6 +257,8 @@ export default function SearchPanel(): JSX.Element {
                                     to={
                                         event.item
                                             ? `/conference/${conference.slug}/item/${event.item.id}`
+                                            : event.exhibition
+                                            ? `/conference/${conference.slug}/exhibition/${event.exhibition.id}`
                                             : `/conference/${conference.slug}/room/${event.roomId}`
                                     }
                                     shadow={shadow}

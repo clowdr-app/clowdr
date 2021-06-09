@@ -44,7 +44,7 @@ gql`
     }
 `;
 
-export default function SponsorBooths({ setAnySponsors }: { setAnySponsors: (value: boolean) => void }): JSX.Element {
+export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (value: boolean) => void }): JSX.Element {
     const conference = useConference();
     const result = useGetSponsorBoothsQuery({
         variables: {
@@ -56,7 +56,7 @@ export default function SponsorBooths({ setAnySponsors }: { setAnySponsors: (val
     const roomParticipants = useRoomParticipants();
 
     useEffect(() => {
-        setAnySponsors(!!result.data && result.data.content_Item.length > 0);
+        setAnySponsors?.(!!result.data && result.data.content_Item.length > 0);
     }, [setAnySponsors, result.data]);
 
     if (roomParticipants === undefined || roomParticipants === false) {

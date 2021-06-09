@@ -169,7 +169,7 @@ export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element 
                             <TabPanel w="100%" h="100%" display="flex" justifyContent="center" overflowY="auto">
                                 <ItemList />
                             </TabPanel>
-                            <TabPanel w="100%" h="100%" display="flex" justifyContent="center" overflowY="auto">
+                            <TabPanel w="100%" h="100%" overflowY="auto">
                                 <ExhibitionsGrid />
                             </TabPanel>
                             <TabPanel w="100%" h="100%" overflowY="auto">

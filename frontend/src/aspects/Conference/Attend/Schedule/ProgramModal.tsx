@@ -12,7 +12,7 @@ import {
     TabPanels,
     Tabs,
 } from "@chakra-ui/react";
-import React, { useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
     Schedule_EventSummaryFragment,
     Schedule_HappeningSoonQuery,
@@ -26,6 +26,8 @@ import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import ItemList from "../Content/ItemList";
+import { ExhibitionsGrid } from "../Exhibition/ExhibitionsPage";
+import SponsorBooths from "../Rooms/V2/SponsorBooths";
 import SearchPanel from "../Search/SearchPanel";
 import { ScheduleFetchWrapper, ScheduleInner } from "./Schedule";
 
@@ -55,7 +57,11 @@ gql`
     }
 `;
 
-export function HappeningSoonFetchWrapper(): JSX.Element {
+export function HappeningSoonFetchWrapper({
+    setAnyHappeningSoon,
+}: {
+    setAnyHappeningSoon: (value: boolean) => void;
+}): JSX.Element {
     const conference = useConference();
     const now = useRealTime(15 * 60 * 1000);
     const endAfter = useMemo(() => new Date(roundDownToNearest(now - 10 * 60 * 1000, 5 * 60 * 1000)).toISOString(), [
@@ -72,6 +78,10 @@ export function HappeningSoonFetchWrapper(): JSX.Element {
             startBefore,
         },
     });
+    useEffect(() => {
+        setAnyHappeningSoon(!!roomsResult.data && roomsResult.data.schedule_Event.length > 0);
+    }, [setAnyHappeningSoon, roomsResult.data]);
+
     return (
         <ApolloQueryWrapper<
             Schedule_HappeningSoonQuery,
@@ -97,6 +107,12 @@ export function HappeningSoonFetchWrapper(): JSX.Element {
 export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element {
     const closeRef = useRef<HTMLButtonElement | null>(null);
 
+    const [anyHappeningSoon, setAnyHappeningSoon] = useState<boolean>(false);
+    const happeningSoon = useMemo(() => <HappeningSoonFetchWrapper setAnyHappeningSoon={setAnyHappeningSoon} />, []);
+
+    const [anySponsors, setAnySponsors] = useState<boolean>(false);
+    const sponsors = useMemo(() => <SponsorBooths setAnySponsors={setAnySponsors} />, []);
+
     return (
         <Modal
             initialFocusRef={closeRef}
@@ -114,13 +130,25 @@ export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element 
                 <ModalBody display="flex" justifyContent="center" overflow="hidden">
                     <Tabs isLazy w="100%" display="flex" flexDir="column">
                         <TabList justifyContent="center">
-                            <Tab>
-                                <FAIcon iconStyle="s" icon="clock" />
-                                &nbsp;&nbsp;Happening soon
-                            </Tab>
+                            {anyHappeningSoon ? (
+                                <Tab>
+                                    <FAIcon iconStyle="s" icon="clock" />
+                                    &nbsp;&nbsp;Happening soon
+                                </Tab>
+                            ) : undefined}
+                            {anySponsors ? (
+                                <Tab>
+                                    <FAIcon iconStyle="s" icon="star" />
+                                    &nbsp;&nbsp;Sponsors
+                                </Tab>
+                            ) : undefined}
                             <Tab>
                                 <FAIcon iconStyle="s" icon="tags" />
                                 &nbsp;&nbsp;Browse content
+                            </Tab>
+                            <Tab>
+                                <FAIcon iconStyle="s" icon="puzzle-piece" />
+                                &nbsp;&nbsp;Exhibitions
                             </Tab>
                             <Tab>
                                 <FAIcon iconStyle="s" icon="search" />
@@ -132,11 +160,17 @@ export function ScheduleModal(props: Omit<ModalProps, "children">): JSX.Element 
                             </Tab>
                         </TabList>
                         <TabPanels h="100%" overflow="hidden">
-                            <TabPanel w="100%" h="100%" display="flex" justifyContent="center">
-                                <HappeningSoonFetchWrapper />
-                            </TabPanel>
+                            {anyHappeningSoon ? (
+                                <TabPanel w="100%" h="100%" display="flex" justifyContent="center">
+                                    {happeningSoon}
+                                </TabPanel>
+                            ) : undefined}
+                            {anySponsors ? <TabPanel>{sponsors}</TabPanel> : undefined}
                             <TabPanel w="100%" h="100%" display="flex" justifyContent="center" overflowY="auto">
                                 <ItemList />
+                            </TabPanel>
+                            <TabPanel w="100%" h="100%" display="flex" justifyContent="center" overflowY="auto">
+                                <ExhibitionsGrid />
                             </TabPanel>
                             <TabPanel w="100%" h="100%" overflowY="auto">
                                 <SearchPanel />

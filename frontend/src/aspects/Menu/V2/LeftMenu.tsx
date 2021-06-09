@@ -3,11 +3,9 @@ import * as R from "ramda";
 import React, { Fragment, useEffect, useRef } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../../generated/graphql";
-import { ExhibitionsModal } from "../../Conference/Attend/Exhibition/ExhibitionsPage";
 import { MyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import LiveProgramRoomsModal from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import SocialiseModal from "../../Conference/Attend/Rooms/V2/SocialiseModal";
-import SponsorBoothsModal from "../../Conference/Attend/Rooms/V2/SponsorBoothsModal";
 import { ScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
 import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../Conference/useConference";
@@ -33,38 +31,19 @@ export default function LeftMenu(): JSX.Element {
     const { isOpen: liveNow_IsOpen, onOpen: liveNow_OnOpen, onClose: liveNow_OnClose } = useDisclosure();
     const liveNowButtonRef = useRef<HTMLButtonElement | null>(null);
 
-    const { isOpen: exhibitions_IsOpen, onOpen: exhibitions_OnOpen, onClose: exhibitions_OnClose } = useDisclosure();
-    const exhibitionsButtonRef = useRef<HTMLButtonElement | null>(null);
-
     const { isOpen: schedule_IsOpen, onOpen: schedule_OnOpen, onClose: schedule_OnClose } = useDisclosure();
     const scheduleButtonRef = useRef<HTMLButtonElement | null>(null);
 
     const { isOpen: socialise_IsOpen, onOpen: socialise_OnOpen, onClose: socialise_OnClose } = useDisclosure();
     const socialiseButtonRef = useRef<HTMLButtonElement | null>(null);
 
-    const {
-        isOpen: sponsorBooths_IsOpen,
-        onOpen: sponsorBooths_OnOpen,
-        onClose: sponsorBooths_OnClose,
-    } = useDisclosure();
-    const sponsorBoothsButtonRef = useRef<HTMLButtonElement | null>(null);
     const { isOpen: myBackstages_IsOpen, onOpen: myBackstages_OnOpen, onClose: myBackstages_OnClose } = useDisclosure();
     const myBackstagesButtonRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
         liveNow_OnClose();
-        exhibitions_OnClose();
         schedule_OnClose();
         socialise_OnClose();
-        sponsorBooths_OnClose();
-    }, [
-        location.pathname,
-        liveNow_OnClose,
-        exhibitions_OnClose,
-        schedule_OnClose,
-        socialise_OnClose,
-        sponsorBooths_OnClose,
-    ]);
         myBackstages_OnClose();
     }, [location.pathname, liveNow_OnClose, schedule_OnClose, socialise_OnClose, myBackstages_OnClose]);
 
@@ -114,18 +93,6 @@ export default function LeftMenu(): JSX.Element {
                 {maybeRegistrant ? (
                     <>
                         <MenuButton
-                            label="Sponsors"
-                            iconStyle="s"
-                            icon="star"
-                            borderTopRadius={showLive ? 0 : undefined}
-                            borderBottomRadius={0}
-                            colorScheme={colorScheme}
-                            bgColor="gold"
-                            side="left"
-                            ref={sponsorBoothsButtonRef}
-                            onClick={sponsorBooths_OnOpen}
-                        />
-                        <MenuButton
                             label={
                                 roomParticipants !== undefined &&
                                 roomParticipants !== false &&
@@ -171,27 +138,6 @@ export default function LeftMenu(): JSX.Element {
                         </MoreOptionsMenuButton>
                     </>
                 ) : undefined}
-                <MenuButton
-                    label="Explore program"
-                    iconStyle="s"
-                    icon={["calendar", "search"]}
-                    px={0}
-                    borderRadius={0}
-                    colorScheme={colorScheme}
-                    side="left"
-                    ref={scheduleButtonRef}
-                    onClick={schedule_OnOpen}
-                />
-                <MenuButton
-                    label="Exhibitions"
-                    iconStyle="s"
-                    icon="puzzle-piece"
-                    borderRadius={0}
-                    colorScheme={colorScheme}
-                    side="left"
-                    ref={exhibitionsButtonRef}
-                    onClick={exhibitions_OnOpen}
-                />
                 <MenuButton
                     label="Conference home"
                     iconStyle="s"
@@ -293,11 +239,6 @@ export default function LeftMenu(): JSX.Element {
                 />
             </Flex>
             <LiveProgramRoomsModal isOpen={liveNow_IsOpen} onClose={liveNow_OnClose} finalFocusRef={liveNowButtonRef} />
-            <ExhibitionsModal
-                isOpen={exhibitions_IsOpen}
-                onClose={exhibitions_OnClose}
-                finalFocusRef={exhibitionsButtonRef}
-            />
             <ScheduleModal isOpen={schedule_IsOpen} onClose={schedule_OnClose} finalFocusRef={scheduleButtonRef} />
             {maybeRegistrant ? (
                 <>
@@ -306,10 +247,6 @@ export default function LeftMenu(): JSX.Element {
                         onClose={socialise_OnClose}
                         finalFocusRef={socialiseButtonRef}
                     />
-                    <SponsorBoothsModal
-                        isOpen={sponsorBooths_IsOpen}
-                        onClose={sponsorBooths_OnClose}
-                        finalFocusRef={sponsorBoothsButtonRef}
                     <MyBackstagesModal
                         isOpen={myBackstages_IsOpen}
                         onClose={myBackstages_OnClose}

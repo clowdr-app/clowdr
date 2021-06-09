@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { SponsorBoothsList_ItemFragment, useGetSponsorBoothsQuery } from "../../../../../generated/graphql";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import { maybeCompare } from "../../../../Utils/maybeSort";
@@ -44,7 +44,7 @@ gql`
     }
 `;
 
-export default function SponsorBooths(): JSX.Element {
+export default function SponsorBooths({ setAnySponsors }: { setAnySponsors: (value: boolean) => void }): JSX.Element {
     const conference = useConference();
     const result = useGetSponsorBoothsQuery({
         variables: {
@@ -54,6 +54,10 @@ export default function SponsorBooths(): JSX.Element {
         nextFetchPolicy: "cache-first",
     });
     const roomParticipants = useRoomParticipants();
+
+    useEffect(() => {
+        setAnySponsors(!!result.data && result.data.content_Item.length > 0);
+    }, [setAnySponsors, result.data]);
 
     if (roomParticipants === undefined || roomParticipants === false) {
         return <></>;

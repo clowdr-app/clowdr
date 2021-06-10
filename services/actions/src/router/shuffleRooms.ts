@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { handleShuffleQueueEntered, processShuffleQueues } from "../handlers/shuffleRoom";
@@ -10,7 +10,7 @@ export const router = express.Router();
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/entered", bodyParser.json(), async (req: Request, res: Response) => {
+router.post("/entered", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ShuffleQueueEntryData>>(req.body);
     } catch (e) {

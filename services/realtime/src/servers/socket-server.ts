@@ -1,6 +1,8 @@
+import { gql } from "@apollo/client/core";
 import jwksRsa, { SigningKey } from "jwks-rsa";
 import socketIO, { Socket } from "socket.io";
 import { createAdapter } from "socket.io-redis";
+import { GetUserConferenceSlugsDocument } from "../generated/graphql";
 import { testJWKs } from "../jwks";
 import { notificationsRoomName } from "../lib/chat";
 import { redisClient } from "../redis";
@@ -11,6 +13,7 @@ import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectAnalytics } from "../socket-handlers/analytics";
 import { onDisconnect as onDisconnectHandRaise } from "../socket-handlers/handRaise";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
+import { testMode } from "../testMode";
 import { authorize } from "./authorize";
 import { httpServer } from "./http-server";
 
@@ -61,8 +64,28 @@ socketServer.use(
     })
 );
 
+gql`
+    query GetUserConferenceSlugs($userId: String!) {
+        conference_Conference(
+            where: {
+                groups: {
+                    enabled: { _eq: true }
+                    groupRoles: { role: { rolePermissions: { permissionName: { _eq: CONFERENCE_VIEW } } } }
+                    _or: [
+                        { includeUnauthenticated: { _eq: true } }
+                        { groupRegistrants: { registrant: { userId: { _eq: $userId } } } }
+                    ]
+                }
+            }
+        ) {
+            id
+            slug
+        }
+    }
+`;
+
 // Handle incoming connections
-socketServer.on("connection", function (socket: Socket) {
+socketServer.on("connection", async function (socket: Socket) {
     const socketId = socket.id;
 
     // Validate the token
@@ -74,22 +97,27 @@ socketServer.on("connection", function (socket: Socket) {
 
     const userId: string = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
     if (userId) {
-        const conferenceSlugsRaw: string =
-            socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-conference-slugs"] ?? "{}";
-        const conferenceSlugs: string[] = JSON.parse(
-            `[${conferenceSlugsRaw.substring(1, conferenceSlugsRaw.length - 1)}]`
-        );
-
-        console.log(`Authorized client connected: ${userId} / ${socketId}: ${conferenceSlugs}`);
+        console.log(`Authorized client connected: ${userId} / ${socketId}`);
 
         socket.on("disconnect", () => {
-            console.log(`Client disconnected: ${userId} / ${socketId}: ${conferenceSlugs}`);
+            console.log(`Client disconnected: ${userId} / ${socketId}`);
 
             onDisconnectPresence(socketId, userId);
             onDisconnectChat(socketId, userId);
             onDisconnectAnalytics(socketId, userId);
             onDisconnectHandRaise(socketId, userId);
         });
+
+        const conferenceSlugs = await testMode(
+            async (apolloClient) => {
+                const response = await apolloClient.query({
+                    query: GetUserConferenceSlugsDocument,
+                    variables: { userId },
+                });
+                return response.data?.conference_Conference.map((x) => x.slug);
+            },
+            async () => ["test-conference-slug"]
+        );
 
         onConnectPresence(socket, userId, conferenceSlugs);
         onConnectChat(socket, userId, conferenceSlugs);

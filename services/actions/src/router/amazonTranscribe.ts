@@ -1,5 +1,5 @@
 import { TranscribeEvent } from "@clowdr-app/shared-types/build/sns/transcribe";
-import bodyParser from "body-parser";
+import { text } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
@@ -8,7 +8,7 @@ import { completeTranscriptionJob, failTranscriptionJob } from "../lib/transcrib
 export const router = express.Router();
 
 // Unprotected routes
-router.post("/notify", bodyParser.text(), async (req: Request, res: Response) => {
+router.post("/notify", text(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
 
     try {

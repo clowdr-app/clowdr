@@ -9,8 +9,8 @@ import {
     Permissions_Permission_Enum,
     useConferenceLandingPageItemQuery,
 } from "../../../generated/graphql";
-import ConferencePageNotFound from "../../Errors/ConferencePageNotFound";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
+import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
@@ -150,7 +150,7 @@ export default function ConferenceLandingPage(): JSX.Element {
                 Permissions_Permission_Enum.ConferenceView,
                 Permissions_Permission_Enum.ConferenceManageContent,
             ]}
-            componentIfDenied={<ConferencePageNotFound />}
+            componentIfDenied={<PageNotFound />}
         >
             <ConferenceLandingPageInner />
         </RequireAtLeastOnePermissionWrapper>

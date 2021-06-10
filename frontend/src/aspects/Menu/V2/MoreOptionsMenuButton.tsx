@@ -15,7 +15,7 @@ export default function MoreOptionsMenuButton({
     iconStyle: "b" | "s" | "r";
     icon: string;
     side: "left" | "right";
-    children: React.ReactNodeArray;
+    children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
     const size = useBreakpointValue({
         base: "md",

@@ -1,5 +1,5 @@
 import assert from "assert";
-import bodyParser from "body-parser";
+import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { AuthenticatedRequest } from "./checkScopes";
 import {
@@ -24,6 +24,7 @@ import { router as eventRouter } from "./router/event";
 import { router as eventProgramPersonRouter } from "./router/eventProgramPerson";
 import { router as eventVonageSessionRouter } from "./router/eventVonageSession";
 import { router as googleRouter } from "./router/google";
+import { router as hasuraRouter } from "./router/hasura";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaPackageRouter } from "./router/mediaPackage";
 import { router as mediaPackageHarvestJobRouter } from "./router/mediaPackageHarvestJob";
@@ -79,13 +80,15 @@ app.use("/shuffle", shuffleRoomsRouter);
 app.use("/queues", queuesRouter);
 app.use("/analytics", analyticsRouter);
 
+app.use("/hasura", hasuraRouter);
+
 app.get("/", function (_req, res) {
     res.send("Clowdr");
 });
 
 app.use(checkEventSecret);
 
-const jsonParser = bodyParser.json();
+const jsonParser = json();
 
 app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {
     const req = _req as AuthenticatedRequest;

@@ -48,6 +48,17 @@ gql`
         slug
         createdBy
 
+        supportAddress: configurations(where: { key: { _eq: "SUPPORT_ADDRESS" } }) {
+            id
+            key
+            value
+        }
+        registrationURL: configurations(where: { key: { _eq: "REGISTRATION_URL" } }) {
+            id
+            key
+            value
+        }
+
         publicGroups: groups(where: { enabled: { _eq: true }, includeUnauthenticated: { _eq: true } }) {
             ...GroupData
         }

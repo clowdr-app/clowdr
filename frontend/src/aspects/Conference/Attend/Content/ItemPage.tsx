@@ -8,7 +8,6 @@ import {
     Permissions_Permission_Enum,
     useGetItemQuery,
 } from "../../../../generated/graphql";
-import ConferencePageNotFound from "../../../Errors/ConferencePageNotFound";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
@@ -76,7 +75,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<ConferencePageNotFound />}
+            componentIfDenied={<PageNotFound />}
             permissions={[Permissions_Permission_Enum.ConferenceView]}
         >
             <ApolloQueryWrapper

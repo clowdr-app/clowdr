@@ -123,3 +123,19 @@ A string representing a valid email address for contacting the service hosting c
 ```json
 "conf2021-support@host.org"
 ```
+
+## Conference customisation
+
+### Key
+
+`REGISTRATION_URL`
+
+### Value
+
+A string representing a valid URL for users to register for the conference.
+
+### Example
+
+```json
+"https://www.example.org/register"
+```

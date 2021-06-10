@@ -43,6 +43,7 @@ router.post("/auth", json(), async (req: Request, res: Response) => {
 
         let userId: undefined | string;
         if (
+            decodedToken &&
             "https://hasura.io/jwt/claims" in decodedToken &&
             decodedToken["https://hasura.io/jwt/claims"] &&
             "x-hasura-allowed-roles" in decodedToken["https://hasura.io/jwt/claims"] &&

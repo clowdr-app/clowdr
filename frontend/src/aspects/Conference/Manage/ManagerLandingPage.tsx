@@ -51,7 +51,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="purple"
                 />
                 <RestrictedDashboardButton
-                    to="content"
+                    to="content/v2"
                     name="Content"
                     icon="align-left"
                     description="Manage your program content: papers, posters, keynotes, etc."
@@ -129,7 +129,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="blue"
                 />
                 <RestrictedDashboardButton
-                    to="sponsors"
+                    to="content/v2"
                     name="Sponsors"
                     icon="star"
                     description="Manage your sponsors, their booths and representatives."

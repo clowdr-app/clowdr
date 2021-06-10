@@ -60,7 +60,7 @@ export interface TextLayoutDataBlob extends BaseLayoutDataBlob {
 
 export interface ImageFileLayoutDataBlob extends BaseLayoutDataBlob {
     contentType: Content_ElementType_Enum.ImageFile;
-    isLogo: boolean;
+    isLogo?: boolean;
 }
 
 export interface PaperFileLayoutDataBlob extends BaseLayoutDataBlob {
@@ -73,7 +73,7 @@ export interface PosterFileLayoutDataBlob extends BaseLayoutDataBlob {
 
 export interface ImageUrlLayoutDataBlob extends BaseLayoutDataBlob {
     contentType: Content_ElementType_Enum.ImageUrl;
-    isLogo: boolean;
+    isLogo?: boolean;
 }
 
 export interface LinkLayoutDataBlob extends BaseLayoutDataBlob {

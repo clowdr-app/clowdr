@@ -38,7 +38,7 @@ export function EditElements({
     defaultOpenSecurityForId?: string;
     isSponsor: boolean;
     openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
-} & ManageContent_ItemSecondaryFragment & {
+} & Partial<ManageContent_ItemSecondaryFragment> & {
         elements: readonly ManageContent_ElementFragment[];
         uploadableElements: readonly ManageContent_UploadableElementFragment[];
     }): JSX.Element {

@@ -36245,7 +36245,7 @@ export type ManageContent_ItemProgramPersonFragment = { readonly __typename?: 'c
     & ManageContent_ProgramPersonFragment
   ) };
 
-export type ManageContent_ItemSecondaryFragment = { readonly __typename?: 'content_Item', readonly chatId?: Maybe<any>, readonly rooms: ReadonlyArray<(
+export type ManageContent_ItemSecondaryFragment = { readonly __typename?: 'content_Item', readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly rooms: ReadonlyArray<(
     { readonly __typename?: 'room_Room' }
     & ManageContent_RoomFragment
   )>, readonly originatingData?: Maybe<(
@@ -38651,6 +38651,7 @@ export const ManageContent_OriginatingDataFragmentDoc = gql`
     `;
 export const ManageContent_ItemSecondaryFragmentDoc = gql`
     fragment ManageContent_ItemSecondary on content_Item {
+  typeName
   rooms {
     ...ManageContent_Room
   }

@@ -146,6 +146,7 @@ gql`
     }
 
     fragment ManageContent_ItemSecondary on content_Item {
+        typeName
         rooms {
             ...ManageContent_Room
         }
@@ -921,7 +922,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 Manage {conference.shortName}
             </Heading>
             <Heading as="h2" id="page-heading" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Content
+                Content &amp; Sponsors
             </Heading>
             {(loadingAllTags && !allTags) ||
             (loadingAllExhibitions && !allExhibitions) ||
@@ -932,6 +933,7 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
             ) : (
                 <></>
             )}
+            <Text fontSize="sm">Managing sponsors has been merged with managing content.</Text>
             <HStack spacing={2}>
                 <ManageTagsModal
                     onClose={async () => {

@@ -3,7 +3,6 @@ import { Spinner } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
 import { SponsorBoothsList_ItemFragment, useGetSponsorBoothsQuery } from "../../../../../generated/graphql";
-import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import { maybeCompare } from "../../../../Utils/maybeSort";
 import { useConference } from "../../../useConference";
 import SponsorsSummary from "./SponsorsSummary";
@@ -53,15 +52,10 @@ export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (va
         fetchPolicy: "cache-and-network",
         nextFetchPolicy: "cache-first",
     });
-    const roomParticipants = useRoomParticipants();
 
     useEffect(() => {
         setAnySponsors?.(!!result.data && result.data.content_Item.length > 0);
     }, [setAnySponsors, result.data]);
-
-    if (roomParticipants === undefined || roomParticipants === false) {
-        return <></>;
-    }
 
     if (result.loading && !result?.data) {
         return <Spinner label="Loading rooms" />;
@@ -70,7 +64,7 @@ export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (va
     return <SponsorBoothsInner sponsors={result.data?.content_Item ?? []} />;
 }
 
-function SponsorBoothsInner({ sponsors }: { sponsors: readonly SponsorBoothsList_ItemFragment[] }): JSX.Element {
+export function SponsorBoothsInner({ sponsors }: { sponsors: readonly SponsorBoothsList_ItemFragment[] }): JSX.Element {
     const sortedSponsors = useMemo(
         () =>
             R.sortWith<SponsorBoothsList_ItemFragment>(

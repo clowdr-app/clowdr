@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import {
+    Content_ItemType_Enum,
     ManageContent_ElementFragment,
     ManageContent_ItemSecondaryFragment,
     ManageContent_UploadableElementFragment,
@@ -137,11 +138,22 @@ function SecondaryEditorInner({
                                 size="sm"
                                 to={`/conference/${conference.slug}/room/${itemResponse.data.content_Item_by_pk.rooms[0].id}`}
                                 isExternal
-                                aria-label="View discussion room"
-                                title="View discussion room"
+                                aria-label={
+                                    itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
+                                        ? "View booth"
+                                        : "View discussion room"
+                                }
+                                title={
+                                    itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
+                                        ? "View booth"
+                                        : "View discussion room"
+                                }
                             >
                                 <FAIcon iconStyle="s" icon="link" mr={2} />
-                                View discussion room&nbsp;
+                                {itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
+                                    ? "View booth"
+                                    : "View discussion room"}
+                                &nbsp;
                                 <ExternalLinkIcon />
                             </LinkButton>
                         ) : itemResponse.data.content_Item_by_pk.rooms.length >= 1 ? (
@@ -169,7 +181,16 @@ function SecondaryEditorInner({
                                 </MenuList>
                             </Menu>
                         ) : (
-                            <CreateRoomButton size="sm" itemId={itemId} refetch={() => itemResponse.refetch()} />
+                            <CreateRoomButton
+                                size="sm"
+                                itemId={itemId}
+                                refetch={() => itemResponse.refetch()}
+                                buttonText={
+                                    itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
+                                        ? "Create booth"
+                                        : undefined
+                                }
+                            />
                         )}
                     </>
                 ) : undefined}
@@ -184,7 +205,7 @@ function SecondaryEditorInner({
                 queryResult={itemResponse}
             >
                 {(
-                    result: ManageContent_ItemSecondaryFragment & {
+                    result: Partial<ManageContent_ItemSecondaryFragment> & {
                         elements: readonly ManageContent_ElementFragment[];
                         uploadableElements: readonly ManageContent_UploadableElementFragment[];
                     }

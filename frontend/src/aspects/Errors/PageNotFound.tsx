@@ -82,7 +82,7 @@ export default function PageNotFound(): JSX.Element {
                     </>
                 ) : loggedIn ? (
                     <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                        Please double check the URL, and if this error persists, please either contact your conference
+                        Please double check the URL, and if this error persists, please contact your conference
                         organiser.
                     </Text>
                 ) : (

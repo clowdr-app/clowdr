@@ -353,20 +353,22 @@ function Event({
                         )}
                     </Td>
                 ) : "exhibitionId" in itemEvent && itemEvent.exhibitionId ? (
-                    <LinkButton
-                        to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
-                        aria-label={"Go to exhibition"}
-                        whiteSpace="normal"
-                        variant="outline"
-                        size="sm"
-                        maxH="unset"
-                        h="auto"
-                        py={1}
-                        colorScheme="blue"
-                        linkProps={{ maxH: "unset" }}
-                    >
-                        View exhibition
-                    </LinkButton>
+                    <Td>
+                        <LinkButton
+                            to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
+                            aria-label={"Go to exhibition"}
+                            whiteSpace="normal"
+                            variant="outline"
+                            size="sm"
+                            maxH="unset"
+                            h="auto"
+                            py={1}
+                            colorScheme="blue"
+                            linkProps={{ maxH: "unset" }}
+                        >
+                            View exhibition
+                        </LinkButton>
+                    </Td>
                 ) : (
                     <Td>No item</Td>
                 )

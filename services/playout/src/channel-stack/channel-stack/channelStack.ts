@@ -47,7 +47,7 @@ import {
     VideoDescriptionScalingBehavior,
 } from "@aws-sdk/client-medialive";
 import { AdMarkers, Origination, PlaylistType, StreamOrder } from "@aws-sdk/client-mediapackage";
-import { truncate } from "../../utils/string";
+import { toSafeTagValue } from "../../utils/string";
 
 export interface ChannelStackDescription {
     rtmpAInputUri: string;
@@ -211,10 +211,10 @@ export class ChannelStack extends cdk.Stack {
                 },
             ],
             tags: {
-                roomId: props.roomId,
-                roomName: truncate(props.roomName, 200),
-                conferenceId: props.conferenceId,
-                environment: props.awsPrefix ?? "unknown",
+                roomId: toSafeTagValue(props.roomId),
+                roomName: toSafeTagValue(props.roomName),
+                conferenceId: toSafeTagValue(props.conferenceId),
+                environment: toSafeTagValue(props.awsPrefix ?? "unknown"),
             },
             name: props.generateId(),
             type: "RTMP_PUSH",
@@ -225,10 +225,10 @@ export class ChannelStack extends cdk.Stack {
     createMp4Input(name: string, props: ChannelStackProps): medialive.CfnInput {
         return new medialive.CfnInput(this, name, {
             tags: {
-                roomId: props.roomId,
-                roomName: truncate(props.roomName, 200),
-                conferenceId: props.conferenceId,
-                environment: props.awsPrefix ?? "unknown",
+                roomId: toSafeTagValue(props.roomId),
+                roomName: toSafeTagValue(props.roomName),
+                conferenceId: toSafeTagValue(props.conferenceId),
+                environment: toSafeTagValue(props.awsPrefix ?? "unknown"),
             },
             name: props.generateId(),
             type: "MP4_FILE",
@@ -249,19 +249,19 @@ export class ChannelStack extends cdk.Stack {
             tags: [
                 {
                     key: "roomId",
-                    value: props.roomId,
+                    value: toSafeTagValue(props.roomId),
                 },
                 {
                     key: "environment",
-                    value: props.awsPrefix,
+                    value: toSafeTagValue(props.awsPrefix),
                 },
                 {
                     key: "roomName",
-                    value: truncate(props.roomName, 200),
+                    value: toSafeTagValue(props.roomName),
                 },
                 {
                     key: "conferenceId",
-                    value: truncate(props.conferenceId, 200),
+                    value: toSafeTagValue(props.conferenceId),
                 },
             ],
             description: `MediaPackage channel for room ${props.roomId}`,
@@ -281,19 +281,19 @@ export class ChannelStack extends cdk.Stack {
             tags: [
                 {
                     key: "roomId",
-                    value: props.roomId,
+                    value: toSafeTagValue(props.roomId),
                 },
                 {
                     key: "environment",
-                    value: props.awsPrefix,
+                    value: toSafeTagValue(props.awsPrefix),
                 },
                 {
                     key: "roomName",
-                    value: truncate(props.roomName, 200),
+                    value: toSafeTagValue(props.roomName),
                 },
                 {
                     key: "conferenceId",
-                    value: truncate(props.conferenceId, 200),
+                    value: toSafeTagValue(props.conferenceId),
                 },
             ],
             hlsPackage: {
@@ -351,10 +351,10 @@ export class ChannelStack extends cdk.Stack {
         const channel = new medialive.CfnChannel(this, name, {
             name,
             tags: {
-                roomId: props.roomId,
-                roomName: truncate(props.roomName, 200),
-                conferenceId: props.conferenceId,
-                environment: props.awsPrefix ?? "unknown",
+                roomId: toSafeTagValue(props.roomId),
+                roomName: toSafeTagValue(props.roomName),
+                conferenceId: toSafeTagValue(props.conferenceId),
+                environment: toSafeTagValue(props.awsPrefix ?? "unknown"),
             },
             channelClass: "SINGLE_PIPELINE",
             inputAttachments: [

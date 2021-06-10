@@ -272,7 +272,7 @@ gql`
             }
         ) {
             returning {
-                ...ItemData
+                ...ItemElements_ItemData
             }
         }
     }

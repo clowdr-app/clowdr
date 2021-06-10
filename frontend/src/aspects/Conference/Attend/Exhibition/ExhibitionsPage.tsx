@@ -53,6 +53,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
     const textColour_Hover = bgColour_Hover_IsDark ? "white" : "black";
     const textColour_Active = bgColour_Active_IsDark ? "white" : "black";
 
+    const shadow = useColorModeValue("md", "light-md");
     return (
         <GridItem>
             <LinkButton
@@ -69,9 +70,11 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
                     color: textColour,
                     border: "1px solid",
                     borderColor: borderColour,
+                    shadow,
                     _hover: {
                         bgColor: bgColour_Hover.toRgbString(),
                         color: textColour_Hover,
+                        shadow,
                     },
                     _focus: {
                         bgColor: bgColour_Hover.toRgbString(),

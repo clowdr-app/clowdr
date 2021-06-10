@@ -4,6 +4,7 @@ import type {
     Schedule_EventSummaryFragment,
     Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
+    Schedule_TagFragment,
 } from "../../../../generated/graphql";
 import type { TimelineEvent, TimelineRoom } from "./DayList";
 import EventBox from "./EventBox";
@@ -12,10 +13,12 @@ function RoomTimelineContents({
     groupedEvents,
     room,
     scrollToEventCbs,
+    tags,
 }: {
     groupedEvents: Schedule_EventSummaryFragment[][];
     room: Schedule_RoomSummaryFragment;
     scrollToEventCbs: Map<string, () => void>;
+    tags: readonly Schedule_TagFragment[];
 }): JSX.Element {
     const eventBoxes = useMemo(
         () =>
@@ -25,9 +28,10 @@ function RoomTimelineContents({
                     key={events[0].id}
                     sortedEvents={events}
                     scrollToEventCbs={scrollToEventCbs}
+                    tags={tags}
                 />
             )),
-        [groupedEvents, room.name, scrollToEventCbs]
+        [groupedEvents, room.name, scrollToEventCbs, tags]
     );
     return <>{eventBoxes}</>;
 }
@@ -37,11 +41,13 @@ function RoomTimelineInner({
     width = 50,
     backgroundColor,
     scrollToEventCbs,
+    tags,
 }: {
     room: TimelineRoom;
     width?: number;
     backgroundColor?: string;
     scrollToEventCbs: Map<string, () => void>;
+    tags: readonly Schedule_TagFragment[];
 }): JSX.Element {
     const groupedEvents = useMemo(() => {
         const result: TimelineEvent[][] = [];
@@ -84,7 +90,12 @@ function RoomTimelineInner({
             role="region"
             aria-label={`${room.name} room schedule.`}
         >
-            <RoomTimelineContents groupedEvents={groupedEvents} room={room} scrollToEventCbs={scrollToEventCbs} />
+            <RoomTimelineContents
+                groupedEvents={groupedEvents}
+                room={room}
+                scrollToEventCbs={scrollToEventCbs}
+                tags={tags}
+            />
         </Box>
     );
 }
@@ -96,6 +107,7 @@ function RoomTimelineWrapper({
     scrollToEventCbs,
     events,
     items,
+    tags,
 }: {
     room: Schedule_RoomSummaryFragment;
     hideTimeZoomButtons?: boolean;
@@ -105,6 +117,7 @@ function RoomTimelineWrapper({
     scrollToEventCbs: Map<string, () => void>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
     items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    tags: readonly Schedule_TagFragment[];
 }): JSX.Element {
     const roomEvents = useMemo(() => {
         const result: TimelineEvent[] = [];
@@ -131,6 +144,7 @@ function RoomTimelineWrapper({
             width={width}
             backgroundColor={backgroundColor}
             scrollToEventCbs={scrollToEventCbs}
+            tags={tags}
         />
     ) : (
         <></>
@@ -146,6 +160,7 @@ type Props = {
     scrollToEventCbs: Map<string, () => void>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
     items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    tags: ReadonlyArray<Schedule_TagFragment>;
 };
 
 export default function RoomTimeline({ ...props }: Props): JSX.Element {

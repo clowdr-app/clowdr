@@ -34,24 +34,14 @@ import { useRestorableState } from "../../../Generic/useRestorableState";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
-import { sortAuthors } from "./AuthorList";
+import { AuthorList } from "./AuthorList";
 
 gql`
-    fragment ItemList_ProgramPersonData on content_ItemProgramPerson {
-        id
-        person {
-            id
-            affiliation
-            name
-        }
-        priority
-    }
-
     fragment ItemList_ItemData on content_Item {
         id
         title
-        itemPeople(where: { roleName: { _nilike: "chair" } }) {
-            ...ItemList_ProgramPersonData
+        itemPeople {
+            ...ProgramPersonData
         }
     }
 
@@ -81,14 +71,16 @@ gql`
     }
 `;
 
-function TagButton({
+export function TagButton({
     tag,
     isExpanded,
     setOpenId,
+    notExpander,
 }: {
     tag: ItemList_TagInfoFragment;
     isExpanded: boolean;
-    setOpenId: (id: string | null) => void;
+    setOpenId?: (id: string | null) => void;
+    notExpander?: boolean;
 }): JSX.Element {
     const colour = tag.colour.replace(/\s/g, "").endsWith("0)") ? undefined : tag.colour;
     const defaultCollapsedBgColour = useColorModeValue("blue.200", "blue.700");
@@ -117,7 +109,7 @@ function TagButton({
     ]);
 
     const shadow = useColorModeValue("md", "light-md");
-    return (
+    return setOpenId ? (
         <Button
             colorScheme="blue"
             isActive={isExpanded}
@@ -130,8 +122,8 @@ function TagButton({
             borderWidth={2}
             borderColor={isExpanded ? expandedBgColour : collapsedBgColour}
             variant="outline"
-            id={`content-groups-accordion-button-${tag.id}`}
-            aria-controls={`content-groups-accordion-panel-${tag.id}`}
+            id={notExpander ? undefined : `content-groups-accordion-button-${tag.id}`}
+            aria-controls={notExpander ? undefined : `content-groups-accordion-panel-${tag.id}`}
             onClick={() => (isExpanded ? setOpenId(null) : setOpenId(tag.id))}
             backgroundColor={isExpanded ? expandedBgColour : collapsedBgColour}
             _hover={{
@@ -151,6 +143,23 @@ function TagButton({
                 </Text>
             </Center>
         </Button>
+    ) : (
+        <Box
+            padding={[1, 1, 1]}
+            whiteSpace="normal"
+            margin={0}
+            color={(isExpanded && isExpandedDark) || (!isExpanded && isDark) ? "white" : "black"}
+            height="auto"
+            borderWidth={2}
+            borderColor={isExpanded ? expandedBgColour : collapsedBgColour}
+            backgroundColor={isExpanded ? expandedBgColour : collapsedBgColour}
+        >
+            <Center m={0} p={0}>
+                <Text as="span" fontSize="xs" fontWeight={600} m={0}>
+                    {tag.name}
+                </Text>
+            </Center>
+        </Box>
     );
 }
 
@@ -168,22 +177,23 @@ function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Elemen
             height="100%"
             colorScheme="gray"
             shadow={shadow}
+            fontSize="0.9em"
         >
-            <Text as="p" whiteSpace="normal" fontSize="1.2em" fontWeight="600" textAlign="left" mb={4}>
+            <Text as="p" whiteSpace="normal" fontSize="1.4em" fontWeight="600" textAlign="left" mb={4}>
                 <Twemoji className="twemoji" text={group.title} />
             </Text>
-            <Text as="p" fontSize="0.9em" whiteSpace="normal" lineHeight="3ex">
-                {[...group.itemPeople]
-                    .sort(sortAuthors)
-                    .reduce((acc, person) => `${acc}, ${person.person.name}`, "")
-                    .substr(2)}
-            </Text>
+            <AuthorList programPeopleData={group.itemPeople} noRegistrantLink />
         </LinkButton>
     );
 }
 
 function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded: boolean }): JSX.Element {
-    const [search, setSearch] = useState<string>("");
+    const [search, setSearch] = useRestorableState<string>(
+        "ItemList_Search_" + tag.id,
+        "",
+        (x) => x,
+        (x) => x
+    );
 
     const contentOfTag = useContentOfTagQuery({
         skip: true,

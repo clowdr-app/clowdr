@@ -12,6 +12,7 @@ import {
     Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
+    Schedule_TagFragment,
     useSchedule_SelectSummariesQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
@@ -56,6 +57,14 @@ gql`
         title
         shortTitle
         typeName
+        itemTags {
+            id
+            itemId
+            tagId
+        }
+        itemPeople {
+            ...Schedule_ItemPerson
+        }
     }
 
     fragment Schedule_Item on content_Item {
@@ -94,6 +103,13 @@ gql`
         managementModeName
     }
 
+    fragment Schedule_Tag on collection_Tag {
+        id
+        name
+        colour
+        priority
+    }
+
     query Schedule_SelectSummaries($conferenceId: uuid!) {
         room_Room(
             where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] }, events: {} }
@@ -105,6 +121,9 @@ gql`
         }
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             ...Schedule_ItemElements
+        }
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Schedule_Tag
         }
     }
 `;
@@ -279,12 +298,14 @@ function ScheduleFrame({
     setScrollToNow,
     items,
     isNewDay,
+    tags,
 }: {
     frame: Frame;
     alternateBgColor: string;
     borderColour: string;
     maxParallelRooms: number;
     items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    tags: ReadonlyArray<Schedule_TagFragment>;
     roomColWidth: number;
     timeBarWidth: number;
     scrollToEventCbs: Map<string, () => void>;
@@ -335,11 +356,12 @@ function ScheduleFrame({
                             scrollToEventCbs={scrollToEventCbs}
                             events={item.session.events}
                             items={items}
+                            tags={tags}
                         />
                     </Box>
                 );
             }, [] as (JSX.Element | undefined)[]),
-        [items, frame.items, roomColWidth, scrollToEventCbs]
+        [items, frame.items, roomColWidth, scrollToEventCbs, tags]
     );
 
     const timelineParams = useTimelineParameters();
@@ -420,11 +442,13 @@ export function ScheduleInner({
     rooms,
     events: rawEvents,
     items,
+    tags,
     titleStr,
 }: {
     rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
     items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    tags: ReadonlyArray<Schedule_TagFragment>;
     titleStr?: string;
 }): JSX.Element {
     const eventsByRoom = useMemo(
@@ -536,6 +560,7 @@ export function ScheduleInner({
                             scrollToEventCbs={scrollToEventCbs}
                             setScrollToNow={setScrollToNow}
                             items={items}
+                            tags={tags}
                             roomColWidth={roomColWidth}
                             timeBarWidth={timeBarWidth}
                             isNewDay={isNewDay}
@@ -544,7 +569,7 @@ export function ScheduleInner({
                 </TimelineParameters>
             );
         });
-    }, [alternateBgColor, borderColour, frames, items, maxParallelRooms, roomColWidth, scrollToEventCbs]);
+    }, [alternateBgColor, borderColour, frames, items, maxParallelRooms, roomColWidth, scrollToEventCbs, tags]);
 
     const scrollToEvent = useCallback(
         (ev: Schedule_EventSummaryFragment) => {
@@ -612,10 +637,16 @@ export function ScheduleFetchWrapper(): JSX.Element {
                 rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
                 events: ReadonlyArray<Schedule_EventSummaryFragment>;
                 items: ReadonlyArray<Schedule_ItemElementsFragment>;
+                tags: ReadonlyArray<Schedule_TagFragment>;
             }
         >
             queryResult={roomsResult}
-            getter={(x) => ({ rooms: x.room_Room, events: x.schedule_Event, items: x.content_Item })}
+            getter={(x) => ({
+                rooms: x.room_Room,
+                events: x.schedule_Event,
+                items: x.content_Item,
+                tags: x.collection_Tag,
+            })}
         >
             {(data) => <ScheduleInner {...data} />}
         </ApolloQueryWrapper>

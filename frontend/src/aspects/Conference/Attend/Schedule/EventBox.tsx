@@ -28,13 +28,16 @@ import {
     Content_ElementType_Enum,
     Schedule_EventSummaryFragment,
     Schedule_ItemFragment,
+    Schedule_TagFragment,
     useSchedule_SelectItemLazyQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import { Markdown } from "../../../Text/Markdown";
+import { maybeCompare } from "../../../Utils/maybeSort";
 import { useConference } from "../../useConference";
 import { AuthorList } from "../Content/AuthorList";
+import TagList from "../Content/TagList";
 import { EventModeIcon } from "../Rooms/V2/EventHighlight";
 import type { TimelineEvent } from "./DayList";
 import useTimelineParameters from "./useTimelineParameters";
@@ -48,6 +51,7 @@ function EventBoxPopover({
     isOpen,
     onClose,
     finalFocusRef,
+    tags,
 }: {
     eventStartMs: number;
     durationSeconds: number;
@@ -57,6 +61,7 @@ function EventBoxPopover({
     isOpen: boolean;
     onClose: () => void;
     finalFocusRef: React.MutableRefObject<FocusableElement | null>;
+    tags: readonly Schedule_TagFragment[];
 }): JSX.Element {
     const conference = useConference();
     const event0 = events[0];
@@ -204,6 +209,13 @@ function EventBoxPopover({
                     </Flex>
                 </ModalHeader>
                 <ModalBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
+                    {content ? (
+                        <TagList
+                            tags={content.itemTags.map(
+                                (x) => ({ ...x, tag: tags.find((y) => x.tagId === y.id) } as any)
+                            )}
+                        />
+                    ) : undefined}
                     {exhibitionUrl ? (
                         <>
                             <Text>This event is an exhibition of multiple items.</Text>
@@ -234,10 +246,12 @@ export default function EventBox({
     sortedEvents,
     roomName,
     scrollToEventCbs,
+    tags,
 }: {
     sortedEvents: ReadonlyArray<TimelineEvent>;
     roomName: string;
     scrollToEventCbs: Map<string, () => void>;
+    tags: readonly Schedule_TagFragment[];
 }): JSX.Element | null {
     const event = sortedEvents[0];
     const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
@@ -306,6 +320,35 @@ export default function EventBox({
                         })}{" "}
                         for {Math.round(durationSeconds / 60)} minutes
                     </Text>
+                    {event.item ? (
+                        <>
+                            <Text>
+                                {R.intersperse(
+                                    ", ",
+                                    R.sortWith(
+                                        [
+                                            (x, y) =>
+                                                x.roleName === "CHAIR"
+                                                    ? y.roleName === "CHAIR"
+                                                        ? 0
+                                                        : 1
+                                                    : y.roleName === "CHAIR"
+                                                    ? -1
+                                                    : x.roleName.localeCompare(y.roleName),
+                                            (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
+                                        ],
+                                        event.item.itemPeople
+                                    ).map((x) => x.person.name)
+                                ).reduce((acc, x) => acc + x, "")}
+                            </Text>
+                            <TagList
+                                tags={event.item.itemTags.map(
+                                    (x) => ({ ...x, tag: tags.find((y) => x.tagId === y.id) } as any)
+                                )}
+                                noClick
+                            />
+                        </>
+                    ) : undefined}
                 </VStack>
                 {sortedEvents.slice(1).map((ev) => (
                     <Divider
@@ -319,7 +362,7 @@ export default function EventBox({
                 ))}
             </>
         );
-    }, [sortedEvents, event.item, event.name, eventStartMs, durationSeconds]);
+    }, [sortedEvents, event.item, event.name, eventStartMs, durationSeconds, tags]);
 
     const eventFocusRef = React.useRef<HTMLButtonElement>(null);
     const { isOpen, onClose: _onClose, onOpen } = useDisclosure();
@@ -412,6 +455,7 @@ export default function EventBox({
                     isOpen={isOpen}
                     onClose={onClose}
                     finalFocusRef={eventFocusRef}
+                    tags={tags}
                 />
             ) : undefined}
         </>

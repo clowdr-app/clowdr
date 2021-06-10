@@ -15,7 +15,9 @@ import { FAIcon } from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useConference } from "../../useConference";
+import { AuthorList } from "../Content/AuthorList";
 import { Element } from "../Content/Element/Element";
+import TagList from "../Content/TagList";
 
 function ItemTile({
     item,
@@ -120,7 +122,9 @@ function ItemTile({
                     <PageCountText path={itemUrl} fontSize="inherit" />
                 </LinkButton>
             </HStack>
+            <TagList tags={item.itemTags} />
             {primaryItem && <Element element={primaryItem} />}
+            <AuthorList programPeopleData={item.itemPeople} noRegistrantLink />
             {/* <Text>TODO: A marker to show if any of the authors are present</Text> */}
         </VStack>
     );

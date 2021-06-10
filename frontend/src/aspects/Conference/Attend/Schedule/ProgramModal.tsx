@@ -18,6 +18,7 @@ import {
     Schedule_HappeningSoonQuery,
     Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
+    Schedule_TagFragment,
     useSchedule_HappeningSoonQuery,
 } from "../../../../generated/graphql";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
@@ -53,6 +54,9 @@ gql`
             item {
                 ...Schedule_ItemElements
             }
+        }
+        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Schedule_Tag
         }
     }
 `;
@@ -90,6 +94,7 @@ export function HappeningSoonFetchWrapper({
                 rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
                 events: ReadonlyArray<Schedule_EventSummaryFragment>;
                 items: ReadonlyArray<Schedule_ItemElementsFragment>;
+                tags: ReadonlyArray<Schedule_TagFragment>;
             }
         >
             queryResult={roomsResult}
@@ -97,6 +102,7 @@ export function HappeningSoonFetchWrapper({
                 rooms: x.room_Room,
                 events: x.schedule_Event,
                 items: x.schedule_Event.filter((x) => !!x.item).map((x) => x.item) as Schedule_ItemElementsFragment[],
+                tags: x.collection_Tag,
             })}
         >
             {(data) => <ScheduleInner titleStr={"Happening Soon"} {...data} />}

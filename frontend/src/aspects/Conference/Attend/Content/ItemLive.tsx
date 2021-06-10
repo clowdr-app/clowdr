@@ -2,7 +2,7 @@ import { chakra, Flex, Text, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     Content_ItemType_Enum,
-    ItemDataFragment,
+    ItemElements_ItemDataFragment,
     ItemEventFragment,
     ItemPage_ItemRoomsFragment,
 } from "../../../../generated/graphql";
@@ -15,7 +15,7 @@ import { useConference } from "../../useConference";
 export function ItemLive({
     itemData,
 }: {
-    itemData: ItemDataFragment & { events: readonly ItemEventFragment[] } & ItemPage_ItemRoomsFragment;
+    itemData: ItemElements_ItemDataFragment & { events: readonly ItemEventFragment[] } & ItemPage_ItemRoomsFragment;
 }): JSX.Element {
     const [liveEvents, setLiveEvents] = useState<ItemEventFragment[] | null>(null);
     // const [nextEvent, setNextEvent] = useState<ItemEventFragment | null>(null);

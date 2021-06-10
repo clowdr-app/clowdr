@@ -34663,7 +34663,7 @@ export type ConferenceLandingPageItemQueryVariables = Exact<{
 
 export type ConferenceLandingPageItemQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<(
     { readonly __typename?: 'content_Item' }
-    & ItemDataFragment
+    & ItemElements_ItemDataFragment
   )> };
 
 export type ProgramPersonDataFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } };
@@ -34686,15 +34686,26 @@ export type ItemElements_ItemDataFragment = { readonly __typename?: 'content_Ite
   )>, readonly itemPeople: ReadonlyArray<(
     { readonly __typename?: 'content_ItemProgramPerson' }
     & ProgramPersonDataFragment
+  )>, readonly itemTags: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemTag' }
+    & ItemTagDataFragment
+  )>, readonly itemExhibitions: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemExhibition' }
+    & ItemExhibitionDataFragment
   )> };
+
+export type ItemTagDataFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } };
+
+export type ItemExhibitionDataFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: (
+    { readonly __typename?: 'collection_Exhibition' }
+    & ExhibitionSummaryFragment
+  ) };
 
 export type ItemRoomEventFragment = { readonly __typename?: 'schedule_Event', readonly startTime: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
 
-export type ItemList_ProgramPersonDataFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly affiliation?: Maybe<string>, readonly name: string } };
-
 export type ItemList_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<(
     { readonly __typename?: 'content_ItemProgramPerson' }
-    & ItemList_ProgramPersonDataFragment
+    & ProgramPersonDataFragment
   )> };
 
 export type ItemList_ItemTagDataFragment = { readonly __typename?: 'content_ItemTag', readonly item: (
@@ -34731,19 +34742,11 @@ export type GetItemQueryVariables = Exact<{
 
 export type GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<(
     { readonly __typename?: 'content_Item' }
-    & ItemDataFragment
+    & ItemElements_ItemDataFragment
     & ItemPage_ItemRoomsFragment
   )>, readonly schedule_Event: ReadonlyArray<(
     { readonly __typename?: 'schedule_Event' }
     & ItemEventFragment
-  )> };
-
-export type ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<(
-    { readonly __typename?: 'content_Element' }
-    & ElementDataFragment
-  )>, readonly itemPeople: ReadonlyArray<(
-    { readonly __typename?: 'content_ItemProgramPerson' }
-    & ProgramPersonDataFragment
   )> };
 
 export type ItemPage_ItemRoomsFragment = { readonly __typename?: 'content_Item', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
@@ -34753,7 +34756,13 @@ export type ItemEventFragment = { readonly __typename?: 'schedule_Event', readon
 export type ExhibitionItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
     & ElementDataFragment
-  )>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
+  )>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ProgramPersonDataFragment
+  )>, readonly itemTags: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemTag' }
+    & ItemTagDataFragment
+  )>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
 
 export type ExhibitionWithContentFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: (
       { readonly __typename?: 'content_Item' }
@@ -35155,6 +35164,9 @@ export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', 
       & Schedule_ItemElementsFragment
     )> }
     & Schedule_EventSummaryFragment
+  )>, readonly collection_Tag: ReadonlyArray<(
+    { readonly __typename?: 'collection_Tag' }
+    & Schedule_TagFragment
   )> };
 
 export type Schedule_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
@@ -35166,7 +35178,10 @@ export type Schedule_ItemPersonFragment = { readonly __typename?: 'content_ItemP
     & Schedule_ProgramPersonFragment
   ) };
 
-export type Schedule_ItemElementsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum };
+export type Schedule_ItemElementsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemPeople: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & Schedule_ItemPersonFragment
+  )> };
 
 export type Schedule_ItemFragment = (
   { readonly __typename?: 'content_Item', readonly abstractElements: ReadonlyArray<(
@@ -35207,9 +35222,15 @@ export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root'
   )>, readonly content_Item: ReadonlyArray<(
     { readonly __typename?: 'content_Item' }
     & Schedule_ItemElementsFragment
+  )>, readonly collection_Tag: ReadonlyArray<(
+    { readonly __typename?: 'collection_Tag' }
+    & Schedule_TagFragment
   )> };
 
-export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> };
+export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }>, readonly itemTags: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemTag' }
+    & ItemTagDataFragment
+  )> };
 
 export type SearchPanel_ItemsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -35222,7 +35243,10 @@ export type SearchPanel_ItemsQuery = { readonly __typename?: 'query_root', reado
     & SearchPanel_ItemFragment
   )> };
 
-export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
+export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<(
+    { readonly __typename?: 'content_Item' }
+    & SearchPanel_ItemFragment
+  )>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
 
 export type SearchPanel_EventsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37101,7 +37125,7 @@ export type CreateNewConferenceMetaStructureMutationVariables = Exact<{
 
 export type CreateNewConferenceMetaStructureMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant_mutation_response', readonly affected_rows: number }>, readonly insert_permissions_Group?: Maybe<{ readonly __typename?: 'permissions_Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'permissions_Group', readonly id: any, readonly conferenceId: any, readonly name: string, readonly enabled: boolean, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly id: any, readonly roleId: any, readonly permissionName: Permissions_Permission_Enum }> } }> }> }>, readonly insert_content_Item?: Maybe<{ readonly __typename?: 'content_Item_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'content_Item' }
-      & ItemDataFragment
+      & ItemElements_ItemDataFragment
     )> }> };
 
 export type RegistrantsByIdQueryVariables = Exact<{
@@ -37590,6 +37614,35 @@ export const ProgramPersonDataFragmentDoc = gql`
   priority
 }
     `;
+export const ItemTagDataFragmentDoc = gql`
+    fragment ItemTagData on content_ItemTag {
+  id
+  itemId
+  tag {
+    id
+    name
+    colour
+    priority
+  }
+}
+    `;
+export const ExhibitionSummaryFragmentDoc = gql`
+    fragment ExhibitionSummary on collection_Exhibition {
+  id
+  name
+  colour
+  priority
+}
+    `;
+export const ItemExhibitionDataFragmentDoc = gql`
+    fragment ItemExhibitionData on content_ItemExhibition {
+  id
+  itemId
+  exhibition {
+    ...ExhibitionSummary
+  }
+}
+    ${ExhibitionSummaryFragmentDoc}`;
 export const ItemElements_ItemDataFragmentDoc = gql`
     fragment ItemElements_ItemData on content_Item {
   id
@@ -37608,9 +37661,17 @@ export const ItemElements_ItemDataFragmentDoc = gql`
   itemPeople(order_by: {priority: asc}) {
     ...ProgramPersonData
   }
+  itemTags {
+    ...ItemTagData
+  }
+  itemExhibitions {
+    ...ItemExhibitionData
+  }
 }
     ${ElementDataFragmentDoc}
-${ProgramPersonDataFragmentDoc}`;
+${ProgramPersonDataFragmentDoc}
+${ItemTagDataFragmentDoc}
+${ItemExhibitionDataFragmentDoc}`;
 export const ItemRoomEventFragmentDoc = gql`
     fragment ItemRoomEvent on schedule_Event {
   startTime
@@ -37626,26 +37687,15 @@ export const ItemRoomEventFragmentDoc = gql`
   intendedRoomModeName
 }
     `;
-export const ItemList_ProgramPersonDataFragmentDoc = gql`
-    fragment ItemList_ProgramPersonData on content_ItemProgramPerson {
-  id
-  person {
-    id
-    affiliation
-    name
-  }
-  priority
-}
-    `;
 export const ItemList_ItemDataFragmentDoc = gql`
     fragment ItemList_ItemData on content_Item {
   id
   title
-  itemPeople(where: {roleName: {_nilike: "chair"}}) {
-    ...ItemList_ProgramPersonData
+  itemPeople {
+    ...ProgramPersonData
   }
 }
-    ${ItemList_ProgramPersonDataFragmentDoc}`;
+    ${ProgramPersonDataFragmentDoc}`;
 export const ItemList_ItemTagDataFragmentDoc = gql`
     fragment ItemList_ItemTagData on content_ItemTag {
   item {
@@ -37661,20 +37711,6 @@ export const ItemList_TagInfoFragmentDoc = gql`
   priority
 }
     `;
-export const ItemDataFragmentDoc = gql`
-    fragment ItemData on content_Item {
-  id
-  title
-  typeName
-  elements(where: {isHidden: {_eq: false}}) {
-    ...ElementData
-  }
-  itemPeople(order_by: {priority: asc}) {
-    ...ProgramPersonData
-  }
-}
-    ${ElementDataFragmentDoc}
-${ProgramPersonDataFragmentDoc}`;
 export const ItemPage_ItemRoomsFragmentDoc = gql`
     fragment ItemPage_ItemRooms on content_Item {
   rooms(
@@ -37718,6 +37754,12 @@ export const ExhibitionItemFragmentDoc = gql`
     endTime
     roomId
   }
+  itemPeople(order_by: {priority: asc}) {
+    ...ProgramPersonData
+  }
+  itemTags {
+    ...ItemTagData
+  }
   discussionRoom: rooms(
     where: {originatingEventId: {_is_null: true}}
     limit: 1
@@ -37726,7 +37768,9 @@ export const ExhibitionItemFragmentDoc = gql`
     id
   }
 }
-    ${ElementDataFragmentDoc}`;
+    ${ElementDataFragmentDoc}
+${ProgramPersonDataFragmentDoc}
+${ItemTagDataFragmentDoc}`;
 export const ExhibitionWithContentFragmentDoc = gql`
     fragment ExhibitionWithContent on collection_Exhibition {
   id
@@ -37746,14 +37790,6 @@ export const ExhibitionWithContentFragmentDoc = gql`
   }
 }
     ${ExhibitionItemFragmentDoc}`;
-export const ExhibitionSummaryFragmentDoc = gql`
-    fragment ExhibitionSummary on collection_Exhibition {
-  id
-  name
-  colour
-  priority
-}
-    `;
 export const MyBackstages_EventFragmentDoc = gql`
     fragment MyBackstages_Event on schedule_Event {
   id
@@ -38020,23 +38056,6 @@ export const Schedule_EventTagFragmentDoc = gql`
   }
 }
     ${Schedule_TagFragmentDoc}`;
-export const Schedule_ItemElementsFragmentDoc = gql`
-    fragment Schedule_ItemElements on content_Item {
-  id
-  title
-  shortTitle
-  typeName
-}
-    `;
-export const Schedule_ElementFragmentDoc = gql`
-    fragment Schedule_Element on content_Element {
-  id
-  typeName
-  name
-  layoutData
-  data
-}
-    `;
 export const Schedule_ProgramPersonFragmentDoc = gql`
     fragment Schedule_ProgramPerson on collection_ProgramPerson {
   id
@@ -38055,6 +38074,31 @@ export const Schedule_ItemPersonFragmentDoc = gql`
   }
 }
     ${Schedule_ProgramPersonFragmentDoc}`;
+export const Schedule_ItemElementsFragmentDoc = gql`
+    fragment Schedule_ItemElements on content_Item {
+  id
+  title
+  shortTitle
+  typeName
+  itemTags {
+    id
+    itemId
+    tagId
+  }
+  itemPeople {
+    ...Schedule_ItemPerson
+  }
+}
+    ${Schedule_ItemPersonFragmentDoc}`;
+export const Schedule_ElementFragmentDoc = gql`
+    fragment Schedule_Element on content_Element {
+  id
+  typeName
+  name
+  layoutData
+  data
+}
+    `;
 export const Schedule_ItemFragmentDoc = gql`
     fragment Schedule_Item on content_Item {
   ...Schedule_ItemElements
@@ -38095,6 +38139,7 @@ export const Schedule_RoomSummaryFragmentDoc = gql`
 export const SearchPanel_ItemFragmentDoc = gql`
     fragment SearchPanel_Item on content_Item {
   id
+  title
   itemPeople(order_by: {priority: asc}) {
     id
     person {
@@ -38103,9 +38148,11 @@ export const SearchPanel_ItemFragmentDoc = gql`
       affiliation
     }
   }
-  title
+  itemTags {
+    ...ItemTagData
+  }
 }
-    `;
+    ${ItemTagDataFragmentDoc}`;
 export const SearchPanel_EventFragmentDoc = gql`
     fragment SearchPanel_Event on schedule_Event {
   id
@@ -38117,8 +38164,7 @@ export const SearchPanel_EventFragmentDoc = gql`
   }
   intendedRoomModeName
   item {
-    id
-    title
+    ...SearchPanel_Item
   }
   name
   roomId
@@ -38127,7 +38173,7 @@ export const SearchPanel_EventFragmentDoc = gql`
     name
   }
 }
-    `;
+    ${SearchPanel_ItemFragmentDoc}`;
 export const SearchPanel_PersonFragmentDoc = gql`
     fragment SearchPanel_Person on collection_ProgramPerson {
   id
@@ -39567,10 +39613,10 @@ export const ConferenceLandingPageItemDocument = gql`
   content_Item(
     where: {_and: [{conferenceId: {_eq: $conferenceId}}, {typeName: {_eq: LANDING_PAGE}}]}
   ) {
-    ...ItemData
+    ...ItemElements_ItemData
   }
 }
-    ${ItemDataFragmentDoc}`;
+    ${ItemElements_ItemDataFragmentDoc}`;
 
 /**
  * __useConferenceLandingPageItemQuery__
@@ -39707,7 +39753,7 @@ export type TagsQueryResult = Apollo.QueryResult<TagsQuery, TagsQueryVariables>;
 export const GetItemDocument = gql`
     query GetItem($itemId: uuid!) {
   content_Item_by_pk(id: $itemId) {
-    ...ItemData
+    ...ItemElements_ItemData
     ...ItemPage_ItemRooms
   }
   schedule_Event(
@@ -39716,7 +39762,7 @@ export const GetItemDocument = gql`
     ...ItemEvent
   }
 }
-    ${ItemDataFragmentDoc}
+    ${ItemElements_ItemDataFragmentDoc}
 ${ItemPage_ItemRoomsFragmentDoc}
 ${ItemEventFragmentDoc}`;
 
@@ -41108,10 +41154,14 @@ export const Schedule_HappeningSoonDocument = gql`
       ...Schedule_ItemElements
     }
   }
+  collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Schedule_Tag
+  }
 }
     ${Schedule_RoomSummaryFragmentDoc}
 ${Schedule_EventSummaryFragmentDoc}
-${Schedule_ItemElementsFragmentDoc}`;
+${Schedule_ItemElementsFragmentDoc}
+${Schedule_TagFragmentDoc}`;
 
 /**
  * __useSchedule_HappeningSoonQuery__
@@ -41190,10 +41240,14 @@ export const Schedule_SelectSummariesDocument = gql`
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
     ...Schedule_ItemElements
   }
+  collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Schedule_Tag
+  }
 }
     ${Schedule_RoomSummaryFragmentDoc}
 ${Schedule_EventSummaryFragmentDoc}
-${Schedule_ItemElementsFragmentDoc}`;
+${Schedule_ItemElementsFragmentDoc}
+${Schedule_TagFragmentDoc}`;
 
 /**
  * __useSchedule_SelectSummariesQuery__
@@ -47881,11 +47935,11 @@ export const CreateNewConferenceMetaStructureDocument = gql`
     objects: {conferenceId: $conferenceId, typeName: LANDING_PAGE, elements: {data: [{conferenceId: $conferenceId, typeName: ABSTRACT, data: $abstractData, isHidden: false, layoutData: null, name: "Welcome text"}, {conferenceId: $conferenceId, typeName: CONTENT_GROUP_LIST, data: $itemListData, isHidden: false, layoutData: null, name: "Content group list"}]}, shortTitle: "Landing", title: "Landing page"}
   ) {
     returning {
-      ...ItemData
+      ...ItemElements_ItemData
     }
   }
 }
-    ${ItemDataFragmentDoc}`;
+    ${ItemElements_ItemDataFragmentDoc}`;
 export type CreateNewConferenceMetaStructureMutationFn = Apollo.MutationFunction<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
 
 /**

@@ -18,6 +18,8 @@ import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissio
 import { useConference } from "../../useConference";
 import { AuthorList } from "./AuthorList";
 import { Element } from "./Element/Element";
+import ExhibitionNameList from "./ExhibitionNameList";
+import TagList from "./TagList";
 
 gql`
     query ItemElements_GetItem($itemId: uuid!) {
@@ -42,6 +44,31 @@ gql`
         }
         itemPeople(order_by: { priority: asc }) {
             ...ProgramPersonData
+        }
+        itemTags {
+            ...ItemTagData
+        }
+        itemExhibitions {
+            ...ItemExhibitionData
+        }
+    }
+
+    fragment ItemTagData on content_ItemTag {
+        id
+        itemId
+        tag {
+            id
+            name
+            colour
+            priority
+        }
+    }
+
+    fragment ItemExhibitionData on content_ItemExhibition {
+        id
+        itemId
+        exhibition {
+            ...ExhibitionSummary
         }
     }
 `;
@@ -185,7 +212,9 @@ export function ItemElements({
                     maxW="100%"
                 >
                     <VStack alignItems="flex-start" maxW="100%">
-                        <Text colorScheme="purple">{formatItemTypeNameForDisplay(itemData.typeName)}</Text>
+                        <Text colorScheme="purple" mb={2}>
+                            {formatItemTypeNameForDisplay(itemData.typeName)}
+                        </Text>
                         <Heading
                             as="h2"
                             size="md"
@@ -200,10 +229,14 @@ export function ItemElements({
                 </LinkButton>
             ) : (
                 <>
-                    <Text colorScheme="purple">{formatItemTypeNameForDisplay(itemData.typeName)}</Text>
-                    <Heading as="h2" size="md" mb={5} textAlign="left">
+                    <Text colorScheme="purple" mb={2}>
+                        {formatItemTypeNameForDisplay(itemData.typeName)}
+                    </Text>
+                    <Heading as="h2" size="md" textAlign="left">
                         <Twemoji className="twemoji" text={itemData.title} />
                     </Heading>
+                    <TagList my={3} tags={itemData.itemTags} />
+                    <ExhibitionNameList mt={3} mb={5} exhibitions={itemData.itemExhibitions} />
                 </>
             )}
             {children}

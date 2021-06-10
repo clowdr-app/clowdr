@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { Box, Flex, Heading, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import {
-    ItemDataFragment,
+    ItemElements_ItemDataFragment,
     ItemEventFragment,
     ItemPage_ItemRoomsFragment,
     Permissions_Permission_Enum,
@@ -20,25 +20,13 @@ import { ItemVideos } from "./ItemVideos";
 gql`
     query GetItem($itemId: uuid!) {
         content_Item_by_pk(id: $itemId) {
-            ...ItemData
+            ...ItemElements_ItemData
             ...ItemPage_ItemRooms
         }
         schedule_Event(
             where: { _or: [{ itemId: { _eq: $itemId } }, { exhibition: { items: { itemId: { _eq: $itemId } } } }] }
         ) {
             ...ItemEvent
-        }
-    }
-
-    fragment ItemData on content_Item {
-        id
-        title
-        typeName
-        elements(where: { isHidden: { _eq: false } }) {
-            ...ElementData
-        }
-        itemPeople(order_by: { priority: asc }) {
-            ...ProgramPersonData
         }
     }
 
@@ -88,7 +76,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                 }
             >
                 {(
-                    itemData: ItemDataFragment & {
+                    itemData: ItemElements_ItemDataFragment & {
                         events: readonly ItemEventFragment[];
                     } & ItemPage_ItemRoomsFragment
                 ) => {
@@ -127,7 +115,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                                 </RequireAtLeastOnePermissionWrapper>
                                             </ItemElements>
                                             <Heading as="h3" size="lg" textAlign="left">
-                                                Events
+                                                Events around this item
                                             </Heading>
                                             <ItemEvents events={itemData.events} itemId={itemId} />
                                         </Box>

@@ -18,7 +18,7 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import { formatRelative } from "date-fns";
+import { format } from "date-fns";
 import React, { useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import {
@@ -27,14 +27,16 @@ import {
     useSearchPanel_PeopleLazyQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
+// import ExhibitionNameList from "../Content/ExhibitionNameList";
+import TagList from "../Content/TagList";
 import { EventModeIcon } from "../Rooms/V2/EventHighlight";
 
 gql`
     fragment SearchPanel_Item on content_Item {
         id
+        title
         itemPeople(order_by: { priority: asc }) {
             id
             person {
@@ -43,7 +45,12 @@ gql`
                 affiliation
             }
         }
-        title
+        itemTags {
+            ...ItemTagData
+        }
+        # itemExhibitions {
+        #     ...ItemExhibitionData
+        # }
     }
 
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
@@ -76,8 +83,7 @@ gql`
         }
         intendedRoomModeName
         item {
-            id
-            title
+            ...SearchPanel_Item
         }
         name
         roomId
@@ -159,7 +165,7 @@ export default function SearchPanel(): JSX.Element {
 
     const shadow = useColorModeValue("md", "light-md");
     const bgColor = useColorModeValue("gray.200", "gray.600");
-    const now = new Date(useRealTime(60 * 1000));
+
     return (
         <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center">
             <VStack maxW={400} spacing={3}>
@@ -268,11 +274,11 @@ export default function SearchPanel(): JSX.Element {
                                         <EventModeIcon mode={event.intendedRoomModeName} fontSize="inherit" />
                                         <VStack w="100%" justifyContent="flex-start" alignItems="flex-start">
                                             <Text whiteSpace="normal" fontSize="sm">
-                                                Starts {formatRelative(new Date(event.startTime), now)}
+                                                Starts {format(new Date(event.startTime), "d MMMM HH:mm")}
                                             </Text>
                                             <Text whiteSpace="normal" fontSize="xs">
                                                 {event.endTime &&
-                                                    `Ends ${formatRelative(new Date(event.endTime), now)}`}
+                                                    `Ends ${format(new Date(event.endTime), "d MMMM HH:mm")}`}
                                             </Text>
                                             <Text whiteSpace="normal" pl={4}>
                                                 {event.name}
@@ -281,6 +287,12 @@ export default function SearchPanel(): JSX.Element {
                                             <Text whiteSpace="normal" pl={4} fontSize="sm">
                                                 In {event.room ? event.room.name : "a private room"}
                                             </Text>
+                                            {event.item ? (
+                                                <TagList pl={4} tags={event.item.itemTags} noClick />
+                                            ) : undefined}
+                                            {/* {event.item ? (
+                                                <ExhibitionNameList exhibitions={event.item.itemExhibitions} noClick />
+                                            ) : undefined} */}
                                         </VStack>
                                     </HStack>
                                 </LinkButton>
@@ -326,6 +338,7 @@ export default function SearchPanel(): JSX.Element {
                                                     .substr(2)}
                                             </Text>
                                         ) : undefined}
+                                        <TagList pl={4} tags={item.itemTags} noClick />
                                     </VStack>
                                 </LinkButton>
                             </ListItem>

@@ -39,6 +39,12 @@ gql`
             endTime
             roomId
         }
+        itemPeople(order_by: { priority: asc }) {
+            ...ProgramPersonData
+        }
+        itemTags {
+            ...ItemTagData
+        }
         discussionRoom: rooms(
             where: { originatingEventId: { _is_null: true } }
             limit: 1

@@ -2,11 +2,11 @@ import { Box, Flex } from "@chakra-ui/react";
 import { assertIsElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
-import { Content_ElementType_Enum, ItemDataFragment } from "../../../../generated/graphql";
+import { Content_ElementType_Enum, ItemElements_ItemDataFragment } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 import { VideoElement } from "./Element/VideoElement";
 
-export function ItemVideos({ itemData }: { itemData: ItemDataFragment }): JSX.Element {
+export function ItemVideos({ itemData }: { itemData: ItemElements_ItemDataFragment }): JSX.Element {
     const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
     const [slowSelectedVideoId, setSlowSelectedVideoId] = useState<string | null>(null);
 

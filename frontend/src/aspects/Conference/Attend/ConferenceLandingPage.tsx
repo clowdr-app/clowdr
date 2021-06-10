@@ -5,7 +5,7 @@ import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layo
 import React, { useMemo } from "react";
 import {
     Content_ElementType_Enum,
-    ItemDataFragment,
+    ItemElements_ItemDataFragment,
     Permissions_Permission_Enum,
     useConferenceLandingPageItemQuery,
 } from "../../../generated/graphql";
@@ -21,12 +21,12 @@ import { Element } from "./Content/Element/Element";
 gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) {
         content_Item(where: { _and: [{ conferenceId: { _eq: $conferenceId } }, { typeName: { _eq: LANDING_PAGE } }] }) {
-            ...ItemData
+            ...ItemElements_ItemData
         }
     }
 `;
 
-function ConferenceLandingContent({ group }: { group: ItemDataFragment }): JSX.Element {
+function ConferenceLandingContent({ group }: { group: ItemElements_ItemDataFragment }): JSX.Element {
     const conferenceLandingContentSortOrder = [
         Content_ElementType_Enum.Abstract,
         Content_ElementType_Enum.VideoUrl,

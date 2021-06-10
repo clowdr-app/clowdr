@@ -26,7 +26,9 @@ export function ScalingProvider({
     avgEventsPerRoom: number;
 }): JSX.Element {
     const timelineParams = useTimelineParameters();
-    const [visibleTimeSpanSeconds, setVisibleTimeSpanSeconds] = useState(6 * (avgEventDuration / 1000));
+    const [visibleTimeSpanSeconds, setVisibleTimeSpanSeconds] = useState(
+        avgEventsPerRoom < 2 ? (1.5 * avgEventDuration) / 1000 : 3 * (avgEventDuration / 1000)
+    );
     const zoomTo = useCallback(
         (span) => {
             setVisibleTimeSpanSeconds((old) =>

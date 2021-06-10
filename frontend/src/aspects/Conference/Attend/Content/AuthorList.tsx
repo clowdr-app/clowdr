@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { Badge, Button, HStack, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import type { ItemList_ProgramPersonDataFragment, ProgramPersonDataFragment } from "../../../../generated/graphql";
+import type { ProgramPersonDataFragment, RegistrantDataFragment } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useRegistrant } from "../../RegistrantsContext";
 import ProfileModal from "../Registrant/ProfileModal";
@@ -20,7 +20,7 @@ gql`
     }
 `;
 
-export function sortAuthors<T extends ItemList_ProgramPersonDataFragment>(x: T, y: T): number {
+export function sortAuthors<T extends ProgramPersonDataFragment>(x: T, y: T): number {
     if (typeof x.priority === "number") {
         if (typeof y.priority === "number") {
             return x.priority - y.priority;
@@ -37,10 +37,12 @@ export function AuthorList({
     programPeopleData,
     hideRole,
     hiddenRoles,
+    noRegistrantLink,
 }: {
     programPeopleData: readonly ProgramPersonDataFragment[];
     hideRole?: boolean;
     hiddenRoles?: string[];
+    noRegistrantLink?: boolean;
 }): JSX.Element {
     const [authorEls, presenterEls, chairEls, othersEls] = useMemo(() => {
         const data =
@@ -58,7 +60,14 @@ export function AuthorList({
         );
 
         const createEl = (programPersonData: ProgramPersonDataFragment) => {
-            return <Author programPersonData={programPersonData} key={programPersonData.id} hideRole={hideRole} />;
+            return (
+                <Author
+                    programPersonData={programPersonData}
+                    key={programPersonData.id}
+                    hideRole={hideRole}
+                    noRegistrantLink={noRegistrantLink}
+                />
+            );
         };
 
         return [
@@ -67,22 +76,32 @@ export function AuthorList({
             chairs.sort(sortAuthors).map(createEl),
             others.sort(sortAuthors).map(createEl),
         ];
-    }, [programPeopleData, hiddenRoles, hideRole]);
+    }, [programPeopleData, hiddenRoles, hideRole, noRegistrantLink]);
 
+    const colSpacing = "8";
+    const rowSpacing = "2";
+    const groupSpacing = 2;
     return (
         <>
             {authorEls.length > 0 ? (
-                <HStack spacing="0" gridGap="8" wrap="wrap" alignItems="flex-start">
+                <HStack
+                    spacing="0"
+                    gridColumnGap={colSpacing}
+                    gridRowGap={rowSpacing}
+                    wrap="wrap"
+                    alignItems="flex-start"
+                >
                     {authorEls}
                 </HStack>
             ) : undefined}
             {presenterEls.length > 0 ? (
                 <HStack
                     spacing="0"
-                    gridGap="8"
+                    gridColumnGap={colSpacing}
+                    gridRowGap={rowSpacing}
                     wrap="wrap"
                     alignItems="flex-start"
-                    mt={authorEls.length > 0 ? 4 : undefined}
+                    mt={authorEls.length > 0 ? groupSpacing : undefined}
                 >
                     {presenterEls}
                 </HStack>
@@ -90,10 +109,11 @@ export function AuthorList({
             {chairEls.length > 0 ? (
                 <HStack
                     spacing="0"
-                    gridGap="8"
+                    gridColumnGap={colSpacing}
+                    gridRowGap={rowSpacing}
                     wrap="wrap"
                     alignItems="flex-start"
-                    mt={authorEls.length > 0 || presenterEls.length > 0 ? 4 : undefined}
+                    mt={authorEls.length > 0 || presenterEls.length > 0 ? groupSpacing : undefined}
                 >
                     {chairEls}
                 </HStack>
@@ -101,10 +121,15 @@ export function AuthorList({
             {othersEls.length > 0 ? (
                 <HStack
                     spacing="0"
-                    gridGap="8"
+                    gridColumnGap={colSpacing}
+                    gridRowGap={rowSpacing}
                     wrap="wrap"
                     alignItems="flex-start"
-                    mt={chairEls.length > 0 || authorEls.length > 0 || presenterEls.length > 0 ? 4 : undefined}
+                    mt={
+                        chairEls.length > 0 || authorEls.length > 0 || presenterEls.length > 0
+                            ? groupSpacing
+                            : undefined
+                    }
                 >
                     {othersEls}
                 </HStack>
@@ -117,18 +142,73 @@ export function Author({
     programPersonData,
     hideRole,
     badgeColour,
+    noRegistrantLink,
 }: {
     programPersonData: ProgramPersonDataFragment;
     hideRole?: boolean;
     badgeColour?: string;
+    noRegistrantLink?: boolean;
 }): JSX.Element {
-    const registrant = useRegistrant(
-        programPersonData.person.registrantId && { registrant: programPersonData.person.registrantId }
+    if (!noRegistrantLink && programPersonData.person.registrantId) {
+        return (
+            <AuthorWithRegistrant
+                programPersonData={programPersonData}
+                hideRole={hideRole}
+                badgeColour={badgeColour}
+                registrantId={programPersonData.person.registrantId}
+            />
+        );
+    } else {
+        return (
+            <AuthorInner
+                programPersonData={programPersonData}
+                hideRole={hideRole}
+                badgeColour={badgeColour}
+                registrant={null}
+            />
+        );
+    }
+}
+
+export function AuthorWithRegistrant({
+    programPersonData,
+    hideRole,
+    badgeColour,
+    registrantId,
+}: {
+    programPersonData: ProgramPersonDataFragment;
+    hideRole?: boolean;
+    badgeColour?: string;
+    registrantId: string;
+}): JSX.Element {
+    const idObj = useMemo(() => ({ registrant: registrantId }), [registrantId]);
+    const registrant = useRegistrant(idObj);
+
+    return (
+        <AuthorInner
+            programPersonData={programPersonData}
+            hideRole={hideRole}
+            badgeColour={badgeColour}
+            registrant={registrant}
+        />
     );
+}
+
+export function AuthorInner({
+    programPersonData,
+    hideRole,
+    badgeColour,
+    registrant,
+}: {
+    programPersonData: ProgramPersonDataFragment;
+    hideRole?: boolean;
+    badgeColour?: string;
+    registrant: RegistrantDataFragment | null;
+}): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
-            {programPersonData.person.registrantId ? (
+            {registrant?.profile ? (
                 <Button
                     onClick={() => onOpen()}
                     variant="ghost"
@@ -160,15 +240,13 @@ export function Author({
                     {programPersonData.roleName}
                 </Badge>
             ) : undefined}
-            <Text fontSize="sm" maxW={180}>
-                {programPersonData.person.affiliation &&
-                programPersonData.person.affiliation !== "None" &&
-                programPersonData.person.affiliation !== "undefined" ? (
-                    programPersonData.person.affiliation
-                ) : (
-                    <>&nbsp;</>
-                )}
-            </Text>
+            {programPersonData.person.affiliation &&
+            programPersonData.person.affiliation !== "None" &&
+            programPersonData.person.affiliation !== "undefined" ? (
+                <Text fontSize="sm" maxW={180}>
+                    {programPersonData.person.affiliation}
+                </Text>
+            ) : undefined}
             {registrant && registrant.profile ? (
                 <ProfileModal
                     registrant={{

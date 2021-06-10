@@ -1,6 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import {
     chakra,
+    Flex,
+    Heading,
     Spinner,
     Tab,
     Table,
@@ -43,7 +45,7 @@ gql`
 `;
 
 export function ItemEvents({ itemId, events }: { itemId: string; events: readonly ItemEventFragment[] }): JSX.Element {
-    // const thisPaperTable = useMemo(() => <EventsTable events={events} includeRoom={true} />, [events]);
+    const thisPaperTable = useMemo(() => <EventsTable events={events} includeRoom={true} />, [events]);
 
     const rooms = useMemo(
         () => [
@@ -67,37 +69,37 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
             <Text my={3} w="auto" textAlign="left" p={0}>
                 Times are shown in your local timezone.
             </Text>
-            {/* <Flex pt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
-                <VStack mt={2} mb={4} flex="1 1 49%" alignItems="flex-start" maxW="max-content">
+            <Flex pt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
+                <VStack mt={2} mb={4} flex="1 1 48%" alignItems="flex-start" maxW="max-content">
                     <Heading as="h4" fontSize="md" textAlign="left" w="100%">
                         All times for this item
                     </Heading>
                     {thisPaperTable}
-                </VStack> */}
-            <VStack w="100%" alignItems="flex-start" maxW="max-content">
-                {rooms.length > 1 ? (
-                    <Tabs variant="enclosed" isLazy>
-                        <TabList>
-                            {rooms.map(([roomId, { roomName }]) => (
-                                <Tab key={roomId}>{roomName}</Tab>
-                            ))}
-                        </TabList>
+                </VStack>
+                <VStack mr={2} flex="1 1 48%" alignItems="flex-start" maxW="max-content">
+                    {rooms.length > 1 ? (
+                        <Tabs variant="enclosed" isLazy>
+                            <TabList>
+                                {rooms.map(([roomId, { roomName }]) => (
+                                    <Tab key={roomId}>{roomName}</Tab>
+                                ))}
+                            </TabList>
 
-                        <TabPanels>
-                            {rooms.map(([roomId, { events }]) => (
-                                <TabPanel key={roomId} p={0} pt={2}>
-                                    <RoomEventsSummary roomId={roomId} events={events} thisItemId={itemId} />
-                                </TabPanel>
-                            ))}
-                        </TabPanels>
-                    </Tabs>
-                ) : rooms.length > 0 ? (
-                    <RoomEventsSummary roomId={rooms[0][0]} events={rooms[0][1].events} thisItemId={itemId} />
-                ) : (
-                    <Text>No events for this item</Text>
-                )}
-            </VStack>
-            {/* </Flex> */}
+                            <TabPanels>
+                                {rooms.map(([roomId, { events }]) => (
+                                    <TabPanel key={roomId} p={0} pt={2}>
+                                        <RoomEventsSummary roomId={roomId} events={events} thisItemId={itemId} />
+                                    </TabPanel>
+                                ))}
+                            </TabPanels>
+                        </Tabs>
+                    ) : rooms.length > 0 ? (
+                        <RoomEventsSummary roomId={rooms[0][0]} events={rooms[0][1].events} thisItemId={itemId} />
+                    ) : (
+                        <Text>No events for this item</Text>
+                    )}
+                </VStack>
+            </Flex>
         </>
     );
 }
@@ -205,16 +207,18 @@ function EventsTable({
     events,
     includeRoom,
 }: {
-    roomId: string;
+    roomId?: string;
     events: readonly (ItemEventFragment | ItemRoomEventFragment)[];
     includeRoom: boolean;
 }): JSX.Element {
     const conference = useConference();
     return (
         <VStack spacing={2} alignItems="flex-start">
-            <LinkButton colorScheme="blue" to={`/conference/${conference.slug}/room/${roomId}`}>
-                Go to room
-            </LinkButton>
+            {roomId ? (
+                <LinkButton colorScheme="blue" to={`/conference/${conference.slug}/room/${roomId}`}>
+                    Go to room
+                </LinkButton>
+            ) : undefined}
             <Table m={0} textAlign="left" variant="striped" w="auto" size="sm" colorScheme="blue">
                 <Thead>
                     <Tr>

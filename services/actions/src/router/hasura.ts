@@ -30,7 +30,7 @@ router.post("/auth", json(), async (req: Request, res: Response) => {
 
     try {
         let decodedToken: any | null = null;
-        const encodedToken = payload.headers.Authorization?.split(" ")[1];
+        const encodedToken = (payload.headers.Authorization ?? payload.headers.authorization)?.split(" ")[1];
         console.log("Encoded token", encodedToken);
         if (encodedToken && typeof encodedToken === "string") {
             const completeDecodedToken = jwt.decode(encodedToken, { complete: true });

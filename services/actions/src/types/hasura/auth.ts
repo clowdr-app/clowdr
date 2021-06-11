@@ -5,6 +5,7 @@ interface AuthPayload {
         "X-Hasura-Conference-Slug"?: string;
         "X-Hasura-Magic-Token"?: string;
         Authorization?: string;
+        authorization?: string;
     };
     request?: {
         variables?: Record<string, any>;

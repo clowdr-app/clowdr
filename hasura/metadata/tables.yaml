@@ -2336,6 +2336,8 @@
             - VIDEO_PREPUBLISH
             - CONTENT_GROUP_LIST
             - WHOLE_SCHEDULE
+            - EXPLORE_PROGRAM_BUTTON
+            - EXPLORE_SCHEDULE_BUTTON
   - role: user
     permission:
       columns:

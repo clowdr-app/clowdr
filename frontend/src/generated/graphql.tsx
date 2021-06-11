@@ -34781,6 +34781,9 @@ export type SelectExhibitionQueryVariables = Exact<{
 export type SelectExhibitionQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition_by_pk?: Maybe<(
     { readonly __typename?: 'collection_Exhibition' }
     & ExhibitionWithContentFragment
+  )>, readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & ItemEventFragment
   )> };
 
 export type ExhibitionSummaryFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
@@ -39803,8 +39806,12 @@ export const SelectExhibitionDocument = gql`
   collection_Exhibition_by_pk(id: $id) {
     ...ExhibitionWithContent
   }
+  schedule_Event(where: {exhibitionId: {_eq: $id}}) {
+    ...ItemEvent
+  }
 }
-    ${ExhibitionWithContentFragmentDoc}`;
+    ${ExhibitionWithContentFragmentDoc}
+${ItemEventFragmentDoc}`;
 
 /**
  * __useSelectExhibitionQuery__

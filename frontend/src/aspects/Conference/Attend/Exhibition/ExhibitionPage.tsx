@@ -1,10 +1,15 @@
 import { gql } from "@apollo/client";
 import { chakra, Circle, Heading } from "@chakra-ui/react";
 import React from "react";
-import { ExhibitionWithContentFragment, useSelectExhibitionQuery } from "../../../../generated/graphql";
+import {
+    ExhibitionWithContentFragment,
+    ItemEventFragment,
+    useSelectExhibitionQuery,
+} from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useTitle } from "../../../Utils/useTitle";
+import { EventsTable } from "../Content/EventsTable";
 import ExhibitionLayout from "./ExhibitionLayout";
 
 gql`
@@ -76,10 +81,19 @@ gql`
         collection_Exhibition_by_pk(id: $id) {
             ...ExhibitionWithContent
         }
+        schedule_Event(where: { exhibitionId: { _eq: $id } }) {
+            ...ItemEvent
+        }
     }
 `;
 
-function ExhibitionPageInner({ exhibition }: { exhibition: ExhibitionWithContentFragment }): JSX.Element {
+function ExhibitionPageInner({
+    exhibition,
+    events,
+}: {
+    exhibition: ExhibitionWithContentFragment;
+    events: readonly ItemEventFragment[];
+}): JSX.Element {
     const title = useTitle(exhibition.name);
 
     return (
@@ -92,6 +106,7 @@ function ExhibitionPageInner({ exhibition }: { exhibition: ExhibitionWithContent
                 </chakra.span>
                 {/*TODO: Link to live event for this exhibition if any.*/}
             </Heading>
+            <EventsTable events={events} includeRoom={true} />
             <ExhibitionLayout exhibition={exhibition} />
         </>
     );
@@ -107,7 +122,10 @@ export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string 
     return exhibitionResponse.loading && !exhibitionResponse.data ? (
         <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
     ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
-        <ExhibitionPageInner exhibition={exhibitionResponse.data.collection_Exhibition_by_pk} />
+        <ExhibitionPageInner
+            exhibition={exhibitionResponse.data.collection_Exhibition_by_pk}
+            events={exhibitionResponse.data.schedule_Event}
+        />
     ) : (
         <PageNotFound />
     );

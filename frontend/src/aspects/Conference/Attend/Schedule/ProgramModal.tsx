@@ -231,7 +231,7 @@ export function ScheduleModal({
 
     const selectedTabIndex = useMemo(() => {
         const offset1 = anyHappeningSoon ? 1 : 0;
-        const offset2 = anySponsors ? offset1 + 1 : 0;
+        const offset2 = offset1 + (anySponsors ? 1 : 0);
         switch (selectedTab) {
             case ProgramModalTab.Exhibitions:
                 return offset1 + 1;

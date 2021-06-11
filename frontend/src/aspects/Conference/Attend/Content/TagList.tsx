@@ -1,6 +1,7 @@
 import { HStack, StackProps } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import type { ItemTagDataFragment } from "../../../../generated/graphql";
+import { useScheduleModal } from "../Schedule/ProgramModal";
 import { TagButton } from "./ItemList";
 
 export default function TagList({
@@ -11,6 +12,7 @@ export default function TagList({
     const sortedTags = useMemo(() => [...tags].filter((x) => !!x.tag).sort((x, y) => x.tag.priority - y.tag.priority), [
         tags,
     ]);
+    const { onOpen } = useScheduleModal();
     return (
         <HStack flexWrap="wrap" w="100%" {...props}>
             {sortedTags.map((tag) => (
@@ -21,7 +23,7 @@ export default function TagList({
                     setOpenId={
                         !noClick
                             ? (id) => {
-                                  // TODO
+                                  onOpen(id ?? undefined);
                               }
                             : undefined
                     }

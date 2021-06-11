@@ -89,6 +89,10 @@ function generateElementTypeFriendlyName(type: Content_ElementType_Enum) {
             return "Video URL";
         case Content_ElementType_Enum.WholeSchedule:
             return "Whole schedule";
+        case Content_ElementType_Enum.ExploreProgramButton:
+            return "Explore program button";
+        case Content_ElementType_Enum.ExploreScheduleButton:
+            return "Explore schedule button";
         case Content_ElementType_Enum.Zoom:
             return "Zoom";
         case Content_ElementType_Enum.ActiveSocialRooms:

@@ -12,6 +12,8 @@ export function assertIsLayoutDataBlob(data: any): asserts data is LayoutDataBlo
 }
 
 export type LayoutDataBlob =
+    | ExploreProgramButtonLayoutDataBlob
+    | ExploreScheduleButtonLayoutDataBlob
     | AbstractLayoutDataBlob
     | ContentGroupListLayoutDataBlob
     | TextLayoutDataBlob
@@ -134,6 +136,14 @@ export interface VideoUrlLayoutDataBlob extends BaseLayoutDataBlob {
 
 export interface WholeScheduleLayoutDataBlob extends BaseLayoutDataBlob {
     contentType: Content_ElementType_Enum.WholeSchedule;
+}
+
+export interface ExploreProgramButtonLayoutDataBlob extends BaseLayoutDataBlob {
+    contentType: Content_ElementType_Enum.ExploreProgramButton;
+}
+
+export interface ExploreScheduleButtonLayoutDataBlob extends BaseLayoutDataBlob {
+    contentType: Content_ElementType_Enum.ExploreScheduleButton;
 }
 
 export interface ZoomLayoutDataBlob extends BaseLayoutDataBlob {

@@ -19,7 +19,7 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import Color from "tinycolor2";
 import {
@@ -297,7 +297,9 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
     );
 }
 
-export default function ItemList(props: StackProps): JSX.Element {
+export default function ItemList(
+    props: { overrideSelectedTag?: string | null; setOverrideSelectedTag?: (id: string | null) => void } & StackProps
+): JSX.Element {
     const conference = useConference();
     const { loading, data, error } = useTagsQuery({
         variables: {
@@ -306,13 +308,20 @@ export default function ItemList(props: StackProps): JSX.Element {
     });
     useQueryErrorToast(error, false, "ItemList.tsx");
 
-    const [openPanelId, setOpenPanelId] = useRestorableState<string | null>(
+    const [internalOpenPanelId, setInternalOpenPanelId] = useRestorableState<string | null>(
         "ItemList_OpenPanelId",
         null,
         (s) => (s === null ? "null" : s),
         (s) => (s === "null" ? null : s)
     );
-    const setOpenId = setOpenPanelId;
+    const setOpenId = useCallback(
+        (id: string | null) => {
+            setInternalOpenPanelId(id);
+            props.setOverrideSelectedTag?.(id);
+        },
+        [props, setInternalOpenPanelId]
+    );
+    const openPanelId = props.overrideSelectedTag !== undefined ? props.overrideSelectedTag : internalOpenPanelId;
 
     const sortedTags = useMemo(
         () =>

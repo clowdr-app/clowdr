@@ -1,6 +1,5 @@
 import { useBreakpointValue, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
-import { useRestorableState } from "../Generic/useRestorableState";
 
 export enum UXChoice {
     V1 = "V1",
@@ -36,17 +35,25 @@ export function useUXChoice(): UXChoiceContext {
 }
 
 export function UXChoiceProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
-    const [rawChoice, setRawChoice] = useRestorableState<UXChoice | null>(
-        "CLOWDR_UX_CHOICE",
-        null,
-        (x) => (x !== null ? x : "null"),
-        (x) => (x === null ? null : (x as UXChoice))
-    );
-    const { isOpen, onOpen, onClose } = useDisclosure({
+    // const [rawChoice, setRawChoice] =
+    // useRestorableState<UXChoice | null>(
+    //     "CLOWDR_UX_CHOICE",
+    //     null,
+    //     (x) => (x !== null ? x : "null"),
+    //     (x) => (x === null ? null : (x as UXChoice))
+    // );
+    const rawChoice = UXChoice.V2;
+    const { /*isOpen,*/ onOpen, onClose } = useDisclosure({
         defaultIsOpen: rawChoice === null,
     });
 
-    const setChoice = useCallback((val: UXChoice) => setRawChoice(val), [setRawChoice]);
+    const setChoice = useCallback(
+        (_val: UXChoice) => {
+            // Do nothing
+            // setRawChoice(val)
+        },
+        [] // [setRawChoice]
+    );
 
     const choice =
         useBreakpointValue({
@@ -59,11 +66,11 @@ export function UXChoiceProvider({ children }: React.PropsWithChildren<any>): JS
             rawChoice,
             choice,
             setChoice,
-            isOpen,
+            isOpen: false,
             onOpen,
             onClose,
         }),
-        [rawChoice, choice, setChoice, isOpen, onOpen, onClose]
+        [rawChoice, choice, setChoice, /*isOpen,*/ onOpen, onClose]
     );
 
     return <context.Provider value={ctx}>{children}</context.Provider>;

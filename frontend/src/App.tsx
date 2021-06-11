@@ -7,6 +7,7 @@ import "./App.css";
 import AppPageV1 from "./aspects/App/AppPageV1";
 import AppPageV2 from "./aspects/App/AppPageV2";
 import { GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
+import { ScheduleModalProvider } from "./aspects/Conference/Attend/Schedule/ProgramModal";
 import AttendeesContextProvider from "./aspects/Conference/RegistrantsContext";
 import ConferenceProvider from "./aspects/Conference/useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
@@ -80,8 +81,12 @@ function AppInner({ confSlug }: { confSlug?: string }): JSX.Element {
                                             <AttendeesContextProvider>
                                                 <LiveEventsProvider>
                                                     <RoomParticipantsProvider>
-                                                        {/* <ShuffleRoomsQueueMonitor /> */}
-                                                        <SharedRoomContextProvider>{page}</SharedRoomContextProvider>
+                                                        <ScheduleModalProvider>
+                                                            {/* <ShuffleRoomsQueueMonitor /> */}
+                                                            <SharedRoomContextProvider>
+                                                                {page}
+                                                            </SharedRoomContextProvider>
+                                                        </ScheduleModalProvider>
                                                     </RoomParticipantsProvider>
                                                 </LiveEventsProvider>
                                             </AttendeesContextProvider>

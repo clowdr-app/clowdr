@@ -9112,6 +9112,10 @@ export enum Content_ElementType_Enum {
     ContentGroupList = "CONTENT_GROUP_LIST",
     /** A horizontal divider */
     Divider = "DIVIDER",
+    /** Button that opens the explore program modal. Intended for use on the landing page. */
+    ExploreProgramButton = "EXPLORE_PROGRAM_BUTTON",
+    /** Button that opens the explore program modal with the Schedule tab open. Intended for use on the landing page. */
+    ExploreScheduleButton = "EXPLORE_SCHEDULE_BUTTON",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */

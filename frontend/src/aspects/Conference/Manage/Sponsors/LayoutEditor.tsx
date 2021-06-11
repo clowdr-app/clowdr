@@ -41,7 +41,7 @@ export function LayoutEditor({
                     wide: false,
                     hidden: false,
                     priority: 0,
-                };
+                } as LayoutDataBlob;
         }
     }, []);
 

@@ -6,7 +6,7 @@ import { Permissions_Permission_Enum } from "../../../generated/graphql";
 import { MyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import LiveProgramRoomsModal from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import SocialiseModal from "../../Conference/Attend/Rooms/V2/SocialiseModal";
-import { ScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
+import { useScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
 import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
@@ -31,14 +31,13 @@ export default function LeftMenu(): JSX.Element {
     const { isOpen: liveNow_IsOpen, onOpen: liveNow_OnOpen, onClose: liveNow_OnClose } = useDisclosure();
     const liveNowButtonRef = useRef<HTMLButtonElement | null>(null);
 
-    const { isOpen: schedule_IsOpen, onOpen: schedule_OnOpen, onClose: schedule_OnClose } = useDisclosure();
-    const scheduleButtonRef = useRef<HTMLButtonElement | null>(null);
-
     const { isOpen: socialise_IsOpen, onOpen: socialise_OnOpen, onClose: socialise_OnClose } = useDisclosure();
     const socialiseButtonRef = useRef<HTMLButtonElement | null>(null);
 
     const { isOpen: myBackstages_IsOpen, onOpen: myBackstages_OnOpen, onClose: myBackstages_OnClose } = useDisclosure();
     const myBackstagesButtonRef = useRef<HTMLButtonElement | null>(null);
+
+    const { onOpen: schedule_OnOpen, onClose: schedule_OnClose, finalFocusRef: scheduleButtonRef } = useScheduleModal();
 
     useEffect(() => {
         liveNow_OnClose();
@@ -87,8 +86,8 @@ export default function LeftMenu(): JSX.Element {
                     borderRadius={0}
                     colorScheme={colorScheme}
                     side="left"
-                    ref={scheduleButtonRef}
-                    onClick={schedule_OnOpen}
+                    ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
+                    onClick={() => schedule_OnOpen()}
                 />
                 {maybeRegistrant ? (
                     <>
@@ -244,7 +243,6 @@ export default function LeftMenu(): JSX.Element {
                 />
             </Flex>
             <LiveProgramRoomsModal isOpen={liveNow_IsOpen} onClose={liveNow_OnClose} finalFocusRef={liveNowButtonRef} />
-            <ScheduleModal isOpen={schedule_IsOpen} onClose={schedule_OnClose} finalFocusRef={scheduleButtonRef} />
             {maybeRegistrant ? (
                 <>
                     <SocialiseModal

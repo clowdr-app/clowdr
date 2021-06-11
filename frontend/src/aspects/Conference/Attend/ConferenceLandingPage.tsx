@@ -55,6 +55,8 @@ function ConferenceLandingContent({ group }: { group: ItemElements_ItemDataFragm
         Content_ElementType_Enum.Zoom,
         Content_ElementType_Enum.ContentGroupList,
         Content_ElementType_Enum.WholeSchedule,
+        Content_ElementType_Enum.ExploreProgramButton,
+        Content_ElementType_Enum.ExploreScheduleButton,
     ];
 
     const elements = group.elements

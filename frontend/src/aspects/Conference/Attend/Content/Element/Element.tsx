@@ -1,4 +1,4 @@
-import { Box, Divider, HStack, Image, Link } from "@chakra-ui/react";
+import { Box, Button, Divider, HStack, Image, Link } from "@chakra-ui/react";
 import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -10,6 +10,7 @@ import { Markdown } from "../../../../Text/Markdown";
 import ActiveSocialRooms from "../../Rooms/V2/ActiveSocialRooms";
 import LiveProgramRooms from "../../Rooms/V2/LiveProgramRooms";
 import SponsorBooths from "../../Rooms/V2/SponsorBooths";
+import { useScheduleModal } from "../../Schedule/ProgramModal";
 import Schedule from "../../Schedule/Schedule";
 import ItemList from "../ItemList";
 import { VideoElement } from "./VideoElement";
@@ -33,6 +34,8 @@ function ElementInner({
     type: Content_ElementType_Enum;
     elementId: string;
 }): JSX.Element {
+    const scheduleModal = useScheduleModal();
+
     const el = useMemo(() => {
         const latestVersion = R.last(blob);
 
@@ -49,6 +52,18 @@ function ElementInner({
                 return <Divider />;
             case Content_ElementType_Enum.SponsorBooths:
                 return <SponsorBooths />;
+            case Content_ElementType_Enum.ExploreProgramButton:
+                return (
+                    <Button colorScheme="purple" onClick={() => scheduleModal.onOpen(undefined, "Tags")}>
+                        Explore the program
+                    </Button>
+                );
+            case Content_ElementType_Enum.ExploreScheduleButton:
+                return (
+                    <Button colorScheme="purple" onClick={() => scheduleModal.onOpen(undefined, "Schedule")}>
+                        Explore the schedule
+                    </Button>
+                );
         }
 
         if (!latestVersion) {

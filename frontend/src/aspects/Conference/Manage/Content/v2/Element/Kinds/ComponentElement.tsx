@@ -9,6 +9,8 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
     allowCreate: [
         Content_ElementType_Enum.ContentGroupList,
         Content_ElementType_Enum.WholeSchedule,
+        Content_ElementType_Enum.ExploreProgramButton,
+        Content_ElementType_Enum.ExploreScheduleButton,
         Content_ElementType_Enum.LiveProgramRooms,
         Content_ElementType_Enum.ActiveSocialRooms,
         Content_ElementType_Enum.Divider,
@@ -21,7 +23,9 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
                 type === Content_ElementType_Enum.LiveProgramRooms ||
                 type === Content_ElementType_Enum.ActiveSocialRooms ||
                 type === Content_ElementType_Enum.Divider ||
-                type === Content_ElementType_Enum.SponsorBooths,
+                type === Content_ElementType_Enum.SponsorBooths ||
+                type === Content_ElementType_Enum.ExploreProgramButton ||
+                type === Content_ElementType_Enum.ExploreScheduleButton,
             `Component Element Template mistakenly used for type ${type}.`
         );
 
@@ -52,7 +56,9 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
                     data.element.typeName === Content_ElementType_Enum.LiveProgramRooms ||
                     data.element.typeName === Content_ElementType_Enum.ActiveSocialRooms ||
                     data.element.typeName === Content_ElementType_Enum.Divider ||
-                    data.element.typeName === Content_ElementType_Enum.SponsorBooths
+                    data.element.typeName === Content_ElementType_Enum.SponsorBooths ||
+                    data.element.typeName === Content_ElementType_Enum.ExploreProgramButton ||
+                    data.element.typeName === Content_ElementType_Enum.ExploreScheduleButton
                 )
             ) {
                 return <>Component Element Template mistakenly used for type {data.type}.</>;

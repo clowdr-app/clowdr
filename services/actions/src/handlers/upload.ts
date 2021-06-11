@@ -224,6 +224,8 @@ async function createBlob(
         }
         case Content_ElementType_Enum.ContentGroupList:
         case Content_ElementType_Enum.WholeSchedule:
+        case Content_ElementType_Enum.ExploreProgramButton:
+        case Content_ElementType_Enum.ExploreScheduleButton:
         case Content_ElementType_Enum.LiveProgramRooms:
         case Content_ElementType_Enum.ActiveSocialRooms:
         case Content_ElementType_Enum.Divider:
@@ -627,6 +629,10 @@ function generateContentTypeFriendlyName(type: Content_ElementType_Enum) {
             return "Divider";
         case Content_ElementType_Enum.SponsorBooths:
             return "Sponsor booths";
+        case Content_ElementType_Enum.ExploreProgramButton:
+            return "Explore program button";
+        case Content_ElementType_Enum.ExploreScheduleButton:
+            return "Explore schedule button";
     }
 }
 

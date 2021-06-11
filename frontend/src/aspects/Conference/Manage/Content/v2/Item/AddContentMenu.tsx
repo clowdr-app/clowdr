@@ -142,7 +142,9 @@ export function AddContentMenu({
                                 x.value !== Content_ElementType_Enum.LiveProgramRooms &&
                                 x.value !== Content_ElementType_Enum.ActiveSocialRooms &&
                                 x.value !== Content_ElementType_Enum.Divider &&
-                                x.value !== Content_ElementType_Enum.SponsorBooths
+                                x.value !== Content_ElementType_Enum.SponsorBooths &&
+                                x.value !== Content_ElementType_Enum.ExploreProgramButton &&
+                                x.value !== Content_ElementType_Enum.ExploreScheduleButton
                         )
                         .map((typeOpt) => (
                             <MenuItem

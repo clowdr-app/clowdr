@@ -15,6 +15,10 @@ export enum Content_ElementType_Enum {
     ContentGroupList = "CONTENT_GROUP_LIST",
     /** A horizontal divider */
     Divider = "DIVIDER",
+    /** Button that opens the explore program modal. Intended for use on the landing page. */
+    ExploreProgramButton = "EXPLORE_PROGRAM_BUTTON",
+    /** Button that opens the explore program modal with the Schedule tab open. Intended for use on the landing page. */
+    ExploreScheduleButton = "EXPLORE_SCHEDULE_BUTTON",
     /** File for an image (stored by Clowdr). */
     ImageFile = "IMAGE_FILE",
     /** URL to an image (embedded in Clowdr UI). */
@@ -108,7 +112,9 @@ export type ElementBlob =
     | ActiveSocialRoomsBlob
     | LiveProgramRoomsBlob
     | DividerBlob
-    | SponsorBoothsBlob;
+    | SponsorBoothsBlob
+    | ExploreProgramButtonBlob
+    | ExploreScheduleButtonBlob;
 
 export interface AbstractBlob extends TextualElementBlob {
     type: Content_ElementType_Enum.Abstract;
@@ -198,6 +204,14 @@ export interface WholeScheduleBlob extends ComponentBlob {
     type: Content_ElementType_Enum.WholeSchedule;
 }
 
+export interface ExploreProgramButtonBlob extends ComponentBlob {
+    type: Content_ElementType_Enum.ExploreProgramButton;
+}
+
+export interface ExploreScheduleButtonBlob extends ComponentBlob {
+    type: Content_ElementType_Enum.ExploreScheduleButton;
+}
+
 export interface ZoomBlob extends UrlElementBlob {
     type: Content_ElementType_Enum.Zoom;
 }
@@ -257,6 +271,8 @@ export const ElementBaseTypes: { [K in Content_ElementType_Enum]: ElementBaseTyp
     [Content_ElementType_Enum.LiveProgramRooms]: ElementBaseType.Component,
     [Content_ElementType_Enum.Divider]: ElementBaseType.Component,
     [Content_ElementType_Enum.SponsorBooths]: ElementBaseType.Component,
+    [Content_ElementType_Enum.ExploreProgramButton]: ElementBaseType.Component,
+    [Content_ElementType_Enum.ExploreScheduleButton]: ElementBaseType.Component,
 };
 
 export interface ComponentBlob extends BaseElementBlob {

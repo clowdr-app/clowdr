@@ -13,7 +13,9 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
                 type === Content_ElementType_Enum.LiveProgramRooms ||
                 type === Content_ElementType_Enum.ActiveSocialRooms ||
                 type === Content_ElementType_Enum.Divider ||
-                type === Content_ElementType_Enum.SponsorBooths,
+                type === Content_ElementType_Enum.SponsorBooths ||
+                type === Content_ElementType_Enum.ExploreProgramButton ||
+                type === Content_ElementType_Enum.ExploreScheduleButton,
             `Component Element Template mistakenly used for type ${type}.`
         );
 

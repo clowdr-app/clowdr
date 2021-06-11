@@ -15,7 +15,7 @@ const jwksClient = jwksRsa({
 });
 
 router.post("/auth", json(), async (req: Request, res: Response) => {
-    console.log("Auth request started");
+    // console.log("Auth request started");
 
     try {
         assertType<AuthPayload>(req.body);
@@ -26,21 +26,21 @@ router.post("/auth", json(), async (req: Request, res: Response) => {
     }
 
     const payload: AuthPayload = req.body;
-    console.log("Auth payload", JSON.stringify(payload));
+    // console.log("Auth payload", JSON.stringify(payload));
 
     try {
         let decodedToken: any | null = null;
         const encodedToken = (payload.headers.Authorization ?? payload.headers.authorization)?.split(" ")[1];
-        console.log("Encoded token", encodedToken);
+        // console.log("Encoded token", encodedToken);
         if (encodedToken && typeof encodedToken === "string") {
             const completeDecodedToken = jwt.decode(encodedToken, { complete: true });
-            console.log("Complete decoded token", completeDecodedToken);
+            // console.log("Complete decoded token", completeDecodedToken);
 
             try {
                 if (completeDecodedToken && typeof completeDecodedToken !== "string") {
                     const key = await jwksClient.getSigningKey(completeDecodedToken.header.kid);
                     decodedToken = jwt.verify(encodedToken, key.getPublicKey(), { algorithms: ["RS256"] });
-                    console.log("Decoded token", decodedToken);
+                    // console.log("Decoded token", decodedToken);
                 }
             } catch {
                 // Ignore
@@ -65,15 +65,15 @@ router.post("/auth", json(), async (req: Request, res: Response) => {
                 authScopes = [];
             }
             
-            console.log("Auth scopes", authScopes);
+            // console.log("Auth scopes", authScopes);
 
             if (authScopes.includes("user")) {
                 userId = decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
-                console.log("User id", userId);
+                // console.log("User id", userId);
             }
-            else {
-                console.log("No user id");
-            }
+            // else {
+            //     console.log("No user id");
+            // }
         }
 
         const result = await handleAuthWebhook(payload, userId);

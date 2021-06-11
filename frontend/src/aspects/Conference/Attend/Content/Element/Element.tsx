@@ -221,7 +221,7 @@ function ElementInner({
         }
 
         return <Box>Cannot {name} content.</Box>;
-    }, [blob, type, name, elementId]);
+    }, [blob, type, name, scheduleModal, elementId]);
 
     return el;
 }

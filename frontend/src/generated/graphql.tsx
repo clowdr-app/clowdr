@@ -41322,7 +41322,7 @@ export type SearchPanel_ItemsQueryResult = Apollo.QueryResult<SearchPanel_ItemsQ
 export const SearchPanel_EventsDocument = gql`
     query SearchPanel_Events($conferenceId: uuid!, $search: String!) {
   schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, _or: [{eventPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}, {exhibition: {name: {_ilike: $search}}}, {item: {_or: [{title: {_ilike: $search}}, {itemPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {name: {_ilike: $search}}]}
+    where: {conferenceId: {_eq: $conferenceId}, _or: [{eventPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}, {exhibition: {_or: [{name: {_ilike: $search}}, {items: {item: {_or: [{title: {_ilike: $search}}, {itemPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}}]}}, {item: {_or: [{title: {_ilike: $search}}, {itemPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {name: {_ilike: $search}}]}
     order_by: [{startTime: asc}, {endTime: asc}, {room: {name: asc}}]
   ) {
     ...SearchPanel_Event

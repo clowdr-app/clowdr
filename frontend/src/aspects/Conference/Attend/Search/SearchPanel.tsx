@@ -103,7 +103,32 @@ gql`
                             person: { _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }] }
                         }
                     }
-                    { exhibition: { name: { _ilike: $search } } }
+                    {
+                        exhibition: {
+                            _or: [
+                                { name: { _ilike: $search } }
+                                {
+                                    items: {
+                                        item: {
+                                            _or: [
+                                                { title: { _ilike: $search } }
+                                                {
+                                                    itemPeople: {
+                                                        person: {
+                                                            _or: [
+                                                                { name: { _ilike: $search } }
+                                                                { affiliation: { _ilike: $search } }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
                     {
                         item: {
                             _or: [

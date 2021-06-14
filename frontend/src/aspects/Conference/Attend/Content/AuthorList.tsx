@@ -218,12 +218,15 @@ export function AuthorInner({
                     fontWeight="bold"
                     h="auto"
                     overflowWrap="normal"
+                    whiteSpace="normal"
                 >
                     <FAIcon iconStyle="s" icon="user" mr={2} fontSize="xs" />
                     {programPersonData.person.name}
                 </Button>
             ) : (
-                <Text fontWeight="bold">{programPersonData.person.name}</Text>
+                <Text fontWeight="bold" overflowWrap="normal" whiteSpace="normal">
+                    {programPersonData.person.name}
+                </Text>
             )}
             {!hideRole ? (
                 <Badge
@@ -243,7 +246,7 @@ export function AuthorInner({
             {programPersonData.person.affiliation &&
             programPersonData.person.affiliation !== "None" &&
             programPersonData.person.affiliation !== "undefined" ? (
-                <Text fontSize="sm" maxW={180}>
+                <Text fontSize="sm" maxW={180} overflowWrap="normal" whiteSpace="normal">
                     {programPersonData.person.affiliation}
                 </Text>
             ) : undefined}

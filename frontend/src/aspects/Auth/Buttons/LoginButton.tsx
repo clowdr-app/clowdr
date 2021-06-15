@@ -2,9 +2,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem } from "@chakra-ui/react";
 import React from "react";
 import { useLocation } from "react-router-dom";
+import MenuButton from "../../Menu/V2/MenuButton";
 
 export default function LoginButton({
     asMenuItem,
+    asMenuButtonV2,
     redirectTo,
     size,
     emailHint,
@@ -12,6 +14,7 @@ export default function LoginButton({
 }: {
     size?: string;
     asMenuItem?: boolean;
+    asMenuButtonV2?: boolean;
     redirectTo?: string;
     emailHint?: string;
     isLoading?: boolean;
@@ -28,7 +31,17 @@ export default function LoginButton({
         },
     };
 
-    return asMenuItem ? (
+    return asMenuButtonV2 ? (
+        <MenuButton
+            label="Login"
+            iconStyle="s"
+            icon="sign-in-alt"
+            borderRadius={0}
+            colorScheme="green"
+            side="right"
+            onClick={() => loginWithRedirect(opts)}
+        />
+    ) : asMenuItem ? (
         <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme="purple">
             Log In
         </MenuItem>

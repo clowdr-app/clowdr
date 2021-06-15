@@ -51,10 +51,19 @@ export default function RightMenu(): JSX.Element {
             >
                 {rightSections}
             </Box>
-            <Flex flexDir="column" w={barWidth} justifyContent="center" alignItems="flex-end" zIndex={1}>
-                <Text fontSize="xs" textAlign="right" mr={1} mb={2}>
-                    Participate
-                </Text>
+            <Flex
+                flexDir="column"
+                w={barWidth}
+                h={maybeUser ? undefined : "100%"}
+                justifyContent={maybeUser ? "center" : "flex-start"}
+                alignItems="flex-end"
+                zIndex={1}
+            >
+                {maybeUser ? (
+                    <Text fontSize="xs" textAlign="right" mr={1} mb={2}>
+                        Participate
+                    </Text>
+                ) : undefined}
                 {maybeConference?.slug && maybeRegistrant ? (
                     <>
                         <Route path={`${path}/item/`}>
@@ -123,41 +132,39 @@ export default function RightMenu(): JSX.Element {
                         />
                     </>
                 ) : undefined}
-                <MoreOptionsMenuButton
-                    label="More options"
-                    iconStyle="s"
-                    icon="ellipsis-h"
-                    borderTopRadius={0}
-                    colorScheme="gray"
-                    side="right"
-                >
-                    {maybeUser ? (
-                        <>
-                            <MenuItem
-                                onClick={() => {
-                                    colorMode.toggleColorMode();
-                                }}
-                            >
-                                <FAIcon iconStyle="s" icon="moon" />
-                                &nbsp;&nbsp;Toggle dark mode
-                            </MenuItem>
-                            <MenuItem as={ReactLink} to="/user/pushNotifications">
-                                <FAIcon iconStyle="s" icon="envelope-open-text" />
-                                &nbsp;&nbsp;Push notifications
-                            </MenuItem>
-                            <MenuItem onClick={onOpenUXChoice}>
-                                <FAIcon iconStyle="s" icon="exchange-alt" />
-                                &nbsp;&nbsp;Change UI experience
-                            </MenuItem>
-                            <MenuItem onClick={() => logout({ returnTo: logoutReturnTo })}>
-                                <FAIcon iconStyle="s" icon="sign-out-alt" />
-                                &nbsp;&nbsp;Logout
-                            </MenuItem>
-                        </>
-                    ) : (
-                        <LoginButton asMenuItem />
-                    )}
-                </MoreOptionsMenuButton>
+                {maybeUser ? (
+                    <MoreOptionsMenuButton
+                        label="More options"
+                        iconStyle="s"
+                        icon="ellipsis-h"
+                        borderTopRadius={0}
+                        colorScheme="gray"
+                        side="right"
+                    >
+                        <MenuItem
+                            onClick={() => {
+                                colorMode.toggleColorMode();
+                            }}
+                        >
+                            <FAIcon iconStyle="s" icon="moon" />
+                            &nbsp;&nbsp;Toggle dark mode
+                        </MenuItem>
+                        <MenuItem as={ReactLink} to="/user/pushNotifications">
+                            <FAIcon iconStyle="s" icon="envelope-open-text" />
+                            &nbsp;&nbsp;Push notifications
+                        </MenuItem>
+                        <MenuItem onClick={onOpenUXChoice}>
+                            <FAIcon iconStyle="s" icon="exchange-alt" />
+                            &nbsp;&nbsp;Change UI experience
+                        </MenuItem>
+                        <MenuItem onClick={() => logout({ returnTo: logoutReturnTo })}>
+                            <FAIcon iconStyle="s" icon="sign-out-alt" />
+                            &nbsp;&nbsp;Logout
+                        </MenuItem>
+                    </MoreOptionsMenuButton>
+                ) : (
+                    <LoginButton asMenuButtonV2 />
+                )}
             </Flex>
         </HStack>
     );

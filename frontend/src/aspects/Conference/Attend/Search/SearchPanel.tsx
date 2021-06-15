@@ -195,10 +195,10 @@ export default function SearchPanel(): JSX.Element {
         <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center">
             <VStack maxW={400} spacing={3}>
                 <Heading as="h3" fontSize="xl">
-                    Search the program
+                    Search
                 </Heading>
                 <Text whiteSpace="normal">
-                    Search events, items and people by name, title, affiliation, tag, exhibition or badge.
+                    Search the schedule, content and people by name, title, affiliation, tag, exhibition or badge.
                 </Text>
                 <FormControl>
                     <InputGroup>
@@ -221,8 +221,8 @@ export default function SearchPanel(): JSX.Element {
                             }}
                         >
                             <option value="events">Events</option>
-                            <option value="items">Items (papers, posters, etc)</option>
-                            <option value="people">People (authors / speakers)</option>
+                            <option value="items">Content (papers, posters, etc)</option>
+                            <option value="people">People (authors / presenters)</option>
                         </Select>
                     </InputGroup>
                 </FormControl>

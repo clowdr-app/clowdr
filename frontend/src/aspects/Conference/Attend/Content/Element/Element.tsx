@@ -6,6 +6,7 @@ import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
 import type { ElementDataFragment } from "../../../../../generated/graphql";
 import { ExternalLinkButton } from "../../../../Chakra/LinkButton";
+import { FAIcon } from "../../../../Icons/FAIcon";
 import { Markdown } from "../../../../Text/Markdown";
 import ActiveSocialRooms from "../../Rooms/V2/ActiveSocialRooms";
 import LiveProgramRooms from "../../Rooms/V2/LiveProgramRooms";
@@ -55,13 +56,15 @@ function ElementInner({
             case Content_ElementType_Enum.ExploreProgramButton:
                 return (
                     <Button colorScheme="purple" onClick={() => scheduleModal.onOpen(undefined, "Tags")}>
-                        Explore the program
+                        <FAIcon iconStyle="s" icon="tags" mr={2} />
+                        Browse content
                     </Button>
                 );
             case Content_ElementType_Enum.ExploreScheduleButton:
                 return (
                     <Button colorScheme="purple" onClick={() => scheduleModal.onOpen(undefined, "Schedule")}>
-                        Explore the schedule
+                        <FAIcon iconStyle="s" icon="calendar" mr={2} />
+                        Full schedule
                     </Button>
                 );
         }

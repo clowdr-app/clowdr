@@ -346,7 +346,7 @@ export function ScheduleModal({
                             ) : undefined}
                             <Tab>
                                 <FAIcon iconStyle="s" icon="search" />
-                                &nbsp;&nbsp;Search program
+                                &nbsp;&nbsp;Search
                             </Tab>
                             <Tab>
                                 <FAIcon iconStyle="s" icon="calendar" />

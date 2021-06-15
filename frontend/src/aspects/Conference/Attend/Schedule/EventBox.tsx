@@ -218,7 +218,7 @@ function EventBoxPopover({
                     ) : undefined}
                     {exhibitionUrl ? (
                         <>
-                            <Text>This event is an exhibition of multiple items.</Text>
+                            <Text>This event is an exhibition of multiple items of content.</Text>
                             <LinkButton
                                 colorScheme="purple"
                                 size="lg"

@@ -598,7 +598,11 @@ function EditableScheduleTable(): JSX.Element {
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
-                    return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.name ?? "") === "");
+                    } else {
+                        return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function EventNameCell(props: CellProps<Partial<EventInfoFragment>>) {
@@ -635,16 +639,20 @@ function EditableScheduleTable(): JSX.Element {
                     return compared;
                 },
                 filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
-                    return rows.filter((row) => {
-                        return (
-                            (row.itemId &&
-                                wholeSchedule.data?.content_Item
-                                    .find((room) => room.id === row.itemId)
-                                    ?.title.toLowerCase()
-                                    .includes(filterValue.toLowerCase())) ??
-                            false
-                        );
-                    });
+                    if (filterValue === "") {
+                        return rows.filter((row) => !row.itemId);
+                    } else {
+                        return rows.filter((row) => {
+                            return (
+                                (row.itemId &&
+                                    wholeSchedule.data?.content_Item
+                                        .find((room) => room.id === row.itemId)
+                                        ?.title.toLowerCase()
+                                        .includes(filterValue.toLowerCase())) ??
+                                false
+                            );
+                        });
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function ContentCell(
@@ -720,16 +728,20 @@ function EditableScheduleTable(): JSX.Element {
                     return compared;
                 },
                 filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
-                    return rows.filter((row) => {
-                        return (
-                            (row.exhibitionId &&
-                                wholeSchedule.data?.collection_Exhibition
-                                    .find((exhibition) => exhibition.id === row.exhibitionId)
-                                    ?.name.toLowerCase()
-                                    .includes(filterValue.toLowerCase())) ??
-                            false
-                        );
-                    });
+                    if (filterValue === "") {
+                        return rows.filter((row) => !row.exhibitionId);
+                    } else {
+                        return rows.filter((row) => {
+                            return (
+                                (row.exhibitionId &&
+                                    wholeSchedule.data?.collection_Exhibition
+                                        .find((exhibition) => exhibition.id === row.exhibitionId)
+                                        ?.name.toLowerCase()
+                                        .includes(filterValue.toLowerCase())) ??
+                                false
+                            );
+                        });
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function ExhibitionCell(
@@ -792,16 +804,20 @@ function EditableScheduleTable(): JSX.Element {
                     return compared;
                 },
                 filterFn: (rows: Array<EventInfoFragment>, filterValue: string) => {
-                    return rows.filter((row) => {
-                        return (
-                            (row.shufflePeriodId &&
-                                shufflePeriodsResponse.data?.room_ShufflePeriod
-                                    .find((shufflePeriod) => shufflePeriod.id === row.shufflePeriodId)
-                                    ?.name.toLowerCase()
-                                    .includes(filterValue.toLowerCase())) ??
-                            false
-                        );
-                    });
+                    if (filterValue === "") {
+                        return rows.filter((row) => !row.shufflePeriodId);
+                    } else {
+                        return rows.filter((row) => {
+                            return (
+                                (row.shufflePeriodId &&
+                                    shufflePeriodsResponse.data?.room_ShufflePeriod
+                                        .find((shufflePeriod) => shufflePeriod.id === row.shufflePeriodId)
+                                        ?.name.toLowerCase()
+                                        .includes(filterValue.toLowerCase())) ??
+                                false
+                            );
+                        });
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function ShufflePeriodCell(

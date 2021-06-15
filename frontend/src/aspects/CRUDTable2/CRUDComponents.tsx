@@ -9,6 +9,7 @@ import {
     NumberInput,
     NumberInputField,
     Select,
+    Tooltip,
 } from "@chakra-ui/react";
 import React from "react";
 import MultiSelect from "../Chakra/MultiSelect";
@@ -17,17 +18,33 @@ import { FAIcon } from "../Icons/FAIcon";
 import type { FilterFunction, FilterProps } from "./CRUDTable2";
 
 // Define a default UI for filtering
-export function TextColumnFilter({ value, onChange, onBlur }: FilterProps<string>): JSX.Element {
+export function TextColumnFilter({ value, onChange, onBlur }: FilterProps<string | null>): JSX.Element {
     return (
-        <Input
-            size="sm"
-            value={value || ""}
-            onChange={(e) => {
-                onChange(e.target.value || null);
-            }}
-            onBlur={onBlur}
-            placeholder="Filter..."
-        />
+        <HStack>
+            <Tooltip label="Tick to enable this filter. Leave the filter empty to show only blank values.">
+                <Checkbox
+                    aria-label="Filter to blank values"
+                    isChecked={value !== null}
+                    onChange={(e) => {
+                        onChange(!e.target.checked ? null : value ?? "");
+                    }}
+                    onBlur={onBlur}
+                />
+            </Tooltip>
+            <Input
+                size="sm"
+                value={value || ""}
+                onChange={(e) => {
+                    if (value !== null && value !== "" && e.target.value === "") {
+                        onChange(null);
+                    } else {
+                        onChange(e.target.value);
+                    }
+                }}
+                onBlur={onBlur}
+                placeholder="Filter..."
+            />
+        </HStack>
     );
 }
 

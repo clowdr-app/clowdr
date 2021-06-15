@@ -1,6 +1,7 @@
 import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
+    Box,
     Button,
     Flex,
     FormLabel,
@@ -11,10 +12,12 @@ import {
     MenuItem,
     MenuList,
     Select,
+    Tooltip,
     useClipboard,
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
+import Papa from "papaparse";
 import React, { LegacyRef, useCallback, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -181,7 +184,11 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                     record.name = value;
                 },
                 filterFn: (rows: Array<ManageProgramPeople_ProgramPersonFragment>, filterValue: string) => {
-                    return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.name ?? "") === "");
+                    } else {
+                        return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
                 },
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
@@ -228,11 +235,15 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                     record.affiliation = value;
                 },
                 filterFn: (rows: Array<ManageProgramPeople_ProgramPersonFragment>, filterValue: string) => {
-                    return rows.filter((row) =>
-                        row.affiliation
-                            ? row.affiliation.toLowerCase().includes(filterValue.toLowerCase())
-                            : filterValue === ""
-                    );
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.affiliation ?? "") === "");
+                    } else {
+                        return rows.filter((row) =>
+                            row.affiliation
+                                ? row.affiliation.toLowerCase().includes(filterValue.toLowerCase())
+                                : filterValue === ""
+                        );
+                    }
                 },
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
@@ -278,9 +289,13 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                     record.email = value;
                 },
                 filterFn: (rows: Array<ManageProgramPeople_ProgramPersonFragment>, filterValue: string) => {
-                    return rows.filter((row) =>
-                        row.email ? row.email.toLowerCase().includes(filterValue.toLowerCase()) : filterValue === ""
-                    );
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.email ?? "") === "");
+                    } else {
+                        return rows.filter((row) =>
+                            row.email ? row.email.toLowerCase().includes(filterValue.toLowerCase()) : filterValue === ""
+                        );
+                    }
                 },
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
@@ -323,6 +338,21 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 set: (record, value: ManageProgramPeople_RegistrantFragment | undefined) => {
                     record.registrantId = value?.id;
                 },
+                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonFragment>, filterValue: string) => {
+                    if (filterValue === "") {
+                        return rows.filter((row) => !row.registrantId);
+                    } else {
+                        return rows.filter(
+                            (row) =>
+                                !!row.registrantId &&
+                                !!registrants
+                                    .find((x) => x.id === row.registrantId)
+                                    ?.displayName.toLowerCase()
+                                    .includes(filterValue.toLowerCase())
+                        );
+                    }
+                },
+                filterEl: TextColumnFilter,
                 sort: (
                     x: ManageProgramPeople_RegistrantFragment | undefined,
                     y: ManageProgramPeople_RegistrantFragment | undefined
@@ -589,6 +619,110 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                             </MenuList>
                         </Menu>
                     );
+                },
+            },
+            {
+                render: function ExportPeople({
+                    selectedData,
+                }: {
+                    selectedData: ManageProgramPeople_ProgramPersonFragment[];
+                }) {
+                    function doExport(dataToExport: ManageProgramPeople_ProgramPersonFragment[]) {
+                        const csvText = Papa.unparse(
+                            dataToExport.map((person) => ({
+                                Name: person.name,
+                                Affiliation: person.affiliation ?? "",
+                                Email: person.email ?? "",
+                                LinkedToRegistrant: person.registrantId ? "Yes" : "No",
+                            }))
+                        );
+
+                        const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+                        let csvURL: string | null = null;
+                        const now = new Date();
+                        const fileName = `${now.getFullYear()}-${now
+                            .getMonth()
+                            .toString()
+                            .padStart(2, "0")}-${now
+                            .getDate()
+                            .toString()
+                            .padStart(2, "0")}T${now
+                            .getHours()
+                            .toString()
+                            .padStart(2, "0")}-${now
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")} - Clowdr Program People.csv`;
+                        if (navigator.msSaveBlob) {
+                            navigator.msSaveBlob(csvData, fileName);
+                        } else {
+                            csvURL = window.URL.createObjectURL(csvData);
+                        }
+
+                        const tempLink = document.createElement("a");
+                        tempLink.href = csvURL ?? "";
+                        tempLink.setAttribute("download", fileName);
+                        tempLink.click();
+                    }
+                    if (selectedData.length === 0) {
+                        return (
+                            <Menu>
+                                <Tooltip label={"Export people."}>
+                                    <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
+                                        Export
+                                    </MenuButton>
+                                </Tooltip>
+                                <MenuList>
+                                    <MenuItem
+                                        onClick={() => {
+                                            doExport(data.filter((a) => !!a.email));
+                                        }}
+                                    >
+                                        <FAIcon iconStyle="s" icon="envelope" w="1em" textAlign="center" mr={2} />
+                                        Has an email address
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            doExport(data.filter((a) => !a.email));
+                                        }}
+                                    >
+                                        <FAIcon iconStyle="r" icon="envelope" w="1em" textAlign="center" mr={2} />
+                                        Does not have email address
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            doExport(data.filter((a) => a.registrantId));
+                                        }}
+                                    >
+                                        <FAIcon iconStyle="s" icon="link" w="1em" textAlign="center" mr={2} />
+                                        Linked to registrant
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            doExport(data.filter((a) => !a.registrantId));
+                                        }}
+                                    >
+                                        <FAIcon iconStyle="s" icon="unlink" w="1em" textAlign="center" mr={2} />
+                                        Not linked to registrant
+                                    </MenuItem>
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip label={"Export the selected people."}>
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        onClick={() => doExport(selectedData)}
+                                    >
+                                        Export
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+                        );
+                    }
                 },
             },
         ],

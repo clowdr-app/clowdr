@@ -364,7 +364,11 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 sort: (x: string | null | undefined, y: string | null | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
                 filterFn: (rows: Array<ManageContent_ItemFragment>, filterValue: string) => {
-                    return rows.filter((row) => row.title.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => row.title === "");
+                    } else {
+                        return rows.filter((row) => row.title.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function TitleCell(props: CellProps<Partial<ManageContent_ItemFragment>>) {
@@ -399,7 +403,13 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                 sort: (x: string | null | undefined, y: string | null | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
                 filterFn: (rows: Array<ManageContent_ItemFragment>, filterValue: string) => {
-                    return rows.filter((row) => !!row.shortTitle?.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.shortTitle ?? "") === "");
+                    } else {
+                        return rows.filter(
+                            (row) => !!row.shortTitle?.toLowerCase().includes(filterValue.toLowerCase())
+                        );
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function ShortTitleCell(props: CellProps<Partial<ManageContent_ItemFragment>>) {

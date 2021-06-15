@@ -477,7 +477,11 @@ function EditableRoomsCRUDTable() {
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: string) => {
-                    return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.name ?? "") === "");
+                    } else {
+                        return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
@@ -706,16 +710,20 @@ function EditableRoomsCRUDTable() {
                     return compared;
                 },
                 filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: string) => {
-                    return rows.filter((row) => {
-                        return (
-                            (row.originatingItemId &&
-                                items.data?.content_Item
-                                    .find((group) => group.id === row.originatingItemId)
-                                    ?.title.toLowerCase()
-                                    .includes(filterValue.toLowerCase())) ??
-                            false
-                        );
-                    });
+                    if (filterValue === "") {
+                        return rows.filter((row) => !row.originatingItemId);
+                    } else {
+                        return rows.filter((row) => {
+                            return (
+                                (row.originatingItemId &&
+                                    items.data?.content_Item
+                                        .find((group) => group.id === row.originatingItemId)
+                                        ?.title.toLowerCase()
+                                        .includes(filterValue.toLowerCase())) ??
+                                false
+                            );
+                        });
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function ContentCell(

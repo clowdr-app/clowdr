@@ -1522,6 +1522,7 @@ export default function CRUDTable<T>({
                 flexDir="row"
                 flexWrap="wrap"
                 my="4px"
+                pb="4px"
             >
                 <ButtonGroup>
                     <Button onClick={() => goToPage(0)} disabled={!canPreviousPage}>

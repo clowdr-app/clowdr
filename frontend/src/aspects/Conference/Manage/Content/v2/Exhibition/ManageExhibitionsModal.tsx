@@ -144,7 +144,11 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 sort: (x: string | null | undefined, y: string | null | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
                 filterFn: (rows: Array<ManageContent_ExhibitionFragment>, filterValue: string) => {
-                    return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.name ?? "") === "");
+                    } else {
+                        return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function NameCell(props: CellProps<Partial<ManageContent_ExhibitionFragment>>) {

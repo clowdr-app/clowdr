@@ -268,7 +268,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                    return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.displayName ?? "") === "");
+                    } else {
+                        return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function NameCell(props: CellProps<Partial<RegistrantDescriptor>>) {
@@ -383,9 +387,13 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                    return rows.filter((row) =>
-                        row.invitation?.invitedEmailAddress?.toLowerCase().includes(filterValue.toLowerCase())
-                    );
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.invitation?.invitedEmailAddress ?? "") === "");
+                    } else {
+                        return rows.filter((row) =>
+                            row.invitation?.invitedEmailAddress?.toLowerCase().includes(filterValue.toLowerCase())
+                        );
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function InvitedEmailAddressCell(props: CellProps<Partial<RegistrantDescriptor>>) {
@@ -431,7 +439,15 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                 },
                 get: (data) => data.invitation?.inviteCode ?? "",
                 filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                    return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.invitation?.inviteCode ?? "") === "");
+                    } else {
+                        return rows.filter(
+                            (row) =>
+                                !!row.invitation?.inviteCode &&
+                                row.invitation?.inviteCode.toLowerCase().includes(filterValue.toLowerCase())
+                        );
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function InviteCodeCell(props: CellProps<Partial<RegistrantDescriptor>>) {

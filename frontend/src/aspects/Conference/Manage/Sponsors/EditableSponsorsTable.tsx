@@ -113,7 +113,11 @@ export function EditableSponsorsTable(): JSX.Element {
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows: Array<SponsorInfoFragment>, filterValue: string) => {
-                    return rows.filter((row) => row.title.toLowerCase().includes(filterValue.toLowerCase()));
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.title ?? "") === "");
+                    } else {
+                        return rows.filter((row) => row.title.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function SponsorTitleCell(props: CellProps<Partial<SponsorInfoFragment>>) {
@@ -149,9 +153,13 @@ export function EditableSponsorsTable(): JSX.Element {
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows: Array<SponsorInfoFragment>, filterValue: string) => {
-                    return rows.filter(
-                        (row) => row.shortTitle && row.shortTitle.toLowerCase().includes(filterValue.toLowerCase())
-                    );
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.shortTitle ?? "") === "");
+                    } else {
+                        return rows.filter(
+                            (row) => row.shortTitle && row.shortTitle.toLowerCase().includes(filterValue.toLowerCase())
+                        );
+                    }
                 },
                 filterEl: TextColumnFilter,
                 cell: function SponsorShortTitleCell(props: CellProps<Partial<SponsorInfoFragment>>) {

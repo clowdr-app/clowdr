@@ -594,7 +594,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 render: function AutoLinkMenu() {
                     return (
                         <Menu>
-                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                            <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                 Auto-link to registrants
                             </MenuButton>
                             <MenuList>

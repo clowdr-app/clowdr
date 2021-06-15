@@ -417,14 +417,18 @@ export default function SearchPanel(): JSX.Element {
                                     pl={4}
                                 >
                                     <Text whiteSpace="normal">
+                                        <FAIcon iconStyle="s" icon="user" mr={2} mb={1} />
                                         {person.registrantId ? (
-                                            <Link
-                                                as={ReactLink}
-                                                to={`/conference/${conference.slug}/profile/view/${person.registrantId}`}
-                                            >
-                                                {person.name}
-                                                {person.affiliation ? ` (${person.affiliation})` : ""}
-                                            </Link>
+                                            <>
+                                                <Link
+                                                    as={ReactLink}
+                                                    to={`/conference/${conference.slug}/profile/view/${person.registrantId}`}
+                                                >
+                                                    {person.name}
+                                                    {person.affiliation ? ` (${person.affiliation})` : ""}
+                                                </Link>
+                                                <FAIcon iconStyle="s" icon="hand-pointer" ml={2} mb={1} fontSize="xs" />
+                                            </>
                                         ) : (
                                             <>
                                                 {person.name}
@@ -433,15 +437,18 @@ export default function SearchPanel(): JSX.Element {
                                         )}
                                     </Text>
                                     {person.itemPeople.length ? (
-                                        <List w="100%" pl={4}>
+                                        <List w="100%" pl={9}>
                                             {person.itemPeople.map((itemPerson) => (
                                                 <ListItem key={itemPerson.id}>
-                                                    <Link
-                                                        as={ReactLink}
-                                                        to={`/conference/${conference.slug}/item/${itemPerson.item.id}`}
-                                                    >
-                                                        {itemPerson.item.title}
-                                                    </Link>
+                                                    <HStack alignItems="flex-start">
+                                                        <FAIcon iconStyle="s" icon="tag" fontSize="xs" mt={1} />
+                                                        <Link
+                                                            as={ReactLink}
+                                                            to={`/conference/${conference.slug}/item/${itemPerson.item.id}`}
+                                                        >
+                                                            {itemPerson.item.title.trim()}
+                                                        </Link>
+                                                    </HStack>
                                                 </ListItem>
                                             ))}
                                         </List>

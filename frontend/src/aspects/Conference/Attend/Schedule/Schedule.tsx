@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import assert from "assert";
 import { DateTime } from "luxon";
 import * as R from "ramda";
@@ -16,6 +16,7 @@ import {
     useSchedule_SelectSummariesQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -597,6 +598,10 @@ export function ScheduleInner({
                 </Heading>
                 {dayList}
             </Flex>
+            <Text w="auto" textAlign="left" p={0} my={1}>
+                <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
+                Dates and times are shown in your local timezone.
+            </Text>
             <Box
                 cursor="pointer"
                 as={ScrollContainer}

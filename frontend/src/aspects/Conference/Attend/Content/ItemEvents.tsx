@@ -4,6 +4,7 @@ import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { ItemEventFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { FAIcon } from "../../../Icons/FAIcon";
 import { EventsTable } from "./EventsTable";
 
 gql`
@@ -50,6 +51,7 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
                         All times for this item
                     </Heading>
                     <Text my={3} w="auto" textAlign="left" p={0}>
+                        <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
                         Times are shown in your local timezone.
                     </Text>
                     {thisPaperTable}
@@ -59,6 +61,7 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
                         Events around this item
                     </Heading>
                     <Text my={3} w="auto" textAlign="left" p={0}>
+                        <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
                         Times are shown in your local timezone.
                     </Text>
                     {rooms.length > 1 ? (

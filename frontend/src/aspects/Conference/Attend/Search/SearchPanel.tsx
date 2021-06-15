@@ -274,7 +274,11 @@ export default function SearchPanel(): JSX.Element {
 
             {searchType === "events" && eventsResponse.data ? (
                 <>
-                    <Divider my={2} />
+                    <Divider my={4} />
+                    <Text w="auto" textAlign="left" p={0} mb={4}>
+                        <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
+                        Times are shown in your local timezone.
+                    </Text>
                     <List spacing={3} w="100%" px={2}>
                         {eventsResponse.data.schedule_Event.map((event) => (
                             <ListItem key={event.id} w="100%">

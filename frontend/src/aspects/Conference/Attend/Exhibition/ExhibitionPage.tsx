@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { chakra, Circle, Heading } from "@chakra-ui/react";
+import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import {
     ExhibitionWithContentFragment,
@@ -8,6 +8,7 @@ import {
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import { EventsTable } from "../Content/EventsTable";
 import ExhibitionLayout from "./ExhibitionLayout";
@@ -106,7 +107,13 @@ function ExhibitionPageInner({
                 </chakra.span>
                 {/*TODO: Link to live event for this exhibition if any.*/}
             </Heading>
-            <EventsTable events={events} includeRoom={true} />
+            <VStack>
+                <Text w="auto" textAlign="left" p={0}>
+                    <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
+                    Times are shown in your local timezone.
+                </Text>
+                <EventsTable events={events} includeRoom={true} />
+            </VStack>
             <ExhibitionLayout exhibition={exhibition} />
         </>
     );

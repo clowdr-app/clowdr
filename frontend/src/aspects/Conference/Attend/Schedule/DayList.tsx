@@ -1,4 +1,5 @@
-import { Button, ButtonGroup, Text } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Button, HStack, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import React, { useMemo } from "react";
 import type {
@@ -74,91 +75,59 @@ export default function DayList({
     }, [events, rooms, timelineParams.timezone]);
 
     return (
-        <ButtonGroup
-            role="navigation"
-            w="auto"
-            h="auto"
-            spacing={0}
-            flexWrap="wrap"
-            justifyContent="stretch"
-            borderTopLeftRadius={5}
-            borderTopRightRadius={5}
-            overflow="hidden"
-        >
+        <HStack zIndex={1000}>
             {scrollToNow ? (
                 <Button
                     m={0}
                     borderRadius={0}
                     colorScheme="red"
-                    borderWidth={1}
-                    borderStyle="solid"
-                    size="sm"
-                    flex="1 1 auto"
-                    position="relative"
-                    height="auto"
-                    p={3}
-                    flexDirection="column"
-                    justifyContent="flex-end"
                     onClick={() => {
                         scrollToNow?.f();
                     }}
                     aria-label="Scroll schedule to now"
                 >
-                    <Text w="100%" display="block" as="span" mt="3px">
-                        Now
-                    </Text>
+                    Now
                 </Button>
             ) : undefined}
-            {distinctDates.map((date, idx) => {
-                const date0 = date[0];
-                return (
-                    <Button
-                        m={0}
-                        key={date0.toISO()}
-                        borderRadius={0}
-                        colorScheme="blue"
-                        borderWidth={1}
-                        borderStyle="solid"
-                        size="sm"
-                        flex="1 1 auto"
-                        position="relative"
-                        height="auto"
-                        p={3}
-                        flexDirection="column"
-                        justifyContent="flex-end"
-                        onClick={() => {
-                            scrollToEvent(date[1].event);
-                        }}
-                        // TODO: Set the timezone for the conference
-                        aria-label={`Scroll schedule to ${date0.toLocaleString({
-                            weekday: "long",
-                            day: "numeric",
-                            month: "long",
-                        })}`}
-                    >
-                        {idx === 0 ||
-                        idx === distinctDates.length - 1 ||
-                        (idx > 0 && date0.weekNumber !== distinctDates[idx - 1][0].weekNumber) ? (
-                            <Text
-                                display="block"
-                                as="span"
-                                fontSize="0.7em"
-                                w="100%"
-                                textAlign="center"
-                                fontStyle="italic"
-                            >
-                                {date0.toLocaleString({
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                })}
-                            </Text>
-                        ) : undefined}
-                        <Text w="100%" display="block" as="span" mt="3px">
-                            {date0.toLocaleString({ weekday: "long" })}
-                        </Text>
-                    </Button>
-                );
-            })}
-        </ButtonGroup>
+            <Menu>
+                <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
+                    Jump to day
+                </MenuButton>
+                <MenuList maxH="30vh" overflow="auto">
+                    {distinctDates.map((date, idx) => {
+                        const date0 = date[0];
+                        return (
+                            <>
+                                {idx > 0 && date0.weekNumber !== distinctDates[idx - 1][0].weekNumber ? (
+                                    <MenuDivider />
+                                ) : undefined}
+                                <MenuItem
+                                    m={0}
+                                    key={date0.toISO()}
+                                    size="sm"
+                                    onClick={() => {
+                                        scrollToEvent(date[1].event);
+                                    }}
+                                    // TODO: Set the timezone for the conference
+                                    aria-label={`Scroll schedule to ${date0.toLocaleString({
+                                        weekday: "long",
+                                        day: "numeric",
+                                        month: "long",
+                                    })}`}
+                                >
+                                    <Text as="span" fontStyle="italic" mr={3} fontSize="80%">
+                                        {date0.toLocaleString({
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                        })}
+                                    </Text>
+                                    <Text as="span">{date0.toLocaleString({ weekday: "long" })}</Text>
+                                </MenuItem>
+                            </>
+                        );
+                    })}
+                </MenuList>
+            </Menu>
+        </HStack>
     );
 }

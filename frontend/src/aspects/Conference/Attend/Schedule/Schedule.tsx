@@ -592,8 +592,8 @@ export function ScheduleInner({
     /*Plus 30 to the width to account for scrollbars!*/
     return (
         <Flex h="100%" w="100%" maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30} flexDir="column">
-            <Flex w="100%" direction="row" justify="center" alignItems="center">
-                <Heading as="h1" id="page-heading" mr={4} mb={2}>
+            <Flex w="100%" direction="row" justify="center" alignItems="center" flexWrap="wrap">
+                <Heading as="h1" id="page-heading" mx={4} mb={2}>
                     {titleStr ?? "Schedule"}
                 </Heading>
                 {dayList}

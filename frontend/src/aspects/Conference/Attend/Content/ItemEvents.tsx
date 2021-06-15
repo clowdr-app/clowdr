@@ -44,17 +44,23 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
 
     return (
         <>
-            <Text my={3} w="auto" textAlign="left" p={0}>
-                Times are shown in your local timezone.
-            </Text>
             <Flex pt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
-                <VStack mt={2} mb={4} flex="1 1 48%" alignItems="flex-start" maxW="max-content">
-                    <Heading as="h4" fontSize="md" textAlign="left" w="100%">
+                <VStack flex="1 1 48%" alignItems="flex-start" maxW="max-content">
+                    <Heading as="h4" size="md" textAlign="left" w="100%">
                         All times for this item
                     </Heading>
+                    <Text my={3} w="auto" textAlign="left" p={0}>
+                        Times are shown in your local timezone.
+                    </Text>
                     {thisPaperTable}
                 </VStack>
                 <VStack mr={2} flex="1 1 48%" alignItems="flex-start" maxW="max-content">
+                    <Heading as="h4" size="md" textAlign="left">
+                        Events around this item
+                    </Heading>
+                    <Text my={3} w="auto" textAlign="left" p={0}>
+                        Times are shown in your local timezone.
+                    </Text>
                     {rooms.length > 1 ? (
                         <Tabs variant="enclosed" isLazy>
                             <TabList>

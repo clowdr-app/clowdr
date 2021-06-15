@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Flex, Heading, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
+import { Box, Flex, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import {
     ItemElements_ItemDataFragment,
@@ -114,9 +114,6 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                                     <ItemLive itemData={itemData} />
                                                 </RequireAtLeastOnePermissionWrapper>
                                             </ItemElements>
-                                            <Heading as="h3" size="lg" textAlign="left">
-                                                Events around this item
-                                            </Heading>
                                             <ItemEvents events={itemData.events} itemId={itemId} />
                                         </Box>
                                     </Box>

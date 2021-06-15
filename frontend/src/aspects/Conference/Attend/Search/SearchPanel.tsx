@@ -9,6 +9,7 @@ import {
     Input,
     InputGroup,
     InputLeftAddon,
+    InputRightElement,
     Link,
     List,
     ListItem,
@@ -19,7 +20,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
-import React, { useState } from "react";
+import React from "react";
 import { Link as ReactLink } from "react-router-dom";
 import {
     useSearchPanel_EventsLazyQuery,
@@ -27,6 +28,7 @@ import {
     useSearchPanel_PeopleLazyQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
+import { useRestorableState } from "../../../Generic/useRestorableState";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 // import ExhibitionNameList from "../Content/ExhibitionNameList";
@@ -181,8 +183,18 @@ gql`
 export default function SearchPanel(): JSX.Element {
     const conference = useConference();
 
-    const [search, setSearch] = useState<string>("");
-    const [searchType, setSearchType] = useState<"events" | "items" | "people">("events");
+    const [search, setSearch] = useRestorableState<string>(
+        "SearchPanel_Search",
+        "",
+        (x) => x,
+        (x) => x
+    );
+    const [searchType, setSearchType] = useRestorableState<"events" | "items" | "people">(
+        "SearchPanel_SearchType",
+        "events",
+        (x) => x,
+        (x) => x as any
+    );
 
     const [fetchEventsQuery, eventsResponse] = useSearchPanel_EventsLazyQuery();
     const [fetchItemsQuery, itemsResponse] = useSearchPanel_ItemsLazyQuery();
@@ -209,6 +221,18 @@ export default function SearchPanel(): JSX.Element {
                                 setSearch(ev.target.value);
                             }}
                         />
+                        <InputRightElement
+                            as={Button}
+                            variant="ghost"
+                            ml={1}
+                            fontSize="sm"
+                            onClick={() => {
+                                setSearch("");
+                            }}
+                            isDisabled={search === ""}
+                        >
+                            <FAIcon iconStyle="s" icon="times-circle" />
+                        </InputRightElement>
                     </InputGroup>
                 </FormControl>
                 <FormControl>

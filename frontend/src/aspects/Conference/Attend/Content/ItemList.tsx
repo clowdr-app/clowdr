@@ -266,7 +266,10 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
                     {resultCountStr}
                 </FormLabel>
                 <InputGroup>
-                    <InputLeftAddon aria-hidden>Search</InputLeftAddon>
+                    <InputLeftAddon aria-hidden>
+                        <FAIcon iconStyle="s" icon="search" mr={2} />
+                        Search
+                    </InputLeftAddon>
                     <Input
                         aria-label={"Search found " + ariaSearchResultStr}
                         type="text"
@@ -276,8 +279,17 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
                             setSearch(ev.target.value);
                         }}
                     />
-                    <InputRightElement>
-                        <FAIcon iconStyle="s" icon="search" />
+                    <InputRightElement
+                        as={Button}
+                        variant="ghost"
+                        ml={1}
+                        fontSize="sm"
+                        onClick={() => {
+                            setSearch("");
+                        }}
+                        isDisabled={search === ""}
+                    >
+                        <FAIcon iconStyle="s" icon="times-circle" />
                     </InputRightElement>
                 </InputGroup>
                 <FormHelperText>Search for an item by title or a person&apos;s name or affiliation.</FormHelperText>

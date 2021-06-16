@@ -188,13 +188,13 @@ export default function SearchPanel(): JSX.Element {
     const conference = useConference();
 
     const [search, setSearch] = useRestorableState<string>(
-        "SearchPanel_Search",
+        "SearchPanel_Search" + conference.id,
         "",
         (x) => x,
         (x) => x
     );
     const [searchType, setSearchType] = useRestorableState<"events" | "items" | "people">(
-        "SearchPanel_SearchType",
+        "SearchPanel_SearchType" + conference.id,
         "events",
         (x) => x,
         (x) => x as any

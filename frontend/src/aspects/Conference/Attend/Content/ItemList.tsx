@@ -323,7 +323,7 @@ export default function ItemList(
     useQueryErrorToast(error, false, "ItemList.tsx");
 
     const [internalOpenPanelId, setInternalOpenPanelId] = useRestorableState<string | null>(
-        "ItemList_OpenPanelId",
+        "ItemList_OpenPanelId_" + conference.id,
         null,
         (s) => (s === null ? "null" : s),
         (s) => (s === "null" ? null : s)

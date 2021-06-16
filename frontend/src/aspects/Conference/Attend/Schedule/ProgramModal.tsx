@@ -91,16 +91,17 @@ enum ProgramModalTab {
 }
 
 export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
+    const conference = useConference();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const scheduleButtonRef = useRef<FocusableElement>(null);
     const [selectedTab, setSelectedTab] = useRestorableState<ProgramModalTab>(
-        "ProgramModal_SelectedTab",
+        "ProgramModal_SelectedTab" + conference.id,
         ProgramModalTab.HappeningSoon,
         (x) => x,
         (x) => x as ProgramModalTab
     );
     const [selectedTagId, setSelectedTag] = useRestorableState<string | null>(
-        "ProgramModal_ItemList_OpenPanelId",
+        "ProgramModal_ItemList_OpenPanelId" + conference.id,
         null,
         (s) => (s === null ? "null" : s),
         (s) => (s === "null" ? null : s)

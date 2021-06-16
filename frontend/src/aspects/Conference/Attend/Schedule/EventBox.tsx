@@ -4,6 +4,8 @@ import {
     chakra,
     Divider,
     Flex,
+    Grid,
+    GridItem,
     HStack,
     Link,
     Modal,
@@ -19,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { format } from "date-fns";
 import { DateTime } from "luxon";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
@@ -34,9 +37,8 @@ import {
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import { Markdown } from "../../../Text/Markdown";
-import { maybeCompare } from "../../../Utils/maybeSort";
 import { useConference } from "../../useConference";
-import { AuthorList } from "../Content/AuthorList";
+import { AuthorList, PlainAuthorsList } from "../Content/AuthorList";
 import TagList from "../Content/TagList";
 import { EventModeIcon } from "../Rooms/V2/EventHighlight";
 import type { TimelineEvent } from "./DayList";
@@ -133,18 +135,16 @@ function EventBoxPopover({
                         fontSize="sm"
                         fontStyle="italic"
                     >
-                        {R.intersperse(
-                            <>&nbsp;/&nbsp;</>,
-                            events.map((ev, idx) => (
+                        {events.length === 1 ? (
+                            <>
                                 <EventModeIcon
-                                    key={idx}
-                                    mode={ev.intendedRoomModeName}
-                                    durationSeconds={ev.durationSeconds}
+                                    mode={event0.intendedRoomModeName}
+                                    durationSeconds={event0.durationSeconds}
                                     fontSize="inherit"
                                 />
-                            ))
-                        )}
-                        &nbsp;&nbsp;
+                                &nbsp;&nbsp;
+                            </>
+                        ) : undefined}
                         {DateTime.fromMillis(eventStartMs).setZone(timelineParams.timezone).toLocaleString({
                             weekday: "short",
                             month: "short",
@@ -235,6 +235,35 @@ function EventBoxPopover({
                             <Markdown>{abstractText}</Markdown>
                         </Box>
                     ) : undefined}
+                    {events.length > 1 ? (
+                        <VStack w="100%" alignItems="flex-start" spacing={1}>
+                            <Text w="auto" textAlign="left" p={0}>
+                                <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
+                                Times are shown in your local timezone.
+                            </Text>
+                            <Grid templateColumns="repeat(3, auto)" rowGap={1} columnGap={2}>
+                                {events.map((event) => (
+                                    <>
+                                        <GridItem key={event.id}>
+                                            <EventModeIcon
+                                                mode={event.intendedRoomModeName}
+                                                durationSeconds={event.durationSeconds}
+                                                fontSize="inherit"
+                                            />
+                                        </GridItem>
+                                        <GridItem key={event.id}>
+                                            {format(new Date(event.startTime), "HH:mm")} -{" "}
+                                            {format(
+                                                new Date(Date.parse(event.startTime) + 1000 * event.durationSeconds),
+                                                "HH:mm"
+                                            )}
+                                        </GridItem>
+                                        <Text whiteSpace="normal">{event.name}</Text>
+                                    </>
+                                ))}
+                            </Grid>
+                        </VStack>
+                    ) : undefined}
                     {content?.itemPeople.length ? <AuthorList programPeopleData={content.itemPeople} /> : undefined}
                 </ModalBody>
             </ModalContent>
@@ -298,19 +327,19 @@ export default function EventBox({
                                 ))
                             )}
                         </Text>
-                        {event.item ? (
-                            <Text fontSize="sm" fontWeight="bold" lineHeight="130%">
-                                <Twemoji className="twemoji" text={event.item.title} />
-                                <br />
-                                <chakra.span fontStyle="italic" fontSize="xs">
-                                    <Twemoji className="twemoji" text={event.name} />
-                                </chakra.span>
-                            </Text>
-                        ) : (
-                            <Text fontSize="sm" fontWeight="bold" pt="0.6ex">
+                        <Text fontSize="sm" fontWeight="bold" lineHeight="130%">
+                            {event.item ? (
+                                <>
+                                    <Twemoji className="twemoji" text={event.item.title} />
+                                    <br />
+                                    <chakra.span fontStyle="italic" fontSize="xs">
+                                        <Twemoji className="twemoji" text={event.name} />
+                                    </chakra.span>
+                                </>
+                            ) : (
                                 <Twemoji className="twemoji" text={event.name} />
-                            </Text>
-                        )}
+                            )}
+                        </Text>
                     </HStack>
                     <Text fontSize="sm">
                         {new Date(eventStartMs).toLocaleTimeString(undefined, {
@@ -322,25 +351,7 @@ export default function EventBox({
                     </Text>
                     {event.item ? (
                         <>
-                            <Text>
-                                {R.intersperse(
-                                    ", ",
-                                    R.sortWith(
-                                        [
-                                            (x, y) =>
-                                                x.roleName === "CHAIR"
-                                                    ? y.roleName === "CHAIR"
-                                                        ? 0
-                                                        : 1
-                                                    : y.roleName === "CHAIR"
-                                                    ? -1
-                                                    : x.roleName.localeCompare(y.roleName),
-                                            (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
-                                        ],
-                                        event.item.itemPeople
-                                    ).map((x) => x.person.name)
-                                ).reduce((acc, x) => acc + x, "")}
-                            </Text>
+                            <PlainAuthorsList people={event.item.itemPeople} />
                             <TagList
                                 tags={event.item.itemTags.map(
                                     (x) => ({ ...x, tag: tags.find((y) => x.tagId === y.id) } as any)

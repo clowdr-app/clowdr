@@ -54,21 +54,21 @@ export function EventModeIcon({
     const iconEl = (() => {
         switch (mode) {
             case Room_Mode_Enum.Breakout:
-                return <FAIcon iconStyle="s" icon="users" fontSize={fontSize} />;
+                return <FAIcon iconStyle="s" icon="users" fontSize={fontSize} mb={1} />;
             case Room_Mode_Enum.Exhibition:
-                return <FAIcon iconStyle="s" icon="puzzle-piece" fontSize={fontSize} />;
+                return <FAIcon iconStyle="s" icon="puzzle-piece" fontSize={fontSize} mb={1} />;
             case Room_Mode_Enum.None:
-                return <FAIcon iconStyle="s" icon="calendar" fontSize={fontSize} />;
+                return <FAIcon iconStyle="s" icon="calendar" fontSize={fontSize} mb={1} />;
             case Room_Mode_Enum.Prerecorded:
             case Room_Mode_Enum.Presentation:
             case Room_Mode_Enum.QAndA:
-                return <FAIcon iconStyle="s" icon="broadcast-tower" fontSize={fontSize} color="red.400" />;
+                return <FAIcon iconStyle="s" icon="broadcast-tower" fontSize={fontSize} color="red.400" mb={1} />;
             case Room_Mode_Enum.Shuffle:
-                return <FAIcon iconStyle="s" icon="random" fontSize={fontSize} />;
+                return <FAIcon iconStyle="s" icon="random" fontSize={fontSize} mb={1} />;
             case Room_Mode_Enum.VideoPlayer:
-                return <FAIcon iconStyle="s" icon="video" fontSize={fontSize} />;
+                return <FAIcon iconStyle="s" icon="video" fontSize={fontSize} mb={1} />;
             case Room_Mode_Enum.Zoom:
-                return <FAIcon iconStyle="s" icon="headset" fontSize={fontSize} />;
+                return <FAIcon iconStyle="s" icon="headset" fontSize={fontSize} mb={1} />;
         }
     })();
 

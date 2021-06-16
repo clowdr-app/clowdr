@@ -368,6 +368,12 @@ export default function SearchPanel(): JSX.Element {
                                             ) : undefined}
                                             {event.item ? (
                                                 <TagList pl={4} tags={event.item.itemTags} noClick />
+                                            ) : event.exhibition ? (
+                                                <TagList
+                                                    pl={4}
+                                                    tags={R.flatten(event.exhibition.items.map((x) => x.item.itemTags))}
+                                                    noClick
+                                                />
                                             ) : undefined}
                                             {/* {event.item ? (
                                                 <ExhibitionNameList exhibitions={event.item.itemExhibitions} noClick />

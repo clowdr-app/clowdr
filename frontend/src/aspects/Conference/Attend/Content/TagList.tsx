@@ -1,4 +1,5 @@
 import { HStack, StackProps } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { ItemTagDataFragment } from "../../../../generated/graphql";
 import { useScheduleModal } from "../Schedule/ProgramModal";
@@ -10,9 +11,14 @@ export default function TagList({
     withBorder,
     ...props
 }: { tags: readonly ItemTagDataFragment[]; noClick?: boolean; withBorder?: boolean } & StackProps): JSX.Element {
-    const sortedTags = useMemo(() => [...tags].filter((x) => !!x.tag).sort((x, y) => x.tag.priority - y.tag.priority), [
-        tags,
-    ]);
+    const sortedTags = useMemo(
+        () =>
+            R.uniqBy(
+                (x) => x.tag.id,
+                [...tags].filter((x) => !!x.tag)
+            ).sort((x, y) => x.tag.priority - y.tag.priority),
+        [tags]
+    );
     const { onOpen } = useScheduleModal();
     return (
         <HStack flexWrap="wrap" w="100%" {...props}>

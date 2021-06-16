@@ -36581,7 +36581,7 @@ export type RoomWithParticipantInfoFragment = { readonly __typename?: 'room_Room
   )>, readonly originatingData?: Maybe<(
     { readonly __typename?: 'conference_OriginatingData' }
     & OriginatingDataInfoFragment
-  )> };
+  )>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> };
 
 export type SelectAllRoomsWithParticipantsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -36643,13 +36643,18 @@ export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
   priority: Scalars['Int'];
   managementModeName: Room_ManagementMode_Enum;
   originatingItemId?: Maybe<Scalars['uuid']>;
+  chatId: Scalars['uuid'];
+  enableMandatoryPin: Scalars['Boolean'];
+  enableAutoPin: Scalars['Boolean'];
+  enableMandatorySubscribe: Scalars['Boolean'];
+  enableAutoSubscribe: Scalars['Boolean'];
 }>;
 
 
 export type UpdateRoomsWithParticipantsMutation = { readonly __typename?: 'mutation_root', readonly update_room_Room_by_pk?: Maybe<(
     { readonly __typename?: 'room_Room' }
     & RoomWithParticipantInfoFragment
-  )> };
+  )>, readonly update_chat_Chat?: Maybe<{ readonly __typename?: 'chat_Chat_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableAutoPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoSubscribe: boolean }> }> };
 
 export type InsertRoomPeopleMutationVariables = Exact<{
   people: ReadonlyArray<Room_RoomPerson_Insert_Input> | Room_RoomPerson_Insert_Input;
@@ -38820,6 +38825,13 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
   }
   originatingData {
     ...OriginatingDataInfo
+  }
+  chat {
+    id
+    enableMandatoryPin
+    enableMandatorySubscribe
+    enableAutoPin
+    enableAutoSubscribe
   }
 }
     ${RoomParticipantWithRegistrantInfoFragmentDoc}
@@ -46301,12 +46313,24 @@ export type CreateRoomMutationHookResult = ReturnType<typeof useCreateRoomMutati
 export type CreateRoomMutationResult = Apollo.MutationResult<CreateRoomMutation>;
 export type CreateRoomMutationOptions = Apollo.BaseMutationOptions<CreateRoomMutation, CreateRoomMutationVariables>;
 export const UpdateRoomsWithParticipantsDocument = gql`
-    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int, $priority: Int!, $managementModeName: room_ManagementMode_enum!, $originatingItemId: uuid) {
+    mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int, $priority: Int!, $managementModeName: room_ManagementMode_enum!, $originatingItemId: uuid, $chatId: uuid!, $enableMandatoryPin: Boolean!, $enableAutoPin: Boolean!, $enableMandatorySubscribe: Boolean!, $enableAutoSubscribe: Boolean!) {
   update_room_Room_by_pk(
     pk_columns: {id: $id}
     _set: {name: $name, capacity: $capacity, priority: $priority, managementModeName: $managementModeName, originatingItemId: $originatingItemId}
   ) {
     ...RoomWithParticipantInfo
+  }
+  update_chat_Chat(
+    where: {id: {_eq: $chatId}}
+    _set: {enableMandatoryPin: $enableMandatoryPin, enableAutoPin: $enableAutoPin, enableMandatorySubscribe: $enableMandatorySubscribe, enableAutoSubscribe: $enableAutoSubscribe}
+  ) {
+    returning {
+      id
+      enableMandatoryPin
+      enableAutoPin
+      enableMandatorySubscribe
+      enableAutoSubscribe
+    }
   }
 }
     ${RoomWithParticipantInfoFragmentDoc}`;
@@ -46331,6 +46355,11 @@ export type UpdateRoomsWithParticipantsMutationFn = Apollo.MutationFunction<Upda
  *      priority: // value for 'priority'
  *      managementModeName: // value for 'managementModeName'
  *      originatingItemId: // value for 'originatingItemId'
+ *      chatId: // value for 'chatId'
+ *      enableMandatoryPin: // value for 'enableMandatoryPin'
+ *      enableAutoPin: // value for 'enableAutoPin'
+ *      enableMandatorySubscribe: // value for 'enableMandatorySubscribe'
+ *      enableAutoSubscribe: // value for 'enableAutoSubscribe'
  *   },
  * });
  */

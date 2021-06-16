@@ -9,6 +9,8 @@ import {
     Button,
     ButtonGroup,
     Center,
+    chakra,
+    Checkbox,
     Code,
     Drawer,
     DrawerBody,
@@ -105,6 +107,13 @@ gql`
         originatingData {
             ...OriginatingDataInfo
         }
+        chat {
+            id
+            enableMandatoryPin
+            enableMandatorySubscribe
+            enableAutoPin
+            enableAutoSubscribe
+        }
     }
 
     query SelectAllRoomsWithParticipants($conferenceId: uuid!) {
@@ -163,6 +172,11 @@ gql`
         $priority: Int!
         $managementModeName: room_ManagementMode_enum!
         $originatingItemId: uuid
+        $chatId: uuid!
+        $enableMandatoryPin: Boolean!
+        $enableAutoPin: Boolean!
+        $enableMandatorySubscribe: Boolean!
+        $enableAutoSubscribe: Boolean!
     ) {
         update_room_Room_by_pk(
             pk_columns: { id: $id }
@@ -175,6 +189,23 @@ gql`
             }
         ) {
             ...RoomWithParticipantInfo
+        }
+        update_chat_Chat(
+            where: { id: { _eq: $chatId } }
+            _set: {
+                enableMandatoryPin: $enableMandatoryPin
+                enableAutoPin: $enableAutoPin
+                enableMandatorySubscribe: $enableMandatorySubscribe
+                enableAutoSubscribe: $enableAutoSubscribe
+            }
+        ) {
+            returning {
+                id
+                enableMandatoryPin
+                enableAutoPin
+                enableMandatorySubscribe
+                enableAutoSubscribe
+            }
         }
     }
 
@@ -419,9 +450,14 @@ function EditableRoomsCRUDTable() {
             conferenceId: conference.id,
         },
     });
-    const data = useMemo(() => [...(selectAllRoomsResult.data?.room_Room ?? [])], [
-        selectAllRoomsResult.data?.room_Room,
-    ]);
+    const data = useMemo(
+        () =>
+            (selectAllRoomsResult.data?.room_Room ?? []).map((x) => ({
+                ...x,
+                chat: x.chat ? { ...x.chat } : undefined,
+            })),
+        [selectAllRoomsResult.data?.room_Room]
+    );
 
     const {
         isOpen: isSecondaryPanelOpen,
@@ -748,6 +784,209 @@ function EditableRoomsCRUDTable() {
                     );
                 },
             },
+            {
+                id: "auto-pin",
+                header: function AutoPinHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <>
+                                <chakra.span fontSize="80%" textAlign="center">
+                                    Chat
+                                </chakra.span>
+                                <Button size="xs" onClick={props.onClick} h="auto" py={1}>
+                                    Auto
+                                    <br />
+                                    pin?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                                </Button>
+                            </>
+                        );
+                    }
+                },
+                get: (data) => (data.chat && !data.chat.enableMandatoryPin ? data.chat.enableAutoPin : undefined),
+                set: (data, value: boolean) => {
+                    if (data.chat) {
+                        data.chat.enableAutoPin = value;
+                    }
+                },
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => !!row.chat?.enableAutoPin === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function AutoPinCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>, boolean>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else if (props.value !== undefined) {
+                        return (
+                            <Center>
+                                <Checkbox
+                                    isChecked={props.value ?? false}
+                                    onChange={(ev) => props.onChange?.(ev.target.checked)}
+                                    onBlur={props.onBlur}
+                                    ref={props.ref as LegacyRef<HTMLInputElement>}
+                                />
+                            </Center>
+                        );
+                    } else {
+                        return <div></div>;
+                    }
+                },
+            },
+            {
+                id: "mandatory-pin",
+                header: function MandatoryPinHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <>
+                                <chakra.span fontSize="80%" textAlign="center">
+                                    Chat
+                                </chakra.span>
+                                <Button size="xs" onClick={props.onClick} h="auto" py={1}>
+                                    Mandatory
+                                    <br />
+                                    pin?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                                </Button>
+                            </>
+                        );
+                    }
+                },
+                get: (data) => data.chat && data.chat.enableMandatoryPin,
+                set: (data, value: boolean) => {
+                    if (data.chat) {
+                        data.chat.enableMandatoryPin = value;
+                    }
+                },
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => !!row.chat?.enableMandatoryPin === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function MandatoryPinCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>, boolean>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else if (props.value !== undefined) {
+                        return (
+                            <Center>
+                                <Checkbox
+                                    isChecked={props.value ?? false}
+                                    onChange={(ev) => props.onChange?.(ev.target.checked)}
+                                    onBlur={props.onBlur}
+                                    ref={props.ref as LegacyRef<HTMLInputElement>}
+                                />
+                            </Center>
+                        );
+                    } else {
+                        return <div></div>;
+                    }
+                },
+            },
+            {
+                id: "auto-subscribe",
+                header: function AutoSubscribeHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <>
+                                <chakra.span fontSize="80%" textAlign="center">
+                                    Chat
+                                </chakra.span>
+                                <Button size="xs" onClick={props.onClick} h="auto" py={1}>
+                                    Auto
+                                    <br />
+                                    subscribe?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                                </Button>
+                            </>
+                        );
+                    }
+                },
+                get: (data) =>
+                    data.chat && !data.chat.enableMandatorySubscribe ? data.chat.enableAutoSubscribe : undefined,
+                set: (data, value: boolean) => {
+                    if (data.chat) {
+                        data.chat.enableAutoSubscribe = value;
+                    }
+                },
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => !!row.chat?.enableAutoSubscribe === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function AutoSubscribeCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>, boolean>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else if (props.value !== undefined) {
+                        return (
+                            <Center>
+                                <Checkbox
+                                    isChecked={props.value ?? false}
+                                    onChange={(ev) => props.onChange?.(ev.target.checked)}
+                                    onBlur={props.onBlur}
+                                    ref={props.ref as LegacyRef<HTMLInputElement>}
+                                />
+                            </Center>
+                        );
+                    } else {
+                        return <div></div>;
+                    }
+                },
+            },
+            {
+                id: "mandatory-subscribe",
+                header: function MandatorySubscribeHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <>
+                                <chakra.span fontSize="80%" textAlign="center">
+                                    Chat
+                                </chakra.span>
+                                <Button size="xs" onClick={props.onClick} h="auto" py={1}>
+                                    Mandatory
+                                    <br />
+                                    subscribe?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                                </Button>
+                            </>
+                        );
+                    }
+                },
+                get: (data) => data.chat && data.chat.enableMandatorySubscribe,
+                set: (data, value: boolean) => {
+                    if (data.chat) {
+                        data.chat.enableMandatorySubscribe = value;
+                    }
+                },
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RoomWithParticipantInfoFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => !!row.chat?.enableMandatorySubscribe === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function MandatorySubscribeCell(
+                    props: CellProps<Partial<RoomWithParticipantInfoFragment>, boolean>
+                ) {
+                    if (props.isInCreate) {
+                        return undefined;
+                    } else if (props.value !== undefined) {
+                        return (
+                            <Center>
+                                <Checkbox
+                                    isChecked={props.value ?? false}
+                                    onChange={(ev) => props.onChange?.(ev.target.checked)}
+                                    onBlur={props.onBlur}
+                                    ref={props.ref as LegacyRef<HTMLInputElement>}
+                                />
+                            </Center>
+                        );
+                    } else {
+                        return <div></div>;
+                    }
+                },
+            },
         ],
         [items, itemOptions]
     );
@@ -826,6 +1065,11 @@ function EditableRoomsCRUDTable() {
                                 capacity: record.capacity,
                                 managementModeName: record.managementModeName,
                                 originatingItemId: record.originatingItemId,
+                                chatId: record.chat?.id ?? "00000000-00000000-00000000-00000000",
+                                enableMandatoryPin: !!record.chat?.enableMandatoryPin,
+                                enableAutoPin: !!record.chat?.enableAutoPin,
+                                enableMandatorySubscribe: !!record.chat?.enableMandatorySubscribe,
+                                enableAutoSubscribe: !!record.chat?.enableAutoSubscribe,
                             },
                             optimisticResponse: {
                                 update_room_Room_by_pk: record,

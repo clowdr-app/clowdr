@@ -511,13 +511,8 @@ export function ScheduleInner({
     ]);
     const timeBarWidth = 50;
     const roomColWidth = Math.min(
-        500,
-        Math.max(
-            150,
-            (window.innerWidth >= 1280 ? window.innerWidth * 0.6 : window.innerWidth) / maxParallelRooms -
-                timeBarWidth -
-                70
-        )
+        800,
+        Math.max(250, ((window.innerWidth >= 1152 ? 1152 : window.innerWidth) - timeBarWidth - 100) / maxParallelRooms)
     );
 
     const frameEls = useMemo(() => {

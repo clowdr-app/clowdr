@@ -34786,7 +34786,13 @@ export type SelectExhibitionQuery = { readonly __typename?: 'query_root', readon
     & ItemEventFragment
   )> };
 
-export type ExhibitionSummaryFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
+export type ExhibitionSummaryFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<(
+        { readonly __typename?: 'content_ItemProgramPerson' }
+        & ProgramPersonDataFragment
+      )>, readonly itemTags: ReadonlyArray<(
+        { readonly __typename?: 'content_ItemTag' }
+        & ItemTagDataFragment
+      )> } }> };
 
 export type SelectAllExhibitionsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -35234,7 +35240,10 @@ export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root'
     & Schedule_TagFragment
   )> };
 
-export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }>, readonly itemTags: ReadonlyArray<(
+export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ProgramPersonDataFragment
+  )>, readonly itemTags: ReadonlyArray<(
     { readonly __typename?: 'content_ItemTag' }
     & ItemTagDataFragment
   )> };
@@ -35250,7 +35259,10 @@ export type SearchPanel_ItemsQuery = { readonly __typename?: 'query_root', reado
     & SearchPanel_ItemFragment
   )> };
 
-export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<(
+export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: (
+        { readonly __typename?: 'content_Item' }
+        & SearchPanel_ItemFragment
+      ) }> }>, readonly item?: Maybe<(
     { readonly __typename?: 'content_Item' }
     & SearchPanel_ItemFragment
   )>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
@@ -37639,8 +37651,20 @@ export const ExhibitionSummaryFragmentDoc = gql`
   name
   colour
   priority
+  items {
+    id
+    item {
+      itemPeople {
+        ...ProgramPersonData
+      }
+      itemTags {
+        ...ItemTagData
+      }
+    }
+  }
 }
-    `;
+    ${ProgramPersonDataFragmentDoc}
+${ItemTagDataFragmentDoc}`;
 export const ItemExhibitionDataFragmentDoc = gql`
     fragment ItemExhibitionData on content_ItemExhibition {
   id
@@ -38147,19 +38171,15 @@ export const SearchPanel_ItemFragmentDoc = gql`
     fragment SearchPanel_Item on content_Item {
   id
   title
-  itemPeople(order_by: {priority: asc}) {
-    id
-    person {
-      id
-      name
-      affiliation
-    }
+  itemPeople {
+    ...ProgramPersonData
   }
   itemTags {
     ...ItemTagData
   }
 }
-    ${ItemTagDataFragmentDoc}`;
+    ${ProgramPersonDataFragmentDoc}
+${ItemTagDataFragmentDoc}`;
 export const SearchPanel_EventFragmentDoc = gql`
     fragment SearchPanel_Event on schedule_Event {
   id
@@ -38168,6 +38188,12 @@ export const SearchPanel_EventFragmentDoc = gql`
   exhibition {
     id
     name
+    items {
+      id
+      item {
+        ...SearchPanel_Item
+      }
+    }
   }
   intendedRoomModeName
   item {

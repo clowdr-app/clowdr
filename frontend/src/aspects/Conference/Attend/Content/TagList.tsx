@@ -7,8 +7,9 @@ import { TagButton } from "./ItemList";
 export default function TagList({
     tags,
     noClick,
+    withBorder,
     ...props
-}: { tags: readonly ItemTagDataFragment[]; noClick?: boolean } & StackProps): JSX.Element {
+}: { tags: readonly ItemTagDataFragment[]; noClick?: boolean; withBorder?: boolean } & StackProps): JSX.Element {
     const sortedTags = useMemo(() => [...tags].filter((x) => !!x.tag).sort((x, y) => x.tag.priority - y.tag.priority), [
         tags,
     ]);
@@ -28,6 +29,7 @@ export default function TagList({
                             : undefined
                     }
                     notExpander
+                    withBorder={withBorder}
                 />
             ))}
         </HStack>

@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import {
     Button,
+    chakra,
     Divider,
     Flex,
     FormControl,
@@ -20,6 +21,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
+import * as R from "ramda";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
 import {
@@ -31,6 +33,7 @@ import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRestorableState } from "../../../Generic/useRestorableState";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
+import { PlainAuthorsList } from "../Content/AuthorList";
 // import ExhibitionNameList from "../Content/ExhibitionNameList";
 import TagList from "../Content/TagList";
 import { EventModeIcon } from "../Rooms/V2/EventHighlight";
@@ -39,13 +42,8 @@ gql`
     fragment SearchPanel_Item on content_Item {
         id
         title
-        itemPeople(order_by: { priority: asc }) {
-            id
-            person {
-                id
-                name
-                affiliation
-            }
+        itemPeople {
+            ...ProgramPersonData
         }
         itemTags {
             ...ItemTagData
@@ -82,6 +80,12 @@ gql`
         exhibition {
             id
             name
+            items {
+                id
+                item {
+                    ...SearchPanel_Item
+                }
+            }
         }
         intendedRoomModeName
         item {
@@ -328,18 +332,40 @@ export default function SearchPanel(): JSX.Element {
                                         <VStack w="100%" justifyContent="flex-start" alignItems="flex-start">
                                             <Text whiteSpace="normal" fontSize="sm">
                                                 Starts {format(new Date(event.startTime), "d MMMM HH:mm")}
+                                                <chakra.span ml={5} fontSize="xs">
+                                                    {event.endTime &&
+                                                        `Ends ${format(new Date(event.endTime), "HH:mm")}`}
+                                                </chakra.span>
                                             </Text>
-                                            <Text whiteSpace="normal" fontSize="xs">
-                                                {event.endTime &&
-                                                    `Ends ${format(new Date(event.endTime), "d MMMM HH:mm")}`}
-                                            </Text>
-                                            <Text whiteSpace="normal" pl={4}>
+                                            <Text whiteSpace="normal" pl={4} fontWeight="bold">
                                                 {event.name}
-                                                {event.item ? `: ${event.item.title}` : ""}
+                                                {event.item &&
+                                                event.item.title.trim().toLowerCase() !==
+                                                    event.name.trim().toLowerCase()
+                                                    ? `: ${event.item.title}`
+                                                    : ""}
+                                                {!event.item &&
+                                                event.exhibition &&
+                                                event.exhibition.name.trim().toLowerCase() !==
+                                                    event.name.trim().toLowerCase()
+                                                    ? `: ${event.exhibition.name}`
+                                                    : undefined}
                                             </Text>
                                             <Text whiteSpace="normal" pl={4} fontSize="sm">
                                                 In {event.room ? event.room.name : "a private room"}
                                             </Text>
+                                            {event.item ? (
+                                                <PlainAuthorsList pl={4} fontSize="sm" people={event.item.itemPeople} />
+                                            ) : event.exhibition ? (
+                                                <PlainAuthorsList
+                                                    pl={4}
+                                                    fontSize="sm"
+                                                    people={R.flatten(
+                                                        event.exhibition.items.map((x) => x.item.itemPeople)
+                                                    )}
+                                                    sortByNameOnly
+                                                />
+                                            ) : undefined}
                                             {event.item ? (
                                                 <TagList pl={4} tags={event.item.itemTags} noClick />
                                             ) : undefined}

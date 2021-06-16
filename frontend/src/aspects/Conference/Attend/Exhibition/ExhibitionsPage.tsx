@@ -1,13 +1,31 @@
 import { gql } from "@apollo/client";
-import { Grid, GridItem, Heading, Spinner, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import {
+    Grid,
+    GridItem,
+    Heading,
+    HStack,
+    Spinner,
+    Text,
+    useColorMode,
+    useColorModeValue,
+    useToken,
+    VStack,
+} from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
-import { ExhibitionSummaryFragment, useSelectAllExhibitionsQuery } from "../../../../generated/graphql";
+import {
+    ExhibitionSummaryFragment,
+    ItemTagDataFragment,
+    useSelectAllExhibitionsQuery,
+} from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageCountText from "../../../Realtime/PageCountText";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
+import { PlainAuthorsList } from "../Content/AuthorList";
+import TagList from "../Content/TagList";
 
 gql`
     fragment ExhibitionSummary on collection_Exhibition {
@@ -15,6 +33,17 @@ gql`
         name
         colour
         priority
+        items {
+            id
+            item {
+                itemPeople {
+                    ...ProgramPersonData
+                }
+                itemTags {
+                    ...ItemTagData
+                }
+            }
+        }
     }
 
     query SelectAllExhibitions($conferenceId: uuid!) {
@@ -54,6 +83,17 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
     const textColour_Active = bgColour_Active_IsDark ? "white" : "black";
 
     const shadow = useColorModeValue("md", "light-md");
+
+    const allAuthors = useMemo(() => R.flatten(exhibition.items.map((x) => x.item.itemPeople)), [exhibition.items]);
+    const allTags = useMemo<ItemTagDataFragment[]>(
+        () =>
+            R.sortWith(
+                [(x, y) => x.tag.priority - y.tag.priority, (x, y) => x.tag.name.localeCompare(y.tag.name)],
+                R.uniqBy((x) => x.tag.id, R.flatten(exhibition.items.map((x) => x.item.itemTags)))
+            ),
+        [exhibition.items]
+    );
+
     return (
         <GridItem>
             <LinkButton
@@ -61,7 +101,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
                 w="100%"
                 h="auto"
                 minH="100%"
-                py={8}
+                p={4}
                 linkProps={{
                     w: "100%",
                     h: "auto",
@@ -101,11 +141,16 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
                     background: "none",
                     color: "inherit",
                 }}
+                as={VStack}
             >
-                <Text whiteSpace="normal" px={5}>
-                    {exhibition.name}
-                </Text>
-                <PageCountText path={`/conference/${conference.slug}/exhibition/${exhibition.id}`} />
+                <TagList tags={allTags} noClick mb={2} withBorder />
+                <HStack w="100%" justifyContent="flex-start" alignItems="center">
+                    <Text whiteSpace="normal" mr="auto" fontWeight="bold">
+                        {exhibition.name}
+                    </Text>
+                    <PageCountText path={`/conference/${conference.slug}/exhibition/${exhibition.id}`} />
+                </HStack>
+                <PlainAuthorsList people={allAuthors} fontSize="sm" sortByNameOnly />
             </LinkButton>
         </GridItem>
     );
@@ -126,7 +171,13 @@ export function ExhibitionsGrid(): JSX.Element {
                 : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
         [exhibitionsResponse.data, exhibitionsResponse.loading]
     );
-    const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);
+    const sortedExhibitions = useMemo(
+        () =>
+            exhibitions
+                ? R.sortWith([(x, y) => x.priority - y.priority, (x, y) => x.name.localeCompare(y.name)], exhibitions)
+                : undefined,
+        [exhibitions]
+    );
 
     return sortedExhibitions ? (
         <Grid

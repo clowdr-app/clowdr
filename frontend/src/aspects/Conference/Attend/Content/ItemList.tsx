@@ -76,11 +76,13 @@ export function TagButton({
     isExpanded,
     setOpenId,
     notExpander,
+    withBorder,
 }: {
     tag: ItemList_TagInfoFragment;
     isExpanded: boolean;
     setOpenId?: (id: string | null) => void;
     notExpander?: boolean;
+    withBorder?: boolean;
 }): JSX.Element {
     const colour = tag.colour.replace(/\s/g, "").endsWith("0)") ? undefined : tag.colour;
     const defaultCollapsedBgColour = useColorModeValue("blue.200", "blue.700");
@@ -150,8 +152,8 @@ export function TagButton({
             margin={0}
             color={(isExpanded && isExpandedDark) || (!isExpanded && isDark) ? "white" : "black"}
             height="auto"
-            borderWidth={2}
-            borderColor={isExpanded ? expandedBgColour : collapsedBgColour}
+            borderWidth={withBorder && !isExpanded ? 1 : 2}
+            borderColor={withBorder || isExpanded ? expandedBgColour : collapsedBgColour}
             backgroundColor={isExpanded ? expandedBgColour : collapsedBgColour}
         >
             <Center m={0} p={0}>

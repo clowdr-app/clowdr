@@ -1,8 +1,10 @@
 import { gql } from "@apollo/client";
-import { Badge, Button, HStack, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import { Badge, Button, HStack, Text, TextProps, useDisclosure, VStack } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { ProgramPersonDataFragment, RegistrantDataFragment } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
+import { maybeCompare } from "../../../Utils/maybeSort";
 import { useRegistrant } from "../../RegistrantsContext";
 import ProfileModal from "../Registrant/ProfileModal";
 
@@ -261,5 +263,46 @@ export function AuthorInner({
                 />
             ) : undefined}
         </VStack>
+    );
+}
+
+export function PlainAuthorsList({
+    people,
+    sortByNameOnly,
+    ...props
+}: { people: readonly ProgramPersonDataFragment[]; sortByNameOnly?: boolean } & TextProps): JSX.Element {
+    return (
+        <Text w="100%" whiteSpace="normal" {...props}>
+            {R.intersperse(
+                ", ",
+                R.sortWith<ProgramPersonDataFragment>(
+                    sortByNameOnly
+                        ? [
+                              (x, y) =>
+                                  x.roleName === "CHAIR"
+                                      ? y.roleName === "CHAIR"
+                                          ? 0
+                                          : 1
+                                      : y.roleName === "CHAIR"
+                                      ? -1
+                                      : x.roleName.localeCompare(y.roleName),
+                              (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
+                              (x, y) => x.person.name.localeCompare(y.person.name),
+                          ]
+                        : [
+                              (x, y) =>
+                                  x.roleName === "CHAIR"
+                                      ? y.roleName === "CHAIR"
+                                          ? 0
+                                          : 1
+                                      : y.roleName === "CHAIR"
+                                      ? -1
+                                      : x.roleName.localeCompare(y.roleName),
+                              (x, y) => x.person.name.localeCompare(y.person.name),
+                          ],
+                    R.uniqBy((x) => x.person.id, people)
+                ).map((x) => x.person.name)
+            ).reduce((acc, x) => acc + x, "")}
+        </Text>
     );
 }

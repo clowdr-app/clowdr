@@ -7,6 +7,7 @@ import {
     Button,
     Center,
     HStack,
+    keyframes,
     Spinner,
     Text,
     useColorModeValue,
@@ -31,6 +32,7 @@ import {
     useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
+import { defaultOutline_AsBoxShadow } from "../../../Chakra/ChakraCustomProvider";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
@@ -816,6 +818,19 @@ function RoomInner({
         hlsUri,
     ]);
 
+    const zoomButtonBgKeyframes = keyframes`
+0% {
+    background-position: 0% 100%;
+}
+50% {
+    background-position: 100% 0%;
+}
+100% {
+    background-position: 0% 100%;
+}
+    `;
+    const shadow = useColorModeValue("lg", "light-md");
+
     return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (
         <Redirect
             to={`/conference/${conference.slug}/shuffle${
@@ -839,12 +854,46 @@ function RoomInner({
                             <ExternalLinkButton
                                 to={maybeZoomUrl.url}
                                 isExternal={true}
+                                mt={20}
+                                mb={4}
+                                mx={2}
+                                p={8}
+                                linkProps={{
+                                    textAlign: "center",
+                                    minH: "18em",
+                                }}
+                                whiteSpace="normal"
+                                h="auto"
+                                lineHeight="150%"
+                                fontSize="1.5em"
                                 colorScheme="purple"
-                                size="lg"
-                                w="100%"
-                                mt={4}
+                                color="white"
+                                borderRadius="2xl"
+                                shadow={shadow}
+                                animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}
+                                transition="none"
+                                background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
+                                backgroundSize="400% 400%"
+                                _hover={{
+                                    background:
+                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
+                                    backgroundSize: "400% 400%",
+                                }}
+                                _focus={{
+                                    background:
+                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
+                                    backgroundSize: "400% 400%",
+                                    boxShadow: defaultOutline_AsBoxShadow,
+                                }}
+                                _active={{
+                                    background:
+                                        "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
+                                    backgroundSize: "400% 400%",
+                                }}
                             >
-                                Go to {maybeZoomUrl.name}
+                                <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
+                                Click to join {maybeZoomUrl.name}
+                                <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
                             </ExternalLinkButton>
                         ) : maybeZoomUrl &&
                           nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom &&
@@ -852,13 +901,48 @@ function RoomInner({
                             <ExternalLinkButton
                                 to={maybeZoomUrl.url}
                                 isExternal={true}
+                                mt={20}
+                                mb={4}
+                                mx={2}
+                                p={8}
+                                linkProps={{
+                                    textAlign: "center",
+                                    minH: "30em",
+                                }}
+                                whiteSpace="normal"
+                                h="auto"
+                                lineHeight="150%"
+                                fontSize="1.5em"
                                 colorScheme="purple"
-                                size="lg"
-                                w="100%"
-                                mt={4}
+                                color="white"
+                                borderRadius="2xl"
+                                shadow={shadow}
+                                animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}
+                                transition="none"
+                                background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
+                                backgroundSize="400% 400%"
+                                _hover={{
+                                    background:
+                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
+                                    backgroundSize: "400% 400%",
+                                }}
+                                _focus={{
+                                    background:
+                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
+                                    backgroundSize: "400% 400%",
+                                    boxShadow: defaultOutline_AsBoxShadow,
+                                }}
+                                _active={{
+                                    background:
+                                        "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
+                                    backgroundSize: "400% 400%",
+                                }}
                             >
-                                Coming up: Go to {maybeZoomUrl.name} (starts{" "}
-                                {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)})
+                                <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
+                                Starting {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}
+                                <br />
+                                Click to join {maybeZoomUrl.name}
+                                <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
                             </ExternalLinkButton>
                         ) : undefined}
                     </>

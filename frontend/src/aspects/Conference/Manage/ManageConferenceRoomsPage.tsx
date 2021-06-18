@@ -565,55 +565,55 @@ function EditableRoomsCRUDTable() {
                     }
                 },
             },
-            {
-                id: "capacity",
-                header: function CapacityHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
-                    return props.isInCreate ? (
-                        <FormLabel>Capacity</FormLabel>
-                    ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Capacity{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
-                        </Button>
-                    );
-                },
-                get: (data) => data.capacity,
-                set: (record, value: number) => {
-                    record.capacity = value;
-                },
-                sort: (x: number, y: number) => x - y,
-                filterFn: (
-                    rows: Array<RoomWithParticipantInfoFragment>,
-                    filterValue: { min?: number; max?: number }
-                ) => {
-                    return rows.filter(
-                        (row) =>
-                            (filterValue.min === undefined && filterValue.max === undefined) ||
-                            (row.capacity &&
-                                (filterValue.min === undefined || filterValue.min <= row.capacity) &&
-                                (filterValue.max === undefined || filterValue.max >= row.capacity))
-                    );
-                },
-                filterEl: NumberRangeColumnFilter(0, 3000),
-                cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
-                    return (
-                        <NumberInput
-                            border="1px solid"
-                            borderColor="rgba(255, 255, 255, 0.16)"
-                            value={props.value ?? 3000}
-                            min={0}
-                            max={3000}
-                            onChange={(vStr, v) => props.onChange?.(vStr === "" ? undefined : v)}
-                            onBlur={props.onBlur}
-                        >
-                            <NumberInputField ref={props.ref as LegacyRef<HTMLInputElement>} />
-                            <NumberInputStepper>
-                                <NumberIncrementStepper aria-label="Increment" />
-                                <NumberDecrementStepper aria-label="Decrement" />
-                            </NumberInputStepper>
-                        </NumberInput>
-                    );
-                },
-            },
+            // {
+            //     id: "capacity",
+            //     header: function CapacityHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
+            //         return props.isInCreate ? (
+            //             <FormLabel>Capacity</FormLabel>
+            //         ) : (
+            //             <Button size="xs" onClick={props.onClick}>
+            //                 Capacity{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+            //             </Button>
+            //         );
+            //     },
+            //     get: (data) => data.capacity,
+            //     set: (record, value: number) => {
+            //         record.capacity = value;
+            //     },
+            //     sort: (x: number, y: number) => x - y,
+            //     filterFn: (
+            //         rows: Array<RoomWithParticipantInfoFragment>,
+            //         filterValue: { min?: number; max?: number }
+            //     ) => {
+            //         return rows.filter(
+            //             (row) =>
+            //                 (filterValue.min === undefined && filterValue.max === undefined) ||
+            //                 (row.capacity &&
+            //                     (filterValue.min === undefined || filterValue.min <= row.capacity) &&
+            //                     (filterValue.max === undefined || filterValue.max >= row.capacity))
+            //         );
+            //     },
+            //     filterEl: NumberRangeColumnFilter(0, 3000),
+            //     cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
+            //         return (
+            //             <NumberInput
+            //                 border="1px solid"
+            //                 borderColor="rgba(255, 255, 255, 0.16)"
+            //                 value={props.value ?? 3000}
+            //                 min={0}
+            //                 max={3000}
+            //                 onChange={(vStr, v) => props.onChange?.(vStr === "" ? undefined : v)}
+            //                 onBlur={props.onBlur}
+            //             >
+            //                 <NumberInputField ref={props.ref as LegacyRef<HTMLInputElement>} />
+            //                 <NumberInputStepper>
+            //                     <NumberIncrementStepper aria-label="Increment" />
+            //                     <NumberDecrementStepper aria-label="Decrement" />
+            //                 </NumberInputStepper>
+            //             </NumberInput>
+            //         );
+            //     },
+            // },
             {
                 id: "priority",
                 header: function PriorityHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {

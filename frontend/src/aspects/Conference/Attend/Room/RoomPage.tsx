@@ -48,6 +48,7 @@ gql`
             startedAt
             durationMinutes
             reshuffleUponEnd
+            shufflePeriodId
         }
         backendName
     }

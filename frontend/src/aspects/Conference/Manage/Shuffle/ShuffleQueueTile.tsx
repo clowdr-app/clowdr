@@ -5,6 +5,13 @@ import {
     ButtonGroup,
     Flex,
     Heading,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
     Table,
     Tbody,
     Td,
@@ -14,6 +21,7 @@ import {
     Tooltip,
     Tr,
     useColorModeValue,
+    useDisclosure,
     useToast,
     VStack,
 } from "@chakra-ui/react";
@@ -28,6 +36,7 @@ import {
 } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
+import ContinuationsEditor from "../Schedule/ContinuationsEditor";
 import ConfigureQueueModal from "./ConfigureQueueModal";
 
 gql`
@@ -37,6 +46,31 @@ gql`
         }
     }
 `;
+
+function ShuffleQueue_ContinuationsModal({ queueId }: { queueId: string }): JSX.Element {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    return (
+        <>
+            <Tooltip label="Edit continuations">
+                <Button size="xs" aria-label="Edit continuations" colorScheme="cyan" onClick={onOpen}>
+                    <FAIcon iconStyle="s" icon="running" />
+                </Button>
+            </Tooltip>
+            <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Edit queue continuations</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {isOpen ? <ContinuationsEditor from={{ shufflePeriodId: queueId }} /> : undefined}
+                    </ModalBody>
+                    <ModalFooter></ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    );
+}
 
 export default function ShuffleQueueTile({
     queue,
@@ -142,6 +176,7 @@ export default function ShuffleQueueTile({
                                 <FAIcon iconStyle="s" icon="users" />
                             </Button>
                         </Tooltip> */}
+                        <ShuffleQueue_ContinuationsModal queueId={queue.id} />
                         <ConfigureQueueModal initialQueue={queue} />
                         <Tooltip label="Delete">
                             <Button

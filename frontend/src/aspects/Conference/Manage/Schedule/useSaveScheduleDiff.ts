@@ -151,9 +151,22 @@ gql`
         }
     }
 
-    mutation InsertEvent($newEvent: schedule_Event_insert_input!) {
+    mutation InsertEvent($newEvent: schedule_Event_insert_input!, $newEventId: uuid!, $insertContinuation: Boolean!) {
         insert_schedule_Event_one(object: $newEvent) {
             ...EventInfo
+        }
+        insert_schedule_Continuation_one(
+            object: {
+                colour: "#4471de"
+                defaultFor: "None"
+                description: "Join the discussion room"
+                fromEvent: $newEventId
+                isActiveChoice: false
+                priority: 0
+                to: { type: "AutoDiscussionRoom", id: null }
+            }
+        ) @include(if: $insertContinuation) {
+            id
         }
     }
 
@@ -577,6 +590,13 @@ export function useSaveScheduleDiff():
                                                 })),
                                             },
                                         },
+                                        newEventId: event.id,
+                                        insertContinuation:
+                                            (event.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                                                event.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+                                            event.itemId
+                                                ? true
+                                                : false,
                                     },
                                 })
                             )

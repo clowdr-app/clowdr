@@ -13,7 +13,7 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Schedule_EventSummaryFragment,
     Schedule_HappeningSoonQuery,
@@ -64,9 +64,18 @@ gql`
     }
 `;
 
+export enum ProgramModalTab {
+    Tags = "Tags",
+    HappeningSoon = "HappeningSoon",
+    Exhibitions = "Exhibitions",
+    Sponsors = "Sponsors",
+    Search = "Search",
+    Schedule = "Schedule",
+}
+
 interface ScheduleModalContext {
     isOpen: boolean;
-    onOpen: (tagId?: string, tab?: "Tags" | "Schedule") => void;
+    onOpen: (tagId?: string, tab?: ProgramModalTab, searchTerm?: string) => void;
     onClose: () => void;
     finalFocusRef: React.RefObject<FocusableElement>;
 }
@@ -79,15 +88,6 @@ export function useScheduleModal(): ScheduleModalContext {
         throw new Error("Context not available - are you outside the provider?");
     }
     return ctx;
-}
-
-enum ProgramModalTab {
-    Tags = "Tags",
-    HappeningSoon = "HappeningSoon",
-    Exhibitions = "Exhibitions",
-    Sponsors = "Sponsors",
-    Search = "Search",
-    Schedule = "Schedule",
 }
 
 export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
@@ -107,16 +107,31 @@ export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>
         (s) => (s === "null" ? null : s)
     );
 
+    const changeSearch = useRef<null | ((term: string) => void)>(null);
+
     const doOnOpen = useCallback(
-        (tagId?: string, tab?: "Tags" | "Schedule") => {
+        (tagId?: string, tab?: ProgramModalTab, searchTerm?: string) => {
             onOpen();
+            if (tab) {
+                setSelectedTab(tab);
+            }
             if (tagId) {
-                setSelectedTab(ProgramModalTab.Tags);
                 setSelectedTag(tagId);
-            } else if (tab === "Tags") {
-                setSelectedTab(ProgramModalTab.Tags);
-            } else if (tab === "Schedule") {
-                setSelectedTab(ProgramModalTab.Schedule);
+                if (!tab) {
+                    setSelectedTab(ProgramModalTab.Tags);
+                }
+            }
+            if (searchTerm) {
+                let attempts = 0;
+                const applySearch = () => {
+                    if (changeSearch.current) {
+                        changeSearch.current?.(searchTerm);
+                    } else if (attempts < 3) {
+                        attempts++;
+                        setTimeout(applySearch, 100);
+                    }
+                };
+                applySearch();
             }
         },
         [onOpen, setSelectedTab, setSelectedTag]
@@ -143,6 +158,7 @@ export function ScheduleModalProvider({ children }: React.PropsWithChildren<any>
                 setSelectedTab={setSelectedTab}
                 selectedTagId={selectedTagId}
                 setSelectedTag={setSelectedTag}
+                changeSearch={changeSearch}
             />
         </ScheduleModalContext.Provider>
     );
@@ -156,6 +172,7 @@ export function ScheduleModal({
     setSelectedTab,
     selectedTagId,
     setSelectedTag,
+    changeSearch,
 }: {
     isOpen: boolean;
     onClose: () => void;
@@ -164,6 +181,7 @@ export function ScheduleModal({
     setSelectedTab: (tab: ProgramModalTab) => void;
     selectedTagId: string | null;
     setSelectedTag: (tagId: string | null) => void;
+    changeSearch: MutableRefObject<null | ((term: string) => void)>;
 }): JSX.Element {
     const conference = useConference();
     const closeRef = useRef<HTMLButtonElement | null>(null);
@@ -368,7 +386,7 @@ export function ScheduleModal({
                             </TabPanel>
                             {anySponsors ? <TabPanel>{sponsors}</TabPanel> : undefined}
                             <TabPanel w="100%" h="100%" overflowY="auto">
-                                <SearchPanel />
+                                <SearchPanel changeSearch={changeSearch} />
                             </TabPanel>
                             <TabPanel w="100%" h="100%" display="flex" justifyContent="center">
                                 <ScheduleFetchWrapper />

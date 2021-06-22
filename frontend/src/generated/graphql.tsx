@@ -14407,6 +14407,10 @@ export type Mutation_Root = {
   readonly delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** delete single row from the table: "room.ShuffleRoom" */
   readonly delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** delete data from the table: "schedule.Continuation" */
+  readonly delete_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
+  /** delete single row from the table: "schedule.Continuation" */
+  readonly delete_schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
   /** delete data from the table: "schedule.Event" */
   readonly delete_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
   /** delete data from the table: "schedule.EventProgramPerson" */
@@ -14756,6 +14760,10 @@ export type Mutation_Root = {
   readonly insert_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** insert a single row into the table: "room.ShuffleRoom" */
   readonly insert_room_ShuffleRoom_one?: Maybe<Room_ShuffleRoom>;
+  /** insert data into the table: "schedule.Continuation" */
+  readonly insert_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
+  /** insert a single row into the table: "schedule.Continuation" */
+  readonly insert_schedule_Continuation_one?: Maybe<Schedule_Continuation>;
   /** insert data into the table: "schedule.Event" */
   readonly insert_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
   /** insert data into the table: "schedule.EventProgramPerson" */
@@ -15113,6 +15121,10 @@ export type Mutation_Root = {
   readonly update_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
   /** update single row of the table: "room.ShuffleRoom" */
   readonly update_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** update data of the table: "schedule.Continuation" */
+  readonly update_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
+  /** update single row of the table: "schedule.Continuation" */
+  readonly update_schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
   /** update data of the table: "schedule.Event" */
   readonly update_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
   /** update data of the table: "schedule.EventProgramPerson" */
@@ -16020,6 +16032,18 @@ export type Mutation_RootDelete_Room_ShuffleRoomArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_ContinuationArgs = {
+  where: Schedule_Continuation_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_Continuation_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -17205,6 +17229,20 @@ export type Mutation_RootInsert_Room_ShuffleRoomArgs = {
 export type Mutation_RootInsert_Room_ShuffleRoom_OneArgs = {
   object: Room_ShuffleRoom_Insert_Input;
   on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_ContinuationArgs = {
+  objects: ReadonlyArray<Schedule_Continuation_Insert_Input>;
+  on_conflict?: Maybe<Schedule_Continuation_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_Continuation_OneArgs = {
+  object: Schedule_Continuation_Insert_Input;
+  on_conflict?: Maybe<Schedule_Continuation_On_Conflict>;
 };
 
 
@@ -18677,6 +18715,32 @@ export type Mutation_RootUpdate_Room_ShuffleRoom_By_PkArgs = {
   _inc?: Maybe<Room_ShuffleRoom_Inc_Input>;
   _set?: Maybe<Room_ShuffleRoom_Set_Input>;
   pk_columns: Room_ShuffleRoom_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_ContinuationArgs = {
+  _append?: Maybe<Schedule_Continuation_Append_Input>;
+  _delete_at_path?: Maybe<Schedule_Continuation_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Schedule_Continuation_Delete_Elem_Input>;
+  _delete_key?: Maybe<Schedule_Continuation_Delete_Key_Input>;
+  _inc?: Maybe<Schedule_Continuation_Inc_Input>;
+  _prepend?: Maybe<Schedule_Continuation_Prepend_Input>;
+  _set?: Maybe<Schedule_Continuation_Set_Input>;
+  where: Schedule_Continuation_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_Continuation_By_PkArgs = {
+  _append?: Maybe<Schedule_Continuation_Append_Input>;
+  _delete_at_path?: Maybe<Schedule_Continuation_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Schedule_Continuation_Delete_Elem_Input>;
+  _delete_key?: Maybe<Schedule_Continuation_Delete_Key_Input>;
+  _inc?: Maybe<Schedule_Continuation_Inc_Input>;
+  _prepend?: Maybe<Schedule_Continuation_Prepend_Input>;
+  _set?: Maybe<Schedule_Continuation_Set_Input>;
+  pk_columns: Schedule_Continuation_Pk_Columns_Input;
 };
 
 
@@ -20702,6 +20766,12 @@ export type Query_Root = {
   readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
   /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
   readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** fetch data from the table: "schedule.Continuation" */
+  readonly schedule_Continuation: ReadonlyArray<Schedule_Continuation>;
+  /** fetch aggregated fields from the table: "schedule.Continuation" */
+  readonly schedule_Continuation_aggregate: Schedule_Continuation_Aggregate;
+  /** fetch data from the table: "schedule.Continuation" using primary key columns */
+  readonly schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
   /** fetch data from the table: "schedule.Event" */
   readonly schedule_Event: ReadonlyArray<Schedule_Event>;
   /** fetch data from the table: "schedule.EventProgramPerson" */
@@ -22574,6 +22644,29 @@ export type Query_RootRoom_ShuffleRoom_AggregateArgs = {
 
 export type Query_RootRoom_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+export type Query_RootSchedule_ContinuationArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Continuation_Order_By>>;
+  where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+
+export type Query_RootSchedule_Continuation_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Continuation_Order_By>>;
+  where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+
+export type Query_RootSchedule_Continuation_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -27420,6 +27513,10 @@ export type Room_ShuffleQueueEntry_Variance_Order_By = {
 /** columns and relationships of "room.ShuffleRoom" */
 export type Room_ShuffleRoom = {
   readonly __typename?: 'room_ShuffleRoom';
+  /** An array relationship */
+  readonly continuations: ReadonlyArray<Schedule_Continuation>;
+  /** An aggregate relationship */
+  readonly continuations_aggregate: Schedule_Continuation_Aggregate;
   readonly created_at: Scalars['timestamptz'];
   readonly durationMinutes: Scalars['Int'];
   readonly id: Scalars['bigint'];
@@ -27437,6 +27534,26 @@ export type Room_ShuffleRoom = {
   readonly shufflePeriodId: Scalars['uuid'];
   readonly startedAt: Scalars['timestamptz'];
   readonly updated_at: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "room.ShuffleRoom" */
+export type Room_ShuffleRoomContinuationsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Continuation_Order_By>>;
+  where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.ShuffleRoom" */
+export type Room_ShuffleRoomContinuations_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Continuation_Order_By>>;
+  where?: Maybe<Schedule_Continuation_Bool_Exp>;
 };
 
 
@@ -27529,6 +27646,7 @@ export type Room_ShuffleRoom_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Room_ShuffleRoom_Bool_Exp>>;
   readonly _not?: Maybe<Room_ShuffleRoom_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Room_ShuffleRoom_Bool_Exp>>;
+  readonly continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly durationMinutes?: Maybe<Int_Comparison_Exp>;
   readonly id?: Maybe<Bigint_Comparison_Exp>;
@@ -27557,6 +27675,7 @@ export type Room_ShuffleRoom_Inc_Input = {
 
 /** input type for inserting data into table "room.ShuffleRoom" */
 export type Room_ShuffleRoom_Insert_Input = {
+  readonly continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly durationMinutes?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['bigint']>;
@@ -27642,6 +27761,7 @@ export type Room_ShuffleRoom_On_Conflict = {
 
 /** Ordering options when selecting data from "room.ShuffleRoom". */
 export type Room_ShuffleRoom_Order_By = {
+  readonly continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly durationMinutes?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -27809,12 +27929,398 @@ export type Room_ShuffleRoom_Variance_Order_By = {
   readonly id?: Maybe<Order_By>;
 };
 
+/**
+ * A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go.
+ *
+ *
+ * columns and relationships of "schedule.Continuation"
+ */
+export type Schedule_Continuation = {
+  readonly __typename?: 'schedule_Continuation';
+  readonly colour: Scalars['String'];
+  readonly defaultFor: Scalars['String'];
+  readonly description: Scalars['String'];
+  /** An object relationship */
+  readonly event?: Maybe<Schedule_Event>;
+  readonly fromEvent?: Maybe<Scalars['uuid']>;
+  readonly fromShuffleQueue?: Maybe<Scalars['uuid']>;
+  readonly id: Scalars['uuid'];
+  readonly isActiveChoice: Scalars['Boolean'];
+  readonly priority: Scalars['Int'];
+  /** An object relationship */
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod>;
+  readonly to: Scalars['jsonb'];
+};
+
+
+/**
+ * A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go.
+ *
+ *
+ * columns and relationships of "schedule.Continuation"
+ */
+export type Schedule_ContinuationToArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "schedule.Continuation" */
+export type Schedule_Continuation_Aggregate = {
+  readonly __typename?: 'schedule_Continuation_aggregate';
+  readonly aggregate?: Maybe<Schedule_Continuation_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Schedule_Continuation>;
+};
+
+/** aggregate fields of "schedule.Continuation" */
+export type Schedule_Continuation_Aggregate_Fields = {
+  readonly __typename?: 'schedule_Continuation_aggregate_fields';
+  readonly avg?: Maybe<Schedule_Continuation_Avg_Fields>;
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Schedule_Continuation_Max_Fields>;
+  readonly min?: Maybe<Schedule_Continuation_Min_Fields>;
+  readonly stddev?: Maybe<Schedule_Continuation_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Schedule_Continuation_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Schedule_Continuation_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Schedule_Continuation_Sum_Fields>;
+  readonly var_pop?: Maybe<Schedule_Continuation_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Schedule_Continuation_Var_Samp_Fields>;
+  readonly variance?: Maybe<Schedule_Continuation_Variance_Fields>;
+};
+
+
+/** aggregate fields of "schedule.Continuation" */
+export type Schedule_Continuation_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "schedule.Continuation" */
+export type Schedule_Continuation_Aggregate_Order_By = {
+  readonly avg?: Maybe<Schedule_Continuation_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Schedule_Continuation_Max_Order_By>;
+  readonly min?: Maybe<Schedule_Continuation_Min_Order_By>;
+  readonly stddev?: Maybe<Schedule_Continuation_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Schedule_Continuation_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Schedule_Continuation_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Schedule_Continuation_Sum_Order_By>;
+  readonly var_pop?: Maybe<Schedule_Continuation_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Schedule_Continuation_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Schedule_Continuation_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Schedule_Continuation_Append_Input = {
+  readonly to?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "schedule.Continuation" */
+export type Schedule_Continuation_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Schedule_Continuation_Insert_Input>;
+  /** on conflict condition */
+  readonly on_conflict?: Maybe<Schedule_Continuation_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Schedule_Continuation_Avg_Fields = {
+  readonly __typename?: 'schedule_Continuation_avg_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Avg_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "schedule.Continuation". All fields are combined with a logical 'AND'. */
+export type Schedule_Continuation_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Schedule_Continuation_Bool_Exp>>;
+  readonly _not?: Maybe<Schedule_Continuation_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Schedule_Continuation_Bool_Exp>>;
+  readonly colour?: Maybe<String_Comparison_Exp>;
+  readonly defaultFor?: Maybe<String_Comparison_Exp>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly event?: Maybe<Schedule_Event_Bool_Exp>;
+  readonly fromEvent?: Maybe<Uuid_Comparison_Exp>;
+  readonly fromShuffleQueue?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly isActiveChoice?: Maybe<Boolean_Comparison_Exp>;
+  readonly priority?: Maybe<Int_Comparison_Exp>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+  readonly to?: Maybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "schedule.Continuation" */
+export enum Schedule_Continuation_Constraint {
+  /** unique or primary key constraint */
+  ContinuationPkey = 'Continuation_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Schedule_Continuation_Delete_At_Path_Input = {
+  readonly to?: Maybe<ReadonlyArray<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Schedule_Continuation_Delete_Elem_Input = {
+  readonly to?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Schedule_Continuation_Delete_Key_Input = {
+  readonly to?: Maybe<Scalars['String']>;
+};
+
+/** input type for incrementing numeric columns in table "schedule.Continuation" */
+export type Schedule_Continuation_Inc_Input = {
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "schedule.Continuation" */
+export type Schedule_Continuation_Insert_Input = {
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly defaultFor?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly event?: Maybe<Schedule_Event_Obj_Rel_Insert_Input>;
+  readonly fromEvent?: Maybe<Scalars['uuid']>;
+  readonly fromShuffleQueue?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isActiveChoice?: Maybe<Scalars['Boolean']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
+  readonly to?: Maybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type Schedule_Continuation_Max_Fields = {
+  readonly __typename?: 'schedule_Continuation_max_fields';
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly defaultFor?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly fromEvent?: Maybe<Scalars['uuid']>;
+  readonly fromShuffleQueue?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by max() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Max_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly defaultFor?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly fromEvent?: Maybe<Order_By>;
+  readonly fromShuffleQueue?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Schedule_Continuation_Min_Fields = {
+  readonly __typename?: 'schedule_Continuation_min_fields';
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly defaultFor?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly fromEvent?: Maybe<Scalars['uuid']>;
+  readonly fromShuffleQueue?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by min() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Min_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly defaultFor?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly fromEvent?: Maybe<Order_By>;
+  readonly fromShuffleQueue?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "schedule.Continuation" */
+export type Schedule_Continuation_Mutation_Response = {
+  readonly __typename?: 'schedule_Continuation_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Schedule_Continuation>;
+};
+
+/** on conflict condition type for table "schedule.Continuation" */
+export type Schedule_Continuation_On_Conflict = {
+  readonly constraint: Schedule_Continuation_Constraint;
+  readonly update_columns: ReadonlyArray<Schedule_Continuation_Update_Column>;
+  readonly where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "schedule.Continuation". */
+export type Schedule_Continuation_Order_By = {
+  readonly colour?: Maybe<Order_By>;
+  readonly defaultFor?: Maybe<Order_By>;
+  readonly description?: Maybe<Order_By>;
+  readonly event?: Maybe<Schedule_Event_Order_By>;
+  readonly fromEvent?: Maybe<Order_By>;
+  readonly fromShuffleQueue?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly isActiveChoice?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
+  readonly to?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: schedule_Continuation */
+export type Schedule_Continuation_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Schedule_Continuation_Prepend_Input = {
+  readonly to?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "schedule.Continuation" */
+export enum Schedule_Continuation_Select_Column {
+  /** column name */
+  Colour = 'colour',
+  /** column name */
+  DefaultFor = 'defaultFor',
+  /** column name */
+  Description = 'description',
+  /** column name */
+  FromEvent = 'fromEvent',
+  /** column name */
+  FromShuffleQueue = 'fromShuffleQueue',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsActiveChoice = 'isActiveChoice',
+  /** column name */
+  Priority = 'priority',
+  /** column name */
+  To = 'to'
+}
+
+/** input type for updating data in table "schedule.Continuation" */
+export type Schedule_Continuation_Set_Input = {
+  readonly colour?: Maybe<Scalars['String']>;
+  readonly defaultFor?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly fromEvent?: Maybe<Scalars['uuid']>;
+  readonly fromShuffleQueue?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isActiveChoice?: Maybe<Scalars['Boolean']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly to?: Maybe<Scalars['jsonb']>;
+};
+
+/** aggregate stddev on columns */
+export type Schedule_Continuation_Stddev_Fields = {
+  readonly __typename?: 'schedule_Continuation_stddev_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Stddev_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Schedule_Continuation_Stddev_Pop_Fields = {
+  readonly __typename?: 'schedule_Continuation_stddev_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Stddev_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Schedule_Continuation_Stddev_Samp_Fields = {
+  readonly __typename?: 'schedule_Continuation_stddev_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Stddev_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Schedule_Continuation_Sum_Fields = {
+  readonly __typename?: 'schedule_Continuation_sum_fields';
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Sum_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** update columns of table "schedule.Continuation" */
+export enum Schedule_Continuation_Update_Column {
+  /** column name */
+  Colour = 'colour',
+  /** column name */
+  DefaultFor = 'defaultFor',
+  /** column name */
+  Description = 'description',
+  /** column name */
+  FromEvent = 'fromEvent',
+  /** column name */
+  FromShuffleQueue = 'fromShuffleQueue',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsActiveChoice = 'isActiveChoice',
+  /** column name */
+  Priority = 'priority',
+  /** column name */
+  To = 'to'
+}
+
+/** aggregate var_pop on columns */
+export type Schedule_Continuation_Var_Pop_Fields = {
+  readonly __typename?: 'schedule_Continuation_var_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Var_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Schedule_Continuation_Var_Samp_Fields = {
+  readonly __typename?: 'schedule_Continuation_var_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Var_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Schedule_Continuation_Variance_Fields = {
+  readonly __typename?: 'schedule_Continuation_variance_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Variance_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
   readonly __typename?: 'schedule_Event';
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
+  /** An array relationship */
+  readonly continuations: ReadonlyArray<Schedule_Continuation>;
+  /** An aggregate relationship */
+  readonly continuations_aggregate: Schedule_Continuation_Aggregate;
   readonly createdAt: Scalars['timestamptz'];
   readonly durationSeconds: Scalars['Int'];
   readonly endTime?: Maybe<Scalars['timestamptz']>;
@@ -27855,6 +28361,26 @@ export type Schedule_Event = {
   readonly startTime: Scalars['timestamptz'];
   readonly timingsUpdatedAt: Scalars['timestamptz'];
   readonly updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventContinuationsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Continuation_Order_By>>;
+  where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventContinuations_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Continuation_Order_By>>;
+  where?: Maybe<Schedule_Continuation_Bool_Exp>;
 };
 
 
@@ -28520,6 +29046,7 @@ export type Schedule_Event_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Schedule_Event_Bool_Exp>>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly durationSeconds?: Maybe<Int_Comparison_Exp>;
   readonly endTime?: Maybe<Timestamptz_Comparison_Exp>;
@@ -28561,6 +29088,7 @@ export type Schedule_Event_Inc_Input = {
 export type Schedule_Event_Insert_Input = {
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
   readonly endTime?: Maybe<Scalars['timestamptz']>;
@@ -28688,6 +29216,7 @@ export type Schedule_Event_On_Conflict = {
 export type Schedule_Event_Order_By = {
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
+  readonly continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly durationSeconds?: Maybe<Order_By>;
   readonly endTime?: Maybe<Order_By>;
@@ -29420,6 +29949,12 @@ export type Subscription_Root = {
   readonly room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
   /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
   readonly room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+  /** fetch data from the table: "schedule.Continuation" */
+  readonly schedule_Continuation: ReadonlyArray<Schedule_Continuation>;
+  /** fetch aggregated fields from the table: "schedule.Continuation" */
+  readonly schedule_Continuation_aggregate: Schedule_Continuation_Aggregate;
+  /** fetch data from the table: "schedule.Continuation" using primary key columns */
+  readonly schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
   /** fetch data from the table: "schedule.Event" */
   readonly schedule_Event: ReadonlyArray<Schedule_Event>;
   /** fetch data from the table: "schedule.EventProgramPerson" */
@@ -31286,6 +31821,29 @@ export type Subscription_RootRoom_ShuffleRoom_AggregateArgs = {
 
 export type Subscription_RootRoom_ShuffleRoom_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootSchedule_ContinuationArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Continuation_Order_By>>;
+  where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+
+export type Subscription_RootSchedule_Continuation_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Continuation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Continuation_Order_By>>;
+  where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+
+export type Subscription_RootSchedule_Continuation_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -34757,6 +35315,25 @@ export type ItemPage_ItemRoomsFragment = { readonly __typename?: 'content_Item',
 
 export type ItemEventFragment = { readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } };
 
+export type ContinuationChoices_ContinuationFragment = { readonly __typename?: 'schedule_Continuation', readonly id: any, readonly to: any, readonly defaultFor: string, readonly isActiveChoice: boolean, readonly priority: number, readonly colour: string, readonly description: string };
+
+export type ContinuationChoices_ContinuationsQueryVariables = Exact<{
+  fromId: Scalars['uuid'];
+}>;
+
+
+export type ContinuationChoices_ContinuationsQuery = { readonly __typename?: 'query_root', readonly schedule_Continuation: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Continuation' }
+    & ContinuationChoices_ContinuationFragment
+  )>, readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly endAt: any, readonly roomDurationMinutes: number }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly endTime?: Maybe<any> }> };
+
+export type ContinuationChoices_RoomsQueryVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ContinuationChoices_RoomsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any }> };
+
 export type ExhibitionItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
     & ElementDataFragment
@@ -34994,13 +35571,6 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
 
 export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
 
-export type Room_GetEventBreakoutRoomQueryVariables = Exact<{
-  originatingItemId: Scalars['uuid'];
-}>;
-
-
-export type Room_GetEventBreakoutRoomQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
-
 export type Room_GetDefaultVideoRoomBackendQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -35025,7 +35595,7 @@ export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root',
     & RoomPage_RoomDetailsFragment
   )> };
 
-export type RoomPage_RoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly selfAdminPerson: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean }> };
+export type RoomPage_RoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly selfAdminPerson: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> };
 
 export type RoomPage_GetRoomChannelStackQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -36691,13 +37261,14 @@ export type InsertEventInfoMutationVariables = Exact<{
   itemId?: Maybe<Scalars['uuid']>;
   exhibitionId?: Maybe<Scalars['uuid']>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
+  insertContinuation: Scalars['Boolean'];
 }>;
 
 
 export type InsertEventInfoMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<(
     { readonly __typename?: 'schedule_Event' }
     & EventInfoFragment
-  )> };
+  )>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
 
 export type UpdateEventInfoMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -36832,6 +37403,106 @@ export type AddEventPeople_InsertEventPeopleMutation = { readonly __typename?: '
       & EventProgramPersonInfoFragment
     )> }> };
 
+export type ContinuationsEditor_ContinuationFragment = { readonly __typename?: 'schedule_Continuation', readonly id: any, readonly fromEvent?: Maybe<any>, readonly fromShuffleQueue?: Maybe<any>, readonly to: any, readonly defaultFor: string, readonly isActiveChoice: boolean, readonly priority: number, readonly colour: string, readonly description: string };
+
+export type ContinuationsEditor_SelectContinuationsQueryVariables = Exact<{
+  fromId: Scalars['uuid'];
+}>;
+
+
+export type ContinuationsEditor_SelectContinuationsQuery = { readonly __typename?: 'query_root', readonly schedule_Continuation: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Continuation' }
+    & ContinuationsEditor_ContinuationFragment
+  )> };
+
+export type ContinuationsEditor_InsertMutationVariables = Exact<{
+  object: Schedule_Continuation_Insert_Input;
+}>;
+
+
+export type ContinuationsEditor_InsertMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Continuation_one?: Maybe<(
+    { readonly __typename?: 'schedule_Continuation' }
+    & ContinuationsEditor_ContinuationFragment
+  )> };
+
+export type ContinuationsEditor_UpdateMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  object: Schedule_Continuation_Set_Input;
+}>;
+
+
+export type ContinuationsEditor_UpdateMutation = { readonly __typename?: 'mutation_root', readonly update_schedule_Continuation_by_pk?: Maybe<(
+    { readonly __typename?: 'schedule_Continuation' }
+    & ContinuationsEditor_ContinuationFragment
+  )> };
+
+export type ContinuationsEditor_UpdateManyMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  object: Schedule_Continuation_Set_Input;
+}>;
+
+
+export type ContinuationsEditor_UpdateManyMutation = { readonly __typename?: 'mutation_root', readonly update_schedule_Continuation?: Maybe<{ readonly __typename?: 'schedule_Continuation_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'schedule_Continuation' }
+      & ContinuationsEditor_ContinuationFragment
+    )> }> };
+
+export type ContinuationsEditor_DeleteMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ContinuationsEditor_DeleteMutation = { readonly __typename?: 'mutation_root', readonly delete_schedule_Continuation?: Maybe<{ readonly __typename?: 'schedule_Continuation_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> }> };
+
+export type CreateContinuationModal_RoomsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateContinuationModal_RoomsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> };
+
+export type CreateContinuationModal_EventsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateContinuationModal_EventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }> }> };
+
+export type CreateContinuationModal_ItemsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateContinuationModal_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
+
+export type CreateContinuationModal_ExhibitionsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateContinuationModal_ExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> };
+
+export type CreateContinuationModal_ShufflePeriodsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateContinuationModal_ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }> };
+
+export type CreateContinuationModal_TagsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateContinuationModal_TagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }> };
+
+export type CreateContinuationModal_ProfileQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type CreateContinuationModal_ProfileQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string }> };
+
 export type InsertEventProgramPersonMutationVariables = Exact<{
   newEventProgramPerson: Schedule_EventProgramPerson_Insert_Input;
 }>;
@@ -36951,13 +37622,15 @@ export type DeleteEventsMutation = { readonly __typename?: 'mutation_root', read
 
 export type InsertEventMutationVariables = Exact<{
   newEvent: Schedule_Event_Insert_Input;
+  newEventId: Scalars['uuid'];
+  insertContinuation: Scalars['Boolean'];
 }>;
 
 
 export type InsertEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<(
     { readonly __typename?: 'schedule_Event' }
     & EventInfoFragment
-  )> };
+  )>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
 
 export type UpdateEventMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -37774,6 +38447,17 @@ export const ItemEventFragmentDoc = gql`
   intendedRoomModeName
 }
     `;
+export const ContinuationChoices_ContinuationFragmentDoc = gql`
+    fragment ContinuationChoices_Continuation on schedule_Continuation {
+  id
+  to
+  defaultFor
+  isActiveChoice
+  priority
+  colour
+  description
+}
+    `;
 export const ExhibitionItemFragmentDoc = gql`
     fragment ExhibitionItem on content_Item {
   id
@@ -37949,6 +38633,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     startedAt
     durationMinutes
     reshuffleUponEnd
+    shufflePeriodId
   }
   backendName
 }
@@ -38927,6 +39612,19 @@ export const AddEventPeople_GroupFragmentDoc = gql`
   name
 }
     `;
+export const ContinuationsEditor_ContinuationFragmentDoc = gql`
+    fragment ContinuationsEditor_Continuation on schedule_Continuation {
+  id
+  fromEvent
+  fromShuffleQueue
+  to
+  defaultFor
+  isActiveChoice
+  priority
+  colour
+  description
+}
+    `;
 export const RoomParticipantInfoFragmentDoc = gql`
     fragment RoomParticipantInfo on room_Participant {
   registrantId
@@ -39839,6 +40537,98 @@ export function useGetItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetItemQueryHookResult = ReturnType<typeof useGetItemQuery>;
 export type GetItemLazyQueryHookResult = ReturnType<typeof useGetItemLazyQuery>;
 export type GetItemQueryResult = Apollo.QueryResult<GetItemQuery, GetItemQueryVariables>;
+export const ContinuationChoices_ContinuationsDocument = gql`
+    query ContinuationChoices_Continuations($fromId: uuid!) {
+  schedule_Continuation(
+    where: {_or: [{fromEvent: {_eq: $fromId}}, {fromShuffleQueue: {_eq: $fromId}}]}
+  ) {
+    ...ContinuationChoices_Continuation
+  }
+  room_ShufflePeriod(where: {id: {_eq: $fromId}}) {
+    id
+    endAt
+    roomDurationMinutes
+  }
+  schedule_Event(where: {id: {_eq: $fromId}}) {
+    id
+    endTime
+  }
+}
+    ${ContinuationChoices_ContinuationFragmentDoc}`;
+
+/**
+ * __useContinuationChoices_ContinuationsQuery__
+ *
+ * To run a query within a React component, call `useContinuationChoices_ContinuationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContinuationChoices_ContinuationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContinuationChoices_ContinuationsQuery({
+ *   variables: {
+ *      fromId: // value for 'fromId'
+ *   },
+ * });
+ */
+export function useContinuationChoices_ContinuationsQuery(baseOptions: Apollo.QueryHookOptions<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>(ContinuationChoices_ContinuationsDocument, options);
+      }
+export function useContinuationChoices_ContinuationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>(ContinuationChoices_ContinuationsDocument, options);
+        }
+export type ContinuationChoices_ContinuationsQueryHookResult = ReturnType<typeof useContinuationChoices_ContinuationsQuery>;
+export type ContinuationChoices_ContinuationsLazyQueryHookResult = ReturnType<typeof useContinuationChoices_ContinuationsLazyQuery>;
+export type ContinuationChoices_ContinuationsQueryResult = Apollo.QueryResult<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>;
+export const ContinuationChoices_RoomsDocument = gql`
+    query ContinuationChoices_Rooms($ids: [uuid!]!) {
+  content_Item(where: {id: {_in: $ids}}) {
+    id
+    rooms(
+      where: {originatingEventId: {_is_null: true}}
+      limit: 1
+      order_by: {created_at: asc}
+    ) {
+      id
+    }
+  }
+  schedule_Event(where: {id: {_in: $ids}}) {
+    id
+    roomId
+  }
+}
+    `;
+
+/**
+ * __useContinuationChoices_RoomsQuery__
+ *
+ * To run a query within a React component, call `useContinuationChoices_RoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContinuationChoices_RoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContinuationChoices_RoomsQuery({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useContinuationChoices_RoomsQuery(baseOptions: Apollo.QueryHookOptions<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>(ContinuationChoices_RoomsDocument, options);
+      }
+export function useContinuationChoices_RoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>(ContinuationChoices_RoomsDocument, options);
+        }
+export type ContinuationChoices_RoomsQueryHookResult = ReturnType<typeof useContinuationChoices_RoomsQuery>;
+export type ContinuationChoices_RoomsLazyQueryHookResult = ReturnType<typeof useContinuationChoices_RoomsLazyQuery>;
+export type ContinuationChoices_RoomsQueryResult = Apollo.QueryResult<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>;
 export const SelectExhibitionDocument = gql`
     query SelectExhibition($id: uuid!) {
   collection_Exhibition_by_pk(id: $id) {
@@ -40648,45 +41438,6 @@ export function useRoom_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type Room_GetEventsQueryHookResult = ReturnType<typeof useRoom_GetEventsQuery>;
 export type Room_GetEventsLazyQueryHookResult = ReturnType<typeof useRoom_GetEventsLazyQuery>;
 export type Room_GetEventsQueryResult = Apollo.QueryResult<Room_GetEventsQuery, Room_GetEventsQueryVariables>;
-export const Room_GetEventBreakoutRoomDocument = gql`
-    query Room_GetEventBreakoutRoom($originatingItemId: uuid!) {
-  room_Room(
-    where: {originatingEventId: {_is_null: true}, originatingItemId: {_eq: $originatingItemId}}
-    order_by: {created_at: asc}
-    limit: 1
-  ) {
-    id
-  }
-}
-    `;
-
-/**
- * __useRoom_GetEventBreakoutRoomQuery__
- *
- * To run a query within a React component, call `useRoom_GetEventBreakoutRoomQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoom_GetEventBreakoutRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRoom_GetEventBreakoutRoomQuery({
- *   variables: {
- *      originatingItemId: // value for 'originatingItemId'
- *   },
- * });
- */
-export function useRoom_GetEventBreakoutRoomQuery(baseOptions: Apollo.QueryHookOptions<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>(Room_GetEventBreakoutRoomDocument, options);
-      }
-export function useRoom_GetEventBreakoutRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>(Room_GetEventBreakoutRoomDocument, options);
-        }
-export type Room_GetEventBreakoutRoomQueryHookResult = ReturnType<typeof useRoom_GetEventBreakoutRoomQuery>;
-export type Room_GetEventBreakoutRoomLazyQueryHookResult = ReturnType<typeof useRoom_GetEventBreakoutRoomLazyQuery>;
-export type Room_GetEventBreakoutRoomQueryResult = Apollo.QueryResult<Room_GetEventBreakoutRoomQuery, Room_GetEventBreakoutRoomQueryVariables>;
 export const Room_GetDefaultVideoRoomBackendDocument = gql`
     query Room_GetDefaultVideoRoomBackend {
   system_Configuration_by_pk(key: DEFAULT_VIDEO_ROOM_BACKEND) {
@@ -46447,11 +47198,16 @@ export type ManageSchedule_ShufflePeriodsQueryHookResult = ReturnType<typeof use
 export type ManageSchedule_ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useManageSchedule_ShufflePeriodsLazyQuery>;
 export type ManageSchedule_ShufflePeriodsQueryResult = Apollo.QueryResult<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>;
 export const InsertEventInfoDocument = gql`
-    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null) {
+    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $insertContinuation: Boolean!) {
   insert_schedule_Event_one(
     object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId}
   ) {
     ...EventInfo
+  }
+  insert_schedule_Continuation_one(
+    object: {colour: "#4471de", defaultFor: "None", description: "Join the discussion room", fromEvent: $id, isActiveChoice: false, priority: 0, to: {type: "AutoDiscussionRoom", id: null}}
+  ) @include(if: $insertContinuation) {
+    id
   }
 }
     ${EventInfoFragmentDoc}`;
@@ -46481,6 +47237,7 @@ export type InsertEventInfoMutationFn = Apollo.MutationFunction<InsertEventInfoM
  *      itemId: // value for 'itemId'
  *      exhibitionId: // value for 'exhibitionId'
  *      shufflePeriodId: // value for 'shufflePeriodId'
+ *      insertContinuation: // value for 'insertContinuation'
  *   },
  * });
  */
@@ -46923,6 +47680,448 @@ export function useAddEventPeople_InsertEventPeopleMutation(baseOptions?: Apollo
 export type AddEventPeople_InsertEventPeopleMutationHookResult = ReturnType<typeof useAddEventPeople_InsertEventPeopleMutation>;
 export type AddEventPeople_InsertEventPeopleMutationResult = Apollo.MutationResult<AddEventPeople_InsertEventPeopleMutation>;
 export type AddEventPeople_InsertEventPeopleMutationOptions = Apollo.BaseMutationOptions<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>;
+export const ContinuationsEditor_SelectContinuationsDocument = gql`
+    query ContinuationsEditor_SelectContinuations($fromId: uuid!) {
+  schedule_Continuation(
+    where: {_or: [{fromEvent: {_eq: $fromId}}, {fromShuffleQueue: {_eq: $fromId}}]}
+  ) {
+    ...ContinuationsEditor_Continuation
+  }
+}
+    ${ContinuationsEditor_ContinuationFragmentDoc}`;
+
+/**
+ * __useContinuationsEditor_SelectContinuationsQuery__
+ *
+ * To run a query within a React component, call `useContinuationsEditor_SelectContinuationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContinuationsEditor_SelectContinuationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContinuationsEditor_SelectContinuationsQuery({
+ *   variables: {
+ *      fromId: // value for 'fromId'
+ *   },
+ * });
+ */
+export function useContinuationsEditor_SelectContinuationsQuery(baseOptions: Apollo.QueryHookOptions<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>(ContinuationsEditor_SelectContinuationsDocument, options);
+      }
+export function useContinuationsEditor_SelectContinuationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>(ContinuationsEditor_SelectContinuationsDocument, options);
+        }
+export type ContinuationsEditor_SelectContinuationsQueryHookResult = ReturnType<typeof useContinuationsEditor_SelectContinuationsQuery>;
+export type ContinuationsEditor_SelectContinuationsLazyQueryHookResult = ReturnType<typeof useContinuationsEditor_SelectContinuationsLazyQuery>;
+export type ContinuationsEditor_SelectContinuationsQueryResult = Apollo.QueryResult<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>;
+export const ContinuationsEditor_InsertDocument = gql`
+    mutation ContinuationsEditor_Insert($object: schedule_Continuation_insert_input!) {
+  insert_schedule_Continuation_one(object: $object) {
+    ...ContinuationsEditor_Continuation
+  }
+}
+    ${ContinuationsEditor_ContinuationFragmentDoc}`;
+export type ContinuationsEditor_InsertMutationFn = Apollo.MutationFunction<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>;
+
+/**
+ * __useContinuationsEditor_InsertMutation__
+ *
+ * To run a mutation, you first call `useContinuationsEditor_InsertMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useContinuationsEditor_InsertMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [continuationsEditorInsertMutation, { data, loading, error }] = useContinuationsEditor_InsertMutation({
+ *   variables: {
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useContinuationsEditor_InsertMutation(baseOptions?: Apollo.MutationHookOptions<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>(ContinuationsEditor_InsertDocument, options);
+      }
+export type ContinuationsEditor_InsertMutationHookResult = ReturnType<typeof useContinuationsEditor_InsertMutation>;
+export type ContinuationsEditor_InsertMutationResult = Apollo.MutationResult<ContinuationsEditor_InsertMutation>;
+export type ContinuationsEditor_InsertMutationOptions = Apollo.BaseMutationOptions<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>;
+export const ContinuationsEditor_UpdateDocument = gql`
+    mutation ContinuationsEditor_Update($id: uuid!, $object: schedule_Continuation_set_input!) {
+  update_schedule_Continuation_by_pk(pk_columns: {id: $id}, _set: $object) {
+    ...ContinuationsEditor_Continuation
+  }
+}
+    ${ContinuationsEditor_ContinuationFragmentDoc}`;
+export type ContinuationsEditor_UpdateMutationFn = Apollo.MutationFunction<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>;
+
+/**
+ * __useContinuationsEditor_UpdateMutation__
+ *
+ * To run a mutation, you first call `useContinuationsEditor_UpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useContinuationsEditor_UpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [continuationsEditorUpdateMutation, { data, loading, error }] = useContinuationsEditor_UpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useContinuationsEditor_UpdateMutation(baseOptions?: Apollo.MutationHookOptions<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>(ContinuationsEditor_UpdateDocument, options);
+      }
+export type ContinuationsEditor_UpdateMutationHookResult = ReturnType<typeof useContinuationsEditor_UpdateMutation>;
+export type ContinuationsEditor_UpdateMutationResult = Apollo.MutationResult<ContinuationsEditor_UpdateMutation>;
+export type ContinuationsEditor_UpdateMutationOptions = Apollo.BaseMutationOptions<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>;
+export const ContinuationsEditor_UpdateManyDocument = gql`
+    mutation ContinuationsEditor_UpdateMany($ids: [uuid!]!, $object: schedule_Continuation_set_input!) {
+  update_schedule_Continuation(where: {id: {_in: $ids}}, _set: $object) {
+    returning {
+      ...ContinuationsEditor_Continuation
+    }
+  }
+}
+    ${ContinuationsEditor_ContinuationFragmentDoc}`;
+export type ContinuationsEditor_UpdateManyMutationFn = Apollo.MutationFunction<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>;
+
+/**
+ * __useContinuationsEditor_UpdateManyMutation__
+ *
+ * To run a mutation, you first call `useContinuationsEditor_UpdateManyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useContinuationsEditor_UpdateManyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [continuationsEditorUpdateManyMutation, { data, loading, error }] = useContinuationsEditor_UpdateManyMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useContinuationsEditor_UpdateManyMutation(baseOptions?: Apollo.MutationHookOptions<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>(ContinuationsEditor_UpdateManyDocument, options);
+      }
+export type ContinuationsEditor_UpdateManyMutationHookResult = ReturnType<typeof useContinuationsEditor_UpdateManyMutation>;
+export type ContinuationsEditor_UpdateManyMutationResult = Apollo.MutationResult<ContinuationsEditor_UpdateManyMutation>;
+export type ContinuationsEditor_UpdateManyMutationOptions = Apollo.BaseMutationOptions<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>;
+export const ContinuationsEditor_DeleteDocument = gql`
+    mutation ContinuationsEditor_Delete($ids: [uuid!]!) {
+  delete_schedule_Continuation(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type ContinuationsEditor_DeleteMutationFn = Apollo.MutationFunction<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>;
+
+/**
+ * __useContinuationsEditor_DeleteMutation__
+ *
+ * To run a mutation, you first call `useContinuationsEditor_DeleteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useContinuationsEditor_DeleteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [continuationsEditorDeleteMutation, { data, loading, error }] = useContinuationsEditor_DeleteMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useContinuationsEditor_DeleteMutation(baseOptions?: Apollo.MutationHookOptions<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>(ContinuationsEditor_DeleteDocument, options);
+      }
+export type ContinuationsEditor_DeleteMutationHookResult = ReturnType<typeof useContinuationsEditor_DeleteMutation>;
+export type ContinuationsEditor_DeleteMutationResult = Apollo.MutationResult<ContinuationsEditor_DeleteMutation>;
+export type ContinuationsEditor_DeleteMutationOptions = Apollo.BaseMutationOptions<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>;
+export const CreateContinuationModal_RoomsDocument = gql`
+    query CreateContinuationModal_Rooms($conferenceId: uuid!) {
+  room_Room(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useCreateContinuationModal_RoomsQuery__
+ *
+ * To run a query within a React component, call `useCreateContinuationModal_RoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateContinuationModal_RoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateContinuationModal_RoomsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateContinuationModal_RoomsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>(CreateContinuationModal_RoomsDocument, options);
+      }
+export function useCreateContinuationModal_RoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>(CreateContinuationModal_RoomsDocument, options);
+        }
+export type CreateContinuationModal_RoomsQueryHookResult = ReturnType<typeof useCreateContinuationModal_RoomsQuery>;
+export type CreateContinuationModal_RoomsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_RoomsLazyQuery>;
+export type CreateContinuationModal_RoomsQueryResult = Apollo.QueryResult<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>;
+export const CreateContinuationModal_EventsDocument = gql`
+    query CreateContinuationModal_Events($conferenceId: uuid!) {
+  schedule_Event(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    name
+    startTime
+    endTime
+    intendedRoomModeName
+    item {
+      id
+      title
+    }
+    exhibition {
+      id
+      name
+    }
+    shufflePeriod {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useCreateContinuationModal_EventsQuery__
+ *
+ * To run a query within a React component, call `useCreateContinuationModal_EventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateContinuationModal_EventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateContinuationModal_EventsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateContinuationModal_EventsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>(CreateContinuationModal_EventsDocument, options);
+      }
+export function useCreateContinuationModal_EventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>(CreateContinuationModal_EventsDocument, options);
+        }
+export type CreateContinuationModal_EventsQueryHookResult = ReturnType<typeof useCreateContinuationModal_EventsQuery>;
+export type CreateContinuationModal_EventsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_EventsLazyQuery>;
+export type CreateContinuationModal_EventsQueryResult = Apollo.QueryResult<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>;
+export const CreateContinuationModal_ItemsDocument = gql`
+    query CreateContinuationModal_Items($conferenceId: uuid!) {
+  content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    title
+  }
+}
+    `;
+
+/**
+ * __useCreateContinuationModal_ItemsQuery__
+ *
+ * To run a query within a React component, call `useCreateContinuationModal_ItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateContinuationModal_ItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateContinuationModal_ItemsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateContinuationModal_ItemsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>(CreateContinuationModal_ItemsDocument, options);
+      }
+export function useCreateContinuationModal_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>(CreateContinuationModal_ItemsDocument, options);
+        }
+export type CreateContinuationModal_ItemsQueryHookResult = ReturnType<typeof useCreateContinuationModal_ItemsQuery>;
+export type CreateContinuationModal_ItemsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ItemsLazyQuery>;
+export type CreateContinuationModal_ItemsQueryResult = Apollo.QueryResult<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>;
+export const CreateContinuationModal_ExhibitionsDocument = gql`
+    query CreateContinuationModal_Exhibitions($conferenceId: uuid!) {
+  collection_Exhibition(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useCreateContinuationModal_ExhibitionsQuery__
+ *
+ * To run a query within a React component, call `useCreateContinuationModal_ExhibitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateContinuationModal_ExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateContinuationModal_ExhibitionsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateContinuationModal_ExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>(CreateContinuationModal_ExhibitionsDocument, options);
+      }
+export function useCreateContinuationModal_ExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>(CreateContinuationModal_ExhibitionsDocument, options);
+        }
+export type CreateContinuationModal_ExhibitionsQueryHookResult = ReturnType<typeof useCreateContinuationModal_ExhibitionsQuery>;
+export type CreateContinuationModal_ExhibitionsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ExhibitionsLazyQuery>;
+export type CreateContinuationModal_ExhibitionsQueryResult = Apollo.QueryResult<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>;
+export const CreateContinuationModal_ShufflePeriodsDocument = gql`
+    query CreateContinuationModal_ShufflePeriods($conferenceId: uuid!) {
+  room_ShufflePeriod(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useCreateContinuationModal_ShufflePeriodsQuery__
+ *
+ * To run a query within a React component, call `useCreateContinuationModal_ShufflePeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateContinuationModal_ShufflePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateContinuationModal_ShufflePeriodsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateContinuationModal_ShufflePeriodsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>(CreateContinuationModal_ShufflePeriodsDocument, options);
+      }
+export function useCreateContinuationModal_ShufflePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>(CreateContinuationModal_ShufflePeriodsDocument, options);
+        }
+export type CreateContinuationModal_ShufflePeriodsQueryHookResult = ReturnType<typeof useCreateContinuationModal_ShufflePeriodsQuery>;
+export type CreateContinuationModal_ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ShufflePeriodsLazyQuery>;
+export type CreateContinuationModal_ShufflePeriodsQueryResult = Apollo.QueryResult<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>;
+export const CreateContinuationModal_TagsDocument = gql`
+    query CreateContinuationModal_Tags($conferenceId: uuid!) {
+  collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useCreateContinuationModal_TagsQuery__
+ *
+ * To run a query within a React component, call `useCreateContinuationModal_TagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateContinuationModal_TagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateContinuationModal_TagsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateContinuationModal_TagsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>(CreateContinuationModal_TagsDocument, options);
+      }
+export function useCreateContinuationModal_TagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>(CreateContinuationModal_TagsDocument, options);
+        }
+export type CreateContinuationModal_TagsQueryHookResult = ReturnType<typeof useCreateContinuationModal_TagsQuery>;
+export type CreateContinuationModal_TagsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_TagsLazyQuery>;
+export type CreateContinuationModal_TagsQueryResult = Apollo.QueryResult<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>;
+export const CreateContinuationModal_ProfileDocument = gql`
+    query CreateContinuationModal_Profile($conferenceId: uuid!) {
+  registrant_Registrant(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    displayName
+  }
+}
+    `;
+
+/**
+ * __useCreateContinuationModal_ProfileQuery__
+ *
+ * To run a query within a React component, call `useCreateContinuationModal_ProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateContinuationModal_ProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateContinuationModal_ProfileQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useCreateContinuationModal_ProfileQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>(CreateContinuationModal_ProfileDocument, options);
+      }
+export function useCreateContinuationModal_ProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>(CreateContinuationModal_ProfileDocument, options);
+        }
+export type CreateContinuationModal_ProfileQueryHookResult = ReturnType<typeof useCreateContinuationModal_ProfileQuery>;
+export type CreateContinuationModal_ProfileLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ProfileLazyQuery>;
+export type CreateContinuationModal_ProfileQueryResult = Apollo.QueryResult<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>;
 export const InsertEventProgramPersonDocument = gql`
     mutation InsertEventProgramPerson($newEventProgramPerson: schedule_EventProgramPerson_insert_input!) {
   insert_schedule_EventProgramPerson_one(
@@ -47240,9 +48439,14 @@ export type DeleteEventsMutationHookResult = ReturnType<typeof useDeleteEventsMu
 export type DeleteEventsMutationResult = Apollo.MutationResult<DeleteEventsMutation>;
 export type DeleteEventsMutationOptions = Apollo.BaseMutationOptions<DeleteEventsMutation, DeleteEventsMutationVariables>;
 export const InsertEventDocument = gql`
-    mutation InsertEvent($newEvent: schedule_Event_insert_input!) {
+    mutation InsertEvent($newEvent: schedule_Event_insert_input!, $newEventId: uuid!, $insertContinuation: Boolean!) {
   insert_schedule_Event_one(object: $newEvent) {
     ...EventInfo
+  }
+  insert_schedule_Continuation_one(
+    object: {colour: "#4471de", defaultFor: "None", description: "Join the discussion room", fromEvent: $newEventId, isActiveChoice: false, priority: 0, to: {type: "AutoDiscussionRoom", id: null}}
+  ) @include(if: $insertContinuation) {
+    id
   }
 }
     ${EventInfoFragmentDoc}`;
@@ -47262,6 +48466,8 @@ export type InsertEventMutationFn = Apollo.MutationFunction<InsertEventMutation,
  * const [insertEventMutation, { data, loading, error }] = useInsertEventMutation({
  *   variables: {
  *      newEvent: // value for 'newEvent'
+ *      newEventId: // value for 'newEventId'
+ *      insertContinuation: // value for 'insertContinuation'
  *   },
  * });
  */

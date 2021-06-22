@@ -11,7 +11,7 @@ import { Markdown } from "../../../../Text/Markdown";
 import ActiveSocialRooms from "../../Rooms/V2/ActiveSocialRooms";
 import LiveProgramRooms from "../../Rooms/V2/LiveProgramRooms";
 import SponsorBooths from "../../Rooms/V2/SponsorBooths";
-import { useScheduleModal } from "../../Schedule/ProgramModal";
+import { ProgramModalTab, useScheduleModal } from "../../Schedule/ProgramModal";
 import Schedule from "../../Schedule/Schedule";
 import ItemList from "../ItemList";
 import { VideoElement } from "./VideoElement";
@@ -55,14 +55,17 @@ function ElementInner({
                 return <SponsorBooths />;
             case Content_ElementType_Enum.ExploreProgramButton:
                 return (
-                    <Button colorScheme="purple" onClick={() => scheduleModal.onOpen(undefined, "Tags")}>
+                    <Button colorScheme="purple" onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Tags)}>
                         <FAIcon iconStyle="s" icon="tags" mr={2} />
                         Browse content
                     </Button>
                 );
             case Content_ElementType_Enum.ExploreScheduleButton:
                 return (
-                    <Button colorScheme="purple" onClick={() => scheduleModal.onOpen(undefined, "Schedule")}>
+                    <Button
+                        colorScheme="purple"
+                        onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Schedule)}
+                    >
                         <FAIcon iconStyle="s" icon="calendar" mr={2} />
                         Full schedule
                     </Button>

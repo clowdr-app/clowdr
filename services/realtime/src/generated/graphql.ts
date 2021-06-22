@@ -14217,6 +14217,10 @@ export type Mutation_Root = {
     delete_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
     /** delete single row from the table: "room.ShuffleRoom" */
     delete_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+    /** delete data from the table: "schedule.Continuation" */
+    delete_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
+    /** delete single row from the table: "schedule.Continuation" */
+    delete_schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
     /** delete data from the table: "schedule.Event" */
     delete_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
     /** delete data from the table: "schedule.EventProgramPerson" */
@@ -14566,6 +14570,10 @@ export type Mutation_Root = {
     insert_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
     /** insert a single row into the table: "room.ShuffleRoom" */
     insert_room_ShuffleRoom_one?: Maybe<Room_ShuffleRoom>;
+    /** insert data into the table: "schedule.Continuation" */
+    insert_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
+    /** insert a single row into the table: "schedule.Continuation" */
+    insert_schedule_Continuation_one?: Maybe<Schedule_Continuation>;
     /** insert data into the table: "schedule.Event" */
     insert_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
     /** insert data into the table: "schedule.EventProgramPerson" */
@@ -14923,6 +14931,10 @@ export type Mutation_Root = {
     update_room_ShuffleRoom?: Maybe<Room_ShuffleRoom_Mutation_Response>;
     /** update single row of the table: "room.ShuffleRoom" */
     update_room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+    /** update data of the table: "schedule.Continuation" */
+    update_schedule_Continuation?: Maybe<Schedule_Continuation_Mutation_Response>;
+    /** update single row of the table: "schedule.Continuation" */
+    update_schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
     /** update data of the table: "schedule.Event" */
     update_schedule_Event?: Maybe<Schedule_Event_Mutation_Response>;
     /** update data of the table: "schedule.EventProgramPerson" */
@@ -15691,6 +15703,16 @@ export type Mutation_RootDelete_Room_ShuffleRoomArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs = {
     id: Scalars["bigint"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_ContinuationArgs = {
+    where: Schedule_Continuation_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_Continuation_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 /** mutation root */
@@ -16701,6 +16723,18 @@ export type Mutation_RootInsert_Room_ShuffleRoomArgs = {
 export type Mutation_RootInsert_Room_ShuffleRoom_OneArgs = {
     object: Room_ShuffleRoom_Insert_Input;
     on_conflict?: Maybe<Room_ShuffleRoom_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_ContinuationArgs = {
+    objects: Array<Schedule_Continuation_Insert_Input>;
+    on_conflict?: Maybe<Schedule_Continuation_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_Continuation_OneArgs = {
+    object: Schedule_Continuation_Insert_Input;
+    on_conflict?: Maybe<Schedule_Continuation_On_Conflict>;
 };
 
 /** mutation root */
@@ -17988,6 +18022,30 @@ export type Mutation_RootUpdate_Room_ShuffleRoom_By_PkArgs = {
     _inc?: Maybe<Room_ShuffleRoom_Inc_Input>;
     _set?: Maybe<Room_ShuffleRoom_Set_Input>;
     pk_columns: Room_ShuffleRoom_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_ContinuationArgs = {
+    _append?: Maybe<Schedule_Continuation_Append_Input>;
+    _delete_at_path?: Maybe<Schedule_Continuation_Delete_At_Path_Input>;
+    _delete_elem?: Maybe<Schedule_Continuation_Delete_Elem_Input>;
+    _delete_key?: Maybe<Schedule_Continuation_Delete_Key_Input>;
+    _inc?: Maybe<Schedule_Continuation_Inc_Input>;
+    _prepend?: Maybe<Schedule_Continuation_Prepend_Input>;
+    _set?: Maybe<Schedule_Continuation_Set_Input>;
+    where: Schedule_Continuation_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_Continuation_By_PkArgs = {
+    _append?: Maybe<Schedule_Continuation_Append_Input>;
+    _delete_at_path?: Maybe<Schedule_Continuation_Delete_At_Path_Input>;
+    _delete_elem?: Maybe<Schedule_Continuation_Delete_Elem_Input>;
+    _delete_key?: Maybe<Schedule_Continuation_Delete_Key_Input>;
+    _inc?: Maybe<Schedule_Continuation_Inc_Input>;
+    _prepend?: Maybe<Schedule_Continuation_Prepend_Input>;
+    _set?: Maybe<Schedule_Continuation_Set_Input>;
+    pk_columns: Schedule_Continuation_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -19962,6 +20020,12 @@ export type Query_Root = {
     room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
     /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
     room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+    /** fetch data from the table: "schedule.Continuation" */
+    schedule_Continuation: Array<Schedule_Continuation>;
+    /** fetch aggregated fields from the table: "schedule.Continuation" */
+    schedule_Continuation_aggregate: Schedule_Continuation_Aggregate;
+    /** fetch data from the table: "schedule.Continuation" using primary key columns */
+    schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
     /** fetch data from the table: "schedule.Event" */
     schedule_Event: Array<Schedule_Event>;
     /** fetch data from the table: "schedule.EventProgramPerson" */
@@ -21608,6 +21672,26 @@ export type Query_RootRoom_ShuffleRoom_AggregateArgs = {
 
 export type Query_RootRoom_ShuffleRoom_By_PkArgs = {
     id: Scalars["bigint"];
+};
+
+export type Query_RootSchedule_ContinuationArgs = {
+    distinct_on?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Continuation_Order_By>>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+export type Query_RootSchedule_Continuation_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Continuation_Order_By>>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+export type Query_RootSchedule_Continuation_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Query_RootSchedule_EventArgs = {
@@ -26347,6 +26431,10 @@ export type Room_ShuffleQueueEntry_Variance_Order_By = {
 /** columns and relationships of "room.ShuffleRoom" */
 export type Room_ShuffleRoom = {
     __typename?: "room_ShuffleRoom";
+    /** An array relationship */
+    continuations: Array<Schedule_Continuation>;
+    /** An aggregate relationship */
+    continuations_aggregate: Schedule_Continuation_Aggregate;
     created_at: Scalars["timestamptz"];
     durationMinutes: Scalars["Int"];
     id: Scalars["bigint"];
@@ -26364,6 +26452,24 @@ export type Room_ShuffleRoom = {
     shufflePeriodId: Scalars["uuid"];
     startedAt: Scalars["timestamptz"];
     updated_at: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "room.ShuffleRoom" */
+export type Room_ShuffleRoomContinuationsArgs = {
+    distinct_on?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Continuation_Order_By>>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+/** columns and relationships of "room.ShuffleRoom" */
+export type Room_ShuffleRoomContinuations_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Continuation_Order_By>>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
 };
 
 /** columns and relationships of "room.ShuffleRoom" */
@@ -26453,6 +26559,7 @@ export type Room_ShuffleRoom_Bool_Exp = {
     _and?: Maybe<Array<Room_ShuffleRoom_Bool_Exp>>;
     _not?: Maybe<Room_ShuffleRoom_Bool_Exp>;
     _or?: Maybe<Array<Room_ShuffleRoom_Bool_Exp>>;
+    continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
     durationMinutes?: Maybe<Int_Comparison_Exp>;
     id?: Maybe<Bigint_Comparison_Exp>;
@@ -26481,6 +26588,7 @@ export type Room_ShuffleRoom_Inc_Input = {
 
 /** input type for inserting data into table "room.ShuffleRoom" */
 export type Room_ShuffleRoom_Insert_Input = {
+    continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     durationMinutes?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["bigint"]>;
@@ -26566,6 +26674,7 @@ export type Room_ShuffleRoom_On_Conflict = {
 
 /** Ordering options when selecting data from "room.ShuffleRoom". */
 export type Room_ShuffleRoom_Order_By = {
+    continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
     created_at?: Maybe<Order_By>;
     durationMinutes?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -26733,12 +26842,396 @@ export type Room_ShuffleRoom_Variance_Order_By = {
     id?: Maybe<Order_By>;
 };
 
+/**
+ * A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go.
+ *
+ *
+ * columns and relationships of "schedule.Continuation"
+ */
+export type Schedule_Continuation = {
+    __typename?: "schedule_Continuation";
+    colour: Scalars["String"];
+    defaultFor: Scalars["String"];
+    description: Scalars["String"];
+    /** An object relationship */
+    event?: Maybe<Schedule_Event>;
+    fromEvent?: Maybe<Scalars["uuid"]>;
+    fromShuffleQueue?: Maybe<Scalars["uuid"]>;
+    id: Scalars["uuid"];
+    isActiveChoice: Scalars["Boolean"];
+    priority: Scalars["Int"];
+    /** An object relationship */
+    shufflePeriod?: Maybe<Room_ShufflePeriod>;
+    to: Scalars["jsonb"];
+};
+
+/**
+ * A continuation from the end of an event or shuffle room to the next thing. Enables organisers to create a guided flow for attendees. It is possible to specify multiple continuations from the same point, giving attendees a choice of where to go.
+ *
+ *
+ * columns and relationships of "schedule.Continuation"
+ */
+export type Schedule_ContinuationToArgs = {
+    path?: Maybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "schedule.Continuation" */
+export type Schedule_Continuation_Aggregate = {
+    __typename?: "schedule_Continuation_aggregate";
+    aggregate?: Maybe<Schedule_Continuation_Aggregate_Fields>;
+    nodes: Array<Schedule_Continuation>;
+};
+
+/** aggregate fields of "schedule.Continuation" */
+export type Schedule_Continuation_Aggregate_Fields = {
+    __typename?: "schedule_Continuation_aggregate_fields";
+    avg?: Maybe<Schedule_Continuation_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Schedule_Continuation_Max_Fields>;
+    min?: Maybe<Schedule_Continuation_Min_Fields>;
+    stddev?: Maybe<Schedule_Continuation_Stddev_Fields>;
+    stddev_pop?: Maybe<Schedule_Continuation_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Schedule_Continuation_Stddev_Samp_Fields>;
+    sum?: Maybe<Schedule_Continuation_Sum_Fields>;
+    var_pop?: Maybe<Schedule_Continuation_Var_Pop_Fields>;
+    var_samp?: Maybe<Schedule_Continuation_Var_Samp_Fields>;
+    variance?: Maybe<Schedule_Continuation_Variance_Fields>;
+};
+
+/** aggregate fields of "schedule.Continuation" */
+export type Schedule_Continuation_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "schedule.Continuation" */
+export type Schedule_Continuation_Aggregate_Order_By = {
+    avg?: Maybe<Schedule_Continuation_Avg_Order_By>;
+    count?: Maybe<Order_By>;
+    max?: Maybe<Schedule_Continuation_Max_Order_By>;
+    min?: Maybe<Schedule_Continuation_Min_Order_By>;
+    stddev?: Maybe<Schedule_Continuation_Stddev_Order_By>;
+    stddev_pop?: Maybe<Schedule_Continuation_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Schedule_Continuation_Stddev_Samp_Order_By>;
+    sum?: Maybe<Schedule_Continuation_Sum_Order_By>;
+    var_pop?: Maybe<Schedule_Continuation_Var_Pop_Order_By>;
+    var_samp?: Maybe<Schedule_Continuation_Var_Samp_Order_By>;
+    variance?: Maybe<Schedule_Continuation_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Schedule_Continuation_Append_Input = {
+    to?: Maybe<Scalars["jsonb"]>;
+};
+
+/** input type for inserting array relation for remote table "schedule.Continuation" */
+export type Schedule_Continuation_Arr_Rel_Insert_Input = {
+    data: Array<Schedule_Continuation_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Schedule_Continuation_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Schedule_Continuation_Avg_Fields = {
+    __typename?: "schedule_Continuation_avg_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Avg_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "schedule.Continuation". All fields are combined with a logical 'AND'. */
+export type Schedule_Continuation_Bool_Exp = {
+    _and?: Maybe<Array<Schedule_Continuation_Bool_Exp>>;
+    _not?: Maybe<Schedule_Continuation_Bool_Exp>;
+    _or?: Maybe<Array<Schedule_Continuation_Bool_Exp>>;
+    colour?: Maybe<String_Comparison_Exp>;
+    defaultFor?: Maybe<String_Comparison_Exp>;
+    description?: Maybe<String_Comparison_Exp>;
+    event?: Maybe<Schedule_Event_Bool_Exp>;
+    fromEvent?: Maybe<Uuid_Comparison_Exp>;
+    fromShuffleQueue?: Maybe<Uuid_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    isActiveChoice?: Maybe<Boolean_Comparison_Exp>;
+    priority?: Maybe<Int_Comparison_Exp>;
+    shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
+    to?: Maybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "schedule.Continuation" */
+export enum Schedule_Continuation_Constraint {
+    /** unique or primary key constraint */
+    ContinuationPkey = "Continuation_pkey",
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Schedule_Continuation_Delete_At_Path_Input = {
+    to?: Maybe<Array<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Schedule_Continuation_Delete_Elem_Input = {
+    to?: Maybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Schedule_Continuation_Delete_Key_Input = {
+    to?: Maybe<Scalars["String"]>;
+};
+
+/** input type for incrementing numeric columns in table "schedule.Continuation" */
+export type Schedule_Continuation_Inc_Input = {
+    priority?: Maybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "schedule.Continuation" */
+export type Schedule_Continuation_Insert_Input = {
+    colour?: Maybe<Scalars["String"]>;
+    defaultFor?: Maybe<Scalars["String"]>;
+    description?: Maybe<Scalars["String"]>;
+    event?: Maybe<Schedule_Event_Obj_Rel_Insert_Input>;
+    fromEvent?: Maybe<Scalars["uuid"]>;
+    fromShuffleQueue?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    isActiveChoice?: Maybe<Scalars["Boolean"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
+    to?: Maybe<Scalars["jsonb"]>;
+};
+
+/** aggregate max on columns */
+export type Schedule_Continuation_Max_Fields = {
+    __typename?: "schedule_Continuation_max_fields";
+    colour?: Maybe<Scalars["String"]>;
+    defaultFor?: Maybe<Scalars["String"]>;
+    description?: Maybe<Scalars["String"]>;
+    fromEvent?: Maybe<Scalars["uuid"]>;
+    fromShuffleQueue?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+};
+
+/** order by max() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Max_Order_By = {
+    colour?: Maybe<Order_By>;
+    defaultFor?: Maybe<Order_By>;
+    description?: Maybe<Order_By>;
+    fromEvent?: Maybe<Order_By>;
+    fromShuffleQueue?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Schedule_Continuation_Min_Fields = {
+    __typename?: "schedule_Continuation_min_fields";
+    colour?: Maybe<Scalars["String"]>;
+    defaultFor?: Maybe<Scalars["String"]>;
+    description?: Maybe<Scalars["String"]>;
+    fromEvent?: Maybe<Scalars["uuid"]>;
+    fromShuffleQueue?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+};
+
+/** order by min() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Min_Order_By = {
+    colour?: Maybe<Order_By>;
+    defaultFor?: Maybe<Order_By>;
+    description?: Maybe<Order_By>;
+    fromEvent?: Maybe<Order_By>;
+    fromShuffleQueue?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    priority?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "schedule.Continuation" */
+export type Schedule_Continuation_Mutation_Response = {
+    __typename?: "schedule_Continuation_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Schedule_Continuation>;
+};
+
+/** on conflict condition type for table "schedule.Continuation" */
+export type Schedule_Continuation_On_Conflict = {
+    constraint: Schedule_Continuation_Constraint;
+    update_columns?: Array<Schedule_Continuation_Update_Column>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "schedule.Continuation". */
+export type Schedule_Continuation_Order_By = {
+    colour?: Maybe<Order_By>;
+    defaultFor?: Maybe<Order_By>;
+    description?: Maybe<Order_By>;
+    event?: Maybe<Schedule_Event_Order_By>;
+    fromEvent?: Maybe<Order_By>;
+    fromShuffleQueue?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    isActiveChoice?: Maybe<Order_By>;
+    priority?: Maybe<Order_By>;
+    shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
+    to?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: schedule_Continuation */
+export type Schedule_Continuation_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Schedule_Continuation_Prepend_Input = {
+    to?: Maybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "schedule.Continuation" */
+export enum Schedule_Continuation_Select_Column {
+    /** column name */
+    Colour = "colour",
+    /** column name */
+    DefaultFor = "defaultFor",
+    /** column name */
+    Description = "description",
+    /** column name */
+    FromEvent = "fromEvent",
+    /** column name */
+    FromShuffleQueue = "fromShuffleQueue",
+    /** column name */
+    Id = "id",
+    /** column name */
+    IsActiveChoice = "isActiveChoice",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    To = "to",
+}
+
+/** input type for updating data in table "schedule.Continuation" */
+export type Schedule_Continuation_Set_Input = {
+    colour?: Maybe<Scalars["String"]>;
+    defaultFor?: Maybe<Scalars["String"]>;
+    description?: Maybe<Scalars["String"]>;
+    fromEvent?: Maybe<Scalars["uuid"]>;
+    fromShuffleQueue?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    isActiveChoice?: Maybe<Scalars["Boolean"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    to?: Maybe<Scalars["jsonb"]>;
+};
+
+/** aggregate stddev on columns */
+export type Schedule_Continuation_Stddev_Fields = {
+    __typename?: "schedule_Continuation_stddev_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Stddev_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Schedule_Continuation_Stddev_Pop_Fields = {
+    __typename?: "schedule_Continuation_stddev_pop_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Stddev_Pop_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Schedule_Continuation_Stddev_Samp_Fields = {
+    __typename?: "schedule_Continuation_stddev_samp_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Stddev_Samp_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Schedule_Continuation_Sum_Fields = {
+    __typename?: "schedule_Continuation_sum_fields";
+    priority?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Sum_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** update columns of table "schedule.Continuation" */
+export enum Schedule_Continuation_Update_Column {
+    /** column name */
+    Colour = "colour",
+    /** column name */
+    DefaultFor = "defaultFor",
+    /** column name */
+    Description = "description",
+    /** column name */
+    FromEvent = "fromEvent",
+    /** column name */
+    FromShuffleQueue = "fromShuffleQueue",
+    /** column name */
+    Id = "id",
+    /** column name */
+    IsActiveChoice = "isActiveChoice",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    To = "to",
+}
+
+/** aggregate var_pop on columns */
+export type Schedule_Continuation_Var_Pop_Fields = {
+    __typename?: "schedule_Continuation_var_pop_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Var_Pop_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Schedule_Continuation_Var_Samp_Fields = {
+    __typename?: "schedule_Continuation_var_samp_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Var_Samp_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Schedule_Continuation_Variance_Fields = {
+    __typename?: "schedule_Continuation_variance_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "schedule.Continuation" */
+export type Schedule_Continuation_Variance_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
 /** columns and relationships of "schedule.Event" */
 export type Schedule_Event = {
     __typename?: "schedule_Event";
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
+    /** An array relationship */
+    continuations: Array<Schedule_Continuation>;
+    /** An aggregate relationship */
+    continuations_aggregate: Schedule_Continuation_Aggregate;
     createdAt: Scalars["timestamptz"];
     durationSeconds: Scalars["Int"];
     endTime?: Maybe<Scalars["timestamptz"]>;
@@ -26779,6 +27272,24 @@ export type Schedule_Event = {
     startTime: Scalars["timestamptz"];
     timingsUpdatedAt: Scalars["timestamptz"];
     updatedAt: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventContinuationsArgs = {
+    distinct_on?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Continuation_Order_By>>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+/** columns and relationships of "schedule.Event" */
+export type Schedule_EventContinuations_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Continuation_Order_By>>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
 };
 
 /** columns and relationships of "schedule.Event" */
@@ -27432,6 +27943,7 @@ export type Schedule_Event_Bool_Exp = {
     _or?: Maybe<Array<Schedule_Event_Bool_Exp>>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     durationSeconds?: Maybe<Int_Comparison_Exp>;
     endTime?: Maybe<Timestamptz_Comparison_Exp>;
@@ -27473,6 +27985,7 @@ export type Schedule_Event_Inc_Input = {
 export type Schedule_Event_Insert_Input = {
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
+    continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     durationSeconds?: Maybe<Scalars["Int"]>;
     endTime?: Maybe<Scalars["timestamptz"]>;
@@ -27600,6 +28113,7 @@ export type Schedule_Event_On_Conflict = {
 export type Schedule_Event_Order_By = {
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
+    continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
     createdAt?: Maybe<Order_By>;
     durationSeconds?: Maybe<Order_By>;
     endTime?: Maybe<Order_By>;
@@ -28331,6 +28845,12 @@ export type Subscription_Root = {
     room_ShuffleRoom_aggregate: Room_ShuffleRoom_Aggregate;
     /** fetch data from the table: "room.ShuffleRoom" using primary key columns */
     room_ShuffleRoom_by_pk?: Maybe<Room_ShuffleRoom>;
+    /** fetch data from the table: "schedule.Continuation" */
+    schedule_Continuation: Array<Schedule_Continuation>;
+    /** fetch aggregated fields from the table: "schedule.Continuation" */
+    schedule_Continuation_aggregate: Schedule_Continuation_Aggregate;
+    /** fetch data from the table: "schedule.Continuation" using primary key columns */
+    schedule_Continuation_by_pk?: Maybe<Schedule_Continuation>;
     /** fetch data from the table: "schedule.Event" */
     schedule_Event: Array<Schedule_Event>;
     /** fetch data from the table: "schedule.EventProgramPerson" */
@@ -29972,6 +30492,26 @@ export type Subscription_RootRoom_ShuffleRoom_AggregateArgs = {
 
 export type Subscription_RootRoom_ShuffleRoom_By_PkArgs = {
     id: Scalars["bigint"];
+};
+
+export type Subscription_RootSchedule_ContinuationArgs = {
+    distinct_on?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Continuation_Order_By>>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_Continuation_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_Continuation_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Continuation_Order_By>>;
+    where?: Maybe<Schedule_Continuation_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_Continuation_By_PkArgs = {
+    id: Scalars["uuid"];
 };
 
 export type Subscription_RootSchedule_EventArgs = {

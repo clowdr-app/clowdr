@@ -127,7 +127,7 @@ export function VideoPlayer({ elementId }: { elementId: string }): JSX.Element {
                     <FAIcon icon="external-link-alt" iconStyle="s" ml={3} />
                 </LinkButton>
             ) : undefined}
-            <AspectRatio maxW="100%" ratio={16 / 9}>
+            <AspectRatio maxW="100%" maxH="90vh" ratio={16 / 9}>
                 <>
                     <Skeleton isLoaded={!loading} position="relative">
                         {videoElementBlob ? (

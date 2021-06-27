@@ -2,6 +2,7 @@ import {
     Alert,
     AlertIcon,
     Box,
+    Button,
     Center,
     chakra,
     Heading,
@@ -20,13 +21,12 @@ import {
     Room_EventSummaryFragment,
     Room_Mode_Enum,
 } from "../../../../generated/graphql";
-import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import FAIcon from "../../../Icons/FAIcon";
-import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { ItemElementsWrapper } from "../Content/ItemElements";
 import { ExhibitionLayoutWrapper } from "../Exhibition/ExhibitionLayout";
+import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModal";
 import { RoomTitle } from "./RoomTitle";
 import { RoomSponsorContent } from "./Sponsor/RoomSponsorContent";
 import { VideoElementButton } from "./Video/VideoElementButton";
@@ -88,7 +88,7 @@ export function RoomContent({
     );
 
     const now5s = useRealTime(5000);
-    const conference = useConference();
+    const socialiseModal = useSocialiseModal();
 
     return (
         <Box flexGrow={1}>
@@ -112,23 +112,23 @@ export function RoomContent({
                     </Heading>
                     {currentRoomEvent.shufflePeriod ? (
                         <Center>
-                            <LinkButton
-                                to={`/conference/${conference.slug}/shuffle`}
+                            <Button
                                 flexDir="column"
                                 py={4}
                                 h="auto"
                                 colorScheme="blue"
+                                onClick={() => socialiseModal.onOpen(SocialiseModalTab.Networking)}
                             >
                                 <HStack>
                                     <FAIcon iconStyle="s" icon="hand-pointer" />
                                     <chakra.span fontWeight="bold" mb={2}>
-                                        Participate in shuffle queue
+                                        Participate in networking
                                     </chakra.span>
                                 </HStack>
                                 <chakra.span mt={2} fontSize="lg" fontStyle="italic">
                                     {currentRoomEvent.shufflePeriod.name}
                                 </chakra.span>
-                            </LinkButton>
+                            </Button>
                         </Center>
                     ) : (
                         <></>

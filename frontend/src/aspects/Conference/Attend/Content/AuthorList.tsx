@@ -286,7 +286,6 @@ export function PlainAuthorsList({
                                       : y.roleName === "CHAIR"
                                       ? -1
                                       : x.roleName.localeCompare(y.roleName),
-                              (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
                               (x, y) => x.person.name.localeCompare(y.person.name),
                           ]
                         : [
@@ -298,6 +297,7 @@ export function PlainAuthorsList({
                                       : y.roleName === "CHAIR"
                                       ? -1
                                       : x.roleName.localeCompare(y.roleName),
+                              (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
                               (x, y) => x.person.name.localeCompare(y.person.name),
                           ],
                     R.uniqBy((x) => x.person.id, people)

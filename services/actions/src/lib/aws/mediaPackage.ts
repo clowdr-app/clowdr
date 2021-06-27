@@ -1,49 +1,10 @@
+import { OriginEndpoint as ClientOriginEndpoint, paginateListOriginEndpoints } from "@aws-sdk/client-mediapackage";
 import { v4 as uuidv4 } from "uuid";
-import { MediaPackage, shortId } from "./awsClient";
-
-export async function createChannel(roomId: string): Promise<string> {
-    const channel = await MediaPackage.createChannel({
-        Id: shortId(),
-        Tags: { roomId, environment: process.env.AWS_PREFIX ?? "unknown" },
-    });
-    if (!channel.Id) {
-        throw new Error("Failed to create new MediaPackage Channel");
-    }
-    return channel.Id;
-}
+import { MediaPackage } from "./awsClient";
 
 export interface OriginEndpoint {
     id: string;
     endpointUri: string;
-}
-
-export async function createOriginEndpoint(roomId: string, mediaPackageId: string): Promise<OriginEndpoint> {
-    const originEndpoint = await MediaPackage.createOriginEndpoint({
-        ChannelId: mediaPackageId,
-        Tags: { roomId, environment: process.env.AWS_PREFIX ?? "unknown" },
-        Id: shortId(),
-        HlsPackage: {
-            AdMarkers: "NONE",
-            IncludeIframeOnlyStream: false,
-            PlaylistType: "EVENT",
-            PlaylistWindowSeconds: 60,
-            ProgramDateTimeIntervalSeconds: 10,
-            SegmentDurationSeconds: 1,
-            StreamSelection: {
-                MaxVideoBitsPerSecond: 2147483647,
-                MinVideoBitsPerSecond: 0,
-                StreamOrder: "ORIGINAL",
-            },
-            UseAudioRenditionGroup: false,
-        },
-        Origination: "ALLOW",
-        StartoverWindowSeconds: 86400,
-        TimeDelaySeconds: 0,
-    });
-    if (originEndpoint.Id && originEndpoint.Url) {
-        return { id: originEndpoint.Id, endpointUri: originEndpoint.Url };
-    }
-    throw new Error("Failed to create OriginEndpoint");
 }
 
 export async function createHarvestJob(
@@ -53,15 +14,26 @@ export async function createHarvestJob(
 ): Promise<string> {
     const id = uuidv4();
 
-    const originEndpoints = await MediaPackage.listOriginEndpoints({
-        ChannelId: mediaPackageChannelId,
-    });
+    const originEndpoints: ClientOriginEndpoint[] = [];
 
-    if (!originEndpoints.OriginEndpoints || originEndpoints.OriginEndpoints.length < 1) {
+    const paginator = paginateListOriginEndpoints(
+        {
+            client: MediaPackage,
+        },
+        {
+            ChannelId: mediaPackageChannelId,
+        }
+    );
+
+    for await (const page of paginator) {
+        originEndpoints.push(...(page.OriginEndpoints ?? []));
+    }
+
+    if (!originEndpoints || originEndpoints.length < 1) {
         throw new Error("No origin endpoints found for MediaPackage channel");
     }
 
-    const originEndpoint = originEndpoints.OriginEndpoints[0];
+    const originEndpoint = originEndpoints[0];
 
     const result = await MediaPackage.createHarvestJob({
         EndTime: endTime,

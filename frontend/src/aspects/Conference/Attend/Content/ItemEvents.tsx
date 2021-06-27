@@ -48,7 +48,7 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
             <Flex pt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
                 <VStack flex="1 1 48%" alignItems="flex-start" maxW="max-content">
                     <Heading as="h4" size="md" textAlign="left" w="100%" pt={8}>
-                        All times for this item
+                        All times for this content
                     </Heading>
                     <Text my={3} w="auto" textAlign="left" p={0}>
                         <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
@@ -58,7 +58,7 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
                 </VStack>
                 <VStack mr={2} flex="1 1 48%" alignItems="flex-start" maxW="max-content">
                     <Heading as="h4" size="md" textAlign="left" pt={8}>
-                        Events around this item
+                        Events around this content
                     </Heading>
                     <Text my={3} w="auto" textAlign="left" p={0}>
                         <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />

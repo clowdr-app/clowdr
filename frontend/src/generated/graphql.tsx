@@ -38108,24 +38108,17 @@ export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePer
 
 export type PrefetchShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> };
 
-export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly allocatedShuffleRoomId?: Maybe<number> };
+export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
 
-export type MyShuffleQueueEntrySubscriptionVariables = Exact<{
+export type MyShuffleQueueEntryQueryVariables = Exact<{
   id: Scalars['bigint'];
 }>;
 
 
-export type MyShuffleQueueEntrySubscription = { readonly __typename?: 'subscription_root', readonly room_ShuffleQueueEntry_by_pk?: Maybe<(
+export type MyShuffleQueueEntryQuery = { readonly __typename?: 'query_root', readonly room_ShuffleQueueEntry_by_pk?: Maybe<(
     { readonly __typename?: 'room_ShuffleQueueEntry' }
     & SubdShuffleQueueEntryDataFragment
   )> };
-
-export type GetShuffleRoomQueryVariables = Exact<{
-  id: Scalars['bigint'];
-}>;
-
-
-export type GetShuffleRoomQuery = { readonly __typename?: 'query_root', readonly room_ShuffleRoom_by_pk?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
 
 export type ShufflePeriodsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39956,7 +39949,10 @@ export const ShufflePeriodDataFragmentDoc = gql`
 export const SubdShuffleQueueEntryDataFragmentDoc = gql`
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
   id
-  allocatedShuffleRoomId
+  shuffleRoom {
+    id
+    roomId
+  }
 }
     `;
 export const RegistrantFieldsFragmentDoc = gql`
@@ -50265,7 +50261,7 @@ export type GetAllRoomParticipantsQueryHookResult = ReturnType<typeof useGetAllR
 export type GetAllRoomParticipantsLazyQueryHookResult = ReturnType<typeof useGetAllRoomParticipantsLazyQuery>;
 export type GetAllRoomParticipantsQueryResult = Apollo.QueryResult<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>;
 export const MyShuffleQueueEntryDocument = gql`
-    subscription MyShuffleQueueEntry($id: bigint!) {
+    query MyShuffleQueueEntry($id: bigint!) {
   room_ShuffleQueueEntry_by_pk(id: $id) {
     ...SubdShuffleQueueEntryData
   }
@@ -50273,63 +50269,32 @@ export const MyShuffleQueueEntryDocument = gql`
     ${SubdShuffleQueueEntryDataFragmentDoc}`;
 
 /**
- * __useMyShuffleQueueEntrySubscription__
+ * __useMyShuffleQueueEntryQuery__
  *
- * To run a query within a React component, call `useMyShuffleQueueEntrySubscription` and pass it any options that fit your needs.
- * When your component renders, `useMyShuffleQueueEntrySubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMyShuffleQueueEntrySubscription({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useMyShuffleQueueEntrySubscription(baseOptions: Apollo.SubscriptionHookOptions<MyShuffleQueueEntrySubscription, MyShuffleQueueEntrySubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<MyShuffleQueueEntrySubscription, MyShuffleQueueEntrySubscriptionVariables>(MyShuffleQueueEntryDocument, options);
-      }
-export type MyShuffleQueueEntrySubscriptionHookResult = ReturnType<typeof useMyShuffleQueueEntrySubscription>;
-export type MyShuffleQueueEntrySubscriptionResult = Apollo.SubscriptionResult<MyShuffleQueueEntrySubscription>;
-export const GetShuffleRoomDocument = gql`
-    query GetShuffleRoom($id: bigint!) {
-  room_ShuffleRoom_by_pk(id: $id) {
-    id
-    roomId
-  }
-}
-    `;
-
-/**
- * __useGetShuffleRoomQuery__
- *
- * To run a query within a React component, call `useGetShuffleRoomQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetShuffleRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMyShuffleQueueEntryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyShuffleQueueEntryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetShuffleRoomQuery({
+ * const { data, loading, error } = useMyShuffleQueueEntryQuery({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetShuffleRoomQuery(baseOptions: Apollo.QueryHookOptions<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>) {
+export function useMyShuffleQueueEntryQuery(baseOptions: Apollo.QueryHookOptions<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>(GetShuffleRoomDocument, options);
+        return Apollo.useQuery<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>(MyShuffleQueueEntryDocument, options);
       }
-export function useGetShuffleRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>) {
+export function useMyShuffleQueueEntryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>(GetShuffleRoomDocument, options);
+          return Apollo.useLazyQuery<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>(MyShuffleQueueEntryDocument, options);
         }
-export type GetShuffleRoomQueryHookResult = ReturnType<typeof useGetShuffleRoomQuery>;
-export type GetShuffleRoomLazyQueryHookResult = ReturnType<typeof useGetShuffleRoomLazyQuery>;
-export type GetShuffleRoomQueryResult = Apollo.QueryResult<GetShuffleRoomQuery, GetShuffleRoomQueryVariables>;
+export type MyShuffleQueueEntryQueryHookResult = ReturnType<typeof useMyShuffleQueueEntryQuery>;
+export type MyShuffleQueueEntryLazyQueryHookResult = ReturnType<typeof useMyShuffleQueueEntryLazyQuery>;
+export type MyShuffleQueueEntryQueryResult = Apollo.QueryResult<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>;
 export const ShufflePeriodsDocument = gql`
     query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
   room_ShufflePeriod(

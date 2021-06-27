@@ -112,7 +112,7 @@ function isShuffleRoomEndingSoon(
 ): boolean {
     const startedAtMs = Date.parse(startedAt);
     const durationMs = durationMinutes * 60 * 1000;
-    return startedAtMs + durationMs < now + 30000;
+    return startedAtMs + durationMs - 30000 <= now && now < startedAtMs + durationMs;
 }
 
 export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
@@ -602,7 +602,7 @@ function RoomInner({
             toast({
                 title: "30 seconds left...",
                 status: "warning",
-                duration: 31000,
+                duration: 29000,
                 isClosable: true,
                 position: "top",
             });

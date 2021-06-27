@@ -13,19 +13,19 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Redirect } from "react-router-dom";
 import {
     PrefetchShuffleQueueEntryDataFragment,
     ShufflePeriodDataFragment,
-    useGetShuffleRoomQuery,
     useJoinShuffleQueueMutation,
-    useMyShuffleQueueEntrySubscription,
+    useMyShuffleQueueEntryQuery,
     useShufflePeriodsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import { ConferenceInfoFragment, useConference } from "../Conference/useConference";
 import useCurrentRegistrant from "../Conference/useCurrentRegistrant";
+import { roundToNearest } from "../Generic/MathUtils";
 import { useRealTime } from "../Generic/useRealTime";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useTitle } from "../Utils/useTitle";
@@ -61,19 +61,15 @@ gql`
 
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
         id
-        allocatedShuffleRoomId
-    }
-
-    subscription MyShuffleQueueEntry($id: bigint!) {
-        room_ShuffleQueueEntry_by_pk(id: $id) {
-            ...SubdShuffleQueueEntryData
+        shuffleRoom {
+            id
+            roomId
         }
     }
 
-    query GetShuffleRoom($id: bigint!) {
-        room_ShuffleRoom_by_pk(id: $id) {
-            id
-            roomId
+    query MyShuffleQueueEntry($id: bigint!) {
+        room_ShuffleQueueEntry_by_pk(id: $id) {
+            ...SubdShuffleQueueEntryData
         }
     }
 
@@ -119,44 +115,27 @@ function QueuedShufflePeriodBox({
 }): JSX.Element {
     const startAt = Date.parse(period.startAt);
     const endAt = Date.parse(period.endAt);
+    const now = useRealTime(1000);
+    const now5s = roundToNearest(now, 5000);
 
     const trackColour = useColorModeValue("gray.50", "gray.900");
 
-    const liveEntry = useMyShuffleQueueEntrySubscription({
-        skip: !isWaitingForAllocatedRoom,
-        variables: {
-            id: lastEntry.id,
-        },
-    });
-    useQueryErrorToast(liveEntry.error, true, "WaitingPage:useMyShuffleQueueEntrySubscription");
-
-    const allocatedShuffleRoom = useGetShuffleRoomQuery({
+    const liveEntry = useMyShuffleQueueEntryQuery({
         skip: true,
     });
-    useQueryErrorToast(allocatedShuffleRoom.error, false);
-
-    const triggeredFetchRoom = useRef<boolean>(false);
     const [allocatedRoomId, setAllocatedRoomId] = useState<string | null>(null);
+    useQueryErrorToast(liveEntry.error, true, "WaitingPage:useMyShuffleQueueEntryQuery");
     useEffect(() => {
-        if (!triggeredFetchRoom.current) {
-            if (isWaitingForAllocatedRoom && liveEntry.data?.room_ShuffleQueueEntry_by_pk?.allocatedShuffleRoomId) {
-                const id = liveEntry.data?.room_ShuffleQueueEntry_by_pk?.allocatedShuffleRoomId;
-                setTimeout(async () => {
-                    triggeredFetchRoom.current = true;
-                    const data = await allocatedShuffleRoom.refetch({
-                        id,
-                    });
-                    setAllocatedRoomId(data.data?.room_ShuffleRoom_by_pk?.roomId ?? null);
-                }, 1000);
-            }
+        if (isWaitingForAllocatedRoom && !liveEntry.data?.room_ShuffleQueueEntry_by_pk?.shuffleRoom) {
+            (async () => {
+                const data = await liveEntry.refetch({
+                    id: lastEntry.id,
+                });
+                setAllocatedRoomId(data.data.room_ShuffleQueueEntry_by_pk?.shuffleRoom?.roomId ?? null);
+            })();
         }
-    }, [
-        allocatedShuffleRoom,
-        isWaitingForAllocatedRoom,
-        liveEntry.data?.room_ShuffleQueueEntry_by_pk?.allocatedShuffleRoomId,
-    ]);
+    }, [isWaitingForAllocatedRoom, lastEntry.id, liveEntry, now5s]);
 
-    const now = useRealTime(1000);
     const timeTextEl =
         startAt < now ? (
             <Text>Ends {formatRelative(endAt, now)}</Text>
@@ -173,23 +152,8 @@ function QueuedShufflePeriodBox({
         );
     }
 
-    if (
-        isWaitingForAllocatedRoom &&
-        liveEntry.data?.room_ShuffleQueueEntry_by_pk?.allocatedShuffleRoomId &&
-        !isJoining
-    ) {
-        if (!allocatedRoomId) {
-            return (
-                <>
-                    <Text>Loading allocated shuffle room information, please wait</Text>
-                    <div>
-                        <Spinner />
-                    </div>
-                </>
-            );
-        } else {
-            return <Redirect to={`/conference/${conference.slug}/room/${allocatedRoomId}`} />;
-        }
+    if (isWaitingForAllocatedRoom && allocatedRoomId && !isJoining) {
+        return <Redirect to={`/conference/${conference.slug}/room/${allocatedRoomId}`} />;
     } else if (lastEntry.shuffleRoom) {
         const intendedEnd =
             period.roomDurationMinutes * 60 * 1000 + new Date(lastEntry.shuffleRoom.startedAt).getTime();

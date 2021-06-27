@@ -83,7 +83,8 @@ export default function ContinuationChoices({
             fromId: "eventId" in from ? from.eventId : from.shufflePeriodId,
         },
     });
-    return response.data?.schedule_Continuation.length ? (
+    return response.data?.schedule_Continuation &&
+        (response.data?.schedule_Continuation.length > 0 || "shufflePeriodId" in from) ? (
         <ContinuationChoices_Inner
             from={
                 "eventId" in from
@@ -197,121 +198,137 @@ function ContinuationChoices_Inner({
     const myBackstages = useMyBackstagesModal();
     const liveProgramRooms = useLiveProgramRoomsModal();
     useEffect(() => {
-        if (activateChoice && selectedOptionId !== null && !activatedChoice) {
-            const selectedOption = choices.find((x) => x.id === selectedOptionId);
-            let error: string | null = null;
+        if (activateChoice && !activatedChoice) {
+            const activateChosenOption = () => {
+                if (selectedOptionId !== null) {
+                    const selectedOption = choices.find((x) => x.id === selectedOptionId);
+                    let error: string | null = null;
 
-            if (selectedOption) {
-                const to: ContinuationTo = selectedOption.to;
-                switch (to.type) {
-                    case ContinuationType.URL:
-                        window.location.assign(to.url);
-                        break;
-                    case ContinuationType.Room:
-                        if (currentRoomId !== to.id) {
-                            history.push(`/conference/${conference.slug}/room/${to.id}`);
-                        }
-                        break;
-                    case ContinuationType.Event:
-                        if (!roomsResponse.loading) {
-                            const event = roomsResponse.data?.schedule_Event.find((event) => event.id === to.id);
-                            if (event && event?.roomId) {
-                                if (currentRoomId !== event.roomId) {
-                                    history.push(`/conference/${conference.slug}/room/${event.roomId}`);
+                    if (selectedOption) {
+                        const to: ContinuationTo = selectedOption.to;
+                        switch (to.type) {
+                            case ContinuationType.URL:
+                                window.location.assign(to.url);
+                                break;
+                            case ContinuationType.Room:
+                                if (currentRoomId !== to.id) {
+                                    history.push(`/conference/${conference.slug}/room/${to.id}`);
                                 }
-                            } else {
-                                if (roomsResponse.error) {
-                                    error = roomsResponse.error.message;
-                                } else {
-                                    error = "Sorry, the room for the chosen event could not be found.";
+                                break;
+                            case ContinuationType.Event:
+                                if (!roomsResponse.loading) {
+                                    const event = roomsResponse.data?.schedule_Event.find(
+                                        (event) => event.id === to.id
+                                    );
+                                    if (event && event?.roomId) {
+                                        if (currentRoomId !== event.roomId) {
+                                            history.push(`/conference/${conference.slug}/room/${event.roomId}`);
+                                        }
+                                    } else {
+                                        if (roomsResponse.error) {
+                                            error = roomsResponse.error.message;
+                                        } else {
+                                            error = "Sorry, the room for the chosen event could not be found.";
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        break;
-                    case ContinuationType.AutoDiscussionRoom:
-                        if (!roomsResponse.loading) {
-                            const item = roomsResponse.data?.content_Item.find((item) => item.id === to.id);
-                            if (item && item.rooms.length > 0) {
-                                if (currentRoomId !== item.rooms[0].id) {
-                                    history.push(`/conference/${conference.slug}/room/${item.rooms[0].id}`);
+                                break;
+                            case ContinuationType.AutoDiscussionRoom:
+                                if (!roomsResponse.loading) {
+                                    const item = roomsResponse.data?.content_Item.find((item) => item.id === to.id);
+                                    if (item && item.rooms.length > 0) {
+                                        if (currentRoomId !== item.rooms[0].id) {
+                                            history.push(`/conference/${conference.slug}/room/${item.rooms[0].id}`);
+                                        }
+                                    } else {
+                                        if (roomsResponse.error) {
+                                            error = roomsResponse.error.message;
+                                        } else {
+                                            error = "Sorry, the chosen discussion room could not be found.";
+                                        }
+                                    }
                                 }
-                            } else {
-                                if (roomsResponse.error) {
-                                    error = roomsResponse.error.message;
-                                } else {
-                                    error = "Sorry, the chosen discussion room could not be found.";
+                                break;
+                            case ContinuationType.Item:
+                                history.push(`/conference/${conference.slug}/item/${to.id}`);
+                                break;
+                            case ContinuationType.Exhibition:
+                                history.push(`/conference/${conference.slug}/exhibition/${to.id}`);
+                                break;
+                            case ContinuationType.ShufflePeriod:
+                                history.push(`/conference/${conference.slug}/shuffle`);
+                                break;
+                            case ContinuationType.Profile:
+                                history.push(`/conference/${conference.slug}/profile/view/${to.id}`);
+                                break;
+                            case ContinuationType.OwnProfile:
+                                history.push(`/conference/${conference.slug}/profile`);
+                                break;
+                            case ContinuationType.NavigationView:
+                                switch (to.view) {
+                                    case NavigationView.LiveProgramRooms:
+                                        liveProgramRooms.onOpen();
+                                        break;
+                                    case NavigationView.HappeningSoon:
+                                        scheduleModal.onOpen(undefined, ProgramModalTab.HappeningSoon);
+                                        break;
+                                    case NavigationView.Tags:
+                                        scheduleModal.onOpen(
+                                            to.tagId?.length ? to.tagId : undefined,
+                                            ProgramModalTab.Tags
+                                        );
+                                        break;
+                                    case NavigationView.Exhibitions:
+                                        scheduleModal.onOpen(undefined, ProgramModalTab.Exhibitions);
+                                        break;
+                                    case NavigationView.Search:
+                                        scheduleModal.onOpen(undefined, ProgramModalTab.Search, to.term);
+                                        break;
+                                    case NavigationView.Schedule:
+                                        scheduleModal.onOpen(undefined, ProgramModalTab.Schedule);
+                                        break;
+                                    case NavigationView.SocialRooms:
+                                        socialiseModal.onOpen(SocialiseModalTab.Rooms);
+                                        break;
+                                    case NavigationView.People:
+                                        socialiseModal.onOpen(SocialiseModalTab.People);
+                                        break;
+                                    case NavigationView.ShufflePeriods:
+                                        socialiseModal.onOpen(SocialiseModalTab.Networking);
+                                        break;
+                                    case NavigationView.MyBackstages:
+                                        myBackstages.onOpen();
+                                        break;
                                 }
-                            }
-                        }
-                        break;
-                    case ContinuationType.Item:
-                        history.push(`/conference/${conference.slug}/item/${to.id}`);
-                        break;
-                    case ContinuationType.Exhibition:
-                        history.push(`/conference/${conference.slug}/exhibition/${to.id}`);
-                        break;
-                    case ContinuationType.ShufflePeriod:
-                        history.push(`/conference/${conference.slug}/shuffle`);
-                        break;
-                    case ContinuationType.Profile:
-                        history.push(`/conference/${conference.slug}/profile/view/${to.id}`);
-                        break;
-                    case ContinuationType.OwnProfile:
-                        history.push(`/conference/${conference.slug}/profile`);
-                        break;
-                    case ContinuationType.NavigationView:
-                        switch (to.view) {
-                            case NavigationView.LiveProgramRooms:
-                                liveProgramRooms.onOpen();
                                 break;
-                            case NavigationView.HappeningSoon:
-                                scheduleModal.onOpen(undefined, ProgramModalTab.HappeningSoon);
-                                break;
-                            case NavigationView.Tags:
-                                scheduleModal.onOpen(to.tagId?.length ? to.tagId : undefined, ProgramModalTab.Tags);
-                                break;
-                            case NavigationView.Exhibitions:
-                                scheduleModal.onOpen(undefined, ProgramModalTab.Exhibitions);
-                                break;
-                            case NavigationView.Search:
-                                scheduleModal.onOpen(undefined, ProgramModalTab.Search, to.term);
-                                break;
-                            case NavigationView.Schedule:
-                                scheduleModal.onOpen(undefined, ProgramModalTab.Schedule);
-                                break;
-                            case NavigationView.SocialRooms:
-                                socialiseModal.onOpen(SocialiseModalTab.Rooms);
-                                break;
-                            case NavigationView.People:
-                                socialiseModal.onOpen(SocialiseModalTab.People);
-                                break;
-                            case NavigationView.ShufflePeriods:
-                                socialiseModal.onOpen(SocialiseModalTab.Networking);
-                                break;
-                            case NavigationView.MyBackstages:
-                                myBackstages.onOpen();
+                            case ContinuationType.ConferenceLandingPage:
+                                history.push(`/conference/${conference.slug}`);
                                 break;
                         }
-                        break;
-                    case ContinuationType.ConferenceLandingPage:
-                        history.push(`/conference/${conference.slug}`);
-                        break;
+                    } else {
+                        error = "Sorry, the selected option is no longer available.";
+                    }
+
+                    if (error) {
+                        toast({
+                            description: error,
+                            duration: 80000,
+                            position: "bottom",
+                            isClosable: true,
+                            title: "Error activating continuation",
+                            status: "error",
+                        });
+                    } else {
+                        setActivatedChoice(true);
+                    }
                 }
-            } else {
-                error = "Sorry, the selected option is no longer available.";
-            }
+            };
 
-            if (error) {
-                toast({
-                    description: error,
-                    duration: 80000,
-                    position: "bottom",
-                    isClosable: true,
-                    title: "Error activating continuation",
-                    status: "error",
-                });
+            if ("shufflePeriodId" in from) {
+                history.push(`/conference/${conference.slug}/shuffle`);
+                setTimeout(() => activateChosenOption(), 100);
             } else {
-                setActivatedChoice(true);
+                activateChosenOption();
             }
         }
     }, [
@@ -331,6 +348,7 @@ function ContinuationChoices_Inner({
         liveProgramRooms,
         activateChoice,
         myBackstages,
+        from,
     ]);
 
     const activeSet = useCallback((choiceId: string | null, isDefault: boolean) => {

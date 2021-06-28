@@ -238,7 +238,14 @@ export function ItemElements({
                         <Twemoji className="twemoji" text={itemData.title} />
                     </Heading>
                     <TagList my={3} tags={itemData.itemTags} />
-                    <ExhibitionNameList mt={3} mb={5} exhibitions={itemData.itemExhibitions} />
+                    {itemData.itemExhibitions.length > 0 ? (
+                        <VStack alignItems="flex-start" mb={3}>
+                            <Text fontStyle="italic">
+                                Featured in exhibition{itemData.itemExhibitions.length > 1 ? "s" : ""}:
+                            </Text>
+                            <ExhibitionNameList mt={3} mb={5} exhibitions={itemData.itemExhibitions} />
+                        </VStack>
+                    ) : undefined}
                 </>
             )}
             {children}

@@ -103,7 +103,6 @@ export function VideoElement({
                 controls={true}
                 width="100%"
                 height="auto"
-                maxHeight="100%"
                 onEnded={() => {
                     setIsPlaying(false);
                 }}

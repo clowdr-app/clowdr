@@ -17,7 +17,6 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    ModalProps,
     Table,
     Tbody,
     Td,
@@ -26,7 +25,9 @@ import {
     Thead,
     Tr,
     useColorModeValue,
+    useDisclosure,
 } from "@chakra-ui/react";
+import type { FocusableElement } from "@chakra-ui/utils";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
 import { MyBackstages_EventFragment, useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
@@ -36,7 +37,7 @@ import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
-import useCurrentRegistrant from "../../useCurrentRegistrant";
+import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 
 gql`
     fragment MyBackstages_Event on schedule_Event {
@@ -273,13 +274,75 @@ function MyBackstages(): JSX.Element {
     );
 }
 
-export function MyBackstagesModal(props: Omit<ModalProps, "children">): JSX.Element {
+interface MyBackstagesModalContext {
+    isOpen: boolean;
+    onOpen: () => void;
+    onClose: () => void;
+    finalFocusRef: React.RefObject<FocusableElement>;
+}
+
+const MyBackstagesModalContext = React.createContext<MyBackstagesModalContext | undefined>(undefined);
+
+export function useMyBackstagesModal(): MyBackstagesModalContext {
+    const ctx = React.useContext(MyBackstagesModalContext);
+    if (!ctx) {
+        throw new Error("Context not available - are you outside the provider?");
+    }
+    return ctx;
+}
+
+export function MyBackstagesModalProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const myBackstagesButtonRef = useRef<FocusableElement>(null);
+
+    const ctx: MyBackstagesModalContext = useMemo(
+        () => ({
+            finalFocusRef: myBackstagesButtonRef,
+            isOpen,
+            onOpen,
+            onClose,
+        }),
+        [onOpen, isOpen, onClose]
+    );
+
+    const maybeRegistrant = useMaybeCurrentRegistrant();
+
+    return (
+        <MyBackstagesModalContext.Provider value={ctx}>
+            {children}
+            {maybeRegistrant ? (
+                <MyBackstagesModal isOpen={isOpen} onClose={onClose} finalFocusRef={myBackstagesButtonRef} />
+            ) : undefined}
+        </MyBackstagesModalContext.Provider>
+    );
+}
+
+export function MyBackstagesModal({
+    isOpen,
+    onClose,
+    finalFocusRef,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    finalFocusRef: React.RefObject<FocusableElement>;
+}): JSX.Element {
     const closeRef = useRef<HTMLButtonElement | null>(null);
 
     const registrant = useCurrentRegistrant();
 
     return (
-        <Modal initialFocusRef={closeRef} size="6xl" isCentered scrollBehavior="inside" {...props}>
+        <Modal
+            initialFocusRef={closeRef}
+            finalFocusRef={finalFocusRef}
+            size="6xl"
+            isCentered
+            autoFocus={false}
+            returnFocusOnClose={false}
+            trapFocus={true}
+            scrollBehavior="inside"
+            isOpen={isOpen}
+            onClose={onClose}
+        >
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>My Backstages ({registrant.displayName})</ModalHeader>

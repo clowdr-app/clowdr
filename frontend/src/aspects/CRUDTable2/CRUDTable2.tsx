@@ -749,7 +749,17 @@ function RenderedCRUDTable<T>({
                             <Button
                                 aria-label="Delete row"
                                 onClick={() => {
-                                    onDelete([...selectedKeys.values()]);
+                                    const deletableKeys = [...selectedKeys.values()].filter((key) => {
+                                        if (!row.canDelete) {
+                                            return true;
+                                        }
+                                        const record = data && data.find((x) => row.getKey(x) === key);
+                                        if (!record) {
+                                            return false;
+                                        }
+                                        return row.canDelete?.(record);
+                                    });
+                                    onDelete(deletableKeys);
                                 }}
                                 size="xs"
                                 colorScheme="red"
@@ -761,7 +771,7 @@ function RenderedCRUDTable<T>({
                     </Center>
                 </Th>
             ) : undefined,
-        [onDelete, selectedKeys]
+        [onDelete, selectedKeys, row, data]
     );
 
     const doFocusOnRow = useCallback(

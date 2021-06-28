@@ -1,11 +1,11 @@
-import { Box, Flex, Link, MenuDivider, MenuItem, Text, useBreakpointValue, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, Link, MenuDivider, MenuItem, Text, useBreakpointValue } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { Fragment, useEffect, useRef } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../../generated/graphql";
-import { MyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
-import LiveProgramRoomsModal from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
-import SocialiseModal from "../../Conference/Attend/Rooms/V2/SocialiseModal";
+import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
+import { useLiveProgramRoomsModal } from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
+import { useSocialiseModal } from "../../Conference/Attend/Rooms/V2/SocialiseModal";
 import { useScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
 import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../Conference/useConference";
@@ -28,16 +28,22 @@ export default function LeftMenu(): JSX.Element {
 
     const location = useLocation();
 
-    const { isOpen: liveNow_IsOpen, onOpen: liveNow_OnOpen, onClose: liveNow_OnClose } = useDisclosure();
-    const liveNowButtonRef = useRef<HTMLButtonElement | null>(null);
-
-    const { isOpen: socialise_IsOpen, onOpen: socialise_OnOpen, onClose: socialise_OnClose } = useDisclosure();
-    const socialiseButtonRef = useRef<HTMLButtonElement | null>(null);
-
-    const { isOpen: myBackstages_IsOpen, onOpen: myBackstages_OnOpen, onClose: myBackstages_OnClose } = useDisclosure();
-    const myBackstagesButtonRef = useRef<HTMLButtonElement | null>(null);
-
     const { onOpen: schedule_OnOpen, onClose: schedule_OnClose, finalFocusRef: scheduleButtonRef } = useScheduleModal();
+    const {
+        onOpen: socialise_OnOpen,
+        onClose: socialise_OnClose,
+        finalFocusRef: socialiseButtonRef,
+    } = useSocialiseModal();
+    const {
+        onOpen: liveNow_OnOpen,
+        onClose: liveNow_OnClose,
+        finalFocusRef: liveNowButtonRef,
+    } = useLiveProgramRoomsModal();
+    const {
+        onOpen: myBackstages_OnOpen,
+        onClose: myBackstages_OnClose,
+        finalFocusRef: myBackstagesButtonRef,
+    } = useMyBackstagesModal();
 
     useEffect(() => {
         liveNow_OnClose();
@@ -70,7 +76,7 @@ export default function LeftMenu(): JSX.Element {
                         borderBottomRadius={0}
                         colorScheme="red"
                         side="left"
-                        ref={liveNowButtonRef}
+                        ref={liveNowButtonRef as React.RefObject<HTMLButtonElement>}
                         onClick={liveNow_OnOpen}
                     >
                         <Box pos="absolute" top={1} right={1} fontSize="xs">
@@ -107,8 +113,8 @@ export default function LeftMenu(): JSX.Element {
                             colorScheme={colorScheme}
                             side="left"
                             pos="relative"
-                            ref={socialiseButtonRef}
-                            onClick={socialise_OnOpen}
+                            ref={socialiseButtonRef as React.RefObject<HTMLButtonElement>}
+                            onClick={() => socialise_OnOpen()}
                         >
                             {roomParticipants !== undefined &&
                             roomParticipants !== false &&
@@ -130,7 +136,10 @@ export default function LeftMenu(): JSX.Element {
                                 <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
                                 My profile
                             </MenuItem>
-                            <MenuItem ref={myBackstagesButtonRef} onClick={myBackstages_OnOpen}>
+                            <MenuItem
+                                ref={myBackstagesButtonRef as React.RefObject<HTMLButtonElement>}
+                                onClick={myBackstages_OnOpen}
+                            >
                                 <FAIcon iconStyle="s" icon="person-booth" mr={2} aria-hidden={true} w="1.2em" /> My
                                 backstages
                             </MenuItem>
@@ -242,21 +251,6 @@ export default function LeftMenu(): JSX.Element {
                     href="https://github.com/clowdr-app/clowdr/issues"
                 />
             </Flex>
-            <LiveProgramRoomsModal isOpen={liveNow_IsOpen} onClose={liveNow_OnClose} finalFocusRef={liveNowButtonRef} />
-            {maybeRegistrant ? (
-                <>
-                    <SocialiseModal
-                        isOpen={socialise_IsOpen}
-                        onClose={socialise_OnClose}
-                        finalFocusRef={socialiseButtonRef}
-                    />
-                    <MyBackstagesModal
-                        isOpen={myBackstages_IsOpen}
-                        onClose={myBackstages_OnClose}
-                        finalFocusRef={myBackstagesButtonRef}
-                    />
-                </>
-            ) : undefined}
         </>
     );
 }

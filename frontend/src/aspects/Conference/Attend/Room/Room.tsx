@@ -15,10 +15,10 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/continuation";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Redirect, useHistory } from "react-router-dom";
 import {
     Content_ItemType_Enum,
     RoomPage_RoomDetailsFragment,
@@ -29,7 +29,6 @@ import {
     Schedule_EventProgramPersonRole_Enum,
     useRoomPage_GetRoomChannelStackQuery,
     useRoom_GetDefaultVideoRoomBackendQuery,
-    useRoom_GetEventBreakoutRoomQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
 import { defaultOutline_AsBoxShadow } from "../../../Chakra/ChakraCustomProvider";
@@ -40,8 +39,8 @@ import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
-import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
+import ContinuationChoices from "../Continuation/ContinuationChoices";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
 import { RoomContent } from "./RoomContent";
@@ -100,16 +99,6 @@ gql`
         }
     }
 
-    query Room_GetEventBreakoutRoom($originatingItemId: uuid!) {
-        room_Room(
-            where: { originatingEventId: { _is_null: true }, originatingItemId: { _eq: $originatingItemId } }
-            order_by: { created_at: asc }
-            limit: 1
-        ) {
-            id
-        }
-    }
-
     query Room_GetDefaultVideoRoomBackend {
         system_Configuration_by_pk(key: DEFAULT_VIDEO_ROOM_BACKEND) {
             value
@@ -117,20 +106,13 @@ gql`
     }
 `;
 
-function hasShuffleRoomEnded({ startedAt, durationMinutes }: { startedAt: string; durationMinutes: number }): boolean {
-    const startedAtMs = Date.parse(startedAt);
-    const durationMs = durationMinutes * 60 * 1000;
-    const now = Date.now();
-    return startedAtMs + durationMs < now;
-}
-
 function isShuffleRoomEndingSoon(
     { startedAt, durationMinutes }: { startedAt: string; durationMinutes: number },
     now: number
 ): boolean {
     const startedAtMs = Date.parse(startedAt);
     const durationMs = durationMinutes * 60 * 1000;
-    return startedAtMs + durationMs < now + 30000;
+    return startedAtMs + durationMs - 30000 <= now && now < startedAtMs + durationMs;
 }
 
 export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
@@ -619,7 +601,6 @@ function RoomInner({
         if (sendShuffleRoomNotification) {
             toast({
                 title: "30 seconds left...",
-                description: "...then you'll be moved back to the shuffle home page",
                 status: "warning",
                 duration: 29000,
                 isClosable: true,
@@ -627,108 +608,6 @@ function RoomInner({
             });
         }
     }, [sendShuffleRoomNotification, toast]);
-
-    // Q&A spinoff
-    const [existingCurrentRoomEvent, setExistingCurrentRoomEvent] = useState<Room_EventSummaryFragment | null>(
-        currentRoomEvent
-    );
-    const conference = useConference();
-    const { refetch: refetchBreakout } = useRoom_GetEventBreakoutRoomQuery({
-        skip: true,
-        fetchPolicy: "network-only",
-    });
-    const history = useHistory();
-    useEffect(() => {
-        async function fn() {
-            try {
-                if (
-                    existingCurrentRoomEvent?.itemId &&
-                    (existingCurrentRoomEvent.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                        existingCurrentRoomEvent.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
-                    existingCurrentRoomEvent.id !== currentRoomEvent?.id
-                ) {
-                    try {
-                        const breakoutRoom = await refetchBreakout({
-                            originatingItemId: existingCurrentRoomEvent.itemId,
-                        });
-
-                        if (
-                            !breakoutRoom.data ||
-                            !breakoutRoom.data.room_Room ||
-                            breakoutRoom.data.room_Room.length < 1
-                        ) {
-                            throw new Error("No matching room found");
-                        }
-
-                        if (showBackstage && backstageSelectedEventId === existingCurrentRoomEvent.id) {
-                            toast({
-                                status: "info",
-                                duration: 60000,
-                                position: "bottom-right",
-                                isClosable: true,
-                                title: "Your event has ended!",
-                                description: (
-                                    <VStack alignItems="flex-start">
-                                        <Text>
-                                            This event is coming to an end. You can join the discussion room to continue
-                                            talking with the audience.
-                                        </Text>
-                                        <Button
-                                            onClick={() =>
-                                                history.push(
-                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`
-                                                )
-                                            }
-                                            colorScheme="purple"
-                                            fontSize="lg"
-                                        >
-                                            Go to the discussion room
-                                        </Button>
-                                    </VStack>
-                                ),
-                            });
-                        } else {
-                            toast({
-                                status: "info",
-                                duration: 30000,
-                                isClosable: true,
-                                position: "bottom-right",
-                                title: "Discussion room available",
-                                description: (
-                                    <VStack alignItems="flex-start">
-                                        <Text>
-                                            You can continue the discussion asynchronously in a discussion room.
-                                        </Text>
-                                        <Button
-                                            onClick={() =>
-                                                history.push(
-                                                    `/conference/${conference.slug}/room/${breakoutRoom.data.room_Room[0].id}`
-                                                )
-                                            }
-                                            colorScheme="purple"
-                                        >
-                                            Join the discussion room
-                                        </Button>
-                                    </VStack>
-                                ),
-                            });
-                        }
-                    } catch (e) {
-                        console.error(
-                            "Error while moving to breakout room at end of event",
-                            existingCurrentRoomEvent.id,
-                            e
-                        );
-                        return;
-                    }
-                }
-            } finally {
-                setExistingCurrentRoomEvent(currentRoomEvent);
-            }
-        }
-        fn();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentRoomEvent]);
 
     const bgColour = useColorModeValue("gray.200", "gray.700");
 
@@ -781,6 +660,7 @@ function RoomInner({
                             <AspectRatio
                                 w="100%"
                                 maxW="600px"
+                                maxH="90vh"
                                 ratio={16 / 9}
                                 border="3px solid"
                                 borderColor="gray.400"
@@ -831,138 +711,203 @@ function RoomInner({
     `;
     const shadow = useColorModeValue("lg", "light-md");
 
-    return roomDetails.shuffleRooms.length > 0 && hasShuffleRoomEnded(roomDetails.shuffleRooms[0]) ? (
-        <Redirect
-            to={`/conference/${conference.slug}/shuffle${
-                !roomDetails.shuffleRooms[0].reshuffleUponEnd ? "/ended" : ""
-            }`}
-        />
-    ) : (
-        <HStack width="100%" flexWrap="wrap" alignItems="stretch">
-            <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
-                {controlBarEl}
+    const [continuationChoicesFrom, setContinuationChoicesFrom] = useState<
+        { eventId: string; endsAt: number } | { shufflePeriodId: string; shuffleRoomEndsAt: number } | null
+    >(null);
+    const [continuationIsBackstage, setContinuationIsBackstage] = useState<boolean>(false);
+    const [continuationNoBackstage, setContinuationNoBackstage] = useState<boolean>(false);
+    const [continuationRole, setContinuationRole] = useState<ContinuationDefaultFor>(ContinuationDefaultFor.None);
 
-                {showBackstage ? backStageEl : undefined}
+    useEffect(() => {
+        if (currentRoomEvent) {
+            const startTime = Date.parse(currentRoomEvent.startTime);
+            if (now5s - startTime > 45000) {
+                setContinuationChoicesFrom((old) =>
+                    !old || !("eventId" in old) || old.eventId !== currentRoomEvent.id
+                        ? {
+                              eventId: currentRoomEvent.id,
+                              endsAt: currentRoomEvent.endTime ? Date.parse(currentRoomEvent.endTime) : 0,
+                          }
+                        : old
+                );
+                const noBackstage =
+                    currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Presentation &&
+                    currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.QAndA;
+                setContinuationIsBackstage(showBackstage);
+                setContinuationNoBackstage(noBackstage);
+                const roleName = !noBackstage
+                    ? currentRoomEvent?.eventPeople.find((x) => x.person?.registrantId === currentRegistrant.id)
+                          ?.roleName
+                    : undefined;
+                if (roleName === Schedule_EventProgramPersonRole_Enum.Chair) {
+                    setContinuationRole(ContinuationDefaultFor.Chairs);
+                } else if (roleName === Schedule_EventProgramPersonRole_Enum.Presenter) {
+                    setContinuationRole(ContinuationDefaultFor.Presenters);
+                } else if (!noBackstage) {
+                    setContinuationRole(ContinuationDefaultFor.Viewers);
+                } else {
+                    setContinuationRole(ContinuationDefaultFor.None);
+                }
+            }
+        } else if (roomDetails.shuffleRooms.length > 0) {
+            setContinuationChoicesFrom((old) =>
+                !old ||
+                !("shufflePeriodId" in old) ||
+                old.shufflePeriodId !== roomDetails.shuffleRooms[0].shufflePeriodId
+                    ? {
+                          shufflePeriodId: roomDetails.shuffleRooms[0].shufflePeriodId,
+                          shuffleRoomEndsAt:
+                              Date.parse(roomDetails.shuffleRooms[0].startedAt) +
+                              roomDetails.shuffleRooms[0].durationMinutes * 60 * 1000,
+                      }
+                    : old
+            );
+            setContinuationIsBackstage(false);
+            setContinuationNoBackstage(true);
+            setContinuationRole(ContinuationDefaultFor.None);
+        } else {
+            setContinuationChoicesFrom((old) => (!old || ("endsAt" in old && now5s > old.endsAt + 45000) ? null : old));
+        }
+    }, [currentRoomEvent, roomDetails.shuffleRooms, now5s, showBackstage, currentRegistrant.id]);
 
-                {!showBackstage ? (
-                    <>
-                        {startsSoonEl}
-                        {isPresenterOfUpcomingEvent ? (
-                            <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
-                        ) : undefined}
-                        {maybeZoomUrl && currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom ? (
-                            <ExternalLinkButton
-                                to={maybeZoomUrl.url}
-                                isExternal={true}
-                                mt={20}
-                                mb={4}
-                                mx={2}
-                                p={8}
-                                linkProps={{
-                                    textAlign: "center",
-                                    minH: "18em",
-                                }}
-                                whiteSpace="normal"
-                                h="auto"
-                                lineHeight="150%"
-                                fontSize="1.5em"
-                                colorScheme="purple"
-                                color="white"
-                                borderRadius="2xl"
-                                shadow={shadow}
-                                animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}
-                                transition="none"
-                                background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
-                                backgroundSize="400% 400%"
-                                _hover={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                }}
-                                _focus={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                    boxShadow: defaultOutline_AsBoxShadow,
-                                }}
-                                _active={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                }}
-                            >
-                                <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
-                                Click to join {maybeZoomUrl.name}
-                                <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
-                            </ExternalLinkButton>
-                        ) : maybeZoomUrl &&
-                          nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom &&
-                          Date.parse(nextRoomEvent.startTime) - now5s < 10 * 60 * 1000 ? (
-                            <ExternalLinkButton
-                                to={maybeZoomUrl.url}
-                                isExternal={true}
-                                mt={20}
-                                mb={4}
-                                mx={2}
-                                p={8}
-                                linkProps={{
-                                    textAlign: "center",
-                                    minH: "30em",
-                                }}
-                                whiteSpace="normal"
-                                h="auto"
-                                lineHeight="150%"
-                                fontSize="1.5em"
-                                colorScheme="purple"
-                                color="white"
-                                borderRadius="2xl"
-                                shadow={shadow}
-                                animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}
-                                transition="none"
-                                background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
-                                backgroundSize="400% 400%"
-                                _hover={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                }}
-                                _focus={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                    boxShadow: defaultOutline_AsBoxShadow,
-                                }}
-                                _active={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                }}
-                            >
-                                <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
-                                Starting {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}
-                                <br />
-                                Click to join {maybeZoomUrl.name}
-                                <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
-                            </ExternalLinkButton>
-                        ) : undefined}
-                    </>
-                ) : undefined}
+    return (
+        <>
+            <HStack width="100%" flexWrap="wrap" alignItems="stretch">
+                <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
+                    {controlBarEl}
 
-                {playerEl}
+                    {showBackstage ? backStageEl : undefined}
 
-                {!showBackstage ? (
-                    <>
-                        <Box bgColor={bgColour} m={-2}>
-                            <BreakoutRoom
-                                defaultVideoBackendName={defaultVideoBackend}
-                                roomDetails={roomDetails}
-                                enable={showDefaultBreakoutRoom}
-                            />
-                        </Box>
-                        {contentEl}
-                    </>
-                ) : undefined}
-            </VStack>
-        </HStack>
+                    {!showBackstage ? (
+                        <>
+                            {startsSoonEl}
+                            {isPresenterOfUpcomingEvent ? (
+                                <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
+                            ) : undefined}
+                            {maybeZoomUrl && currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom ? (
+                                <ExternalLinkButton
+                                    to={maybeZoomUrl.url}
+                                    isExternal={true}
+                                    mt={20}
+                                    mb={4}
+                                    mx={2}
+                                    p={8}
+                                    linkProps={{
+                                        textAlign: "center",
+                                        minH: "18em",
+                                    }}
+                                    whiteSpace="normal"
+                                    h="auto"
+                                    lineHeight="150%"
+                                    fontSize="1.5em"
+                                    colorScheme="purple"
+                                    color="white"
+                                    borderRadius="2xl"
+                                    shadow={shadow}
+                                    animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}
+                                    transition="none"
+                                    background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
+                                    backgroundSize="400% 400%"
+                                    _hover={{
+                                        background:
+                                            "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
+                                        backgroundSize: "400% 400%",
+                                    }}
+                                    _focus={{
+                                        background:
+                                            "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
+                                        backgroundSize: "400% 400%",
+                                        boxShadow: defaultOutline_AsBoxShadow,
+                                    }}
+                                    _active={{
+                                        background:
+                                            "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
+                                        backgroundSize: "400% 400%",
+                                    }}
+                                >
+                                    <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
+                                    Click to join {maybeZoomUrl.name}
+                                    <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
+                                </ExternalLinkButton>
+                            ) : maybeZoomUrl &&
+                              nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom &&
+                              Date.parse(nextRoomEvent.startTime) - now5s < 10 * 60 * 1000 ? (
+                                <ExternalLinkButton
+                                    to={maybeZoomUrl.url}
+                                    isExternal={true}
+                                    mt={20}
+                                    mb={4}
+                                    mx={2}
+                                    p={8}
+                                    linkProps={{
+                                        textAlign: "center",
+                                        minH: "30em",
+                                    }}
+                                    whiteSpace="normal"
+                                    h="auto"
+                                    lineHeight="150%"
+                                    fontSize="1.5em"
+                                    colorScheme="purple"
+                                    color="white"
+                                    borderRadius="2xl"
+                                    shadow={shadow}
+                                    animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}
+                                    transition="none"
+                                    background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
+                                    backgroundSize="400% 400%"
+                                    _hover={{
+                                        background:
+                                            "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
+                                        backgroundSize: "400% 400%",
+                                    }}
+                                    _focus={{
+                                        background:
+                                            "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
+                                        backgroundSize: "400% 400%",
+                                        boxShadow: defaultOutline_AsBoxShadow,
+                                    }}
+                                    _active={{
+                                        background:
+                                            "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
+                                        backgroundSize: "400% 400%",
+                                    }}
+                                >
+                                    <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
+                                    Starting {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}
+                                    <br />
+                                    Click to join {maybeZoomUrl.name}
+                                    <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
+                                </ExternalLinkButton>
+                            ) : undefined}
+                        </>
+                    ) : undefined}
+
+                    {playerEl}
+
+                    {!showBackstage ? (
+                        <>
+                            <Box bgColor={bgColour} m={-2}>
+                                <BreakoutRoom
+                                    defaultVideoBackendName={defaultVideoBackend}
+                                    roomDetails={roomDetails}
+                                    enable={showDefaultBreakoutRoom}
+                                />
+                            </Box>
+                            {contentEl}
+                        </>
+                    ) : undefined}
+                </VStack>
+            </HStack>
+
+            {continuationChoicesFrom ? (
+                <ContinuationChoices
+                    from={continuationChoicesFrom}
+                    isBackstage={continuationIsBackstage}
+                    noBackstage={continuationNoBackstage}
+                    currentRole={continuationRole}
+                    currentRoomId={roomDetails.id}
+                />
+            ) : undefined}
+        </>
     );
 }

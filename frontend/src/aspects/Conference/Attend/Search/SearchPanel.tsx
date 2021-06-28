@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import * as R from "ramda";
-import React from "react";
+import React, { MutableRefObject } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import {
     useSearchPanel_EventsLazyQuery,
@@ -184,7 +184,11 @@ gql`
     }
 `;
 
-export default function SearchPanel(): JSX.Element {
+export default function SearchPanel({
+    changeSearch,
+}: {
+    changeSearch?: MutableRefObject<null | ((term: string) => void)>;
+}): JSX.Element {
     const conference = useConference();
 
     const [search, setSearch] = useRestorableState<string>(
@@ -199,6 +203,9 @@ export default function SearchPanel(): JSX.Element {
         (x) => x,
         (x) => x as any
     );
+    if (changeSearch) {
+        changeSearch.current = setSearch;
+    }
 
     const [fetchEventsQuery, eventsResponse] = useSearchPanel_EventsLazyQuery();
     const [fetchItemsQuery, itemsResponse] = useSearchPanel_ItemsLazyQuery();

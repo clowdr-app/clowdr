@@ -1,4 +1,6 @@
 import { gql } from "@apollo/client/core";
+import { ContinuationTo, ContinuationType } from "@clowdr-app/shared-types/build/continuation";
+import { is } from "typescript-is";
 import {
     EndChatDuplicationDocument,
     EndChatDuplicationMutationVariables,
@@ -241,6 +243,10 @@ gql`
                 title
                 chatId
             }
+            continuations {
+                id
+                to
+            }
         }
     }
 `;
@@ -291,9 +297,46 @@ export async function handleEventStartNotification(
             }
         }, startTimeMillis - nowMillis + 500);
 
+        // Used to skip creating duplicate rooms by accident
+        // (I don't trust Apollo cache!)
+        const itemsCreatedRoomsFor: string[] = [];
+        for (const continuation of result.data.schedule_Event_by_pk.continuations) {
+            if (is<ContinuationTo>(continuation.to)) {
+                const to: ContinuationTo = continuation.to;
+                if (to.type === ContinuationType.AutoDiscussionRoom) {
+                    if (to.id && !itemsCreatedRoomsFor.includes(to.id)) {
+                        try {
+                            await createItemBreakoutRoom(to.id, result.data.schedule_Event_by_pk.conferenceId);
+                            itemsCreatedRoomsFor.push(to.id);
+                        } catch (e) {
+                            console.error("Failed to create automatic discussion room (specified item)", eventId, e);
+                        }
+                    } else if (
+                        result.data.schedule_Event_by_pk.item?.id &&
+                        !itemsCreatedRoomsFor.includes(result.data.schedule_Event_by_pk.item.id)
+                    ) {
+                        try {
+                            await createItemBreakoutRoom(
+                                result.data.schedule_Event_by_pk.item.id,
+                                result.data.schedule_Event_by_pk.conferenceId
+                            );
+                            itemsCreatedRoomsFor.push(result.data.schedule_Event_by_pk.item.id);
+                        } catch (e) {
+                            console.error("Failed to create automatic discussion room (matching event)", eventId, e);
+                        }
+                    }
+                }
+            }
+        }
+
+        // TODO: During the migration to Continuations, Ed left the logic for generating
+        //       discussion rooms for Presentation/Q&A events as a fallback. Once
+        //       continuations are fully bedded in, the logic can be removed as it is
+        //       redundant.
         if (
             [Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName) &&
-            result.data.schedule_Event_by_pk.item
+            result.data.schedule_Event_by_pk.item &&
+            !itemsCreatedRoomsFor.includes(result.data.schedule_Event_by_pk.item.id)
         ) {
             try {
                 await createItemBreakoutRoom(
@@ -301,7 +344,7 @@ export async function handleEventStartNotification(
                     result.data.schedule_Event_by_pk.conferenceId
                 );
             } catch (e) {
-                console.error("Failed to create content group breakout room", eventId, e);
+                console.error("Failed to create automatic discussion room (fallback)", eventId, e);
             }
         }
     } else {

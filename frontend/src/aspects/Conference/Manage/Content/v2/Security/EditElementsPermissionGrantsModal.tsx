@@ -542,55 +542,75 @@ function EditElementsPermissionGrantsModalInner({
                                         groupId: keyGroupId,
                                     });
                                 });
+                                const elementGrantIds = R.flatten(
+                                    data.map((row) => {
+                                        const ids = [];
+                                        if (
+                                            keyPairs.some(
+                                                (pair) =>
+                                                    pair.permissionSetId === row.permissionSetId &&
+                                                    pair.groupId === row.groupId
+                                            )
+                                        ) {
+                                            ids.push(
+                                                ...row.elements
+                                                    .filter(
+                                                        (grant) =>
+                                                            (!grant.entityId && elementIds.length === 0) ||
+                                                            (grant.entityId && elementIds.includes(grant.entityId))
+                                                    )
+                                                    .map((x) => x.id)
+                                            );
+                                        }
+                                        const uploadablesElementGrants = R.flatten(
+                                            row.uploadables
+                                                .map((x) => x.entity?.element?.permissionGrants)
+                                                .filter((x) => !!x) as ElementSecurity_ElementPgFragment[][]
+                                        );
+                                        ids.push(
+                                            uploadablesElementGrants
+                                                .filter(
+                                                    (grant) =>
+                                                        keyPairs.some(
+                                                            (pair) =>
+                                                                pair.permissionSetId === grant.permissionSetId &&
+                                                                pair.groupId === grant.groupId
+                                                        ) &&
+                                                        ((!grant.entityId && elementIds.length === 0) ||
+                                                            (grant.entityId && elementIds.includes(grant.entityId)))
+                                                )
+                                                .map((x) => x.id)
+                                        );
+                                        return ids;
+                                    })
+                                );
+                                const uploadableGrantIds = R.flatten(
+                                    data.map((row) => {
+                                        const ids = [];
+                                        if (
+                                            keyPairs.some(
+                                                (pair) =>
+                                                    pair.permissionSetId === row.permissionSetId &&
+                                                    pair.groupId === row.groupId
+                                            )
+                                        ) {
+                                            ids.push(
+                                                ...row.uploadables
+                                                    .filter(
+                                                        (grant) =>
+                                                            (!grant.entityId && uploadableIds.length === 0) ||
+                                                            (grant.entityId && uploadableIds.includes(grant.entityId))
+                                                    )
+                                                    .map((x) => x.id)
+                                            );
+                                        }
+                                        return ids;
+                                    })
+                                );
                                 deleteGrants({
                                     variables: {
-                                        elementGrantIds: R.flatten(
-                                            data.map((row) => {
-                                                const ids = [];
-                                                if (
-                                                    keyPairs.some(
-                                                        (pair) =>
-                                                            pair.permissionSetId === row.permissionSetId &&
-                                                            pair.groupId === row.groupId
-                                                    )
-                                                ) {
-                                                    ids.push(...row.elements.map((x) => x.id));
-                                                }
-                                                const uploadablesElementGrants = R.flatten(
-                                                    row.uploadables
-                                                        .map((x) => x.entity?.element?.permissionGrants)
-                                                        .filter((x) => !!x) as ElementSecurity_ElementPgFragment[][]
-                                                );
-                                                ids.push(
-                                                    uploadablesElementGrants
-                                                        .filter((elementGrant) =>
-                                                            keyPairs.some(
-                                                                (pair) =>
-                                                                    pair.permissionSetId ===
-                                                                        elementGrant.permissionSetId &&
-                                                                    pair.groupId === elementGrant.groupId
-                                                            )
-                                                        )
-                                                        .map((x) => x.id)
-                                                );
-                                                return ids;
-                                            })
-                                        ),
-                                        uploadableGrantIds: R.flatten(
-                                            data.map((row) => {
-                                                const ids = [];
-                                                if (
-                                                    keyPairs.some(
-                                                        (pair) =>
-                                                            pair.permissionSetId === row.permissionSetId &&
-                                                            pair.groupId === row.groupId
-                                                    )
-                                                ) {
-                                                    ids.push(...row.uploadables.map((x) => x.id));
-                                                }
-                                                return ids;
-                                            })
-                                        ),
+                                        elementGrantIds,
+                                        uploadableGrantIds,
                                     },
                                 });
                             },

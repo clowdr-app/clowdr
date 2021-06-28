@@ -75,6 +75,7 @@ import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
 import BatchAddEventPeople from "./Schedule/BatchAddEventPeople";
+import ContinuationsEditor from "./Schedule/ContinuationsEditor";
 import { EventProgramPersonsModal, requiresEventPeople } from "./Schedule/EventProgramPersonsModal";
 
 gql`
@@ -101,6 +102,7 @@ gql`
         $itemId: uuid = null
         $exhibitionId: uuid = null
         $shufflePeriodId: uuid = null
+        $insertContinuation: Boolean!
     ) {
         insert_schedule_Event_one(
             object: {
@@ -118,6 +120,19 @@ gql`
             }
         ) {
             ...EventInfo
+        }
+        insert_schedule_Continuation_one(
+            object: {
+                colour: "#4471de"
+                defaultFor: "None"
+                description: "Join the discussion room"
+                fromEvent: $id
+                isActiveChoice: false
+                priority: 0
+                to: { type: "AutoDiscussionRoom", id: null }
+            }
+        ) @include(if: $insertContinuation) {
+            id
         }
     }
 
@@ -1025,7 +1040,15 @@ function EditableScheduleTable(): JSX.Element {
                       makeWhole: (d) => d as EventInfoFragment,
                       start: (record) => {
                           insertEvent({
-                              variables: record,
+                              variables: {
+                                  ...record,
+                                  insertContinuation:
+                                      (record.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                                          record.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+                                      record.itemId
+                                          ? true
+                                          : false,
+                              },
                               update: (cache, { data: _data }) => {
                                   if (_data?.insert_schedule_Event_one) {
                                       const data = _data.insert_schedule_Event_one;
@@ -1337,6 +1360,17 @@ function EventSecondaryEditor({
                                             event={event}
                                             programPeople={programPeople}
                                         />
+                                    </AccordionPanel>
+                                </AccordionItem>
+                                <AccordionItem key="continuations">
+                                    <AccordionButton>
+                                        <Box flex="1" textAlign="left">
+                                            Continuations
+                                        </Box>
+                                        <AccordionIcon />
+                                    </AccordionButton>
+                                    <AccordionPanel>
+                                        <ContinuationsEditor from={{ eventId: event.id }} itemId={event.itemId} />
                                     </AccordionPanel>
                                 </AccordionItem>
                             </Accordion>

@@ -5,14 +5,12 @@ type Mutation {
   ): CreateItemRoomOutput
 }
 
-
 type Mutation {
   createRoomDm (
     conferenceId: uuid!
     registrantIds: [uuid]!
   ): CreateRoomDmOutput
 }
-
 
 type Mutation {
   getGoogleOAuthUrl (
@@ -21,13 +19,11 @@ type Mutation {
   ): GetGoogleOAuthUrlOutput
 }
 
-
 type Query {
   getUploadAgreement (
     magicToken: String!
   ): GetUploadAgreementOutput
 }
-
 
 type Mutation {
   invitationConfirmCurrent (
@@ -35,13 +31,11 @@ type Mutation {
   ): ConfirmInvitationOutput
 }
 
-
 type Mutation {
   invitationConfirmSendInitialEmail (
     inviteInput: InvitationConfirmationEmailInput!
   ): InvitationConfirmationEmailOutput
 }
-
 
 type Mutation {
   invitationConfirmSendRepeatEmail (
@@ -49,13 +43,11 @@ type Mutation {
   ): InvitationConfirmationEmailOutput
 }
 
-
 type Mutation {
   invitationConfirmWithCode (
     inviteInput: ConfirmInvitationInput!
   ): ConfirmInvitationOutput
 }
-
 
 type Mutation {
   joinEventVonageSession (
@@ -63,13 +55,11 @@ type Mutation {
   ): JoinEventVonageSessionOutput
 }
 
-
 type Mutation {
   joinRoomChimeSession (
     roomId: uuid!
   ): JoinRoomChimeSessionOutput
 }
-
 
 type Mutation {
   joinRoomVonageSession (
@@ -77,23 +67,19 @@ type Mutation {
   ): JoinRoomVonageSessionOutput
 }
 
-
 type Mutation {
   notifyEventEnded (
     eventId: uuid!
   ): NotifyEventEnded!
 }
 
-
 type Mutation {
   presence_Flush : PresenceFlushOutput!
 }
 
-
 type Query {
   presence_Summary : PresenceSummaryOutput
 }
-
 
 type Mutation {
   refreshYouTubeData (
@@ -102,13 +88,11 @@ type Mutation {
   ): RefreshYouTubeDataOutput
 }
 
-
 type Mutation {
   stopEventBroadcast (
     eventId: uuid!
   ): StopEventBroadcastOutput
 }
-
 
 type Mutation {
   submitGoogleOAuthCode (
@@ -117,7 +101,6 @@ type Mutation {
   ): SubmitGoogleOAuthCodeOutput
 }
 
-
 type Mutation {
   submitUploadableElement (
     data: jsonb!
@@ -125,14 +108,12 @@ type Mutation {
   ): SubmitUploadableElementOutput
 }
 
-
 type Mutation {
   updateProfilePhoto (
     registrantId: uuid!
     s3URL: String
   ): UpdateProfilePhotoResponse
 }
-
 
 type Mutation {
   updateSubtitles (
@@ -142,13 +123,9 @@ type Mutation {
   ): SubmitUpdatedSubtitlesOutput
 }
 
-
 type Query {
   vapidPublicKey : VAPIDPublicKeyOutput!
 }
-
-
-
 
 input SubmitContentItemInput {
   contentItemData : jsonb!

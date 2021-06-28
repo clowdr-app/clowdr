@@ -8,7 +8,6 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    ModalProps,
     Tab,
     TabList,
     TabPanel,
@@ -17,17 +16,104 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useRef } from "react";
+import type { FocusableElement } from "@chakra-ui/utils";
+import React, { useCallback, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import { useRestorableState } from "../../../../Generic/useRestorableState";
 import FAIcon from "../../../../Icons/FAIcon";
 import { ShuffleWaiting } from "../../../../ShuffleRooms/WaitingPage";
 import { useConference } from "../../../useConference";
+import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { AllRegistrantsList } from "../../Registrant/RegistrantListPage";
 import { CreateRoomModal } from "../../Room/CreateRoomModal";
 import ActiveSocialRooms from "./ActiveSocialRooms";
 import InactiveSocialRooms from "./InactiveSocialRooms";
 
-export default function SocialiseModal(props: Omit<ModalProps, "children">): JSX.Element {
+export enum SocialiseModalTab {
+    Rooms = "Rooms",
+    People = "People",
+    Networking = "Networking",
+}
+
+interface SocialiseModalContext {
+    isOpen: boolean;
+    onOpen: (tab?: SocialiseModalTab) => void;
+    onClose: () => void;
+    finalFocusRef: React.RefObject<FocusableElement>;
+}
+
+const SocialiseModalContext = React.createContext<SocialiseModalContext | undefined>(undefined);
+
+export function useSocialiseModal(): SocialiseModalContext {
+    const ctx = React.useContext(SocialiseModalContext);
+    if (!ctx) {
+        throw new Error("Context not available - are you outside the provider?");
+    }
+    return ctx;
+}
+
+export function SocialiseModalProvider({ children }: React.PropsWithChildren<any>): JSX.Element {
+    const conference = useConference();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const socialiseButtonRef = useRef<FocusableElement>(null);
+    const [selectedTab, setSelectedTab] = useRestorableState<SocialiseModalTab>(
+        "SocialiseModal_SelectedTab" + conference.id,
+        SocialiseModalTab.Rooms,
+        (x) => x,
+        (x) => x as SocialiseModalTab
+    );
+
+    const doOnOpen = useCallback(
+        (tab?: SocialiseModalTab) => {
+            onOpen();
+            if (tab) {
+                setSelectedTab(tab);
+            }
+        },
+        [onOpen, setSelectedTab]
+    );
+
+    const ctx: SocialiseModalContext = useMemo(
+        () => ({
+            finalFocusRef: socialiseButtonRef,
+            isOpen,
+            onOpen: doOnOpen,
+            onClose,
+        }),
+        [doOnOpen, isOpen, onClose]
+    );
+
+    const maybeRegistrant = useMaybeCurrentRegistrant();
+
+    return (
+        <SocialiseModalContext.Provider value={ctx}>
+            {children}
+            {maybeRegistrant ? (
+                <SocialiseModal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    finalFocusRef={socialiseButtonRef}
+                    selectedTab={selectedTab}
+                    setSelectedTab={setSelectedTab}
+                />
+            ) : undefined}
+        </SocialiseModalContext.Provider>
+    );
+}
+
+export default function SocialiseModal({
+    isOpen,
+    onClose,
+    finalFocusRef,
+    selectedTab,
+    setSelectedTab,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    finalFocusRef: React.RefObject<FocusableElement>;
+    selectedTab: SocialiseModalTab;
+    setSelectedTab: (tab: SocialiseModalTab) => void;
+}): JSX.Element {
     const { isOpen: createRoom_IsOpen, onClose: createRoom_OnClose, onOpen: createRoom_OnOpen } = useDisclosure();
     const conference = useConference();
 
@@ -44,16 +130,63 @@ export default function SocialiseModal(props: Omit<ModalProps, "children">): JSX
     );
 
     const closeRef = useRef<HTMLButtonElement | null>(null);
+
+    const selectedTabIndex = useMemo(() => {
+        switch (selectedTab) {
+            case SocialiseModalTab.Rooms:
+                return 0;
+            case SocialiseModalTab.People:
+                return 1;
+            case SocialiseModalTab.Networking:
+                return 2;
+        }
+    }, [selectedTab]);
+
+    const setSelectedTabFromIndex = useCallback(
+        (index: number) => {
+            switch (index) {
+                case 0:
+                    setSelectedTab(SocialiseModalTab.Rooms);
+                    break;
+                case 1:
+                    setSelectedTab(SocialiseModalTab.People);
+                    break;
+                case 2:
+                    setSelectedTab(SocialiseModalTab.Networking);
+                    break;
+            }
+        },
+        [setSelectedTab]
+    );
+
     return (
         <>
             <CreateRoomModal isOpen={createRoom_IsOpen} onClose={createRoom_OnClose} onCreated={refetch} />
-            <Modal initialFocusRef={closeRef} size="6xl" isCentered scrollBehavior="inside" {...props}>
+            <Modal
+                initialFocusRef={closeRef}
+                finalFocusRef={finalFocusRef}
+                size="6xl"
+                isCentered
+                autoFocus={false}
+                returnFocusOnClose={false}
+                trapFocus={true}
+                scrollBehavior="inside"
+                isOpen={isOpen}
+                onClose={onClose}
+            >
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Socialise</ModalHeader>
                     <ModalCloseButton ref={closeRef} />
                     <ModalBody>
-                        <Tabs isFitted variant="enclosed-colored" colorScheme="purple" isLazy>
+                        <Tabs
+                            isFitted
+                            variant="enclosed-colored"
+                            colorScheme="purple"
+                            isLazy
+                            index={selectedTabIndex}
+                            onChange={setSelectedTabFromIndex}
+                        >
                             <TabList>
                                 <Tab>
                                     <FAIcon iconStyle="s" icon="mug-hot" aria-hidden />

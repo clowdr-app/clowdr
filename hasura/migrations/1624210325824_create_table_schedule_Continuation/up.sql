@@ -1,0 +1,2 @@
+CREATE TABLE "schedule"."Continuation" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "fromEvent" uuid, "fromShuffleRoom" int8, "to" JSONB NOT NULL, "defaultFor" text NOT NULL, "isActiveChoice" boolean NOT NULL, "priority" Integer NOT NULL, "colour" text NOT NULL, "description" Text NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("fromEvent") REFERENCES "schedule"."Event"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("fromShuffleRoom") REFERENCES "room"."ShuffleRoom"("id") ON UPDATE cascade ON DELETE cascade);
+CREATE EXTENSION IF NOT EXISTS pgcrypto;

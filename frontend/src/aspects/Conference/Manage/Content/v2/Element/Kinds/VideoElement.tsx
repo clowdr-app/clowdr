@@ -1,9 +1,11 @@
 import { Heading } from "@chakra-ui/react";
 import { ElementBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
+import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
+import { DownloadButton } from "../../../../../../Chakra/LinkButton";
 import { VideoElement } from "../../../../../Attend/Content/Element/VideoElement";
 import { RefreshSubtitles } from "./RefreshSubtitles";
 import type { RenderEditorProps, SupportedElementBaseTemplate } from "./Types";
@@ -30,6 +32,11 @@ function createDefaultVideo(
             subtitles: {},
         },
     };
+}
+
+function s3UrlToHttpUrl(s3Url: string): string {
+    const { bucket, key } = AmazonS3Uri(s3Url);
+    return `https://${bucket}.s3.eu-west-1.amazonaws.com/${key}`;
 }
 
 export const VideoElementTemplate: SupportedElementBaseTemplate = {
@@ -168,6 +175,15 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
                             update(newData);
                         }}
                     />
+                    {latestVersion.data.subtitles["en_US"]?.s3Url ? (
+                        <DownloadButton
+                            to={s3UrlToHttpUrl(latestVersion.data.subtitles["en_US"].s3Url)}
+                            size="sm"
+                            ml={2}
+                        >
+                            Download .SRT file
+                        </DownloadButton>
+                    ) : undefined}
                 </>
             );
         }

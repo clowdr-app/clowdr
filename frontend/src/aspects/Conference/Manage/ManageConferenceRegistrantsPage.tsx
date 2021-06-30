@@ -710,9 +710,12 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     function doExport(dataToExport: RegistrantDescriptor[]) {
                         const csvText = Papa.unparse(
                             dataToExport.map((registrant) => ({
-                                name: registrant.displayName,
-                                email: registrant.invitation?.invitedEmailAddress ?? "",
-                                groups: registrant.groupRegistrants.map(
+                                Name: registrant.displayName,
+                                Email: registrant.invitation?.invitedEmailAddress ?? "",
+                                "Invite sent": registrant.inviteSent ? "Yes" : "No",
+                                "Invite accepted": registrant.userId ? "Yes" : "No",
+                                "Invite code": registrant.invitation?.inviteCode ?? "",
+                                Groups: registrant.groupRegistrants.map(
                                     (x) =>
                                         allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
                                         "<Unrecognised>"

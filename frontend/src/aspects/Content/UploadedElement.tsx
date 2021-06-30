@@ -39,21 +39,21 @@ export default function UploadedElement({
                 data?.content_ElementByAccessToken?.map((item) =>
                     item ? (
                         <VStack spacing={2} key={item.id}>
-                            <Tooltip label="Refresh uploaded item">
-                                <Button
-                                    aria-label="Refresh uploaded item"
-                                    onClick={async () => {
-                                        setDisableRefresh(true);
-                                        await refetch();
-                                    }}
-                                    isDisabled={disableRefresh}
-                                >
-                                    {disableRefresh ? (
-                                        "(Please wait before refreshing again)"
-                                    ) : (
+                            <Tooltip
+                                label={disableRefresh ? "Please wait before refreshing again" : "Refresh uploaded item"}
+                            >
+                                <span>
+                                    <Button
+                                        aria-label="Refresh uploaded item"
+                                        onClick={async () => {
+                                            setDisableRefresh(true);
+                                            await refetch();
+                                        }}
+                                        isDisabled={disableRefresh}
+                                    >
                                         <FAIcon iconStyle="s" icon="sync" />
-                                    )}
-                                </Button>
+                                    </Button>
+                                </span>
                             </Tooltip>
                             {!item?.data ||
                             item?.data.length === 0 ||

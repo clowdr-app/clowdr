@@ -31,49 +31,41 @@ export default function UploadedElement({
         }
     }, [disableRefresh]);
 
-    return loading && !data ? (
-        <div>
-            <Spinner />
-        </div>
-    ) : error ? (
-        <>Could not load item.</>
-    ) : (
+    return (
         <>
+            {loading ? <Spinner /> : undefined}
+            {error ? <Text>Could not load item.</Text> : undefined}
             {data?.content_ElementByAccessToken?.length ? (
-                <>
-                    {data?.content_ElementByAccessToken?.map((item) =>
-                        item ? (
-                            <VStack spacing={2} key={item.id}>
-                                <Tooltip label="Refresh uploaded item">
-                                    <Button
-                                        aria-label="Refresh uploaded item"
-                                        onClick={async () => {
-                                            setDisableRefresh(true);
-                                            await refetch();
-                                        }}
-                                        disabled={disableRefresh}
-                                    >
-                                        {disableRefresh ? (
-                                            "(Please wait before refreshing again)"
-                                        ) : (
-                                            <FAIcon iconStyle="s" icon="sync" />
-                                        )}
-                                    </Button>
-                                </Tooltip>
-                                {!item?.data ||
-                                item?.data.length === 0 ||
-                                item?.data[item.data.length - 1]?.data.baseType !== "video" ||
-                                !item?.data[item.data.length - 1]?.data.subtitles["en_US"] ||
-                                !item?.data[item.data.length - 1]?.data.subtitles["en_US"]?.s3Url?.length ? (
-                                    <RenderElement data={item.data} />
-                                ) : undefined}
-                                <EditElement data={item.data} elementId={item.id} magicToken={magicToken} />
-                            </VStack>
-                        ) : (
-                            <></>
-                        )
-                    )}
-                </>
+                data?.content_ElementByAccessToken?.map((item) =>
+                    item ? (
+                        <VStack spacing={2} key={item.id}>
+                            <Tooltip label="Refresh uploaded item">
+                                <Button
+                                    aria-label="Refresh uploaded item"
+                                    onClick={async () => {
+                                        setDisableRefresh(true);
+                                        await refetch();
+                                    }}
+                                    isDisabled={disableRefresh}
+                                >
+                                    {disableRefresh ? (
+                                        "(Please wait before refreshing again)"
+                                    ) : (
+                                        <FAIcon iconStyle="s" icon="sync" />
+                                    )}
+                                </Button>
+                            </Tooltip>
+                            {!item?.data ||
+                            item?.data.length === 0 ||
+                            item?.data[item.data.length - 1]?.data.baseType !== "video" ||
+                            !item?.data[item.data.length - 1]?.data.subtitles["en_US"] ||
+                            !item?.data[item.data.length - 1]?.data.subtitles["en_US"]?.s3Url?.length ? (
+                                <RenderElement data={item.data} />
+                            ) : undefined}
+                            <EditElement data={item.data} elementId={item.id} magicToken={magicToken} />
+                        </VStack>
+                    ) : undefined
+                )
             ) : (
                 <Text mt={5}>No item has been uploaded yet.</Text>
             )}

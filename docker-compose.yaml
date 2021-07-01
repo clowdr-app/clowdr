@@ -11,7 +11,7 @@ services:
       # TODO: set up Postgres security
       POSTGRES_PASSWORD: postgrespassword
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     depends_on:
       - "postgres"
     ports:

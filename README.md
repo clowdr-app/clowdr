@@ -597,6 +597,7 @@ PRs. You may need to configure your editor to use Prettier (for example, by usin
 ## Notes
 
 - The various `Procfile`s are used by Heroku to determine what services to run.
+- In production deployments, you will want to regularly clear out old Hasura event logs or you will encounter performance issues. There is a stored procedure `public.truncate_hasura_logs` to clear out logs older than a week. You could, for example, deploy a Cron To Go task in Heroku that calls `psql $DATABASE_URL -c "CALL public.truncate_hasura_logs()"`.
 
 ## GitHub Actions Configuration (/Secrets)
 

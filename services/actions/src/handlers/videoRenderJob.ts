@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import assert from "assert";
 import { assertType } from "typescript-is";
 import {
@@ -159,17 +160,23 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
     const newVideoRenderJobIds = await apolloClient.query({
         query: SelectNewVideoRenderJobsDocument,
     });
+
+    const jobIdsToMark = newVideoRenderJobIds.data.video_VideoRenderJob.map((x) => x.id);
+
+    if (!jobIdsToMark.length) {
+        return;
+    }
     const videoRenderJobs = await apolloClient.mutate({
         mutation: MarkAndSelectNewVideoRenderJobsDocument,
         variables: {
-            ids: newVideoRenderJobIds.data.video_VideoRenderJob.map((x) => x.id),
+            ids: jobIdsToMark,
         },
     });
     assert(videoRenderJobs.data?.update_video_VideoRenderJob, "Failed to fetch new VideoRenderJobs");
 
     const snooze = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const unsuccessfulVideoRenderJobs: (string | undefined)[] = await Promise.all(
+    const unsuccessfulVideoRenderJobIds: (string | undefined)[] = await Promise.all(
         videoRenderJobs.data.update_video_VideoRenderJob.returning.map(async (job) => {
             try {
                 if (job.retriesCount < 3) {
@@ -187,16 +194,21 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
         })
     );
 
-    try {
-        await callWithRetry(async () => {
-            await apolloClient.mutate({
-                mutation: UnmarkVideoRenderJobsDocument,
-                variables: {
-                    ids: unsuccessfulVideoRenderJobs.filter((x) => !!x),
-                },
+    const jobIdsToUnmark = unsuccessfulVideoRenderJobIds.filter(notEmpty);
+
+    if (jobIdsToUnmark.length) {
+        try {
+            console.log("Unmarking unsuccessful video render jobs", { jobIdsToUnmark, count: jobIdsToUnmark.length });
+            await callWithRetry(async () => {
+                await apolloClient.mutate({
+                    mutation: UnmarkVideoRenderJobsDocument,
+                    variables: {
+                        ids: jobIdsToUnmark,
+                    },
+                });
             });
-        });
-    } catch (e) {
-        console.error("Could not record failed VideoRenderJobs", e);
+        } catch (e) {
+            console.error("Could not record failed VideoRenderJobs", e);
+        }
     }
 }

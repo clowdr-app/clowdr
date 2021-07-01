@@ -1294,7 +1294,7 @@ function EventSecondaryEditor({
                         {event ? (
                             <>
                                 <Text fontSize="lg" overflow="wrap">
-                                    Edit event: {event.name}
+                                    Edit: {event.name}
                                 </Text>
                                 <Text fontSize="xs" mt={2}>
                                     Event: <Code fontSize="xs">{event.id}</Code>

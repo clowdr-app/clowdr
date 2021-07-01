@@ -35550,13 +35550,6 @@ export type LiveIndicator_GetElementQueryVariables = Exact<{
 
 export type LiveIndicator_GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> };
 
-export type GetBreakoutRoomFromEventQueryVariables = Exact<{
-  originatingEventId: Scalars['uuid'];
-}>;
-
-
-export type GetBreakoutRoomFromEventQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
-
 export type Room_GetEventsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
   now: Scalars['timestamptz'];
@@ -37145,7 +37138,7 @@ export type UpdateRoleMutation = { readonly __typename?: 'mutation_root', readon
 
 export type RoomParticipantWithRegistrantInfoFragment = { readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } };
 
-export type RoomWithParticipantInfoFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly participants: ReadonlyArray<(
+export type RoomWithParticipantInfoFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly participants: ReadonlyArray<(
     { readonly __typename?: 'room_Participant' }
     & RoomParticipantWithRegistrantInfoFragment
   )>, readonly originatingData?: Maybe<(
@@ -39489,6 +39482,7 @@ export const OriginatingDataInfoFragmentDoc = gql`
 export const RoomWithParticipantInfoFragmentDoc = gql`
     fragment RoomWithParticipantInfo on room_Room {
   id
+  created_at
   conferenceId
   name
   currentModeName
@@ -41360,41 +41354,6 @@ export function useLiveIndicator_GetElementLazyQuery(baseOptions?: Apollo.LazyQu
 export type LiveIndicator_GetElementQueryHookResult = ReturnType<typeof useLiveIndicator_GetElementQuery>;
 export type LiveIndicator_GetElementLazyQueryHookResult = ReturnType<typeof useLiveIndicator_GetElementLazyQuery>;
 export type LiveIndicator_GetElementQueryResult = Apollo.QueryResult<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>;
-export const GetBreakoutRoomFromEventDocument = gql`
-    query GetBreakoutRoomFromEvent($originatingEventId: uuid!) {
-  room_Room(where: {originatingEventId: {_eq: $originatingEventId}}) {
-    id
-  }
-}
-    `;
-
-/**
- * __useGetBreakoutRoomFromEventQuery__
- *
- * To run a query within a React component, call `useGetBreakoutRoomFromEventQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBreakoutRoomFromEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetBreakoutRoomFromEventQuery({
- *   variables: {
- *      originatingEventId: // value for 'originatingEventId'
- *   },
- * });
- */
-export function useGetBreakoutRoomFromEventQuery(baseOptions: Apollo.QueryHookOptions<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>(GetBreakoutRoomFromEventDocument, options);
-      }
-export function useGetBreakoutRoomFromEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>(GetBreakoutRoomFromEventDocument, options);
-        }
-export type GetBreakoutRoomFromEventQueryHookResult = ReturnType<typeof useGetBreakoutRoomFromEventQuery>;
-export type GetBreakoutRoomFromEventLazyQueryHookResult = ReturnType<typeof useGetBreakoutRoomFromEventLazyQuery>;
-export type GetBreakoutRoomFromEventQueryResult = Apollo.QueryResult<GetBreakoutRoomFromEventQuery, GetBreakoutRoomFromEventQueryVariables>;
 export const Room_GetEventsDocument = gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
   schedule_Event(

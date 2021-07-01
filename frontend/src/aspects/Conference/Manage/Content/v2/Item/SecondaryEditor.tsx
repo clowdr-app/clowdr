@@ -59,10 +59,10 @@ export function SecondaryEditor({
                 <DrawerContent>
                     <DrawerHeader pb={1} pr="3em">
                         <Text fontSize="lg" overflow="wrap">
-                            Edit item: {itemTitle}
+                            Edit: {itemTitle}
                         </Text>
                         <Text fontSize="xs" mt={2}>
-                            <Code fontSize="xs">{itemId}</Code>
+                            Id: <Code fontSize="xs">{itemId}</Code>
                             <Button
                                 onClick={onCopyItemId}
                                 size="xs"

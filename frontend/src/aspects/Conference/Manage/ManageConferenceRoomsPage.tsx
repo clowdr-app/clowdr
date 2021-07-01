@@ -34,6 +34,7 @@ import {
     Select,
     Text,
     UnorderedList,
+    useClipboard,
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -92,6 +93,7 @@ gql`
 
     fragment RoomWithParticipantInfo on room_Room {
         id
+        created_at
         conferenceId
         name
         currentModeName
@@ -275,6 +277,9 @@ function RoomSecondaryEditor({
         [groupRegistrantsQ, insertRoomPeople, room]
     );
 
+    const { onCopy: onCopyRoomId, hasCopied: hasCopiedRoomId } = useClipboard(room?.id ?? "");
+    const createdAt = useMemo(() => (room ? new Date(room.created_at) : new Date()), [room]);
+
     return (
         <Drawer
             isOpen={isSecondaryPanelOpen}
@@ -285,8 +290,35 @@ function RoomSecondaryEditor({
         >
             <DrawerOverlay>
                 <DrawerContent>
+                    <DrawerHeader pb={1} pr="3em">
+                        <Text fontSize="lg" overflow="wrap">
+                            Edit: {room?.name ?? ""}
+                        </Text>
+                        <Text fontSize="xs" fontWeight="normal" mt={2} mb={1}>
+                            Id: <Code fontSize="xs">{room?.id ?? ""}</Code>
+                            <Button
+                                onClick={onCopyRoomId}
+                                size="xs"
+                                ml="auto"
+                                variant="ghost"
+                                p={0}
+                                h="auto"
+                                minH={0}
+                                aria-label="Copy room id"
+                            >
+                                <FAIcon
+                                    iconStyle="s"
+                                    icon={hasCopiedRoomId ? "check-circle" : "clipboard"}
+                                    m={0}
+                                    p={0}
+                                />
+                            </Button>
+                        </Text>
+                        <Text fontSize="xs" fontWeight="normal">
+                            Created at: {createdAt.toLocaleString()}
+                        </Text>
+                    </DrawerHeader>
                     <DrawerCloseButton />
-                    <DrawerHeader>Edit</DrawerHeader>
 
                     <DrawerBody>
                         {room ? (

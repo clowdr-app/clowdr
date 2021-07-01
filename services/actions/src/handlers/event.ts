@@ -304,25 +304,34 @@ export async function handleEventStartNotification(
             if (is<ContinuationTo>(continuation.to)) {
                 const to: ContinuationTo = continuation.to;
                 if (to.type === ContinuationType.AutoDiscussionRoom) {
-                    if (to.id && !itemsCreatedRoomsFor.includes(to.id)) {
-                        try {
-                            await createItemBreakoutRoom(to.id, result.data.schedule_Event_by_pk.conferenceId);
-                            itemsCreatedRoomsFor.push(to.id);
-                        } catch (e) {
-                            console.error("Failed to create automatic discussion room (specified item)", eventId, e);
+                    if (to.id) {
+                        if (!itemsCreatedRoomsFor.includes(to.id)) {
+                            try {
+                                await createItemBreakoutRoom(to.id, result.data.schedule_Event_by_pk.conferenceId);
+                                itemsCreatedRoomsFor.push(to.id);
+                            } catch (e) {
+                                console.error(
+                                    "Failed to create automatic discussion room (specified item)",
+                                    eventId,
+                                    e
+                                );
+                            }
                         }
-                    } else if (
-                        result.data.schedule_Event_by_pk.item?.id &&
-                        !itemsCreatedRoomsFor.includes(result.data.schedule_Event_by_pk.item.id)
-                    ) {
-                        try {
-                            await createItemBreakoutRoom(
-                                result.data.schedule_Event_by_pk.item.id,
-                                result.data.schedule_Event_by_pk.conferenceId
-                            );
-                            itemsCreatedRoomsFor.push(result.data.schedule_Event_by_pk.item.id);
-                        } catch (e) {
-                            console.error("Failed to create automatic discussion room (matching event)", eventId, e);
+                    } else if (result.data.schedule_Event_by_pk.item?.id) {
+                        if (!itemsCreatedRoomsFor.includes(result.data.schedule_Event_by_pk.item.id)) {
+                            try {
+                                await createItemBreakoutRoom(
+                                    result.data.schedule_Event_by_pk.item.id,
+                                    result.data.schedule_Event_by_pk.conferenceId
+                                );
+                                itemsCreatedRoomsFor.push(result.data.schedule_Event_by_pk.item.id);
+                            } catch (e) {
+                                console.error(
+                                    "Failed to create automatic discussion room (matching event)",
+                                    eventId,
+                                    e
+                                );
+                            }
                         }
                     }
                 }

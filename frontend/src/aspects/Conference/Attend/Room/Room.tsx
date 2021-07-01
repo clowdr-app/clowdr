@@ -712,7 +712,9 @@ function RoomInner({
     const shadow = useColorModeValue("lg", "light-md");
 
     const [continuationChoicesFrom, setContinuationChoicesFrom] = useState<
-        { eventId: string; endsAt: number } | { shufflePeriodId: string; shuffleRoomEndsAt: number } | null
+        | { eventId: string; itemId: string | null; endsAt: number }
+        | { shufflePeriodId: string; shuffleRoomEndsAt: number }
+        | null
     >(null);
     const [continuationIsBackstage, setContinuationIsBackstage] = useState<boolean>(false);
     const [continuationNoBackstage, setContinuationNoBackstage] = useState<boolean>(false);
@@ -726,6 +728,7 @@ function RoomInner({
                     !old || !("eventId" in old) || old.eventId !== currentRoomEvent.id
                         ? {
                               eventId: currentRoomEvent.id,
+                              itemId: currentRoomEvent.itemId ?? null,
                               endsAt: currentRoomEvent.endTime ? Date.parse(currentRoomEvent.endTime) : 0,
                           }
                         : old

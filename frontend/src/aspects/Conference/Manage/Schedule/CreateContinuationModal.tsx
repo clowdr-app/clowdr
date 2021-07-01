@@ -605,9 +605,9 @@ export default function CreateContinuationModal({
                     return [
                         {
                             key: "00-match-event",
-                            value: "Match item of event",
+                            value: "(Match item of event)",
                         },
-                        ...data.data?.content_Item.map((x) => ({
+                        ...data.data.content_Item.map((x) => ({
                             key: x.id,
                             value: x.title,
                         })),
@@ -617,11 +617,11 @@ export default function CreateContinuationModal({
                 onChange={(id) => {
                     setTo({
                         type: ContinuationType.AutoDiscussionRoom,
-                        id,
+                        id: id === "00-match-event" ? null : id,
                     });
                 }}
                 visible={to.type === ContinuationType.AutoDiscussionRoom}
-                label="Item"
+                label="X Item"
             />
         ),
         [response_Items, to]

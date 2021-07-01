@@ -72,7 +72,7 @@ export default function ContinuationChoices({
     currentRole,
     currentRoomId,
 }: {
-    from: { eventId: string } | { shufflePeriodId: string; shuffleRoomEndsAt: number };
+    from: { eventId: string; itemId: string | null } | { shufflePeriodId: string; shuffleRoomEndsAt: number };
     isBackstage: boolean;
     noBackstage: boolean;
     currentRole: ContinuationDefaultFor;
@@ -97,6 +97,7 @@ export default function ContinuationChoices({
                 "eventId" in from
                     ? {
                           eventId: from.eventId,
+                          itemId: from.itemId,
                           endTime:
                               response.data.schedule_Event.length > 0
                                   ? Date.parse(response.data.schedule_Event[0].endTime)
@@ -135,7 +136,7 @@ function ContinuationChoices_Inner({
     currentRoomId,
 }: {
     from:
-        | { eventId: string; endTime: number }
+        | { eventId: string; itemId: string | null; endTime: number }
         | { shufflePeriodId: string; periodEndTime: number; roomEndTime: number; roomDuration: number };
     choices: readonly ContinuationChoices_ContinuationFragment[];
     isBackstage: boolean;
@@ -148,7 +149,7 @@ function ContinuationChoices_Inner({
             ids: choices.reduce((acc, option) => {
                 const to: ContinuationTo = option.to;
                 if (to.type === ContinuationType.AutoDiscussionRoom) {
-                    const itemId = to.id ?? ("eventId" in from ? from.eventId : null);
+                    const itemId = to.id ?? ("eventId" in from ? from.itemId : null);
                     if (itemId) {
                         acc.push(itemId);
                     }
@@ -242,7 +243,8 @@ function ContinuationChoices_Inner({
                                 break;
                             case ContinuationType.AutoDiscussionRoom:
                                 if (!roomsResponse.loading) {
-                                    const item = roomsResponse.data?.content_Item.find((item) => item.id === to.id);
+                                    const toItemId = to.id ?? ("eventId" in from ? from.itemId : null);
+                                    const item = roomsResponse.data?.content_Item.find((item) => item.id === toItemId);
                                     if (item && item.rooms.length > 0) {
                                         if (currentRoomId !== item.rooms[0].id) {
                                             history.push(`/conference/${conference.slug}/room/${item.rooms[0].id}`);

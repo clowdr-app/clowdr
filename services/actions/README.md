@@ -64,6 +64,12 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
    - **Full Setup**: You will need the outputs from running the AWS CDK
      deployment. **Quick setup**: Set all the environment variables related
      to AWS to `XXXX`.
+1. Use the Hasura Console to add your Sendgrid API credentials to the system configuration. Open the `system.Configuration` table and insert the following rows:
+
+   - `key`: `SENDGRID_API_KEY`, `value`: your SendGrid API key, as a JSON string (i.e. wrapped in double quotes)
+   - `key`: `SENDGRID_SENDER`, `value`: the 'from' email address you wish to use for emails sent by Clowdr, as a JSON string
+   - `key`: `SENDGRID_REPLYTO`, `value`: the 'reply-to' email address you wish to use for emails sent by Clowdr, as a JSON string
+
 1. Run the `Actions service - GraphQL Codegen` task in VSCode to generate the GraphQL query code (Hasura must be running when you do this).
 
 Now return to the main README.
@@ -145,8 +151,6 @@ You will not have the information required for all environment variables yet. Se
 | FAILURE_NOTIFICATIONS_EMAIL_ADDRESS              | The email address the system should send notifications when errors occurr, such as failing to process a video.                |          |
 | GRAPHQL_API_SECURE_PROTOCOLS                     | Boolean. Default: true. Whether to use https/wss or not.                                                                      |          |
 | GRAPHQL_API_DOMAIN                               | The domain and port of the GraphQL server (Hasura)                                                                            |          |
-| SENDGRID_API_KEY                                 | Your SendGrid API Key                                                                                                         |          |
-| SENDGRID_SENDER                                  | Your SendGrid sender email address                                                                                            |          |
 | HOST_SECURE_PROTOCOLS                            | Whether the actions service public URL uses https                                                                             |          |
 | HOST_DOMAIN                                      | The public domain of the actions service (e.g. your actions Packetriot/ngrok URL)                                             |          | Yes            |
 | AWS_PREFIX                                       | The deployment prefix you are using for your AWS deployment. Same as `clowdr/stackPrefix` in the `cdk.context.json`           |          |

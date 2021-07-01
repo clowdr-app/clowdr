@@ -6,15 +6,18 @@ and all of our backend services.
 ## Pre-requisites
 
 1. [Docker Compose](https://docs.docker.com/compose/)
-1. [Hasura CLI](https://hasura.io/docs/1.0/graphql/core/hasura-cli/install-hasura-cli.html)
+1. [Hasura CLI](https://hasura.io/docs/2.0/graphql/core/hasura-cli/install-hasura-cli.html)
+   - At the time of writing, the Hasura CLI installer defaults to installing `v1.3.3`. You will need a version of the CLI that matches the version of the Hasura image you are using in your `docker-compose.yaml`. You can run (for example) `hasura update-cli --version 2.0.1` to update the CLI to `v2.0.1`.
 
 ## Setting Up
 
 1. `cp hasura/.env.example hasura/.env.local`
 1. In `docker-compose.yaml`, comment out the line `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`. We'll re-enable it once we have a JWT secret.
+1. If you are using an M1 Mac, note that Hasura's official Docker image does not yet support this platform. You will need to use a different image built by a third party. Swap `image: hasura/graphql-engine:v{version number}.cli-migrations-v2` for `image: fedormelexin/graphql-engine-arm64:v{version number}.cli-migrations-v2` in `docker-compose.yaml`, replacing the version number as appropriate.
 1. Run the `Hasura Console -- Local Development` task within VSCode:
    `Terminal > Run Task`.
 1. Check that the Docker Compose task ran successfully in the Task Output
+   - If you get an error from this task, make sure the Docker app is running first!
 1. Check that the Hasura Console task ran successfully in the Task Output
     - If you get an error message about `version check: failed to get
       version from server: failed making version api call...` try running

@@ -83,8 +83,15 @@ export default function ContinuationChoices({
             fromId: "eventId" in from ? from.eventId : from.shufflePeriodId,
         },
     });
+
+    // Delay rendering choices (and thus fetching of events/items/rooms) to
+    // allow time for automatic discussion rooms to be generated
+    const renderedAt = useMemo(() => Date.now(), []);
+    const now = useRealTime(10000);
+
     return response.data?.schedule_Continuation &&
-        (response.data?.schedule_Continuation.length > 0 || "shufflePeriodId" in from) ? (
+        (response.data?.schedule_Continuation.length > 0 || "shufflePeriodId" in from) &&
+        now - renderedAt > 15000 ? (
         <ContinuationChoices_Inner
             from={
                 "eventId" in from
@@ -183,7 +190,7 @@ function ContinuationChoices_Inner({
     }, [from, isActiveChoice, now, selectedOptionId]);
 
     const [activateChoice, setActivateChoice] = useState<boolean>(false);
-    const [activatedChoice, setActivatedChoice] = useState<boolean>(false);
+    const [activatedChoice, setActivatedChoice] = useState<boolean | string>(false);
     useEffect(() => {
         if (timeRemaining < 0) {
             setActivateChoice(true);
@@ -309,18 +316,7 @@ function ContinuationChoices_Inner({
                         error = "Sorry, the selected option is no longer available.";
                     }
 
-                    if (error) {
-                        toast({
-                            description: error,
-                            duration: 80000,
-                            position: "bottom",
-                            isClosable: true,
-                            title: "Error activating continuation",
-                            status: "error",
-                        });
-                    } else {
-                        setActivatedChoice(true);
-                    }
+                    setActivatedChoice(error ?? true);
                 }
             };
 
@@ -350,6 +346,19 @@ function ContinuationChoices_Inner({
         myBackstages,
         from,
     ]);
+
+    useEffect(() => {
+        if (typeof activatedChoice === "string") {
+            toast({
+                description: activatedChoice,
+                duration: 80000,
+                position: "bottom",
+                isClosable: true,
+                title: "Error activating continuation",
+                status: "error",
+            });
+        }
+    }, [activatedChoice, toast]);
 
     const activeSet = useCallback((choiceId: string | null, isDefault: boolean) => {
         setSelectedOptionId(choiceId);

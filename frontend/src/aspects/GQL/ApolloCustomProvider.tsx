@@ -48,6 +48,7 @@ async function createApolloClient(
             return {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    "x-hasura-conference-slug": conferenceSlug,
                 },
             };
         } else {

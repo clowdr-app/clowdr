@@ -31,8 +31,8 @@ import {
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
-import { defaultOutline_AsBoxShadow } from "../../../Chakra/ChakraCustomProvider";
 import { ExternalLinkButton } from "../../../Chakra/LinkButton";
+import { defaultOutline_AsBoxShadow } from "../../../Chakra/Outline";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";

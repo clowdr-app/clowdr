@@ -1,7 +1,7 @@
 import { As, Button, PropsOf, Tooltip, useBreakpointValue } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { forwardRef } from "react";
-import { defaultOutline_AsBoxShadow } from "../../Chakra/ChakraCustomProvider";
+import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { FAIcon } from "../../Icons/FAIcon";
 
 type Props<T extends As<any> = typeof Button> = PropsOf<T> & {

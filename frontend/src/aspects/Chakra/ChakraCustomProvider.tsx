@@ -1,5 +1,7 @@
 import { ChakraProvider, extendTheme, PortalManager } from "@chakra-ui/react";
 import React from "react";
+import { Button } from "./Components/Button";
+import { defaultOutline_AsBoxShadow } from "./Outline";
 
 // https://themera.vercel.app/
 // const colors = {
@@ -132,8 +134,6 @@ const colors = {
     },
 };
 
-export const defaultOutline_AsBoxShadow = "0 0 0 2px rgba(255, 187, 0, 0.8)";
-
 const theme = extendTheme({
     radii: {
         none: "0",
@@ -154,6 +154,7 @@ const theme = extendTheme({
         "bottom-popup-dark": "0px -1px 4px 0px rgba(255,255,255,0.25)",
     },
     components: {
+        Button,
         Heading: {
             baseStyle: {
                 textAlign: "center",

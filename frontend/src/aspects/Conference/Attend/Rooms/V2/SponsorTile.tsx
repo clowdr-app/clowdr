@@ -5,7 +5,7 @@ import * as R from "ramda";
 import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { Content_ElementType_Enum, SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
-import { defaultOutline_AsBoxShadow } from "../../../../Chakra/ChakraCustomProvider";
+import { defaultOutline_AsBoxShadow } from "../../../../Chakra/Outline";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 import RoomPresenceGrid from "./RoomPresenceGrid";
@@ -35,9 +35,10 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
 
     const shadow = useColorModeValue("md", "light-md");
     const history = useHistory();
-    const logoUrl = useMemo(() => (sponsor.logo.length > 0 ? getLogoUrlFromData(sponsor.logo[0].data) : null), [
-        sponsor.logo,
-    ]);
+    const logoUrl = useMemo(
+        () => (sponsor.logo.length > 0 ? getLogoUrlFromData(sponsor.logo[0].data) : null),
+        [sponsor.logo]
+    );
     return (
         <Button
             as={VStack}

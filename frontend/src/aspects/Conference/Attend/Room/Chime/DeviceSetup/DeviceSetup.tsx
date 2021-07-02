@@ -51,8 +51,9 @@ export function DeviceSetup(): JSX.Element {
                     w="10em"
                     h="6ex"
                     fontSize="xl"
+                    variant="glowing"
                 >
-                    Join meeting
+                    Join Room
                 </Button>
             </Box>
         </Box>

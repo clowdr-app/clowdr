@@ -4,7 +4,6 @@ import {
     Button,
     chakra,
     HStack,
-    keyframes,
     Spinner,
     Stack,
     Tag,
@@ -14,7 +13,6 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
-import { defaultOutline_AsBoxShadow } from "../../../../Chakra/ChakraCustomProvider";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import DeviceChooserModal from "./DeviceChooserModal";
@@ -250,18 +248,6 @@ export function VonageRoomControlBar({
         [vonage.state]
     );
 
-    const joinRoomButtonBgKeyframes = keyframes`
-0% {
-    background-position: 0% 100%;
-}
-50% {
-    background-position: 100% 0%;
-}
-100% {
-    background-position: 0% 100%;
-}
-    `;
-
     return (
         <>
             <Stack
@@ -346,6 +332,7 @@ export function VonageRoomControlBar({
                                 colorScheme={joining ? "yellow" : "purple"}
                                 h="auto"
                                 py={4}
+                                variant="glowing"
                                 onClick={joining ? onCancelJoinRoom : onJoinRoom}
                                 isLoading={!onCancelJoinRoom && joining}
                                 isDisabled={!joining && requireMicrophone && !state.microphoneIntendedEnabled}
@@ -353,27 +340,6 @@ export function VonageRoomControlBar({
                                 overflow="hidden"
                                 display="inline-flex"
                                 flexDir="column"
-                                background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
-                                backgroundSize="400% 400%"
-                                animation={`${joinRoomButtonBgKeyframes} 10s ease-in-out infinite`}
-                                transition="none"
-                                color="white"
-                                _hover={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                }}
-                                _focus={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                    boxShadow: defaultOutline_AsBoxShadow,
-                                }}
-                                _active={{
-                                    background:
-                                        "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
-                                    backgroundSize: "400% 400%",
-                                }}
                             >
                                 <HStack alignItems="flex-end">
                                     {joining ? <Spinner size="sm" speed="2.5s" thickness="4px" /> : undefined}

@@ -7,7 +7,9 @@
         "heroku-postbuild": "cd shared && npm ci && cd ../services/realtime && npm ci && npm run build && cd ../../services/actions && npm ci && npm run build && cd ../../services/playout && npm ci && npm run build",
         "run-services-actions": "npx foreman start --procfile ./Procfile -p 3001",
         "run-services-realtime": "npx foreman start --procfile ./Realtime.Procfile -p 3002",
-        "run-services-playout": "npx foreman start --procfile ./Playout.Procfile -p 3003"
+        "run-services-playout": "npx foreman start --procfile ./Playout.Procfile -p 3003",
+        "lint-staged": "lint-staged",
+        "prepare": "husky install"
     },
     "repository": {
         "type": "git",
@@ -20,39 +22,28 @@
     },
     "homepage": "https://github.com/clowdr-app/clowdr#readme",
     "devDependencies": {
-        "@types/jest": "^26.0.20",
-        "@typescript-eslint/eslint-plugin": "^4.15.0",
-        "@typescript-eslint/parser": "^4.15.0",
-        "eslint": "^7.19.0",
-        "eslint-plugin-jest": "^24.1.3",
-        "eslint-plugin-react": "^7.22.0",
+        "@types/jest": "^26.0.23",
+        "@typescript-eslint/eslint-plugin": "^4.28.1",
+        "@typescript-eslint/parser": "^4.28.1",
+        "eslint": "^7.29.0",
+        "eslint-plugin-jest": "^24.3.6",
+        "eslint-plugin-react": "^7.24.0",
         "eslint-plugin-react-hooks": "^4.2.0",
-        "husky": "^4.3.8",
-        "lint-staged": "^10.5.4",
+        "husky": "^7.0.0",
+        "lint-staged": "^11.0.0",
         "prettier": "^2.2.1",
         "prettier-plugin-organize-imports": "^1.1.1",
         "typescript": "^4.2.4"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
     },
     "lint-staged": {
         "*.js": "eslint --cache --fix",
         "*.{js,jsx,ts,tsx,css,json,md}": "prettier --write"
     },
     "engines": {
-        "node": "15.13.0",
-        "npm": "7.8.x"
+        "node": ">=15.13.0 <17",
+        "npm": "^7.8.x"
     },
     "workspaces": [
         "shared"
-    ],
-    "dependencies": {
-        "@chakra-ui/react": "^1.6.2",
-        "@types/ramda": "^0.27.38",
-        "ramda": "^0.27.1",
-        "typescript-is": "^0.17.1"
-    }
+    ]
 }

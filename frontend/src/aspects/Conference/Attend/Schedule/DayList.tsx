@@ -73,6 +73,11 @@ export default function DayList({
                     ]
             );
     }, [events, rooms, timelineParams.timezone]);
+    const todayMillis = useMemo(() => DateTime.now().startOf("day").toMillis(), []);
+    const todayFEI = useMemo(() => distinctDates.find(([time, _event]) => time.toMillis() === todayMillis), [
+        distinctDates,
+        todayMillis,
+    ]);
 
     return (
         <HStack zIndex={1000}>
@@ -94,6 +99,31 @@ export default function DayList({
                     Jump to day
                 </MenuButton>
                 <MenuList maxH="30vh" overflow="auto">
+                    {todayFEI ? (
+                        <>
+                            <MenuItem
+                                m={0}
+                                key="today"
+                                size="sm"
+                                onClick={() => {
+                                    scrollToEvent(todayFEI[1].event);
+                                }}
+                                // TODO: Set the timezone for the conference
+                                aria-label="Scroll schedule to today"
+                            >
+                                <Text as="span" fontStyle="italic" mr={3} fontSize="75%">
+                                    {todayFEI[0].toLocaleString({
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                    })}
+                                </Text>
+                                <Text as="span" fontWeight="semibold">
+                                    Today
+                                </Text>
+                            </MenuItem>
+                            <MenuDivider />
+                        </>
+                    ) : undefined}
                     {distinctDates.map((date, idx) => {
                         const date0 = date[0];
                         return (

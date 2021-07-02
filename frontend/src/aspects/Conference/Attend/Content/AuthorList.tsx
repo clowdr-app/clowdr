@@ -85,17 +85,6 @@ export function AuthorList({
     const groupSpacing = 2;
     return (
         <>
-            {authorEls.length > 0 ? (
-                <HStack
-                    spacing="0"
-                    gridColumnGap={colSpacing}
-                    gridRowGap={rowSpacing}
-                    wrap="wrap"
-                    alignItems="flex-start"
-                >
-                    {authorEls}
-                </HStack>
-            ) : undefined}
             {presenterEls.length > 0 ? (
                 <HStack
                     spacing="0"
@@ -106,6 +95,17 @@ export function AuthorList({
                     mt={authorEls.length > 0 ? groupSpacing : undefined}
                 >
                     {presenterEls}
+                </HStack>
+            ) : undefined}
+            {authorEls.length > 0 ? (
+                <HStack
+                    spacing="0"
+                    gridColumnGap={colSpacing}
+                    gridRowGap={rowSpacing}
+                    wrap="wrap"
+                    alignItems="flex-start"
+                >
+                    {authorEls}
                 </HStack>
             ) : undefined}
             {chairEls.length > 0 ? (
@@ -278,25 +278,11 @@ export function PlainAuthorsList({
                 R.sortWith<ProgramPersonDataFragment>(
                     sortByNameOnly
                         ? [
-                              (x, y) =>
-                                  x.roleName === "CHAIR"
-                                      ? y.roleName === "CHAIR"
-                                          ? 0
-                                          : 1
-                                      : y.roleName === "CHAIR"
-                                      ? -1
-                                      : x.roleName.localeCompare(y.roleName),
+                              (x, y) => sortByRoleName(x.roleName, y.roleName),
                               (x, y) => x.person.name.localeCompare(y.person.name),
                           ]
                         : [
-                              (x, y) =>
-                                  x.roleName === "CHAIR"
-                                      ? y.roleName === "CHAIR"
-                                          ? 0
-                                          : 1
-                                      : y.roleName === "CHAIR"
-                                      ? -1
-                                      : x.roleName.localeCompare(y.roleName),
+                              (x, y) => sortByRoleName(x.roleName, y.roleName),
                               (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
                               (x, y) => x.person.name.localeCompare(y.person.name),
                           ],
@@ -305,4 +291,17 @@ export function PlainAuthorsList({
             ).reduce((acc, x) => acc + x, "")}
         </Text>
     );
+}
+
+function sortByRoleName(roleX: string, roleY: string): number {
+    return roleToIndex(roleX) - roleToIndex(roleY);
+}
+
+const rolePositions = ["PRESENTER", "AUTHOR", "CHAIR"];
+function roleToIndex(role: string) {
+    const idx = rolePositions.indexOf(role);
+    if (idx === -1) {
+        return rolePositions.length;
+    }
+    return idx;
 }

@@ -40,7 +40,7 @@
         "*.{js,jsx,ts,tsx,css,json,md}": "prettier --write"
     },
     "engines": {
-        "node": ">=15.13.0 <17",
+        "node": "16.x",
         "npm": "^7.8.x"
     },
     "workspaces": [

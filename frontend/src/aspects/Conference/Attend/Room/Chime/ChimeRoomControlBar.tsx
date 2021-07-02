@@ -296,14 +296,14 @@ export function ChimeRoomControlBar(): JSX.Element {
                     <WrapItem>
                         {meetingStatus === MeetingStatus.Succeeded ? (
                             isLocalUserSharing ? (
-                                <Button onClick={toggleContentShare}>
+                                <Button onClick={() => toggleContentShare()}>
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
                                     </>
                                 </Button>
                             ) : isLocalShareLoading ? (
-                                <Button onClick={toggleContentShare} isLoading={true}>
+                                <Button onClick={() => toggleContentShare()} isLoading={true}>
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Share screen</span>
@@ -326,7 +326,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                     </TagLabel>
                                 </Tag>
                             ) : (
-                                <Button onClick={toggleContentShare}>
+                                <Button onClick={() => toggleContentShare()}>
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Share screen</span>

@@ -1,6 +1,6 @@
 import { Button, ButtonProps, Menu, MenuButton, MenuList, Portal, Tooltip, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
-import { defaultOutline_AsBoxShadow } from "../../Chakra/ChakraCustomProvider";
+import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { FAIcon } from "../../Icons/FAIcon";
 
 export default function MoreOptionsMenuButton({

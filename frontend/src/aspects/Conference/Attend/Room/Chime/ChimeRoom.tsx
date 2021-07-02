@@ -125,6 +125,7 @@ function ChimeRoomInner({
                                 my={8}
                                 onClick={joinRoom}
                                 isLoading={false}
+                                variant="glowing"
                             >
                                 Join Room
                             </Button>

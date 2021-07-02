@@ -37,7 +37,7 @@ parts of the platform, follow all the steps below.
 1. [VSCode](https://code.visualstudio.com/)
    - We also recommend you install the "recommended extensions" listed in the
      `.vscode/extensions` folder. VSCode may offer to install them automatically.
-2. [Node.js](https://nodejs.org/en/) (and NPM)
+2. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
 3. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
 4. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
 5. [Playout service pre-requisites](services/playout/README.md#Pre-requisites)

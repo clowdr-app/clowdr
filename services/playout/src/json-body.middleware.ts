@@ -1,10 +1,11 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
-import { json } from "body-parser";
-import { Request, Response } from "express";
+import type { NextFunction } from "connect";
+import { json } from "express";
+import { IncomingMessage, ServerResponse } from "http";
 
 @Injectable()
 export class JsonBodyMiddleware implements NestMiddleware {
-    use(req: Request, res: Response, next: () => any): void {
+    use(req: IncomingMessage, res: ServerResponse, next: NextFunction): void {
         json()(req, res, next);
     }
 }

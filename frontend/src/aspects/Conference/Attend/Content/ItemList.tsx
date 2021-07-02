@@ -88,14 +88,14 @@ export function TagButton({
     const defaultCollapsedBgColour = useColorModeValue("blue.200", "blue.700");
     const defaultExpandedBgColour = useColorModeValue("blue.300", "gray.500");
     const colourMode = useColorMode();
-    const isDark = useMemo(() => (colour ? Color(colour).isDark() : colourMode.colorMode === "dark"), [
-        colour,
-        colourMode.colorMode,
-    ]);
-    const collapsedBgColour = useMemo(() => (colour ? colour : defaultCollapsedBgColour), [
-        colour,
-        defaultCollapsedBgColour,
-    ]);
+    const isDark = useMemo(
+        () => (colour ? Color(colour).isDark() : colourMode.colorMode === "dark"),
+        [colour, colourMode.colorMode]
+    );
+    const collapsedBgColour = useMemo(
+        () => (colour ? colour : defaultCollapsedBgColour),
+        [colour, defaultCollapsedBgColour]
+    );
     const expandedBgColour = useMemo(
         () =>
             colour
@@ -105,10 +105,10 @@ export function TagButton({
                 : defaultExpandedBgColour,
         [colour, defaultExpandedBgColour, isDark]
     );
-    const isExpandedDark = useMemo(() => (colour ? Color(expandedBgColour).isDark() : false), [
-        colour,
-        expandedBgColour,
-    ]);
+    const isExpandedDark = useMemo(
+        () => (colour ? Color(expandedBgColour).isDark() : false),
+        [colour, expandedBgColour]
+    );
 
     const shadow = useColorModeValue("md", "light-md");
     return setOpenId ? (
@@ -212,9 +212,10 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
         }
     }, [content, contentOfTag, isExpanded, tag.id]);
 
-    const sortedGroups = useMemo(() => content?.map((x) => x.item).sort((x, y) => x.title.localeCompare(y.title)), [
-        content,
-    ]);
+    const sortedGroups = useMemo(
+        () => content?.map((x) => x.item).sort((x, y) => x.title.localeCompare(y.title)),
+        [content]
+    );
     const groupElements = useMemo(
         () =>
             sortedGroups?.map((group) => ({
@@ -314,6 +315,7 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
 export default function ItemList(
     props: { overrideSelectedTag?: string | null; setOverrideSelectedTag?: (id: string | null) => void } & StackProps
 ): JSX.Element {
+    const { overrideSelectedTag, setOverrideSelectedTag, ...remainingProps } = props;
     const conference = useConference();
     const { loading, data, error } = useTagsQuery({
         variables: {
@@ -331,11 +333,11 @@ export default function ItemList(
     const setOpenId = useCallback(
         (id: string | null) => {
             setInternalOpenPanelId(id);
-            props.setOverrideSelectedTag?.(id);
+            setOverrideSelectedTag?.(id);
         },
-        [props, setInternalOpenPanelId]
+        [setInternalOpenPanelId, setOverrideSelectedTag]
     );
-    const openPanelId = props.overrideSelectedTag !== undefined ? props.overrideSelectedTag : internalOpenPanelId;
+    const openPanelId = overrideSelectedTag !== undefined ? overrideSelectedTag : internalOpenPanelId;
 
     const sortedTags = useMemo(
         () =>
@@ -360,7 +362,7 @@ export default function ItemList(
     }
 
     return (
-        <VStack px={4} spacing={4} {...props}>
+        <VStack px={4} spacing={4} {...remainingProps}>
             <Text>Select a tag to browse papers, posters, keynotes, and more.</Text>
             <Center flexDirection="column">
                 <SimpleGrid

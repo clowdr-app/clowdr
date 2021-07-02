@@ -1,5 +1,5 @@
 import type { IntermediaryOriginatingDataDescriptor } from "@clowdr-app/shared-types/build/import/intermediary";
-import levenshtein from "levenshtein-edit-distance";
+import { levenshteinEditDistance } from "levenshtein-edit-distance";
 import { v4 as uuidv4 } from "uuid";
 import type { OriginatingDataDescriptor } from "../Shared/Types";
 
@@ -407,7 +407,7 @@ export function isMatch_String_EditDistance<C, T, S extends T>(
             return false;
         }
 
-        const editDistance = levenshtein(v1.toLowerCase(), v2.toLowerCase());
+        const editDistance = levenshteinEditDistance(v1.toLowerCase(), v2.toLowerCase());
         if (editDistance / longerLength >= threshhold) {
             return false;
         }

@@ -72,7 +72,7 @@
         "intersection-observer": "^0.12.0",
         "jsonata": "^1.8.4",
         "jszip": "^3.6.0",
-        "levenshtein-edit-distance": "^2.0.5",
+        "levenshtein-edit-distance": "^3.0.0",
         "luxon": "^1.27.0",
         "match-sorter": "^6.3.0",
         "mustache": "^4.2.0",

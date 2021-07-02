@@ -1,10 +1,11 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
-import { text } from "body-parser";
-import { Request, Response } from "express";
+import type { NextFunction } from "connect";
+import { text } from "express";
+import { IncomingMessage, ServerResponse } from "http";
 
 @Injectable()
 export class TextBodyMiddleware implements NestMiddleware {
-    use(req: Request, res: Response, next: () => any): void {
+    use(req: IncomingMessage, res: ServerResponse, next: NextFunction): void {
         text()(req, res, next);
     }
 }

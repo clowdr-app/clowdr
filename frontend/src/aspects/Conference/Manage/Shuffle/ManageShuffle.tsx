@@ -11,14 +11,14 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Permissions_Permission_Enum, useManageShufflePeriods_SelectAllQuery } from "../../../generated/graphql";
-import PageNotFound from "../../Errors/PageNotFound";
-import { useRealTime } from "../../Generic/useRealTime";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
-import CreateQueueModal from "./Shuffle/CreateQueueModal";
-import ShuffleQueueTile from "./Shuffle/ShuffleQueueTile";
+import { Permissions_Permission_Enum, useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
+import PageNotFound from "../../../Errors/PageNotFound";
+import { useRealTime } from "../../../Generic/useRealTime";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+import CreateQueueModal from "./CreateQueueModal";
+import ShuffleQueueTile from "./ShuffleQueueTile";
 
 gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
@@ -59,7 +59,7 @@ gql`
     }
 `;
 
-export default function ManageConferenceShufflePage(): JSX.Element {
+export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
 

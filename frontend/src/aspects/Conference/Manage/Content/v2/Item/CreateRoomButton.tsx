@@ -1,7 +1,17 @@
+import { gql } from "@apollo/client";
 import { Button, ButtonProps, useToast } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
 import { useItem_CreateRoomMutation } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
+
+gql`
+    mutation Item_CreateRoom($conferenceId: uuid!, $itemId: uuid!) {
+        createItemRoom(conferenceId: $conferenceId, itemId: $itemId) {
+            roomId
+            message
+        }
+    }
+`;
 
 export function CreateRoomButton({
     itemId: groupId,

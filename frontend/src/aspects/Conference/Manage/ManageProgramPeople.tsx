@@ -119,7 +119,7 @@ gql`
     }
 `;
 
-export default function ManageConferenceProgramPeoplePage(): JSX.Element {
+export default function ManageProgramPeople(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage program people at ${conference.shortName}`);
 
@@ -129,9 +129,10 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
         },
     });
 
-    const registrants = useMemo(() => (registrantsData ? [...registrantsData.registrant_Registrant] : []), [
-        registrantsData,
-    ]);
+    const registrants = useMemo(
+        () => (registrantsData ? [...registrantsData.registrant_Registrant] : []),
+        [registrantsData]
+    );
     const registrantOptions = useMemo(() => {
         return registrants
             .sort((x, y) => x.displayName.localeCompare(y.displayName))
@@ -403,9 +404,10 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
         },
     });
     useQueryErrorToast(errorAllProgramPersons, false);
-    const data = useMemo(() => [...(allProgramPersons?.collection_ProgramPerson ?? [])], [
-        allProgramPersons?.collection_ProgramPerson,
-    ]);
+    const data = useMemo(
+        () => [...(allProgramPersons?.collection_ProgramPerson ?? [])],
+        [allProgramPersons?.collection_ProgramPerson]
+    );
 
     const [insertProgramPerson, insertProgramPersonResponse] = useManageProgramPeople_InsertProgramPersonMutation();
     const [deleteProgramPersons, deleteProgramPersonsResponse] = useManageProgramPeople_DeleteProgramPersonsMutation();
@@ -640,16 +642,10 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                         let csvURL: string | null = null;
                         const now = new Date();
-                        const fileName = `${now.getFullYear()}-${now
-                            .getMonth()
-                            .toString()
-                            .padStart(2, "0")}-${now
+                        const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
                             .getDate()
                             .toString()
-                            .padStart(2, "0")}T${now
-                            .getHours()
-                            .toString()
-                            .padStart(2, "0")}-${now
+                            .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
                             .getMinutes()
                             .toString()
                             .padStart(2, "0")} - Clowdr Program People.csv`;
@@ -726,7 +722,7 @@ export default function ManageConferenceProgramPeoplePage(): JSX.Element {
                 },
             },
         ],
-        [autoLink, green, greenAlt]
+        [autoLink, data, green, greenAlt]
     );
 
     const pageSizes = useMemo(() => [10, 20, 35, 50], []);

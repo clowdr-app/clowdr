@@ -18,23 +18,21 @@ import RoomPage from "./Attend/Room/RoomPage";
 import RoomListPageV1 from "./Attend/Rooms/V1/RoomListPage";
 import Schedule from "./Attend/Schedule/Schedule";
 import AnalyticsDashboard from "./Manage/Analytics/AnalyticsDashboard";
+import ManageBroadcast from "./Manage/Broadcast/ManageBroadcasts";
 import ChecklistPage from "./Manage/Checklist/ChecklistPage";
-import ManageConferenceBroadcastPage from "./Manage/ManageConferenceBroadcastPage";
-import ManageConferenceContentPage from "./Manage/ManageConferenceContentPage";
-import ManageConferenceContentPageV2 from "./Manage/ManageConferenceContentPageV2";
-import { ManageConferenceEmailPage } from "./Manage/ManageConferenceEmailPage";
-import ManageConferenceExportPage from "./Manage/ManageConferenceExportPage";
-import ManageConferenceGroupsPage from "./Manage/ManageConferenceGroupsPage";
-import ManageConferenceImportPage from "./Manage/ManageConferenceImportPage";
-import ManageConferenceNamePage from "./Manage/ManageConferenceNamePage";
-import ManageConferenceProgramPeoplePage from "./Manage/ManageConferenceProgramPeoplePage";
-import ManageConferenceRegistrantsPage from "./Manage/ManageConferenceRegistrantsPage";
-import ManageConferenceRolesPage from "./Manage/ManageConferenceRolesPage";
-import ManageConferenceRoomsPage from "./Manage/ManageConferenceRoomsPage";
-import ManageConferenceSchedulePage from "./Manage/ManageConferenceSchedulePage";
-import ManageConferenceShufflePage from "./Manage/ManageConferenceShufflePage";
-import { ManageConferenceSponsorsPage } from "./Manage/ManageConferenceSponsorsPage";
-import ManagerLandingPage from "./Manage/ManagerLandingPage";
+import ManageContent from "./Manage/Content/ManageContent";
+import ManageEmail from "./Manage/Email/ManageEmail";
+import ManageExport from "./Manage/Export/ManageExport";
+import ManageImport from "./Manage/Import/ManageImport";
+import ManageDetails from "./Manage/ManageDetails";
+import ManageGroups from "./Manage/ManageGroups";
+import ManageProgramPeople from "./Manage/ManageProgramPeople";
+import ManagerLanding from "./Manage/ManagerLanding";
+import ManageRoles from "./Manage/ManageRoles";
+import ManageRooms from "./Manage/ManageRooms";
+import ManageRegistrants from "./Manage/Registrants/ManageRegistrants";
+import ManageSchedule from "./Manage/Schedule/ManageSchedule";
+import ManageShuffle from "./Manage/Shuffle/ManageShuffle";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
 import { useConference } from "./useConference";
 import { useMaybeCurrentRegistrant } from "./useCurrentRegistrant";
@@ -84,57 +82,51 @@ export default function ConferenceRoutes(): JSX.Element {
                     ]}
                     componentIfDenied={<PageNotFound />}
                 >
-                    <ManagerLandingPage />
+                    <ManagerLanding />
                 </RequireAtLeastOnePermissionWrapper>
             </Route>
-            <Route path={`${path}/manage/name`}>
-                <ManageConferenceNamePage />
+            <Route path={`${path}/manage/details`}>
+                <ManageDetails />
             </Route>
             <Route path={`${path}/manage/roles`}>
-                <ManageConferenceRolesPage />
+                <ManageRoles />
             </Route>
             <Route path={`${path}/manage/groups`}>
-                <ManageConferenceGroupsPage />
+                <ManageGroups />
             </Route>
             <Route path={`${path}/manage/registrants`}>
-                <ManageConferenceRegistrantsPage />
+                <ManageRegistrants />
             </Route>
             <Route path={`${path}/manage/people`}>
-                <ManageConferenceProgramPeoplePage />
-            </Route>
-            <Route path={`${path}/manage/content/v2`}>
-                <ManageConferenceContentPageV2 />
+                <ManageProgramPeople />
             </Route>
             <Route path={`${path}/manage/content`}>
-                <ManageConferenceContentPage />
+                <ManageContent />
             </Route>
             <Route path={`${path}/manage/import`}>
-                <ManageConferenceImportPage />
+                <ManageImport />
             </Route>
             <Route path={`${path}/manage/rooms`}>
-                <ManageConferenceRoomsPage />
+                <ManageRooms />
             </Route>
             <Route path={`${path}/manage/shuffle`}>
-                <ManageConferenceShufflePage />
+                <ManageShuffle />
             </Route>
             <Route path={`${path}/manage/broadcasts`}>
-                <ManageConferenceBroadcastPage />
+                <ManageBroadcast />
             </Route>
 
             <Route path={`${path}/manage/export`}>
-                <ManageConferenceExportPage />
+                <ManageExport />
             </Route>
             <Route path={`${path}/manage/schedule`}>
-                <ManageConferenceSchedulePage />
+                <ManageSchedule />
             </Route>
             <Route path={`${path}/manage/chats`}>
                 <PageNotImplemented />
             </Route>
             <Route path={`${path}/manage/email`}>
-                <ManageConferenceEmailPage />
-            </Route>
-            <Route path={`${path}/manage/sponsors`}>
-                <ManageConferenceSponsorsPage />
+                <ManageEmail />
             </Route>
             <Route path={`${path}/manage/checklist`}>
                 <ChecklistPage />

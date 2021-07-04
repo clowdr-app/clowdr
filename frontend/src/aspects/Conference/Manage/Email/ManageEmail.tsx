@@ -1,13 +1,13 @@
 import { Box, Heading } from "@chakra-ui/react";
 import React from "react";
-import { Permissions_Permission_Enum } from "../../../generated/graphql";
-import PageNotFound from "../../Errors/PageNotFound";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
-import { ConfigureEmailTemplates } from "./Email/ConfigureEmailTemplates";
+import { Permissions_Permission_Enum } from "../../../../generated/graphql";
+import PageNotFound from "../../../Errors/PageNotFound";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+import { ConfigureEmailTemplates } from "./ConfigureEmailTemplates";
 
-export function ManageConferenceEmailPage(): JSX.Element {
+export default function ManageEmail(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage email settings for ${conference.shortName}`);
 

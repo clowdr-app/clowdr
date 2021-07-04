@@ -32,9 +32,9 @@ import {
     useManageContent_SelectAllItemsQuery,
     useManageContent_SelectAllTagsQuery,
     useManageContent_UpdateItemMutation,
-} from "../../../generated/graphql";
-import MultiSelect from "../../Chakra/MultiSelect";
-import { MultiSelectColumnFilter, TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
+} from "../../../../generated/graphql";
+import MultiSelect from "../../../Chakra/MultiSelect";
+import { MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
     ColumnHeaderProps,
@@ -43,21 +43,21 @@ import CRUDTable, {
     ExtraButton,
     RowSpecification,
     SortDirection,
-} from "../../CRUDTable2/CRUDTable2";
-import PageNotFound from "../../Errors/PageNotFound";
-import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { FAIcon } from "../../Icons/FAIcon";
-import { maybeCompare } from "../../Utils/maybeSort";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
-import { BulkOperationMenu } from "./Content/v2/BulkOperations/BulkOperationMenu";
-import ManageExhibitionsModal from "./Content/v2/Exhibition/ManageExhibitionsModal";
-import { SecondaryEditor } from "./Content/v2/Item/SecondaryEditor";
-import ManageTagsModal from "./Content/v2/ManageTagsModal";
-import { EditElementsPermissionGrantsModal } from "./Content/v2/Security/EditElementsPermissionGrantsModal";
-import { SendSubmissionRequestsModal } from "./Content/v2/Submissions/SubmissionRequestsModal";
-import { SubmissionsReviewModal } from "./Content/v2/Submissions/SubmissionsReviewModal";
+} from "../../../CRUDTable2/CRUDTable2";
+import PageNotFound from "../../../Errors/PageNotFound";
+import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { FAIcon } from "../../../Icons/FAIcon";
+import { maybeCompare } from "../../../Utils/maybeSort";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+import { BulkOperationMenu } from "./v2/BulkOperations/BulkOperationMenu";
+import ManageExhibitionsModal from "./v2/Exhibition/ManageExhibitionsModal";
+import { SecondaryEditor } from "./v2/Item/SecondaryEditor";
+import ManageTagsModal from "./v2/ManageTagsModal";
+import { EditElementsPermissionGrantsModal } from "./v2/Security/EditElementsPermissionGrantsModal";
+import { SendSubmissionRequestsModal } from "./v2/Submissions/SubmissionRequestsModal";
+import { SubmissionsReviewModal } from "./v2/Submissions/SubmissionsReviewModal";
 
 gql`
     ## Items
@@ -261,7 +261,7 @@ function formatEnumValueForLabel(value: string): string {
     return parts.reduce((acc, x) => `${acc} ${x[0]}${x.substr(1).toLowerCase()}`, "").trimStart();
 }
 
-export default function ManageConferenceContentPageV2(): JSX.Element {
+export default function ManageContentV2(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage content at ${conference.shortName}`);
 
@@ -492,9 +492,9 @@ export default function ManageConferenceContentPageV2(): JSX.Element {
                     ) ?? [],
                 set: (record, value: { label: string; value: string }[]) => {
                     record.itemTags = value.map((x) => ({
-                        itemId: (record.id as any) as DeepWriteable<any>,
-                        tagId: (x.value as any) as DeepWriteable<any>,
-                        id: (undefined as any) as DeepWriteable<any>,
+                        itemId: record.id as any as DeepWriteable<any>,
+                        tagId: x.value as any as DeepWriteable<any>,
+                        id: undefined as any as DeepWriteable<any>,
                     }));
                 },
                 filterFn: (

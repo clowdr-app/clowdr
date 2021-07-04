@@ -51,7 +51,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="purple"
                 />
                 <RestrictedDashboardButton
-                    to="content/v2"
+                    to="content"
                     name="Content"
                     icon="align-left"
                     description="Manage your program content: papers, posters, keynotes, etc."
@@ -129,7 +129,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="blue"
                 />
                 <RestrictedDashboardButton
-                    to="content/v2"
+                    to="content"
                     name="Sponsors"
                     icon="star"
                     description="Manage your sponsors, their booths and representatives."
@@ -165,8 +165,8 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="gray"
                 />
                 <RestrictedDashboardButton
-                    to="name"
-                    name="Name"
+                    to="details"
+                    name="Details"
                     icon="signature"
                     description="Manage name, short name and url."
                     permissions={[Permissions_Permission_Enum.ConferenceManageName]}

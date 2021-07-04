@@ -4,21 +4,22 @@ import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    CreateDeleteRolesMutation,
+    CreateDeleteGroupsMutation,
     Permissions_Permission_Enum,
-    UpdateRoleMutation,
-    useCreateDeleteRolesMutation,
-    useSelectAllPermissionsQuery,
+    UpdateGroupMutation,
+    useCreateDeleteGroupsMutation,
+    useSelectAllGroupsQuery,
     useSelectAllRolesQuery,
-    useUpdateRoleMutation,
+    useUpdateGroupMutation,
 } from "../../../generated/graphql";
 import CRUDTable, {
     BooleanFieldFormat,
-    BooleanFieldSpec,
     CRUDTableProps,
+    defaultSelectFilter,
     defaultStringFilter,
     FieldType,
     PrimaryField,
+    SelectOption,
     UpdateResult,
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
@@ -29,74 +30,78 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 
 gql`
-    query SelectAllPermissions {
-        permissions_Permission {
-            name
-            description
-        }
-    }
-
-    query SelectAllRoles($conferenceId: uuid!) {
-        permissions_Role(where: { conferenceId: { _eq: $conferenceId } }) {
-            conferenceId
+    fragment ManageGroups_Group on permissions_Group {
+        conferenceId
+        enabled
+        id
+        includeUnauthenticated
+        name
+        groupRoles {
             id
-            name
-            rolePermissions {
-                id
-                permissionName
-                roleId
-            }
+            roleId
+            groupId
         }
     }
 
-    mutation CreateDeleteRoles($deleteRoleIds: [uuid!] = [], $insertRoles: [permissions_Role_insert_input!]!) {
-        delete_permissions_Role(where: { id: { _in: $deleteRoleIds } }) {
+    query SelectAllGroups($conferenceId: uuid!) {
+        permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...ManageGroups_Group
+        }
+    }
+
+    mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [permissions_Group_insert_input!]!) {
+        delete_permissions_Group(where: { id: { _in: $deleteGroupIds } }) {
             returning {
                 id
             }
         }
-        insert_permissions_Role(objects: $insertRoles) {
+        insert_permissions_Group(objects: $insertGroups) {
             returning {
                 id
                 conferenceId
                 name
-                rolePermissions {
+                enabled
+                includeUnauthenticated
+                groupRoles {
                     id
-                    permissionName
+                    groupId
                     roleId
                 }
             }
         }
     }
 
-    mutation UpdateRole(
-        $roleId: uuid!
-        $roleName: String!
-        $insertPermissions: [permissions_RolePermission_insert_input!]!
-        $deletePermissionNames: [permissions_Permission_enum!] = []
+    mutation UpdateGroup(
+        $groupId: uuid!
+        $groupName: String!
+        $enabled: Boolean!
+        $includeUnauthenticated: Boolean!
+        $insertRoles: [permissions_GroupRole_insert_input!]!
+        $deleteRoleIds: [uuid!] = []
     ) {
-        update_permissions_Role(where: { id: { _eq: $roleId } }, _set: { name: $roleName }) {
+        update_permissions_Group(
+            where: { id: { _eq: $groupId } }
+            _set: { name: $groupName, enabled: $enabled, includeUnauthenticated: $includeUnauthenticated }
+        ) {
             returning {
                 id
                 name
-                rolePermissions {
+                groupRoles {
                     id
-                    permissionName
+                    groupId
                     roleId
                 }
                 conferenceId
             }
         }
-        insert_permissions_RolePermission(objects: $insertPermissions) {
+        insert_permissions_GroupRole(objects: $insertRoles) {
             returning {
                 id
-                permissionName
+                groupId
                 roleId
             }
         }
-        delete_permissions_RolePermission(
-            where: { roleId: { _eq: $roleId }, permissionName: { _in: $deletePermissionNames } }
-        ) {
+        delete_permissions_GroupRole(where: { groupId: { _eq: $groupId }, roleId: { _in: $deleteRoleIds } }) {
             returning {
                 id
             }
@@ -104,31 +109,27 @@ gql`
     }
 `;
 
-type RoleDescriptor = {
+type RoleOption = SelectOption;
+
+type GroupDescriptor = {
     isNew: boolean;
     id: string;
     name: string;
-    permissions: { [K: string]: boolean };
+    enabled: boolean;
+    includeUnauthenticated: boolean;
+    roleIds: Set<string>;
 };
 
-const RolesCRUDTable = (props: Readonly<CRUDTableProps<RoleDescriptor, "id">>) => CRUDTable(props);
+const GroupsCRUDTable = (props: Readonly<CRUDTableProps<GroupDescriptor, "id">>) => CRUDTable(props);
 
-export default function ManageConferenceRolesPage(): JSX.Element {
+export default function ManageGroups(): JSX.Element {
     const conference = useConference();
-    const title = useTitle(`Manage roles at ${conference.shortName}`);
-
-    const {
-        loading: loadingAllPermissions,
-        error: errorAllPermissions,
-        data: allPermissions,
-    } = useSelectAllPermissionsQuery();
-    useQueryErrorToast(errorAllPermissions, false);
+    const title = useTitle(`Manage groups of ${conference.shortName}`);
 
     const {
         loading: loadingAllRoles,
         error: errorAllRoles,
         data: allRoles,
-        refetch: refetchAllRoles,
     } = useSelectAllRolesQuery({
         fetchPolicy: "network-only",
         variables: {
@@ -137,62 +138,71 @@ export default function ManageConferenceRolesPage(): JSX.Element {
     });
     useQueryErrorToast(errorAllRoles, false);
 
-    const [createDeleteRolesMutation] = useCreateDeleteRolesMutation();
-    const [updateRoleMutation] = useUpdateRoleMutation();
+    const {
+        loading: loadingAllGroups,
+        error: errorAllGroups,
+        data: allGroups,
+        refetch: refetchAllGroups,
+    } = useSelectAllGroupsQuery({
+        fetchPolicy: "network-only",
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    useQueryErrorToast(errorAllGroups, false);
 
-    const [allRolesMap, setAllRolesMap] = useState<Map<string, RoleDescriptor>>();
+    const [createDeleteGroupsMutation] = useCreateDeleteGroupsMutation();
+    const [updateGroupMutation] = useUpdateGroupMutation();
 
-    const parsedDBRoles = useMemo(() => {
-        if (!allRoles || !allPermissions) {
+    const [allGroupsMap, setAllGroupsMap] = useState<Map<string, GroupDescriptor>>();
+
+    const parsedDBGroups = useMemo(() => {
+        if (!allGroups || !allRoles) {
             return undefined;
         }
 
-        const result = new Map<string, RoleDescriptor>();
+        const result = new Map<string, GroupDescriptor>();
 
-        for (const role of allRoles.permissions_Role) {
-            const permissions: { [K: string]: boolean } = {};
-            for (const key in Permissions_Permission_Enum) {
-                const value = (Permissions_Permission_Enum as any)[key] as string;
-                permissions[key] = role.rolePermissions.some((x) => x.permissionName === value);
+        for (const group of allGroups.permissions_Group) {
+            const roleIds: Set<string> = new Set();
+            for (const groupRole of group.groupRoles) {
+                roleIds.add(groupRole.roleId);
             }
-            result.set(role.id, {
+            result.set(group.id, {
                 isNew: false,
-                id: role.id,
-                name: role.name,
-                permissions,
+                id: group.id,
+                name: group.name,
+                enabled: group.enabled,
+                includeUnauthenticated: group.includeUnauthenticated,
+                roleIds,
             });
         }
 
         return result;
-    }, [allPermissions, allRoles]);
+    }, [allGroups, allRoles]);
 
     useEffect(() => {
-        if (parsedDBRoles) {
-            setAllRolesMap(parsedDBRoles);
+        if (parsedDBGroups) {
+            setAllGroupsMap(parsedDBGroups);
         }
-    }, [parsedDBRoles]);
-
-    const permissionFieldSpec: BooleanFieldSpec<boolean> = useMemo(
-        () => ({
-            fieldType: FieldType.boolean,
-            convertFromUI: (x) => x,
-            convertToUI: (x: boolean) => x,
-            format: BooleanFieldFormat.checkbox,
-        }),
-        []
-    );
+    }, [parsedDBGroups]);
 
     const fields = useMemo(() => {
+        const roleOptions: RoleOption[] =
+            allRoles?.permissions_Role.map((role) => ({
+                value: role.id,
+                label: role.name,
+            })) ?? [];
         const result: {
-            [K: string]: Readonly<PrimaryField<RoleDescriptor, any>>;
+            [K: string]: Readonly<PrimaryField<GroupDescriptor, any>>;
         } = {
             name: {
                 heading: "Name",
                 ariaLabel: "Name",
-                description: "Role name",
+                description: "Group name",
                 isHidden: false,
                 isEditable: true,
-                defaultValue: "New role name",
+                defaultValue: "New group name",
                 insert: (item, v) => {
                     return {
                         ...item,
@@ -208,47 +218,90 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                 },
                 validate: (v) => v.length >= 3 || ["Name must be at least 3 characters"],
             },
-        };
-        for (const permissionEnumKey in Permissions_Permission_Enum) {
-            const permissionEnumValue = (Permissions_Permission_Enum as any)[permissionEnumKey] as string;
-            const name = permissionEnumValue
-                .split("_")
-                .reduce((acc, part) => `${acc} ${part[0].toUpperCase()}${part.toLowerCase().substr(1)}`, "")
-                .substr(1)
-                .replace("Conference ", "");
-
-            result[permissionEnumKey] = {
-                heading: `${name}?`,
-                ariaLabel: `${name} Permission`,
+            enabled: {
+                heading: "Enabled",
+                ariaLabel: "Enabled",
                 description:
-                    allPermissions?.permissions_Permission.find((x) => x.name === permissionEnumValue)?.description ??
-                    "No description provided.",
+                    "Members do not have the group's permissions while the group is disabled. You can use this to manually schedule access to the conference on certain days.",
                 isHidden: false,
-                defaultValue:
-                    permissionEnumValue === Permissions_Permission_Enum.ConferenceView ||
-                    permissionEnumValue === Permissions_Permission_Enum.ConferenceViewAttendees,
-                editorFalseLabel: "Deny",
-                editorTrueLabel: "Allow",
                 isEditable: true,
+                defaultValue: true,
                 insert: (item, v) => {
                     return {
                         ...item,
-                        permissions: {
-                            ...item.permissions,
-                            [permissionEnumKey]: v,
-                        },
+                        enabled: v,
                     };
                 },
-                extract: (v) => v.permissions[permissionEnumKey],
-                spec: permissionFieldSpec,
-            };
-        }
+                extract: (v) => v.enabled,
+                spec: {
+                    fieldType: FieldType.boolean,
+                    convertFromUI: (x) => x,
+                    convertToUI: (x: boolean) => x,
+                    format: BooleanFieldFormat.switch,
+                },
+            },
+            includeUnauthenticated: {
+                heading: "Include public?",
+                ariaLabel: "Include public users",
+                description: "Include public users (i.e. those who are not logged in) as part of this group.",
+                isHidden: false,
+                isEditable: true,
+                defaultValue: false,
+                insert: (item, v) => {
+                    return {
+                        ...item,
+                        includeUnauthenticated: v,
+                    };
+                },
+                extract: (v) => v.includeUnauthenticated,
+                spec: {
+                    fieldType: FieldType.boolean,
+                    convertFromUI: (x) => x,
+                    convertToUI: (x: boolean) => x,
+                    format: BooleanFieldFormat.switch,
+                },
+            },
+            roles: {
+                heading: "Roles",
+                ariaLabel: "Roles",
+                description: "The roles for members of this group.",
+                isHidden: false,
+                isEditable: true,
+                defaultValue: [],
+                insert: (item, v) => {
+                    return {
+                        ...item,
+                        roleIds: v,
+                    };
+                },
+                extract: (item) => item.roleIds,
+                spec: {
+                    fieldType: FieldType.select,
+                    multiSelect: true,
+                    convertToUI: (ids) =>
+                        Array.from(ids.values()).map((id) => {
+                            const opt = roleOptions.find((x) => x.value === id);
+                            assert(opt);
+                            return opt;
+                        }),
+                    convertFromUI: (opts) => {
+                        opts ??= [];
+                        return opts instanceof Array ? new Set(opts.map((x) => x.value)) : new Set([opts.value]);
+                    },
+                    filter: defaultSelectFilter,
+                    options: () => roleOptions,
+                },
+            },
+        };
         return result;
-    }, [allPermissions?.permissions_Permission, permissionFieldSpec]);
+    }, [allRoles?.permissions_Role]);
 
     return (
         <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageRoles]}
+            permissions={[
+                Permissions_Permission_Enum.ConferenceManageRoles,
+                Permissions_Permission_Enum.ConferenceManageGroups,
+            ]}
             componentIfDenied={<PageNotFound />}
         >
             {title}
@@ -256,18 +309,18 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                 Manage {conference.shortName}
             </Heading>
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Roles
+                Groups
             </Heading>
-            {(loadingAllPermissions && !allPermissions) || (loadingAllRoles && !allRolesMap) ? (
+            {(loadingAllRoles && !allRoles) || (loadingAllGroups && !allGroupsMap) ? (
                 <Spinner />
-            ) : errorAllPermissions || errorAllRoles ? (
+            ) : errorAllRoles || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
             )}
-            <RolesCRUDTable
+            <GroupsCRUDTable
                 key="crud-table"
-                data={allRolesMap ?? new Map()}
+                data={allGroupsMap ?? new Map()}
                 csud={{
                     cudCallbacks: {
                         generateTemporaryKey: () => uuidv4(),
@@ -276,8 +329,8 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                 ...item,
                                 isNew: true,
                                 id: tempKey,
-                            } as RoleDescriptor;
-                            setAllRolesMap((oldData) => {
+                            } as GroupDescriptor;
+                            setAllGroupsMap((oldData) => {
                                 const newData = new Map(oldData ? oldData.entries() : []);
                                 newData.set(tempKey, newItem);
                                 return newData;
@@ -290,7 +343,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                 results.set(key, true);
                             });
 
-                            setAllRolesMap((oldData) => {
+                            setAllGroupsMap((oldData) => {
                                 if (oldData) {
                                     const newData = new Map(oldData.entries());
                                     items.forEach((item, key) => {
@@ -309,7 +362,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                 results.set(key, true);
                             });
 
-                            setAllRolesMap((oldData) => {
+                            setAllGroupsMap((oldData) => {
                                 const newData = new Map(oldData ? oldData.entries() : []);
                                 keys.forEach((key) => {
                                     newData.delete(key);
@@ -320,14 +373,15 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                             return results;
                         },
                         save: async (keys) => {
-                            assert(allRolesMap);
+                            assert(allGroupsMap);
+                            assert(allRoles);
 
                             const newKeys = new Set<string>();
                             const updatedKeys = new Map<
                                 string,
                                 {
-                                    added: Set<Permissions_Permission_Enum>;
-                                    deleted: Set<Permissions_Permission_Enum>;
+                                    added: Set<string>;
+                                    deleted: Set<string>;
                                 }
                             >();
                             const deletedKeys = new Set<string>();
@@ -339,88 +393,77 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                             });
 
                             keys.forEach((key) => {
-                                const item = allRolesMap.get(key);
+                                const item = allGroupsMap.get(key);
                                 if (!item) {
                                     deletedKeys.add(key);
                                 } else {
                                     if (item.isNew) {
                                         newKeys.add(key);
                                     } else {
-                                        const existing = parsedDBRoles?.get(key);
+                                        const existing = parsedDBGroups?.get(key);
                                         if (!existing) {
                                             console.error("Not-new value was not found in the existing DB dataset.");
                                             results.set(key, false);
                                             return;
                                         }
 
-                                        let changed = item.name !== existing.name;
-                                        const permissionsAdded = new Set<Permissions_Permission_Enum>();
-                                        const permissionsDeleted = new Set<Permissions_Permission_Enum>();
-                                        for (const permissionEnumKey in Permissions_Permission_Enum) {
-                                            const permissionEnumValue = (Permissions_Permission_Enum as any)[
-                                                permissionEnumKey
-                                            ] as Permissions_Permission_Enum;
-                                            if (
-                                                item.permissions[permissionEnumKey] &&
-                                                !existing.permissions[permissionEnumKey]
-                                            ) {
+                                        let changed =
+                                            item.name !== existing.name ||
+                                            item.enabled !== existing.enabled ||
+                                            item.includeUnauthenticated !== existing.includeUnauthenticated;
+                                        const roleIdsAdded = new Set<string>();
+                                        const roleIdsDeleted = new Set<string>();
+                                        for (const role of allRoles.permissions_Role) {
+                                            if (item.roleIds.has(role.id) && !existing.roleIds.has(role.id)) {
                                                 changed = true;
-                                                permissionsAdded.add(permissionEnumValue);
-                                            } else if (
-                                                !item.permissions[permissionEnumKey] &&
-                                                existing.permissions[permissionEnumKey]
-                                            ) {
+                                                roleIdsAdded.add(role.id);
+                                            } else if (!item.roleIds.has(role.id) && existing.roleIds.has(role.id)) {
                                                 changed = true;
-                                                permissionsDeleted.add(permissionEnumValue);
+                                                roleIdsDeleted.add(role.id);
                                             }
                                         }
                                         if (changed) {
                                             updatedKeys.set(key, {
-                                                added: permissionsAdded,
-                                                deleted: permissionsDeleted,
+                                                added: roleIdsAdded,
+                                                deleted: roleIdsDeleted,
                                             });
                                         }
                                     }
                                 }
                             });
 
-                            let createDeleteRolesResult: FetchResult<
-                                CreateDeleteRolesMutation,
+                            let createDeleteGroupsResult: FetchResult<
+                                CreateDeleteGroupsMutation,
                                 Record<string, any>,
                                 Record<string, any>
                             >;
                             try {
-                                createDeleteRolesResult = await createDeleteRolesMutation({
+                                createDeleteGroupsResult = await createDeleteGroupsMutation({
                                     variables: {
-                                        deleteRoleIds: Array.from(deletedKeys.values()),
-                                        insertRoles: Array.from(newKeys.values()).map((key) => {
-                                            const item = allRolesMap.get(key);
+                                        deleteGroupIds: Array.from(deletedKeys.values()),
+                                        insertGroups: Array.from(newKeys.values()).map((key) => {
+                                            const item = allGroupsMap.get(key);
                                             assert(item);
-                                            const permissionEnumKeys = Object.keys(item.permissions).filter(
-                                                (key) => item.permissions[key]
-                                            );
                                             return {
                                                 conferenceId: conference.id,
                                                 name: item.name,
-                                                rolePermissions: {
-                                                    data: permissionEnumKeys.map((permissionEnumKey) => {
-                                                        return {
-                                                            permissionName: (Permissions_Permission_Enum as any)[
-                                                                permissionEnumKey
-                                                            ],
-                                                        };
-                                                    }),
+                                                enabled: item.enabled,
+                                                includeUnauthenticated: item.includeUnauthenticated,
+                                                groupRoles: {
+                                                    data: Array.from(item.roleIds.values()).map((roleId) => ({
+                                                        roleId,
+                                                    })),
                                                 },
                                             };
                                         }),
                                     },
                                 });
                             } catch (e) {
-                                createDeleteRolesResult = {
+                                createDeleteGroupsResult = {
                                     errors: [e],
                                 };
                             }
-                            if (createDeleteRolesResult.errors) {
+                            if (createDeleteGroupsResult.errors) {
                                 newKeys.forEach((key) => {
                                     results.set(key, false);
                                 });
@@ -438,32 +481,32 @@ export default function ManageConferenceRolesPage(): JSX.Element {
 
                             let updatedResults: {
                                 key: string;
-                                result: FetchResult<UpdateRoleMutation, Record<string, any>, Record<string, any>>;
+                                result: FetchResult<UpdateGroupMutation, Record<string, any>, Record<string, any>>;
                             }[];
                             try {
                                 updatedResults = await Promise.all(
                                     Array.from(updatedKeys.entries()).map(async ([key, { added, deleted }]) => {
-                                        const item = allRolesMap.get(key);
+                                        const item = allGroupsMap.get(key);
                                         assert(item);
                                         let result: FetchResult<
-                                            UpdateRoleMutation,
+                                            UpdateGroupMutation,
                                             Record<string, any>,
                                             Record<string, any>
                                         >;
                                         try {
-                                            result = await updateRoleMutation({
+                                            result = await updateGroupMutation({
                                                 variables: {
-                                                    roleId: item.id,
-                                                    roleName: item.name,
-                                                    deletePermissionNames: Array.from(deleted.values()),
-                                                    insertPermissions: Array.from(added.values()).map(
-                                                        (permissionEnumValue) => {
-                                                            return {
-                                                                roleId: item.id,
-                                                                permissionName: permissionEnumValue,
-                                                            };
-                                                        }
-                                                    ),
+                                                    groupId: item.id,
+                                                    groupName: item.name,
+                                                    enabled: item.enabled,
+                                                    includeUnauthenticated: item.includeUnauthenticated,
+                                                    deleteRoleIds: Array.from(deleted.values()),
+                                                    insertRoles: Array.from(added.values()).map((roleId) => {
+                                                        return {
+                                                            groupId: item.id,
+                                                            roleId,
+                                                        };
+                                                    }),
                                                 },
                                             });
                                         } catch (e) {
@@ -495,7 +538,7 @@ export default function ManageConferenceRolesPage(): JSX.Element {
                                 }
                             });
 
-                            await refetchAllRoles();
+                            await refetchAllGroups();
 
                             return results;
                         },

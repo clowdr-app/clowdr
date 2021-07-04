@@ -51,32 +51,32 @@ import {
     useManageSchedule_ShufflePeriodsQuery,
     useSelectWholeScheduleQuery,
     useUpdateEventInfoMutation,
-} from "../../../generated/graphql";
-import { LinkButton } from "../../Chakra/LinkButton";
-import { DateTimePicker } from "../../CRUDTable/DateTimePicker";
+} from "../../../../generated/graphql";
+import { LinkButton } from "../../../Chakra/LinkButton";
+import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import {
     DateTimeColumnFilter,
     dateTimeFilterFn,
     formatEnumValue,
     SelectColumnFilter,
     TextColumnFilter,
-} from "../../CRUDTable2/CRUDComponents";
+} from "../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
     RowSpecification,
     SortDirection,
-} from "../../CRUDTable2/CRUDTable2";
-import PageNotFound from "../../Errors/PageNotFound";
-import { useRealTime } from "../../Generic/useRealTime";
-import FAIcon from "../../Icons/FAIcon";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
-import BatchAddEventPeople from "./Schedule/BatchAddEventPeople";
-import ContinuationsEditor from "./Schedule/ContinuationsEditor";
-import { EventProgramPersonsModal, requiresEventPeople } from "./Schedule/EventProgramPersonsModal";
+} from "../../../CRUDTable2/CRUDTable2";
+import PageNotFound from "../../../Errors/PageNotFound";
+import { useRealTime } from "../../../Generic/useRealTime";
+import FAIcon from "../../../Icons/FAIcon";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+import BatchAddEventPeople from "./BatchAddEventPeople";
+import ContinuationsEditor from "./ContinuationsEditor";
+import { EventProgramPersonsModal, requiresEventPeople } from "./EventProgramPersonsModal";
 
 gql`
     query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
@@ -405,7 +405,7 @@ function EditableScheduleTable(): JSX.Element {
                         ? new Date(Date.parse(record.startTime) + 1000 * (record.durationSeconds ?? 300))
                         : new Date(Date.now() + 1000 * (record.durationSeconds ?? 300)),
                 set: (record, v: Date) => {
-                    const start = record.startTime ? Date.parse((record.startTime as unknown) as string) : Date.now();
+                    const start = record.startTime ? Date.parse(record.startTime as unknown as string) : Date.now();
                     record.durationSeconds = Math.max(60, Math.round((v.getTime() - start) / 1000));
                 },
                 filterFn: dateTimeFilterFn(["endTime"]),
@@ -1238,7 +1238,7 @@ function EditableScheduleTable(): JSX.Element {
     );
 }
 
-export default function ManageConferenceSchedulePage(): JSX.Element {
+export default function ManageSchedule(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage schedule of ${conference.shortName}`);
 

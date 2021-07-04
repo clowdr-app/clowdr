@@ -771,7 +771,7 @@ function EditableRoomsCRUDTable() {
                 },
                 get: (data) => items.data?.content_Item.find((group) => group.id === data.originatingItemId),
                 set: (record, value: { id: string; title: string } | undefined) => {
-                    record.originatingItemId = (value?.id as any) as DeepWriteable<any> | undefined;
+                    record.originatingItemId = value?.id as any as DeepWriteable<any> | undefined;
                 },
                 sortType: (rowA: { id: string; title: string }, rowB: { id: string; title: string }) => {
                     const compared = rowA && rowB ? rowA.title.localeCompare(rowB.title) : rowA ? 1 : rowB ? -1 : 0;
@@ -1180,7 +1180,7 @@ function EditableRoomsCRUDTable() {
     );
 }
 
-export default function ManageConferenceRoomsPage(): JSX.Element {
+export default function ManageRooms(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage rooms at ${conference.shortName}`);
 

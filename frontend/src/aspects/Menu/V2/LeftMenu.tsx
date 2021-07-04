@@ -186,7 +186,7 @@ export default function LeftMenu(): JSX.Element {
                             Dashboard
                         </MenuItem>
                         <MenuDivider />
-                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/content/v2`}>
+                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/content`}>
                             <FAIcon iconStyle="s" icon="align-left" mr={2} aria-hidden={true} w="1.2em" />
                             Content
                         </MenuItem>

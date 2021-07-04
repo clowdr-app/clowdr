@@ -32,14 +32,14 @@ import {
     useInsertInvitationEmailJobsMutation,
     useInsertRegistrantMutation,
     useInsertRegistrantWithoutInviteMutation,
-    useManageConferencePeoplePage_InsertCustomEmailJobMutation,
+    useManagePeople_InsertCustomEmailJobMutation,
     useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,
     useUpdateRegistrantMutation,
-} from "../../../generated/graphql";
-import { LinkButton } from "../../Chakra/LinkButton";
-import MultiSelect from "../../Chakra/MultiSelect";
-import { CheckBoxColumnFilter, MultiSelectColumnFilter, TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
+} from "../../../../generated/graphql";
+import { LinkButton } from "../../../Chakra/LinkButton";
+import MultiSelect from "../../../Chakra/MultiSelect";
+import { CheckBoxColumnFilter, MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
     ColumnHeaderProps,
@@ -51,14 +51,14 @@ import CRUDTable, {
     RowSpecification,
     SortDirection,
     Update,
-} from "../../CRUDTable2/CRUDTable2";
-import PageNotFound from "../../Errors/PageNotFound";
-import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { FAIcon } from "../../Icons/FAIcon";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
-import { SendEmailModal } from "./Registrants/SendEmailModal";
+} from "../../../CRUDTable2/CRUDTable2";
+import PageNotFound from "../../../Errors/PageNotFound";
+import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { FAIcon } from "../../../Icons/FAIcon";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+import { SendEmailModal } from "./SendEmailModal";
 
 gql`
     fragment InvitationParts on registrant_Invitation {
@@ -158,7 +158,7 @@ gql`
         }
     }
 
-    mutation ManageConferencePeoplePage_InsertCustomEmailJob(
+    mutation ManagePeople_InsertCustomEmailJob(
         $htmlBody: String!
         $subject: String!
         $conferenceId: uuid!
@@ -188,11 +188,15 @@ type RegistrantDescriptor = RegistrantPartsFragment & {
     >;
 };
 
-export default function ManageConferenceRegistrantsPage(): JSX.Element {
+export default function ManageRegistrants(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
-    const { loading: loadingAllGroups, error: errorAllGroups, data: allGroups } = useSelectAllGroupsQuery({
+    const {
+        loading: loadingAllGroups,
+        error: errorAllGroups,
+        data: allGroups,
+    } = useSelectAllGroupsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -212,15 +216,14 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         },
     });
     useQueryErrorToast(errorAllRegistrants, false);
-    const data = useMemo(() => [...(allRegistrants?.registrant_Registrant ?? [])], [
-        allRegistrants?.registrant_Registrant,
-    ]);
+    const data = useMemo(
+        () => [...(allRegistrants?.registrant_Registrant ?? [])],
+        [allRegistrants?.registrant_Registrant]
+    );
 
     const [insertRegistrant, insertRegistrantResponse] = useInsertRegistrantMutation();
-    const [
-        insertRegistrantWithoutInvite,
-        insertRegistrantWithoutInviteResponse,
-    ] = useInsertRegistrantWithoutInviteMutation();
+    const [insertRegistrantWithoutInvite, insertRegistrantWithoutInviteResponse] =
+        useInsertRegistrantWithoutInviteMutation();
     const [deleteRegistrants, deleteRegistrantsResponse] = useDeleteRegistrantsMutation();
     const [updateRegistrant, updateRegistrantResponse] = useUpdateRegistrantMutation();
 
@@ -375,11 +378,11 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                         assert(record.id);
                         record.invitation = {
                             registrantId: record.id as DeepWriteable<any>,
-                            createdAt: (new Date().toISOString() as any) as DeepWriteable<any>,
-                            updatedAt: (new Date().toISOString() as any) as DeepWriteable<any>,
+                            createdAt: new Date().toISOString() as any as DeepWriteable<any>,
+                            updatedAt: new Date().toISOString() as any as DeepWriteable<any>,
                             invitedEmailAddress: value,
-                            inviteCode: ("" as any) as DeepWriteable<any>,
-                            id: ("" as any) as DeepWriteable<any>,
+                            inviteCode: "" as any as DeepWriteable<any>,
+                            id: "" as any as DeepWriteable<any>,
                         };
                     } else {
                         record.invitation.invitedEmailAddress = value;
@@ -491,9 +494,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                     ) ?? [],
                 set: (record, value: { label: string; value: string }[]) => {
                     record.groupRegistrants = value.map((x) => ({
-                        registrantId: (record.id as any) as DeepWriteable<any>,
-                        groupId: (x.value as any) as DeepWriteable<any>,
-                        id: (undefined as any) as DeepWriteable<any>,
+                        registrantId: record.id as any as DeepWriteable<any>,
+                        groupId: x.value as any as DeepWriteable<any>,
+                        id: undefined as any as DeepWriteable<any>,
                     }));
                 },
                 filterFn: (
@@ -530,11 +533,9 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         return result;
     }, [allGroups?.permissions_Group]);
 
-    const [
-        insertInvitationEmailJobsMutation,
-        { loading: insertInvitationEmailJobsLoading },
-    ] = useInsertInvitationEmailJobsMutation();
-    const [insertCustomEmailJobMutation] = useManageConferencePeoplePage_InsertCustomEmailJobMutation();
+    const [insertInvitationEmailJobsMutation, { loading: insertInvitationEmailJobsLoading }] =
+        useInsertInvitationEmailJobsMutation();
+    const [insertCustomEmailJobMutation] = useManagePeople_InsertCustomEmailJobMutation();
     const [sendCustomEmailRegistrants, setSendCustomEmailRegistrants] = useState<RegistrantDescriptor[]>([]);
     const sendCustomEmailModal = useDisclosure();
 
@@ -684,12 +685,14 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
         [deleteRegistrants, deleteRegistrantsResponse.loading]
     );
 
-    const enabledGroups = useMemo(() => allGroups?.permissions_Group.filter((x) => x.enabled), [
-        allGroups?.permissions_Group,
-    ]);
-    const disabledGroups = useMemo(() => allGroups?.permissions_Group.filter((x) => !x.enabled), [
-        allGroups?.permissions_Group,
-    ]);
+    const enabledGroups = useMemo(
+        () => allGroups?.permissions_Group.filter((x) => x.enabled),
+        [allGroups?.permissions_Group]
+    );
+    const disabledGroups = useMemo(
+        () => allGroups?.permissions_Group.filter((x) => !x.enabled),
+        [allGroups?.permissions_Group]
+    );
 
     const buttons: ExtraButton<RegistrantDescriptor>[] = useMemo(
         () => [
@@ -726,16 +729,10 @@ export default function ManageConferenceRegistrantsPage(): JSX.Element {
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                         let csvURL: string | null = null;
                         const now = new Date();
-                        const fileName = `${now.getFullYear()}-${now
-                            .getMonth()
-                            .toString()
-                            .padStart(2, "0")}-${now
+                        const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
                             .getDate()
                             .toString()
-                            .padStart(2, "0")}T${now
-                            .getHours()
-                            .toString()
-                            .padStart(2, "0")}-${now
+                            .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
                             .getMinutes()
                             .toString()
                             .padStart(2, "0")} - Clowdr Registrants.csv`;

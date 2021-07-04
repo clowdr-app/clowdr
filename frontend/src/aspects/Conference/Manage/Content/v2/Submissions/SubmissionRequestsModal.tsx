@@ -47,13 +47,13 @@ import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
 
-// gql`
-//     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
-//         insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
-//             affected_rows
-//         }
-//     }
-// `;
+gql`
+    mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
+        insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
+            affected_rows
+        }
+    }
+`;
 
 function generateElementTypeFriendlyName(type: Content_ElementType_Enum) {
     switch (type) {
@@ -208,7 +208,7 @@ function SendSubmissionRequestsModalLazyInner({
                     subjectTemplate: null,
                 };
                 if (conferenceConfiguration?.value && isEmailTemplate_BaseConfig(conferenceConfiguration.value)) {
-                    existingTemplate = (conferenceConfiguration.value as unknown) as EmailTemplate_BaseConfig;
+                    existingTemplate = conferenceConfiguration.value as unknown as EmailTemplate_BaseConfig;
                 }
 
                 return (

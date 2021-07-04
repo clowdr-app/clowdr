@@ -1,15 +1,15 @@
 import { Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import React from "react";
-import { Permissions_Permission_Enum } from "../../../generated/graphql";
-import PageNotFound from "../../Errors/PageNotFound";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
-import { ConnectYouTubeAccount } from "./Export/ConnectYouTubeAccount";
-import { UploadedYouTubeVideos } from "./Export/UploadedYouTubeVideos";
-import { UploadYouTubeVideos } from "./Export/UploadYouTubeVideos";
+import { Permissions_Permission_Enum } from "../../../../generated/graphql";
+import PageNotFound from "../../../Errors/PageNotFound";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+import { ConnectYouTubeAccount } from "./ConnectYouTubeAccount";
+import { UploadedYouTubeVideos } from "./UploadedYouTubeVideos";
+import { UploadYouTubeVideos } from "./UploadYouTubeVideos";
 
-export default function ManageConferenceExportPage(): JSX.Element {
+export default function ManageExport(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Export data from ${conference.shortName}`);
 

@@ -4,10 +4,10 @@ import * as R from "ramda";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-    ManageConferenceExportPage_RegistrantGoogleAccountFragment,
-    useManageConferenceExportPage_DeleteRegistrantGoogleAccountMutation,
-    useManageConferenceExportPage_GetGoogleOAuthUrlMutation,
-    useManageConferenceExportPage_GetRegistrantGoogleAccountsQuery,
+    ManageExport_RegistrantGoogleAccountFragment,
+    useManageExport_DeleteRegistrantGoogleAccountMutation,
+    useManageExport_GetGoogleOAuthUrlMutation,
+    useManageExport_GetRegistrantGoogleAccountsQuery,
 } from "../../../../generated/graphql";
 import { useGoogleOAuthRedirectPath } from "../../../Google/useGoogleOAuthRedirectUrl";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
@@ -15,24 +15,24 @@ import { FAIcon } from "../../../Icons/FAIcon";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 
 gql`
-    mutation ManageConferenceExportPage_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {
+    mutation ManageExport_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {
         getGoogleOAuthUrl(registrantId: $registrantId, scopes: $scopes) {
             url
         }
     }
 
-    query ManageConferenceExportPage_GetRegistrantGoogleAccounts($registrantId: uuid!) {
+    query ManageExport_GetRegistrantGoogleAccounts($registrantId: uuid!) {
         registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId } }) {
-            ...ManageConferenceExportPage_RegistrantGoogleAccount
+            ...ManageExport_RegistrantGoogleAccount
         }
     }
 
-    fragment ManageConferenceExportPage_RegistrantGoogleAccount on registrant_GoogleAccount {
+    fragment ManageExport_RegistrantGoogleAccount on registrant_GoogleAccount {
         id
         googleAccountEmail
     }
 
-    mutation ManageConferenceExportPage_DeleteRegistrantGoogleAccount($registrantGoogleAccountId: uuid!) {
+    mutation ManageExport_DeleteRegistrantGoogleAccount($registrantGoogleAccountId: uuid!) {
         delete_registrant_GoogleAccount_by_pk(id: $registrantGoogleAccountId) {
             id
         }
@@ -42,16 +42,16 @@ export function ConnectYouTubeAccount(): JSX.Element {
     const listItemBgColour = useColorModeValue("gray.100", "gray.700");
     const toast = useToast();
 
-    const [mutation] = useManageConferenceExportPage_GetGoogleOAuthUrlMutation();
+    const [mutation] = useManageExport_GetGoogleOAuthUrlMutation();
 
     const registrant = useCurrentRegistrant();
-    const result = useManageConferenceExportPage_GetRegistrantGoogleAccountsQuery({
+    const result = useManageExport_GetRegistrantGoogleAccountsQuery({
         variables: {
             registrantId: registrant?.id,
         },
     });
 
-    const [deleteAccount] = useManageConferenceExportPage_DeleteRegistrantGoogleAccountMutation();
+    const [deleteAccount] = useManageExport_DeleteRegistrantGoogleAccountMutation();
     const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
 
     const history = useHistory();
@@ -63,7 +63,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                 Connected accounts
             </Heading>
             <ApolloQueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={result}>
-                {(accounts: readonly ManageConferenceExportPage_RegistrantGoogleAccountFragment[]) => (
+                {(accounts: readonly ManageExport_RegistrantGoogleAccountFragment[]) => (
                     <List>
                         {accounts.map((account) => (
                             <ListItem

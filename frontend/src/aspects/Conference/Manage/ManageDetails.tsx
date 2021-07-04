@@ -66,7 +66,7 @@ export function validateSlug(inValue: string | null | undefined): string | undef
     return error;
 }
 
-export default function ManageConferenceNamePage(): JSX.Element {
+export default function ManageName(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage name of ${conference.shortName}`);
 
@@ -114,7 +114,7 @@ export default function ManageConferenceNamePage(): JSX.Element {
                             });
 
                             if (conference.slug !== variables.slug) {
-                                history.push(`/conference/${variables.slug}/manage/name`);
+                                history.push(`/conference/${variables.slug}/manage/details`);
                             }
                         }
                     } catch (e) {

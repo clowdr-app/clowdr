@@ -1,17 +1,17 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
-import { Permissions_Permission_Enum } from "../../../generated/graphql";
-import PageNotFound from "../../Errors/PageNotFound";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
-import ImportContentPage from "./Import/Content/ImportContentPage";
-import ImportRegistrantsPage from "./Import/Registrants/ImportRegistrantsPage";
-import ImportSchedulePage from "./Import/Schedule/ImportSchedulePage";
-import RestrictedDashboardButton from "./RestrictedDashboardButton";
+import { Permissions_Permission_Enum } from "../../../../generated/graphql";
+import PageNotFound from "../../../Errors/PageNotFound";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+import RestrictedDashboardButton from "../RestrictedDashboardButton";
+import ImportContentPage from "./Content/ImportContentPage";
+import ImportRegistrantsPage from "./Registrants/ImportRegistrantsPage";
+import ImportSchedulePage from "./Schedule/ImportSchedulePage";
 
-export default function ManageConferenceImportPage(): JSX.Element {
+export default function ManageImport(): JSX.Element {
     const { path } = useRouteMatch();
     return (
         <Switch>
@@ -25,13 +25,13 @@ export default function ManageConferenceImportPage(): JSX.Element {
                 <ImportRegistrantsPage />
             </Route>
             <Route path={`${path}/`}>
-                <InnerManageConferenceImportPage />
+                <InnerManageImport />
             </Route>
         </Switch>
     );
 }
 
-function InnerManageConferenceImportPage(): JSX.Element {
+function InnerManageImport(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Import to ${conference.shortName}`);
 

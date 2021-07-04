@@ -13,19 +13,19 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Permissions_Permission_Enum, useCreateConferencePrepareJobMutation } from "../../../generated/graphql";
-import PageNotFound from "../../Errors/PageNotFound";
-import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
-import { BroadcastRooms } from "./Broadcast/BroadcastRooms";
-import { Configuration as ConferenceConfiguration } from "./Broadcast/ConferenceConfiguration";
-import { EventVonageControls } from "./Broadcast/EventVonageControls";
-import LivestreamMonitoring from "./Broadcast/LivestreamMonitoring";
-import { PrepareJobsList } from "./Broadcast/PrepareJobsList";
+import { Permissions_Permission_Enum, useCreateConferencePrepareJobMutation } from "../../../../generated/graphql";
+import PageNotFound from "../../../Errors/PageNotFound";
+import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { useTitle } from "../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
+import { BroadcastRooms } from "./BroadcastRooms";
+import { Configuration as ConferenceConfiguration } from "./ConferenceConfiguration";
+import { EventVonageControls } from "./EventVonageControls";
+import LivestreamMonitoring from "./LivestreamMonitoring";
+import { PrepareJobsList } from "./PrepareJobsList";
 
-export default function ManageConferenceBroadcastPage(): JSX.Element {
+export default function ManageBroadcast(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage broadcasts at ${conference.shortName}`);
 

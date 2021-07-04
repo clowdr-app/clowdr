@@ -4,6 +4,7 @@ import { Chat_ReactionType_Enum } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
 import type { MessageState } from "../ChatGlobalState";
 import { useEmojiPicker } from "../EmojiPickerProvider";
+import { useReportMessage } from "../Moderation/ReportMessageDialog";
 import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 export default function MessageControls({
@@ -31,6 +32,7 @@ export default function MessageControls({
     const emojiPicker = useEmojiPicker();
     const messages = useReceiveMessageQueries();
     const toast = useToast();
+    const report = useReportMessage();
 
     function buttonF(label: string, icon: string, colour: string, onClick: () => void) {
         return (
@@ -144,8 +146,12 @@ export default function MessageControls({
                   })
                 : undefined}
             {!isOwnMessage && canFlag
-                ? buttonF("Report message", "flag", "purple.400", () => {
-                      alert("TODO"); // TODO
+                ? buttonF("Report message", "flag", "red.400", () => {
+                      report.open((info) => {
+                          if (info) {
+                              message.report(info.type, info.reason);
+                          }
+                      });
                   })
                 : undefined}
         </HStack>

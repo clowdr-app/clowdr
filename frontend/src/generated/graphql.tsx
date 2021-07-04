@@ -35211,6 +35211,21 @@ export type ShortChatMessageDataFragment = { readonly __typename?: 'chat_Message
 
 export type ShortChatReactionDataFragment = { readonly __typename?: 'chat_Reaction', readonly data: any, readonly senderId: any, readonly symbol: string, readonly type: Chat_ReactionType_Enum, readonly messageSId: any, readonly sId: any, readonly duplicateSId?: Maybe<any> };
 
+export type ChatFlagDataFragment = { readonly __typename?: 'chat_Flag', readonly discussionChatId?: Maybe<any>, readonly flaggedById?: Maybe<any>, readonly id: number, readonly messageSId: any, readonly notes?: Maybe<string>, readonly resolution?: Maybe<string>, readonly resolved_at?: Maybe<any>, readonly type: Chat_FlagType_Enum, readonly updated_at: any, readonly created_at: any };
+
+export type InsertChatFlagMutationVariables = Exact<{
+  messageSId: Scalars['uuid'];
+  registrantId: Scalars['uuid'];
+  type: Chat_FlagType_Enum;
+  reason: Scalars['String'];
+}>;
+
+
+export type InsertChatFlagMutation = { readonly __typename?: 'mutation_root', readonly insert_chat_Flag_one?: Maybe<(
+    { readonly __typename?: 'chat_Flag' }
+    & ChatFlagDataFragment
+  )> };
+
 export type GetChatPathQueryVariables = Exact<{
   chatId: Scalars['uuid'];
 }>;
@@ -38275,6 +38290,20 @@ export const ShortChatReactionDataFragmentDoc = gql`
   duplicateSId
 }
     `;
+export const ChatFlagDataFragmentDoc = gql`
+    fragment ChatFlagData on chat_Flag {
+  discussionChatId
+  flaggedById
+  id
+  messageSId
+  notes
+  resolution
+  resolved_at
+  type
+  updated_at
+  created_at
+}
+    `;
 export const ElementDataFragmentDoc = gql`
     fragment ElementData on content_Element {
   id
@@ -40301,6 +40330,44 @@ export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
 export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
 export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
+export const InsertChatFlagDocument = gql`
+    mutation InsertChatFlag($messageSId: uuid!, $registrantId: uuid!, $type: chat_FlagType_enum!, $reason: String!) {
+  insert_chat_Flag_one(
+    object: {messageSId: $messageSId, flaggedById: $registrantId, type: $type, notes: $reason}
+  ) {
+    ...ChatFlagData
+  }
+}
+    ${ChatFlagDataFragmentDoc}`;
+export type InsertChatFlagMutationFn = Apollo.MutationFunction<InsertChatFlagMutation, InsertChatFlagMutationVariables>;
+
+/**
+ * __useInsertChatFlagMutation__
+ *
+ * To run a mutation, you first call `useInsertChatFlagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertChatFlagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertChatFlagMutation, { data, loading, error }] = useInsertChatFlagMutation({
+ *   variables: {
+ *      messageSId: // value for 'messageSId'
+ *      registrantId: // value for 'registrantId'
+ *      type: // value for 'type'
+ *      reason: // value for 'reason'
+ *   },
+ * });
+ */
+export function useInsertChatFlagMutation(baseOptions?: Apollo.MutationHookOptions<InsertChatFlagMutation, InsertChatFlagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertChatFlagMutation, InsertChatFlagMutationVariables>(InsertChatFlagDocument, options);
+      }
+export type InsertChatFlagMutationHookResult = ReturnType<typeof useInsertChatFlagMutation>;
+export type InsertChatFlagMutationResult = Apollo.MutationResult<InsertChatFlagMutation>;
+export type InsertChatFlagMutationOptions = Apollo.BaseMutationOptions<InsertChatFlagMutation, InsertChatFlagMutationVariables>;
 export const GetChatPathDocument = gql`
     query GetChatPath($chatId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {

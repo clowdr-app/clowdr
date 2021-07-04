@@ -3,6 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { GlobalChatState } from "./ChatGlobalState";
+import { ReportMessageProvider } from "./Moderation/ReportMessageDialog";
 
 export const GlobalChatStateContext = React.createContext<GlobalChatState | undefined>(undefined);
 
@@ -40,5 +41,9 @@ export function GlobalChatStateProvider({
         };
     }, [state]);
 
-    return <GlobalChatStateContext.Provider value={state}>{children}</GlobalChatStateContext.Provider>;
+    return (
+        <GlobalChatStateContext.Provider value={state}>
+            <ReportMessageProvider>{children}</ReportMessageProvider>
+        </GlobalChatStateContext.Provider>
+    );
 }

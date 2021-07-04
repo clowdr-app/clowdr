@@ -19,6 +19,7 @@ import RoomListPageV1 from "./Attend/Rooms/V1/RoomListPage";
 import Schedule from "./Attend/Schedule/Schedule";
 import AnalyticsDashboard from "./Manage/Analytics/AnalyticsDashboard";
 import ManageBroadcast from "./Manage/Broadcast/ManageBroadcasts";
+import ManageModeration from "./Manage/Chat/Moderation/ManageModeration";
 import ChecklistPage from "./Manage/Checklist/ChecklistPage";
 import ManageContent from "./Manage/Content/ManageContent";
 import ManageEmail from "./Manage/Email/ManageEmail";
@@ -121,6 +122,9 @@ export default function ConferenceRoutes(): JSX.Element {
             </Route>
             <Route path={`${path}/manage/schedule`}>
                 <ManageSchedule />
+            </Route>
+            <Route path={`${path}/manage/chats/moderation`}>
+                <ManageModeration />
             </Route>
             <Route path={`${path}/manage/chats`}>
                 <PageNotImplemented />

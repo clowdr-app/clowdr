@@ -1,12 +1,14 @@
 import React, { useMemo } from "react";
-import { useChatConfiguration } from "../Configuration";
 
 interface ReceiveMessageQueriesCtx {
-    delete: (sId: string) => Promise<void>;
     setAnsweringQuestionSId: React.RefObject<{ f: (sIds: string[] | null) => void; answeringSIds: string[] | null }>;
 }
 
 const ReceiveMessageQueriesContext = React.createContext<ReceiveMessageQueriesCtx | undefined>(undefined);
+
+export function useMaybeReceiveMessageQueries(): ReceiveMessageQueriesCtx | undefined {
+    return React.useContext(ReceiveMessageQueriesContext);
+}
 
 export function useReceiveMessageQueries(): ReceiveMessageQueriesCtx {
     const ctx = React.useContext(ReceiveMessageQueriesContext);
@@ -23,15 +25,11 @@ export default function ReceiveMessageQueriesProvider({
     children: React.ReactNode | React.ReactNodeArray;
     setAnsweringQuestionSId: React.RefObject<{ f: (sIds: string[] | null) => void; answeringSIds: string[] | null }>;
 }): JSX.Element {
-    const config = useChatConfiguration();
-
-    const ctx = useMemo(
-        () => ({
-            delete: config.state.deleteMessage.bind(config.state),
+    const ctx = useMemo(() => {
+        return {
             setAnsweringQuestionSId,
-        }),
-        [config.state, setAnsweringQuestionSId]
-    );
+        };
+    }, [setAnsweringQuestionSId]);
 
     return <ReceiveMessageQueriesContext.Provider value={ctx}>{children}</ReceiveMessageQueriesContext.Provider>;
 }

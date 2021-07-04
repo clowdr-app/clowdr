@@ -1,3 +1,4 @@
+import assert from "assert";
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { useChatConfiguration } from "../Configuration";
 import type { MutableQuery } from "../Types/Queries";
@@ -22,28 +23,33 @@ export function ChatPinnedQueryProvider({
     const [isPinned, setIsPinned] = useState<boolean | null>(null);
 
     useEffect(() => {
+        assert(
+            config.state?.IsPinned !== undefined,
+            "config.state is null. Chat state is not available in the current context."
+        );
         return config.state.IsPinned.subscribe(setIsPinned);
-    }, [config.state.IsPinned]);
+    }, [config.state?.IsPinned]);
 
     const data = useMemo(
         () => ({
             isPinned: isPinned ?? false,
-            allowedToUnpin: !config.state.EnableMandatoryPin,
+            allowedToUnpin: !config.state?.EnableMandatoryPin,
         }),
-        [config.state.EnableMandatoryPin, isPinned]
+        [config.state?.EnableMandatoryPin, isPinned]
     );
 
     const mutate = useCallback(async () => {
+        assert(config.state, "config.state is null. Chat state is not available in the current context.");
         await config.state.togglePinned();
     }, [config.state]);
 
     const value: PinnedQuery = useMemo(
         () => ({
             data,
-            loading: isPinned === null || config.state.IsTogglingPinned,
+            loading: isPinned === null || !!config.state?.IsTogglingPinned,
             mutate,
         }),
-        [config.state.IsTogglingPinned, data, isPinned, mutate]
+        [config.state?.IsTogglingPinned, data, isPinned, mutate]
     );
 
     return <QueryContext.Provider value={value}>{children}</QueryContext.Provider>;

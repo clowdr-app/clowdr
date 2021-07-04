@@ -1,19 +1,16 @@
 import { Button, Code, HStack, StackProps, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
-import React from "react";
-import { Chat_ReactionType_Enum } from "../../../generated/graphql";
+import React, { useMemo } from "react";
+import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
 import type { MessageState } from "../ChatGlobalState";
+import { useChatConfiguration } from "../Configuration";
 import { useEmojiPicker } from "../EmojiPickerProvider";
 import { useReportMessage } from "../Moderation/ReportMessageDialog";
-import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 export default function MessageControls({
     hideReactions,
     message,
     isOwnMessage,
-    canEdit,
-    canDelete,
-    canFlag,
     isPollOpen,
     isPollIncomplete,
     usedReactions,
@@ -21,18 +18,15 @@ export default function MessageControls({
 }: StackProps & {
     message: MessageState;
     isOwnMessage: boolean;
-    canEdit?: boolean;
-    canDelete?: boolean;
-    canFlag?: boolean;
     isPollOpen?: boolean;
     isPollIncomplete?: boolean;
     hideReactions: boolean;
     usedReactions: string[];
 }): JSX.Element {
     const emojiPicker = useEmojiPicker();
-    const messages = useReceiveMessageQueries();
     const toast = useToast();
     const report = useReportMessage();
+    const config = useChatConfiguration();
 
     function buttonF(label: string, icon: string, colour: string, onClick: () => void) {
         return (
@@ -61,6 +55,58 @@ export default function MessageControls({
             </Tooltip>
         );
     }
+
+    const canEdit = useMemo(() => {
+        switch (message.type) {
+            case Chat_MessageType_Enum.Answer:
+                return config.permissions.canEditAnswer;
+            case Chat_MessageType_Enum.DuplicationMarker:
+                return false;
+            case Chat_MessageType_Enum.Emote:
+                return config.permissions.canEditEmote;
+            case Chat_MessageType_Enum.Message:
+                return config.permissions.canEditMessage;
+            case Chat_MessageType_Enum.Poll:
+                return config.permissions.canEditPoll;
+            case Chat_MessageType_Enum.PollResults:
+                return false;
+            case Chat_MessageType_Enum.Question:
+                return config.permissions.canEditQuestion;
+        }
+    }, [
+        config.permissions.canEditAnswer,
+        config.permissions.canEditEmote,
+        config.permissions.canEditMessage,
+        config.permissions.canEditPoll,
+        config.permissions.canEditQuestion,
+        message.type,
+    ]);
+
+    const canDelete = useMemo(() => {
+        switch (message.type) {
+            case Chat_MessageType_Enum.Answer:
+                return config.permissions.canDeleteAnswer;
+            case Chat_MessageType_Enum.DuplicationMarker:
+                return false;
+            case Chat_MessageType_Enum.Emote:
+                return config.permissions.canDeleteEmote;
+            case Chat_MessageType_Enum.Message:
+                return config.permissions.canDeleteMessage;
+            case Chat_MessageType_Enum.Poll:
+                return config.permissions.canDeletePoll;
+            case Chat_MessageType_Enum.PollResults:
+                return false;
+            case Chat_MessageType_Enum.Question:
+                return config.permissions.canDeleteQuestion;
+        }
+    }, [
+        config.permissions.canDeleteAnswer,
+        config.permissions.canDeleteEmote,
+        config.permissions.canDeleteMessage,
+        config.permissions.canDeletePoll,
+        config.permissions.canDeleteQuestion,
+        message.type,
+    ]);
 
     return (
         <HStack
@@ -119,7 +165,7 @@ export default function MessageControls({
             {isOwnMessage || canDelete
                 ? buttonF("Delete message", "trash-alt", "red.400", async () => {
                       try {
-                          await messages.delete(message.sId);
+                          await message.delete();
                           toast({
                               title: "Deleted",
                               status: "success",
@@ -145,7 +191,7 @@ export default function MessageControls({
                       }
                   })
                 : undefined}
-            {!isOwnMessage && canFlag
+            {!isOwnMessage && config.permissions.canFlag
                 ? buttonF("Report message", "flag", "red.400", () => {
                       report.open((info) => {
                           if (info) {

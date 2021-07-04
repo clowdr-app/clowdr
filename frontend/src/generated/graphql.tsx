@@ -35955,6 +35955,35 @@ export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
 
 export type ConferencePrepareJobSubscriptionSubscription = { readonly __typename?: 'subscription_root', readonly conference_PrepareJob: ReadonlyArray<{ readonly __typename?: 'conference_PrepareJob', readonly id: any, readonly jobStatusName: Video_JobStatus_Enum, readonly message?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly videoRenderJobs: ReadonlyArray<{ readonly __typename?: 'video_VideoRenderJob', readonly id: any, readonly jobStatusName: Video_JobStatus_Enum, readonly updated_at: any, readonly created_at: any }> }> };
 
+export type ManageModeration_ChatFlagFragment = (
+  { readonly __typename?: 'chat_Flag', readonly message: (
+    { readonly __typename?: 'chat_Message' }
+    & ChatMessageDataFragment
+  ) }
+  & ChatFlagDataFragment
+);
+
+export type ManageModeration_SelectFlagsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageModeration_SelectFlagsQuery = { readonly __typename?: 'query_root', readonly chat_Flag: ReadonlyArray<(
+    { readonly __typename?: 'chat_Flag' }
+    & ManageModeration_ChatFlagFragment
+  )> };
+
+export type ManageModeration_UpdateFlagMutationVariables = Exact<{
+  flagId: Scalars['Int'];
+  update: Chat_Flag_Set_Input;
+}>;
+
+
+export type ManageModeration_UpdateFlagMutation = { readonly __typename?: 'mutation_root', readonly update_chat_Flag_by_pk?: Maybe<(
+    { readonly __typename?: 'chat_Flag' }
+    & ChatFlagDataFragment
+  )> };
+
 export type PreshowChecklistQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   now: Scalars['timestamptz'];
@@ -38112,36 +38141,6 @@ export const InitialChatState_ChatFragmentDoc = gql`
   }
 }
     `;
-export const ChatReactionDataFragmentDoc = gql`
-    fragment ChatReactionData on chat_Reaction {
-  sId
-  data
-  senderId
-  symbol
-  type
-  messageSId
-  duplicateSId
-  created_at
-  updated_at
-  chatId
-}
-    `;
-export const ChatMessageDataFragmentDoc = gql`
-    fragment ChatMessageData on chat_Message {
-  created_at
-  data
-  duplicatedMessageSId
-  id
-  sId
-  message
-  reactions {
-    ...ChatReactionData
-  }
-  senderId
-  type
-  chatId
-}
-    ${ChatReactionDataFragmentDoc}`;
 export const ShortChatMessageDataFragmentDoc = gql`
     fragment ShortChatMessageData on chat_Message {
   created_at
@@ -38163,20 +38162,6 @@ export const ShortChatReactionDataFragmentDoc = gql`
   messageSId
   sId
   duplicateSId
-}
-    `;
-export const ChatFlagDataFragmentDoc = gql`
-    fragment ChatFlagData on chat_Flag {
-  discussionChatId
-  flaggedById
-  id
-  messageSId
-  notes
-  resolution
-  resolved_at
-  type
-  updated_at
-  created_at
 }
     `;
 export const ElementDataFragmentDoc = gql`
@@ -38864,6 +38849,59 @@ export const MonitorLivestreams_EventFragmentDoc = gql`
   }
 }
     ${MonitorLivestreams_PersonFragmentDoc}`;
+export const ChatFlagDataFragmentDoc = gql`
+    fragment ChatFlagData on chat_Flag {
+  discussionChatId
+  flaggedById
+  id
+  messageSId
+  notes
+  resolution
+  resolved_at
+  type
+  updated_at
+  created_at
+}
+    `;
+export const ChatReactionDataFragmentDoc = gql`
+    fragment ChatReactionData on chat_Reaction {
+  sId
+  data
+  senderId
+  symbol
+  type
+  messageSId
+  duplicateSId
+  created_at
+  updated_at
+  chatId
+}
+    `;
+export const ChatMessageDataFragmentDoc = gql`
+    fragment ChatMessageData on chat_Message {
+  created_at
+  data
+  duplicatedMessageSId
+  id
+  sId
+  message
+  reactions {
+    ...ChatReactionData
+  }
+  senderId
+  type
+  chatId
+}
+    ${ChatReactionDataFragmentDoc}`;
+export const ManageModeration_ChatFlagFragmentDoc = gql`
+    fragment ManageModeration_ChatFlag on chat_Flag {
+  ...ChatFlagData
+  message {
+    ...ChatMessageData
+  }
+}
+    ${ChatFlagDataFragmentDoc}
+${ChatMessageDataFragmentDoc}`;
 export const ManageContent_ItemExhibitionFragmentDoc = gql`
     fragment ManageContent_ItemExhibition on content_ItemExhibition {
   id
@@ -42426,6 +42464,75 @@ export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apo
       }
 export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
 export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
+export const ManageModeration_SelectFlagsDocument = gql`
+    query ManageModeration_SelectFlags($conferenceId: uuid!) {
+  chat_Flag(where: {message: {chat: {conferenceId: {_eq: $conferenceId}}}}) {
+    ...ManageModeration_ChatFlag
+  }
+}
+    ${ManageModeration_ChatFlagFragmentDoc}`;
+
+/**
+ * __useManageModeration_SelectFlagsQuery__
+ *
+ * To run a query within a React component, call `useManageModeration_SelectFlagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useManageModeration_SelectFlagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useManageModeration_SelectFlagsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useManageModeration_SelectFlagsQuery(baseOptions: Apollo.QueryHookOptions<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>(ManageModeration_SelectFlagsDocument, options);
+      }
+export function useManageModeration_SelectFlagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>(ManageModeration_SelectFlagsDocument, options);
+        }
+export type ManageModeration_SelectFlagsQueryHookResult = ReturnType<typeof useManageModeration_SelectFlagsQuery>;
+export type ManageModeration_SelectFlagsLazyQueryHookResult = ReturnType<typeof useManageModeration_SelectFlagsLazyQuery>;
+export type ManageModeration_SelectFlagsQueryResult = Apollo.QueryResult<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>;
+export const ManageModeration_UpdateFlagDocument = gql`
+    mutation ManageModeration_UpdateFlag($flagId: Int!, $update: chat_Flag_set_input!) {
+  update_chat_Flag_by_pk(pk_columns: {id: $flagId}, _set: $update) {
+    ...ChatFlagData
+  }
+}
+    ${ChatFlagDataFragmentDoc}`;
+export type ManageModeration_UpdateFlagMutationFn = Apollo.MutationFunction<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>;
+
+/**
+ * __useManageModeration_UpdateFlagMutation__
+ *
+ * To run a mutation, you first call `useManageModeration_UpdateFlagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageModeration_UpdateFlagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageModerationUpdateFlagMutation, { data, loading, error }] = useManageModeration_UpdateFlagMutation({
+ *   variables: {
+ *      flagId: // value for 'flagId'
+ *      update: // value for 'update'
+ *   },
+ * });
+ */
+export function useManageModeration_UpdateFlagMutation(baseOptions?: Apollo.MutationHookOptions<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>(ManageModeration_UpdateFlagDocument, options);
+      }
+export type ManageModeration_UpdateFlagMutationHookResult = ReturnType<typeof useManageModeration_UpdateFlagMutation>;
+export type ManageModeration_UpdateFlagMutationResult = Apollo.MutationResult<ManageModeration_UpdateFlagMutation>;
+export type ManageModeration_UpdateFlagMutationOptions = Apollo.BaseMutationOptions<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>;
 export const PreshowChecklistDocument = gql`
     query PreshowChecklist($conferenceId: uuid!, $now: timestamptz!) {
   requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(

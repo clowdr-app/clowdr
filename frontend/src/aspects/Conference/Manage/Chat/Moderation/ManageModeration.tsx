@@ -4,6 +4,7 @@ import {
     Button,
     chakra,
     Divider,
+    Flex,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -113,7 +114,12 @@ function ModerationList(): JSX.Element {
                     {sortedFlags?.map((flag, idx) =>
                         idx === boundaryIndex && idx > 0 ? (
                             <Fragment key={flag.id}>
-                                <Divider />
+                                <Box>
+                                    <Divider />
+                                    <Text w="100%" textAlign="center" mt={2} fontWeight="bold">
+                                        Resolved
+                                    </Text>
+                                </Box>
                                 <ModerationFlag flag={flag} />
                             </Fragment>
                         ) : (
@@ -285,18 +291,29 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
     return (
         <ListItem bgColor={bgColor} shadow={shadow} p={4} w="100%">
             <VStack spacing={3} alignItems="flex-start" w="100%">
-                <HStack fontSize="xs">
-                    <Text>Reported at: {createdAt.toLocaleString()}</Text>
-                    <Text>&middot;</Text>
-                    <Text>Last updated: {updatedAt.toLocaleString()}</Text>
-                    {resolvedAt && (
-                        <>
-                            <Text>&middot;</Text>
-                            <Text>Resolved at: {resolvedAt.toLocaleString()}</Text>
-                        </>
-                    )}
-                    {/* TODO: Open chat button */}
-                </HStack>
+                <Flex fontSize="xs" w="100%" flexWrap="wrap">
+                    <Button
+                        size="xs"
+                        colorScheme="purple"
+                        onClick={() => {
+                            chatState.showSidebar?.();
+                            chatState.openChatInSidebar?.(flag.message.chatId);
+                        }}
+                    >
+                        Open chat
+                    </Button>
+                    <HStack mt={1} ml="auto" mr="auto">
+                        <Text whiteSpace="normal">Reported at: {createdAt.toLocaleString()}</Text>
+                        <Text>&middot;</Text>
+                        <Text whiteSpace="normal">Last updated: {updatedAt.toLocaleString()}</Text>
+                        {resolvedAt && (
+                            <>
+                                <Text>&middot;</Text>
+                                <Text whiteSpace="normal">Resolved at: {resolvedAt.toLocaleString()}</Text>
+                            </>
+                        )}
+                    </HStack>
+                </Flex>
                 <Text fontSize="sm">
                     <chakra.span fontWeight="bold">Reason:</chakra.span> {flag.type.replace(/_/g, " ")}
                 </Text>
@@ -317,38 +334,42 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                     <Markdown>{flag.notes ?? "No notes provided."}</Markdown>
                 </VStack>
                 <Divider borderColor={dividerColour} />
-                <FormControl>
-                    <FormLabel fontSize="sm" fontWeight="bold" fontStyle="italic">
-                        Add a note
-                    </FormLabel>
-                    <Textarea value={newNote} onChange={(ev) => setNewNote(ev.target.value)} />
-                    <FormHelperText>Notes are formatted using Markdown</FormHelperText>
-                </FormControl>
-                <Button
-                    colorScheme="purple"
-                    size="sm"
-                    isDisabled={newNote.trim().length === 0}
-                    isLoading={updateResponse.loading}
-                    onClick={() => {
-                        update({
-                            variables: {
-                                flagId: flag.id,
-                                update: {
-                                    notes:
-                                        (flag.notes?.length ? flag.notes + "\n\n----\n\n" : "") +
-                                        registrant.displayName +
-                                        ", " +
-                                        new Date().toUTCString() +
-                                        "\n\n" +
-                                        newNote.trim(),
-                                },
-                            },
-                        });
-                    }}
-                >
-                    Add note
-                </Button>
-                <Divider borderColor={dividerColour} />
+                {!resolvedAt ? (
+                    <>
+                        <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="bold" fontStyle="italic">
+                                Add a note
+                            </FormLabel>
+                            <Textarea value={newNote} onChange={(ev) => setNewNote(ev.target.value)} />
+                            <FormHelperText>Notes are formatted using Markdown</FormHelperText>
+                        </FormControl>
+                        <Button
+                            colorScheme="purple"
+                            size="sm"
+                            isDisabled={newNote.trim().length === 0}
+                            isLoading={updateResponse.loading}
+                            onClick={() => {
+                                update({
+                                    variables: {
+                                        flagId: flag.id,
+                                        update: {
+                                            notes:
+                                                (flag.notes?.length ? flag.notes + "\n\n----\n\n" : "") +
+                                                registrant.displayName +
+                                                ", " +
+                                                new Date().toUTCString() +
+                                                "\n\n" +
+                                                newNote.trim(),
+                                        },
+                                    },
+                                });
+                            }}
+                        >
+                            Add note
+                        </Button>
+                        <Divider borderColor={dividerColour} />
+                    </>
+                ) : undefined}
                 {flag.resolution ? (
                     <Text>
                         <chakra.span fontWeight="bold">Resolution:</chakra.span> {flag.resolution}

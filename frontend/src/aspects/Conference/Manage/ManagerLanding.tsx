@@ -136,7 +136,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[
                         Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage sponsors permission
                     ]}
-                    colorScheme="yellow"
+                    colorScheme="purple"
                 />
                 {/* <RestrictedDashboardButton
                     to="chats"
@@ -146,7 +146,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     permissions={[
                         Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage chats permission
                     ]}
-                    colorScheme="yellow"
+                    colorScheme="purple"
                 /> */}
                 <RestrictedDashboardButton
                     to="shuffle"
@@ -154,6 +154,14 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="random"
                     description="Manage randomised, time-limited networking, aka. shuffle periods."
                     permissions={[Permissions_Permission_Enum.ConferenceManageShuffle]}
+                    colorScheme="purple"
+                />
+                <RestrictedDashboardButton
+                    to="chats/moderation"
+                    name="Chat Moderation"
+                    icon="comments"
+                    description="Moderate conversations."
+                    permissions={[Permissions_Permission_Enum.ConferenceModerateAttendees]}
                     colorScheme="purple"
                 />
                 <RestrictedDashboardButton

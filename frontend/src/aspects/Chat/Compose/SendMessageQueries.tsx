@@ -1,3 +1,4 @@
+import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import type { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";
@@ -34,17 +35,21 @@ export default function SendMessageQueriesProvider({
     const config = useChatConfiguration();
     const [isSending, setIsSending] = useState<boolean>(false);
     useEffect(() => {
+        assert(
+            config.state?.IsSending !== undefined,
+            "config.state is null. Chat state is not available in the current context."
+        );
         return config.state.IsSending.subscribe((v) => {
             setIsSending(v);
         });
-    }, [config.state.IsSending]);
-    const ctx = useMemo(
-        () => ({
+    }, [config.state?.IsSending]);
+    const ctx = useMemo(() => {
+        assert(config.state, "config.state is null. Chat state is not available in the current context.");
+        return {
             send: config.state.send.bind(config.state),
             isSending,
-        }),
-        [config.state, isSending]
-    );
+        };
+    }, [config.state, isSending]);
 
     return <SendMessageQueriesContext.Provider value={ctx}>{children}</SendMessageQueriesContext.Provider>;
 }

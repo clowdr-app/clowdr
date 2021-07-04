@@ -182,7 +182,7 @@ export function Markdown(elProps?: {
                         </Text>
                     );
                 },
-                thematicBreak: Divider,
+                thematicBreak: () => <Divider borderColor="gray.400" variant="dashed" />,
                 img: Image,
                 linkReference: Link,
                 imageReference: Image,

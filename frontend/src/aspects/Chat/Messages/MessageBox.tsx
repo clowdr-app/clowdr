@@ -20,7 +20,7 @@ import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
 import ProfileBox from "./ProfileBox";
 import ReactionsList from "./ReactionsList";
-import { useReceiveMessageQueries } from "./ReceiveMessageQueries";
+import { useMaybeReceiveMessageQueries } from "./ReceiveMessageQueries";
 
 // function ReflectionButton({ children }: { children: React.ReactNode | React.ReactNodeArray }): JSX.Element {
 //     const infoModal = useReflectionInfoModal();
@@ -75,7 +75,7 @@ function MessageBody({
     subscribeToReactions: boolean;
 }): JSX.Element {
     const config = useChatConfiguration();
-    const messages = useReceiveMessageQueries();
+    const messages = useMaybeReceiveMessageQueries();
     const [reactions, setReactions] = useState<ChatReactionDataFragment[]>([]);
     useEffect(() => {
         return message.Reactions.subscribe(setReactions);
@@ -176,7 +176,6 @@ function MessageBody({
                     ml="auto"
                     isOwnMessage={!!config.currentRegistrantId && message.senderId === config.currentRegistrantId}
                     message={message}
-                    canFlag={config.permissions.canFlag}
                     usedReactions={reactions.reduce((acc, reaction) => {
                         if (
                             config.currentRegistrantId &&
@@ -200,7 +199,7 @@ function MessageBody({
                 />
             </Flex>
         ),
-        [registrantNameEl, message, smallFontSize, config.permissions.canFlag, config.currentRegistrantId, reactions]
+        [config.currentRegistrantId, message, reactions, registrantNameEl, smallFontSize]
     );
 
     const emote = useMemo(
@@ -230,60 +229,54 @@ function MessageBody({
 
     const question = useMemo(
         () =>
-            message.type === Chat_MessageType_Enum.Question ? (
-                reactions.some((x) => x.type === Chat_ReactionType_Enum.Answer) ? (
-                    <Button
-                        fontSize={smallFontSize}
-                        p={config.spacing}
-                        m={config.spacing}
-                        colorScheme="purple"
-                        w="auto"
-                        h="auto"
-                        onClick={() => {
-                            if (message.duplicatedMessageSId) {
-                                messages.setAnsweringQuestionSId.current?.f([
-                                    message.sId,
-                                    message.duplicatedMessageSId,
-                                ]);
-                            } else {
-                                messages.setAnsweringQuestionSId.current?.f([message.sId]);
-                            }
-                        }}
-                    >
-                        Answered! (Answer again?)
-                    </Button>
-                ) : (
-                    <Button
-                        fontSize={smallFontSize}
-                        p={config.spacing}
-                        m={config.spacing}
-                        colorScheme="blue"
-                        w="auto"
-                        h="auto"
-                        onClick={() => {
-                            if (message.duplicatedMessageSId) {
-                                messages.setAnsweringQuestionSId.current?.f([
-                                    message.sId,
-                                    message.duplicatedMessageSId,
-                                ]);
-                            } else {
-                                messages.setAnsweringQuestionSId.current?.f([message.sId]);
-                            }
-                        }}
-                    >
-                        Answer this question
-                    </Button>
-                )
+            messages ? (
+                message.type === Chat_MessageType_Enum.Question ? (
+                    reactions.some((x) => x.type === Chat_ReactionType_Enum.Answer) ? (
+                        <Button
+                            fontSize={smallFontSize}
+                            p={config.spacing}
+                            m={config.spacing}
+                            colorScheme="purple"
+                            w="auto"
+                            h="auto"
+                            onClick={() => {
+                                if (message.duplicatedMessageSId) {
+                                    messages.setAnsweringQuestionSId.current?.f([
+                                        message.sId,
+                                        message.duplicatedMessageSId,
+                                    ]);
+                                } else {
+                                    messages.setAnsweringQuestionSId.current?.f([message.sId]);
+                                }
+                            }}
+                        >
+                            Answered! (Answer again?)
+                        </Button>
+                    ) : (
+                        <Button
+                            fontSize={smallFontSize}
+                            p={config.spacing}
+                            m={config.spacing}
+                            colorScheme="blue"
+                            w="auto"
+                            h="auto"
+                            onClick={() => {
+                                if (message.duplicatedMessageSId) {
+                                    messages.setAnsweringQuestionSId.current?.f([
+                                        message.sId,
+                                        message.duplicatedMessageSId,
+                                    ]);
+                                } else {
+                                    messages.setAnsweringQuestionSId.current?.f([message.sId]);
+                                }
+                            }}
+                        >
+                            Answer this question
+                        </Button>
+                    )
+                ) : undefined
             ) : undefined,
-        [
-            config.spacing,
-            message.duplicatedMessageSId,
-            message.sId,
-            reactions,
-            message.type,
-            messages.setAnsweringQuestionSId,
-            smallFontSize,
-        ]
+        [config.spacing, message.duplicatedMessageSId, message.sId, reactions, message.type, messages, smallFontSize]
     );
 
     const poll = useMemo(
@@ -399,7 +392,7 @@ export default function MessageBox({
     positionObservable,
 }: {
     message: MessageState;
-    positionObservable: Observable<number>;
+    positionObservable?: Observable<number>;
 }): JSX.Element {
     const config = useChatConfiguration();
     const scaleFactor = config.spacing / ChatSpacing.RELAXED;
@@ -428,9 +421,10 @@ export default function MessageBox({
         []
     );
 
-    const senderIdObj = useMemo(() => (message.senderId ? { registrant: message.senderId } : undefined), [
-        message.senderId,
-    ]);
+    const senderIdObj = useMemo(
+        () => (message.senderId ? { registrant: message.senderId } : undefined),
+        [message.senderId]
+    );
     const registrant = useRegistrant(senderIdObj);
 
     const emojiFloat = useEmojiFloat();
@@ -452,7 +446,7 @@ export default function MessageBox({
 
     const [subscribeToReactions, setSubscribeToReactions] = useState<boolean>(false);
     useEffect(() => {
-        return positionObservable.subscribe((v) => {
+        return positionObservable?.subscribe((v) => {
             setSubscribeToReactions(v < 10);
         });
     }, [positionObservable]);

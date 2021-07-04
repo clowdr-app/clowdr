@@ -1,5 +1,6 @@
 import { Box, BoxProps, Button, Center, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
+import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { Observable } from "../../Observable";
@@ -24,32 +25,49 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
     const setHasReachedEnd = React.useRef<((value: boolean) => void) | null>(null);
 
     const config = useChatConfiguration();
+    assert(config.state, "config.state is null. Chat state is not available in the current context.");
+
     const chatId = config.state.Id;
     const pageSize = config.messageBatchSize ?? 30;
 
     useEffect(() => {
+        assert(config.state, "config.state is null. Chat state is not available in the current context.");
         config.state.connect();
 
         return () => {
+            assert(config.state, "config.state is null. Chat state is not available in the current context.");
             config.state.disconnect();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatId]);
 
     const fetchMore = useCallback(() => {
+        assert(config.state, "config.state is null. Chat state is not available in the current context.");
         config.state.loadMoreMessages(pageSize);
     }, [config.state, pageSize]);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
+        assert(
+            config.state?.IsLoadingMessages !== undefined,
+            "config.state is null. Chat state is not available in the current context."
+        );
         return config.state.IsLoadingMessages.subscribe(setIsLoading);
     }, [config.state.IsLoadingMessages]);
     useEffect(() => {
+        assert(
+            config.state?.MightHaveMoreMessages !== undefined,
+            "config.state is null. Chat state is not available in the current context."
+        );
         return config.state.MightHaveMoreMessages.subscribe((v) => {
             setHasReachedEnd.current?.(!v);
         });
     }, [config.state.MightHaveMoreMessages]);
     useEffect(() => {
+        assert(
+            config.state?.Messages !== undefined,
+            "config.state is null. Chat state is not available in the current context."
+        );
         return config.state.Messages.subscribe((update) => {
             switch (update.op) {
                 case "initial":
@@ -113,6 +131,8 @@ function MessageList({
 
     const initMessages = useCallback(
         (messages: MessageState[]) => {
+            assert(config.state, "config.state is null. Chat state is not available in the current context.");
+
             setHasReachedEnd(false);
             positionObservables.current = new Map();
             messageElements.current = [];
@@ -138,6 +158,8 @@ function MessageList({
     );
     const insertMessages = useCallback(
         (messages: MessageState[], areNew: boolean) => {
+            assert(config.state, "config.state is null. Chat state is not available in the current context.");
+
             const newMessageElements: JSX.Element[] = [];
             messages.forEach((msg) => {
                 const obs = new Observable<number>((observer) => {
@@ -259,6 +281,10 @@ function MessageList({
 
                     if (shouldAutoScroll.current && messageElements.current && messageElements.current.length > 0) {
                         const latest = messageElements.current[0].props.message as MessageState;
+                        assert(
+                            config.state,
+                            "config.state is null. Chat state is not available in the current context."
+                        );
                         config.state.setAllMessagesRead(latest.sId);
                     }
                 }}

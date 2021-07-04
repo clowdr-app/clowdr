@@ -428,6 +428,10 @@ export class MessageState {
             },
         });
     }
+
+    public async delete(): Promise<void> {
+        await this.globalState.deleteMessage(this);
+    }
 }
 
 type MessageUpdate =
@@ -1051,36 +1055,13 @@ export class ChatState {
         }
     }
 
-    public async deleteMessage(messageSId: string): Promise<void> {
+    public async removeMessage(messageSId: string): Promise<void> {
         const release = await this.messagesMutex.acquire();
         try {
-            const socket = this.globalState.socket;
-            assert(socket, "Not connected to chat service.");
-
-            const msg = this.messages.get(messageSId);
-            if (msg) {
-                const action: Action<Message> = {
-                    op: "DELETE",
-                    data: {
-                        chatId: msg.chatId,
-                        created_at: new Date(msg.created_at).toISOString(),
-                        data: msg.data,
-                        isPinned: false,
-                        message: msg.message,
-                        sId: msg.sId,
-                        senderId: msg.senderId,
-                        type: msg.type,
-                        updated_at: new Date(msg.created_at).toISOString(),
-                        duplicatedMessageSId: msg.duplicatedMessageSId,
-                        systemId: undefined,
-                    },
-                };
-                socket.emit("chat.messages.send", action);
-                this.messagesObs.publish({
-                    op: "deleted",
-                    messageSIds: [messageSId],
-                });
-            }
+            this.messagesObs.publish({
+                op: "deleted",
+                messageSIds: [messageSId],
+            });
         } catch (e) {
             console.error(`Error deleting message: ${this.Id} @ ${messageSId}`, e);
             throw e;
@@ -1165,7 +1146,7 @@ export class GlobalChatState {
     });
 
     public get Chats(): Observable<ReadonlyMap<string, ChatState>> {
-        return (this.chatStatesObs as unknown) as Observable<ReadonlyMap<string, ChatState>>;
+        return this.chatStatesObs as unknown as Observable<ReadonlyMap<string, ChatState>>;
     }
 
     public observeChatId(chatId: string, observer: Observer<ChatState>): () => void {
@@ -1603,5 +1584,30 @@ export class GlobalChatState {
                 release();
             }
         }
+    }
+
+    public async deleteMessage(msg: MessageState): Promise<void> {
+        const socket = this.socket;
+        assert(socket, "Not connected to chat service.");
+        const action: Action<Message> = {
+            op: "DELETE",
+            data: {
+                chatId: msg.chatId,
+                created_at: new Date(msg.created_at).toISOString(),
+                data: msg.data,
+                isPinned: false,
+                message: msg.message,
+                sId: msg.sId,
+                senderId: msg.senderId,
+                type: msg.type,
+                updated_at: new Date(msg.created_at).toISOString(),
+                duplicatedMessageSId: msg.duplicatedMessageSId,
+                systemId: undefined,
+            },
+        };
+        socket.emit("chat.messages.send", action);
+
+        const chat = this.chatStates?.get(msg.chatId);
+        await chat?.removeMessage(msg.sId);
     }
 }

@@ -1,3 +1,4 @@
+import assert from "assert";
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { useChatConfiguration } from "../Configuration";
 import type { MutableQuery } from "../Types/Queries";
@@ -22,28 +23,33 @@ export function ChatSubscribedQueryProvider({
     const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
 
     useEffect(() => {
+        assert(
+            config.state?.IsSubscribed !== undefined,
+            "config.state is null. Chat state is not available in the current context."
+        );
         return config.state.IsSubscribed.subscribe(setIsSubscribed);
-    }, [config.state.IsSubscribed]);
+    }, [config.state?.IsSubscribed]);
 
     const data = useMemo(
         () => ({
             isSubscribed: isSubscribed ?? false,
-            allowedToUnsubscribe: !config.state.EnableMandatorySubscribe,
+            allowedToUnsubscribe: !config.state?.EnableMandatorySubscribe,
         }),
-        [config.state.EnableMandatorySubscribe, isSubscribed]
+        [config.state?.EnableMandatorySubscribe, isSubscribed]
     );
 
     const mutate = useCallback(async () => {
+        assert(config.state, "config.state is null. Chat state is not available in the current context.");
         await config.state.toggleSubscribed();
     }, [config.state]);
 
     const value: SubscribedQuery = useMemo(
         () => ({
             data,
-            loading: isSubscribed === null || config.state.IsTogglingSubscribed,
+            loading: isSubscribed === null || !!config.state?.IsTogglingSubscribed,
             mutate,
         }),
-        [config.state.IsTogglingSubscribed, data, isSubscribed, mutate]
+        [config.state?.IsTogglingSubscribed, data, isSubscribed, mutate]
     );
 
     return <QueryContext.Provider value={value}>{children}</QueryContext.Provider>;

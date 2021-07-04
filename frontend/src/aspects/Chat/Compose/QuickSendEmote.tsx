@@ -1,4 +1,5 @@
 import { Button, ButtonProps, HStack, Tooltip } from "@chakra-ui/react";
+import assert from "assert";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
@@ -15,6 +16,10 @@ export default function QuickSendEmote(): JSX.Element {
     const send = useCallback(
         (emoji: string) => {
             try {
+                assert(
+                    config.state?.Id !== undefined,
+                    "config.state is null. Chat state is not available in the current context."
+                );
                 if (Date.now() > lastSendAt.current + rateLimitMs) {
                     lastSendAt.current = Date.now();
                     sendQueries.send(config.state.Id, Chat_MessageType_Enum.Emote, emoji, {}, false);
@@ -23,7 +28,7 @@ export default function QuickSendEmote(): JSX.Element {
                 console.error(`${new Date().toLocaleString()}: Failed to send message`, e);
             }
         },
-        [config.state.Id, sendQueries]
+        [config.state?.Id, sendQueries]
     );
 
     const now = useRealTime(1000);

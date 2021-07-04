@@ -635,7 +635,7 @@
                       role:
                         rolePermissions:
                           permissionName:
-                            _eq: CONFERENCE_MANAGE_ATTENDEES
+                            _eq: CONFERENCE_MODERATE_ATTENDEES
                   - _or:
                     - includeUnauthenticated:
                         _eq: true
@@ -672,7 +672,7 @@
                         role:
                           rolePermissions:
                             permissionName:
-                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                              _eq: CONFERENCE_MODERATE_ATTENDEES
                     - _or:
                       - includeUnauthenticated:
                           _eq: true

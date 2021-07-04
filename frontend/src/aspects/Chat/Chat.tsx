@@ -84,14 +84,14 @@ export function Chat({
                 canEditAnswer: false, // TODO
                 canEditPoll: false, // TODO
 
-                canDeleteMessage: true, // TODO
-                canDeleteEmote: true, // TODO
-                canDeleteReaction: true, // TODO
-                canDeleteQuestion: true, // TODO
-                canDeleteAnswer: true, // TODO
-                canDeletePoll: true, // TODO
+                canDeleteMessage: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
+                canDeleteEmote: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
+                canDeleteReaction: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
+                canDeleteQuestion: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
+                canDeleteAnswer: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
+                canDeletePoll: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
 
-                canFlag: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees), // TODO
+                canFlag: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
             },
             messageConfig: {
                 length: {

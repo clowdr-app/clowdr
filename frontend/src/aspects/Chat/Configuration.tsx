@@ -80,7 +80,7 @@ export interface ChatPollConfiguration {
 export interface ChatConfiguration {
     customHeadingElements?: React.ReactNodeArray;
 
-    state: ChatState;
+    state: ChatState | null;
     useTypingIndicators: Maybe<boolean>; // TODO
     permissions: ChatPermissions; // TODO
     messageConfig: ChatMessageConfiguration; // TODO

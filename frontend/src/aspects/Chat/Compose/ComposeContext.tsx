@@ -190,6 +190,10 @@ export function ComposeContextProvider({
                 }
 
                 try {
+                    assert(
+                        config.state?.Id,
+                        "config.state is null. Chat state is not available in the current context."
+                    );
                     const isEmote = /^\p{Emoji}$/iu.test(newMessage);
                     sendQueries.send(
                         config.state.Id,
@@ -211,7 +215,7 @@ export function ComposeContextProvider({
                 }
             })();
         },
-        [config.currentRegistrantId, newMessage, newMessageData, newMessageType, config.state.Id, sendQueries]
+        [config.currentRegistrantId, newMessage, newMessageData, newMessageType, config.state?.Id, sendQueries]
     );
     const messageLengthRange = useMemo(
         () => ({

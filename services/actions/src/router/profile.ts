@@ -19,9 +19,6 @@ assert(
 );
 assert(process.env.AWS_REGION, "AWS_REGION environment variable not provided.");
 
-assert(process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME, "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided.");
-assert(process.env.AWS_IMAGES_SECRET_VALUE, "AWS_IMAGES_SECRET_VALUE not provided.");
-
 export const router = express.Router();
 
 // Protected routes
@@ -175,6 +172,12 @@ function btoa(str: string) {
 }
 
 function generateSignedImageURL(bucketName: string, objectName: string, width: number, height: number): string {
+    assert(
+        process.env.AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME,
+        "AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME not provided."
+    );
+    assert(process.env.AWS_IMAGES_SECRET_VALUE, "AWS_IMAGES_SECRET_VALUE not provided.");
+
     const imageRequest = JSON.stringify({
         bucket: bucketName,
         key: objectName,

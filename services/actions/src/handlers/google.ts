@@ -71,6 +71,8 @@ export async function handleSubmitGoogleOAuthToken(
     userId: string
 ): Promise<SubmitGoogleOAuthCodeOutput> {
     try {
+        assert(process.env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID environment variable not provided");
+
         console.log("Retrieving Google auth token", userId, params.state);
         const validRegistrant = await registrantBelongsToUser(params.state, userId);
         assert(validRegistrant, "Registrant does not belong to the user");

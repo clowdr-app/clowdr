@@ -18,12 +18,14 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     ChatReactionDataFragment,
+    Chat_FlagType_Enum,
     Chat_MessageType_Enum,
     Chat_ReactionType_Enum,
     InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
     InitialChatState_ChatFragment,
+    InsertChatFlagDocument,
     Maybe,
     PinChatDocument,
     PinChatMutation,
@@ -233,20 +235,28 @@ gql`
 `;
 
 // CHAT_TODO: Message and reaction flagging / moderation
-// gql`
-//     fragment ChatFlagData on chat_Flag {
-//         discussionChatId
-//         flaggedById
-//         id
-//         messageSId
-//         notes
-//         resolution
-//         resolved_at
-//         type
-//         updated_at
-//         created_at
-//     }
-// `;
+gql`
+    fragment ChatFlagData on chat_Flag {
+        discussionChatId
+        flaggedById
+        id
+        messageSId
+        notes
+        resolution
+        resolved_at
+        type
+        updated_at
+        created_at
+    }
+
+    mutation InsertChatFlag($messageSId: uuid!, $registrantId: uuid!, $type: chat_FlagType_enum!, $reason: String!) {
+        insert_chat_Flag_one(
+            object: { messageSId: $messageSId, flaggedById: $registrantId, type: $type, notes: $reason }
+        ) {
+            ...ChatFlagData
+        }
+    }
+`;
 
 export type ChatMessageData = {
     created_at: string;
@@ -405,6 +415,18 @@ export class MessageState {
     public async onReactionUpdated(rct: Reaction): Promise<void> {
         this.reactions = this.reactions.map((x) => (x.sId === rct.sId ? rct : x));
         this.reactionsObs.publish([...this.reactions]);
+    }
+
+    public async report(type: Chat_FlagType_Enum, reason: string): Promise<void> {
+        await this.globalState.apolloClient.mutate({
+            mutation: InsertChatFlagDocument,
+            variables: {
+                messageSId: this.sId,
+                registrantId: this.globalState.registrant.id,
+                type,
+                reason,
+            },
+        });
     }
 }
 

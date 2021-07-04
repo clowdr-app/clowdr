@@ -91,7 +91,7 @@ export function Chat({
                 canDeleteAnswer: true, // TODO
                 canDeletePoll: true, // TODO
 
-                canFlag: false, // TODO
+                canFlag: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees), // TODO
             },
             messageConfig: {
                 length: {
@@ -170,6 +170,7 @@ export function Chat({
             setFontSize,
             setSpacing,
             spacing,
+            currentPermissions,
         ]
     );
 

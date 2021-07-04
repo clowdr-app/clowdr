@@ -176,6 +176,7 @@ function MessageBody({
                     ml="auto"
                     isOwnMessage={!!config.currentRegistrantId && message.senderId === config.currentRegistrantId}
                     message={message}
+                    canFlag={config.permissions.canFlag}
                     usedReactions={reactions.reduce((acc, reaction) => {
                         if (
                             config.currentRegistrantId &&
@@ -199,7 +200,7 @@ function MessageBody({
                 />
             </Flex>
         ),
-        [registrantNameEl, message, smallFontSize, config.currentRegistrantId, reactions]
+        [registrantNameEl, message, smallFontSize, config.permissions.canFlag, config.currentRegistrantId, reactions]
     );
 
     const emote = useMemo(

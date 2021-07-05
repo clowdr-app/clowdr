@@ -98,7 +98,7 @@ function ModerationList(): JSX.Element {
             R.sortWith(
                 [
                     (x, y) => (!x.resolved_at ? (!y.resolved_at ? 0 : -1) : !y.resolved_at ? 1 : 0),
-                    (x, y) => Date.parse(x.created_at) - Date.parse(y.created_at),
+                    (x, y) => Date.parse(y.created_at) - Date.parse(x.created_at),
                 ],
                 flagsResponse.data.chat_Flag
             ),

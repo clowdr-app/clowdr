@@ -14,6 +14,7 @@ import { checkJwt } from "./middlewares/checkJwt";
 import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
 import { router as analyticsRouter } from "./router/analytics";
+import { router as chatRouter } from "./router/chat";
 import { router as chimeRouter } from "./router/chime";
 import { router as combineVideosJobRouter } from "./router/combineVideosJob";
 import { router as companionRouter } from "./router/companion";
@@ -76,6 +77,7 @@ app.use("/registrantGoogleAccount", registrantGoogleAccountRouter);
 
 app.use("/profile", profileRouter);
 app.use("/shuffle", shuffleRoomsRouter);
+app.use("/chat", chatRouter);
 
 app.use("/queues", queuesRouter);
 app.use("/analytics", analyticsRouter);

@@ -691,6 +691,20 @@
         - flaggedBy:
             userId:
               _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: ChatFlagInserted_NotifyActions
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 2
+      interval_sec: 120
+      timeout_sec: 60
+    webhook: '{{ACTION_BASE_URL}}/chat/flag/inserted'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
   - name: ChatFlagInserted_NotifyRealtime
     definition:
       enable_manual: false

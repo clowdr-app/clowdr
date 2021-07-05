@@ -3,6 +3,7 @@ import { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
 import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
 import { Credentials } from "google-auth-library/build/src/auth/credentials";
 import {
+    Chat_FlagType_Enum,
     Content_ElementType_Enum,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
@@ -182,3 +183,16 @@ export interface RegistrantGoogleAccountData extends BaseData {
 }
 
 export interface UserData extends BaseData {}
+
+export interface FlagData {
+    created_at: string;
+    discussionChatId?: string | null;
+    flaggedById?: string | null;
+    id: number;
+    messageSId: string;
+    notes?: string | null;
+    resolution?: string | null;
+    resolved_at?: string | null;
+    type: Chat_FlagType_Enum;
+    updated_at: string;
+}

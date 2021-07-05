@@ -134,7 +134,7 @@ const colors = {
     },
 };
 
-const theme = extendTheme({
+export const theme = extendTheme({
     radii: {
         none: "0",
         sm: "0",

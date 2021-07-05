@@ -50,6 +50,7 @@ import {
     UnsubscribeChatMutation,
     UnsubscribeChatMutationVariables,
 } from "../../generated/graphql";
+import { theme } from "../Chakra/ChakraCustomProvider";
 import type { Registrant } from "../Conference/useCurrentRegistrant";
 import { Observable, Observer } from "../Observable";
 import { realtimeService } from "../Realtime/RealtimeService";
@@ -1171,7 +1172,7 @@ export class GlobalChatState {
         };
     }
 
-    private readonly toast = createStandaloneToast();
+    private readonly toast = createStandaloneToast({ theme });
 
     private mutex = new Mutex();
     private hasInitialised = false;
@@ -1202,12 +1203,11 @@ export class GlobalChatState {
                             const notificationId = this.toast({
                                 position: "top-right",
                                 isClosable: true,
-                                duration: 7000,
                                 render: function ChatNotification(props: RenderProps) {
                                     return (
                                         <VStack
                                             alignItems="flex-start"
-                                            background="purple.700"
+                                            bgColor="purple.800"
                                             color="gray.50"
                                             w="auto"
                                             h="auto"

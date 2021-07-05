@@ -91,7 +91,7 @@ export function Chat({
                 canDeleteAnswer: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
                 canDeletePoll: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
 
-                canFlag: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
+                canFlag: true,
             },
             messageConfig: {
                 length: {

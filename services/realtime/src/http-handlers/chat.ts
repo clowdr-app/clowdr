@@ -1,11 +1,15 @@
+import { gql } from "@apollo/client/core";
 import assert from "assert";
 import { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
+import { FlagInserted_GetModeratorsDocument } from "../generated/graphql";
+import { apolloClient } from "../graphqlClient";
 import { deletePin, insertPin } from "../lib/cache/pin";
 import { deleteSubscription, insertSubscription } from "../lib/cache/subscription";
 import { generateChatPinsChangedRoomName, generateChatSubscriptionsChangedRoomName } from "../lib/chat";
+import { sendNotifications } from "../lib/notifications";
 import { emitter } from "../socket-emitter/socket-emitter";
-import { Payload, Pin, Subscription } from "../types/hasura";
+import { Flag, Payload, Pin, Subscription } from "../types/hasura";
 
 export async function subscriptionChanged(req: Request, res: Response, _next?: NextFunction): Promise<void> {
     try {
@@ -54,6 +58,71 @@ export async function pinChanged(req: Request, res: Response, _next?: NextFuncti
         res.status(200).send("OK");
     } catch (e) {
         console.error("Chat pin changed: Received incorrect payload", e);
+        res.status(500).json("Unexpected payload");
+        return;
+    }
+}
+
+gql`
+    query FlagInserted_GetModerators($messageSId: uuid!) {
+        chat_Message(where: { sId: { _eq: $messageSId } }) {
+            chat {
+                conference {
+                    slug
+                    registrants(
+                        where: {
+                            groupRegistrants: {
+                                group: {
+                                    enabled: { _eq: true }
+                                    groupRoles: {
+                                        role: {
+                                            rolePermissions: { permissionName: { _eq: CONFERENCE_MODERATE_ATTENDEES } }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ) {
+                        id
+                        userId
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export async function flagInserted(req: Request, res: Response, _next?: NextFunction): Promise<void> {
+    try {
+        assertType<Payload<Flag>>(req.body);
+
+        const data: Payload<Flag> = req.body;
+        assert(data.event.data.new, "New flag is not defined.");
+        const newFlag: Flag = data.event.data.new;
+
+        const messageSId = newFlag.messageSId;
+        const response = await apolloClient?.query({
+            query: FlagInserted_GetModeratorsDocument,
+            variables: {
+                messageSId,
+            },
+        });
+        assert(response?.data, "List of moderators could not be retrieved.");
+        if (response.data.chat_Message.length) {
+            const message = response.data.chat_Message[0];
+            const maybeUserIds = message.chat.conference.registrants.map((registrant) => registrant.userId);
+            const userIds = maybeUserIds.filter((x) => !!x) as string[];
+            sendNotifications(new Set(userIds), {
+                description: "A message has been reported. Please go to the moderation hub to resolve it.",
+                title: "Message reported",
+                linkURL: `/conference/${message.chat.conference.slug}/manage/chats/moderation`,
+                subtitle: `Reason: ${newFlag.type}`,
+            });
+        }
+
+        res.status(200).send("OK");
+    } catch (e) {
+        console.error("Chat flag inserted: Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
         return;
     }

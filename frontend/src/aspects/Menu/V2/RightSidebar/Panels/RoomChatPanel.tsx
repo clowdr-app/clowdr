@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, HStack, Spinner } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { RefObject, useEffect, useState } from "react";
 import { useGetRoomChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
 import type { ChatState } from "../../../../Chat/ChatGlobalState";
@@ -20,10 +20,12 @@ export function RoomChatPanel({
     roomId,
     onChatIdLoaded,
     setUnread,
+    isVisible,
 }: {
     roomId: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
+    isVisible: RefObject<boolean>;
 }): JSX.Element {
     const { loading, error, data } = useGetRoomChatIdQuery({
         variables: {
@@ -104,5 +106,5 @@ export function RoomChatPanel({
         );
     }
 
-    return <Chat chat={chat} />;
+    return <Chat chat={chat} isVisible={isVisible} />;
 }

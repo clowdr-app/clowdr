@@ -1,5 +1,5 @@
 import type { BoxProps } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { RefObject, useMemo } from "react";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
 import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
@@ -13,6 +13,7 @@ import type { EmoteMessageData } from "./Types/Messages";
 export interface ChatProps {
     customHeadingElements?: React.ReactNodeArray;
     chat: ChatState;
+    isVisible: RefObject<boolean>;
 
     onProfileModalOpened?: (registrantId: string, close: () => void) => void;
     onEmoteReceived?: (emote: EmoteMessageData) => void;

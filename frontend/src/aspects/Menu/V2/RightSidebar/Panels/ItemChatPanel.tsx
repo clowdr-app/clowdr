@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner, Tooltip } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { RefObject, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useGetItemChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
@@ -23,11 +23,13 @@ export function ItemChatPanel({
     confSlug,
     onChatIdLoaded,
     setUnread,
+    isVisible,
 }: {
     itemId: string;
     confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
+    isVisible: RefObject<boolean>;
 }): JSX.Element {
     const { loading, error, data } = useGetItemChatIdQuery({
         variables: {
@@ -114,9 +116,8 @@ export function ItemChatPanel({
         <Chat
             customHeadingElements={[
                 chat.RoomId ? (
-                    <Tooltip key="back-button" label="Go to video room">
+                    <Tooltip key="room-button" label="Go to video room">
                         <Button
-                            key="room-button"
                             size="xs"
                             colorScheme="blue"
                             onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
@@ -128,6 +129,7 @@ export function ItemChatPanel({
                 ) : undefined,
             ]}
             chat={chat}
+            isVisible={isVisible}
         />
     );
 }

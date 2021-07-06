@@ -69,6 +69,8 @@ export function ItemChatPanel({
 
     const history = useHistory();
 
+    const isVisible = React.useRef<boolean>(true);
+
     if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
     }
@@ -128,6 +130,7 @@ export function ItemChatPanel({
                 ) : undefined,
             ]}
             chat={chat}
+            isVisible={isVisible}
         />
     );
 }

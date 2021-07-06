@@ -125,9 +125,10 @@ export function ChatsPanel({
             unsubscribeChatStates();
         };
     }, [globalChatState]);
-    const pinnedChats = useMemo(() => (pinnedChatsMap !== null ? [...pinnedChatsMap.values()] : undefined), [
-        pinnedChatsMap,
-    ]);
+    const pinnedChats = useMemo(
+        () => (pinnedChatsMap !== null ? [...pinnedChatsMap.values()] : undefined),
+        [pinnedChatsMap]
+    );
 
     const [currentChatId, _setCurrentChatId] = useState<string | null>(null);
     const [currentChat, setCurrentChat] = useState<ChatState | null>(null);
@@ -290,12 +291,14 @@ export function ChatsPanel({
         ]
     );
 
+    const chat_IsVisible = React.useRef<boolean>(true);
     const chatEl = useMemo(() => {
         if (currentChatId && currentChatId !== pageChatId) {
             if (currentChat) {
                 return (
                     <>
                         <Chat
+                            isVisible={chat_IsVisible}
                             customHeadingElements={[
                                 <Tooltip key="back-button" label="Back to chats list">
                                     <Button

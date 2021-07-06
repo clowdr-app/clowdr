@@ -1,5 +1,5 @@
 import { Box, BoxProps, VStack } from "@chakra-ui/react";
-import React from "react";
+import React, { RefObject } from "react";
 import { ChatCompose } from "../Compose/ChatCompose";
 import { ComposeContextProvider } from "../Compose/ComposeContext";
 import SendMessageQueriesProvider from "../Compose/SendMessageQueries";
@@ -10,7 +10,7 @@ import { ChatMessageList } from "../Messages/ChatMessageList";
 import ReceiveMessageQueriesProvider from "../Messages/ReceiveMessageQueries";
 import ChatProfileModalProvider from "./ChatProfileModalProvider";
 
-export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
+export function ChatFrame({ isVisible, ...rest }: { isVisible: RefObject<boolean> } & BoxProps): JSX.Element {
     const config = useChatConfiguration();
     const setAnsweringQuestionSIdRef = React.useRef<{
         f: (sIds: string[] | null) => void;
@@ -47,7 +47,7 @@ export function ChatFrame({ ...rest }: BoxProps): JSX.Element {
                                 pos="relative"
                                 overflow="hidden"
                             >
-                                <ChatMessageList pos="relative" h="100%" zIndex={1} />
+                                <ChatMessageList pos="relative" h="100%" zIndex={1} isVisible={isVisible} />
                             </Box>
                         </ReceiveMessageQueriesProvider>
                     </ChatProfileModalProvider>

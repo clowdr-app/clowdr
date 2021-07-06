@@ -63,6 +63,8 @@ export function RoomChatPanel({
         };
     }, [chat, setUnread]);
 
+    const isVisible = React.useRef<boolean>(true);
+
     if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
     }
@@ -104,5 +106,5 @@ export function RoomChatPanel({
         );
     }
 
-    return <Chat chat={chat} />;
+    return <Chat chat={chat} isVisible={isVisible} />;
 }

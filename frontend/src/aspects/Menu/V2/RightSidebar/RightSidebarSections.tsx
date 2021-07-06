@@ -52,8 +52,25 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
     const [pageChatUnread, setPageChatUnread] = useState<string>("");
     const [chatsUnread, setChatsUnread] = useState<string>("");
 
+    const roomPanel_IsVisible = React.useRef<boolean>(false);
+    const itemPanel_IsVisible = React.useRef<boolean>(false);
+    useEffect(() => {
+        roomPanel_IsVisible.current = !!roomId && currentTab === RightSidebarTabs.PageChat;
+    }, [currentTab, roomId]);
+    useEffect(() => {
+        itemPanel_IsVisible.current = !!itemId && currentTab === RightSidebarTabs.PageChat;
+    }, [currentTab, itemId]);
+
     const roomPanel = useMemo(
-        () => roomId && <RoomChatPanel roomId={roomId} onChatIdLoaded={setPageChatId} setUnread={setPageChatUnread} />,
+        () =>
+            roomId && (
+                <RoomChatPanel
+                    roomId={roomId}
+                    onChatIdLoaded={setPageChatId}
+                    setUnread={setPageChatUnread}
+                    isVisible={roomPanel_IsVisible}
+                />
+            ),
         [roomId]
     );
     const itemPanel = useMemo(
@@ -64,6 +81,7 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                     onChatIdLoaded={setPageChatId}
                     confSlug={confSlug}
                     setUnread={setPageChatUnread}
+                    isVisible={itemPanel_IsVisible}
                 />
             ),
         [confSlug, itemId]
@@ -81,9 +99,10 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                 openChat={openChatCb}
                 closeChat={closeChatCb}
                 setUnread={setChatsUnread}
+                isVisible={currentTab === RightSidebarTabs.Chats}
             />
         ),
-        [confSlug, pageChatId, switchToPageChat]
+        [confSlug, currentTab, pageChatId, switchToPageChat]
     );
     const presencePanel = useMemo(
         () => <PresencePanel roomId={roomId} isOpen={currentTab === RightSidebarTabs.Presence} />,

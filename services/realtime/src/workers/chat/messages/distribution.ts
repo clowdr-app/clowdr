@@ -66,7 +66,7 @@ async function updateRecentMessagesAndUnreadCounts(action: Action<Message>) {
         registrantIds: [],
     });
     if (pins) {
-        const listenerUserIds = (await redisClientP.smembers(chatListenersKeyName(chatId))).map((x) => x.split("¬")[1]);
+        // const listenerUserIds = (await redisClientP.smembers(chatListenersKeyName(chatId))).map((x) => x.split("¬")[1]);
         const infos = await Promise.all(
             pins.registrantIds.map((registrantId) =>
                 getRegistrantInfo(registrantId, {
@@ -79,7 +79,12 @@ async function updateRecentMessagesAndUnreadCounts(action: Action<Message>) {
             await setReadUpToIndex(chatId, senderInfo.userId, action.data.sId);
         }
         const pinnedUserIds = new Set(
-            infos.filter((x) => !!x?.userId && !listenerUserIds.includes(x.userId)).map((x) => x?.userId) as string[]
+            infos
+                .filter(
+                    (x) =>
+                        !!x?.userId /* TODO: Do we need this performance filter: && !listenerUserIds.includes(x.userId) */
+                )
+                .map((x) => x?.userId) as string[]
         );
 
         await Promise.all(

@@ -51,6 +51,7 @@ export function ChatsPanel({
     openChat,
     closeChat,
     setUnread,
+    isVisible,
 }: {
     confSlug: string;
     pageChatId: string | null;
@@ -58,6 +59,7 @@ export function ChatsPanel({
     openChat: React.MutableRefObject<((chatId: string) => void) | null>;
     closeChat: React.MutableRefObject<(() => void) | null>;
     setUnread: (v: string) => void;
+    isVisible: boolean;
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
@@ -125,9 +127,10 @@ export function ChatsPanel({
             unsubscribeChatStates();
         };
     }, [globalChatState]);
-    const pinnedChats = useMemo(() => (pinnedChatsMap !== null ? [...pinnedChatsMap.values()] : undefined), [
-        pinnedChatsMap,
-    ]);
+    const pinnedChats = useMemo(
+        () => (pinnedChatsMap !== null ? [...pinnedChatsMap.values()] : undefined),
+        [pinnedChatsMap]
+    );
 
     const [currentChatId, _setCurrentChatId] = useState<string | null>(null);
     const [currentChat, setCurrentChat] = useState<ChatState | null>(null);
@@ -290,12 +293,17 @@ export function ChatsPanel({
         ]
     );
 
+    const chat_IsVisible = React.useRef<boolean>(false);
+    useEffect(() => {
+        chat_IsVisible.current = isVisible && !!currentChatId && currentChatId !== pageChatId && !!currentChat;
+    }, [currentChat, currentChatId, pageChatId, isVisible]);
     const chatEl = useMemo(() => {
         if (currentChatId && currentChatId !== pageChatId) {
             if (currentChat) {
                 return (
                     <>
                         <Chat
+                            isVisible={chat_IsVisible}
                             customHeadingElements={[
                                 <Tooltip key="back-button" label="Back to chats list">
                                     <Button
@@ -310,7 +318,7 @@ export function ChatsPanel({
                                     </Button>
                                 </Tooltip>,
                                 currentChat && currentChat.RoomId ? (
-                                    <Tooltip key="video-room-button" label="Go to video room">
+                                    <Tooltip key="room-button" label="Go to video room">
                                         <Button
                                             key="room-button"
                                             size="xs"

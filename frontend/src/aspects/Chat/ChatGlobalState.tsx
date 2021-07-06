@@ -1535,7 +1535,7 @@ export class GlobalChatState {
         }
     }
 
-    private readonly oldChatTimeoutPeriodMs = 15 * 1000; // 15 seconds
+    private readonly oldChatTimeoutPeriodMs = 5 * 1000; // 5 seconds
     private readonly maxNotSubscribedListeningChats = 5;
     public async onChatChannelDisconnect(): Promise<void> {
         await this.disconnectOldOrExcess();

@@ -1,7 +1,7 @@
 import { Box, BoxProps, Button, Center, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
 import assert from "assert";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { RefObject, useCallback, useEffect, useMemo, useState } from "react";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { Observable } from "../../Observable";
 import type { MessageState } from "../ChatGlobalState";
@@ -11,6 +11,7 @@ import MessageBox from "./MessageBox";
 interface MessageListProps {
     chatId: string;
     isLoading: boolean;
+    isVisible: RefObject<boolean>;
     fetchMore: () => void;
     initMessagesRef: React.MutableRefObject<((messages: MessageState[]) => void) | null>;
     insertMessagesRef: React.MutableRefObject<((messages: MessageState[], areNew: boolean) => void) | null>;
@@ -18,7 +19,7 @@ interface MessageListProps {
     setHasReachedEndRef: React.MutableRefObject<((value: boolean) => void) | null>;
 }
 
-export function ChatMessageList(props: BoxProps): JSX.Element {
+export function ChatMessageList(props: { isVisible: RefObject<boolean> } & BoxProps): JSX.Element {
     const initMessages = React.useRef<((messages: MessageState[]) => void) | null>(null);
     const insertMessages = React.useRef<((messages: MessageState[], areNew: boolean) => void) | null>(null);
     const deleteMessages = React.useRef<((messageSIds: string[]) => void) | null>(null);
@@ -103,6 +104,7 @@ export function ChatMessageList(props: BoxProps): JSX.Element {
 function MessageList({
     chatId,
     isLoading,
+    isVisible,
     initMessagesRef,
     insertMessagesRef,
     deleteMessagesRef,
@@ -147,14 +149,14 @@ function MessageList({
                 messageElements.current?.push(<MessageBox key={msg.sId} message={msg} positionObservable={obs} />);
             });
 
-            if (messageElements.current.length > 0) {
+            if (isVisible.current && messageElements.current.length > 0) {
                 const latest = messageElements.current[0].props.message as MessageState;
                 config.state.setAllMessagesRead(latest.sId);
             }
 
             setLastRenderTime(Date.now());
         },
-        [config.state]
+        [config.state, isVisible]
     );
     const insertMessages = useCallback(
         (messages: MessageState[], areNew: boolean) => {
@@ -197,7 +199,7 @@ function MessageList({
                     });
                 }, 50);
 
-                if (messageElements.current && messageElements.current.length > 0) {
+                if (isVisible.current && messageElements.current && messageElements.current.length > 0) {
                     const latest = messageElements.current[0].props.message as MessageState;
                     config.state.setAllMessagesRead(latest.sId);
                 }
@@ -205,7 +207,7 @@ function MessageList({
 
             setLastRenderTime(Date.now());
         },
-        [config.state]
+        [config.state, isVisible]
     );
 
     const deleteMessages = useCallback((messageSIds: string[]) => {
@@ -277,9 +279,14 @@ function MessageList({
         return (
             <Observer
                 onChange={(ev) => {
-                    shouldAutoScroll.current = ev.intersectionRatio > 0;
+                    shouldAutoScroll.current = !!isVisible.current && ev.intersectionRatio > 0;
 
-                    if (shouldAutoScroll.current && messageElements.current && messageElements.current.length > 0) {
+                    if (
+                        isVisible.current &&
+                        shouldAutoScroll.current &&
+                        messageElements.current &&
+                        messageElements.current.length > 0
+                    ) {
                         const latest = messageElements.current[0].props.message as MessageState;
                         assert(
                             config.state,
@@ -292,7 +299,7 @@ function MessageList({
                 <Box m={0} p={0} h="1px" w="100%"></Box>
             </Observer>
         );
-    }, [config.state]);
+    }, [config.state, isVisible]);
 
     return (
         <Box {...rest}>

@@ -114,20 +114,24 @@ function MyBackstages(): JSX.Element {
     const orangeBg = useColorModeValue("yellow.300", "yellow.600");
     return (
         <>
-            <Box pb={4}>
+            <Text pb={2}>
                 If you are an author, chair or presenter, below is the list of your backstages for current and future
                 events. You should join your backstage when it is available.
-            </Box>
+            </Text>
+            <Text pb={4}>
+                Backstages are only available for live-stream events. If you are presenting at a video-chat event, you
+                can go directly to your room at the start time. You will not see any backstages in this list.
+            </Text>
             {myBackstagesResponse.loading && !eventsGroupedByDay ? (
                 <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} />
             ) : undefined}
             {eventsTodayAndFuture ? (
                 <>
                     {eventsTodayAndFuture.length === 0 ? (
-                        <Box>
+                        <Text fontWeight="bold">
                             You are not assigned to any future live-stream events. If you think this is a mistake,
                             please contact your conference organisers.
-                        </Box>
+                        </Text>
                     ) : (
                         <>
                             <Text>All times/dates are shown in your local timezone.</Text>

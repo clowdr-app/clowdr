@@ -201,6 +201,7 @@ function CurrentUserProvider_IsAuthenticated({
                         cookiesURL={cookiesURL}
                         setAcceptedCookiesAt={setAcceptedCookiesAt}
                         hostOrganisationName={termsData.hostOrganisationName.value}
+                        policyChanged={!!acceptedCookiesAt && cookiesTimestamp > acceptedCookiesAt}
                     />
                 );
             }
@@ -234,10 +235,12 @@ function CookiePolicyCompliance({
     cookiesURL,
     setAcceptedCookiesAt,
     hostOrganisationName,
+    policyChanged,
 }: {
     cookiesURL: string;
     setAcceptedCookiesAt: React.Dispatch<React.SetStateAction<number | null>>;
     hostOrganisationName: string;
+    policyChanged: boolean;
 }) {
     return (
         <Center mt={10}>
@@ -263,6 +266,12 @@ function CookiePolicyCompliance({
                         </Link>
                         .
                     </Text>
+                    {policyChanged ? (
+                        <Alert status="info" fontSize="small" p={2}>
+                            <AlertIcon />
+                            We have updated our cookie policy. Please review the new policy before continuing.
+                        </Alert>
+                    ) : undefined}
                     <Button colorScheme="purple" onClick={() => setAcceptedCookiesAt(Date.now())}>
                         <FAIcon iconStyle="r" icon="check-square" aria-hidden mr={2} />
                         Agree and continue

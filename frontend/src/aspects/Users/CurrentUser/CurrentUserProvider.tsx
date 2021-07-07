@@ -1,6 +1,20 @@
 import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Box, Button, Center, Checkbox, Container, Heading, Link, Text, Tooltip, VStack } from "@chakra-ui/react";
+import {
+    Alert,
+    AlertIcon,
+    Box,
+    Button,
+    Center,
+    Checkbox,
+    Container,
+    Heading,
+    Link,
+    Spacer,
+    Text,
+    Tooltip,
+    VStack,
+} from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import {
     useAgreeToTermsMutation,
@@ -203,6 +217,10 @@ function CurrentUserProvider_IsAuthenticated({
                         ppURL={termsData.ppURL.value}
                         termsURL={termsData.termsURL.value}
                         userId={userId}
+                        ppAcceptance={!acceptedPPAt ? "never" : ppTimestamp > acceptedPPAt ? "outdated" : "current"}
+                        termsAcceptance={
+                            !acceptedTermsAt ? "never" : termsTimestamp > acceptedTermsAt ? "outdated" : "current"
+                        }
                     />
                 );
             }
@@ -235,7 +253,7 @@ function CookiePolicyCompliance({
                             read the cookie policy
                             <ExternalLinkIcon ml={1} fontSize="xs" />
                         </Link>{" "}
-                        before continuining.
+                        before continuing.
                     </Text>
                     <Text>
                         By clicking &ldquo;Agree and continue&rdquo;, you agree to the use of cookies in accordance with{" "}
@@ -270,11 +288,15 @@ function TermsAndPPCompliance({
     termsURL,
     hostOrganisationName,
     userId,
+    termsAcceptance,
+    ppAcceptance,
 }: {
     ppURL: string;
     termsURL: string;
     hostOrganisationName: string;
     userId: string;
+    termsAcceptance: "never" | "current" | "outdated";
+    ppAcceptance: "never" | "current" | "outdated";
 }): JSX.Element {
     const [termsChecked, setTermsChecked] = useState<boolean>(false);
     const [ppChecked, setPPChecked] = useState<boolean>(false);
@@ -317,6 +339,24 @@ function TermsAndPPCompliance({
                                 <ExternalLinkIcon ml={1} fontSize="xs" />
                             </Link>
                         </Checkbox>
+                        {termsAcceptance === "outdated" ? (
+                            <>
+                                <Alert status="info" fontSize="small" p={2}>
+                                    <AlertIcon />
+                                    We have updated our terms and conditions. Please review the new terms before
+                                    continuing.
+                                </Alert>
+                                <Spacer p={1} />
+                            </>
+                        ) : termsAcceptance === "current" ? (
+                            <>
+                                <Alert status="info" fontSize="small" p={2}>
+                                    <AlertIcon />
+                                    The terms and conditions have not changed since you last agreed to them.
+                                </Alert>
+                                <Spacer p={1} />
+                            </>
+                        ) : undefined}
                         <Checkbox isChecked={ppChecked} onChange={(ev) => setPPChecked(ev.target.checked)}>
                             I agree to the {hostOrganisationName}{" "}
                             <Link isExternal href={ppURL}>
@@ -324,6 +364,17 @@ function TermsAndPPCompliance({
                                 <ExternalLinkIcon ml={1} fontSize="xs" />
                             </Link>
                         </Checkbox>
+                        {ppAcceptance === "outdated" ? (
+                            <Alert status="info" fontSize="small" p={2}>
+                                <AlertIcon />
+                                We have updated our privacy policy. Please review the new policy before continuing.
+                            </Alert>
+                        ) : ppAcceptance === "current" ? (
+                            <Alert status="info" fontSize="small" p={2}>
+                                <AlertIcon />
+                                The privacy policy has not changed since you last agreed to it.
+                            </Alert>
+                        ) : undefined}
                     </VStack>
                     <Tooltip
                         label={

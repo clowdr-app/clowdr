@@ -621,7 +621,7 @@ export default function CreateContinuationModal({
                     });
                 }}
                 visible={to.type === ContinuationType.AutoDiscussionRoom}
-                label="X Item"
+                label="Item"
             />
         ),
         [response_Items, to]

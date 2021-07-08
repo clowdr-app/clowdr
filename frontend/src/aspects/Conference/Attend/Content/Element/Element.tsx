@@ -1,4 +1,4 @@
-import { Box, Button, Divider, HStack, Image, Link } from "@chakra-ui/react";
+import { AspectRatio, Box, Button, Divider, HStack, Image, Link } from "@chakra-ui/react";
 import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -99,7 +99,7 @@ function ElementInner({
                 return (
                     // TODO: Chakra AspectRatio
                     // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
-                    <Box maxWidth="100%" width="100%" height="0" paddingTop="56.25%" position="relative">
+                    <AspectRatio ratio={16 / 9} maxW={800} m={2}>
                         <ReactPlayer
                             url={latestVersion.data.url}
                             style={{ maxWidth: "100%", position: "absolute", top: 0, left: 0 }}
@@ -107,7 +107,7 @@ function ElementInner({
                             height="100%"
                             controls={true}
                         />
-                    </Box>
+                    </AspectRatio>
                 );
             case Content_ElementType_Enum.ImageUrl:
                 return (

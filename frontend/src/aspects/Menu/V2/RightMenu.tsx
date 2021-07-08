@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Box, Flex, HStack, MenuItem, Text, useBreakpointValue, useColorMode } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Link as ReactLink, Route, useRouteMatch } from "react-router-dom";
 import LoginButton from "../../Auth/Buttons/LoginButton";
 import { useMaybeConference } from "../../Conference/useConference";
@@ -15,7 +15,7 @@ import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebar/Righ
 import RightSidebarSections from "./RightSidebar/RightSidebarSections";
 
 const colorScheme = "purple";
-export default function RightMenu(): JSX.Element {
+export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.Element {
     const { isRightBarOpen, onRightBarOpen, onRightBarClose } = useMainMenu();
     const maybeConference = useMaybeConference();
     const maybeRegistrant = useMaybeCurrentRegistrant();
@@ -30,6 +30,9 @@ export default function RightMenu(): JSX.Element {
 
     const { setCurrentTab } = useRightSidebarCurrentTab();
 
+    const [pageChatUnreadCount, setPageChatUnreadCount] = useState<string>("");
+    const [chatsUnreadCount, setChatsUnreadCount] = useState<string>("");
+
     const barWidth = useBreakpointValue({
         base: "3em",
         lg: "4em",
@@ -37,9 +40,15 @@ export default function RightMenu(): JSX.Element {
     const rightSections = useMemo(
         () =>
             maybeConference?.slug && maybeRegistrant ? (
-                <RightSidebarSections confSlug={maybeConference.slug} onClose={onRightBarClose} />
+                <RightSidebarSections
+                    confSlug={maybeConference.slug}
+                    onClose={onRightBarClose}
+                    externalSetPageChatUnreadCount={setPageChatUnreadCount}
+                    externalSetChatsUnreadCount={setChatsUnreadCount}
+                    isVisible={isVisible}
+                />
             ) : undefined,
-        [maybeConference?.slug, maybeRegistrant, onRightBarClose]
+        [maybeConference?.slug, maybeRegistrant, onRightBarClose, isVisible]
     );
     return (
         <HStack h="100%" w="100%" justifyContent="stretch">
@@ -78,7 +87,11 @@ export default function RightMenu(): JSX.Element {
                                     setCurrentTab(RightSidebarTabs.PageChat);
                                     onRightBarOpen();
                                 }}
-                            />
+                            >
+                                <Box pos="absolute" top={1} right={1} fontSize="xs">
+                                    {pageChatUnreadCount}
+                                </Box>
+                            </MenuButton>
                         </Route>
                         <Route path={`${path}/room/`}>
                             <MenuButton
@@ -92,7 +105,11 @@ export default function RightMenu(): JSX.Element {
                                     setCurrentTab(RightSidebarTabs.PageChat);
                                     onRightBarOpen();
                                 }}
-                            />
+                            >
+                                <Box pos="absolute" top={1} right={1} fontSize="xs">
+                                    {pageChatUnreadCount}
+                                </Box>
+                            </MenuButton>
                             <MenuButton
                                 label="Raise hand"
                                 iconStyle="s"
@@ -117,7 +134,11 @@ export default function RightMenu(): JSX.Element {
                                 setCurrentTab(RightSidebarTabs.Chats);
                                 onRightBarOpen();
                             }}
-                        />
+                        >
+                            <Box pos="absolute" top={1} right={1} fontSize="xs">
+                                {chatsUnreadCount}
+                            </Box>
+                        </MenuButton>
                         <MenuButton
                             label="Who's here with you"
                             iconStyle="s"

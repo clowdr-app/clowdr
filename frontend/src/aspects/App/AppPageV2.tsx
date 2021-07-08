@@ -174,7 +174,7 @@ function RightBar({
             alignItems={"stretch"}
             justifyContent={"center"}
         >
-            <RightMenu />
+            <RightMenu isVisible={rightVisible} />
         </Box>
     );
 }

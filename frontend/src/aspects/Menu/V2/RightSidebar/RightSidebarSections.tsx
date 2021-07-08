@@ -13,7 +13,17 @@ import { RoomChatPanel } from "./Panels/RoomChatPanel";
 import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebarCurrentTab";
 import { ToggleChatsButton } from "./ToggleChatsButton";
 
-function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Element {
+function RightSidebarSections_Inner({
+    confSlug,
+    externalSetPageChatUnreadCount,
+    externalSetChatsUnreadCount,
+    isVisible,
+}: {
+    confSlug: string;
+    externalSetPageChatUnreadCount: (count: string) => void;
+    externalSetChatsUnreadCount: (count: string) => void;
+    isVisible: boolean;
+}): JSX.Element {
     const { path } = useRouteMatch();
     const roomMatch = useRouteMatch<{ roomId: string }>(`${path}/room/:roomId`);
     const itemMatch = useRouteMatch<{ itemId: string }>(`${path}/item/:itemId`);
@@ -51,6 +61,26 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
 
     const [pageChatUnread, setPageChatUnread] = useState<string>("");
     const [chatsUnread, setChatsUnread] = useState<string>("");
+    const setPageChatUnreadCount = useCallback(
+        (count: string) => {
+            externalSetPageChatUnreadCount(count);
+            setPageChatUnread(count);
+        },
+        [externalSetPageChatUnreadCount]
+    );
+    const setChatsUnreadCount = useCallback(
+        (count: string) => {
+            externalSetChatsUnreadCount(count);
+            setChatsUnread(count);
+        },
+        [externalSetChatsUnreadCount]
+    );
+
+    useEffect(() => {
+        if (!roomId && !itemId) {
+            setPageChatUnreadCount("");
+        }
+    }, [itemId, roomId, setPageChatUnreadCount]);
 
     const roomPanel = useMemo(
         () =>
@@ -58,11 +88,11 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                 <RoomChatPanel
                     roomId={roomId}
                     onChatIdLoaded={setPageChatId}
-                    setUnread={setPageChatUnread}
-                    isVisible={!!roomId && currentTab === RightSidebarTabs.PageChat}
+                    setUnread={setPageChatUnreadCount}
+                    isVisible={isVisible && !!roomId && currentTab === RightSidebarTabs.PageChat}
                 />
             ),
-        [currentTab, roomId]
+        [currentTab, roomId, setPageChatUnreadCount, isVisible]
     );
     const itemPanel = useMemo(
         () =>
@@ -71,11 +101,11 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                     itemId={itemId}
                     onChatIdLoaded={setPageChatId}
                     confSlug={confSlug}
-                    setUnread={setPageChatUnread}
-                    isVisible={!!itemId && currentTab === RightSidebarTabs.PageChat}
+                    setUnread={setPageChatUnreadCount}
+                    isVisible={isVisible && !!itemId && currentTab === RightSidebarTabs.PageChat}
                 />
             ),
-        [confSlug, currentTab, itemId]
+        [confSlug, currentTab, itemId, setPageChatUnreadCount, isVisible]
     );
     const switchToPageChat = useCallback(() => {
         setCurrentTab(RightSidebarTabs.PageChat);
@@ -89,11 +119,11 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                 switchToPageChat={switchToPageChat}
                 openChat={openChatCb}
                 closeChat={closeChatCb}
-                setUnread={setChatsUnread}
-                isVisible={currentTab === RightSidebarTabs.Chats}
+                setUnread={setChatsUnreadCount}
+                isVisible={isVisible && currentTab === RightSidebarTabs.Chats}
             />
         ),
-        [confSlug, currentTab, pageChatId, switchToPageChat]
+        [confSlug, currentTab, pageChatId, switchToPageChat, isVisible, setChatsUnreadCount]
     );
     const presencePanel = useMemo(
         () => <PresencePanel roomId={roomId} isOpen={currentTab === RightSidebarTabs.Presence} />,
@@ -212,12 +242,30 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
     );
 }
 
-export default function RightSidebarSections({ confSlug }: { confSlug: string; onClose: () => void }): JSX.Element {
+export default function RightSidebarSections({
+    confSlug,
+    externalSetPageChatUnreadCount,
+    externalSetChatsUnreadCount,
+    isVisible,
+}: {
+    confSlug: string;
+    onClose: () => void;
+    externalSetPageChatUnreadCount: (count: string) => void;
+    externalSetChatsUnreadCount: (count: string) => void;
+    isVisible: boolean;
+}): JSX.Element {
     const user = useMaybeCurrentUser();
     if (user.user && user.user.registrants.length > 0) {
         const registrant = user.user.registrants.find((x) => x.conference.slug === confSlug);
         if (registrant) {
-            return <RightSidebarSections_Inner confSlug={confSlug} />;
+            return (
+                <RightSidebarSections_Inner
+                    confSlug={confSlug}
+                    externalSetPageChatUnreadCount={externalSetPageChatUnreadCount}
+                    externalSetChatsUnreadCount={externalSetChatsUnreadCount}
+                    isVisible={isVisible}
+                />
+            );
         }
     }
     return <></>;

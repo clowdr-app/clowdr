@@ -2,6 +2,7 @@ import { Box } from "@chakra-ui/react";
 import type OT from "@opentok/client";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import usePolling from "../../../../Generic/usePolling";
+import { useRegistrant } from "../../../RegistrantsContext";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { VonageOverlay } from "./VonageOverlay";
@@ -43,6 +44,28 @@ export function VonageSubscriber({
     usePolling(pollCb, 1500, true);
 
     const [microphoneEnabled, setMicrophoneEnabled] = useState<boolean>(false);
+
+    const registrantIdObj = useMemo(() => {
+        if (!stream.connection.data) {
+            return null;
+        }
+        try {
+            const data = JSON.parse(stream.connection.data);
+            return data["registrantId"] ? { registrant: data["registrantId"] } : null;
+        } catch (e) {
+            console.warn("Couldn't parse registrant ID from Vonage subscriber data");
+            return null;
+        }
+    }, [stream.connection.data]);
+
+    const registrant = useRegistrant(registrantIdObj);
+
+    useEffect(() => {
+        // Vonage provides no working way to un-set the style, so never attempt to reset to the original
+        if (subscriber && registrant?.profile?.photoURL_350x350) {
+            subscriber.setStyle("backgroundImageURI", registrant?.profile?.photoURL_350x350);
+        }
+    }, [registrant, subscriber]);
 
     useEffect(() => {
         if (subscriber) {
@@ -97,6 +120,14 @@ export function VonageSubscriber({
                         : normalDimensions,
                 preferredFrameRate:
                     resolution === "low" ? lowFrameRate : resolution === "high" ? highFrameRate : normalFrameRate,
+                // If you supply an empty style object it will break the default styling.
+                ...(registrant?.profile?.photoURL_350x350
+                    ? {
+                          style: {
+                              backgroundImageURI: registrant.profile.photoURL_350x350,
+                          },
+                      }
+                    : {}),
             });
 
             setSubscriber(subscriber);
@@ -160,11 +191,15 @@ export function VonageSubscriber({
     );
     const overlayBox = useMemo(
         () => (
-            <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
-                <VonageOverlay connectionData={stream.connection.data} microphoneEnabled={microphoneEnabled} />
+            <Box position="absolute" zIndex="200" height="100%" width="100%">
+                <VonageOverlay
+                    connectionData={stream.connection.data}
+                    microphoneEnabled={stream.videoType === "camera" ? microphoneEnabled : undefined}
+                    cameraHidden={!enableVideo}
+                />
             </Box>
         ),
-        [stream.connection.data, microphoneEnabled]
+        [stream.connection.data, stream.videoType, microphoneEnabled, enableVideo]
     );
 
     return (

@@ -81,7 +81,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
                       (x) => x.id,
                       R.filter(
                           (x) =>
-                              Date.parse(x.startTime) <= nowQuick + 5 * 60 * 1000 &&
+                              Date.parse(x.startTime) <= nowQuick + 10 * 60 * 1000 &&
                               Date.parse(x.endTime) >= nowQuick - 2 * 60 * 1000,
                           response.data.schedule_Event
                       )

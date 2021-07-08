@@ -76,7 +76,7 @@ export default function LiveProgramRoomsModal({
         >
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Live rooms</ModalHeader>
+                <ModalHeader>Live or starting within 10 mins</ModalHeader>
                 <ModalCloseButton ref={closeRef} />
                 <ModalBody>
                     <LiveProgramRooms />

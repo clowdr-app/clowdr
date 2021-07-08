@@ -127,10 +127,9 @@ export function ChatsPanel({
             unsubscribeChatStates();
         };
     }, [globalChatState]);
-    const pinnedChats = useMemo(
-        () => (pinnedChatsMap !== null ? [...pinnedChatsMap.values()] : undefined),
-        [pinnedChatsMap]
-    );
+    const pinnedChats = useMemo(() => (pinnedChatsMap !== null ? [...pinnedChatsMap.values()] : undefined), [
+        pinnedChatsMap,
+    ]);
 
     const [currentChatId, _setCurrentChatId] = useState<string | null>(null);
     const [currentChat, setCurrentChat] = useState<ChatState | null>(null);
@@ -295,7 +294,16 @@ export function ChatsPanel({
 
     const chat_IsVisible = React.useRef<boolean>(false);
     useEffect(() => {
-        chat_IsVisible.current = isVisible && !!currentChatId && currentChatId !== pageChatId && !!currentChat;
+        const _isVisible = isVisible && !!currentChatId && currentChatId !== pageChatId && !!currentChat;
+        chat_IsVisible.current = _isVisible;
+        if (_isVisible) {
+            currentChat?.fixUnreadCountToZero();
+        }
+        return () => {
+            if (_isVisible) {
+                currentChat?.unfixUnreadCountToZero();
+            }
+        };
     }, [currentChat, currentChatId, pageChatId, isVisible]);
     const chatEl = useMemo(() => {
         if (currentChatId && currentChatId !== pageChatId) {

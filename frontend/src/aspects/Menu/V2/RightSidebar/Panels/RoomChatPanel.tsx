@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, HStack, Spinner } from "@chakra-ui/react";
-import React, { RefObject, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGetRoomChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
 import type { ChatState } from "../../../../Chat/ChatGlobalState";
@@ -25,7 +25,7 @@ export function RoomChatPanel({
     roomId: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
-    isVisible: RefObject<boolean>;
+    isVisible: boolean;
 }): JSX.Element {
     const { loading, error, data } = useGetRoomChatIdQuery({
         variables: {
@@ -64,6 +64,20 @@ export function RoomChatPanel({
             unsubscribe?.();
         };
     }, [chat, setUnread]);
+
+    const isVisibleRef = React.useRef<boolean>(false);
+    useEffect(() => {
+        const _isVisible = isVisible;
+        isVisibleRef.current = _isVisible;
+        if (_isVisible) {
+            chat?.fixUnreadCountToZero();
+        }
+        return () => {
+            if (_isVisible) {
+                chat?.unfixUnreadCountToZero();
+            }
+        };
+    }, [chat, isVisible]);
 
     if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
@@ -106,5 +120,5 @@ export function RoomChatPanel({
         );
     }
 
-    return <Chat chat={chat} isVisible={isVisible} />;
+    return <Chat chat={chat} isVisible={isVisibleRef} />;
 }

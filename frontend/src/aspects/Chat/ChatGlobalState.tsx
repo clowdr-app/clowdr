@@ -895,6 +895,26 @@ export class ChatState {
                 newMessageStates.forEach((msg) => {
                     this.messages.set(msg.sId, msg);
                 });
+
+                if (this.unreadCountFixedToZero <= 0) {
+                    if (this.unreadCount !== "10+") {
+                        const existingCount = this.unreadCount === "" ? 0 : parseInt(this.unreadCount, 10);
+                        const addedCount = newMessageStates.filter(
+                            (x) =>
+                                x.type !== Chat_MessageType_Enum.DuplicationMarker &&
+                                x.type !== Chat_MessageType_Enum.Emote
+                        ).length;
+                        const newCount = existingCount + addedCount;
+                        if (newCount >= 10) {
+                            this.unreadCount = "10+";
+                        } else if (newCount === 0) {
+                            this.unreadCount = "";
+                        } else {
+                            this.unreadCount = newCount.toString();
+                        }
+                        this.unreadCountObs.publish(this.unreadCount);
+                    }
+                }
             }
         } catch (e) {
             console.error(`Error processing new messages from remote service: ${this.Id}`, e);
@@ -1076,6 +1096,14 @@ export class ChatState {
     public setAllMessagesRead(messageSId: string): void {
         this.unreadCount = "";
         this.unreadCountObs.publish(this.unreadCount);
+        const message = this.messages.get(messageSId);
+        if (
+            message &&
+            (message.type === Chat_MessageType_Enum.DuplicationMarker || message.type === Chat_MessageType_Enum.Emote)
+        ) {
+            return;
+        }
+
         if (messageSId !== this.latestReadUpToMessageSId) {
             this.latestReadUpToMessageSId = messageSId;
             if (this.isPinned && this.setReadUpToTimeoutId === undefined) {
@@ -1090,7 +1118,7 @@ export class ChatState {
                             );
                         }
                     }) as TimerHandler,
-                    Math.round(5000 * Math.random()) + 5000
+                    Math.round(9000 * Math.random()) + 1000
                 );
             }
         }
@@ -1101,10 +1129,20 @@ export class ChatState {
         }
     }
     public setUnreadCount(value: string): void {
-        if (this.unreadCount !== value) {
+        if (this.unreadCount !== value && this.unreadCountFixedToZero <= 0) {
             this.unreadCount = value;
             this.unreadCountObs.publish(this.unreadCount);
         }
+    }
+
+    private unreadCountFixedToZero = 0;
+    public fixUnreadCountToZero(): void {
+        this.unreadCountFixedToZero++;
+        this.unreadCount = "";
+        this.unreadCountObs.publish(this.unreadCount);
+    }
+    public unfixUnreadCountToZero(): void {
+        this.unreadCountFixedToZero--;
     }
 
     static compare(x: ChatState, y: ChatState): number {
@@ -1147,7 +1185,7 @@ export class GlobalChatState {
     });
 
     public get Chats(): Observable<ReadonlyMap<string, ChatState>> {
-        return this.chatStatesObs as unknown as Observable<ReadonlyMap<string, ChatState>>;
+        return (this.chatStatesObs as unknown) as Observable<ReadonlyMap<string, ChatState>>;
     }
 
     public observeChatId(chatId: string, observer: Observer<ChatState>): () => void {

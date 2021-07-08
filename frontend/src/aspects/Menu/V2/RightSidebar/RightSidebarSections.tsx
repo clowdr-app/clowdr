@@ -52,15 +52,6 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
     const [pageChatUnread, setPageChatUnread] = useState<string>("");
     const [chatsUnread, setChatsUnread] = useState<string>("");
 
-    const roomPanel_IsVisible = React.useRef<boolean>(false);
-    const itemPanel_IsVisible = React.useRef<boolean>(false);
-    useEffect(() => {
-        roomPanel_IsVisible.current = !!roomId && currentTab === RightSidebarTabs.PageChat;
-    }, [currentTab, roomId]);
-    useEffect(() => {
-        itemPanel_IsVisible.current = !!itemId && currentTab === RightSidebarTabs.PageChat;
-    }, [currentTab, itemId]);
-
     const roomPanel = useMemo(
         () =>
             roomId && (
@@ -68,10 +59,10 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                     roomId={roomId}
                     onChatIdLoaded={setPageChatId}
                     setUnread={setPageChatUnread}
-                    isVisible={roomPanel_IsVisible}
+                    isVisible={!!roomId && currentTab === RightSidebarTabs.PageChat}
                 />
             ),
-        [roomId]
+        [currentTab, roomId]
     );
     const itemPanel = useMemo(
         () =>
@@ -81,10 +72,10 @@ function RightSidebarSections_Inner({ confSlug }: { confSlug: string }): JSX.Ele
                     onChatIdLoaded={setPageChatId}
                     confSlug={confSlug}
                     setUnread={setPageChatUnread}
-                    isVisible={itemPanel_IsVisible}
+                    isVisible={!!itemId && currentTab === RightSidebarTabs.PageChat}
                 />
             ),
-        [confSlug, itemId]
+        [confSlug, currentTab, itemId]
     );
     const switchToPageChat = useCallback(() => {
         setCurrentTab(RightSidebarTabs.PageChat);

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner, Tooltip } from "@chakra-ui/react";
-import React, { RefObject, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useGetItemChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
@@ -29,7 +29,7 @@ export function ItemChatPanel({
     confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
-    isVisible: RefObject<boolean>;
+    isVisible: boolean;
 }): JSX.Element {
     const { loading, error, data } = useGetItemChatIdQuery({
         variables: {
@@ -68,6 +68,20 @@ export function ItemChatPanel({
             unsubscribe?.();
         };
     }, [chat, setUnread]);
+
+    const isVisibleRef = React.useRef<boolean>(false);
+    useEffect(() => {
+        const _isVisible = isVisible;
+        isVisibleRef.current = _isVisible;
+        if (_isVisible) {
+            chat?.fixUnreadCountToZero();
+        }
+        return () => {
+            if (_isVisible) {
+                chat?.unfixUnreadCountToZero();
+            }
+        };
+    }, [chat, isVisible]);
 
     const history = useHistory();
 
@@ -129,7 +143,7 @@ export function ItemChatPanel({
                 ) : undefined,
             ]}
             chat={chat}
-            isVisible={isVisible}
+            isVisible={isVisibleRef}
         />
     );
 }

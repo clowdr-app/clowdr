@@ -30,11 +30,11 @@ const presetJSONata_JSON = `
 `;
 
 const presetJSONata_CSV = `
-$.[{
-    "name": name,
-    "email": email,
-    "group": $exists(group) ? group : "Registrants"
- }]
+[$.{
+    "name": $exists(name) ? name : Name,
+    "email": $exists(email) ? email : Email,
+    "group": $exists(group) ? group : $exists(Group) ? Group : "Registrants"
+}]
 `;
 
 export default function ImportRegistrantsPage(): JSX.Element {

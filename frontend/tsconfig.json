@@ -1,9 +1,16 @@
 {
-    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "types", "node_modules/@types", "public/js/ServiceWorker.ts"],
+    "include": [
+        "src/**/*.d.ts",
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "types",
+        "node_modules/@types",
+        "public/js/ServiceWorker.ts"
+    ],
     "exclude": ["./build"],
     "compilerOptions": {
         "module": "esnext",
-        "target": "ES2016",
+        "target": "ES2020",
         "moduleResolution": "node",
         "jsx": "preserve",
         "baseUrl": "./",
@@ -19,5 +26,5 @@
         "allowSyntheticDefaultImports": true,
         "importsNotUsedAsValues": "error",
         "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
-    },
+    }
 }

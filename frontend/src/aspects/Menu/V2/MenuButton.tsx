@@ -1,5 +1,4 @@
 import { As, Button, PropsOf, Tooltip, useBreakpointValue } from "@chakra-ui/react";
-import * as R from "ramda";
 import React, { forwardRef } from "react";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { FAIcon } from "../../Icons/FAIcon";
@@ -12,9 +11,9 @@ type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
     noTooltip?: boolean;
 };
 
-function intermingle<T>(fn: (number: number) => T) {
-    function inner(xs: T[]) {
-        return R.flatten(xs.map((x, i) => (i == 0 ? [x] : [fn(2 * i - 1), x])));
+function intermingle<T>(fn: (idx: number) => T) {
+    function inner(xs: ((idx: number) => T)[]) {
+        return xs.flatMap((x, i) => (i === 0 ? [x(0)] : [fn(2 * i - 1), x(2 * i)]));
     }
     return inner;
 }
@@ -60,8 +59,13 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
             {typeof icon === "string" ? (
                 <FAIcon iconStyle={iconStyle} icon={icon} />
             ) : (
-                intermingle((idx) => <span key={idx * 2}>&nbsp;/&nbsp;</span>)(
-                    icon.map((ic, idx) => <FAIcon key={idx * 2 + 1} iconStyle={iconStyle} icon={ic} />)
+                intermingle((idx) => <span key={idx}>&nbsp;/&nbsp;</span>)(
+                    icon.map(
+                        (ic) =>
+                            function ButtonIcon(idx: number) {
+                                return <FAIcon key={idx} iconStyle={iconStyle} icon={ic} />;
+                            }
+                    )
                 )
             )}
             {children}

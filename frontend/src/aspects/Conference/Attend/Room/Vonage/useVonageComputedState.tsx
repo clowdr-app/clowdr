@@ -25,7 +25,6 @@ export function useVonageComputedState(
 
     const onCameraStreamDestroyed = useCallback(
         (reason: string) => {
-            setCamera(vonage.camera);
             if (reason === "mediaStopped") {
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraIntendedState,
@@ -39,7 +38,7 @@ export function useVonageComputedState(
                 });
             }
         },
-        [dispatch, vonage.camera]
+        [dispatch]
     );
     const onScreenStreamDestroyed = useCallback(
         (reason: string) => {
@@ -89,9 +88,6 @@ export function useVonageComputedState(
                         }
                     },
                     (reason) => {
-                        setCamera(
-                            vonage.state.type === StateType.Connected ? vonage.state.camera?.publisher ?? null : null
-                        );
                         onCameraStreamDestroyed(reason);
                     },
                     (reason) => {
@@ -115,12 +111,8 @@ export function useVonageComputedState(
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vonageSessionId]);
 
-    return useMemo(() => ({ vonage, connected, streams, connections, screen, camera }), [
-        camera,
-        connected,
-        connections,
-        screen,
-        streams,
-        vonage,
-    ]);
+    return useMemo(
+        () => ({ vonage, connected, streams, connections, screen, camera }),
+        [camera, connected, connections, screen, streams, vonage]
+    );
 }

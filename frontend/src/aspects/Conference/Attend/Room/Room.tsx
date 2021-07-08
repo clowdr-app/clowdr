@@ -889,7 +889,7 @@ function RoomInner({
 
                     {!showBackstage ? (
                         <>
-                            <Box bgColor={bgColour} m={-2}>
+                            <Box bgColor={bgColour}>
                                 <BreakoutRoom
                                     defaultVideoBackendName={defaultVideoBackend}
                                     roomDetails={roomDetails}

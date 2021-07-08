@@ -3,7 +3,13 @@ import React, { useMemo } from "react";
 import { backgroundImage } from "../../../Vonage/resources";
 import { useRegistrant } from "../../RegistrantsContext";
 
-export default function PlaceholderImage({ connectionData }: { connectionData?: string }): JSX.Element {
+export default function PlaceholderImage({
+    connectionData,
+    zIndex,
+}: {
+    connectionData?: string;
+    zIndex?: number;
+}): JSX.Element {
     const registrantIdObj = useMemo(() => {
         if (!connectionData) {
             return null;
@@ -24,7 +30,6 @@ export default function PlaceholderImage({ connectionData }: { connectionData?: 
             position="absolute"
             width="100%"
             height="100%"
-            borderRadius={5}
             objectFit="cover"
             objectPosition="center"
             top="0"
@@ -32,6 +37,7 @@ export default function PlaceholderImage({ connectionData }: { connectionData?: 
             src={registrant?.profile.photoURL_350x350}
             alt={`Profile picture of ${registrant?.displayName}`}
             opacity={0.8}
+            zIndex={zIndex}
         />
     ) : (
         <Box
@@ -45,6 +51,7 @@ export default function PlaceholderImage({ connectionData }: { connectionData?: 
             bgPos="center bottom"
             opacity="0.25"
             top="0"
+            zIndex={zIndex}
         />
     );
 }

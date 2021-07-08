@@ -1,7 +1,8 @@
 import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
-import { Observable } from "../../../../Observable";
+import { StoredObservable } from "../../../../Observable";
+import { transparentImage } from "../../../../Vonage/resources";
 
 export type CameraResolutions = "640x480" | "1280x720";
 
@@ -54,17 +55,17 @@ export class VonageGlobalState {
         return this._state;
     }
     public set state(value: StateData) {
-        const wasConnected = this._state.type === StateType.Connected;
         this._state = value;
-        const isConnected = this._state.type === StateType.Connected;
 
-        if (wasConnected !== isConnected) {
-            this.IsConnected.publish(isConnected);
-        }
+        this.IsConnected.publish(this.state.type === StateType.Connected);
+        this.CameraEnabled.publish(
+            this.state.type === StateType.Connected ? this.state.camera?.publisher?.stream?.hasVideo ?? false : false
+        );
     }
-    public IsConnected = new Observable<boolean>((observer) => {
-        observer(this.state.type === StateType.Connected);
-    });
+    public IsConnected = new StoredObservable<boolean>(this.state.type === StateType.Connected);
+    public CameraEnabled = new StoredObservable<boolean>(
+        this.state.type === StateType.Connected ? this.state.camera?.publisher?.stream?.hasVideo ?? false : false
+    );
 
     public get camera(): OT.Publisher | null {
         return this.state.type === StateType.Connected ? this.state.camera?.publisher ?? null : null;
@@ -143,6 +144,11 @@ export class VonageGlobalState {
                     console.error("VonageGlobalState: error handling streamDestroyed", e)
                 )
             );
+            session.on("streamPropertyChanged", (event) =>
+                this.onStreamPropertyChanged(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling streamDestroyed", e)
+                )
+            );
             session.on("connectionCreated", (event) =>
                 this.onConnectionCreated(event).catch((e) =>
                     console.error("VonageGlobalState: error handling connectionCreated", e)
@@ -206,34 +212,37 @@ export class VonageGlobalState {
                 throw new Error("Invalid state transition: must be connected");
             }
 
-            const state = this.state;
+            const existingState = this.state;
 
             if (!videoDeviceId && !audioDeviceId) {
-                if (state.camera) {
-                    state.session.unpublish(state.camera.publisher);
-                    state.camera.publisher.destroy();
+                if (existingState.camera) {
+                    existingState.session.unpublish(existingState.camera.publisher);
+                    existingState.camera.publisher.destroy();
 
                     this.state = {
                         ...this.state,
                         camera: null,
                     };
-                    state.initialisedState.onCameraStreamDestroyed("mediaStopped");
+                    this.state.initialisedState.onCameraStreamDestroyed("mediaStopped");
                 }
-            } else if (state.camera) {
-                if (state.camera.audioDeviceId === audioDeviceId && state.camera.videoDeviceId === videoDeviceId) {
+            } else if (existingState.camera) {
+                if (
+                    existingState.camera.audioDeviceId === audioDeviceId &&
+                    existingState.camera.videoDeviceId === videoDeviceId
+                ) {
                     // Nothing to do here!
                     return;
                 }
 
                 // We must republish if the publisher did not originally have one of the media types enabled
                 const mustRepublish =
-                    (!state.camera.initialisedWithAudio && audioDeviceId) ||
-                    (!state.camera.initialisedWithVideo && videoDeviceId);
+                    (!existingState.camera.initialisedWithAudio && audioDeviceId) ||
+                    (!existingState.camera.initialisedWithVideo && videoDeviceId);
 
                 if (mustRepublish) {
                     // First unpublish and destroy the existing publisher
-                    state.session.unpublish(state.camera.publisher);
-                    state.camera.publisher.destroy();
+                    existingState.session.unpublish(existingState.camera.publisher);
+                    existingState.camera.publisher.destroy();
 
                     // Now re-initialise with a new publisher
                     const publisher = OT.initPublisher(targetElement, {
@@ -247,12 +256,15 @@ export class VonageGlobalState {
                         height: "100%",
                         insertMode: "append",
                         showControls: false,
+                        style: {
+                            backgroundImageURI: transparentImage,
+                        },
                     });
 
                     _publisher = publisher;
 
                     await new Promise<void>((resolve, reject) => {
-                        state.session.publish(publisher, (error: OT.OTError | undefined) => {
+                        existingState.session.publish(publisher, (error: OT.OTError | undefined) => {
                             if (error) {
                                 reject(error);
                             } else {
@@ -267,7 +279,7 @@ export class VonageGlobalState {
                     );
 
                     this.state = {
-                        ...state,
+                        ...existingState,
                         camera: {
                             audioDeviceId,
                             videoDeviceId,
@@ -279,28 +291,28 @@ export class VonageGlobalState {
                     this.state.initialisedState.onCameraStreamCreated();
                 } else {
                     // Otherwise, we can simply switch the sources
-                    if (audioDeviceId !== state.camera.audioDeviceId) {
+                    if (audioDeviceId !== existingState.camera.audioDeviceId) {
                         if (audioDeviceId) {
-                            await state.camera.publisher.setAudioSource(audioDeviceId);
-                            state.camera.publisher.publishAudio(true);
+                            await existingState.camera.publisher.setAudioSource(audioDeviceId);
+                            existingState.camera.publisher.publishAudio(true);
                         } else {
-                            state.camera.publisher.publishAudio(false);
+                            existingState.camera.publisher.publishAudio(false);
                         }
                     }
 
-                    if (videoDeviceId !== state.camera.videoDeviceId) {
+                    if (videoDeviceId !== existingState.camera.videoDeviceId) {
                         if (videoDeviceId) {
-                            await state.camera.publisher.setVideoSource(videoDeviceId);
-                            state.camera.publisher.publishVideo(true);
+                            await existingState.camera.publisher.setVideoSource(videoDeviceId);
+                            existingState.camera.publisher.publishVideo(true);
                         } else {
-                            state.camera.publisher.publishVideo(false);
+                            existingState.camera.publisher.publishVideo(false);
                         }
                     }
 
                     this.state = {
-                        ...state,
+                        ...existingState,
                         camera: {
-                            ...state.camera,
+                            ...existingState.camera,
                             audioDeviceId,
                             videoDeviceId,
                         },
@@ -318,12 +330,15 @@ export class VonageGlobalState {
                     height: "100%",
                     insertMode: "append",
                     showControls: false,
+                    style: {
+                        backgroundImageURI: transparentImage,
+                    },
                 });
 
                 _publisher = publisher;
 
                 await new Promise<void>((resolve, reject) => {
-                    state.session.publish(publisher, (error: OT.OTError | undefined) => {
+                    existingState.session.publish(publisher, (error: OT.OTError | undefined) => {
                         if (error) {
                             reject(error);
                         } else {
@@ -338,7 +353,7 @@ export class VonageGlobalState {
                 );
 
                 this.state = {
-                    ...state,
+                    ...existingState,
                     camera: {
                         audioDeviceId,
                         videoDeviceId,
@@ -528,6 +543,37 @@ export class VonageGlobalState {
         }
     }
 
+    private async onStreamPropertyChanged(
+        event: OT.Event<"streamPropertyChanged", OT.Session> & { stream: OT.Stream } & (
+                | { changedProperty: "hasAudio"; oldValue: boolean; newValue: boolean }
+                | { changedProperty: "hasVideo"; oldValue: boolean; newValue: boolean }
+                | { changedProperty: "videoDimensions"; oldValue: OT.Dimensions; newValue: OT.Dimensions }
+            )
+    ): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type !== StateType.Connected) {
+                throw new Error("Invalid state transition: must be connected to update stream property");
+            }
+
+            if (
+                event.stream.streamId === this.state.camera?.publisher?.stream?.streamId &&
+                event.changedProperty === "hasVideo"
+            ) {
+                this.CameraEnabled.publish(
+                    this.state.type === StateType.Connected
+                        ? this.state.camera?.publisher?.stream?.hasVideo ?? false
+                        : false
+                );
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onStreamPropertyChanged failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
     private async onConnectionCreated(
         event: OT.Event<"connectionCreated", OT.Session> & { connection: OT.Connection }
     ): Promise<void> {
@@ -539,10 +585,10 @@ export class VonageGlobalState {
 
             this.state = {
                 ...this.state,
-                connections: R.uniqBy((connection) => connection.connectionId, [
-                    ...this.state.connections,
-                    event.connection,
-                ]),
+                connections: R.uniqBy(
+                    (connection) => connection.connectionId,
+                    [...this.state.connections, event.connection]
+                ),
             };
 
             this.state.initialisedState.onConnectionsChanged(this.state.connections);

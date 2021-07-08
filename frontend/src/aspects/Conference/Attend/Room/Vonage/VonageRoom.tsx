@@ -134,13 +134,14 @@ export function VonageRoom({
                                                               __typename: "schedule_Event",
                                                               id: eventId,
                                                           });
-                                                          const eventFragment = apolloClient.cache.readFragment<Room_EventSummaryFragment>(
-                                                              {
-                                                                  fragment: Room_EventSummaryFragmentDoc,
-                                                                  id: fragmentId,
-                                                                  fragmentName: "Room_EventSummary",
-                                                              }
-                                                          );
+                                                          const eventFragment =
+                                                              apolloClient.cache.readFragment<Room_EventSummaryFragment>(
+                                                                  {
+                                                                      fragment: Room_EventSummaryFragmentDoc,
+                                                                      id: fragmentId,
+                                                                      fragmentName: "Room_EventSummary",
+                                                                  }
+                                                              );
                                                           if (eventFragment) {
                                                               apolloClient.cache.writeFragment({
                                                                   fragment: Room_EventSummaryFragmentDoc,
@@ -203,6 +204,16 @@ function VonageRoomInner({
         getAccessToken,
         vonageSessionId
     );
+
+    const [cameraEnabled, setCameraEnabled] = useState<boolean>(false);
+    useEffect(() => {
+        const unobserve = vonage.CameraEnabled.subscribe((enabled) => {
+            setCameraEnabled(enabled);
+        });
+        return () => {
+            unobserve();
+        };
+    }, [vonage]);
 
     const userId = useUserId();
     const registrant = useCurrentRegistrant();
@@ -366,9 +377,10 @@ function VonageRoomInner({
             }));
         }
     }, []);
-    const othersCameraStreams = useMemo(() => streams.filter((s) => s.videoType === "camera" || !s.videoType), [
-        streams,
-    ]);
+    const othersCameraStreams = useMemo(
+        () => streams.filter((s) => s.videoType === "camera" || !s.videoType),
+        [streams]
+    );
 
     const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
     useEffect(() => {
@@ -489,7 +501,7 @@ function VonageRoomInner({
                     width="100%"
                     pointerEvents="none"
                 />
-                <Box position="absolute" left="0.4rem" bottom="0.35rem" zIndex="200" width="100%">
+                <Box position="absolute" zIndex="200" height="100%" width="100%">
                     <VonageOverlay connectionData={JSON.stringify({ registrantId: registrant.id })} />
                 </Box>
             </Box>
@@ -548,8 +560,14 @@ function VonageRoomInner({
     const viewPublishedPlaceholder = useMemo(
         () =>
             connected && !camera ? (
-                <Box position="relative" flex={`0 0 ${participantWidth}px`} w={participantWidth} h={participantWidth}>
-                    <Box position="absolute" left="0" bottom="0" zIndex="200" width="100%" overflow="hidden">
+                <Box
+                    position="relative"
+                    flex={`0 0 ${participantWidth}px`}
+                    w={participantWidth}
+                    h={participantWidth}
+                    bgColor="black"
+                >
+                    <Box position="absolute" zIndex="200" height="100%" width="100%" overflow="hidden">
                         <VonageOverlay
                             connectionData={connectionData}
                             microphoneEnabled={state.microphoneIntendedEnabled}
@@ -571,7 +589,7 @@ function VonageRoomInner({
                 h={participantWidth}
                 display={connected && camera ? "block" : "none"}
             >
-                <Box position="relative" height="100%" width="100%" overflow="hidden">
+                <Box position="relative" height="100%" width="100%" overflow="hidden" bgColor="black">
                     <Box
                         ref={cameraPublishContainerRef}
                         position="absolute"
@@ -590,7 +608,8 @@ function VonageRoomInner({
                         width="100%"
                         pointerEvents="none"
                     />
-                    <Box position="absolute" left="0.4rem" bottom="0.2rem" zIndex="200" width="100%" overflow="hidden">
+                    {!cameraEnabled ? <PlaceholderImage zIndex={150} connectionData={connectionData} /> : undefined}
+                    <Box position="absolute" zIndex="200" height="100%" width="100%" overflow="hidden">
                         <VonageOverlay
                             connectionData={JSON.stringify({ registrantId: registrant.id })}
                             microphoneEnabled={state.microphoneIntendedEnabled}
@@ -599,7 +618,15 @@ function VonageRoomInner({
                 </Box>
             </Box>
         ),
-        [registrant.id, camera, connected, participantWidth, state.microphoneIntendedEnabled]
+        [
+            participantWidth,
+            connected,
+            camera,
+            registrant.id,
+            state.microphoneIntendedEnabled,
+            connectionData,
+            cameraEnabled,
+        ]
     );
 
     const preJoin = useMemo(() => (connected ? <></> : <PreJoin cameraPreviewRef={cameraPreviewRef} />), [connected]);
@@ -638,7 +665,11 @@ function VonageRoomInner({
                 (connection) =>
                     userId &&
                     !connection.data.includes(userId) &&
-                    !streams.find((stream) => stream.connection.connectionId === connection.connectionId)
+                    !streams.find(
+                        (stream) =>
+                            stream.connection.connectionId === connection.connectionId &&
+                            (stream.videoType === "camera" || !stream.hasVideo)
+                    )
             ),
         [connected, connections, streams, userId]
     );
@@ -652,8 +683,9 @@ function VonageRoomInner({
                     flex={`0 0 ${participantWidth}px`}
                     w={participantWidth}
                     h={participantWidth}
+                    bgColor="black"
                 >
-                    <Box position="absolute" left="0.4rem" bottom="0.2rem" zIndex="200" width="100%" overflow="hidden">
+                    <Box position="absolute" zIndex="200" width="100%" height="100%" overflow="hidden">
                         <VonageOverlay connectionData={connection.data} microphoneEnabled={false} />
                     </Box>
                     <PlaceholderImage connectionData={connection.data} />

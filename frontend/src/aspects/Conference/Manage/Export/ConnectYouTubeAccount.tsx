@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, Heading, HStack, List, ListItem, Text, useColorModeValue, useToast } from "@chakra-ui/react";
+import { Button, Heading, HStack, Link, List, ListItem, Text, useColorModeValue, useToast } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -62,6 +62,14 @@ export function ConnectYouTubeAccount(): JSX.Element {
             <Heading as="h3" size="md" textAlign="left" mb={2}>
                 Connected accounts
             </Heading>
+            <Text>
+                By connecting your YouTube account through this &ldquo;Export to YouTube&rdquo; feature of Clowdr, you
+                agree to{" "}
+                <Link isExternal href="https://www.youtube.com/t/terms">
+                    YouTube&apos;s Terms of Service
+                </Link>
+                .
+            </Text>
             <ApolloQueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={result}>
                 {(accounts: readonly ManageExport_RegistrantGoogleAccountFragment[]) => (
                     <List>

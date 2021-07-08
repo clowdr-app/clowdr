@@ -1,4 +1,4 @@
-import { Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import { Heading, Link, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
 import React from "react";
 import { Permissions_Permission_Enum } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -25,6 +25,13 @@ export default function ManageExport(): JSX.Element {
             <Heading id="page-heading" as="h2" fontSize="2xl" fontStyle="italic">
                 Exports
             </Heading>
+            <Text>
+                By using this &ldquo;Export to YouTube&rdquo; feature of Clowdr, you agree to{" "}
+                <Link isExternal href="https://www.youtube.com/t/terms">
+                    YouTube&apos;s Terms of Service
+                </Link>
+                .
+            </Text>
             <Tabs width="100%">
                 <TabList>
                     <Tab>Connected YouTube accounts</Tab>

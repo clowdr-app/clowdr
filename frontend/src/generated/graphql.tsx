@@ -14427,6 +14427,10 @@ export type Mutation_Root = {
   readonly delete_schedule_EventTag_by_pk?: Maybe<Schedule_EventTag>;
   /** delete single row from the table: "schedule.Event" */
   readonly delete_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+  /** delete data from the table: "schedule.StarredEvent" */
+  readonly delete_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
+  /** delete single row from the table: "schedule.StarredEvent" */
+  readonly delete_schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
   /** delete data from the table: "system.Configuration" */
   readonly delete_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** delete data from the table: "system.ConfigurationKey" */
@@ -14780,6 +14784,10 @@ export type Mutation_Root = {
   readonly insert_schedule_EventTag_one?: Maybe<Schedule_EventTag>;
   /** insert a single row into the table: "schedule.Event" */
   readonly insert_schedule_Event_one?: Maybe<Schedule_Event>;
+  /** insert data into the table: "schedule.StarredEvent" */
+  readonly insert_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
+  /** insert a single row into the table: "schedule.StarredEvent" */
+  readonly insert_schedule_StarredEvent_one?: Maybe<Schedule_StarredEvent>;
   /** insert data into the table: "system.Configuration" */
   readonly insert_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** insert data into the table: "system.ConfigurationKey" */
@@ -15141,6 +15149,10 @@ export type Mutation_Root = {
   readonly update_schedule_EventTag_by_pk?: Maybe<Schedule_EventTag>;
   /** update single row of the table: "schedule.Event" */
   readonly update_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+  /** update data of the table: "schedule.StarredEvent" */
+  readonly update_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
+  /** update single row of the table: "schedule.StarredEvent" */
+  readonly update_schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
   /** update data of the table: "system.Configuration" */
   readonly update_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
   /** update data of the table: "system.ConfigurationKey" */
@@ -16091,6 +16103,18 @@ export type Mutation_RootDelete_Schedule_EventTag_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Schedule_Event_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_StarredEventArgs = {
+  where: Schedule_StarredEvent_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_StarredEvent_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -17299,6 +17323,20 @@ export type Mutation_RootInsert_Schedule_EventTag_OneArgs = {
 export type Mutation_RootInsert_Schedule_Event_OneArgs = {
   object: Schedule_Event_Insert_Input;
   on_conflict?: Maybe<Schedule_Event_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_StarredEventArgs = {
+  objects: ReadonlyArray<Schedule_StarredEvent_Insert_Input>;
+  on_conflict?: Maybe<Schedule_StarredEvent_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_StarredEvent_OneArgs = {
+  object: Schedule_StarredEvent_Insert_Input;
+  on_conflict?: Maybe<Schedule_StarredEvent_On_Conflict>;
 };
 
 
@@ -18799,6 +18837,20 @@ export type Mutation_RootUpdate_Schedule_Event_By_PkArgs = {
   _inc?: Maybe<Schedule_Event_Inc_Input>;
   _set?: Maybe<Schedule_Event_Set_Input>;
   pk_columns: Schedule_Event_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_StarredEventArgs = {
+  _set?: Maybe<Schedule_StarredEvent_Set_Input>;
+  where: Schedule_StarredEvent_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_StarredEvent_By_PkArgs = {
+  _set?: Maybe<Schedule_StarredEvent_Set_Input>;
+  pk_columns: Schedule_StarredEvent_Pk_Columns_Input;
 };
 
 
@@ -20800,6 +20852,12 @@ export type Query_Root = {
   readonly schedule_OverlappingEvents: ReadonlyArray<Schedule_OverlappingEvents>;
   /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
   readonly schedule_OverlappingEvents_aggregate: Schedule_OverlappingEvents_Aggregate;
+  /** fetch data from the table: "schedule.StarredEvent" */
+  readonly schedule_StarredEvent: ReadonlyArray<Schedule_StarredEvent>;
+  /** fetch aggregated fields from the table: "schedule.StarredEvent" */
+  readonly schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
+  /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
+  readonly schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
   /** fetch data from the table: "system.Configuration" */
   readonly system_Configuration: ReadonlyArray<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -22777,6 +22835,29 @@ export type Query_RootSchedule_OverlappingEvents_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Schedule_OverlappingEvents_Order_By>>;
   where?: Maybe<Schedule_OverlappingEvents_Bool_Exp>;
+};
+
+
+export type Query_RootSchedule_StarredEventArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_StarredEvent_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_StarredEvent_Order_By>>;
+  where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+
+export type Query_RootSchedule_StarredEvent_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_StarredEvent_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_StarredEvent_Order_By>>;
+  where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+
+export type Query_RootSchedule_StarredEvent_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -29497,6 +29578,164 @@ export enum Schedule_OverlappingEvents_Select_Column {
   YId = 'yId'
 }
 
+/** columns and relationships of "schedule.StarredEvent" */
+export type Schedule_StarredEvent = {
+  readonly __typename?: 'schedule_StarredEvent';
+  readonly created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly event: Schedule_Event;
+  readonly eventId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly registrant?: Maybe<Registrant_Registrant>;
+  readonly registrantId: Scalars['uuid'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Aggregate = {
+  readonly __typename?: 'schedule_StarredEvent_aggregate';
+  readonly aggregate?: Maybe<Schedule_StarredEvent_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Schedule_StarredEvent>;
+};
+
+/** aggregate fields of "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Aggregate_Fields = {
+  readonly __typename?: 'schedule_StarredEvent_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Schedule_StarredEvent_Max_Fields>;
+  readonly min?: Maybe<Schedule_StarredEvent_Min_Fields>;
+};
+
+
+/** aggregate fields of "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Schedule_StarredEvent_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "schedule.StarredEvent". All fields are combined with a logical 'AND'. */
+export type Schedule_StarredEvent_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Schedule_StarredEvent_Bool_Exp>>;
+  readonly _not?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Schedule_StarredEvent_Bool_Exp>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly event?: Maybe<Schedule_Event_Bool_Exp>;
+  readonly eventId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
+  readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "schedule.StarredEvent" */
+export enum Schedule_StarredEvent_Constraint {
+  /** unique or primary key constraint */
+  StarredEventEventIdRegistrantIdKey = 'StarredEvent_eventId_registrantId_key',
+  /** unique or primary key constraint */
+  StarredEventPkey = 'StarredEvent_pkey'
+}
+
+/** input type for inserting data into table "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly event?: Maybe<Schedule_Event_Obj_Rel_Insert_Input>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Schedule_StarredEvent_Max_Fields = {
+  readonly __typename?: 'schedule_StarredEvent_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Schedule_StarredEvent_Min_Fields = {
+  readonly __typename?: 'schedule_StarredEvent_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Mutation_Response = {
+  readonly __typename?: 'schedule_StarredEvent_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Schedule_StarredEvent>;
+};
+
+/** on conflict condition type for table "schedule.StarredEvent" */
+export type Schedule_StarredEvent_On_Conflict = {
+  readonly constraint: Schedule_StarredEvent_Constraint;
+  readonly update_columns?: ReadonlyArray<Schedule_StarredEvent_Update_Column>;
+  readonly where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "schedule.StarredEvent". */
+export type Schedule_StarredEvent_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly event?: Maybe<Schedule_Event_Order_By>;
+  readonly eventId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: schedule_StarredEvent */
+export type Schedule_StarredEvent_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "schedule.StarredEvent" */
+export enum Schedule_StarredEvent_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RegistrantId = 'registrantId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly eventId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "schedule.StarredEvent" */
+export enum Schedule_StarredEvent_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EventId = 'eventId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RegistrantId = 'registrantId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 export type Subscription_Root = {
   readonly __typename?: 'subscription_root';
   /** fetch data from the table: "Email" */
@@ -29983,6 +30222,12 @@ export type Subscription_Root = {
   readonly schedule_OverlappingEvents: ReadonlyArray<Schedule_OverlappingEvents>;
   /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
   readonly schedule_OverlappingEvents_aggregate: Schedule_OverlappingEvents_Aggregate;
+  /** fetch data from the table: "schedule.StarredEvent" */
+  readonly schedule_StarredEvent: ReadonlyArray<Schedule_StarredEvent>;
+  /** fetch aggregated fields from the table: "schedule.StarredEvent" */
+  readonly schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
+  /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
+  readonly schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
   /** fetch data from the table: "system.Configuration" */
   readonly system_Configuration: ReadonlyArray<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -31954,6 +32199,29 @@ export type Subscription_RootSchedule_OverlappingEvents_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Schedule_OverlappingEvents_Order_By>>;
   where?: Maybe<Schedule_OverlappingEvents_Bool_Exp>;
+};
+
+
+export type Subscription_RootSchedule_StarredEventArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_StarredEvent_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_StarredEvent_Order_By>>;
+  where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+
+export type Subscription_RootSchedule_StarredEvent_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Schedule_StarredEvent_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_StarredEvent_Order_By>>;
+  where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+
+export type Subscription_RootSchedule_StarredEvent_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -35818,6 +36086,36 @@ export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root'
     & Schedule_TagFragment
   )> };
 
+export type StarredEventFragment = { readonly __typename?: 'schedule_StarredEvent', readonly id: any, readonly eventId: any, readonly registrantId: any };
+
+export type StarEventButton_GetStarsQueryVariables = Exact<{
+  eventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type StarEventButton_GetStarsQuery = { readonly __typename?: 'query_root', readonly schedule_StarredEvent: ReadonlyArray<(
+    { readonly __typename?: 'schedule_StarredEvent' }
+    & StarredEventFragment
+  )> };
+
+export type StarEventButton_InsertStarsMutationVariables = Exact<{
+  objects: ReadonlyArray<Schedule_StarredEvent_Insert_Input> | Schedule_StarredEvent_Insert_Input;
+}>;
+
+
+export type StarEventButton_InsertStarsMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_StarredEvent?: Maybe<{ readonly __typename?: 'schedule_StarredEvent_mutation_response', readonly returning: ReadonlyArray<(
+      { readonly __typename?: 'schedule_StarredEvent' }
+      & StarredEventFragment
+    )> }> };
+
+export type StarEventButton_DeleteStarsMutationVariables = Exact<{
+  ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type StarEventButton_DeleteStarsMutation = { readonly __typename?: 'mutation_root', readonly delete_schedule_StarredEvent?: Maybe<{ readonly __typename?: 'schedule_StarredEvent_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_StarredEvent', readonly id: any }> }> };
+
 export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<(
     { readonly __typename?: 'content_ItemProgramPerson' }
     & ProgramPersonDataFragment
@@ -38730,6 +39028,13 @@ export const Schedule_RoomSummaryFragmentDoc = gql`
   currentModeName
   priority
   managementModeName
+}
+    `;
+export const StarredEventFragmentDoc = gql`
+    fragment StarredEvent on schedule_StarredEvent {
+  id
+  eventId
+  registrantId
 }
     `;
 export const SearchPanel_ItemFragmentDoc = gql`
@@ -41971,6 +42276,114 @@ export function useSchedule_SelectSummariesLazyQuery(baseOptions?: Apollo.LazyQu
 export type Schedule_SelectSummariesQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesQuery>;
 export type Schedule_SelectSummariesLazyQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesLazyQuery>;
 export type Schedule_SelectSummariesQueryResult = Apollo.QueryResult<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>;
+export const StarEventButton_GetStarsDocument = gql`
+    query StarEventButton_GetStars($eventIds: [uuid!]!, $registrantId: uuid!) {
+  schedule_StarredEvent(
+    where: {eventId: {_in: $eventIds}, registrantId: {_eq: $registrantId}}
+  ) {
+    ...StarredEvent
+  }
+}
+    ${StarredEventFragmentDoc}`;
+
+/**
+ * __useStarEventButton_GetStarsQuery__
+ *
+ * To run a query within a React component, call `useStarEventButton_GetStarsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStarEventButton_GetStarsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStarEventButton_GetStarsQuery({
+ *   variables: {
+ *      eventIds: // value for 'eventIds'
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useStarEventButton_GetStarsQuery(baseOptions: Apollo.QueryHookOptions<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>(StarEventButton_GetStarsDocument, options);
+      }
+export function useStarEventButton_GetStarsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>(StarEventButton_GetStarsDocument, options);
+        }
+export type StarEventButton_GetStarsQueryHookResult = ReturnType<typeof useStarEventButton_GetStarsQuery>;
+export type StarEventButton_GetStarsLazyQueryHookResult = ReturnType<typeof useStarEventButton_GetStarsLazyQuery>;
+export type StarEventButton_GetStarsQueryResult = Apollo.QueryResult<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>;
+export const StarEventButton_InsertStarsDocument = gql`
+    mutation StarEventButton_InsertStars($objects: [schedule_StarredEvent_insert_input!]!) {
+  insert_schedule_StarredEvent(objects: $objects) {
+    returning {
+      ...StarredEvent
+    }
+  }
+}
+    ${StarredEventFragmentDoc}`;
+export type StarEventButton_InsertStarsMutationFn = Apollo.MutationFunction<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>;
+
+/**
+ * __useStarEventButton_InsertStarsMutation__
+ *
+ * To run a mutation, you first call `useStarEventButton_InsertStarsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStarEventButton_InsertStarsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [starEventButtonInsertStarsMutation, { data, loading, error }] = useStarEventButton_InsertStarsMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useStarEventButton_InsertStarsMutation(baseOptions?: Apollo.MutationHookOptions<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>(StarEventButton_InsertStarsDocument, options);
+      }
+export type StarEventButton_InsertStarsMutationHookResult = ReturnType<typeof useStarEventButton_InsertStarsMutation>;
+export type StarEventButton_InsertStarsMutationResult = Apollo.MutationResult<StarEventButton_InsertStarsMutation>;
+export type StarEventButton_InsertStarsMutationOptions = Apollo.BaseMutationOptions<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>;
+export const StarEventButton_DeleteStarsDocument = gql`
+    mutation StarEventButton_DeleteStars($ids: [uuid!]!) {
+  delete_schedule_StarredEvent(where: {id: {_in: $ids}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type StarEventButton_DeleteStarsMutationFn = Apollo.MutationFunction<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>;
+
+/**
+ * __useStarEventButton_DeleteStarsMutation__
+ *
+ * To run a mutation, you first call `useStarEventButton_DeleteStarsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStarEventButton_DeleteStarsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [starEventButtonDeleteStarsMutation, { data, loading, error }] = useStarEventButton_DeleteStarsMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useStarEventButton_DeleteStarsMutation(baseOptions?: Apollo.MutationHookOptions<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>(StarEventButton_DeleteStarsDocument, options);
+      }
+export type StarEventButton_DeleteStarsMutationHookResult = ReturnType<typeof useStarEventButton_DeleteStarsMutation>;
+export type StarEventButton_DeleteStarsMutationResult = Apollo.MutationResult<StarEventButton_DeleteStarsMutation>;
+export type StarEventButton_DeleteStarsMutationOptions = Apollo.BaseMutationOptions<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>;
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
   content_Item(

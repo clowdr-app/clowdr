@@ -7,6 +7,8 @@ import type { ItemEventFragment, ItemRoomEventFragment } from "../../../../gener
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useConference } from "../../useConference";
+import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import StarEventButton from "../Schedule/StarEventButton";
 
 export function EventsTable({
     roomId,
@@ -18,6 +20,7 @@ export function EventsTable({
     includeRoom: boolean;
 }): JSX.Element {
     const conference = useConference();
+    const maybeRegistrant = useMaybeCurrentRegistrant();
     return (
         <VStack spacing={2} alignItems="flex-start">
             {roomId ? (
@@ -28,6 +31,7 @@ export function EventsTable({
             <Table m={0} textAlign="left" variant="striped" w="auto" size="sm" colorScheme="blue">
                 <Thead>
                     <Tr>
+                        {maybeRegistrant ? <Th></Th> : undefined}
                         <Th>Date</Th>
                         <Th>Time</Th>
                         <Th>Duration</Th>
@@ -58,6 +62,7 @@ function Event({
     includeRoom: boolean;
 }): JSX.Element {
     const conference = useConference();
+    const maybeRegistrant = useMaybeCurrentRegistrant();
     const now = useRealTime(60000);
 
     const startMillis = useMemo(() => Date.parse(itemEvent.startTime), [itemEvent.startTime]);
@@ -87,6 +92,11 @@ function Event({
 
     return (
         <Tr p={2} my={2} w="auto" backgroundColor={happeningSoonOrNow ? "purple.500" : "initial"}>
+            {maybeRegistrant ? (
+                <Td>
+                    <StarEventButton eventIds={itemEvent.id} />
+                </Td>
+            ) : undefined}
             <Td>
                 <Text>{startDate}</Text>
             </Td>

@@ -42,6 +42,7 @@ import { AuthorList, PlainAuthorsList } from "../Content/AuthorList";
 import TagList from "../Content/TagList";
 import { EventModeIcon } from "../Rooms/V2/EventHighlight";
 import type { TimelineEvent } from "./DayList";
+import StarEventButton from "./StarEventButton";
 import useTimelineParameters from "./useTimelineParameters";
 
 function EventBoxPopover({
@@ -68,6 +69,7 @@ function EventBoxPopover({
     const conference = useConference();
     const event0 = events[0];
     const eventTitle = content ? content.title : event0.name;
+    const eventIds = useMemo(() => events.map((x) => x.id), [events]);
 
     const now = Date.now();
     const isLive = eventStartMs < now + 10 * 60 * 1000 && now < eventStartMs + durationSeconds * 1000;
@@ -135,6 +137,7 @@ function EventBoxPopover({
                         fontSize="sm"
                         fontStyle="italic"
                     >
+                        <StarEventButton eventIds={eventIds} mb={1} mr={1} size="sm" />
                         {events.length === 1 ? (
                             <>
                                 <EventModeIcon
@@ -244,14 +247,17 @@ function EventBoxPopover({
                             <Grid templateColumns="repeat(3, auto)" rowGap={1} columnGap={2}>
                                 {events.map((event) => (
                                     <>
-                                        <GridItem key={event.id}>
+                                        <GridItem>
+                                            <StarEventButton eventIds={event.id} />
+                                        </GridItem>
+                                        <GridItem>
                                             <EventModeIcon
                                                 mode={event.intendedRoomModeName}
                                                 durationSeconds={event.durationSeconds}
                                                 fontSize="inherit"
                                             />
                                         </GridItem>
-                                        <GridItem key={event.id}>
+                                        <GridItem>
                                             {format(new Date(event.startTime), "HH:mm")} -{" "}
                                             {format(
                                                 new Date(Date.parse(event.startTime) + 1000 * event.durationSeconds),
@@ -283,6 +289,7 @@ export default function EventBox({
     tags: readonly Schedule_TagFragment[];
 }): JSX.Element | null {
     const event = sortedEvents[0];
+    const eventIds = useMemo(() => sortedEvents.map((x) => x.id), [sortedEvents]);
     const eventStartMs = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const durationSeconds = useMemo(() => {
         const lastEvent = sortedEvents[sortedEvents.length - 1];
@@ -314,6 +321,7 @@ export default function EventBox({
                     alignItems="flex-start"
                 >
                     <HStack alignItems="flex-start" justifyContent="flex-start">
+                        <StarEventButton eventIds={eventIds} />
                         <Text fontSize="sm" fontWeight="bold">
                             {R.intersperse(
                                 <>&nbsp;/&nbsp;</>,

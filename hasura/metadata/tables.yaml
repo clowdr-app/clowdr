@@ -8133,6 +8133,53 @@
                 schema: public
                 name: FlatUserPermission
 - table:
+    schema: schedule
+    name: StarredEvent
+  object_relationships:
+  - name: event
+    using:
+      foreign_key_constraint_on: eventId
+  - name: registrant
+    using:
+      manual_configuration:
+        remote_table:
+          schema: registrant
+          name: Registrant
+        insertion_order: null
+        column_mapping:
+          registrantId: id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+      columns:
+      - eventId
+      - registrantId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - created_at
+      - updated_at
+      - eventId
+      - id
+      - registrantId
+      filter:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+- table:
     schema: system
     name: Configuration
   select_permissions:

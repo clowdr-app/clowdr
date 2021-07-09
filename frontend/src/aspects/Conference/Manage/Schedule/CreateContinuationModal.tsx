@@ -960,7 +960,7 @@ export default function CreateContinuationModal({
                     >({
                         query: ContinuationsEditor_SelectContinuationsDocument,
                         data: {
-                            ...query.schedule_Continuation,
+                            ...query,
                             schedule_Continuation: [...query.schedule_Continuation, data],
                         },
                         variables: {

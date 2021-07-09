@@ -6,6 +6,9 @@ import {
     StarEventButton_GetStarsQuery,
     StarEventButton_GetStarsQueryVariables,
     StarredEventFragmentDoc,
+    StarredEvents_SelectEventIdsDocument,
+    StarredEvents_SelectEventIdsQuery,
+    StarredEvents_SelectEventIdsQueryVariables,
     useStarEventButton_DeleteStarsMutation,
     useStarEventButton_GetStarsQuery,
     useStarEventButton_InsertStarsMutation,
@@ -84,25 +87,55 @@ function StarEventButtonInner({
                     });
                 });
 
-                const query = cache.readQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>({
-                    query: StarEventButton_GetStarsDocument,
-                    variables: {
-                        eventIds,
-                        registrantId: registrant.id,
-                    },
-                });
-                if (query) {
-                    cache.writeQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>({
+                {
+                    const query = cache.readQuery<
+                        StarEventButton_GetStarsQuery,
+                        StarEventButton_GetStarsQueryVariables
+                    >({
                         query: StarEventButton_GetStarsDocument,
-                        data: {
-                            ...query,
-                            schedule_StarredEvent: [...query.schedule_StarredEvent, ...datas],
-                        },
                         variables: {
                             eventIds,
                             registrantId: registrant.id,
                         },
                     });
+                    if (query) {
+                        cache.writeQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>({
+                            query: StarEventButton_GetStarsDocument,
+                            data: {
+                                ...query,
+                                schedule_StarredEvent: [...query.schedule_StarredEvent, ...datas],
+                            },
+                            variables: {
+                                eventIds,
+                                registrantId: registrant.id,
+                            },
+                        });
+                    }
+                }
+                {
+                    const query = cache.readQuery<
+                        StarredEvents_SelectEventIdsQuery,
+                        StarredEvents_SelectEventIdsQueryVariables
+                    >({
+                        query: StarredEvents_SelectEventIdsDocument,
+                        variables: {
+                            registrantId: registrant.id,
+                        },
+                    });
+                    if (query) {
+                        cache.writeQuery<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>(
+                            {
+                                query: StarredEvents_SelectEventIdsDocument,
+                                data: {
+                                    ...query,
+                                    schedule_StarredEvent: [...query.schedule_StarredEvent, ...datas],
+                                },
+                                variables: {
+                                    registrantId: registrant.id,
+                                },
+                            }
+                        );
+                    }
                 }
             }
         },
@@ -115,7 +148,7 @@ function StarEventButtonInner({
                 deletedIds.forEach((x) => {
                     cache.evict({
                         id: x.id,
-                        fieldName: "MySchedule_StarredEvent",
+                        fieldName: "StarredEvents_SelectEventIds",
                         broadcast: true,
                     });
 
@@ -125,28 +158,59 @@ function StarEventButtonInner({
                         broadcast: true,
                     });
                 });
-
-                const query = cache.readQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>({
-                    query: StarEventButton_GetStarsDocument,
-                    variables: {
-                        eventIds,
-                        registrantId: registrant.id,
-                    },
-                });
-                if (query) {
-                    cache.writeQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>({
+                {
+                    const query = cache.readQuery<
+                        StarEventButton_GetStarsQuery,
+                        StarEventButton_GetStarsQueryVariables
+                    >({
                         query: StarEventButton_GetStarsDocument,
-                        data: {
-                            ...query,
-                            schedule_StarredEvent: query.schedule_StarredEvent.filter(
-                                (x) => !deletedIds.includes(x.id)
-                            ),
-                        },
                         variables: {
                             eventIds,
                             registrantId: registrant.id,
                         },
                     });
+                    if (query) {
+                        cache.writeQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>({
+                            query: StarEventButton_GetStarsDocument,
+                            data: {
+                                ...query,
+                                schedule_StarredEvent: query.schedule_StarredEvent.filter(
+                                    (x) => !deletedIds.includes(x.id)
+                                ),
+                            },
+                            variables: {
+                                eventIds,
+                                registrantId: registrant.id,
+                            },
+                        });
+                    }
+                }
+                {
+                    const query = cache.readQuery<
+                        StarredEvents_SelectEventIdsQuery,
+                        StarredEvents_SelectEventIdsQueryVariables
+                    >({
+                        query: StarredEvents_SelectEventIdsDocument,
+                        variables: {
+                            registrantId: registrant.id,
+                        },
+                    });
+                    if (query) {
+                        cache.writeQuery<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>(
+                            {
+                                query: StarredEvents_SelectEventIdsDocument,
+                                data: {
+                                    ...query,
+                                    schedule_StarredEvent: query.schedule_StarredEvent.filter(
+                                        (x) => !deletedIds.includes(x.id)
+                                    ),
+                                },
+                                variables: {
+                                    registrantId: registrant.id,
+                                },
+                            }
+                        );
+                    }
                 }
             }
         },

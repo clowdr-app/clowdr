@@ -7,6 +7,7 @@ import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstag
 import { useLiveProgramRoomsModal } from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { useSocialiseModal } from "../../Conference/Attend/Rooms/V2/SocialiseModal";
 import { useScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
+import { useStarredEventsModal } from "../../Conference/Attend/Schedule/StarredEventsModal";
 import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
@@ -44,6 +45,11 @@ export default function LeftMenu(): JSX.Element {
         onClose: myBackstages_OnClose,
         finalFocusRef: myBackstagesButtonRef,
     } = useMyBackstagesModal();
+    const {
+        onOpen: myStarredEvents_OnOpen,
+        onClose: myStarredEvents_OnClose,
+        finalFocusRef: myStarredEventsButtonRef,
+    } = useStarredEventsModal();
 
     useEffect(() => {
         liveNow_OnClose();
@@ -132,6 +138,13 @@ export default function LeftMenu(): JSX.Element {
                             colorScheme={colorScheme}
                             side="left"
                         >
+                            <MenuItem
+                                ref={myStarredEventsButtonRef as React.RefObject<HTMLButtonElement>}
+                                onClick={myStarredEvents_OnOpen}
+                            >
+                                <FAIcon iconStyle="s" icon="star" mr={2} aria-hidden={true} w="1.2em" />
+                                My events
+                            </MenuItem>
                             <MenuItem as={ReactLink} to={`/conference/${conference.slug}/profile`}>
                                 <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
                                 My profile

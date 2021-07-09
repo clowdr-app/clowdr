@@ -36116,6 +36116,36 @@ export type StarEventButton_DeleteStarsMutationVariables = Exact<{
 
 export type StarEventButton_DeleteStarsMutation = { readonly __typename?: 'mutation_root', readonly delete_schedule_StarredEvent?: Maybe<{ readonly __typename?: 'schedule_StarredEvent_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_StarredEvent', readonly id: any }> }> };
 
+export type StarredEvents_SelectEventIdsQueryVariables = Exact<{
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type StarredEvents_SelectEventIdsQuery = { readonly __typename?: 'query_root', readonly schedule_StarredEvent: ReadonlyArray<(
+    { readonly __typename?: 'schedule_StarredEvent' }
+    & StarredEventFragment
+  )>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any }> };
+
+export type StarredEvents_SelectEventsQueryVariables = Exact<{
+  eventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type StarredEvents_SelectEventsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & Schedule_RoomSummaryFragment
+  )>, readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event', readonly item?: Maybe<(
+      { readonly __typename?: 'content_Item' }
+      & Schedule_ItemElementsFragment
+    )> }
+    & Schedule_EventSummaryFragment
+  )>, readonly collection_Tag: ReadonlyArray<(
+    { readonly __typename?: 'collection_Tag' }
+    & Schedule_TagFragment
+  )> };
+
 export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<(
     { readonly __typename?: 'content_ItemProgramPerson' }
     & ProgramPersonDataFragment
@@ -42384,6 +42414,94 @@ export function useStarEventButton_DeleteStarsMutation(baseOptions?: Apollo.Muta
 export type StarEventButton_DeleteStarsMutationHookResult = ReturnType<typeof useStarEventButton_DeleteStarsMutation>;
 export type StarEventButton_DeleteStarsMutationResult = Apollo.MutationResult<StarEventButton_DeleteStarsMutation>;
 export type StarEventButton_DeleteStarsMutationOptions = Apollo.BaseMutationOptions<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>;
+export const StarredEvents_SelectEventIdsDocument = gql`
+    query StarredEvents_SelectEventIds($registrantId: uuid!) {
+  schedule_StarredEvent(where: {registrantId: {_eq: $registrantId}}) {
+    ...StarredEvent
+  }
+  schedule_Event(
+    where: {eventPeople: {person: {registrantId: {_eq: $registrantId}}}}
+  ) {
+    id
+  }
+}
+    ${StarredEventFragmentDoc}`;
+
+/**
+ * __useStarredEvents_SelectEventIdsQuery__
+ *
+ * To run a query within a React component, call `useStarredEvents_SelectEventIdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStarredEvents_SelectEventIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStarredEvents_SelectEventIdsQuery({
+ *   variables: {
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useStarredEvents_SelectEventIdsQuery(baseOptions: Apollo.QueryHookOptions<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>(StarredEvents_SelectEventIdsDocument, options);
+      }
+export function useStarredEvents_SelectEventIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>(StarredEvents_SelectEventIdsDocument, options);
+        }
+export type StarredEvents_SelectEventIdsQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventIdsQuery>;
+export type StarredEvents_SelectEventIdsLazyQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventIdsLazyQuery>;
+export type StarredEvents_SelectEventIdsQueryResult = Apollo.QueryResult<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>;
+export const StarredEvents_SelectEventsDocument = gql`
+    query StarredEvents_SelectEvents($eventIds: [uuid!]!, $conferenceId: uuid!) {
+  room_Room(where: {events: {id: {_in: $eventIds}}}) {
+    ...Schedule_RoomSummary
+  }
+  schedule_Event(where: {id: {_in: $eventIds}}) {
+    ...Schedule_EventSummary
+    item {
+      ...Schedule_ItemElements
+    }
+  }
+  collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Schedule_Tag
+  }
+}
+    ${Schedule_RoomSummaryFragmentDoc}
+${Schedule_EventSummaryFragmentDoc}
+${Schedule_ItemElementsFragmentDoc}
+${Schedule_TagFragmentDoc}`;
+
+/**
+ * __useStarredEvents_SelectEventsQuery__
+ *
+ * To run a query within a React component, call `useStarredEvents_SelectEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStarredEvents_SelectEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStarredEvents_SelectEventsQuery({
+ *   variables: {
+ *      eventIds: // value for 'eventIds'
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useStarredEvents_SelectEventsQuery(baseOptions: Apollo.QueryHookOptions<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>(StarredEvents_SelectEventsDocument, options);
+      }
+export function useStarredEvents_SelectEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>(StarredEvents_SelectEventsDocument, options);
+        }
+export type StarredEvents_SelectEventsQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventsQuery>;
+export type StarredEvents_SelectEventsLazyQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventsLazyQuery>;
+export type StarredEvents_SelectEventsQueryResult = Apollo.QueryResult<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>;
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
   content_Item(

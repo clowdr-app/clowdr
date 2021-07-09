@@ -445,12 +445,14 @@ export function ScheduleInner({
     items,
     tags,
     titleStr,
+    noEventsText = titleStr,
 }: {
     rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
     items: ReadonlyArray<Schedule_ItemElementsFragment>;
     tags: ReadonlyArray<Schedule_TagFragment>;
     titleStr?: string;
+    noEventsText?: string;
 }): JSX.Element {
     const eventsByRoom = useMemo(
         () =>
@@ -617,7 +619,7 @@ export function ScheduleInner({
                     {frameEls}
                 </Flex>
             </Box>
-            {!rawEvents.length ? <Box>No events {titleStr ? titleStr.toLowerCase() : ""}</Box> : undefined}
+            {!rawEvents.length ? <Box>No events {noEventsText ? noEventsText.toLowerCase() : ""}</Box> : undefined}
         </Flex>
     );
 }

@@ -320,7 +320,7 @@ function ContinuationOption({
                     >({
                         query: ContinuationsEditor_SelectContinuationsDocument,
                         data: {
-                            ...query.schedule_Continuation,
+                            ...query,
                             schedule_Continuation: query.schedule_Continuation.map((x) =>
                                 x.id === data.id ? data : x
                             ),
@@ -370,7 +370,7 @@ function ContinuationOption({
                     >({
                         query: ContinuationsEditor_SelectContinuationsDocument,
                         data: {
-                            ...query.schedule_Continuation,
+                            ...query,
                             schedule_Continuation: query.schedule_Continuation.filter(
                                 (x) => !deletedIds.includes(x.id)
                             ),

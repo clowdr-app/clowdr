@@ -11,6 +11,7 @@ import { MyBackstagesModalProvider } from "./aspects/Conference/Attend/Profile/M
 import { LiveProgramRoomsModalProvider } from "./aspects/Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { SocialiseModalProvider } from "./aspects/Conference/Attend/Rooms/V2/SocialiseModal";
 import { ScheduleModalProvider } from "./aspects/Conference/Attend/Schedule/ProgramModal";
+import StarredEventsModalProvider from "./aspects/Conference/Attend/Schedule/StarredEventsModal";
 import AttendeesContextProvider from "./aspects/Conference/RegistrantsContext";
 import ConferenceProvider from "./aspects/Conference/useConference";
 import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference/useConferenceCurrentUserActivePermissions";
@@ -86,14 +87,16 @@ function AppInner({ confSlug }: { confSlug?: string }): JSX.Element {
                                                     <RoomParticipantsProvider>
                                                         <ScheduleModalProvider>
                                                             <LiveProgramRoomsModalProvider>
-                                                                <MyBackstagesModalProvider>
-                                                                    <SocialiseModalProvider>
-                                                                        {/* <ShuffleRoomsQueueMonitor /> */}
-                                                                        <SharedRoomContextProvider>
-                                                                            {page}
-                                                                        </SharedRoomContextProvider>
-                                                                    </SocialiseModalProvider>
-                                                                </MyBackstagesModalProvider>
+                                                                <StarredEventsModalProvider>
+                                                                    <MyBackstagesModalProvider>
+                                                                        <SocialiseModalProvider>
+                                                                            {/* <ShuffleRoomsQueueMonitor /> */}
+                                                                            <SharedRoomContextProvider>
+                                                                                {page}
+                                                                            </SharedRoomContextProvider>
+                                                                        </SocialiseModalProvider>
+                                                                    </MyBackstagesModalProvider>
+                                                                </StarredEventsModalProvider>
                                                             </LiveProgramRoomsModalProvider>
                                                         </ScheduleModalProvider>
                                                     </RoomParticipantsProvider>

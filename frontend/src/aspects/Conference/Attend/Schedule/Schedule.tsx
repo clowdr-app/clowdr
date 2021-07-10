@@ -20,7 +20,8 @@ import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
-import DayList from "./DayList";
+import DayList, { TimelineEvent } from "./DayList";
+import DownloadCalendarButton from "./DownloadCalendarButton";
 import NowMarker from "./NowMarker";
 import RoomNameBox from "./RoomNameBox";
 import RoomTimeline from "./RoomTimeline";
@@ -586,6 +587,15 @@ export function ScheduleInner({
         [rawEvents, rooms, scrollToEvent, scrollToNow]
     );
 
+    const eventsWithItems: TimelineEvent[] = useMemo(
+        () =>
+            rawEvents.map((event) => ({
+                ...event,
+                item: event.itemId ? items.find((x) => x.id === event.itemId) : undefined,
+            })),
+        [rawEvents, items]
+    );
+
     /*Plus 30 to the width to account for scrollbars!*/
     return (
         <Flex h="100%" w="100%" maxW={timeBarWidth + maxParallelRooms * roomColWidth + 30} flexDir="column">
@@ -594,10 +604,19 @@ export function ScheduleInner({
                     {titleStr ?? "Schedule"}
                 </Heading>
                 {dayList}
+                <DownloadCalendarButton
+                    events={eventsWithItems}
+                    ml={2}
+                    calendarName={titleStr ?? "Complete Schedule"}
+                />
             </Flex>
             <Text w="auto" textAlign="left" p={0} my={1}>
                 <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
                 Dates and times are shown in your local timezone.
+            </Text>
+            <Text w="auto" textAlign="left" p={0} my={1}>
+                <FAIcon iconStyle="s" icon="bell" mr={2} mb={1} />
+                Download the calendar and import it to your preferred calendar app to receive reminders.
             </Text>
             <Box
                 cursor="pointer"

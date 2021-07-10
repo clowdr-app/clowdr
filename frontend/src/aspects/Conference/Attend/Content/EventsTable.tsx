@@ -31,9 +31,9 @@ export function EventsTable({
             <Table m={0} textAlign="left" variant="striped" w="auto" size="sm" colorScheme="blue">
                 <Thead>
                     <Tr>
-                        {maybeRegistrant ? <Th></Th> : undefined}
-                        <Th>Date</Th>
-                        <Th>Time</Th>
+                        {maybeRegistrant ? <Th p={0}></Th> : undefined}
+                        <Th px={3}>Date</Th>
+                        <Th px={1}>Time</Th>
                         <Th>Duration</Th>
                         {includeRoom ? <Th>Room</Th> : undefined}
                         {!includeRoom ? <Th>Item</Th> : undefined}
@@ -93,14 +93,14 @@ function Event({
     return (
         <Tr p={2} my={2} w="auto" backgroundColor={happeningSoonOrNow ? "purple.500" : "initial"}>
             {maybeRegistrant ? (
-                <Td>
+                <Td p={0} pl={1}>
                     <StarEventButton eventIds={itemEvent.id} />
                 </Td>
             ) : undefined}
-            <Td>
+            <Td px={3}>
                 <Text>{startDate}</Text>
             </Td>
-            <Td>
+            <Td px={1}>
                 <Text>{startTime}</Text>
             </Td>
             <Td>

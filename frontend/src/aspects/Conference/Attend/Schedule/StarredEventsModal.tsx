@@ -107,7 +107,7 @@ export function StarredEventsModal({
             <ModalOverlay />
             <ModalContent>
                 <ModalCloseButton ref={closeRef} />
-                <ModalBody display="flex" justifyContent="center">
+                <ModalBody display="flex" justifyContent="stretch">
                     <StarredEvents />
                 </ModalBody>
             </ModalContent>

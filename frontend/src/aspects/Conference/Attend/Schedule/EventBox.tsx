@@ -137,7 +137,7 @@ function EventBoxPopover({
                         fontSize="sm"
                         fontStyle="italic"
                     >
-                        <StarEventButton eventIds={eventIds} mb={1} mr={1} size="sm" />
+                        <StarEventButton eventIds={eventIds} mb={1} mr={1} />
                         {events.length === 1 ? (
                             <>
                                 <EventModeIcon

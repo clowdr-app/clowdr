@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
-import { Button, ButtonProps, Spinner } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import { Box, BoxProps, Button, Spinner } from "@chakra-ui/react";
+import Observer from "@researchgate/react-intersection-observer";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     StarEventButton_GetStarsDocument,
     StarEventButton_GetStarsQuery,
@@ -48,25 +49,59 @@ gql`
 
 export default function StarEventButton({
     eventIds,
-    ...rest
-}: { eventIds: string | string[] } & ButtonProps): JSX.Element {
+    ...props
+}: { eventIds: string | string[] } & BoxProps): JSX.Element {
     const registrant = useMaybeCurrentRegistrant();
+    const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [show, setShow] = useState<boolean>(false);
+    useEffect(() => {
+        let tId: number | undefined;
 
-    if (registrant) {
-        return <StarEventButtonInner eventIds={eventIds} registrant={registrant} {...rest} />;
-    } else {
-        return <></>;
-    }
+        if (isVisible) {
+            tId = setTimeout(
+                (() => {
+                    setShow(true);
+                }) as TimerHandler,
+                250
+            );
+        } else {
+            setShow(false);
+        }
+
+        return () => {
+            if (tId) {
+                clearTimeout(tId);
+            }
+        };
+    }, [isVisible]);
+
+    return (
+        <Observer
+            onChange={(ev) => {
+                setIsVisible(ev.intersectionRatio > 0);
+            }}
+        >
+            <Box
+                display="inline-flex"
+                justifyContent="center"
+                alignItems="center"
+                verticalAlign="middle"
+                minW="1em"
+                {...props}
+            >
+                {show && registrant ? <StarEventButtonInner eventIds={eventIds} registrant={registrant} /> : undefined}
+            </Box>
+        </Observer>
+    );
 }
 
 function StarEventButtonInner({
     eventIds: _eventIds,
     registrant,
-    ...rest
 }: {
     eventIds: string | string[];
     registrant: Registrant;
-} & ButtonProps): JSX.Element {
+}): JSX.Element {
     const eventIds = useMemo(() => (typeof _eventIds === "string" ? [_eventIds] : _eventIds), [_eventIds]);
     const starsResponse = useStarEventButton_GetStarsQuery({
         variables: {
@@ -225,7 +260,7 @@ function StarEventButtonInner({
     }
 
     if (!starsResponse.data) {
-        return <></>;
+        return <div></div>;
     }
 
     if (starsResponse.data.schedule_StarredEvent.length > 0) {
@@ -253,10 +288,12 @@ function StarEventButtonInner({
                 h="auto"
                 minW={0}
                 minH={0}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
                 _hover={{
                     bgColor: "gold",
                 }}
-                {...rest}
             >
                 <FAIcon iconStyle="s" icon="star" color="gold" aria-hidden />
             </Button>
@@ -286,10 +323,12 @@ function StarEventButtonInner({
                 h="auto"
                 minW={0}
                 minH={0}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
                 _hover={{
                     bgColor: "gold",
                 }}
-                {...rest}
             >
                 <FAIcon iconStyle="r" icon="star" color="gold" aria-hidden />
             </Button>

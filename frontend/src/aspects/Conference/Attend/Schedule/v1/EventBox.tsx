@@ -33,16 +33,16 @@ import {
     Schedule_ItemFragment,
     Schedule_TagFragment,
     useSchedule_SelectItemLazyQuery,
-} from "../../../../generated/graphql";
-import { LinkButton } from "../../../Chakra/LinkButton";
-import FAIcon from "../../../Icons/FAIcon";
-import { Markdown } from "../../../Text/Markdown";
-import { useConference } from "../../useConference";
-import { AuthorList, PlainAuthorsList } from "../Content/AuthorList";
-import TagList from "../Content/TagList";
-import { EventModeIcon } from "../Rooms/V2/EventHighlight";
+} from "../../../../../generated/graphql";
+import { LinkButton } from "../../../../Chakra/LinkButton";
+import FAIcon from "../../../../Icons/FAIcon";
+import { Markdown } from "../../../../Text/Markdown";
+import { useConference } from "../../../useConference";
+import { AuthorList, PlainAuthorsList } from "../../Content/AuthorList";
+import TagList from "../../Content/TagList";
+import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
+import StarEventButton from "../StarEventButton";
 import type { TimelineEvent } from "./DayList";
-import StarEventButton from "./StarEventButton";
 import useTimelineParameters from "./useTimelineParameters";
 
 function EventBoxPopover({
@@ -381,7 +381,7 @@ export default function EventBox({
                 ))}
             </>
         );
-    }, [sortedEvents, event.item, event.name, eventStartMs, durationSeconds, tags]);
+    }, [eventIds, sortedEvents, event.item, event.name, eventStartMs, durationSeconds, tags]);
 
     const eventFocusRef = React.useRef<HTMLButtonElement>(null);
     const { isOpen, onClose: _onClose, onOpen } = useDisclosure();

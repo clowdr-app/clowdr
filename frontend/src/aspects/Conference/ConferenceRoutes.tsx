@@ -16,7 +16,7 @@ import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RegistrantListPage from "./Attend/Registrant/RegistrantListPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import RoomListPageV1 from "./Attend/Rooms/V1/RoomListPage";
-import Schedule from "./Attend/Schedule/Schedule";
+import Schedule from "./Attend/Schedule/v1/Schedule";
 import AnalyticsDashboard from "./Manage/Analytics/AnalyticsDashboard";
 import ManageBroadcast from "./Manage/Broadcast/ManageBroadcasts";
 import ManageModeration from "./Manage/Chat/Moderation/ManageModeration";

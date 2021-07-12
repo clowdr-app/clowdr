@@ -5,7 +5,7 @@ import type {
     Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
     Schedule_TagFragment,
-} from "../../../../generated/graphql";
+} from "../../../../../generated/graphql";
 import type { TimelineEvent, TimelineRoom } from "./DayList";
 import EventBox from "./EventBox";
 

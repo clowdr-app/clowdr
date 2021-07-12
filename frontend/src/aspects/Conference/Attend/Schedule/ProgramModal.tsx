@@ -33,7 +33,7 @@ import ItemList from "../Content/ItemList";
 import { ExhibitionsGrid } from "../Exhibition/ExhibitionsPage";
 import { SponsorBoothsInner } from "../Rooms/V2/SponsorBooths";
 import SearchPanel from "../Search/SearchPanel";
-import { ScheduleFetchWrapper, ScheduleInner } from "./Schedule";
+import { ScheduleFetchWrapper, ScheduleInner } from "./v1/Schedule";
 
 gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {

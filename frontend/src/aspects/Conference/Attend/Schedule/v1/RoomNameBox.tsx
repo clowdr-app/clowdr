@@ -1,9 +1,9 @@
 import { Center, HStack, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
-import { Permissions_Permission_Enum, Schedule_RoomSummaryFragment } from "../../../../generated/graphql";
-import { useConference } from "../../useConference";
-import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
+import { Permissions_Permission_Enum, Schedule_RoomSummaryFragment } from "../../../../../generated/graphql";
+import { useConference } from "../../../useConference";
+import { useConferenceCurrentUserActivePermissions } from "../../../useConferenceCurrentUserActivePermissions";
 
 export default function RoomNameBox({
     room,

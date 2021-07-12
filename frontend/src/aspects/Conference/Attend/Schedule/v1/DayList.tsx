@@ -6,7 +6,7 @@ import type {
     Schedule_EventSummaryFragment,
     Schedule_ItemElementsFragment,
     Schedule_RoomSummaryFragment,
-} from "../../../../generated/graphql";
+} from "../../../../../generated/graphql";
 import useTimelineParameters from "./useTimelineParameters";
 
 type FirstEventInfo = {
@@ -74,10 +74,10 @@ export default function DayList({
             );
     }, [events, rooms, timelineParams.timezone]);
     const todayMillis = useMemo(() => DateTime.now().startOf("day").toMillis(), []);
-    const todayFEI = useMemo(() => distinctDates.find(([time, _event]) => time.toMillis() === todayMillis), [
-        distinctDates,
-        todayMillis,
-    ]);
+    const todayFEI = useMemo(
+        () => distinctDates.find(([time, _event]) => time.toMillis() === todayMillis),
+        [distinctDates, todayMillis]
+    );
 
     return (
         <HStack zIndex={1000}>

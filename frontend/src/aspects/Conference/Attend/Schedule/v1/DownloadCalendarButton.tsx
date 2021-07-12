@@ -1,8 +1,8 @@
 import { Button, ButtonProps, useToast } from "@chakra-ui/react";
 import ics, { EventAttributes } from "ics";
 import React from "react";
-import FAIcon from "../../../Icons/FAIcon";
-import { useConference } from "../../useConference";
+import FAIcon from "../../../../Icons/FAIcon";
+import { useConference } from "../../../useConference";
 import type { TimelineEvent } from "./DayList";
 
 export default function DownloadCalendarButton({
@@ -72,18 +72,13 @@ export default function DownloadCalendarButton({
                     const dataBlob = new Blob([value], { type: "text/calendar;charset=utf-8;" });
                     let fileURL: string | null = null;
                     const now = new Date();
-                    const fileName = `${now.getFullYear()}-${now
-                        .getMonth()
-                        .toString()
-                        .padStart(2, "0")}-${now
+                    const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
                         .getDate()
                         .toString()
-                        .padStart(2, "0")}T${now
-                        .getHours()
+                        .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
+                        .getMinutes()
                         .toString()
-                        .padStart(2, "0")}-${now.getMinutes().toString().padStart(2, "0")} - ${
-                        conference.shortName
-                    } - ${calendarName}.ics`;
+                        .padStart(2, "0")} - ${conference.shortName} - ${calendarName}.ics`;
                     if (navigator.msSaveBlob) {
                         navigator.msSaveBlob(dataBlob, fileName);
                     } else {

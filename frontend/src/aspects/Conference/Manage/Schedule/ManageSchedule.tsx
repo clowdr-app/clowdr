@@ -1,4 +1,5 @@
 import { gql, Reference } from "@apollo/client";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
     AccordionButton,
@@ -23,6 +24,11 @@ import {
     Heading,
     HStack,
     Input,
+    Menu,
+    MenuButton,
+    MenuGroup,
+    MenuItem,
+    MenuList,
     Select,
     Text,
     Tooltip,
@@ -32,6 +38,7 @@ import {
     VisuallyHidden,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
+import Papa from "papaparse";
 import React, { LegacyRef, Ref, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -65,6 +72,7 @@ import CRUDTable, {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
+    ExtraButton,
     RowSpecification,
     SortDirection,
 } from "../../../CRUDTable2/CRUDTable2";
@@ -1168,6 +1176,149 @@ function EditableScheduleTable(): JSX.Element {
 
     const pageSizes = useMemo(() => [5, 10, 15, 20], []);
 
+    const buttons: ExtraButton<EventInfoFragment>[] = useMemo(
+        () => [
+            {
+                render: ({ selectedData }: { selectedData: EventInfoFragment[] }) => {
+                    function doExport(dataToExport: readonly EventInfoFragment[]) {
+                        const csvText = Papa.unparse(
+                            dataToExport.map((event) => ({
+                                "Start time": new Date(event.startTime).toISOString(),
+                                "End time": event.endTime
+                                    ? new Date(event.endTime)
+                                    : new Date(
+                                          Date.parse(event.startTime) + event.durationSeconds * 1000
+                                      ).toISOString(),
+                                "Duration (seconds)": event.durationSeconds,
+                                Name: event.name,
+                                Mode: event.intendedRoomModeName,
+
+                                "Participate link": `/conference/${conference.slug}/room/${event.roomId}`,
+                                "Info link": event.itemId
+                                    ? `https://${window.location.host}/conference/${conference.slug}/item/${event.itemId}`
+                                    : event.exhibitionId
+                                    ? `https://${window.location.host}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
+                                    : `https://${window.location.host}/conference/${conference.slug}/schedule`,
+
+                                "Room id": event.roomId,
+                                "Room name":
+                                    wholeSchedule.data?.room_Room.find((x) => x.id === event.roomId)?.name ?? "",
+                                "Room link": `https://${window.location.host}/conference/${conference.slug}/room/${event.roomId}`,
+
+                                "Content id": event.itemId ?? "",
+                                "Content title": event.itemId
+                                    ? wholeSchedule.data?.content_Item.find((item) => item.id === event.itemId)
+                                          ?.title ?? ""
+                                    : "",
+                                "Content link": event.itemId
+                                    ? `https://${window.location.host}/conference/${conference.slug}/item/${event.itemId}`
+                                    : "",
+
+                                "Exhibition id": event.exhibitionId ?? "",
+                                "Exhibition title": event.exhibitionId
+                                    ? wholeSchedule.data?.collection_Exhibition.find(
+                                          (exh) => exh.id === event.exhibitionId
+                                      ) ?? ""
+                                    : "",
+                                "Exhibition link": event.exhibitionId
+                                    ? `https://${window.location.host}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
+                                    : "",
+
+                                "Shuffle period id": event.shufflePeriodId ?? "",
+                                "Shuffle link": event.shufflePeriodId
+                                    ? `https://${window.location.host}/conference/${conference.slug}/shuffle`
+                                    : "",
+                            }))
+                        );
+
+                        const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+                        let csvURL: string | null = null;
+                        const now = new Date();
+                        const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                            .getDate()
+                            .toString()
+                            .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")} - Clowdr Schedule.csv`;
+                        if (navigator.msSaveBlob) {
+                            navigator.msSaveBlob(csvData, fileName);
+                        } else {
+                            csvURL = window.URL.createObjectURL(csvData);
+                        }
+
+                        const tempLink = document.createElement("a");
+                        tempLink.href = csvURL ?? "";
+                        tempLink.setAttribute("download", fileName);
+                        tempLink.click();
+                    }
+
+                    const tooltip = (filler: string) => `Exports ${filler}.`;
+                    if (selectedData.length === 0) {
+                        return (
+                            <Menu>
+                                <Tooltip label={tooltip("all events (from a chosen room)")}>
+                                    <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
+                                        Export
+                                    </MenuButton>
+                                </Tooltip>
+                                <MenuList maxH="400px" overflowY="auto">
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (wholeSchedule.data?.schedule_Event) {
+                                                doExport(wholeSchedule.data.schedule_Event);
+                                            }
+                                        }}
+                                    >
+                                        All rooms
+                                    </MenuItem>
+                                    <MenuGroup>
+                                        {wholeSchedule.data?.room_Room.map((room) => (
+                                            <MenuItem
+                                                key={room.id}
+                                                onClick={() => {
+                                                    if (wholeSchedule.data?.schedule_Event) {
+                                                        doExport(
+                                                            wholeSchedule.data.schedule_Event.filter(
+                                                                (event) => event.roomId === room.id
+                                                            )
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                {room.name}
+                                            </MenuItem>
+                                        ))}
+                                    </MenuGroup>
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip label={tooltip("selected events")}>
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        onClick={() => doExport(selectedData)}
+                                    >
+                                        Export
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+                        );
+                    }
+                },
+            },
+        ],
+        [
+            wholeSchedule.data?.schedule_Event,
+            wholeSchedule.data?.room_Room,
+            wholeSchedule.data?.collection_Exhibition,
+            conference.slug,
+        ]
+    );
+
     return (
         <>
             <HStack flexWrap="wrap" maxW="100%" justifyContent="center" gridRowGap={2}>
@@ -1216,6 +1367,7 @@ function EditableScheduleTable(): JSX.Element {
                         : undefined
                 }
                 forceReload={forceReloadRef}
+                buttons={buttons}
             />
             <EventSecondaryEditor
                 yellowC={yellow}

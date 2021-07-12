@@ -99,7 +99,7 @@ function ElementInner({
                 return (
                     // TODO: Chakra AspectRatio
                     // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
-                    <AspectRatio ratio={16 / 9} maxW={800} m={2}>
+                    <AspectRatio ratio={16 / 9} w="100%" maxW="800px" maxH="90vh" m={2}>
                         <ReactPlayer
                             url={latestVersion.data.url}
                             style={{ maxWidth: "100%", position: "absolute", top: 0, left: 0 }}

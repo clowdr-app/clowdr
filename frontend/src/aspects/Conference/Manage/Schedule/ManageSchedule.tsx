@@ -1321,10 +1321,11 @@ function EditableScheduleTable(): JSX.Element {
             },
         ],
         [
-            wholeSchedule.data?.schedule_Event,
-            wholeSchedule.data?.room_Room,
-            wholeSchedule.data?.collection_Exhibition,
             conference.slug,
+            wholeSchedule.data?.room_Room,
+            wholeSchedule.data?.content_Item,
+            wholeSchedule.data?.collection_Exhibition,
+            wholeSchedule.data?.schedule_Event,
         ]
     );
 

@@ -33,6 +33,7 @@ import {
     useManageContent_SelectAllTagsQuery,
     useManageContent_UpdateItemMutation,
 } from "../../../../generated/graphql";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import MultiSelect from "../../../Chakra/MultiSelect";
 import { MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
@@ -755,6 +756,15 @@ export default function ManageContentV2(): JSX.Element {
     const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(
         () => [
             {
+                render: function ImportButton(_selectedData) {
+                    return (
+                        <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/content`}>
+                            Import
+                        </LinkButton>
+                    );
+                },
+            },
+            {
                 render: function SendSubmissionRequests({
                     selectedData: items,
                     key,
@@ -912,7 +922,13 @@ export default function ManageContentV2(): JSX.Element {
                 },
             },
         ],
-        [allTags?.collection_Tag, sendSubmissionRequests_OnOpen, allItems?.content_Item, submissionsReview_OnOpen]
+        [
+            conference.slug,
+            allTags?.collection_Tag,
+            sendSubmissionRequests_OnOpen,
+            allItems?.content_Item,
+            submissionsReview_OnOpen,
+        ]
     );
 
     const { isOpen: editPGs_IsOpen, onOpen: editPGs_OnOpen, onClose: editPGs_OnClose } = useDisclosure();

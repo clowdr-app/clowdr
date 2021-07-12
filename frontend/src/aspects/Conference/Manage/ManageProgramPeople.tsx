@@ -31,6 +31,7 @@ import {
     useManageProgramPeople_SelectAllRegistrantsQuery,
     useManageProgramPeople_UpdateProgramPersonMutation,
 } from "../../../generated/graphql";
+import { LinkButton } from "../../Chakra/LinkButton";
 import { TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
@@ -593,6 +594,15 @@ export default function ManageProgramPeople(): JSX.Element {
     const buttons = useMemo(
         () => [
             {
+                render: function ImportButton(_selectedData: any) {
+                    return (
+                        <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/content`}>
+                            Import
+                        </LinkButton>
+                    );
+                },
+            },
+            {
                 render: function AutoLinkMenu() {
                     return (
                         <Menu>
@@ -722,7 +732,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 },
             },
         ],
-        [autoLink, data, green, greenAlt]
+        [autoLink, conference.slug, data, green, greenAlt]
     );
 
     const pageSizes = useMemo(() => [10, 20, 35, 50], []);

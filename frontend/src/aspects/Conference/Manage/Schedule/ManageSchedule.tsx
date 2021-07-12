@@ -1179,6 +1179,15 @@ function EditableScheduleTable(): JSX.Element {
     const buttons: ExtraButton<EventInfoFragment>[] = useMemo(
         () => [
             {
+                render: function ImportButton(_selectedData) {
+                    return (
+                        <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/schedule`}>
+                            Import
+                        </LinkButton>
+                    );
+                },
+            },
+            {
                 render: ({ selectedData }: { selectedData: EventInfoFragment[] }) => {
                     function doExport(dataToExport: readonly EventInfoFragment[]) {
                         const csvText = Papa.unparse(

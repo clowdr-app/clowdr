@@ -2285,14 +2285,16 @@
     permission:
       columns:
       - conferenceId
-      - itemId
-      - typeName
+      - created_at
       - data
       - id
       - isHidden
+      - itemId
       - layoutData
       - name
       - originatingDataId
+      - typeName
+      - updated_at
       filter:
         _and:
         - _and:

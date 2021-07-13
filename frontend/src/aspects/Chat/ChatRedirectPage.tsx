@@ -42,8 +42,8 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
         <Redirect
             to={`/conference/${conference.slug}${
                 data?.chat_Chat_by_pk?.rooms
-                    ? `/room/${data?.chat_Chat_by_pk?.rooms[0].id}`
-                    : `/item/${data?.chat_Chat_by_pk?.items[0].id}`
+                    ? `/room/${data?.chat_Chat_by_pk?.rooms[0]?.id}`
+                    : `/item/${data?.chat_Chat_by_pk?.items[0]?.id}`
             }`}
         />
     );

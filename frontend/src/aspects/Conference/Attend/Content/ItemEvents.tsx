@@ -43,7 +43,7 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
         [events]
     );
 
-    return (
+    return rooms.length > 0 ? (
         <>
             <Flex pt={2} flexWrap="wrap" alignItems="flex-start" gridColumnGap="2%" overflowX="auto">
                 <VStack flex="1 1 48%" alignItems="flex-start" maxW="max-content">
@@ -88,6 +88,8 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
                 </VStack>
             </Flex>
         </>
+    ) : (
+        <></>
     );
 }
 
@@ -156,35 +158,38 @@ query ItemEvent_RoomNearbyEvents {
         () =>
             query.loading || !query.data
                 ? []
-                : R.uniqBy((x) => x.id, [
-                      ...events.map((event) => ({
-                          ...event,
-                          item: {
-                              id: "",
-                              title: "This item",
-                          },
-                      })),
-                      ...(Object.values(query.data) as any[][])
-                          .reduce((acc, evs) => [...acc, ...evs], [])
-                          .map((event) =>
-                              event.item?.id === thisItemId
-                                  ? {
-                                        ...event,
-                                        item: {
-                                            id: "",
-                                            title: "This item",
-                                        },
-                                    }
-                                  : { ...event }
-                          ),
-                  ]),
+                : R.uniqBy(
+                      (x) => x.id,
+                      [
+                          ...events.map((event) => ({
+                              ...event,
+                              item: {
+                                  id: "",
+                                  title: "This item",
+                              },
+                          })),
+                          ...(Object.values(query.data) as any[][])
+                              .reduce((acc, evs) => [...acc, ...evs], [])
+                              .map((event) =>
+                                  event.item?.id === thisItemId
+                                      ? {
+                                            ...event,
+                                            item: {
+                                                id: "",
+                                                title: "This item",
+                                            },
+                                        }
+                                      : { ...event }
+                              ),
+                      ]
+                  ),
         [events, query.data, query.loading, thisItemId]
     );
 
-    const table = useMemo(() => <EventsTable events={fullEventsList} includeRoom={false} roomId={roomId} />, [
-        fullEventsList,
-        roomId,
-    ]);
+    const table = useMemo(
+        () => <EventsTable events={fullEventsList} includeRoom={false} roomId={roomId} />,
+        [fullEventsList, roomId]
+    );
 
     return query.loading ? <Spinner label="Loading room schedule" /> : table;
 }

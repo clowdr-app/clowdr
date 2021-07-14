@@ -244,7 +244,7 @@ function EventBoxPopover({
                                 <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
                                 Times are shown in your local timezone.
                             </Text>
-                            <Grid templateColumns="repeat(3, auto)" rowGap={1} columnGap={2}>
+                            <Grid templateColumns="repeat(4, auto)" rowGap={1} columnGap={2}>
                                 {events.map((event) => (
                                     <>
                                         <GridItem>

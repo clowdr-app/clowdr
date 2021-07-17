@@ -25291,6 +25291,7 @@ export type Room_Room = {
   readonly chatId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting>;
+  readonly colour: Scalars['String'];
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -25766,6 +25767,7 @@ export type Room_Room_Bool_Exp = {
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
+  readonly colour?: Maybe<String_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -25817,6 +25819,7 @@ export type Room_Room_Insert_Input = {
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
@@ -25849,6 +25852,7 @@ export type Room_Room_Max_Fields = {
   readonly __typename?: 'room_Room_max_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -25865,6 +25869,7 @@ export type Room_Room_Max_Fields = {
 export type Room_Room_Max_Order_By = {
   readonly capacity?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -25882,6 +25887,7 @@ export type Room_Room_Min_Fields = {
   readonly __typename?: 'room_Room_min_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -25898,6 +25904,7 @@ export type Room_Room_Min_Fields = {
 export type Room_Room_Min_Order_By = {
   readonly capacity?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -25942,6 +25949,7 @@ export type Room_Room_Order_By = {
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
@@ -25983,6 +25991,8 @@ export enum Room_Room_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
+  Colour = 'colour',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'created_at',
@@ -26013,6 +26023,7 @@ export type Room_Room_Set_Input = {
   readonly backendName?: Maybe<Room_Backend_Enum>;
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly currentModeName?: Maybe<Room_Mode_Enum>;
@@ -26087,6 +26098,8 @@ export enum Room_Room_Update_Column {
   Capacity = 'capacity',
   /** column name */
   ChatId = 'chatId',
+  /** column name */
+  Colour = 'colour',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -35570,64 +35583,6 @@ export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', 
     & Schedule_TagFragment
   )> };
 
-export type Schedule_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
-
-export type Schedule_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> };
-
-export type Schedule_ItemPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
-    { readonly __typename?: 'collection_ProgramPerson' }
-    & Schedule_ProgramPersonFragment
-  ) };
-
-export type Schedule_ItemElementsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemPeople: ReadonlyArray<(
-    { readonly __typename?: 'content_ItemProgramPerson' }
-    & Schedule_ItemPersonFragment
-  )> };
-
-export type Schedule_ItemFragment = (
-  { readonly __typename?: 'content_Item', readonly abstractElements: ReadonlyArray<(
-    { readonly __typename?: 'content_Element' }
-    & Schedule_ElementFragment
-  )>, readonly itemPeople: ReadonlyArray<(
-    { readonly __typename?: 'content_ItemProgramPerson' }
-    & Schedule_ItemPersonFragment
-  )> }
-  & Schedule_ItemElementsFragment
-);
-
-export type Schedule_SelectItemQueryVariables = Exact<{
-  id: Scalars['uuid'];
-}>;
-
-
-export type Schedule_SelectItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<(
-    { readonly __typename?: 'content_Item' }
-    & Schedule_ItemFragment
-  )> };
-
-export type Schedule_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any> };
-
-export type Schedule_RoomSummaryFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum };
-
-export type Schedule_SelectSummariesQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
-    { readonly __typename?: 'room_Room' }
-    & Schedule_RoomSummaryFragment
-  )>, readonly schedule_Event: ReadonlyArray<(
-    { readonly __typename?: 'schedule_Event' }
-    & Schedule_EventSummaryFragment
-  )>, readonly content_Item: ReadonlyArray<(
-    { readonly __typename?: 'content_Item' }
-    & Schedule_ItemElementsFragment
-  )>, readonly collection_Tag: ReadonlyArray<(
-    { readonly __typename?: 'collection_Tag' }
-    & Schedule_TagFragment
-  )> };
-
 export type StarredEventFragment = { readonly __typename?: 'schedule_StarredEvent', readonly id: any, readonly eventId: any, readonly registrantId: any };
 
 export type StarEventButton_GetStarsQueryVariables = Exact<{
@@ -35686,6 +35641,88 @@ export type StarredEvents_SelectEventsQuery = { readonly __typename?: 'query_roo
   )>, readonly collection_Tag: ReadonlyArray<(
     { readonly __typename?: 'collection_Tag' }
     & Schedule_TagFragment
+  )> };
+
+export type Schedule_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
+
+export type Schedule_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> };
+
+export type Schedule_ItemPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
+    { readonly __typename?: 'collection_ProgramPerson' }
+    & Schedule_ProgramPersonFragment
+  ) };
+
+export type Schedule_ItemElementsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemPeople: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & Schedule_ItemPersonFragment
+  )> };
+
+export type Schedule_ItemFragment = (
+  { readonly __typename?: 'content_Item', readonly abstractElements: ReadonlyArray<(
+    { readonly __typename?: 'content_Element' }
+    & Schedule_ElementFragment
+  )>, readonly itemPeople: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & Schedule_ItemPersonFragment
+  )> }
+  & Schedule_ItemElementsFragment
+);
+
+export type Schedule_SelectItemQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type Schedule_SelectItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<(
+    { readonly __typename?: 'content_Item' }
+    & Schedule_ItemFragment
+  )> };
+
+export type Schedule_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any> };
+
+export type Schedule_RoomSummaryFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum };
+
+export type Schedule_SelectSummariesQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & Schedule_RoomSummaryFragment
+  )>, readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & Schedule_EventSummaryFragment
+  )>, readonly content_Item: ReadonlyArray<(
+    { readonly __typename?: 'content_Item' }
+    & Schedule_ItemElementsFragment
+  )>, readonly collection_Tag: ReadonlyArray<(
+    { readonly __typename?: 'collection_Tag' }
+    & Schedule_TagFragment
+  )> };
+
+export type ScheduleV2_BaseEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any };
+
+export type ScheduleV2_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number };
+
+export type ScheduleV2_RoomsQueryVariables = Exact<{
+  roomIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ScheduleV2_RoomsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & ScheduleV2_RoomFragment
+  )> };
+
+export type ScheduleV2_AllEventsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ScheduleV2_AllEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & ScheduleV2_BaseEventFragment
   )> };
 
 export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<(
@@ -38464,6 +38501,13 @@ export const Schedule_EventTagFragmentDoc = gql`
   }
 }
     ${Schedule_TagFragmentDoc}`;
+export const StarredEventFragmentDoc = gql`
+    fragment StarredEvent on schedule_StarredEvent {
+  id
+  eventId
+  registrantId
+}
+    `;
 export const Schedule_ProgramPersonFragmentDoc = gql`
     fragment Schedule_ProgramPerson on collection_ProgramPerson {
   id
@@ -38544,11 +38588,19 @@ export const Schedule_RoomSummaryFragmentDoc = gql`
   managementModeName
 }
     `;
-export const StarredEventFragmentDoc = gql`
-    fragment StarredEvent on schedule_StarredEvent {
+export const ScheduleV2_BaseEventFragmentDoc = gql`
+    fragment ScheduleV2_BaseEvent on schedule_Event {
   id
-  eventId
-  registrantId
+  startTime
+  endTime
+  roomId
+}
+    `;
+export const ScheduleV2_RoomFragmentDoc = gql`
+    fragment ScheduleV2_Room on room_Room {
+  id
+  name
+  priority
 }
     `;
 export const SearchPanel_ItemFragmentDoc = gql`
@@ -41678,90 +41730,6 @@ export function useSchedule_HappeningSoonLazyQuery(baseOptions?: Apollo.LazyQuer
 export type Schedule_HappeningSoonQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonQuery>;
 export type Schedule_HappeningSoonLazyQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonLazyQuery>;
 export type Schedule_HappeningSoonQueryResult = Apollo.QueryResult<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>;
-export const Schedule_SelectItemDocument = gql`
-    query Schedule_SelectItem($id: uuid!) {
-  content_Item_by_pk(id: $id) {
-    ...Schedule_Item
-  }
-}
-    ${Schedule_ItemFragmentDoc}`;
-
-/**
- * __useSchedule_SelectItemQuery__
- *
- * To run a query within a React component, call `useSchedule_SelectItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useSchedule_SelectItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSchedule_SelectItemQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useSchedule_SelectItemQuery(baseOptions: Apollo.QueryHookOptions<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>(Schedule_SelectItemDocument, options);
-      }
-export function useSchedule_SelectItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>(Schedule_SelectItemDocument, options);
-        }
-export type Schedule_SelectItemQueryHookResult = ReturnType<typeof useSchedule_SelectItemQuery>;
-export type Schedule_SelectItemLazyQueryHookResult = ReturnType<typeof useSchedule_SelectItemLazyQuery>;
-export type Schedule_SelectItemQueryResult = Apollo.QueryResult<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>;
-export const Schedule_SelectSummariesDocument = gql`
-    query Schedule_SelectSummaries($conferenceId: uuid!) {
-  room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, managementModeName: {_in: [PUBLIC, PRIVATE]}, events: {}}
-  ) {
-    ...Schedule_RoomSummary
-  }
-  schedule_Event(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...Schedule_EventSummary
-  }
-  content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...Schedule_ItemElements
-  }
-  collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...Schedule_Tag
-  }
-}
-    ${Schedule_RoomSummaryFragmentDoc}
-${Schedule_EventSummaryFragmentDoc}
-${Schedule_ItemElementsFragmentDoc}
-${Schedule_TagFragmentDoc}`;
-
-/**
- * __useSchedule_SelectSummariesQuery__
- *
- * To run a query within a React component, call `useSchedule_SelectSummariesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSchedule_SelectSummariesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSchedule_SelectSummariesQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSchedule_SelectSummariesQuery(baseOptions: Apollo.QueryHookOptions<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>(Schedule_SelectSummariesDocument, options);
-      }
-export function useSchedule_SelectSummariesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>(Schedule_SelectSummariesDocument, options);
-        }
-export type Schedule_SelectSummariesQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesQuery>;
-export type Schedule_SelectSummariesLazyQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesLazyQuery>;
-export type Schedule_SelectSummariesQueryResult = Apollo.QueryResult<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>;
 export const StarEventButton_GetStarsDocument = gql`
     query StarEventButton_GetStars($eventIds: [uuid!]!, $registrantId: uuid!) {
   schedule_StarredEvent(
@@ -41958,6 +41926,160 @@ export function useStarredEvents_SelectEventsLazyQuery(baseOptions?: Apollo.Lazy
 export type StarredEvents_SelectEventsQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventsQuery>;
 export type StarredEvents_SelectEventsLazyQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventsLazyQuery>;
 export type StarredEvents_SelectEventsQueryResult = Apollo.QueryResult<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>;
+export const Schedule_SelectItemDocument = gql`
+    query Schedule_SelectItem($id: uuid!) {
+  content_Item_by_pk(id: $id) {
+    ...Schedule_Item
+  }
+}
+    ${Schedule_ItemFragmentDoc}`;
+
+/**
+ * __useSchedule_SelectItemQuery__
+ *
+ * To run a query within a React component, call `useSchedule_SelectItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSchedule_SelectItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSchedule_SelectItemQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSchedule_SelectItemQuery(baseOptions: Apollo.QueryHookOptions<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>(Schedule_SelectItemDocument, options);
+      }
+export function useSchedule_SelectItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>(Schedule_SelectItemDocument, options);
+        }
+export type Schedule_SelectItemQueryHookResult = ReturnType<typeof useSchedule_SelectItemQuery>;
+export type Schedule_SelectItemLazyQueryHookResult = ReturnType<typeof useSchedule_SelectItemLazyQuery>;
+export type Schedule_SelectItemQueryResult = Apollo.QueryResult<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>;
+export const Schedule_SelectSummariesDocument = gql`
+    query Schedule_SelectSummaries($conferenceId: uuid!) {
+  room_Room(
+    where: {conferenceId: {_eq: $conferenceId}, managementModeName: {_in: [PUBLIC, PRIVATE]}, events: {}}
+  ) {
+    ...Schedule_RoomSummary
+  }
+  schedule_Event(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Schedule_EventSummary
+  }
+  content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Schedule_ItemElements
+  }
+  collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Schedule_Tag
+  }
+}
+    ${Schedule_RoomSummaryFragmentDoc}
+${Schedule_EventSummaryFragmentDoc}
+${Schedule_ItemElementsFragmentDoc}
+${Schedule_TagFragmentDoc}`;
+
+/**
+ * __useSchedule_SelectSummariesQuery__
+ *
+ * To run a query within a React component, call `useSchedule_SelectSummariesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSchedule_SelectSummariesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSchedule_SelectSummariesQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useSchedule_SelectSummariesQuery(baseOptions: Apollo.QueryHookOptions<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>(Schedule_SelectSummariesDocument, options);
+      }
+export function useSchedule_SelectSummariesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>(Schedule_SelectSummariesDocument, options);
+        }
+export type Schedule_SelectSummariesQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesQuery>;
+export type Schedule_SelectSummariesLazyQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesLazyQuery>;
+export type Schedule_SelectSummariesQueryResult = Apollo.QueryResult<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>;
+export const ScheduleV2_RoomsDocument = gql`
+    query ScheduleV2_Rooms($roomIds: [uuid!]!) {
+  room_Room(where: {id: {_in: $roomIds}}) {
+    ...ScheduleV2_Room
+  }
+}
+    ${ScheduleV2_RoomFragmentDoc}`;
+
+/**
+ * __useScheduleV2_RoomsQuery__
+ *
+ * To run a query within a React component, call `useScheduleV2_RoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useScheduleV2_RoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useScheduleV2_RoomsQuery({
+ *   variables: {
+ *      roomIds: // value for 'roomIds'
+ *   },
+ * });
+ */
+export function useScheduleV2_RoomsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>(ScheduleV2_RoomsDocument, options);
+      }
+export function useScheduleV2_RoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>(ScheduleV2_RoomsDocument, options);
+        }
+export type ScheduleV2_RoomsQueryHookResult = ReturnType<typeof useScheduleV2_RoomsQuery>;
+export type ScheduleV2_RoomsLazyQueryHookResult = ReturnType<typeof useScheduleV2_RoomsLazyQuery>;
+export type ScheduleV2_RoomsQueryResult = Apollo.QueryResult<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>;
+export const ScheduleV2_AllEventsDocument = gql`
+    query ScheduleV2_AllEvents($conferenceId: uuid!) {
+  schedule_Event(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ScheduleV2_BaseEvent
+  }
+}
+    ${ScheduleV2_BaseEventFragmentDoc}`;
+
+/**
+ * __useScheduleV2_AllEventsQuery__
+ *
+ * To run a query within a React component, call `useScheduleV2_AllEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useScheduleV2_AllEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useScheduleV2_AllEventsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useScheduleV2_AllEventsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>(ScheduleV2_AllEventsDocument, options);
+      }
+export function useScheduleV2_AllEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>(ScheduleV2_AllEventsDocument, options);
+        }
+export type ScheduleV2_AllEventsQueryHookResult = ReturnType<typeof useScheduleV2_AllEventsQuery>;
+export type ScheduleV2_AllEventsLazyQueryHookResult = ReturnType<typeof useScheduleV2_AllEventsLazyQuery>;
+export type ScheduleV2_AllEventsQueryResult = Apollo.QueryResult<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>;
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
   content_Item(

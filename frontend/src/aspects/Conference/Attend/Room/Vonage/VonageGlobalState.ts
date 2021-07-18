@@ -394,6 +394,7 @@ export class VonageGlobalState {
 
             const publisher = OT.initPublisher(screenPublishContainerRef, {
                 videoSource: "screen",
+                resolution: "1280x720",
                 maxResolution: { width: 1280, height: 1280 },
                 width: "100%",
                 height: "100%",
@@ -402,6 +403,32 @@ export class VonageGlobalState {
             });
 
             _publisher = publisher;
+
+            publisher.on("streamCreated", () => {
+                try {
+                    // We may need to manually apply the constraints to work around a bug in the Vonage client
+                    const track = publisher.getVideoSource().track;
+                    if (!track) {
+                        console.warn("No track detected after stream creation");
+                        return;
+                    }
+                    const settings = track.getSettings();
+                    if (!settings.width || settings.width > 1280 || !settings.height || settings.height > 1280) {
+                        const existingConstraints = track.getConstraints();
+                        console.warn("Vonage client failed to apply MediaStreamConstraints, re-applying", {
+                            settings,
+                            existingConstraints,
+                        });
+                        track.applyConstraints({
+                            ...existingConstraints,
+                            width: { ideal: 1280, max: 1280 },
+                            height: { ideal: 720, max: 1280 },
+                        });
+                    }
+                } catch (err) {
+                    console.error("Error while checking MediaStreamConstraint application", { err });
+                }
+            });
 
             await new Promise<void>((resolve, reject) => {
                 state.session.publish(publisher, (error: OT.OTError | undefined) => {

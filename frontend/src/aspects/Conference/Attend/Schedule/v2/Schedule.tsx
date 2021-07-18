@@ -10,7 +10,6 @@ import {
     useScheduleV2_RoomsQuery,
 } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
-import { roundDownToNearest } from "../../../../Generic/MathUtils";
 import { useConference } from "../../../useConference";
 import { ScheduleProvider, useSchedule } from "./ScheduleContext";
 
@@ -120,10 +119,10 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
         latestHourDT = latestHourPlus3HrsDT.toMillis() > latestDayDT.toMillis() ? latestDayDT : latestHourPlus3HrsDT;
 
         const timeMarkers: luxon.DateTime[] = [earliestHourDT];
-        let lastTimeMarker = earliestHourDT;
+        let previousTimeMarker = earliestHourDT;
 
         // Order matters - longest period first
-        const boundaries: luxon.DurationObject[] = [
+        const boundaries: luxon.Duration[] = [
             // These periods allow us to span most weekends and public holidays
             // without having to display every day in between and without copious
             // empty hours at the beginning of the resuming day
@@ -145,7 +144,6 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
             { hours: 24 },
             { hours: 21 },
             { hours: 18 },
-            { hours: 15 },
             { hours: 12 },
             { hours: 9 },
             { hours: 6 },
@@ -163,13 +161,13 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
             { minutes: 1 },
             // ...and deal with the insane people who scheduled events off of
             // minute boundaries ;)
-            { seconds: 45 },
             { seconds: 30 },
             { seconds: 15 },
             { seconds: 5 },
             { seconds: 1 },
-        ];
-        let currentBoundaryIndex = 0;
+        ].map((x) => luxon.Duration.fromObject(x));
+
+        let previousBoundary: luxon.Duration = boundaries[0];
         for (
             let startEventIndex = 0, endEventIndex = 0;
             startEventIndex < sortedEvents.length || endEventIndex < sortedEvents.length;
@@ -195,49 +193,17 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                 currentEventSource = "end";
             }
 
-            if (currentEventMs !== lastTimeMarker.toMillis()) {
-                let nextMarkerDT = lastTimeMarker.plus(boundaries[currentBoundaryIndex]);
-                if (nextMarkerDT.toMillis() > currentEventMs) {
-                    // Home in on / approach up to
-                    while (currentBoundaryIndex < boundaries.length - 1 && nextMarkerDT.toMillis() > currentEventMs) {
-                        currentBoundaryIndex++;
-                        nextMarkerDT = lastTimeMarker.plus(boundaries[currentBoundaryIndex]);
-                    }
-                } else if (nextMarkerDT.toMillis() < currentEventMs) {
-                    // Expand away from
+            const timeToEventMs = currentEventMs - previousTimeMarker.toMillis();
+            if (timeToEventMs > 0) {
+                const chosenBoundary =
+                    boundaries.find(
+                        (boundary) =>
+                            boundary.toMillis() <= timeToEventMs &&
+                            isBoundaryExpandableTo(previousBoundary, boundary, previousTimeMarker)
+                    ) ?? boundaries[boundaries.length - 1];
+                let nextMarkerDT = previousTimeMarker.plus(chosenBoundary);
 
-                    let couldExpand = false;
-                    for (let testIndex = 0; testIndex < currentBoundaryIndex; testIndex++) {
-                        couldExpand = isOnExpansionBoundary(lastTimeMarker, boundaries[testIndex]);
-                    }
-                    if (couldExpand) {
-                        nextMarkerDT = lastTimeMarker;
-
-                        while (currentBoundaryIndex > 0 && nextMarkerDT.toMillis() < currentEventMs) {
-                            currentBoundaryIndex--;
-                            if (isOnExpansionBoundary(lastTimeMarker, boundaries[currentBoundaryIndex])) {
-                                nextMarkerDT = roundDateTimeDown(
-                                    lastTimeMarker,
-                                    boundaries[currentBoundaryIndex],
-                                    params.timezone
-                                ).plus(boundaries[currentBoundaryIndex]);
-                            }
-                        }
-
-                        while (nextMarkerDT.toMillis() > currentEventMs) {
-                            currentBoundaryIndex++;
-                            if (isOnExpansionBoundary(lastTimeMarker, boundaries[currentBoundaryIndex])) {
-                                nextMarkerDT = roundDateTimeDown(
-                                    lastTimeMarker,
-                                    boundaries[currentBoundaryIndex],
-                                    params.timezone
-                                ).plus(boundaries[currentBoundaryIndex]);
-                            }
-                        }
-                    }
-                }
-
-                if (nextMarkerDT.hour !== lastTimeMarker.hour) {
+                if (nextMarkerDT.hour !== previousTimeMarker.hour) {
                     nextMarkerDT = nextMarkerDT.startOf("hour");
                 }
 
@@ -246,7 +212,8 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                 }
 
                 timeMarkers.push(nextMarkerDT);
-                lastTimeMarker = nextMarkerDT;
+                previousTimeMarker = nextMarkerDT;
+                previousBoundary = chosenBoundary;
             } else {
                 advanceEventIndex = true;
             }
@@ -423,6 +390,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
 
                     const markerMillis = marker.toMillis();
                     const isHourBoundary = markerMillis % (60 * 60 * 1000) === 0;
+                    const isHourDiscontiguous = !!previousMarker && marker.hour > previousMarker.hour + 1;
                     const hourBoundaryBorder = "1px solid";
                     const hourBoundaryBorderColor = "gray.400";
                     const eventBorder = "1px solid";
@@ -472,6 +440,8 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                                     ? eventBorderColor
                                                     : undefined
                                             }
+                                            borderTopStyle={isHourBoundary && isHourDiscontiguous ? "double" : "solid"}
+                                            borderTopWidth={isHourBoundary && isHourDiscontiguous ? "6px" : undefined}
                                             borderX="1px solid"
                                             borderXColor={eventBorderColor}
                                         >
@@ -498,6 +468,8 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                             key={room.id}
                                             borderTop={isHourBoundary ? hourBoundaryBorder : undefined}
                                             borderTopColor={isHourBoundary ? hourBoundaryBorderColor : undefined}
+                                            borderTopStyle={isHourBoundary && isHourDiscontiguous ? "double" : "solid"}
+                                            borderTopWidth={isHourBoundary && isHourDiscontiguous ? "6px" : undefined}
                                         >
                                             {/* EMPTY */}
                                         </Td>
@@ -515,7 +487,11 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                         colSpan={1 + sortedRooms.length}
                                         pos="sticky"
                                         top="calc(2.7rem - 4px)"
-                                        bgColor="blue.400"
+                                        bgColor={
+                                            previousMarker && previousMarker.weekNumber !== marker.weekNumber
+                                                ? "purple.300"
+                                                : "blue.400"
+                                        }
                                         fontWeight="bold"
                                         fontSize="md"
                                         zIndex={2}
@@ -566,13 +542,12 @@ export function WholeSchedule(): JSX.Element {
     return <Schedule events={eventsResponse.data.schedule_Event} />;
 }
 
-function isOnExpansionBoundary(time: luxon.DateTime, period: luxon.DurationObject) {
-    const periodMs = Math.min(60 * 60 * 1000, Math.max(1, luxon.Duration.fromObject(period).toMillis()));
-    return time.toMillis() % periodMs === 0;
-}
-
-function roundDateTimeDown(time: luxon.DateTime, period: luxon.DurationObject, timezone: luxon.Zone) {
-    return luxon.DateTime.fromMillis(
-        roundDownToNearest(time.toMillis(), luxon.Duration.fromObject(period).toMillis())
-    ).setZone(timezone);
+function isBoundaryExpandableTo(period1: luxon.Duration, period2: luxon.Duration, currentTime: luxon.DateTime) {
+    const period1Ms = period1.toMillis();
+    const period2Ms = period2.toMillis();
+    return (
+        period2Ms < period1Ms ||
+        (period2Ms % period1Ms === 0 && currentTime.toMillis() % period2Ms === 0) ||
+        (period2Ms >= 6 * 60 * 60 * 1000 && currentTime.toMillis() % (60 * 60 * 1000) === 0)
+    );
 }

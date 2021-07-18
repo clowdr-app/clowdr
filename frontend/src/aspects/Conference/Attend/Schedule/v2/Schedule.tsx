@@ -325,6 +325,14 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
     const scrollbarColourT = useToken("colors", scrollbarColour);
     const scrollbarBackgroundT = useToken("colors", scrollbarBackground);
 
+    const timeBoxBgColor = useColorModeValue("gray.50", "gray.900");
+    const roomHeadingBgColor = useColorModeValue("gray.50", "gray.900");
+    const hourBoundaryBorderColor = useColorModeValue("gray.400", "gray.500");
+    const eventBorderColor = useColorModeValue("gray.600", "gray.300");
+    const eventBoxBgColor = useColorModeValue("gray.100", "gray.700");
+    const weekHeadingBgColor = useColorModeValue("purple.300", "purple.700");
+    const dayHeadingBgColor = useColorModeValue("blue.400", "blue.500");
+
     return (
         <Box
             pos="relative"
@@ -361,7 +369,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                         pos="sticky"
                         top={0}
                         left={0}
-                        bgColor="gray.50"
+                        bgColor={timeBoxBgColor}
                         zIndex={2}
                         whiteSpace="nowrap"
                         minW="min-content"
@@ -375,7 +383,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                             key={room.id}
                             pos="sticky"
                             top={0}
-                            bgColor="gray.50"
+                            bgColor={roomHeadingBgColor}
                             whiteSpace="nowrap" /* bgColor={room.colour} */
                             zIndex={0}
                             textAlign="center"
@@ -392,16 +400,14 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                     const isHourBoundary = markerMillis % (60 * 60 * 1000) === 0;
                     const isHourDiscontiguous = !!previousMarker && marker.hour > previousMarker.hour + 1;
                     const hourBoundaryBorder = "1px solid";
-                    const hourBoundaryBorderColor = "gray.400";
                     const eventBorder = "1px solid";
-                    const eventBorderColor = "gray.600";
                     const currentRow = (
                         <Tr key={markerMillis}>
                             <Td
                                 pos="sticky"
                                 left={0}
                                 zIndex={1}
-                                bgColor="gray.50"
+                                bgColor={timeBoxBgColor}
                                 border="none"
                                 m={0}
                                 verticalAlign="top"
@@ -423,7 +429,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                         <Td
                                             key={room.id}
                                             rowSpan={eventCellDescriptor.markerSpan}
-                                            bgColor="yellow.400"
+                                            bgColor={eventBoxBgColor}
                                             verticalAlign="top"
                                             zIndex={0}
                                             borderTop={
@@ -489,8 +495,8 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                         top="calc(2.7rem - 4px)"
                                         bgColor={
                                             previousMarker && previousMarker.weekNumber !== marker.weekNumber
-                                                ? "purple.300"
-                                                : "blue.400"
+                                                ? weekHeadingBgColor
+                                                : dayHeadingBgColor
                                         }
                                         fontWeight="bold"
                                         fontSize="md"

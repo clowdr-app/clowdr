@@ -64,8 +64,6 @@ export default function StarEventButton({
                 }) as TimerHandler,
                 250
             );
-        } else {
-            setShow(false);
         }
 
         return () => {
@@ -77,8 +75,8 @@ export default function StarEventButton({
 
     return (
         <Observer
-            onChange={(ev) => {
-                setIsVisible(ev.intersectionRatio > 0);
+            onChange={({ isIntersecting }) => {
+                setIsVisible(isIntersecting);
             }}
         >
             <Box

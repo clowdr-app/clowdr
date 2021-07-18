@@ -2,16 +2,17 @@ import { gql } from "@apollo/client";
 import { Box, Table, Td, Th, Tr, useColorModeValue, useToken } from "@chakra-ui/react";
 import * as luxon from "luxon";
 import * as R from "ramda";
-import React, { useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import {
-    ScheduleV2_BaseEventFragment,
     ScheduleV2_RoomFragment,
     useScheduleV2_AllEventsQuery,
     useScheduleV2_RoomsQuery,
 } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import { useConference } from "../../../useConference";
+import EventBox from "./EventBox";
 import { ScheduleProvider, useSchedule } from "./ScheduleContext";
+import type { EventCellDescriptor, ParsedEvent, ScheduleProps } from "./Types";
 
 gql`
     fragment ScheduleV2_BaseEvent on schedule_Event {
@@ -40,23 +41,6 @@ gql`
         }
     }
 `;
-
-interface ParsedEvent {
-    event: ScheduleV2_BaseEventFragment;
-    startTimeMs: number;
-    endTimeMs: number;
-}
-
-interface ScheduleProps {
-    events: readonly ScheduleV2_BaseEventFragment[];
-}
-
-interface EventCellDescriptor {
-    parsedEvent: ParsedEvent;
-    preceedingEventId: string | undefined;
-    markerMs: number;
-    markerSpan: number;
-}
 
 function ScheduleInner({ events }: ScheduleProps): JSX.Element {
     const params = useSchedule();
@@ -272,7 +256,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                 const roomEvents = sortedEventsByRoom[roomId];
 
                 let currentEventIndex = 0;
-                let currentDescriptor: EventCellDescriptor | null | undefined = null;
+                let currentDescriptors: EventCellDescriptor[] = [];
                 for (let currentMarkerIndex = 0; currentMarkerIndex < timeMarkers.length; ) {
                     if (currentEventIndex < roomEvents.length) {
                         const currentMarker = timeMarkers[currentMarkerIndex];
@@ -282,32 +266,45 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                         if (currentEvent.startTimeMs > currentMarkerMs) {
                             result.push(null);
                             currentMarkerIndex++;
-                        } else if (currentDescriptor === null) {
-                            const eventStartDT = luxon.DateTime.fromMillis(currentEvent.startTimeMs).setZone(
-                                params.timezone
-                            );
-                            const eventEndDT = luxon.DateTime.fromMillis(currentEvent.endTimeMs).setZone(
-                                params.timezone
-                            );
-                            const differentDays = !eventStartDT.hasSame(eventEndDT, "day");
-                            currentDescriptor = {
-                                parsedEvent: currentEvent,
-                                markerMs: currentMarkerMs,
-                                markerSpan: differentDays ? 2 : 1, // Plus an extra one due to the day divider
-                                preceedingEventId:
-                                    previousEvent && currentEvent.startTimeMs - previousEvent.endTimeMs < 2 * 60 * 1000
-                                        ? previousEvent.event.id
-                                        : undefined,
-                            };
-                            result.push(currentDescriptor);
+                        } else if (currentDescriptors.length === 0) {
+                            currentDescriptors = [
+                                {
+                                    parsedEvent: currentEvent,
+                                    markerMs: currentMarkerMs,
+                                    markerSpan: 1, // Plus an extra one due to the day divider
+                                    preceedingEventId:
+                                        previousEvent &&
+                                        currentEvent.startTimeMs - previousEvent.endTimeMs < 2 * 60 * 1000
+                                            ? previousEvent.event.id
+                                            : undefined,
+                                    isSecondaryCell: false,
+                                },
+                            ];
+                            result.push(currentDescriptors[0]);
                             currentMarkerIndex++;
                         } else if (currentEvent.endTimeMs <= currentMarkerMs) {
-                            currentDescriptor = null;
+                            currentDescriptors = [];
                             currentEventIndex++;
-                        } else if (currentDescriptor) {
-                            currentDescriptor.markerSpan++;
+                        } else if (currentDescriptors.length > 0) {
+                            const startTimeDT = luxon.DateTime.fromMillis(currentEvent.startTimeMs).setZone(
+                                params.timezone
+                            );
+                            const endTimeDT = luxon.DateTime.fromMillis(currentEvent.endTimeMs).setZone(
+                                params.timezone
+                            );
+                            if (currentDescriptors.length === 1 && startTimeDT.day !== endTimeDT.day) {
+                                currentDescriptors.push({
+                                    ...currentDescriptors[0],
+                                    markerMs: currentMarkerMs,
+                                    isSecondaryCell: true,
+                                });
+                                result.push(currentDescriptors[1]);
+                            } else {
+                                result.push(undefined);
+                            }
+
+                            currentDescriptors.forEach((x) => x.markerSpan++);
                             currentMarkerIndex++;
-                            result.push(undefined);
                         }
                     } else {
                         result.push(null);
@@ -318,7 +315,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                 return [roomId, result];
             })
         );
-    }, [params.timezone, roomIds, sortedEventsByRoom, timeMarkers]);
+    }, [roomIds, sortedEventsByRoom, timeMarkers]);
 
     const scrollbarColour = useColorModeValue("gray.500", "gray.200");
     const scrollbarBackground = useColorModeValue("gray.200", "gray.500");
@@ -370,7 +367,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                         top={0}
                         left={0}
                         bgColor={timeBoxBgColor}
-                        zIndex={2}
+                        zIndex={3}
                         whiteSpace="nowrap"
                         minW="min-content"
                         w="8em"
@@ -385,7 +382,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                             top={0}
                             bgColor={roomHeadingBgColor}
                             whiteSpace="nowrap" /* bgColor={room.colour} */
-                            zIndex={0}
+                            zIndex={1}
                             textAlign="center"
                             w="350px"
                         >
@@ -400,13 +397,12 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                     const isHourBoundary = markerMillis % (60 * 60 * 1000) === 0;
                     const isHourDiscontiguous = !!previousMarker && marker.hour > previousMarker.hour + 1;
                     const hourBoundaryBorder = "1px solid";
-                    const eventBorder = "1px solid";
                     const currentRow = (
                         <Tr key={markerMillis}>
                             <Td
                                 pos="sticky"
                                 left={0}
-                                zIndex={1}
+                                zIndex={2}
                                 bgColor={timeBoxBgColor}
                                 border="none"
                                 m={0}
@@ -415,6 +411,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                 overflow="hidden"
                                 size="xs"
                                 fontSize="sm"
+                                p="0.6em"
                             >
                                 {marker.toLocaleString({
                                     hour: "numeric",
@@ -425,48 +422,29 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                             {sortedRooms.map((room) => {
                                 const eventCellDescriptor = eventCellDescriptors[room.id][markerIndex];
                                 if (eventCellDescriptor) {
+                                    const startTimeDT = luxon.DateTime.fromMillis(
+                                        eventCellDescriptor.parsedEvent.startTimeMs
+                                    ).setZone(params.timezone);
+                                    const endTimeDT = luxon.DateTime.fromMillis(
+                                        eventCellDescriptor.parsedEvent.endTimeMs
+                                    ).setZone(params.timezone);
                                     return (
-                                        <Td
+                                        <EventBox
                                             key={room.id}
-                                            rowSpan={eventCellDescriptor.markerSpan}
-                                            bgColor={eventBoxBgColor}
-                                            verticalAlign="top"
-                                            zIndex={0}
-                                            borderTop={
-                                                isHourBoundary
-                                                    ? hourBoundaryBorder
-                                                    : eventCellDescriptor.preceedingEventId
-                                                    ? eventBorder
-                                                    : undefined
+                                            event={eventCellDescriptor}
+                                            isHourBoundary={isHourBoundary}
+                                            isHourDiscontiguous={isHourDiscontiguous}
+                                            hourBoundaryBorderColor={hourBoundaryBorderColor}
+                                            eventBoxBgColor={eventBoxBgColor}
+                                            eventBorderColor={eventBorderColor}
+                                            splitOverDayBoundary={
+                                                startTimeDT.day !== endTimeDT.day
+                                                    ? eventCellDescriptor.isSecondaryCell
+                                                        ? "second"
+                                                        : "first"
+                                                    : "no"
                                             }
-                                            borderTopColor={
-                                                isHourBoundary
-                                                    ? hourBoundaryBorderColor
-                                                    : eventCellDescriptor.preceedingEventId
-                                                    ? eventBorderColor
-                                                    : undefined
-                                            }
-                                            borderTopStyle={isHourBoundary && isHourDiscontiguous ? "double" : "solid"}
-                                            borderTopWidth={isHourBoundary && isHourDiscontiguous ? "6px" : undefined}
-                                            borderX="1px solid"
-                                            borderXColor={eventBorderColor}
-                                        >
-                                            {luxon.DateTime.fromISO(eventCellDescriptor.parsedEvent.event.startTime)
-                                                .setZone(params.timezone)
-                                                .toLocaleString({
-                                                    hour: "numeric",
-                                                    minute: "numeric",
-                                                    second: "numeric",
-                                                })}
-                                            &nbsp;to&nbsp;
-                                            {luxon.DateTime.fromISO(eventCellDescriptor.parsedEvent.event.endTime)
-                                                .setZone(params.timezone)
-                                                .toLocaleString({
-                                                    hour: "numeric",
-                                                    minute: "numeric",
-                                                    second: "numeric",
-                                                })}
-                                        </Td>
+                                        />
                                     );
                                 } else if (eventCellDescriptor !== undefined) {
                                     return (
@@ -487,7 +465,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
 
                     if (!previousMarker || previousMarker.day !== marker.day) {
                         return (
-                            <>
+                            <Fragment key={markerMillis}>
                                 <Tr>
                                     <Th
                                         colSpan={1 + sortedRooms.length}
@@ -500,7 +478,8 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                         }
                                         fontWeight="bold"
                                         fontSize="md"
-                                        zIndex={2}
+                                        zIndex={3}
+                                        h="2.7rem"
                                     >
                                         <Box pos="sticky" left="50%" w="min-content" whiteSpace="nowrap">
                                             <Box pos="relative" left="-50%">
@@ -514,7 +493,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                     </Th>
                                 </Tr>
                                 {currentRow}
-                            </>
+                            </Fragment>
                         );
                     }
 

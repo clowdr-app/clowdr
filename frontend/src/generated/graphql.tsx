@@ -35701,6 +35701,53 @@ export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root'
     & Schedule_TagFragment
   )> };
 
+export type ScheduleV2_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
+
+export type ScheduleV2_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> };
+
+export type ScheduleV2_ItemPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: (
+    { readonly __typename?: 'collection_ProgramPerson' }
+    & ScheduleV2_ProgramPersonFragment
+  ) };
+
+export type ScheduleV2_ItemElementsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemPeople: ReadonlyArray<(
+    { readonly __typename?: 'content_ItemProgramPerson' }
+    & ScheduleV2_ItemPersonFragment
+  )> };
+
+export type ScheduleV2_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<(
+    { readonly __typename?: 'content_Item', readonly abstractElements: ReadonlyArray<(
+      { readonly __typename?: 'content_Element' }
+      & ScheduleV2_ElementFragment
+    )>, readonly itemPeople: ReadonlyArray<(
+      { readonly __typename?: 'content_ItemProgramPerson' }
+      & ScheduleV2_ItemPersonFragment
+    )> }
+    & ScheduleV2_ItemElementsFragment
+  )> };
+
+export type ScheduleV2_EventQueryVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type ScheduleV2_EventQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<(
+    { readonly __typename?: 'schedule_Event' }
+    & ScheduleV2_EventFragment
+  )> };
+
+export type ScheduleV2_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
+
+export type ScheduleV2_TagsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ScheduleV2_TagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<(
+    { readonly __typename?: 'collection_Tag' }
+    & ScheduleV2_TagFragment
+  )> };
+
 export type ScheduleV2_BaseEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any };
 
 export type ScheduleV2_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number };
@@ -38586,6 +38633,83 @@ export const Schedule_RoomSummaryFragmentDoc = gql`
   currentModeName
   priority
   managementModeName
+}
+    `;
+export const ScheduleV2_ProgramPersonFragmentDoc = gql`
+    fragment ScheduleV2_ProgramPerson on collection_ProgramPerson {
+  id
+  name
+  affiliation
+  registrantId
+}
+    `;
+export const ScheduleV2_ItemPersonFragmentDoc = gql`
+    fragment ScheduleV2_ItemPerson on content_ItemProgramPerson {
+  id
+  priority
+  roleName
+  person {
+    ...ScheduleV2_ProgramPerson
+  }
+}
+    ${ScheduleV2_ProgramPersonFragmentDoc}`;
+export const ScheduleV2_ItemElementsFragmentDoc = gql`
+    fragment ScheduleV2_ItemElements on content_Item {
+  id
+  title
+  shortTitle
+  typeName
+  itemTags {
+    id
+    itemId
+    tagId
+  }
+  itemPeople {
+    ...ScheduleV2_ItemPerson
+  }
+}
+    ${ScheduleV2_ItemPersonFragmentDoc}`;
+export const ScheduleV2_ElementFragmentDoc = gql`
+    fragment ScheduleV2_Element on content_Element {
+  id
+  typeName
+  name
+  layoutData
+  data
+}
+    `;
+export const ScheduleV2_EventFragmentDoc = gql`
+    fragment ScheduleV2_Event on schedule_Event {
+  id
+  roomId
+  intendedRoomModeName
+  name
+  startTime
+  durationSeconds
+  itemId
+  exhibitionId
+  shufflePeriodId
+  item {
+    ...ScheduleV2_ItemElements
+    abstractElements: elements(
+      where: {typeName: {_eq: ABSTRACT}, isHidden: {_eq: false}}
+    ) {
+      ...ScheduleV2_Element
+    }
+    itemPeople {
+      ...ScheduleV2_ItemPerson
+    }
+  }
+}
+    ${ScheduleV2_ItemElementsFragmentDoc}
+${ScheduleV2_ElementFragmentDoc}
+${ScheduleV2_ItemPersonFragmentDoc}`;
+export const ScheduleV2_TagFragmentDoc = gql`
+    fragment ScheduleV2_Tag on collection_Tag {
+  id
+  name
+  colour
+  priority
 }
     `;
 export const ScheduleV2_BaseEventFragmentDoc = gql`
@@ -42010,6 +42134,76 @@ export function useSchedule_SelectSummariesLazyQuery(baseOptions?: Apollo.LazyQu
 export type Schedule_SelectSummariesQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesQuery>;
 export type Schedule_SelectSummariesLazyQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesLazyQuery>;
 export type Schedule_SelectSummariesQueryResult = Apollo.QueryResult<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>;
+export const ScheduleV2_EventDocument = gql`
+    query ScheduleV2_Event($eventId: uuid!) {
+  schedule_Event_by_pk(id: $eventId) {
+    ...ScheduleV2_Event
+  }
+}
+    ${ScheduleV2_EventFragmentDoc}`;
+
+/**
+ * __useScheduleV2_EventQuery__
+ *
+ * To run a query within a React component, call `useScheduleV2_EventQuery` and pass it any options that fit your needs.
+ * When your component renders, `useScheduleV2_EventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useScheduleV2_EventQuery({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useScheduleV2_EventQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>(ScheduleV2_EventDocument, options);
+      }
+export function useScheduleV2_EventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>(ScheduleV2_EventDocument, options);
+        }
+export type ScheduleV2_EventQueryHookResult = ReturnType<typeof useScheduleV2_EventQuery>;
+export type ScheduleV2_EventLazyQueryHookResult = ReturnType<typeof useScheduleV2_EventLazyQuery>;
+export type ScheduleV2_EventQueryResult = Apollo.QueryResult<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>;
+export const ScheduleV2_TagsDocument = gql`
+    query ScheduleV2_Tags($conferenceId: uuid!) {
+  collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ScheduleV2_Tag
+  }
+}
+    ${ScheduleV2_TagFragmentDoc}`;
+
+/**
+ * __useScheduleV2_TagsQuery__
+ *
+ * To run a query within a React component, call `useScheduleV2_TagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useScheduleV2_TagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useScheduleV2_TagsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useScheduleV2_TagsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>(ScheduleV2_TagsDocument, options);
+      }
+export function useScheduleV2_TagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>(ScheduleV2_TagsDocument, options);
+        }
+export type ScheduleV2_TagsQueryHookResult = ReturnType<typeof useScheduleV2_TagsQuery>;
+export type ScheduleV2_TagsLazyQueryHookResult = ReturnType<typeof useScheduleV2_TagsLazyQuery>;
+export type ScheduleV2_TagsQueryResult = Apollo.QueryResult<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>;
 export const ScheduleV2_RoomsDocument = gql`
     query ScheduleV2_Rooms($roomIds: [uuid!]!) {
   room_Room(where: {id: {_in: $roomIds}}) {

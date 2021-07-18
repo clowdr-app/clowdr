@@ -394,7 +394,7 @@ export class VonageGlobalState {
 
             const publisher = OT.initPublisher(screenPublishContainerRef, {
                 videoSource: "screen",
-                resolution: "1280x720",
+                maxResolution: { width: 1280, height: 1280 },
                 width: "100%",
                 height: "100%",
                 insertMode: "append",

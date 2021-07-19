@@ -264,7 +264,7 @@ function StarEventButtonInner({
     if (starsResponse.data.schedule_StarredEvent.length > 0) {
         return (
             <Button
-                aria-label="Remove event from your schedule"
+                aria-label="Remove event from your personal schedule"
                 onClick={(ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();
@@ -299,7 +299,7 @@ function StarEventButtonInner({
     } else {
         return (
             <Button
-                aria-label="Remove event from your schedule"
+                aria-label="Add event to your personal schedule"
                 onClick={(ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();

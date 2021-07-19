@@ -1,4 +1,4 @@
-import { ViewOffIcon } from "@chakra-ui/icons";
+import { ViewOffIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { Button, HStack, Image, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useChatProfileModal } from "../../../../Chat/Frame/ChatProfileModalProvider";
@@ -9,10 +9,18 @@ export function VonageOverlay({
     connectionData,
     microphoneEnabled,
     cameraHidden,
+    videoStatus,
+    audioBlocked,
 }: {
     connectionData: string;
     microphoneEnabled?: boolean;
     cameraHidden?: boolean;
+    videoStatus?: {
+        streamHasVideo: boolean;
+        warning?: "quality";
+        error?: "codec-not-supported" | "quality" | "exceeds-max-streams";
+    };
+    audioBlocked?: boolean;
 }): JSX.Element {
     const registrantIdObj = useMemo(() => {
         try {
@@ -99,19 +107,76 @@ export function VonageOverlay({
                     ) : undefined}
                 </HStack>
             </Button>
-            {cameraHidden ? (
-                <Tooltip label="There are too many people here to show everyone's video at once. This person is hidden because they haven't spoken recently.">
-                    <ViewOffIcon
-                        w={6}
-                        h={6}
-                        bgColor="rgba(0,0,0,0.6)"
-                        color="white"
-                        p={1}
-                        aria-label="Video hidden"
-                        borderRadius={5}
-                    />
-                </Tooltip>
-            ) : undefined}
+            <HStack>
+                {cameraHidden ? (
+                    <Tooltip label="There are too many people here to show everyone's video at once. This person is hidden because they haven't spoken recently.">
+                        <ViewOffIcon
+                            w={6}
+                            h={6}
+                            bgColor="rgba(0,0,0,0.6)"
+                            color="white"
+                            p={1}
+                            aria-label="Video hidden"
+                            borderRadius={5}
+                        />
+                    </Tooltip>
+                ) : undefined}
+                {videoStatus?.error === "codec-not-supported" ? (
+                    <Tooltip label="The video format is not supported in your browser.">
+                        <WarningTwoIcon
+                            w={6}
+                            h={6}
+                            bgColor="rgba(0,0,0,0.6)"
+                            color="red.500"
+                            p={1}
+                            aria-label="Video format not supported"
+                            borderRadius={5}
+                        />
+                    </Tooltip>
+                ) : undefined}
+                {videoStatus?.error === "quality" ? (
+                    <Tooltip label="The video was hidden because the connection is not stable enough at the moment.">
+                        <WarningTwoIcon
+                            w={6}
+                            h={6}
+                            bgColor="rgba(0,0,0,0.6)"
+                            color="red.500"
+                            p={1}
+                            aria-label="Connection too unstable to show video"
+                            borderRadius={5}
+                        />
+                    </Tooltip>
+                ) : undefined}
+                {videoStatus?.warning === "quality" && videoStatus.error !== "quality" ? (
+                    <Tooltip label="Video quality may be limited due to an unstable connection.">
+                        <WarningTwoIcon
+                            w={6}
+                            h={6}
+                            bgColor="rgba(0,0,0,0.6)"
+                            color="orange.500"
+                            p={1}
+                            aria-label="Connection unstable"
+                            borderRadius={5}
+                        />
+                    </Tooltip>
+                ) : undefined}
+                {audioBlocked ? (
+                    <Tooltip label="Audio is currently blocked by your browser. Click to unblock.">
+                        <WarningTwoIcon
+                            w={6}
+                            h={6}
+                            bgColor="rgba(0,0,0,0.6)"
+                            color="orange.500"
+                            p={1}
+                            aria-label="Audio blocked by browser"
+                            onClick={() => {
+                                OT.unblockAudio();
+                            }}
+                            borderRadius={5}
+                        />
+                    </Tooltip>
+                ) : undefined}
+            </HStack>
         </VStack>
     );
 }

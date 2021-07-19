@@ -36,14 +36,19 @@ export function VonageSubscriber({
         const isTalking = activityRef.current?.talking ?? false;
         if (lastTalking.current !== isTalking) {
             lastTalking.current = isTalking;
-
-            setTalking(isTalking);
             onChangeActivity?.(isTalking);
         }
+        setTalking(isTalking);
     }, [onChangeActivity]);
     usePolling(pollCb, 1500, true);
 
-    const [microphoneEnabled, setMicrophoneEnabled] = useState<boolean>(false);
+    const [streamHasAudio, setStreamHasAudio] = useState<boolean>(false);
+    const [audioBlocked, setAudioBlocked] = useState<boolean>(false);
+    const [videoStatus, setVideoStatus] = useState<{
+        streamHasVideo: boolean;
+        warning?: "quality";
+        error?: "codec-not-supported" | "quality" | "exceeds-max-streams";
+    }>({ streamHasVideo: stream.hasVideo });
 
     const registrantIdObj = useMemo(() => {
         if (!stream.connection.data) {
@@ -125,6 +130,7 @@ export function VonageSubscriber({
                     ? {
                           style: {
                               backgroundImageURI: registrant.profile.photoURL_350x350,
+                              videoDisabledDisplayMode: "off",
                           },
                       }
                     : {}),
@@ -154,14 +160,57 @@ export function VonageSubscriber({
                 }
             });
 
+            subscriber.on("videoDisabled", (event) => {
+                switch (event.reason) {
+                    case "codecNotSupported":
+                        setVideoStatus((status) => ({ ...status, error: "codec-not-supported" }));
+                        break;
+                    case "quality":
+                        setVideoStatus((status) => ({ ...status, error: "quality" }));
+                        break;
+                    case "subscribeToVideo":
+                        setVideoStatus((status) => ({ ...status, error: "exceeds-max-streams" }));
+                        break;
+                    case "publishVideo":
+                    default:
+                        setVideoStatus((status) => ({ ...status, streamHasVideo: false, error: undefined }));
+                        break;
+                }
+                lastTalking.current = false; // Force the callback to be fired again
+            });
+
+            subscriber.on("videoEnabled", () => {
+                setVideoStatus((status) => ({ ...status, streamHasVideo: true, error: undefined }));
+                lastTalking.current = false; // Force the callback to be fired again
+            });
+
+            subscriber.on("videoDisableWarning", () => {
+                setVideoStatus((status) => ({ ...status, warning: "quality" }));
+            });
+
+            subscriber.on("videoDisableWarningLifted", () => {
+                setVideoStatus((status) => ({ ...status, warning: undefined }));
+            });
+
+            subscriber.on("audioBlocked", () => {
+                setAudioBlocked(true);
+            });
+
+            subscriber.on("audioUnblocked", () => {
+                setAudioBlocked(false);
+            });
+
             const streamPropertyChangedHandler = (event: any) => {
                 if (event.changedProperty === "hasAudio" && event.stream.streamId === stream.streamId) {
-                    console.log("hasAudio", event.newValue, event.stream.streamId);
-                    setMicrophoneEnabled(event.newValue);
+                    setStreamHasAudio(event.newValue);
+                }
+                if (event.changedProperty === "hasVideo" && event.stream.streamId === stream.streamId) {
+                    setVideoStatus((status) => ({ ...status, streamHasVideo: event.newValue }));
                 }
             };
 
-            setMicrophoneEnabled(stream.hasAudio);
+            setStreamHasAudio(stream.hasAudio);
+            setVideoStatus((status) => ({ ...status, streamHasVideo: stream.hasVideo }));
             vonage.state.session.on("streamPropertyChanged", streamPropertyChangedHandler);
 
             return () => {
@@ -194,12 +243,18 @@ export function VonageSubscriber({
             <Box position="absolute" zIndex="200" height="100%" width="100%">
                 <VonageOverlay
                     connectionData={stream.connection.data}
-                    microphoneEnabled={stream.videoType === "camera" ? microphoneEnabled : undefined}
-                    cameraHidden={!enableVideo}
+                    microphoneEnabled={stream.videoType === "camera" ? streamHasAudio : undefined}
+                    cameraHidden={
+                        videoStatus.streamHasVideo &&
+                        !enableVideo &&
+                        (!videoStatus.error || videoStatus.error === "exceeds-max-streams")
+                    }
+                    videoStatus={videoStatus}
+                    audioBlocked={audioBlocked}
                 />
             </Box>
         ),
-        [stream.connection.data, stream.videoType, microphoneEnabled, enableVideo]
+        [stream.connection.data, stream.videoType, streamHasAudio, videoStatus, enableVideo, audioBlocked]
     );
 
     return (

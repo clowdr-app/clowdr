@@ -387,17 +387,21 @@ function VonageRoomInner({
         if (othersCameraStreams.length <= maxVideoStreams) {
             setEnableStreams(null);
         } else {
-            const streamTimestamps = R.toPairs(streamLastActive) as [string, number][];
+            const streamTimestamps = R.toPairs<number>(streamLastActive);
             // console.log(`${new Date().toISOString()}: Proceeding with computing enabled streams`, streamTimestamps);
             const activeStreams = R.sortWith(
                 [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
                 streamTimestamps
-            ).map((pair) => pair[0]);
+            )
+                .map((pair) => pair[0])
+                .filter((streamId) =>
+                    othersCameraStreams.find((stream) => stream.streamId === streamId && stream.hasVideo)
+                );
             const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
 
             const remainingSlots = maxVideoStreams - selectedActiveStreams.length;
             const topUpStreams = R.sortWith(
-                [R.ascend((s) => s.connection.creationTime)],
+                [R.ascend((s) => s.hasVideo), R.ascend((s) => s.connection.creationTime)],
                 othersCameraStreams.filter((s) => !selectedActiveStreams.includes(s.streamId))
             ).map((s) => s.streamId);
             const selectedTopUpStreams = topUpStreams.slice(0, Math.min(topUpStreams.length, remainingSlots));
@@ -424,10 +428,10 @@ function VonageRoomInner({
     }, [maxVideoStreams, othersCameraStreams, othersCameraStreams.length, screenSharingActive, streamLastActive]);
 
     const [sortedStreams, setSortedStreams] = useState<OT.Stream[]>([]);
-    const sliceAndDice = useCallback(
+    const sortCameraStreamsWhileScreenSharing = useCallback(
         (cameraStreams: OT.Stream[], enableStreams: string[] | null, maxVideoStreams: number): OT.Stream[] => {
-            console.log("Slicing and dicing");
             if (enableStreams) {
+                // The number of videos exceeds the maximum, so we pull the active ones to the top
                 const screenConnections = streams
                     .filter((stream) => stream.videoType === "screen")
                     .map((x) => x.connection.connectionId);
@@ -471,7 +475,19 @@ function VonageRoomInner({
                 console.log(`scs: ${scsCount}, eas: ${easCount}, nas: ${nasCount}, rest: ${restCount}`);
                 return screenCameraStreams.concat(sortedNewlyActiveStreams).concat(existingActiveStreams).concat(rest);
             } else {
-                return R.sortWith([R.ascend((s) => s.connection.creationTime)], cameraStreams);
+                // The number of streams is within the maximum, so we put the sharer's camera first, then sort by creation
+                const screenConnections = streams
+                    .filter((stream) => stream.videoType === "screen")
+                    .map((x) => x.connection.connectionId);
+                const screenCameraStreams = R.sortWith(
+                    [R.ascend((s) => s.connection.creationTime)],
+                    cameraStreams.filter((x) => screenConnections.includes(x.connection.connectionId))
+                );
+                const rest = R.sortWith(
+                    [R.ascend((s) => s.connection.creationTime)],
+                    cameraStreams.filter((x) => !screenConnections.includes(x.connection.connectionId))
+                );
+                return screenCameraStreams.concat(rest);
             }
         },
         [sortedStreams, streamLastActive, streams]
@@ -481,7 +497,7 @@ function VonageRoomInner({
         () =>
             setSortedStreams(
                 screenSharingActive
-                    ? sliceAndDice(othersCameraStreams, enableStreams, maxVideoStreams)
+                    ? sortCameraStreamsWhileScreenSharing(othersCameraStreams, enableStreams, maxVideoStreams)
                     : R.sortWith([R.ascend((s) => s.connection.creationTime)], othersCameraStreams)
             ),
         // eslint-disable-next-line react-hooks/exhaustive-deps

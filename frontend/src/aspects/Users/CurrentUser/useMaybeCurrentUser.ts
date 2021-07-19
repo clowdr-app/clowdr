@@ -3,6 +3,14 @@ import type { UserInfoFragment } from "../../../generated/graphql";
 
 export type UserInfo = {
     loading: boolean;
+    /**
+     * The current user, if found.
+     *
+     * @returns
+     * `false` if there is an error or if the user is not found in the database.
+     * `undefined` if the result is still loading.
+     * `UserInfoFragment` if the user was found.
+     */
     user: UserInfoFragment | false | undefined;
     refetchUser: () => Promise<unknown>;
 };

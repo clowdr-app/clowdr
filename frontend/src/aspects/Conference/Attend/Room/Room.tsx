@@ -633,19 +633,19 @@ function RoomInner({
         () => (
             <>
                 {showDefaultBreakoutRoom && secondsUntilBreakoutRoomCloses <= 180 ? (
-                    <Alert status="warning">
+                    <Alert status="warning" pos="sticky" top={0} zIndex={10000}>
                         <AlertIcon />
                         Video-chat closes in {Math.round(secondsUntilBreakoutRoomCloses)} seconds
                     </Alert>
                 ) : undefined}
                 {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
-                    <Alert status="info">
+                    <Alert status="info" pos="sticky" top={0} zIndex={10000}>
                         <AlertIcon />
                         Zoom event starting in {Math.round(secondsUntilZoomEvent)} seconds
                     </Alert>
                 ) : undefined}
                 {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
-                    <Alert status="info">
+                    <Alert status="info" pos="sticky" top={0} zIndex={10000}>
                         <AlertIcon />
                         Livestream event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
                     </Alert>

@@ -35602,13 +35602,15 @@ export type ContinuationChoices_ContinuationFragment = { readonly __typename?: '
 
 export type ContinuationChoices_ContinuationsQueryVariables = Exact<{
   fromId: Scalars['uuid'];
+  nowStart?: Maybe<Scalars['timestamptz']>;
+  nowEnd?: Maybe<Scalars['timestamptz']>;
 }>;
 
 
 export type ContinuationChoices_ContinuationsQuery = { readonly __typename?: 'query_root', readonly schedule_Continuation: ReadonlyArray<(
     { readonly __typename?: 'schedule_Continuation' }
     & ContinuationChoices_ContinuationFragment
-  )>, readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly endAt: any, readonly roomDurationMinutes: number }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly endTime?: Maybe<any> }> };
+  )>, readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly endAt: any, readonly roomDurationMinutes: number }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly endTime?: Maybe<any> }> };
 
 export type ContinuationChoices_RoomsQueryVariables = Exact<{
   ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -40804,7 +40806,7 @@ export type GetItemQueryHookResult = ReturnType<typeof useGetItemQuery>;
 export type GetItemLazyQueryHookResult = ReturnType<typeof useGetItemLazyQuery>;
 export type GetItemQueryResult = Apollo.QueryResult<GetItemQuery, GetItemQueryVariables>;
 export const ContinuationChoices_ContinuationsDocument = gql`
-    query ContinuationChoices_Continuations($fromId: uuid!) {
+    query ContinuationChoices_Continuations($fromId: uuid!, $nowStart: timestamptz, $nowEnd: timestamptz) {
   schedule_Continuation(
     where: {_or: [{fromEvent: {_eq: $fromId}}, {fromShuffleQueue: {_eq: $fromId}}]}
   ) {
@@ -40815,8 +40817,11 @@ export const ContinuationChoices_ContinuationsDocument = gql`
     endAt
     roomDurationMinutes
   }
-  schedule_Event(where: {id: {_eq: $fromId}}) {
+  schedule_Event(
+    where: {_or: [{id: {_eq: $fromId}}, {startTime: {_lte: $nowStart}, endTime: {_gte: $nowEnd}, shufflePeriodId: {_eq: $fromId}}]}
+  ) {
     id
+    roomId
     endTime
   }
 }

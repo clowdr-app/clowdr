@@ -611,15 +611,31 @@ function RoomInner({
 
     const bgColour = useColorModeValue("gray.200", "gray.700");
 
+    // Note: A video chat might be shown in a sponsor booth. That booth may
+    //       have an upcoming broadcast or Zoom event. Thus it's possible
+    //       for the video chat to be closing even when there is no ongoing
+    //       breakout event.
     const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
+    const currentRoomEventEndTime = useMemo(
+        () => (currentRoomEvent ? Date.parse(currentRoomEvent.endTime) : undefined),
+        [currentRoomEvent]
+    );
+    const secondsUntilBreakoutEventEnds = useMemo(
+        () =>
+            currentRoomEventEndTime && currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout
+                ? (currentRoomEventEndTime - now5s) / 1000
+                : Number.POSITIVE_INFINITY,
+        [currentRoomEvent?.intendedRoomModeName, currentRoomEventEndTime, now5s]
+    );
+    const secondsUntilBreakoutRoomCloses = Math.min(secondsUntilBreakoutEventEnds, secondsUntilNonBreakoutEvent);
 
     const startsSoonEl = useMemo(
         () => (
             <>
-                {showDefaultBreakoutRoom && secondsUntilNonBreakoutEvent <= 180 ? (
+                {showDefaultBreakoutRoom && secondsUntilBreakoutRoomCloses <= 180 ? (
                     <Alert status="warning">
                         <AlertIcon />
-                        Event starting soon. Breakout room closes in {Math.round(secondsUntilNonBreakoutEvent)} seconds
+                        Video-chat closes in {Math.round(secondsUntilBreakoutRoomCloses)} seconds
                     </Alert>
                 ) : undefined}
                 {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
@@ -638,8 +654,8 @@ function RoomInner({
         ),
         [
             currentRoomEvent,
+            secondsUntilBreakoutRoomCloses,
             secondsUntilBroadcastEvent,
-            secondsUntilNonBreakoutEvent,
             secondsUntilZoomEvent,
             showDefaultBreakoutRoom,
         ]

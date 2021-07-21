@@ -267,11 +267,19 @@ async function attemptToMatchEntry_FCFS(
             const periodEndsAt = Date.parse(activePeriod.endAt);
             const timeRemaining = periodEndsAt - (now + roomDuration);
             const reshuffleUponEnd = timeRemaining > 60 * 1000;
+            const nowDate = new Date();
+            const timeStr = `${nowDate.getUTCFullYear()}/${nowDate.getUTCMonth().toString().padStart(2, "0")}/${nowDate
+                .getUTCDate()
+                .toString()
+                .padStart(2, "0")} ${nowDate.getUTCHours().toString().padStart(2, "0")}:${nowDate
+                .getUTCMinutes()
+                .toString()
+                .padStart(2, "0")}`;
             activeRooms.push(
                 await allocateToNewRoom(
                     activePeriod.id,
                     activePeriod.maxRegistrantsPerRoom + 1,
-                    activePeriod.name + " room " + new Date().toISOString(),
+                    activePeriod.name + " room: " + timeStr,
                     activePeriod.conferenceId,
                     activePeriod.roomDurationMinutes,
                     reshuffleUponEnd,

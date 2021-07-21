@@ -7,6 +7,7 @@ import {
     ScheduleV2_RoomFragment,
     useScheduleV2_AllEventsQuery,
     useScheduleV2_RoomsQuery,
+    useScheduleV2_TagsQuery,
 } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import { useConference } from "../../../useConference";
@@ -45,6 +46,13 @@ gql`
 function ScheduleInner({ events }: ScheduleProps): JSX.Element {
     const params = useSchedule();
 
+    const conference = useConference();
+    const tagsResponse = useScheduleV2_TagsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+
     const parsedEvents: ParsedEvent[] = useMemo(
         () =>
             events.map((event) => ({
@@ -64,6 +72,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
         latestHourDT,
         latestDayDT,
         timeMarkers,
+        eventCellDescriptors,
     } = useMemo<{
         roomIds: string[];
         sortedEventsByRoom: Record<string, ParsedEvent[]>;
@@ -74,6 +83,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
         latestHourDT: luxon.DateTime;
         latestDayDT: luxon.DateTime;
         timeMarkers: luxon.DateTime[];
+        eventCellDescriptors: Record<string, (EventCellDescriptor | null | undefined)[]>;
     }>(() => {
         // Ealriest events first. Events of equal start time sorted by shortest duration first (earliest ending first)
         const sortedEvents = R.sortWith(
@@ -211,46 +221,8 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
             }
         }
 
-        const result = {
-            roomIds: [...roomIdsResult],
-            sortedEventsByRoom,
-            earliestDT,
-            latestDT,
-            earliestHourDT,
-            earliestDayDT,
-            latestHourDT,
-            latestDayDT,
-            timeMarkers,
-        };
-
-        console.info("Schedule structure", {
-            ...result,
-            timeMarkers: timeMarkers.map((x) => x.toISO()),
-        });
-
-        return result;
-    }, [params.timezone, parsedEvents]);
-
-    const roomsResponse = useScheduleV2_RoomsQuery({
-        variables: {
-            roomIds,
-        },
-    });
-
-    const sortedRooms = useMemo<ScheduleV2_RoomFragment[]>(
-        () =>
-            roomsResponse.data?.room_Room
-                ? R.sortWith(
-                      [(x, y) => x.priority - y.priority, (x, y) => x.name.localeCompare(y.name)],
-                      roomsResponse.data.room_Room
-                  )
-                : [],
-        [roomsResponse.data?.room_Room]
-    );
-
-    const eventCellDescriptors = useMemo<Record<string, (EventCellDescriptor | null | undefined)[]>>(() => {
-        return Object.fromEntries(
-            roomIds.map((roomId) => {
+        const descriptors = Object.fromEntries(
+            [...roomIdsResult].map((roomId) => {
                 const result: (EventCellDescriptor | null | undefined)[] = [];
 
                 const roomEvents = sortedEventsByRoom[roomId];
@@ -315,7 +287,39 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                 return [roomId, result];
             })
         );
-    }, [roomIds, sortedEventsByRoom, timeMarkers]);
+
+        const result = {
+            roomIds: [...roomIdsResult],
+            sortedEventsByRoom,
+            earliestDT,
+            latestDT,
+            earliestHourDT,
+            earliestDayDT,
+            latestHourDT,
+            latestDayDT,
+            timeMarkers,
+            eventCellDescriptors: descriptors,
+        };
+
+        return result;
+    }, [params.timezone, parsedEvents]);
+
+    const roomsResponse = useScheduleV2_RoomsQuery({
+        variables: {
+            roomIds,
+        },
+    });
+
+    const sortedRooms = useMemo<ScheduleV2_RoomFragment[]>(
+        () =>
+            roomsResponse.data?.room_Room
+                ? R.sortWith(
+                      [(x, y) => x.priority - y.priority, (x, y) => x.name.localeCompare(y.name)],
+                      roomsResponse.data.room_Room
+                  )
+                : [],
+        [roomsResponse.data?.room_Room]
+    );
 
     const scrollbarColour = useColorModeValue("gray.500", "gray.200");
     const scrollbarBackground = useColorModeValue("gray.200", "gray.500");
@@ -330,31 +334,8 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
     const weekHeadingBgColor = useColorModeValue("purple.300", "purple.700");
     const dayHeadingBgColor = useColorModeValue("blue.400", "blue.500");
 
-    return (
-        <Box
-            pos="relative"
-            h="100%"
-            maxH="95vh"
-            w="97%"
-            overflow="auto"
-            css={{
-                scrollbarWidth: "thin",
-                scrollbarColor: `${scrollbarColour} ${scrollbarBackground}`,
-                "&::-webkit-scrollbar": {
-                    width: "6px",
-                    height: "6px",
-                },
-                "&::-webkit-scrollbar-track": {
-                    width: "8px",
-                    height: "8px",
-                    background: scrollbarBackgroundT,
-                },
-                "&::-webkit-scrollbar-thumb": {
-                    background: scrollbarColourT,
-                    borderRadius: "24px",
-                },
-            }}
-        >
+    const table = useMemo(
+        () => (
             <Table
                 variant="unstyled"
                 w="100%"
@@ -444,6 +425,7 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                                                         : "first"
                                                     : "no"
                                             }
+                                            tags={tagsResponse.data?.collection_Tag ?? []}
                                         />
                                     );
                                 } else if (eventCellDescriptor !== undefined) {
@@ -500,6 +482,49 @@ function ScheduleInner({ events }: ScheduleProps): JSX.Element {
                     return currentRow;
                 })}
             </Table>
+        ),
+        [
+            dayHeadingBgColor,
+            eventBorderColor,
+            eventBoxBgColor,
+            eventCellDescriptors,
+            hourBoundaryBorderColor,
+            params.timezone,
+            roomHeadingBgColor,
+            sortedRooms,
+            tagsResponse.data?.collection_Tag,
+            timeBoxBgColor,
+            timeMarkers,
+            weekHeadingBgColor,
+        ]
+    );
+
+    return (
+        <Box
+            pos="relative"
+            h="100%"
+            maxH="95vh"
+            w="97%"
+            overflow="auto"
+            css={{
+                scrollbarWidth: "thin",
+                scrollbarColor: `${scrollbarColour} ${scrollbarBackground}`,
+                "&::-webkit-scrollbar": {
+                    width: "6px",
+                    height: "6px",
+                },
+                "&::-webkit-scrollbar-track": {
+                    width: "8px",
+                    height: "8px",
+                    background: scrollbarBackgroundT,
+                },
+                "&::-webkit-scrollbar-thumb": {
+                    background: scrollbarColourT,
+                    borderRadius: "24px",
+                },
+            }}
+        >
+            {table}
         </Box>
     );
 }

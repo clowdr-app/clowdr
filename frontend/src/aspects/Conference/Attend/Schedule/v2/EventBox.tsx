@@ -8,9 +8,7 @@ import {
     ScheduleV2_EventFragment,
     ScheduleV2_TagFragment,
     useScheduleV2_EventQuery,
-    useScheduleV2_TagsQuery,
 } from "../../../../../generated/graphql";
-import { useConference } from "../../../useConference";
 import { PlainAuthorsList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
 import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
@@ -108,6 +106,7 @@ export default function EventBox({
     eventBoxBgColor,
     eventBorderColor,
     splitOverDayBoundary,
+    tags,
 }: {
     event: EventCellDescriptor;
     isHourBoundary: boolean;
@@ -116,6 +115,7 @@ export default function EventBox({
     eventBoxBgColor: string;
     eventBorderColor: string;
     splitOverDayBoundary: "first" | "second" | "no";
+    tags: readonly ScheduleV2_TagFragment[];
 }): JSX.Element {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
@@ -138,14 +138,6 @@ export default function EventBox({
         };
     }, [isVisible]);
 
-    const conference = useConference();
-
-    const tagsResponse = useScheduleV2_TagsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-        skip: !show,
-    });
     const eventResponse = useScheduleV2_EventQuery({
         variables: {
             eventId: event.parsedEvent.event.id,
@@ -159,39 +151,55 @@ export default function EventBox({
                 setIsVisible(isIntersecting);
             }}
         >
-            <Skeleton
-                as={Td}
-                isLoaded={show && !!tagsResponse.data && !!eventResponse.data}
-                rowSpan={
-                    splitOverDayBoundary === "first"
-                        ? 1
-                        : splitOverDayBoundary === "second"
-                        ? event.markerSpan - 1
-                        : event.markerSpan
-                }
-                bgColor={eventBoxBgColor}
-                verticalAlign="top"
-                zIndex={0}
-                borderTopColor={
-                    isHourBoundary ? hourBoundaryBorderColor : event.preceedingEventId ? eventBorderColor : undefined
-                }
-                borderTopStyle={isHourBoundary && isHourDiscontiguous ? "double" : "solid"}
-                borderTopWidth={isHourBoundary && isHourDiscontiguous ? "6px" : "1px"}
-                borderX="1px solid"
-                borderLeftColor={eventBorderColor}
-                borderRightColor={eventBorderColor}
-                fadeDuration={0.8}
-            >
-                {splitOverDayBoundary !== "second" && eventResponse.data?.schedule_Event_by_pk && tagsResponse.data ? (
-                    <EventBoxContents
-                        event={event}
-                        eventInfo={eventResponse.data.schedule_Event_by_pk}
-                        tags={tagsResponse.data.collection_Tag}
-                    />
-                ) : splitOverDayBoundary !== "second" ? (
-                    <Box minH="24ex"></Box>
-                ) : undefined}
-            </Skeleton>
+            {isVisible ? (
+                <Skeleton
+                    as={Td}
+                    isLoaded={show && !!eventResponse.data}
+                    rowSpan={
+                        splitOverDayBoundary === "first"
+                            ? 1
+                            : splitOverDayBoundary === "second"
+                            ? event.markerSpan - 1
+                            : event.markerSpan
+                    }
+                    bgColor={eventBoxBgColor}
+                    verticalAlign="top"
+                    zIndex={0}
+                    borderTopColor={
+                        isHourBoundary
+                            ? hourBoundaryBorderColor
+                            : event.preceedingEventId
+                            ? eventBorderColor
+                            : undefined
+                    }
+                    borderTopStyle={isHourBoundary && isHourDiscontiguous ? "double" : "solid"}
+                    borderTopWidth={isHourBoundary && isHourDiscontiguous ? "6px" : "1px"}
+                    borderX="1px solid"
+                    borderLeftColor={eventBorderColor}
+                    borderRightColor={eventBorderColor}
+                    fadeDuration={0.8}
+                >
+                    {splitOverDayBoundary !== "second" && eventResponse.data?.schedule_Event_by_pk ? (
+                        <EventBoxContents
+                            event={event}
+                            eventInfo={eventResponse.data.schedule_Event_by_pk}
+                            tags={tags}
+                        />
+                    ) : splitOverDayBoundary !== "second" ? (
+                        <Box minH="24ex"></Box>
+                    ) : undefined}
+                </Skeleton>
+            ) : (
+                <td
+                    rowSpan={
+                        splitOverDayBoundary === "first"
+                            ? 1
+                            : splitOverDayBoundary === "second"
+                            ? event.markerSpan - 1
+                            : event.markerSpan
+                    }
+                ></td>
+            )}
         </IntersectionObserver>
     );
 }
@@ -217,56 +225,54 @@ function EventBoxContents({
     const overlapsDayBoundary = useMemo(() => startTimeDT.day !== endTimeDT.day, [endTimeDT.day, startTimeDT.day]);
 
     return (
-        <>
-            <VStack
-                w="100%"
-                maxH="100%"
-                justifyContent="flex-start"
-                alignItems="flex-start"
-                pb={overlapsDayBoundary ? "3rem" : undefined}
-            >
-                <HStack alignItems="flex-start" justifyContent="flex-start">
-                    <StarEventButton eventIds={eventInfo.id} mt={1} />
-                    <Text fontSize="sm" fontWeight="bold">
-                        <EventModeIcon
-                            mode={eventInfo.intendedRoomModeName}
-                            durationSeconds={eventInfo.durationSeconds}
-                            fontSize="inherit"
-                        />
-                    </Text>
-                    <Text fontSize="sm" pl={2}>
-                        {startTimeDT.toLocaleString({
-                            hour: "numeric",
-                            minute: "numeric",
-                        })}{" "}
-                        for {Math.round(eventInfo.durationSeconds / 60)} minutes
-                    </Text>
-                </HStack>
-                <Text fontSize="sm" fontWeight="bold" lineHeight="130%">
-                    {eventInfo.item ? (
-                        <>
-                            <Twemoji className="twemoji" text={eventInfo.item.title} />
-                            <br />
-                            <chakra.span fontStyle="italic" fontSize="xs">
-                                <Twemoji className="twemoji" text={eventInfo.name} />
-                            </chakra.span>
-                        </>
-                    ) : (
-                        <Twemoji className="twemoji" text={eventInfo.name} />
-                    )}
+        <VStack
+            w="100%"
+            maxH="100%"
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            pb={overlapsDayBoundary ? "3rem" : undefined}
+        >
+            <HStack alignItems="flex-start" justifyContent="flex-start">
+                <StarEventButton eventIds={eventInfo.id} mt={1} />
+                <Text fontSize="sm" fontWeight="bold">
+                    <EventModeIcon
+                        mode={eventInfo.intendedRoomModeName}
+                        durationSeconds={eventInfo.durationSeconds}
+                        fontSize="inherit"
+                    />
                 </Text>
+                <Text fontSize="sm" pl={2}>
+                    {startTimeDT.toLocaleString({
+                        hour: "numeric",
+                        minute: "numeric",
+                    })}{" "}
+                    for {Math.round(eventInfo.durationSeconds / 60)} minutes
+                </Text>
+            </HStack>
+            <Text fontSize="sm" fontWeight="bold" lineHeight="130%">
                 {eventInfo.item ? (
                     <>
-                        <PlainAuthorsList people={eventInfo.item.itemPeople} />
-                        <TagList
-                            tags={eventInfo.item.itemTags.map(
-                                (x) => ({ ...x, tag: tags.find((y) => x.tagId === y.id) } as any)
-                            )}
-                            noClick
-                        />
+                        <Twemoji className="twemoji" text={eventInfo.item.title} />
+                        <br />
+                        <chakra.span fontStyle="italic" fontSize="xs">
+                            <Twemoji className="twemoji" text={eventInfo.name} />
+                        </chakra.span>
                     </>
-                ) : undefined}
-            </VStack>
-        </>
+                ) : (
+                    <Twemoji className="twemoji" text={eventInfo.name} />
+                )}
+            </Text>
+            {eventInfo.item ? (
+                <>
+                    <PlainAuthorsList people={eventInfo.item.itemPeople} />
+                    <TagList
+                        tags={eventInfo.item.itemTags.map(
+                            (x) => ({ ...x, tag: tags.find((y) => x.tagId === y.id) } as any)
+                        )}
+                        noClick
+                    />
+                </>
+            ) : undefined}
+        </VStack>
     );
 }

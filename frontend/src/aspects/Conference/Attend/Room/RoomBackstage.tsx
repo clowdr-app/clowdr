@@ -366,7 +366,7 @@ export function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFra
     }, [event.item, event.name]);
 
     return timeRemaining > 0 ? (
-        <Alert status="info" alignItems="flex-start">
+        <Alert status="info" alignItems="flex-start" pos="sticky" top={0} zIndex={10000}>
             <AlertIcon />
             <VStack alignItems="start">
                 <AlertTitle>{formatRemainingTime(timeRemaining)} until your backstage is available</AlertTitle>

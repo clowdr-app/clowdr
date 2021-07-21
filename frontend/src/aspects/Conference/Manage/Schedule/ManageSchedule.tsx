@@ -290,11 +290,15 @@ function EditableScheduleTable(): JSX.Element {
     const roomModeOptions = useMemo(
         () =>
             Object.keys(Room_Mode_Enum)
-                .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
                     const v = (Room_Mode_Enum as any)[x];
-                    return { value: v, label: formatEnumValue(v) };
-                }),
+                    if (v === Room_Mode_Enum.Breakout) {
+                        return { value: v, label: "Video-chat" };
+                    } else {
+                        return { value: v, label: formatEnumValue(v) };
+                    }
+                })
+                .sort((x, y) => x.label.localeCompare(y.label)),
         []
     );
 

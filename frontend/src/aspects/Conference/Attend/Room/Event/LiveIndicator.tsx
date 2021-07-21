@@ -12,6 +12,7 @@ import {
     StatLabel,
     StatNumber,
     Text,
+    useColorModeValue,
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
@@ -202,6 +203,7 @@ export function LiveIndicator({
         }
     }, [currentInput, isConnected]);
 
+    const bgColor = useColorModeValue("gray.100", "gray.800");
     return (
         <>
             <Modal isOpen={shouldModalBeOpen} onClose={onClose} isCentered>
@@ -212,31 +214,35 @@ export function LiveIndicator({
                             <Heading>
                                 You will be live the moment the indicator says &ldquo;Backstage is live&rdquo;.
                             </Heading>
-                            <Text>DO NOT ASK THE AUDIENCE WHEN YOU ARE LIVE!</Text>
+                            <Text>Please do not ask the audience when you are live.</Text>
                             <Text>
                                 The audience sees the stream with a bit of lag - anywhere from 5 to 30 seconds depending
                                 on where they are in the world. So they can&apos;t give you real-time feedback about the
                                 stream. Also, if there were a technical glitch (meaning your stream was not live) you
-                                can trust that the audience will quickly start telling you via the chat!
+                                can trust that the audience will quickly start telling you via the chat.
                             </Text>
                             <Text>
-                                So please trust the countdown - it is accurate and reliable. If it says the backstage is
-                                live, then you are live in front of the entire conference and should start your
-                                presentation or Q&amp;A session (or whatever it is you&apos;re here to do).
+                                The countdown is accurate and reliable. If it says the backstage is live, then you are
+                                live in front of the entire conference and should start your presentation or Q&amp;A
+                                session.
                             </Text>
-                            <Text>
-                                Please try not to be &ldquo;that person&rdquo; that wastes the first 2 minutes of their
-                                stream trying to check &ldquo;am I live&rdquo;!
-                            </Text>
-                            <Text>
-                                (Also, please open the chat sidebar while you are off air - i.e. ahead of time!)
-                            </Text>
+                            <Text>(Also, please open the chat sidebar ahead of time, while you are off air.)</Text>
                         </VStack>
                     </ModalBody>
                 </ModalContent>
             </Modal>
             {live ? (
-                <HStack alignItems="stretch" justifyContent="flex-start" mx="auto" flexWrap="wrap">
+                <HStack
+                    alignItems="stretch"
+                    justifyContent="flex-start"
+                    mx="auto"
+                    flexWrap="wrap"
+                    pos="sticky"
+                    top={0}
+                    bgColor={bgColor}
+                    zIndex={10000}
+                    overflow="visible"
+                >
                     <Badge
                         fontSize={isConnected ? "lg" : "md"}
                         colorScheme="red"
@@ -254,7 +260,17 @@ export function LiveIndicator({
                     </Stat>
                 </HStack>
             ) : (
-                <HStack alignItems="stretch" justifyContent="flex-start" mx="auto" flexWrap="wrap">
+                <HStack
+                    alignItems="stretch"
+                    justifyContent="flex-start"
+                    mx="auto"
+                    flexWrap="wrap"
+                    pos="sticky"
+                    top={0}
+                    bgColor={bgColor}
+                    zIndex={10000}
+                    overflow="visible"
+                >
                     {secondsUntilLive > 0 ? (
                         <>
                             <Badge
@@ -299,9 +315,7 @@ export function LiveIndicator({
                             )}
                             {secondsUntilLive > 10 ? (
                                 <Button onClick={onOpen} h="auto" maxH="auto" p={3} colorScheme="blue" size="sm">
-                                    When will I be live?
-                                    <br />
-                                    Click to learn.
+                                    What should I do?
                                 </Button>
                             ) : undefined}
                         </>

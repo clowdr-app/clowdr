@@ -99,15 +99,7 @@ export default function AppPageV2(): JSX.Element {
             mr={rightVisible ? 0 : [2, 2, 2, 4]}
             pr={rightVisible ? 2 : 0}
         >
-            <VStack
-                mt={2}
-                spacing={5}
-                width="100%"
-                mb="40px"
-                overflow="hidden"
-                role="region"
-                aria-labelledby="page-heading"
-            >
+            <VStack spacing={5} width="100%" mb="40px" role="region" aria-labelledby="page-heading">
                 {center}
             </VStack>
         </Box>

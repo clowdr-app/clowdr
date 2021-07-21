@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import {
     Box,
     Button,
-    Flex,
+    HStack,
     Popover,
     PopoverArrow,
     PopoverBody,
@@ -13,7 +13,6 @@ import {
     Portal,
     Spinner,
     Text,
-    useBreakpointValue,
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
@@ -141,11 +140,8 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
         [event.id, live, secondsUntilOffAir, isConnected]
     );
 
-    const insertSpacer = useBreakpointValue([false, false, true]);
     return (
-        <Flex w="100%" p={2} flexWrap="wrap" alignItems="center" justifyContent="space-between">
-            {/* Add a spacer of equal width to the Broadcast Controls button, so that the time info is centered */}
-            {insertSpacer ? <Box w={"10em"}>&nbsp;</Box> : <></>}
+        <>
             <LiveIndicator
                 live={live}
                 secondsUntilLive={secondsUntilLive}
@@ -154,10 +150,10 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                 eventId={event.id}
                 isConnected={isConnected}
             />
-            <VStack justifyContent="center" alignItems="flex-end" my={2}>
+            <HStack flexWrap="wrap" w="100%" justifyContent="center" alignItems="flex-end" my={2}>
                 {immediateSwitchControls}
                 {broadcastPopover}
-            </VStack>
-        </Flex>
+            </HStack>
+        </>
     );
 }

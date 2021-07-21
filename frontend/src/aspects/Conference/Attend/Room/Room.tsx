@@ -611,25 +611,41 @@ function RoomInner({
 
     const bgColour = useColorModeValue("gray.200", "gray.700");
 
+    // Note: A video chat might be shown in a sponsor booth. That booth may
+    //       have an upcoming broadcast or Zoom event. Thus it's possible
+    //       for the video chat to be closing even when there is no ongoing
+    //       breakout event.
     const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
+    const currentRoomEventEndTime = useMemo(
+        () => (currentRoomEvent ? Date.parse(currentRoomEvent.endTime) : undefined),
+        [currentRoomEvent]
+    );
+    const secondsUntilBreakoutEventEnds = useMemo(
+        () =>
+            currentRoomEventEndTime && currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout
+                ? (currentRoomEventEndTime - now5s) / 1000
+                : Number.POSITIVE_INFINITY,
+        [currentRoomEvent?.intendedRoomModeName, currentRoomEventEndTime, now5s]
+    );
+    const secondsUntilBreakoutRoomCloses = Math.min(secondsUntilBreakoutEventEnds, secondsUntilNonBreakoutEvent);
 
     const startsSoonEl = useMemo(
         () => (
             <>
-                {showDefaultBreakoutRoom && secondsUntilNonBreakoutEvent <= 180 ? (
-                    <Alert status="warning">
+                {showDefaultBreakoutRoom && secondsUntilBreakoutRoomCloses <= 180 ? (
+                    <Alert status="warning" pos="sticky" top={0} zIndex={10000}>
                         <AlertIcon />
-                        Event starting soon. Breakout room closes in {Math.round(secondsUntilNonBreakoutEvent)} seconds
+                        Video-chat closes in {Math.round(secondsUntilBreakoutRoomCloses)} seconds
                     </Alert>
                 ) : undefined}
                 {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
-                    <Alert status="info">
+                    <Alert status="info" pos="sticky" top={0} zIndex={10000}>
                         <AlertIcon />
                         Zoom event starting in {Math.round(secondsUntilZoomEvent)} seconds
                     </Alert>
                 ) : undefined}
                 {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
-                    <Alert status="info">
+                    <Alert status="info" pos="sticky" top={0} zIndex={10000}>
                         <AlertIcon />
                         Livestream event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
                     </Alert>
@@ -638,8 +654,8 @@ function RoomInner({
         ),
         [
             currentRoomEvent,
+            secondsUntilBreakoutRoomCloses,
             secondsUntilBroadcastEvent,
-            secondsUntilNonBreakoutEvent,
             secondsUntilZoomEvent,
             showDefaultBreakoutRoom,
         ]

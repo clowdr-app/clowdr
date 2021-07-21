@@ -199,7 +199,11 @@ export function ChimeRoomControlBar(): JSX.Element {
                 </WrapItem>
                 {audioVideo ? (
                     <WrapItem>
-                        <Button onClick={toggleMute} isDisabled={!audioInputs.selectedDevice}>
+                        <Button
+                            onClick={toggleMute}
+                            isDisabled={!audioInputs.selectedDevice}
+                            colorScheme={muted || !audioInputs.selectedDevice ? "blue" : "purple"}
+                        >
                             {muted || !audioInputs.selectedDevice ? (
                                 <>
                                     <FAIcon icon="microphone-slash" iconStyle="s" />
@@ -220,6 +224,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                 pl={0}
                                 pr={3}
                                 aria-label="Choose microphone"
+                                colorScheme="blue"
                             />
                             <MenuList zIndex="300">
                                 {audioInputs.devices.map((device) => (
@@ -241,7 +246,11 @@ export function ChimeRoomControlBar(): JSX.Element {
                 ) : undefined}
                 {audioVideo ? (
                     <WrapItem>
-                        <Button onClick={toggleVideoWrapper} isDisabled={!videoInputs.selectedDevice}>
+                        <Button
+                            onClick={toggleVideoWrapper}
+                            isDisabled={!videoInputs.selectedDevice}
+                            colorScheme={!videoInputs.selectedDevice ? "blue" : "purple"}
+                        >
                             {isVideoEnabled && videoInputs.selectedDevice ? (
                                 <>
                                     <FAIcon icon="video" iconStyle="s" />
@@ -262,6 +271,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                 pl={0}
                                 pr={3}
                                 aria-label="Choose camera"
+                                colorScheme="blue"
                             />
                             <MenuList zIndex="300">
                                 {videoInputs.devices.map((device) => (
@@ -296,14 +306,14 @@ export function ChimeRoomControlBar(): JSX.Element {
                     <WrapItem>
                         {meetingStatus === MeetingStatus.Succeeded ? (
                             isLocalUserSharing ? (
-                                <Button onClick={() => toggleContentShare()}>
+                                <Button onClick={() => toggleContentShare()} colorScheme="blue">
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
                                     </>
                                 </Button>
                             ) : isLocalShareLoading ? (
-                                <Button onClick={() => toggleContentShare()} isLoading={true}>
+                                <Button onClick={() => toggleContentShare()} isLoading={true} colorScheme="blue">
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Share screen</span>
@@ -326,7 +336,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                     </TagLabel>
                                 </Tag>
                             ) : (
-                                <Button onClick={() => toggleContentShare()}>
+                                <Button onClick={() => toggleContentShare()} colorScheme="blue">
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Share screen</span>

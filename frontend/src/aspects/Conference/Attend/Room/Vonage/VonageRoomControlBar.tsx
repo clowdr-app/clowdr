@@ -263,6 +263,7 @@ export function VonageRoomControlBar({
                     leftIcon={<SettingsIcon />}
                     onClick={() => onOpen(true, !joining || !requireMicrophone)}
                     isDisabled={joining}
+                    colorScheme="blue"
                 >
                     Choose microphone / camera
                 </Button>
@@ -272,7 +273,7 @@ export function VonageRoomControlBar({
                         <span style={{ marginLeft: "1rem" }}>Mute</span>
                     </Button>
                 ) : (
-                    <Button isLoading={isOpening} onClick={startMicrophone} isDisabled={joining}>
+                    <Button isLoading={isOpening} onClick={startMicrophone} isDisabled={joining} colorScheme="blue">
                         <FAIcon icon="microphone-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Unmute</span>
                     </Button>
@@ -283,7 +284,7 @@ export function VonageRoomControlBar({
                         <span style={{ marginLeft: "1rem" }}>Stop video</span>
                     </Button>
                 ) : (
-                    <Button isLoading={isOpening} onClick={startCamera} isDisabled={joining}>
+                    <Button isLoading={isOpening} onClick={startCamera} isDisabled={joining} colorScheme="blue">
                         <FAIcon icon="video-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Start video</span>
                     </Button>
@@ -300,7 +301,7 @@ export function VonageRoomControlBar({
                     </Button>
                 ) : vonage.state.type === StateType.Connected &&
                   vonage.state.initialisedState.screenSharingSupported ? (
-                    <Button onClick={startScreenShare} mr="auto" isDisabled={joining}>
+                    <Button onClick={startScreenShare} mr="auto" isDisabled={joining} colorScheme="blue">
                         <FAIcon icon="desktop" iconStyle="s" mr="auto" />
                         <span style={{ marginLeft: "1rem" }}>Share screen</span>
                     </Button>

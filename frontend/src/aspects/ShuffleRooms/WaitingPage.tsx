@@ -221,7 +221,7 @@ function QueuedShufflePeriodBox({
     }
 }
 
-function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JSX.Element {
+export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment }): JSX.Element {
     const now = useRealTime(1000);
     const currentRegistrant = useCurrentRegistrant();
     const conference = useConference();
@@ -346,14 +346,15 @@ export function ShuffleWaiting(): JSX.Element {
         variables: vars,
     });
 
-    const data = useMemo(() => (periods.data?.room_ShufflePeriod ? [...periods.data.room_ShufflePeriod] : null), [
-        periods.data?.room_ShufflePeriod,
-    ]);
+    const data = useMemo(
+        () => (periods.data?.room_ShufflePeriod ? [...periods.data.room_ShufflePeriod] : null),
+        [periods.data?.room_ShufflePeriod]
+    );
 
-    const ongoingQueues = useMemo(() => data?.filter((x) => Date.parse(x.startAt) <= 5 * 60 * 1000 + now.getTime()), [
-        data,
-        now,
-    ]);
+    const ongoingQueues = useMemo(
+        () => data?.filter((x) => Date.parse(x.startAt) <= 5 * 60 * 1000 + now.getTime()),
+        [data, now]
+    );
     const upcomingQueues = useMemo(
         () =>
             data

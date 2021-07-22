@@ -66,8 +66,7 @@ gql`
         itemId
         exhibitionId
         shufflePeriod {
-            id
-            name
+            ...ShufflePeriodData
         }
         item {
             id

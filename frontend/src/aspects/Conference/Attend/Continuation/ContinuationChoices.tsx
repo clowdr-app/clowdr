@@ -34,7 +34,7 @@ gql`
         description
     }
 
-    query ContinuationChoices_Continuations($fromId: uuid!) {
+    query ContinuationChoices_Continuations($fromId: uuid!, $nowStart: timestamptz, $nowEnd: timestamptz) {
         schedule_Continuation(
             where: { _or: [{ fromEvent: { _eq: $fromId } }, { fromShuffleQueue: { _eq: $fromId } }] }
         ) {
@@ -45,8 +45,16 @@ gql`
             endAt
             roomDurationMinutes
         }
-        schedule_Event(where: { id: { _eq: $fromId } }) {
+        schedule_Event(
+            where: {
+                _or: [
+                    { id: { _eq: $fromId } }
+                    { startTime: { _lte: $nowStart }, endTime: { _gte: $nowEnd }, shufflePeriodId: { _eq: $fromId } }
+                ]
+            }
+        ) {
             id
+            roomId
             endTime
         }
     }
@@ -78,9 +86,15 @@ export default function ContinuationChoices({
     currentRole: ContinuationDefaultFor;
     currentRoomId: string;
 }): JSX.Element {
+    // We do not want this to change on every render...
+    const nowStatic_StartStr = useMemo(() => new Date(Date.now() + 60000).toISOString(), []);
+    const nowStatic_EndStr = useMemo(() => new Date(Date.now() - 60000).toISOString(), []);
+    // ...else this query would change on every render!
     const response = useContinuationChoices_ContinuationsQuery({
         variables: {
             fromId: "eventId" in from ? from.eventId : from.shufflePeriodId,
+            nowStart: nowStatic_StartStr,
+            nowEnd: nowStatic_EndStr,
         },
     });
 
@@ -114,6 +128,7 @@ export default function ContinuationChoices({
                               response.data.room_ShufflePeriod.length > 0
                                   ? response.data.room_ShufflePeriod[0].roomDurationMinutes * 60 * 1000
                                   : 0,
+                          eventRoomId: response.data.schedule_Event[0]?.roomId,
                       }
             }
             choices={response.data.schedule_Continuation}
@@ -137,7 +152,13 @@ function ContinuationChoices_Inner({
 }: {
     from:
         | { eventId: string; itemId: string | null; endTime: number }
-        | { shufflePeriodId: string; periodEndTime: number; roomEndTime: number; roomDuration: number };
+        | {
+              shufflePeriodId: string;
+              periodEndTime: number;
+              roomEndTime: number;
+              roomDuration: number;
+              eventRoomId?: string;
+          };
     choices: readonly ContinuationChoices_ContinuationFragment[];
     isBackstage: boolean;
     noBackstage: boolean;
@@ -323,8 +344,12 @@ function ContinuationChoices_Inner({
             };
 
             if ("shufflePeriodId" in from) {
-                history.push(`/conference/${conference.slug}/shuffle`);
-                setTimeout(() => activateChosenOption(), 100);
+                if (from.eventRoomId) {
+                    history.push(`/conference/${conference.slug}/room/${from.eventRoomId}`);
+                } else {
+                    history.push(`/conference/${conference.slug}/shuffle`);
+                }
+                setTimeout(() => activateChosenOption(), 200);
             } else {
                 activateChosenOption();
             }

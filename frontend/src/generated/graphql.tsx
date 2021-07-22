@@ -35602,13 +35602,15 @@ export type ContinuationChoices_ContinuationFragment = { readonly __typename?: '
 
 export type ContinuationChoices_ContinuationsQueryVariables = Exact<{
   fromId: Scalars['uuid'];
+  nowStart?: Maybe<Scalars['timestamptz']>;
+  nowEnd?: Maybe<Scalars['timestamptz']>;
 }>;
 
 
 export type ContinuationChoices_ContinuationsQuery = { readonly __typename?: 'query_root', readonly schedule_Continuation: ReadonlyArray<(
     { readonly __typename?: 'schedule_Continuation' }
     & ContinuationChoices_ContinuationFragment
-  )>, readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly endAt: any, readonly roomDurationMinutes: number }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly endTime?: Maybe<any> }> };
+  )>, readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly endAt: any, readonly roomDurationMinutes: number }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly endTime?: Maybe<any> }> };
 
 export type ContinuationChoices_RoomsQueryVariables = Exact<{
   ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -35845,7 +35847,10 @@ export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly
     & Room_EventSummaryFragment
   )> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriod?: Maybe<(
+    { readonly __typename?: 'room_ShufflePeriod' }
+    & ShufflePeriodDataFragment
+  )>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
 
 export type Room_GetDefaultVideoRoomBackendQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -38760,6 +38765,39 @@ export const RoomEventDetailsFragmentDoc = gql`
   }
 }
     `;
+export const PrefetchShuffleQueueEntryDataFragmentDoc = gql`
+    fragment PrefetchShuffleQueueEntryData on room_ShuffleQueueEntry {
+  id
+  registrantId
+  created_at
+  updated_at
+  shuffleRoom {
+    id
+    startedAt
+    isEnded
+    roomId
+  }
+}
+    `;
+export const ShufflePeriodDataFragmentDoc = gql`
+    fragment ShufflePeriodData on room_ShufflePeriod {
+  id
+  conferenceId
+  endAt
+  maxRegistrantsPerRoom
+  name
+  queueEntries(
+    distinct_on: [registrantId]
+    order_by: {registrantId: asc, id: desc}
+  ) {
+    ...PrefetchShuffleQueueEntryData
+  }
+  roomDurationMinutes
+  startAt
+  targetRegistrantsPerRoom
+  waitRoomMaxDurationSeconds
+}
+    ${PrefetchShuffleQueueEntryDataFragmentDoc}`;
 export const Room_EventSummaryFragmentDoc = gql`
     fragment Room_EventSummary on schedule_Event {
   id
@@ -38771,8 +38809,7 @@ export const Room_EventSummaryFragmentDoc = gql`
   itemId
   exhibitionId
   shufflePeriod {
-    id
-    name
+    ...ShufflePeriodData
   }
   item {
     id
@@ -38803,7 +38840,7 @@ export const Room_EventSummaryFragmentDoc = gql`
     roleName
   }
 }
-    `;
+    ${ShufflePeriodDataFragmentDoc}`;
 export const RoomPage_RoomDetailsFragmentDoc = gql`
     fragment RoomPage_RoomDetails on room_Room {
   id
@@ -40143,39 +40180,6 @@ export const RoomParticipantDetailsFragmentDoc = gql`
   registrantId
 }
     `;
-export const PrefetchShuffleQueueEntryDataFragmentDoc = gql`
-    fragment PrefetchShuffleQueueEntryData on room_ShuffleQueueEntry {
-  id
-  registrantId
-  created_at
-  updated_at
-  shuffleRoom {
-    id
-    startedAt
-    isEnded
-    roomId
-  }
-}
-    `;
-export const ShufflePeriodDataFragmentDoc = gql`
-    fragment ShufflePeriodData on room_ShufflePeriod {
-  id
-  conferenceId
-  endAt
-  maxRegistrantsPerRoom
-  name
-  queueEntries(
-    distinct_on: [registrantId]
-    order_by: {registrantId: asc, id: desc}
-  ) {
-    ...PrefetchShuffleQueueEntryData
-  }
-  roomDurationMinutes
-  startAt
-  targetRegistrantsPerRoom
-  waitRoomMaxDurationSeconds
-}
-    ${PrefetchShuffleQueueEntryDataFragmentDoc}`;
 export const SubdShuffleQueueEntryDataFragmentDoc = gql`
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
   id
@@ -40802,7 +40806,7 @@ export type GetItemQueryHookResult = ReturnType<typeof useGetItemQuery>;
 export type GetItemLazyQueryHookResult = ReturnType<typeof useGetItemLazyQuery>;
 export type GetItemQueryResult = Apollo.QueryResult<GetItemQuery, GetItemQueryVariables>;
 export const ContinuationChoices_ContinuationsDocument = gql`
-    query ContinuationChoices_Continuations($fromId: uuid!) {
+    query ContinuationChoices_Continuations($fromId: uuid!, $nowStart: timestamptz, $nowEnd: timestamptz) {
   schedule_Continuation(
     where: {_or: [{fromEvent: {_eq: $fromId}}, {fromShuffleQueue: {_eq: $fromId}}]}
   ) {
@@ -40813,8 +40817,11 @@ export const ContinuationChoices_ContinuationsDocument = gql`
     endAt
     roomDurationMinutes
   }
-  schedule_Event(where: {id: {_eq: $fromId}}) {
+  schedule_Event(
+    where: {_or: [{id: {_eq: $fromId}}, {startTime: {_lte: $nowStart}, endTime: {_gte: $nowEnd}, shufflePeriodId: {_eq: $fromId}}]}
+  ) {
     id
+    roomId
     endTime
   }
 }

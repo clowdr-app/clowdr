@@ -1,5 +1,6 @@
 import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouteMatch } from "react-router-dom";
 import Routing from "../../AppRouting";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
 import { GlobalChatStateContext } from "../Chat/GlobalChatStateProvider";
@@ -73,11 +74,14 @@ export default function AppPageV2(): JSX.Element {
         [centerVisible, rightVisible]
     );
 
-    // const locationMatchSchedule = useRouteMatch([
-    //     `/conference/${conference?.slug ?? "NONE"}/schedule`,
-    //     `/conference/${conference?.slug ?? "NONE"}/schedule2`,
-    // ]);
-    // const isSchedulePage = locationMatchSchedule !== null;
+    const locationMatchRoom = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/room`]);
+    const isRoomPage = locationMatchRoom !== null;
+    useEffect(() => {
+        if (isRoomPage && centerAlwaysVisible) {
+            setRightOpen(true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isRoomPage]);
 
     const borderColour = useColorModeValue("gray.200", "gray.600");
     const centerBar = (

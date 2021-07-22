@@ -144,13 +144,6 @@ export function RoomContent({
                             </Tag>
                         ) : undefined}
                     </HStack>
-                    {nextRoomEvent.shufflePeriod ? (
-                        <Center>
-                            <ShufflePeriodBox period={nextRoomEvent.shufflePeriod} />
-                        </Center>
-                    ) : (
-                        <></>
-                    )}
                     {nextRoomEvent?.itemId ? (
                         <ItemElementsWrapper itemId={nextRoomEvent.itemId} linkToItem={true} />
                     ) : (

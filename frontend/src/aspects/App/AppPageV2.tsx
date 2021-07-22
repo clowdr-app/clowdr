@@ -75,13 +75,15 @@ export default function AppPageV2(): JSX.Element {
     );
 
     const locationMatchRoom = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/room`]);
+    const locationMatchItem = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/item`]);
     const isRoomPage = locationMatchRoom !== null;
+    const isItemPage = locationMatchItem !== null;
     useEffect(() => {
-        if (isRoomPage && centerAlwaysVisible) {
+        if ((isRoomPage || isItemPage) && centerAlwaysVisible) {
             setRightOpen(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isRoomPage]);
+    }, [isRoomPage, isItemPage]);
 
     const borderColour = useColorModeValue("gray.200", "gray.600");
     const centerBar = (

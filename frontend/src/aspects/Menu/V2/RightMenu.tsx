@@ -7,7 +7,6 @@ import { useMaybeConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import FAIcon from "../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
-import { useUXChoice } from "../../UXChoice/UXChoice";
 import { useMainMenu } from "../V1/MainMenu/MainMenuState";
 import MenuButton from "./MenuButton";
 import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
@@ -20,7 +19,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
     const maybeConference = useMaybeConference();
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const { path } = useRouteMatch();
-    const { onOpen: onOpenUXChoice } = useUXChoice();
+    // const { onOpen: onOpenUXChoice } = useUXChoice();
 
     const colorMode = useColorMode();
     const maybeUser = useMaybeCurrentUser()?.user;
@@ -174,10 +173,10 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             <FAIcon iconStyle="s" icon="envelope-open-text" />
                             &nbsp;&nbsp;Push notifications
                         </MenuItem>
-                        <MenuItem onClick={onOpenUXChoice}>
+                        {/* <MenuItem onClick={onOpenUXChoice}>
                             <FAIcon iconStyle="s" icon="exchange-alt" />
                             &nbsp;&nbsp;Change UI experience
-                        </MenuItem>
+                        </MenuItem> */}
                         <MenuItem onClick={() => logout({ returnTo: logoutReturnTo })}>
                             <FAIcon iconStyle="s" icon="sign-out-alt" />
                             &nbsp;&nbsp;Logout

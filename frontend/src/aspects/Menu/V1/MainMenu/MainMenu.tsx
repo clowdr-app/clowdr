@@ -23,7 +23,6 @@ import { useConferenceCurrentUserActivePermissions } from "../../../Conference/u
 import { useMaybeCurrentRegistrant } from "../../../Conference/useCurrentRegistrant";
 import FAIcon from "../../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
-import SwitchUXChoiceButton from "../../../UXChoice/SwitchUXChoiceButton";
 import { ToggleChatsButton } from "../ToggleChatsButton";
 import { ToggleNavButton } from "../ToggleNavButton";
 import { MenuState, MenuStateContext, useMainMenu } from "./MainMenuState";
@@ -41,10 +40,10 @@ export function MenuBar(): JSX.Element {
     const isPermittedAccess = registrant && permissions.has(Permissions_Permission_Enum.ConferenceViewAttendees);
     const mainMenu = useMainMenu();
 
-    const navButton = useMemo(() => (isPermittedAccess && !mainMenu.isLeftBarOpen ? <ToggleNavButton /> : undefined), [
-        isPermittedAccess,
-        mainMenu.isLeftBarOpen,
-    ]);
+    const navButton = useMemo(
+        () => (isPermittedAccess && !mainMenu.isLeftBarOpen ? <ToggleNavButton /> : undefined),
+        [isPermittedAccess, mainMenu.isLeftBarOpen]
+    );
 
     const chatButton = useMemo(
         () => (isPermittedAccess && !mainMenu.isRightBarOpen ? <ToggleChatsButton /> : undefined),
@@ -130,7 +129,7 @@ export function MenuBar(): JSX.Element {
                                 ) : undefined}
                                 <AuthenticationButton asMenuItem />
                                 <SignupButton asMenuItem />
-                                <SwitchUXChoiceButton />
+                                {/* <SwitchUXChoiceButton /> */}
                             </Route>
                             <Route path="/">
                                 {conference && registrant ? (
@@ -228,7 +227,7 @@ export function MenuBar(): JSX.Element {
                                 ) : undefined}
                                 <AuthenticationButton asMenuItem />
                                 <SignupButton asMenuItem />
-                                <SwitchUXChoiceButton />
+                                {/* <SwitchUXChoiceButton /> */}
                             </Route>
                         </Switch>
                     </MenuList>

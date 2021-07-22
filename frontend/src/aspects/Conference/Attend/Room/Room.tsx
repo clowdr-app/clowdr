@@ -1,11 +1,13 @@
 import { gql, useApolloClient } from "@apollo/client";
 import {
     Alert,
+    AlertDescription,
     AlertIcon,
     AspectRatio,
     Box,
     Button,
     Center,
+    chakra,
     HStack,
     keyframes,
     Spinner,
@@ -41,6 +43,7 @@ import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import ContinuationChoices from "../Continuation/ContinuationChoices";
+import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModal";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
 import { RoomContent } from "./RoomContent";
@@ -625,31 +628,59 @@ function RoomInner({
     );
     const secondsUntilBreakoutRoomCloses = Math.min(secondsUntilBreakoutEventEnds, secondsUntilNonBreakoutEvent);
 
+    const socialModal = useSocialiseModal();
     const startsSoonEl = useMemo(
         () => (
             <>
                 {shuffleTimeRemaining <= 30000 ? (
-                    <Alert status="warning" pos="sticky" top={0} zIndex={10000}>
+                    <Alert status="warning" pos="sticky" top={0} zIndex={1000}>
                         <AlertIcon />
-                        Shuffle room ends in {Math.max(0, Math.round(shuffleTimeRemaining))} seconds
+                        <AlertDescription>
+                            Shuffle room ends in {Math.max(0, Math.round(shuffleTimeRemaining))} seconds.
+                        </AlertDescription>
                     </Alert>
                 ) : undefined}
                 {showDefaultBreakoutRoom && secondsUntilBreakoutRoomCloses <= 180 ? (
-                    <Alert status="warning" pos="sticky" top={0} zIndex={10000}>
+                    <Alert status="warning" pos="sticky" top={0} zIndex={1000} alignItems="flex-start">
                         <AlertIcon />
-                        Video-chat closes in {Math.round(secondsUntilBreakoutRoomCloses)} seconds
+                        <AlertDescription as={VStack} w="100%">
+                            <Text>
+                                Video-chat closes in{" "}
+                                <chakra.span fontWeight="bold">
+                                    {Math.round(secondsUntilBreakoutRoomCloses)} seconds
+                                </chakra.span>
+                                .
+                            </Text>
+                            <Text>Still discussing something? Why not carry on the conversation in a social room?</Text>
+                            <Button
+                                my={2}
+                                ml={2}
+                                onClick={() => {
+                                    socialModal.onOpen(SocialiseModalTab.Rooms);
+                                }}
+                                size="sm"
+                                colorScheme="purple"
+                            >
+                                <FAIcon iconStyle="s" icon="hand-point-right" />
+                                &nbsp;&nbsp;Choose a social room
+                            </Button>
+                        </AlertDescription>
                     </Alert>
                 ) : undefined}
                 {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
-                    <Alert status="info" pos="sticky" top={0} zIndex={10000}>
+                    <Alert status="info" pos="sticky" top={0} zIndex={1000}>
                         <AlertIcon />
-                        Zoom event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                        <AlertDescription>
+                            Zoom event starting in {Math.round(secondsUntilZoomEvent)} seconds
+                        </AlertDescription>
                     </Alert>
                 ) : undefined}
                 {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
-                    <Alert status="info" pos="sticky" top={0} zIndex={10000}>
+                    <Alert status="info" pos="sticky" top={0} zIndex={1000}>
                         <AlertIcon />
-                        Livestream event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
+                        <AlertDescription>
+                            Livestream event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
+                        </AlertDescription>
                     </Alert>
                 ) : undefined}
             </>
@@ -661,6 +692,7 @@ function RoomInner({
             secondsUntilZoomEvent,
             showDefaultBreakoutRoom,
             shuffleTimeRemaining,
+            socialModal,
         ]
     );
 

@@ -91,7 +91,7 @@ function Event({
     }, [endMillis, now, startMillis]);
 
     return (
-        <Tr p={2} my={2} w="auto" backgroundColor={happeningSoonOrNow ? "purple.500" : "initial"}>
+        <Tr p={2} my={2} w="auto" backgroundColor={happeningSoonOrNow ? "green.500" : "initial"}>
             {maybeRegistrant ? (
                 <Td p={0} pl={1}>
                     <StarEventButton eventIds={itemEvent.id} />

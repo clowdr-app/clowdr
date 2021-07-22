@@ -105,13 +105,13 @@ gql`
     }
 `;
 
-function isShuffleRoomEndingSoon(
+function shuffleTimeRemainingMs(
     { startedAt, durationMinutes }: { startedAt: string; durationMinutes: number },
     now: number
-): boolean {
+): number {
     const startedAtMs = Date.parse(startedAt);
     const durationMs = durationMinutes * 60 * 1000;
-    return startedAtMs + durationMs - 30000 <= now && now < startedAtMs + durationMs;
+    return startedAtMs + durationMs - now;
 }
 
 export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
@@ -340,6 +340,8 @@ function RoomInner({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRoomEvent]);
+
+    const toast = useToast();
 
     useEffect(() => {
         if (
@@ -588,25 +590,13 @@ function RoomInner({
         [currentRoomEvent, nextRoomEvent, roomDetails, selectedVideoElementId]
     );
 
-    const [sendShuffleRoomNotification, setSendShuffleRoomNotification] = useState<boolean>(false);
-    useEffect(() => {
-        if (roomDetails.shuffleRooms.length > 0 && isShuffleRoomEndingSoon(roomDetails.shuffleRooms[0], now5s)) {
-            setSendShuffleRoomNotification(true);
-        }
-    }, [roomDetails.shuffleRooms, now5s]);
-
-    const toast = useToast();
-    useEffect(() => {
-        if (sendShuffleRoomNotification) {
-            toast({
-                title: "30 seconds left...",
-                status: "warning",
-                duration: 29000,
-                isClosable: true,
-                position: "top",
-            });
-        }
-    }, [sendShuffleRoomNotification, toast]);
+    const shuffleTimeRemaining = useMemo(
+        () =>
+            roomDetails.shuffleRooms.length
+                ? shuffleTimeRemainingMs(roomDetails.shuffleRooms[0], now5s)
+                : Number.POSITIVE_INFINITY,
+        [roomDetails.shuffleRooms, now5s]
+    );
 
     const bgColour = useColorModeValue("gray.200", "gray.700");
 
@@ -631,6 +621,12 @@ function RoomInner({
     const startsSoonEl = useMemo(
         () => (
             <>
+                {shuffleTimeRemaining <= 30000 ? (
+                    <Alert status="warning" pos="sticky" top={0} zIndex={10000}>
+                        <AlertIcon />
+                        Shuffle room ends in {Math.max(0, Math.round(shuffleTimeRemaining))} seconds
+                    </Alert>
+                ) : undefined}
                 {showDefaultBreakoutRoom && secondsUntilBreakoutRoomCloses <= 180 ? (
                     <Alert status="warning" pos="sticky" top={0} zIndex={10000}>
                         <AlertIcon />
@@ -657,6 +653,7 @@ function RoomInner({
             secondsUntilBroadcastEvent,
             secondsUntilZoomEvent,
             showDefaultBreakoutRoom,
+            shuffleTimeRemaining,
         ]
     );
 

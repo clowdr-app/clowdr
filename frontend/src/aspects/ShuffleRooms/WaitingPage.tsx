@@ -393,6 +393,10 @@ export default function WaitingPage(): JSX.Element {
     return (
         <>
             {title}
+            <Heading as="h1" mt={2}>
+                Networking
+            </Heading>
+            <Text>Join a networking queue to be randomly grouped and meet new people!</Text>
             <ShuffleWaiting />
         </>
     );

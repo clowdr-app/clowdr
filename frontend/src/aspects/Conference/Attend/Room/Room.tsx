@@ -295,10 +295,17 @@ function RoomInner({
     alreadyBackstage.current = showBackstage;
 
     const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.None;
-    const showDefaultBreakoutRoom =
-        !roomDetails.isProgramRoom ||
-        currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout ||
-        (!currentRoomEvent && roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor);
+    const showDefaultBreakoutRoom = useMemo(
+        () =>
+            !roomDetails.isProgramRoom ||
+            currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout ||
+            (!currentRoomEvent &&
+                nextRoomEvent &&
+                nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.Breakout &&
+                Date.parse(nextRoomEvent.startTime) <= now30s + 20 * 60 * 1000) ||
+            (!currentRoomEvent && roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor),
+        [currentRoomEvent, nextRoomEvent, now30s, roomDetails.isProgramRoom, roomDetails.originatingItem?.typeName]
+    );
 
     const maybeZoomUrl = useMemo(() => {
         try {

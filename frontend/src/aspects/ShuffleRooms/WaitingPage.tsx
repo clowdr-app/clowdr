@@ -201,7 +201,9 @@ function QueuedShufflePeriodBox({
                 color={colour}
                 trackColor={trackColour}
             >
-                <CircularProgressLabel fontSize="sm">{Math.round(timeWaiting / 1000)}s</CircularProgressLabel>
+                <CircularProgressLabel fontSize="sm">
+                    {timeWaiting < 0 ? "Initialising..." : Math.round(timeWaiting / 1000) + "s"}
+                </CircularProgressLabel>
             </CircularProgress>
         );
         if (timeWaiting > period.waitRoomMaxDurationSeconds * 1000) {

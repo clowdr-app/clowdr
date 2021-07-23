@@ -33,7 +33,7 @@ export default function RoomContinuationChoices({
     useEffect(() => {
         if (currentRoomEvent) {
             const startTime = Date.parse(currentRoomEvent.startTime);
-            if (now5s - startTime > 45000) {
+            if (now5s - startTime > 30000) {
                 setContinuationChoicesFrom((old) =>
                     !old || !("eventId" in old) || old.eventId !== currentRoomEvent.id
                         ? {
@@ -79,7 +79,7 @@ export default function RoomContinuationChoices({
             setContinuationNoBackstage(true);
             setContinuationRole(ContinuationDefaultFor.None);
         } else {
-            setContinuationChoicesFrom((old) => (!old || ("endsAt" in old && now5s > old.endsAt + 45000) ? null : old));
+            setContinuationChoicesFrom((old) => (!old || ("endsAt" in old && now5s > old.endsAt + 30000) ? null : old));
         }
     }, [currentRoomEvent, roomDetails.shuffleRooms, now5s, showBackstage, currentRegistrantId]);
 

@@ -142,6 +142,11 @@ export default function ContinuationChoices({
     );
 }
 
+const passiveChoice_RevealThreshholdMs = 2 * 60 * 1000;
+const passiveChoice_HideThreshholdMs = 1 * 60 * 1000;
+const activeChoice_RevealThreshholdMs = 20 * 1000;
+const activeChoice_HideThreshholdMs = 1 * 60 * 1000;
+
 function ContinuationChoices_Inner({
     from,
     choices,
@@ -204,9 +209,11 @@ function ContinuationChoices_Inner({
             displayChoice:
                 (!isActiveChoice &&
                     (now < endTime || selectedOptionId === null) &&
-                    now > endTime - 30000 &&
-                    now < endTime + 20000) ||
-                (isActiveChoice && now > endTime - 5000 && now < endTime + 45000),
+                    now > endTime - passiveChoice_RevealThreshholdMs &&
+                    now < endTime + passiveChoice_HideThreshholdMs) ||
+                (isActiveChoice &&
+                    now > endTime - activeChoice_RevealThreshholdMs &&
+                    now < endTime + activeChoice_HideThreshholdMs),
             timeRemaining: endTime - now,
         };
     }, [from, isActiveChoice, now, selectedOptionId]);
@@ -406,8 +413,8 @@ function ContinuationChoices_Inner({
                 isBackstage={isBackstage}
                 noBackstage={noBackstage}
                 currentRole={currentRole}
-                timeRemaining={timeRemaining + 45000}
-                timeMax={50000}
+                timeRemaining={timeRemaining + activeChoice_HideThreshholdMs}
+                timeMax={activeChoice_RevealThreshholdMs + activeChoice_HideThreshholdMs}
                 onChoiceSelected={activeSet}
             />
         ) : (
@@ -417,7 +424,7 @@ function ContinuationChoices_Inner({
                 noBackstage={noBackstage}
                 currentRole={currentRole}
                 timeRemaining={timeRemaining}
-                timeMax={30000}
+                timeMax={passiveChoice_RevealThreshholdMs}
                 onChoiceSelected={passiveSet}
             />
         )

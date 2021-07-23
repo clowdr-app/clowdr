@@ -17,7 +17,7 @@ export default function ContinuationChoiceList({
     isBackstage: boolean;
     noBackstage: boolean;
     currentRole: ContinuationDefaultFor;
-    onChoiceSelected: (choiceId: string | null, isDefault: boolean) => void;
+    onChoiceSelected: (choiceId: string | null, isDefault: boolean, isInitial: boolean) => void;
 }): JSX.Element {
     const sortedChoices = useMemo(() => R.sortBy((x) => x.priority, choices), [choices]);
     const defaultOptionId = useMemo(() => {
@@ -42,7 +42,7 @@ export default function ContinuationChoiceList({
     }, [currentRole, isBackstage, noBackstage, sortedChoices]);
     const [selectedOptionId, setSelectedOptionId] = useState<string | null>(defaultOptionId);
     useEffect(() => {
-        onChoiceSelected(defaultOptionId, true);
+        onChoiceSelected(defaultOptionId, true, true);
     }, [defaultOptionId, onChoiceSelected]);
 
     return (
@@ -54,7 +54,7 @@ export default function ContinuationChoiceList({
                         isSelected={selectedOptionId === option.id}
                         onSelect={() => {
                             setSelectedOptionId(option.id);
-                            onChoiceSelected(option.id, false);
+                            onChoiceSelected(option.id, false, false);
                         }}
                     />
                 </ListItem>
@@ -69,7 +69,7 @@ export default function ContinuationChoiceList({
                     onClick={(ev) => {
                         ev.stopPropagation();
                         setSelectedOptionId(null);
-                        onChoiceSelected(null, defaultOptionId === null);
+                        onChoiceSelected(null, defaultOptionId === null, false);
                     }}
                     variant="outline"
                 >
@@ -98,10 +98,10 @@ function ContinuationChoice({
     const { colorMode } = useColorMode();
     const baseBgColour = colorMode === "light" ? "gray.200" : "gray.600";
     const baseGrey = useToken("colors", baseBgColour);
-    const baseColour = useMemo(() => (Color(option.colour).getAlpha() !== 0 ? option.colour : baseGrey), [
-        baseGrey,
-        option.colour,
-    ]);
+    const baseColour = useMemo(
+        () => (Color(option.colour).getAlpha() !== 0 ? option.colour : baseGrey),
+        [baseGrey, option.colour]
+    );
     const bgColour = useMemo(() => Color(baseColour), [baseColour]);
     const bgColour_Hover = useMemo(
         () => (colorMode === "light" ? Color(baseColour).darken(15) : Color(baseColour).lighten(15)),

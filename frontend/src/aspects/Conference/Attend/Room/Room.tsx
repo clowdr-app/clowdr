@@ -1,13 +1,9 @@
 import { gql, useApolloClient } from "@apollo/client";
 import {
-    Alert,
-    AlertDescription,
-    AlertIcon,
     AspectRatio,
     Box,
     Button,
     Center,
-    chakra,
     HStack,
     keyframes,
     Spinner,
@@ -43,11 +39,11 @@ import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import ContinuationChoices from "../Continuation/ContinuationChoices";
-import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModal";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
 import { RoomContent } from "./RoomContent";
 import { RoomControlBar } from "./RoomControlBar";
+import RoomTimeAlert from "./RoomTimeAlert";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { HlsPlayer } from "./Video/HlsPlayer";
 import { VideoPlayer } from "./Video/VideoPlayer";
@@ -107,15 +103,6 @@ gql`
         }
     }
 `;
-
-function shuffleTimeRemainingMs(
-    { startedAt, durationMinutes }: { startedAt: string; durationMinutes: number },
-    now: number
-): number {
-    const startedAtMs = Date.parse(startedAt);
-    const durationMs = durationMinutes * 60 * 1000;
-    return startedAtMs + durationMs - now;
-}
 
 export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
     const {
@@ -223,9 +210,10 @@ function RoomInner({
         nonCurrentLiveEvents,
         nonCurrentLiveEventsInNext20Mins,
         withinThreeMinutesOfBroadcastEvent,
-        secondsUntilBroadcastEvent,
-        secondsUntilZoomEvent,
+        broadcastEventStartsAt,
+        zoomEventStartsAt,
     } = useCurrentRoomEvent(roomEvents);
+    const secondsUntilBroadcastEvent = broadcastEventStartsAt - now5s;
 
     const [refetchChannelStackInterval, setRefetchChannelStackInterval] = useState<number>(2 * 60 * 1000);
     const [skipGetChannelStack, setSkipGetChannelStack] = useState<boolean>(true);
@@ -238,10 +226,10 @@ function RoomInner({
         skip: skipGetChannelStack,
     });
     useEffect(() => {
-        if (secondsUntilBroadcastEvent < 5 * 60 * 1000) {
+        if (!skipGetChannelStack && secondsUntilBroadcastEvent < 5 * 60 * 1000) {
             setSkipGetChannelStack(false);
         }
-    }, [secondsUntilBroadcastEvent]);
+    }, [skipGetChannelStack, secondsUntilBroadcastEvent]);
     useEffect(() => {
         if (roomChannelStackResponse.data?.video_ChannelStack?.[0]) {
             setRefetchChannelStackInterval(5 * 60 * 1000);
@@ -600,12 +588,12 @@ function RoomInner({
         [currentRoomEvent, nextRoomEvent, roomDetails, selectedVideoElementId]
     );
 
-    const shuffleTimeRemaining = useMemo(
+    const shuffleRoomEndsAt = useMemo(
         () =>
             roomDetails.shuffleRooms.length
-                ? shuffleTimeRemainingMs(roomDetails.shuffleRooms[0], now5s)
+                ? Date.parse(roomDetails.shuffleRooms[0].startedAt)
                 : Number.POSITIVE_INFINITY,
-        [roomDetails.shuffleRooms, now5s]
+        [roomDetails.shuffleRooms]
     );
 
     const bgColour = useColorModeValue("gray.200", "gray.700");
@@ -614,85 +602,40 @@ function RoomInner({
     //       have an upcoming broadcast or Zoom event. Thus it's possible
     //       for the video chat to be closing even when there is no ongoing
     //       breakout event.
-    const secondsUntilNonBreakoutEvent = Math.min(secondsUntilBroadcastEvent, secondsUntilZoomEvent);
+    const nonBreakoutEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt);
     const currentRoomEventEndTime = useMemo(
         () => (currentRoomEvent ? Date.parse(currentRoomEvent.endTime) : undefined),
         [currentRoomEvent]
     );
-    const secondsUntilBreakoutEventEnds = useMemo(
+    const breakoutEventEndsAt = useMemo(
         () =>
-            currentRoomEventEndTime && currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout
-                ? (currentRoomEventEndTime - now5s) / 1000
+            currentRoomEventEndTime &&
+            currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout &&
+            nextRoomEvent?.intendedRoomModeName !== Room_Mode_Enum.Breakout
+                ? currentRoomEventEndTime
                 : Number.POSITIVE_INFINITY,
-        [currentRoomEvent?.intendedRoomModeName, currentRoomEventEndTime, now5s]
+        [currentRoomEvent?.intendedRoomModeName, currentRoomEventEndTime, nextRoomEvent?.intendedRoomModeName]
     );
-    const secondsUntilBreakoutRoomCloses = Math.min(secondsUntilBreakoutEventEnds, secondsUntilNonBreakoutEvent);
+    const breakoutRoomClosesAt = Math.min(breakoutEventEndsAt, nonBreakoutEventStartsAt);
 
-    const socialModal = useSocialiseModal();
     const startsSoonEl = useMemo(
         () => (
-            <>
-                {shuffleTimeRemaining <= 30000 ? (
-                    <Alert status="warning" pos="sticky" top={0} zIndex={1000}>
-                        <AlertIcon />
-                        <AlertDescription>
-                            Shuffle room ends in {Math.max(0, Math.round(shuffleTimeRemaining))} seconds.
-                        </AlertDescription>
-                    </Alert>
-                ) : undefined}
-                {showDefaultBreakoutRoom && secondsUntilBreakoutRoomCloses <= 180 ? (
-                    <Alert status="warning" pos="sticky" top={0} zIndex={1000} alignItems="flex-start">
-                        <AlertIcon />
-                        <AlertDescription as={VStack} w="100%">
-                            <Text>
-                                Video-chat closes in{" "}
-                                <chakra.span fontWeight="bold">
-                                    {Math.round(secondsUntilBreakoutRoomCloses)} seconds
-                                </chakra.span>
-                                .
-                            </Text>
-                            <Text>Still discussing something? Why not carry on the conversation in a social room?</Text>
-                            <Button
-                                my={2}
-                                ml={2}
-                                onClick={() => {
-                                    socialModal.onOpen(SocialiseModalTab.Rooms);
-                                }}
-                                size="sm"
-                                colorScheme="purple"
-                            >
-                                <FAIcon iconStyle="s" icon="hand-point-right" />
-                                &nbsp;&nbsp;Choose a social room
-                            </Button>
-                        </AlertDescription>
-                    </Alert>
-                ) : undefined}
-                {secondsUntilZoomEvent > 0 && secondsUntilZoomEvent < 180 && !currentRoomEvent ? (
-                    <Alert status="info" pos="sticky" top={0} zIndex={1000}>
-                        <AlertIcon />
-                        <AlertDescription>
-                            Zoom event starting in {Math.round(secondsUntilZoomEvent)} seconds
-                        </AlertDescription>
-                    </Alert>
-                ) : undefined}
-                {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
-                    <Alert status="info" pos="sticky" top={0} zIndex={1000}>
-                        <AlertIcon />
-                        <AlertDescription>
-                            Livestream event starting in {Math.round(secondsUntilBroadcastEvent)} seconds
-                        </AlertDescription>
-                    </Alert>
-                ) : undefined}
-            </>
+            <RoomTimeAlert
+                breakoutRoomClosesAt={breakoutRoomClosesAt}
+                broadcastStartsAt={broadcastEventStartsAt}
+                eventIsOngoing={!!currentRoomEvent}
+                showDefaultBreakoutRoom={showDefaultBreakoutRoom}
+                shuffleEndsAt={shuffleRoomEndsAt}
+                zoomStartsAt={zoomEventStartsAt}
+            />
         ),
         [
+            breakoutRoomClosesAt,
+            broadcastEventStartsAt,
             currentRoomEvent,
-            secondsUntilBreakoutRoomCloses,
-            secondsUntilBroadcastEvent,
-            secondsUntilZoomEvent,
             showDefaultBreakoutRoom,
-            shuffleTimeRemaining,
-            socialModal,
+            shuffleRoomEndsAt,
+            zoomEventStartsAt,
         ]
     );
 

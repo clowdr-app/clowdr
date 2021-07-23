@@ -9,8 +9,8 @@ interface Result {
     nonCurrentLiveEvents: Room_EventSummaryFragment[] | null;
     nonCurrentLiveEventsInNext20Mins: Room_EventSummaryFragment[] | null;
     withinThreeMinutesOfBroadcastEvent: boolean;
-    secondsUntilBroadcastEvent: number;
-    secondsUntilZoomEvent: number;
+    broadcastEventStartsAt: number;
+    zoomEventStartsAt: number;
 }
 
 export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragment[]): Result {
@@ -24,9 +24,10 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         [roomEvents]
     );
 
-    const zoomEvents = useMemo(() => roomEvents.filter((event) => event.intendedRoomModeName === Room_Mode_Enum.Zoom), [
-        roomEvents,
-    ]);
+    const zoomEvents = useMemo(
+        () => roomEvents.filter((event) => event.intendedRoomModeName === Room_Mode_Enum.Zoom),
+        [roomEvents]
+    );
 
     const [currentRoomEvent, setCurrentRoomEvent] = useState<Room_EventSummaryFragment | null>(null);
     const getCurrentEvent = useCallback(() => {
@@ -54,60 +55,18 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         setWithinThreeMinutesOfBroadcastEvent(eventsSoon.length > 0);
     }, [broadcastEvents]);
 
-    const [secondsUntilBroadcastEvent, setSecondsUntilBroadcastEvent] = useState<number>(Number.MAX_SAFE_INTEGER);
+    const [broadcastEventStartsAt, setBroadcastEventStartsAt] = useState<number>(Number.MAX_SAFE_INTEGER);
     const computeSecondsUntilBroadcastEvent = useCallback(() => {
-        const now = new Date().getTime();
-
-        if (
-            broadcastEvents.find((event) => {
-                const startTime = Date.parse(event.startTime);
-                const endTime = Date.parse(event.endTime);
-                return startTime < now && now < endTime;
-            })
-        ) {
-            setSecondsUntilBroadcastEvent(0);
-            return;
-        }
-
-        const futureEvents = R.sortBy(
-            (event) => event.startTime,
-            broadcastEvents.filter((event) => Date.parse(event.startTime) > now)
+        setBroadcastEventStartsAt(
+            broadcastEvents.reduce((acc, ev) => Math.min(acc, Date.parse(ev.startTime)), Number.MAX_SAFE_INTEGER)
         );
-
-        if (futureEvents.length > 0) {
-            setSecondsUntilBroadcastEvent((Date.parse(futureEvents[0].startTime) - now) / 1000);
-            return;
-        }
-
-        setSecondsUntilBroadcastEvent(Number.MAX_SAFE_INTEGER);
     }, [broadcastEvents]);
 
-    const [secondsUntilZoomEvent, setSecondsUntilZoomEvent] = useState<number>(Number.MAX_SAFE_INTEGER);
+    const [zoomEventStartsAt, setZoomEventStartsAt] = useState<number>(Number.MAX_SAFE_INTEGER);
     const computeSecondsUntilZoomEvent = useCallback(() => {
-        const now = new Date().getTime();
-
-        if (
-            zoomEvents.find((event) => {
-                const startTime = Date.parse(event.startTime);
-                const endTime = Date.parse(event.endTime);
-                return startTime < now && now < endTime;
-            })
-        ) {
-            setSecondsUntilZoomEvent(0);
-            return;
-        }
-
-        const futureEvents = R.sortBy(
-            (event) => event.startTime,
-            zoomEvents.filter((event) => Date.parse(event.startTime) > now)
+        setZoomEventStartsAt(
+            zoomEvents.reduce((acc, ev) => Math.min(acc, Date.parse(ev.startTime)), Number.MAX_SAFE_INTEGER)
         );
-
-        if (futureEvents.length > 0) {
-            setSecondsUntilZoomEvent((Date.parse(futureEvents[0].startTime) - now) / 1000);
-            return;
-        }
-
-        setSecondsUntilZoomEvent(Number.MAX_SAFE_INTEGER);
     }, [zoomEvents]);
 
     const frequentUpdate = useCallback(() => {
@@ -191,16 +150,16 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
             nextRoomEvent,
             nonCurrentLiveEvents,
             nonCurrentLiveEventsInNext20Mins,
-            secondsUntilBroadcastEvent,
-            secondsUntilZoomEvent,
+            broadcastEventStartsAt,
+            zoomEventStartsAt,
         }),
         [
             currentRoomEvent,
             nextRoomEvent,
             nonCurrentLiveEvents,
             nonCurrentLiveEventsInNext20Mins,
-            secondsUntilBroadcastEvent,
-            secondsUntilZoomEvent,
+            broadcastEventStartsAt,
+            zoomEventStartsAt,
             withinThreeMinutesOfBroadcastEvent,
         ]
     );

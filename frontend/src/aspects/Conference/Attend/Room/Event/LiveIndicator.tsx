@@ -23,19 +23,8 @@ import { validateSync } from "class-validator";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../generated/graphql";
-import { roundDownToNearest } from "../../../../Generic/MathUtils";
 import { FAIcon } from "../../../../Icons/FAIcon";
-
-export function formatRemainingTime(seconds: number): string {
-    const NearestHoursInS = roundDownToNearest(seconds, 60 * 60);
-    const IntermediateSeconds = seconds - NearestHoursInS;
-    const NearestMinutesInS = roundDownToNearest(IntermediateSeconds, 60);
-    const NearestSeconds = IntermediateSeconds - NearestMinutesInS;
-    const Hours = (NearestHoursInS / (60 * 60)).toFixed(0).padStart(2, "0");
-    const Minutes = (NearestMinutesInS / 60).toFixed(0).padStart(2, "0");
-    const Seconds = NearestSeconds.toFixed(0).padStart(2, "0");
-    return `${Hours}:${Minutes}:${Seconds}`;
-}
+import { formatRemainingTime } from "../formatTimeRemaining";
 
 export function LiveIndicator({
     live,
@@ -255,7 +244,7 @@ export function LiveIndicator({
                         <HStack>{whatIsLiveText}</HStack>
                     </Badge>
                     <Stat fontSize="md" ml="auto" flexGrow={1} textAlign="center">
-                        <StatLabel>Time remaining until event ends</StatLabel>
+                        <StatLabel>Time until end</StatLabel>
                         <StatNumber>{formatRemainingTime(secondsUntilOffAir)}</StatNumber>
                     </Stat>
                 </HStack>
@@ -307,7 +296,7 @@ export function LiveIndicator({
                                             : undefined
                                     }
                                 >
-                                    <StatLabel>Time remaining until backstage is live</StatLabel>
+                                    <StatLabel>Time until start</StatLabel>
                                     <StatNumber>{formatRemainingTime(secondsUntilLive)}</StatNumber>
                                 </Stat>
                             ) : (

@@ -30,7 +30,7 @@ import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
 import { EventVonageRoom } from "./Event/EventVonageRoom";
-import { formatRemainingTime } from "./Event/LiveIndicator";
+import { formatRemainingTime } from "./formatTimeRemaining";
 
 function isEventNow(now: number, event: Room_EventSummaryFragment): boolean {
     const startTime = Date.parse(event.startTime) - 5000;

@@ -17,7 +17,7 @@ export function useHLSUri(roomId: string, broadcastEventStartsAt: number): strin
         skip: skipGetChannelStack,
     });
     useEffect(() => {
-        if (!skipGetChannelStack && secondsUntilBroadcastEvent < 5 * 60 * 1000) {
+        if (skipGetChannelStack && secondsUntilBroadcastEvent < 5 * 60 * 1000) {
             setSkipGetChannelStack(false);
         }
     }, [skipGetChannelStack, secondsUntilBroadcastEvent]);

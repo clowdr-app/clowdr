@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, chakra, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useRealTime } from "../../../Generic/useRealTime";
-import { formatRemainingTime } from "./formatTimeRemaining";
+import { formatRemainingTime } from "./formatRemainingTime";
 
 export default function RoomTimeAlert({
     shuffleEndsAt,

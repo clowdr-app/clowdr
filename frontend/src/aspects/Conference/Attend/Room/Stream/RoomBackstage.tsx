@@ -25,12 +25,12 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
-import { Room_EventSummaryFragment, Room_Mode_Enum } from "../../../../generated/graphql";
-import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
-import { useRealTime } from "../../../Generic/useRealTime";
-import { useSharedRoomContext } from "../../../Room/useSharedRoomContext";
-import { EventVonageRoom } from "./Event/EventVonageRoom";
-import { formatRemainingTime } from "./formatTimeRemaining";
+import { Room_EventSummaryFragment, Room_Mode_Enum } from "../../../../../generated/graphql";
+import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
+import { useRealTime } from "../../../../Generic/useRealTime";
+import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import { EventVonageRoom } from "../Event/EventVonageRoom";
+import { formatRemainingTime } from "../formatRemainingTime";
 
 function isEventNow(now: number, event: Room_EventSummaryFragment): boolean {
     const startTime = Date.parse(event.startTime) - 5000;

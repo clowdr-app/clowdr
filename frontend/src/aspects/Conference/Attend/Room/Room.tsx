@@ -5,7 +5,6 @@ import {
     Button,
     Center,
     HStack,
-    keyframes,
     Spinner,
     Text,
     useColorModeValue,
@@ -13,8 +12,6 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
-import { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/continuation";
-import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -25,12 +22,9 @@ import {
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
-    useRoomPage_GetRoomChannelStackQuery,
     useRoom_GetDefaultVideoRoomBackendQuery,
     useRoom_GetEventsQuery,
 } from "../../../../generated/graphql";
-import { ExternalLinkButton } from "../../../Chakra/LinkButton";
-import { defaultOutline_AsBoxShadow } from "../../../Chakra/Outline";
 import EmojiFloatContainer from "../../../Emoji/EmojiFloatContainer";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
@@ -38,12 +32,14 @@ import { FAIcon } from "../../../Icons/FAIcon";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
-import ContinuationChoices from "../Continuation/ContinuationChoices";
 import { BreakoutRoom } from "./Breakout/BreakoutRoom";
-import { RoomBackstage, UpcomingBackstageBanner } from "./RoomBackstage";
+import JoinZoomButton from "./JoinZoomButton";
 import { RoomContent } from "./RoomContent";
+import RoomContinuationChoices from "./RoomContinuationChoices";
 import { RoomControlBar } from "./RoomControlBar";
 import RoomTimeAlert from "./RoomTimeAlert";
+import { RoomBackstage, UpcomingBackstageBanner } from "./Stream/RoomBackstage";
+import { useHLSUri } from "./Stream/useHLSUri";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { HlsPlayer } from "./Video/HlsPlayer";
 import { VideoPlayer } from "./Video/VideoPlayer";
@@ -213,37 +209,8 @@ function RoomInner({
         broadcastEventStartsAt,
         zoomEventStartsAt,
     } = useCurrentRoomEvent(roomEvents);
-    const secondsUntilBroadcastEvent = broadcastEventStartsAt - now5s;
 
-    const [refetchChannelStackInterval, setRefetchChannelStackInterval] = useState<number>(2 * 60 * 1000);
-    const [skipGetChannelStack, setSkipGetChannelStack] = useState<boolean>(true);
-    const roomChannelStackResponse = useRoomPage_GetRoomChannelStackQuery({
-        variables: {
-            roomId: roomDetails.id,
-        },
-        fetchPolicy: "network-only",
-        pollInterval: refetchChannelStackInterval,
-        skip: skipGetChannelStack,
-    });
-    useEffect(() => {
-        if (!skipGetChannelStack && secondsUntilBroadcastEvent < 5 * 60 * 1000) {
-            setSkipGetChannelStack(false);
-        }
-    }, [skipGetChannelStack, secondsUntilBroadcastEvent]);
-    useEffect(() => {
-        if (roomChannelStackResponse.data?.video_ChannelStack?.[0]) {
-            setRefetchChannelStackInterval(5 * 60 * 1000);
-        }
-    }, [roomChannelStackResponse.data?.video_ChannelStack]);
-
-    const hlsUri = useMemo(() => {
-        if (!roomChannelStackResponse.data?.video_ChannelStack?.[0]) {
-            return null;
-        }
-        const finalUri = new URL(roomChannelStackResponse.data.video_ChannelStack[0].endpointUri);
-        finalUri.hostname = roomChannelStackResponse.data.video_ChannelStack[0].cloudFrontDomain;
-        return finalUri.toString();
-    }, [roomChannelStackResponse.data?.video_ChannelStack]);
+    const hlsUri = useHLSUri(roomDetails.id, broadcastEventStartsAt);
 
     const isPresenterOfUpcomingEvent = useMemo(
         () =>
@@ -327,7 +294,6 @@ function RoomInner({
 
     const videoPlayerRef = useRef<HTMLDivElement | null>(null);
     const [selectedVideoElementId, setSelectedVideoElementId] = useState<string | null>(null);
-
     useEffect(() => {
         if (
             selectedVideoElementId &&
@@ -340,7 +306,6 @@ function RoomInner({
     }, [currentRoomEvent]);
 
     const toast = useToast();
-
     useEffect(() => {
         if (
             currentRoomEvent &&
@@ -692,81 +657,6 @@ function RoomInner({
         hlsUri,
     ]);
 
-    const zoomButtonBgKeyframes = keyframes`
-0% {
-    background-position: 0% 100%;
-}
-50% {
-    background-position: 100% 0%;
-}
-100% {
-    background-position: 0% 100%;
-}
-    `;
-    const shadow = useColorModeValue("lg", "light-md");
-
-    const [continuationChoicesFrom, setContinuationChoicesFrom] = useState<
-        | { eventId: string; itemId: string | null; endsAt: number }
-        | { shufflePeriodId: string; shuffleRoomEndsAt: number }
-        | null
-    >(null);
-    const [continuationIsBackstage, setContinuationIsBackstage] = useState<boolean>(false);
-    const [continuationNoBackstage, setContinuationNoBackstage] = useState<boolean>(false);
-    const [continuationRole, setContinuationRole] = useState<ContinuationDefaultFor>(ContinuationDefaultFor.None);
-
-    useEffect(() => {
-        if (currentRoomEvent) {
-            const startTime = Date.parse(currentRoomEvent.startTime);
-            if (now5s - startTime > 45000) {
-                setContinuationChoicesFrom((old) =>
-                    !old || !("eventId" in old) || old.eventId !== currentRoomEvent.id
-                        ? {
-                              eventId: currentRoomEvent.id,
-                              itemId: currentRoomEvent.itemId ?? null,
-                              endsAt: currentRoomEvent.endTime ? Date.parse(currentRoomEvent.endTime) : 0,
-                          }
-                        : old
-                );
-                const noBackstage =
-                    currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Presentation &&
-                    currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.QAndA;
-                setContinuationIsBackstage(showBackstage);
-                setContinuationNoBackstage(noBackstage);
-                const roleName = !noBackstage
-                    ? currentRoomEvent?.eventPeople.find((x) => x.person?.registrantId === currentRegistrant.id)
-                          ?.roleName
-                    : undefined;
-                if (roleName === Schedule_EventProgramPersonRole_Enum.Chair) {
-                    setContinuationRole(ContinuationDefaultFor.Chairs);
-                } else if (roleName === Schedule_EventProgramPersonRole_Enum.Presenter) {
-                    setContinuationRole(ContinuationDefaultFor.Presenters);
-                } else if (!noBackstage) {
-                    setContinuationRole(ContinuationDefaultFor.Viewers);
-                } else {
-                    setContinuationRole(ContinuationDefaultFor.None);
-                }
-            }
-        } else if (roomDetails.shuffleRooms.length > 0) {
-            setContinuationChoicesFrom((old) =>
-                !old ||
-                !("shufflePeriodId" in old) ||
-                old.shufflePeriodId !== roomDetails.shuffleRooms[0].shufflePeriodId
-                    ? {
-                          shufflePeriodId: roomDetails.shuffleRooms[0].shufflePeriodId,
-                          shuffleRoomEndsAt:
-                              Date.parse(roomDetails.shuffleRooms[0].startedAt) +
-                              roomDetails.shuffleRooms[0].durationMinutes * 60 * 1000,
-                      }
-                    : old
-            );
-            setContinuationIsBackstage(false);
-            setContinuationNoBackstage(true);
-            setContinuationRole(ContinuationDefaultFor.None);
-        } else {
-            setContinuationChoicesFrom((old) => (!old || ("endsAt" in old && now5s > old.endsAt + 45000) ? null : old));
-        }
-    }, [currentRoomEvent, roomDetails.shuffleRooms, now5s, showBackstage, currentRegistrant.id]);
-
     return (
         <>
             <HStack width="100%" flexWrap="wrap" alignItems="stretch">
@@ -782,99 +672,11 @@ function RoomInner({
                                 <UpcomingBackstageBanner event={isPresenterOfUpcomingEvent} />
                             ) : undefined}
                             {maybeZoomUrl && currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom ? (
-                                <ExternalLinkButton
-                                    to={maybeZoomUrl.url}
-                                    isExternal={true}
-                                    mt={20}
-                                    mb={4}
-                                    mx={2}
-                                    p={8}
-                                    linkProps={{
-                                        textAlign: "center",
-                                        minH: "18em",
-                                    }}
-                                    whiteSpace="normal"
-                                    h="auto"
-                                    lineHeight="150%"
-                                    fontSize="1.5em"
-                                    colorScheme="purple"
-                                    color="white"
-                                    borderRadius="2xl"
-                                    shadow={shadow}
-                                    animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}
-                                    transition="none"
-                                    background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
-                                    backgroundSize="400% 400%"
-                                    _hover={{
-                                        background:
-                                            "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                        backgroundSize: "400% 400%",
-                                    }}
-                                    _focus={{
-                                        background:
-                                            "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                        backgroundSize: "400% 400%",
-                                        boxShadow: defaultOutline_AsBoxShadow,
-                                    }}
-                                    _active={{
-                                        background:
-                                            "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
-                                        backgroundSize: "400% 400%",
-                                    }}
-                                >
-                                    <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
-                                    Click to join {maybeZoomUrl.name}
-                                    <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
-                                </ExternalLinkButton>
+                                <JoinZoomButton zoomUrl={maybeZoomUrl} />
                             ) : maybeZoomUrl &&
                               nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Zoom &&
-                              Date.parse(nextRoomEvent.startTime) - now5s < 10 * 60 * 1000 ? (
-                                <ExternalLinkButton
-                                    to={maybeZoomUrl.url}
-                                    isExternal={true}
-                                    mt={20}
-                                    mb={4}
-                                    mx={2}
-                                    p={8}
-                                    linkProps={{
-                                        textAlign: "center",
-                                        minH: "30em",
-                                    }}
-                                    whiteSpace="normal"
-                                    h="auto"
-                                    lineHeight="150%"
-                                    fontSize="1.5em"
-                                    colorScheme="purple"
-                                    color="white"
-                                    borderRadius="2xl"
-                                    shadow={shadow}
-                                    animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}
-                                    transition="none"
-                                    background="linear-gradient(135deg, rgba(195,0,146,1) 20%, rgba(0,105,231,1) 50%, rgba(195,0,146,1) 80%);"
-                                    backgroundSize="400% 400%"
-                                    _hover={{
-                                        background:
-                                            "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                        backgroundSize: "400% 400%",
-                                    }}
-                                    _focus={{
-                                        background:
-                                            "linear-gradient(135deg, rgba(168,0,126,1) 20%, rgba(0,82,180,1) 50%, rgba(168,0,126,1) 80%);",
-                                        backgroundSize: "400% 400%",
-                                        boxShadow: defaultOutline_AsBoxShadow,
-                                    }}
-                                    _active={{
-                                        background:
-                                            "linear-gradient(135deg, rgba(118,0,89,1) 20%, rgba(0,55,121,1) 50%, rgba(118,0,89,1) 80%);",
-                                        backgroundSize: "400% 400%",
-                                    }}
-                                >
-                                    <FAIcon iconStyle="s" icon="link" ml="auto" mr={4} />
-                                    Starting {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}
-                                    <br />
-                                    Click to join {maybeZoomUrl.name}
-                                    <FAIcon iconStyle="s" icon="mouse-pointer" ml={4} />
-                                </ExternalLinkButton>
+                              zoomEventStartsAt - now5s < 10 * 60 * 1000 ? (
+                                <JoinZoomButton zoomUrl={maybeZoomUrl} startTime={zoomEventStartsAt} />
                             ) : undefined}
                         </>
                     ) : undefined}
@@ -896,15 +698,12 @@ function RoomInner({
                 </VStack>
             </HStack>
 
-            {continuationChoicesFrom ? (
-                <ContinuationChoices
-                    from={continuationChoicesFrom}
-                    isBackstage={continuationIsBackstage}
-                    noBackstage={continuationNoBackstage}
-                    currentRole={continuationRole}
-                    currentRoomId={roomDetails.id}
-                />
-            ) : undefined}
+            <RoomContinuationChoices
+                currentRoomEvent={currentRoomEvent}
+                roomDetails={roomDetails}
+                showBackstage={showBackstage}
+                currentRegistrantId={currentRegistrant.id}
+            />
         </>
     );
 }

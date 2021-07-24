@@ -891,31 +891,23 @@ function RenderedCRUDTable<T>({
             <Center flexDir="column">
                 Filtered to {filteredDataLength} out of {fullDataLength} ({selectedKeys.size} selected)
             </Center>
-            <Table
-                bgColor={bgColour}
-                display="block"
-                maxWidth="100%"
-                width="auto"
-                size="sm"
-                variant="striped"
-                overflow="auto"
-                pt={1}
-                colorScheme="gray"
-            >
-                <Thead borderBottom="2px solid" borderBottomColor={headerBottomColour}>
-                    <Tr>
-                        {selectColumnEl}
-                        {editColumnEl}
-                        {columnEls}
-                        {deleteColumnEl}
-                    </Tr>
-                </Thead>
-                <Tbody>
-                    {rowEls}
-                    {noDataEl}
-                    {loadingDataEl}
-                </Tbody>
-            </Table>
+            <chakra.div maxWidth="100%" width="auto" overflow="auto">
+                <Table bgColor={bgColour} size="sm" variant="striped" pt={1} colorScheme="gray" width="max-content">
+                    <Thead borderBottom="2px solid" borderBottomColor={headerBottomColour}>
+                        <Tr>
+                            {selectColumnEl}
+                            {editColumnEl}
+                            {columnEls}
+                            {deleteColumnEl}
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {rowEls}
+                        {noDataEl}
+                        {loadingDataEl}
+                    </Tbody>
+                </Table>
+            </chakra.div>
         </>
     );
 }

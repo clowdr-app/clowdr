@@ -42,6 +42,7 @@ import { RoomBackstage, UpcomingBackstageBanner } from "./Stream/RoomBackstage";
 import { useHLSUri } from "./Stream/useHLSUri";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { HlsPlayer } from "./Video/HlsPlayer";
+import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
 import { VideoPlayer } from "./Video/VideoPlayer";
 
 gql`
@@ -636,12 +637,14 @@ function RoomInner({
                 </Box>
             ) : shouldShowLivePlayer && hlsUri ? (
                 <Box pos="relative">
-                    <HlsPlayer
-                        roomId={roomDetails.id}
-                        canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
-                        hlsUri={hlsUri}
-                    />
-                    <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
+                    <VideoAspectWrapper>
+                        <HlsPlayer
+                            roomId={roomDetails.id}
+                            canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
+                            hlsUri={hlsUri}
+                        />
+                        <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
+                    </VideoAspectWrapper>
                 </Box>
             ) : undefined
         ) : undefined;
@@ -659,7 +662,7 @@ function RoomInner({
 
     return (
         <>
-            <HStack width="100%" flexWrap="wrap" alignItems="stretch">
+            <HStack width="100%" flexWrap="wrap" alignItems="stretch" px={2} py={4}>
                 <VStack textAlign="left" flexGrow={2.5} alignItems="stretch" flexBasis={0} minW="100%" maxW="100%">
                     {controlBarEl}
 

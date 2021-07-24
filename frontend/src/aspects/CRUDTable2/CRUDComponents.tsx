@@ -263,12 +263,12 @@ export const dateTimeFilterFn: <T = any>(
         return columnIds.reduce((acc, id) => {
             let value = valueD.getTime();
             if (mode === "after") {
-                return acc.filter((row) => Date.parse((row[id] as unknown) as string) >= value);
+                return acc.filter((row) => Date.parse(row[id] as unknown as string) >= value);
             } else if (mode === "before") {
-                return acc.filter((row) => Date.parse((row[id] as unknown) as string) <= value);
+                return acc.filter((row) => Date.parse(row[id] as unknown as string) <= value);
             } else {
                 value = Math.round(value / 1000);
-                return acc.filter((row) => Math.round(Date.parse((row[id] as unknown) as string) / 1000) === value);
+                return acc.filter((row) => Math.round(Date.parse(row[id] as unknown as string) / 1000) === value);
             }
         }, rows);
     };
@@ -323,7 +323,7 @@ export function DateTimeColumnFilter({
                 }}
                 onBlur={() => onBlur()}
             >
-                <option value="">🗙</option>
+                <option value="">&#x2715;</option>
                 <option value="after">≥</option>
                 <option value="exact">=</option>
                 <option value="before">≤</option>

@@ -10,12 +10,14 @@ import {
     CloseButton,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
 import "video.js/dist/video-js.css";
 import "videojs-contrib-quality-levels";
 import hlsQualitySelector from "videojs-hls-quality-selector";
 import { useRestorableState, useSessionState } from "../../../../Generic/useRestorableState";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
+import { HlsPlayerError } from "./HlsPlayerError";
 
 const VideoJSInner = React.forwardRef<HTMLVideoElement, BoxProps>(function VideoJSInner(
     props: BoxProps,
@@ -53,15 +55,7 @@ function NonLiveAlert({
     );
 }
 
-export function HlsPlayer({
-    roomId,
-    hlsUri,
-    canPlay,
-    forceMute,
-    initialMute,
-    expectLivestream,
-    onAspectRatioChange,
-}: {
+type HlsPlayerProps = {
     roomId?: string;
     hlsUri: string;
     canPlay: boolean;
@@ -69,7 +63,17 @@ export function HlsPlayer({
     initialMute?: boolean;
     expectLivestream?: boolean;
     onAspectRatioChange?: (aspectRatio: number) => void;
-}): JSX.Element {
+};
+
+export function HlsPlayerInner({
+    roomId,
+    hlsUri,
+    canPlay,
+    forceMute,
+    initialMute,
+    expectLivestream,
+    onAspectRatioChange,
+}: HlsPlayerProps): JSX.Element {
     const [player, setPlayer] = useState<VideoJsPlayer | null>(null);
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -287,5 +291,13 @@ export function HlsPlayer({
                 />
             ) : undefined}
         </chakra.div>
+    );
+}
+
+export function HlsPlayer(props: HlsPlayerProps): JSX.Element {
+    return (
+        <ErrorBoundary FallbackComponent={HlsPlayerError}>
+            <HlsPlayerInner {...props} />
+        </ErrorBoundary>
     );
 }

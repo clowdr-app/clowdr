@@ -18,14 +18,6 @@ export function VideoAspectWrapper({
 
     return (
         <chakra.div
-            // width={`minmax(${maxWidth}vw, ${widthFromHeight}vh)`}
-            // height={`minmax(${heightFromWidth}vw, max-content)`}
-            // width={`${maxWidth}vw`}
-            // height={`${heightFromWidth}vw`}
-            // maxHeight={`${maxHeight}vh`}
-            // maxWidth={`${widthFromHeight}vh`}
-            // width="100%"
-            // height="fit-content"
             width="100%"
             maxWidth={`${widthFromHeight}vh`}
             height="90vh"

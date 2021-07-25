@@ -563,7 +563,11 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
                     {name}
                 </Link>
             </Text>
-            {hlsUri ? <HlsPlayer roomId={id} canPlay={true} hlsUri={hlsUri} forceMute={true} /> : <Spinner />}
+            {hlsUri ? (
+                <HlsPlayer roomId={id} canPlay={true} hlsUri={hlsUri} initialMute={true} expectLivestream={true} />
+            ) : (
+                <Spinner />
+            )}
         </Box>
     );
 }

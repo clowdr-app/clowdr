@@ -6,6 +6,7 @@ import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import PasswordResetResultPage from "./aspects/Auth/PasswordResetResultPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
 import { LinkButton } from "./aspects/Chakra/LinkButton";
+import { VideoTestPage } from "./aspects/Conference/Attend/Room/Video/VideoTestPage";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import UseInviteOrCreateView from "./aspects/Conference/UseInviteOrCreateView";
 import SubmitItemPage from "./aspects/Content/SubmitItemPage";
@@ -133,6 +134,9 @@ export default function Routing({ confSlug }: { confSlug?: string }): JSX.Elemen
 
             {confSlug && <ConferenceRoutes />}
 
+            {/* A page for easy testing of the HLS video player */}
+            <Route path="/video-player" component={VideoTestPage} />
+
             <Route
                 path="/upload/:id/:token"
                 component={(
@@ -144,25 +148,6 @@ export default function Routing({ confSlug }: { confSlug?: string }): JSX.Elemen
             />
 
             <Route exact path="/googleoauth" component={GoogleOAuthRedirect} />
-
-            {/*
-
-            <Route exact path="/echo">
-                <Echo />
-            </Route>
-            <Route exact path="/protectedEcho">
-                <ProtectedEcho />
-            </Route>
-
-            <Route
-                exact
-                path="/chat/:chatId"
-                component={(p: RouteComponentProps<any>) => (
-                    <ChatsPage chatId={p.match.params.chatId} />
-                )}
-            />
-
-            <ProtectedRoute exact path="/profile" component={UserProfileInfo} /> */}
 
             <Route path="/">
                 <PageNotFound />

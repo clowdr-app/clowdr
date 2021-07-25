@@ -1,43 +1,53 @@
+import { chakra } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
 import "video.js/dist/video-js.css";
 import "videojs-contrib-quality-levels";
 import hlsQualitySelector from "videojs-hls-quality-selector";
-import useTrackView from "../../../../Realtime/Analytics/useTrackView";
+import { useRestorableState, useSessionState } from "../../../../Generic/useRestorableState";
+import { PlayerAnalytics } from "./PlayerAnalytics";
 
 const VideoJSInner = React.forwardRef<HTMLVideoElement, unknown>(function VideoJSInner(_, ref): JSX.Element {
     return (
-        <div data-vjs-player>
+        <chakra.div data-vjs-player color="black">
             <video ref={ref} className="video-js vjs-big-play-centered" />
-        </div>
+        </chakra.div>
     );
 });
-
-function PlayerAnalytics({ isPlaying, roomId }: { isPlaying: boolean; roomId: string }) {
-    useTrackView(isPlaying, roomId, "Room.HLSStream");
-
-    return null;
-}
 
 export function HlsPlayer({
     roomId,
     hlsUri,
     canPlay,
-    isMuted,
+    forceMute,
+    onAspectRatioChange,
 }: {
     roomId?: string;
     hlsUri: string;
     canPlay: boolean;
-    isMuted?: boolean;
+    forceMute?: boolean;
+    onAspectRatioChange?: (aspectRatio: number) => void;
 }): JSX.Element {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
+    const [intendMuted, setIntendMuted] = useSessionState<boolean>(
+        "StreamPlayer_IntendMuted",
+        false,
+        (x) => (x ? "true" : "false"),
+        (x) => x === "true"
+    );
+    const [volume, setVolume] = useRestorableState<number>(
+        "StreamPlayer_Volume",
+        1.0,
+        (x) => x.toString(),
+        (x) => parseFloat(x)
+    );
 
     const videoRef = useRef<HTMLVideoElement>(null);
 
     const options = useMemo<VideoJsPlayerOptions>(
         () => ({
-            autoplay: "muted",
+            autoplay: "play",
             bigPlayButton: true,
             controls: true,
             fluid: true,
@@ -60,11 +70,18 @@ export function HlsPlayer({
     }, [canPlay, intendPlayStream]);
 
     useEffect(() => {
-        if (!videoRef.current || isMuted === undefined) {
+        if (!videoRef.current) {
             return;
         }
-        videoRef.current.muted = isMuted;
-    }, [isMuted]);
+        videoRef.current.muted = forceMute || intendMuted;
+    }, [forceMute, intendMuted]);
+
+    useEffect(() => {
+        if (!videoRef.current || videoRef.current.volume === volume) {
+            return;
+        }
+        videoRef.current.volume = volume;
+    }, [volume]);
 
     useEffect(() => {
         const videoElement = videoRef.current;
@@ -94,6 +111,19 @@ export function HlsPlayer({
                 setIsPlaying(false);
             };
             videoElement.addEventListener("waiting", onWaiting);
+            const onVolumeChange = () => {
+                if (videoElement) {
+                    setIntendMuted(videoElement.muted ?? false);
+                    setVolume(videoElement.volume);
+                }
+            };
+            videoElement.addEventListener("volumechange", onVolumeChange);
+            const onResize = () => {
+                if (videoElement && videoElement.videoWidth !== 0 && videoElement.videoHeight !== 0) {
+                    onAspectRatioChange?.(videoElement.videoWidth / videoElement.videoHeight);
+                }
+            };
+            videoElement.addEventListener("resize", onResize);
 
             return () => {
                 videoElement?.removeEventListener("play", onPlay);
@@ -102,10 +132,13 @@ export function HlsPlayer({
                 videoElement?.removeEventListener("ended", onEnded);
                 videoElement?.removeEventListener("error", onError);
                 videoElement?.removeEventListener("waiting", onWaiting);
+                videoElement?.removeEventListener("volumechange", onVolumeChange);
+                videoElement?.removeEventListener("resize", onResize);
             };
         }
-    }, []);
+    }, [onAspectRatioChange, setIntendMuted, setVolume]);
 
+    // Re-initialise the player when the options (i.e. the stream URI) change
     useEffect(() => {
         // Registered on import, but it likes to deregister itself when the player is disposed
         if (!videojs.getPlugin("hlsQualitySelector")) {
@@ -113,26 +146,33 @@ export function HlsPlayer({
         }
 
         const videoJs = videoRef.current
-            ? videojs(videoRef.current, options, function onReady(this: VideoJsPlayer): void {
-                  if (videoJs) {
-                      if (options.src) {
-                          videoJs.src(options.src);
-                      }
-                      // This will probably crash occasionally without this guard
-                      if (typeof videoJs.hlsQualitySelector === "function") {
-                          videoJs.hlsQualitySelector({ displayCurrentQuality: true });
-                      } else {
-                          console.warn("hlsQualitySelector plugin was not registered, skipping initialisation");
-                      }
-
-                      videoJs.on("loadedmetadata", () => {
-                          const tracks = videoJs.textTracks();
-                          for (let i = 0; i < tracks.length; i++) {
-                              tracks[i].mode = "disabled";
+            ? videojs(
+                  videoRef.current,
+                  { ...options, muted: forceMute || intendMuted ? true : undefined, defaultVolume: volume },
+                  function onReady(this: VideoJsPlayer): void {
+                      if (videoJs) {
+                          if (options.src) {
+                              videoJs.src(options.src);
                           }
-                      });
+                          // This will probably crash occasionally without this guard
+                          if (typeof videoJs.hlsQualitySelector === "function") {
+                              videoJs.hlsQualitySelector({ displayCurrentQuality: true });
+                          } else {
+                              console.warn("hlsQualitySelector plugin was not registered, skipping initialisation");
+                          }
+
+                          videoJs.on("loadedmetadata", () => {
+                              const tracks = videoJs.textTracks();
+                              for (let i = 0; i < tracks.length; i++) {
+                                  tracks[i].mode = "disabled";
+                              }
+                              if (videoJs.videoWidth() !== 0 && videoJs.videoHeight() !== 0) {
+                                  onAspectRatioChange?.(videoJs.videoWidth() / videoJs.videoHeight());
+                              }
+                          });
+                      }
                   }
-              })
+              )
             : null;
 
         return () => {
@@ -140,6 +180,7 @@ export function HlsPlayer({
                 videoJs.reset();
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [options]);
 
     return (
@@ -148,55 +189,4 @@ export function HlsPlayer({
             <VideoJSInner ref={videoRef} />
         </>
     );
-
-    // const playerEl = useMemo(() => {
-    //     const hlsOptions: Partial<HlsConfig> = {
-    //         liveSyncDurationCount: 5,
-    //         enableCEA708Captions: false,
-    //         enableWebVTT: true,
-    //         backBufferLength: 180,
-    //     };
-    //     return (
-    //         <Box>
-    //             <ReactPlayer
-    //                 width="100%"
-    //                 height="auto"
-    //                 url={hlsUri}
-    //                 config={{
-    //                     file: {
-    //                         hlsVersion: "1.0.2",
-    //                         hlsOptions,
-    //                     },
-    //                 }}
-    //                 ref={playerRef}
-    //                 playing={canPlay && intendPlayStream}
-    //                 controls={true}
-    //                 muted={isMuted}
-    //                 onEnded={() => {
-    //                     setIsPlaying(false);
-    //                 }}
-    //                 onError={() => {
-    //                     setIsPlaying(false);
-    //                 }}
-    //                 onPause={() => {
-    //                     setIsPlaying(false);
-    //                     setIntendPlayStream(false);
-    //                 }}
-    //                 onPlay={() => {
-    //                     setIsPlaying(true);
-    //                     setIntendPlayStream(true);
-    //                 }}
-    //             />
-    //         </Box>
-    //     );
-    // }, [canPlay, hlsUri, intendPlayStream, isMuted]);
-
-    // useEffect(() => {
-    //     if (playerRef.current) {
-    //         const hls: Hls = playerRef.current.getInternalPlayer("hls") as Hls;
-    //         if (hls) {
-    //             hls.subtitleDisplay = false;
-    //         }
-    //     }
-    // }, []);
 }

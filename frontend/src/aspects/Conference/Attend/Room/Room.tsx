@@ -655,6 +655,7 @@ function RoomInner({
                                         canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
                                         hlsUri={hlsUri}
                                         onAspectRatioChange={onAspectRatioChange}
+                                        expectLivestream={true}
                                     />
                                 )}
                                 <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />

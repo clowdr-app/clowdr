@@ -6,7 +6,26 @@ export function useRestorableState<T>(
     serialise: (input: T) => string,
     parse: (input: string) => T
 ): [T, Dispatch<SetStateAction<T>>] {
-    const locallyStoredValue = window.localStorage.getItem(uniqueKey);
+    return useStoredState(uniqueKey, initial, serialise, parse, window.localStorage);
+}
+
+export function useSessionState<T>(
+    uniqueKey: string,
+    initial: T,
+    serialise: (input: T) => string,
+    parse: (input: string) => T
+): [T, Dispatch<SetStateAction<T>>] {
+    return useStoredState(uniqueKey, initial, serialise, parse, window.sessionStorage);
+}
+
+export function useStoredState<T>(
+    uniqueKey: string,
+    initial: T,
+    serialise: (input: T) => string,
+    parse: (input: string) => T,
+    storage: Storage
+): [T, Dispatch<SetStateAction<T>>] {
+    const locallyStoredValue = storage.getItem(uniqueKey);
     const [t, setTInner] = useState<T>(locallyStoredValue ? parse(locallyStoredValue) : initial);
     const setT = useCallback(
         (f: SetStateAction<T>) => {
@@ -17,11 +36,11 @@ export function useRestorableState<T>(
                 } else {
                     newV = f;
                 }
-                window.localStorage.setItem(uniqueKey, serialise(newV));
+                storage.setItem(uniqueKey, serialise(newV));
                 return newV;
             });
         },
-        [serialise, uniqueKey]
+        [serialise, storage, uniqueKey]
     );
     return [t, setT];
 }

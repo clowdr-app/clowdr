@@ -20,7 +20,7 @@ export function VideoAspectWrapper({
         <chakra.div
             width="100%"
             maxWidth={`${widthFromHeight}vh`}
-            height="90vh"
+            height="min(90vh, auto)"
             maxHeight={`${heightFromWidth}vw`}
             mx="auto"
         >

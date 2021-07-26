@@ -134,13 +134,11 @@ export function HlsPlayerInner({
 
     const addListeners = useCallback(
         (videoElement: HTMLVideoElement) => {
-            console.log("dbg (add event listeners)");
             const onPlay = () => {
                 setIntendPlayStream(true);
             };
             videoElement.addEventListener("play", onPlay);
             const onPlaying = () => {
-                console.log("dbg (play)");
                 setIsPlaying(true);
             };
             videoElement.addEventListener("playing", onPlaying);
@@ -150,7 +148,6 @@ export function HlsPlayerInner({
             };
             videoElement.addEventListener("pause", onPause);
             const onEnded = () => {
-                console.log("dbg (pause)");
                 setIsPlaying(false);
             };
             videoElement.addEventListener("ended", onEnded);
@@ -175,16 +172,8 @@ export function HlsPlayerInner({
                 }
             };
             videoElement.addEventListener("resize", onResize);
-            // const onDurationChange = () => {
-            //     if (videoElement) {
-            //         console.log("dbg (durationchange)", { duration: videoElement.duration });
-            //         setIsLive(videoElement.duration === Infinity);
-            //     }
-            // };
-            // videoElement.addEventListener("durationchange", onDurationChange);
 
             return () => {
-                console.log("dbg (remove event listeners)");
                 videoElement?.removeEventListener("play", onPlay);
                 videoElement?.removeEventListener("playing", onPlaying);
                 videoElement?.removeEventListener("pause", onPause);
@@ -193,23 +182,13 @@ export function HlsPlayerInner({
                 videoElement?.removeEventListener("waiting", onWaiting);
                 videoElement?.removeEventListener("volumechange", onVolumeChange);
                 videoElement?.removeEventListener("resize", onResize);
-                // videoElement?.removeEventListener("durationchange", onDurationChange);
             };
         },
         [onAspectRatioChange, setIntendMuted, setVolume]
     );
 
-    // useEffect(() => {
-    //     const videoElement = videoRef.current;
-    //     if (videoElement) {
-    //         return addListeners(videoElement);
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [videoKey]);
-
     useEffect(() => {
         return () => {
-            console.log("dbg (global unmount)", { player: playerRef.current, src: playerRef.current?.src() });
             const player = playerRef.current;
             playerRef.current = null;
             setVideoKey((i) => i + 1);
@@ -228,8 +207,6 @@ export function HlsPlayerInner({
             if (!videojs.getPlugin("hlsQualitySelector")) {
                 videojs.registerPlugin("hlsQualitySelector", hlsQualitySelector);
             }
-            const src = options.src ?? "no source";
-            console.log("dbg (loadedmetadata)", { src });
             const removeListeners = videoRef.current ? addListeners(videoRef.current) : null;
 
             const targetVideoEl = videoRef.current;
@@ -250,7 +227,6 @@ export function HlsPlayerInner({
                               }
 
                               const onLoadedMetadata = () => {
-                                  console.log("dbg (loadedmetadata)", { player: this, src }); //debug
                                   const tracks = this.textTracks();
                                   for (let i = 0; i < tracks.length; i++) {
                                       tracks[i].mode = "disabled";
@@ -264,7 +240,6 @@ export function HlsPlayerInner({
 
                               this.on("loadedmetadata", onLoadedMetadata);
                               this.one("playerreset", () => {
-                                  console.log("dbg (playerreset)", { player: this, src }); //debug
                                   this.off("loadedmetadata", onLoadedMetadata);
                               });
                           }
@@ -274,10 +249,8 @@ export function HlsPlayerInner({
 
             return () => {
                 if (player && player === playerRef.current && !player.isDisposed()) {
-                    console.log("dbg (unmount)", { player, src });
                     removeListeners?.();
                     if (targetVideoEl && targetVideoEl === videoRef.current) {
-                        console.log("dbg (reset)", { player, src });
                         player.reset();
                     }
                 }

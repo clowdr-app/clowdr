@@ -30,8 +30,8 @@ const presetJSONata_ScheduleCSVQuery = `
         "events": [$all.(
             $timeZoneOffset := '+00:00';
             $timeFormat := "[Y0001]-[M01]-[D01]T[H01]:[m01] [Z]";
-            $startAt := $."Start Time (UTC)" & ' ' & $timeZoneOffset;
-            $endAt := $."End Time (UTC)" & ' ' & $timeZoneOffset;
+            $startAt := $."Start Time" & ' ' & $timeZoneOffset;
+            $endAt := $."End Time" & ' ' & $timeZoneOffset;
             $startTime := $toMillis($startAt, $timeFormat);
             $endTime := $toMillis($endAt, $timeFormat);
             $durationSeconds := ($endTime - $startTime) / 1000;
@@ -45,7 +45,7 @@ const presetJSONata_ScheduleCSVQuery = `
                 "startTime": $startTime,
                 "durationSeconds": $durationSeconds,
 
-                "intendedRoomModeName": $modeName,
+                "intendedRoomModeName": $modeName = "QANDA" ? "Q_AND_A" : $modeName,
                 "name": $name,
                 "itemSourceId": $."Content Id",
                 "exhibitionName": $."Exhibition Name",
@@ -93,9 +93,10 @@ export default function ImportSchedulePage(): JSX.Element {
             ),
         [data]
     );
-    const reviewPanel = useMemo(() => <ReviewPanel data={intermediaryData} defaultQuery={defaultReviewQuery} />, [
-        intermediaryData,
-    ]);
+    const reviewPanel = useMemo(
+        () => <ReviewPanel data={intermediaryData} defaultQuery={defaultReviewQuery} />,
+        [intermediaryData]
+    );
     const mergePanel = useMemo(() => <MergePanel data={intermediaryData} />, [intermediaryData]);
 
     return (

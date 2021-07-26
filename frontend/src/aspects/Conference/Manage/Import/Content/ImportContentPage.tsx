@@ -81,7 +81,7 @@ const presetJSONata_CSVQuery_Content = `
             "originatingDataSourceId": $."Content Id",
             "title": Title,
             "shortTitle": $."Short title",
-            "typeName": $uppercase(Type),
+            "typeName": $uppercase(Type) = "SESSION Q&A" ? "SESSION_Q_AND_A" : $uppercase(Type),
             "elements": [
                 {
                     "typeName": "ABSTRACT",
@@ -296,9 +296,10 @@ export default function ImportContentPage(): JSX.Element {
             ),
         [data]
     );
-    const reviewPanel = useMemo(() => <ReviewPanel data={intermediaryData} defaultQuery={defaultReviewQuery} />, [
-        intermediaryData,
-    ]);
+    const reviewPanel = useMemo(
+        () => <ReviewPanel data={intermediaryData} defaultQuery={defaultReviewQuery} />,
+        [intermediaryData]
+    );
     const mergePanel = useMemo(() => <MergePanel data={intermediaryData} />, [intermediaryData]);
 
     return (

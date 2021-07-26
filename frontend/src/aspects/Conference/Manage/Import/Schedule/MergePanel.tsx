@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import type { IntermediaryScheduleData } from "@clowdr-app/shared-types/build/import/intermediary";
 import assert from "assert";
+import * as R from "ramda";
 import React, { useEffect, useState } from "react";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
 import FAIcon from "../../../../Icons/FAIcon";
@@ -38,9 +39,8 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const [mergedEventsMap, setMergedEventsMap] = useState<Map<string, EventDescriptor>>();
     const [mergedRoomsMap, setMergedRoomsMap] = useState<Map<string, RoomDescriptor>>();
     const [mergedTagsMap, setMergedTagsMap] = useState<Map<string, TagDescriptor>>();
-    const [mergedOriginatingDatasMap, setMergedOriginatingDatasMap] = useState<
-        Map<string, OriginatingDataDescriptor>
-    >();
+    const [mergedOriginatingDatasMap, setMergedOriginatingDatasMap] =
+        useState<Map<string, OriginatingDataDescriptor>>();
     const [changes, setChanges] = useState<ChangeSummary[]>([]);
     const [error, setError] = useState<string | null>(null);
 
@@ -65,6 +65,16 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                     originalExhibitions,
                     items
                 );
+                if (
+                    R.any(
+                        (x) => !x.startTime || !x.durationSeconds || x.durationSeconds < 60,
+                        [...merged.newEvents.values()]
+                    )
+                ) {
+                    throw new Error(
+                        "Start time, end time or duration is missing or negative on one or more events. Please double check the start and end time calculations are correct. (Timezones are a common pitfall)."
+                    );
+                }
                 setMergedEventsMap(merged.newEvents);
                 setMergedRoomsMap(merged.newRooms);
                 setMergedTagsMap(merged.newTags);

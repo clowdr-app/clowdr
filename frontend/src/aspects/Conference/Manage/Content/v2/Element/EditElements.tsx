@@ -49,25 +49,25 @@ export function EditElements({
         ];
 
         sortedElements.sort((a, b) => {
-            if ("layoutData" in a && "layoutData" in b) {
-                if (
-                    (!a.layoutData || !("priority" in a.layoutData)) &&
-                    (!b.layoutData || !("priority" in b.layoutData))
-                ) {
+            const layoutA = "layoutData" in a ? a.layoutData : "element" in a ? a.element?.layoutData : undefined;
+            const layoutB = "layoutData" in b ? b.layoutData : "element" in b ? b.element?.layoutData : undefined;
+
+            if (layoutA && layoutB) {
+                if (!("priority" in layoutA) && !("priority" in layoutB)) {
                     return a.name.localeCompare(b.name);
                 }
-                if (!a.layoutData || !("priority" in a.layoutData)) {
+                if (!("priority" in layoutA)) {
                     return 1;
                 }
-                if (!b.layoutData || !("priority" in b.layoutData)) {
+                if (!("priority" in layoutB)) {
                     return -1;
                 }
-                const priorityOrder = a.layoutData.priority - b.layoutData.priority;
+                const priorityOrder = layoutA.priority - layoutB.priority;
 
                 return priorityOrder === 0 ? a.name.localeCompare(b.name) : priorityOrder;
-            } else if ("layoutData" in a) {
+            } else if (layoutA) {
                 return -1;
-            } else if ("layoutData" in b) {
+            } else if (layoutB) {
                 return 1;
             } else {
                 return a.name.localeCompare(b.name);

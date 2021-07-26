@@ -215,6 +215,7 @@ function RoomInner({
     } = useCurrentRoomEvent(roomEvents);
 
     const hlsUri = useHLSUri(roomDetails.id, broadcastEventStartsAt);
+    const secondsUntilBroadcastEvent = Math.round((broadcastEventStartsAt - now5s) / 1000);
 
     const isPresenterOfUpcomingEvent = useMemo(
         () =>
@@ -655,7 +656,7 @@ function RoomInner({
                                         canPlay={withinThreeMinutesOfBroadcastEvent || !!currentRoomEvent}
                                         hlsUri={hlsUri}
                                         onAspectRatioChange={onAspectRatioChange}
-                                        expectLivestream={true}
+                                        expectLivestream={secondsUntilBroadcastEvent < 10}
                                     />
                                 )}
                                 <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
@@ -676,6 +677,7 @@ function RoomInner({
         roomDetails.id,
         hlsUri,
         choice,
+        secondsUntilBroadcastEvent,
     ]);
 
     return (

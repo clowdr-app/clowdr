@@ -1,4 +1,4 @@
-import { chakra, FormControl, FormLabel, Heading, Input, Select, Switch, Text } from "@chakra-ui/react";
+import { chakra, FormControl, FormLabel, Heading, HStack, Input, Select, Switch, Text } from "@chakra-ui/react";
 import React, { ChangeEvent, FocusEvent, useCallback, useState } from "react";
 import { HlsPlayer } from "./HlsPlayer";
 import { HlsPlayerV1 } from "./HlsPlayerV1";
@@ -25,12 +25,7 @@ export function VideoTestPage(): JSX.Element {
         [setUri]
     );
 
-    const handleExpectLivestreamChange = useCallback(
-        (event: ChangeEvent<HTMLInputElement>) => {
-            setExpectLivestream(event.target.value === "true");
-        },
-        [setExpectLivestream]
-    );
+    const [mountPlayer, setMountPlayer] = useState<boolean>(true);
 
     return (
         <>
@@ -58,33 +53,43 @@ export function VideoTestPage(): JSX.Element {
                     </FormLabel>
                     <Input placeholder={defaultUri} onBlur={handleUriChange} id="manifest-url" />
                 </FormControl>
+                <HStack>
+                    <FormControl>
+                        <FormLabel htmlFor="expect-livestream" mt={2}>
+                            Expect a livestream
+                        </FormLabel>
+                        <Switch
+                            id="expect-livestream"
+                            isChecked={expectLivestream}
+                            onChange={() => setExpectLivestream((v) => !v)}
+                        />
+                    </FormControl>
 
-                <FormControl>
-                    <FormLabel htmlFor="expect-livestream" mt={2}>
-                        Expect a livestream
-                    </FormLabel>
-                    <Switch
-                        id="expect-livestream"
-                        isChecked={expectLivestream}
-                        onChange={() => setExpectLivestream((v) => !v)}
-                    />
-                </FormControl>
+                    <FormControl>
+                        <FormLabel htmlFor="mount-player" mt={2}>
+                            Mount player
+                        </FormLabel>
+                        <Switch id="mount-player" isChecked={mountPlayer} onChange={() => setMountPlayer((v) => !v)} />
+                    </FormControl>
+                </HStack>
             </chakra.form>
 
-            <VideoAspectWrapper>
-                {(onAspectRatioChange) =>
-                    choice === "v1" ? (
-                        <HlsPlayerV1 canPlay={true} hlsUri={uri} />
-                    ) : (
-                        <HlsPlayer
-                            canPlay={true}
-                            hlsUri={uri}
-                            onAspectRatioChange={onAspectRatioChange}
-                            expectLivestream={expectLivestream ?? undefined}
-                        />
-                    )
-                }
-            </VideoAspectWrapper>
+            {mountPlayer ? (
+                <VideoAspectWrapper>
+                    {(onAspectRatioChange) =>
+                        choice === "v1" ? (
+                            <HlsPlayerV1 canPlay={true} hlsUri={uri} />
+                        ) : (
+                            <HlsPlayer
+                                canPlay={true}
+                                hlsUri={uri}
+                                onAspectRatioChange={onAspectRatioChange}
+                                expectLivestream={expectLivestream ?? undefined}
+                            />
+                        )
+                    }
+                </VideoAspectWrapper>
+            ) : undefined}
 
             <Text>This is a test of the HLS stream component.</Text>
         </>

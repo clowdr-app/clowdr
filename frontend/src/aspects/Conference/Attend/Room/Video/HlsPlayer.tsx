@@ -1,14 +1,4 @@
-import {
-    Alert,
-    AlertDescription,
-    AlertIcon,
-    AlertProps,
-    Box,
-    BoxProps,
-    Button,
-    chakra,
-    CloseButton,
-} from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertProps, Button, chakra, CloseButton } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
@@ -17,16 +7,20 @@ import "videojs-contrib-quality-levels";
 import hlsQualitySelector from "videojs-hls-quality-selector";
 import { useRestorableState, useSessionState } from "../../../../Generic/useRestorableState";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
+import "./hls-player.css";
 import { HlsPlayerError } from "./HlsPlayerError";
 
-const VideoJSInner = React.forwardRef<HTMLVideoElement, BoxProps>(function VideoJSInner(
-    props: BoxProps,
+const VideoJSInner = React.forwardRef<
+    HTMLVideoElement,
+    React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+>(function VideoJSInner(
+    props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     ref: React.ForwardedRef<HTMLVideoElement>
 ): JSX.Element {
     return (
-        <Box data-vjs-player color="black" position="relative" {...props}>
+        <div data-vjs-player {...props} style={{ position: "relative", ...(props.style ?? {}) }}>
             <video ref={ref} className="video-js vjs-big-play-centered" />
-        </Box>
+        </div>
     );
 });
 
@@ -74,7 +68,7 @@ export function HlsPlayerInner({
     expectLivestream,
     onAspectRatioChange,
 }: HlsPlayerProps): JSX.Element {
-    const [player, setPlayer] = useState<VideoJsPlayer | null>(null);
+    const playerRef = useRef<VideoJsPlayer | null>(null);
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [intendPlayStream, setIntendPlayStream] = useState<boolean>(true);
@@ -98,6 +92,7 @@ export function HlsPlayerInner({
     }, [expectLivestream]);
 
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [videoKey, setVideoKey] = useState<number>(0);
 
     const options = useMemo<VideoJsPlayerOptions>(
         () => ({
@@ -137,14 +132,15 @@ export function HlsPlayerInner({
         videoRef.current.volume = volume;
     }, [volume]);
 
-    useEffect(() => {
-        const videoElement = videoRef.current;
-        if (videoElement) {
+    const addListeners = useCallback(
+        (videoElement: HTMLVideoElement) => {
+            console.log("dbg (add event listeners)");
             const onPlay = () => {
                 setIntendPlayStream(true);
             };
             videoElement.addEventListener("play", onPlay);
             const onPlaying = () => {
+                console.log("dbg (play)");
                 setIsPlaying(true);
             };
             videoElement.addEventListener("playing", onPlaying);
@@ -154,6 +150,7 @@ export function HlsPlayerInner({
             };
             videoElement.addEventListener("pause", onPause);
             const onEnded = () => {
+                console.log("dbg (pause)");
                 setIsPlaying(false);
             };
             videoElement.addEventListener("ended", onEnded);
@@ -178,13 +175,16 @@ export function HlsPlayerInner({
                 }
             };
             videoElement.addEventListener("resize", onResize);
-            const onDurationChange = () => {
-                if (videoElement) {
-                    setIsLive(videoElement.duration === Infinity);
-                }
-            };
+            // const onDurationChange = () => {
+            //     if (videoElement) {
+            //         console.log("dbg (durationchange)", { duration: videoElement.duration });
+            //         setIsLive(videoElement.duration === Infinity);
+            //     }
+            // };
+            // videoElement.addEventListener("durationchange", onDurationChange);
 
             return () => {
+                console.log("dbg (remove event listeners)");
                 videoElement?.removeEventListener("play", onPlay);
                 videoElement?.removeEventListener("playing", onPlaying);
                 videoElement?.removeEventListener("pause", onPause);
@@ -193,84 +193,109 @@ export function HlsPlayerInner({
                 videoElement?.removeEventListener("waiting", onWaiting);
                 videoElement?.removeEventListener("volumechange", onVolumeChange);
                 videoElement?.removeEventListener("resize", onResize);
-                videoElement?.removeEventListener("durationchange", onDurationChange);
+                // videoElement?.removeEventListener("durationchange", onDurationChange);
             };
-        }
-    }, [expectLivestream, onAspectRatioChange, setIntendMuted, setVolume]);
+        },
+        [onAspectRatioChange, setIntendMuted, setVolume]
+    );
+
+    // useEffect(() => {
+    //     const videoElement = videoRef.current;
+    //     if (videoElement) {
+    //         return addListeners(videoElement);
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [videoKey]);
 
     useEffect(() => {
         return () => {
-            if (player) {
-                player.dispose();
-            }
+            console.log("dbg (global unmount)", { player: playerRef.current, src: playerRef.current?.src() });
+            const player = playerRef.current;
+            playerRef.current = null;
+            setVideoKey((i) => i + 1);
+            setTimeout(() => {
+                if (player && !player.isDisposed()) {
+                    player.dispose();
+                }
+            }, 0);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const initialisePlayer = useCallback(
         (options: VideoJsPlayerOptions) => {
-            // Registered on import, but it likes to deregister itself when the player is disposed
+            // Registered on import, but it likes to deregister itself
             if (!videojs.getPlugin("hlsQualitySelector")) {
                 videojs.registerPlugin("hlsQualitySelector", hlsQualitySelector);
             }
+            const src = options.src ?? "no source";
+            console.log("dbg (loadedmetadata)", { src });
+            const removeListeners = videoRef.current ? addListeners(videoRef.current) : null;
 
-            const videoJs = videoRef.current
+            const targetVideoEl = videoRef.current;
+            const player = (playerRef.current = targetVideoEl
                 ? videojs(
-                      videoRef.current,
+                      targetVideoEl,
                       { ...options, muted: forceMute || intendMuted ? true : undefined, defaultVolume: volume },
                       function onReady(this: VideoJsPlayer): void {
-                          if (videoJs) {
+                          if (this === playerRef.current) {
                               if (options.src) {
-                                  videoJs.src(options.src);
+                                  this.src(options.src);
                               }
                               // This will probably crash occasionally without this guard
-                              if (typeof videoJs.hlsQualitySelector === "function") {
-                                  videoJs.hlsQualitySelector({ displayCurrentQuality: true });
+                              if (typeof this.hlsQualitySelector === "function") {
+                                  this.hlsQualitySelector({ displayCurrentQuality: true });
                               } else {
                                   console.warn("hlsQualitySelector plugin was not registered, skipping initialisation");
                               }
 
-                              videoJs.on("loadedmetadata", () => {
-                                  const tracks = videoJs.textTracks();
+                              const onLoadedMetadata = () => {
+                                  console.log("dbg (loadedmetadata)", { player: this, src }); //debug
+                                  const tracks = this.textTracks();
                                   for (let i = 0; i < tracks.length; i++) {
                                       tracks[i].mode = "disabled";
                                   }
-                                  if (videoJs.videoWidth() !== 0 && videoJs.videoHeight() !== 0) {
-                                      onAspectRatioChange?.(videoJs.videoWidth() / videoJs.videoHeight());
+                                  if (this.videoWidth() !== 0 && this.videoHeight() !== 0) {
+                                      onAspectRatioChange?.(this.videoWidth() / this.videoHeight());
                                   }
-                                  setIsLive(videoJs.duration() === Infinity);
+                                  setDismissAlert(false);
+                                  setIsLive(this.duration() === Infinity);
+                              };
+
+                              this.on("loadedmetadata", onLoadedMetadata);
+                              this.one("playerreset", () => {
+                                  console.log("dbg (playerreset)", { player: this, src }); //debug
+                                  this.off("loadedmetadata", onLoadedMetadata);
                               });
                           }
                       }
                   )
-                : null;
-
-            setPlayer(videoJs);
+                : null);
 
             return () => {
-                if (videoJs) {
-                    videoJs.reset();
+                if (player && player === playerRef.current && !player.isDisposed()) {
+                    console.log("dbg (unmount)", { player, src });
+                    removeListeners?.();
+                    if (targetVideoEl && targetVideoEl === videoRef.current) {
+                        console.log("dbg (reset)", { player, src });
+                        player.reset();
+                    }
                 }
             };
         },
-        [forceMute, intendMuted, onAspectRatioChange, volume]
+        [addListeners, forceMute, intendMuted, onAspectRatioChange, volume]
     );
 
     // Re-initialise the player when the options (i.e. the stream URI) change
     useEffect(() => {
         return initialisePlayer(options);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [options]);
+    }, [options, videoKey]);
 
     const handleReload = useCallback(() => {
-        if (player) {
-            setPlayer(null);
-            if (!player.isDisposed) {
-                player.dispose();
-            }
-            initialisePlayer(options);
-        }
-    }, [initialisePlayer, player, options]);
+        setDismissAlert(true);
+        initialisePlayer(options);
+    }, [initialisePlayer, options]);
 
     const handleDismiss = useCallback(() => {
         setDismissAlert(true);
@@ -279,7 +304,7 @@ export function HlsPlayerInner({
     return (
         <chakra.div h="100%" w="100%" position="relative">
             {roomId ? <PlayerAnalytics isPlaying={isPlaying} roomId={roomId} /> : undefined}
-            <VideoJSInner ref={videoRef} zIndex={1} />
+            <VideoJSInner ref={videoRef} style={{ zIndex: 1 }} key={videoKey} />
             {!isLive && expectLivestream && !dismissAlert ? (
                 <NonLiveAlert
                     position="absolute"

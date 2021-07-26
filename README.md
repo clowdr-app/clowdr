@@ -173,7 +173,17 @@ OAuth will work.
                "useLetsEnc": true,
                "redirect": true,
                "upstreamURL": ""
+         },
+         {
+               "domain": "<custom-actions-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 3003,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
          }
+
       ]
    ```
 1. Run `pktriot start --config pktriot.json` to start the tunnel.

@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Button, Divider, HStack, Image, Link } from "@chakra-ui/react";
+import { AspectRatio, Box, Button, Container, Divider, HStack, Image, Link } from "@chakra-ui/react";
 import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -79,9 +79,9 @@ function ElementInner({
         switch (latestVersion.data.type) {
             case Content_ElementType_Enum.Abstract:
                 return (
-                    <Box maxW={700}>
+                    <Container width="100%" maxW="50em" mx={0}>
                         <Markdown>{latestVersion.data.text}</Markdown>
-                    </Box>
+                    </Container>
                 );
             case Content_ElementType_Enum.Zoom:
                 return (
@@ -91,14 +91,12 @@ function ElementInner({
                 );
             case Content_ElementType_Enum.Text:
                 return (
-                    <Box maxW={700}>
+                    <Container width="100%" maxW="50em" mx={0}>
                         <Markdown>{latestVersion.data.text}</Markdown>
-                    </Box>
+                    </Container>
                 );
             case Content_ElementType_Enum.VideoUrl:
                 return (
-                    // TODO: Chakra AspectRatio
-                    // https://stackoverflow.com/questions/49393838/how-to-make-reactplayer-scale-with-height-and-width
                     <AspectRatio ratio={16 / 9} w="100%" maxW="800px" maxH="90vh" m={2}>
                         <ReactPlayer
                             url={latestVersion.data.url}

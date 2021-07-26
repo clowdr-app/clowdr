@@ -1,6 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Container, Heading, HStack, Text, VStack } from "@chakra-ui/react";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { Box, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
@@ -13,11 +12,11 @@ import {
 import { LinkButton } from "../../../Chakra/LinkButton";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
-import { maybeCompare } from "../../../Utils/maybeSort";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import { AuthorList } from "./AuthorList";
 import { Element } from "./Element/Element";
+import ElementsGridLayout from "./Element/ElementsGridLayout";
 import ExhibitionNameList from "./ExhibitionNameList";
 import TagList from "./TagList";
 
@@ -102,13 +101,6 @@ export function ItemElements({
 }): JSX.Element {
     useTrackView(true, itemData.id, "Item", 3000);
 
-    const abstractElement = useMemo(() => {
-        const abstractItem = itemData.elements.find(
-            (element) => element.typeName === Content_ElementType_Enum.Abstract
-        );
-        return abstractItem && <Element element={abstractItem} />;
-    }, [itemData.elements]);
-
     const conference = useConference();
 
     const zoomDetailsEls = useMemo(() => {
@@ -133,73 +125,19 @@ export function ItemElements({
             });
     }, [itemData.elements]);
 
-    const videoURLEls = useMemo(() => {
-        return itemData.elements
-            .filter((element) => element.typeName === Content_ElementType_Enum.VideoUrl)
-            .map((item) => {
-                return <Element key={item.id} element={item} />;
-            });
-    }, [itemData.elements]);
-
-    const otherEls = useMemo(() => {
-        const contentSortOrder = [
-            Content_ElementType_Enum.Abstract,
-            Content_ElementType_Enum.VideoUrl,
-            Content_ElementType_Enum.LiveProgramRooms,
-            Content_ElementType_Enum.ActiveSocialRooms,
-            Content_ElementType_Enum.Divider,
-            Content_ElementType_Enum.SponsorBooths,
-            Content_ElementType_Enum.Text,
-            Content_ElementType_Enum.PaperFile,
-            Content_ElementType_Enum.PaperLink,
-            Content_ElementType_Enum.PaperUrl,
-            Content_ElementType_Enum.PosterFile,
-            Content_ElementType_Enum.PosterUrl,
-            Content_ElementType_Enum.ImageFile,
-            Content_ElementType_Enum.ImageUrl,
-            Content_ElementType_Enum.Link,
-            Content_ElementType_Enum.LinkButton,
-            Content_ElementType_Enum.VideoBroadcast,
-            Content_ElementType_Enum.VideoCountdown,
-            Content_ElementType_Enum.VideoFile,
-            Content_ElementType_Enum.VideoFiller,
-            Content_ElementType_Enum.VideoLink,
-            Content_ElementType_Enum.VideoPrepublish,
-            Content_ElementType_Enum.VideoSponsorsFiller,
-            Content_ElementType_Enum.VideoTitles,
-            Content_ElementType_Enum.Zoom,
-            Content_ElementType_Enum.ContentGroupList,
-            Content_ElementType_Enum.WholeSchedule,
-            Content_ElementType_Enum.ExploreProgramButton,
-            Content_ElementType_Enum.ExploreScheduleButton,
-        ];
-
-        return itemData.elements
-            .filter(
-                (element) =>
-                    ![
-                        Content_ElementType_Enum.PaperUrl,
-                        Content_ElementType_Enum.PaperLink,
-                        Content_ElementType_Enum.PaperFile,
-                        Content_ElementType_Enum.VideoUrl,
-                        Content_ElementType_Enum.Zoom,
-                        Content_ElementType_Enum.Abstract,
-                        Content_ElementType_Enum.VideoBroadcast,
-                        Content_ElementType_Enum.VideoPrepublish,
-                        Content_ElementType_Enum.VideoFile,
-                    ].includes(element.typeName)
-            )
-            .sort((x, y) => contentSortOrder.indexOf(x.typeName) - contentSortOrder.indexOf(y.typeName))
-            .sort((x, y) =>
-                maybeCompare(
-                    (x.layoutData as LayoutDataBlob | undefined)?.priority,
-                    (y.layoutData as LayoutDataBlob | undefined)?.priority,
-                    (a, b) => a - b
-                )
-            )
-            .map((item) => {
-                return <Element key={item.id} element={item} />;
-            });
+    const filteredElements = useMemo(() => {
+        return itemData.elements.filter(
+            (element) =>
+                ![
+                    Content_ElementType_Enum.PaperUrl,
+                    Content_ElementType_Enum.PaperLink,
+                    Content_ElementType_Enum.PaperFile,
+                    Content_ElementType_Enum.Zoom,
+                    Content_ElementType_Enum.VideoBroadcast,
+                    Content_ElementType_Enum.VideoPrepublish,
+                    Content_ElementType_Enum.VideoFile,
+                ].includes(element.typeName)
+        );
     }, [itemData.elements]);
 
     return (
@@ -256,11 +194,7 @@ export function ItemElements({
                 </RequireAtLeastOnePermissionWrapper>
                 {stackableEls}
             </HStack>
-            <Container width="100%" mt={5} ml={0} pl={0} maxW="100%">
-                {abstractElement}
-            </Container>
-            {videoURLEls}
-            {otherEls}
+            <ElementsGridLayout elements={filteredElements} />
         </Box>
     );
 }

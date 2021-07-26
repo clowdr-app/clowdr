@@ -549,19 +549,6 @@ created above.
 
 #### 7. Configure Hasura
 
-1. Generate your JWT Secret key using [Hasura's tool -
-   https://hasura.io/jwt-config/](https://hasura.io/jwt-config/)
-   - Select Auth0
-   - Enter your Auth0 Domain
-1. Copy your key (the whole JSON object that is generated in the JWT Config
-   box) into your local `hasura/.env.local` file
-   - e.g. `HASURA_GRAPHQL_JWT_SECRET='your key goes in here'`
-   - **Don't forget the wrapping single quotes!**
-1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`
-   line in `docker-compose.yaml`
-   - Don't forget to restart the `Hasura Console -- Local Development` task
-     in VSCode! (Again, if you get an error message about `version check: failed to get version from server: failed making version api call...`
-     try running the task again -- this could be due to a race condition.)
 1. Optionally: Copy your key into Hasura Cloud Environment configuration
    - No need for the wrapping single quotes - Hasura's UI will handle that
      for you.

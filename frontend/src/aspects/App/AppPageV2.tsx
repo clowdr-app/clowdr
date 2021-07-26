@@ -22,6 +22,11 @@ export default function AppPageV2(): JSX.Element {
 
     const bgColour = useColorModeValue("gray.50", "gray.900");
 
+    const locationMatchRoom = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/room`]);
+    const locationMatchItem = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/item`]);
+    const isRoomPage = locationMatchRoom !== null;
+    const isItemPage = locationMatchItem !== null;
+
     // const isAdminPage = !!useRouteMatch("/conference/:confSlug/manage/");
     const centerAlwaysVisible = useBreakpointValue({
         base: false,
@@ -29,6 +34,12 @@ export default function AppPageV2(): JSX.Element {
     });
     const [rightOpen, setRightOpen] = useState<boolean>(false);
     const rightVisible = isPermittedAccess && !!rightOpen;
+
+    useEffect(() => {
+        if ((isRoomPage || isItemPage) && !!centerAlwaysVisible) {
+            setRightOpen(true);
+        }
+    }, [isRoomPage, isItemPage, centerAlwaysVisible]);
 
     const centerVisible = !confSlug || centerAlwaysVisible || !rightVisible;
 
@@ -73,17 +84,6 @@ export default function AppPageV2(): JSX.Element {
         ),
         [centerVisible, rightVisible]
     );
-
-    const locationMatchRoom = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/room`]);
-    const locationMatchItem = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/item`]);
-    const isRoomPage = locationMatchRoom !== null;
-    const isItemPage = locationMatchItem !== null;
-    useEffect(() => {
-        if ((isRoomPage || isItemPage) && centerAlwaysVisible) {
-            setRightOpen(true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isRoomPage, isItemPage]);
 
     const borderColour = useColorModeValue("gray.200", "gray.600");
     const centerBar = (

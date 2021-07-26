@@ -18,10 +18,15 @@ export default function UploadLinkForm({
     magicToken,
     uploadAgreement,
     handleFormSubmitted,
+    existingLink,
 }: {
     magicToken: string;
     uploadAgreement?: string;
     handleFormSubmitted?: () => Promise<void>;
+    existingLink: {
+        text: string;
+        url: string;
+    } | null;
 }): JSX.Element {
     const toast = useToast();
     const [submitUploadableElement] = useSubmitUploadableElementMutation();
@@ -29,8 +34,8 @@ export default function UploadLinkForm({
         <>
             <Formik
                 initialValues={{
-                    text: null,
-                    url: null,
+                    text: existingLink?.text ?? null,
+                    url: existingLink?.url ?? null,
                     agree: null,
                 }}
                 onSubmit={async (values) => {

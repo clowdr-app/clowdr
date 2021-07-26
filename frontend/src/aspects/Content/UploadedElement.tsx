@@ -51,7 +51,7 @@ export default function UploadedElement({
                                         }}
                                         isDisabled={disableRefresh}
                                     >
-                                        <FAIcon iconStyle="s" icon="sync" />
+                                        <FAIcon iconStyle="s" icon="sync" mr={2} /> Refresh
                                     </Button>
                                 </span>
                             </Tooltip>

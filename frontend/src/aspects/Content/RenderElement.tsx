@@ -5,6 +5,7 @@ import React from "react";
 import ReactPlayer from "react-player";
 import { ExternalLinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
+import { Markdown } from "../Text/Markdown";
 
 export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.Element {
     const latestVersion = data && data.length > 0 ? data[data.length - 1] : null;
@@ -42,7 +43,7 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
                     </Text>
                 );
             case ElementBaseType.Text:
-                return <Text>{latestVersion.data.text}</Text>;
+                return <Markdown>{latestVersion.data.text}</Markdown>;
             case ElementBaseType.URL:
                 return (
                     <Text>

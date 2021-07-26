@@ -1,3 +1,4 @@
+import { InfoIcon } from "@chakra-ui/icons";
 import {
     Button,
     Checkbox,
@@ -5,21 +6,28 @@ import {
     FormErrorMessage,
     FormHelperText,
     FormLabel,
+    Heading,
+    HStack,
+    Link,
     Text,
     Textarea,
     useToast,
+    VStack,
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
 import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
+import { Markdown } from "../Text/Markdown";
 
 export default function UploadTextForm({
     magicToken,
     uploadAgreement,
+    existingText,
 }: {
     magicToken: string;
     uploadAgreement?: string;
+    existingText: { text: string } | null;
 }): JSX.Element {
     const toast = useToast();
     const [submitUploadableElement] = useSubmitUploadableElementMutation();
@@ -27,7 +35,7 @@ export default function UploadTextForm({
         <>
             <Formik
                 initialValues={{
-                    text: null,
+                    text: existingText?.text ?? null,
                 }}
                 onSubmit={async (values) => {
                     try {
@@ -64,20 +72,67 @@ export default function UploadTextForm({
                 {({ dirty, ...props }) => (
                     <>
                         <UnsavedChangesWarning hasUnsavedChanges={dirty} />
-                        <Form>
+                        <Form
+                            style={{
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                marginTop: "2em",
+                            }}
+                        >
                             <Field name="text">
                                 {({ form, field }: FieldProps<string>) => (
-                                    <FormControl
-                                        isInvalid={!!form.errors.text && !!form.touched.text}
-                                        isRequired
-                                        mt={5}
+                                    <HStack
+                                        justifyContent="center"
+                                        alignItems="flex-start"
+                                        w="100%"
+                                        flexWrap="wrap"
+                                        spacing={6}
+                                        mb={3}
                                     >
-                                        <FormLabel htmlFor="text">Text</FormLabel>
-                                        {/* TODO: Use Markdown editor instead of a textarea */}
-                                        <Textarea transition="none" {...field} id="text"></Textarea>
-                                        <FormHelperText>Text to submit.</FormHelperText>
-                                        <FormErrorMessage>{form.errors.text}</FormErrorMessage>
-                                    </FormControl>
+                                        <FormControl
+                                            isInvalid={!!form.errors.text && !!form.touched.text}
+                                            isRequired
+                                            mb={10}
+                                            maxW="40em"
+                                        >
+                                            <FormLabel htmlFor="text" fontWeight="bold">
+                                                Text
+                                            </FormLabel>
+                                            {/* TODO: Use Markdown editor instead of a textarea */}
+                                            <Textarea transition="none" {...field} id="text"></Textarea>
+                                            <FormHelperText>
+                                                Text may be formatted using{" "}
+                                                <Link
+                                                    isExternal
+                                                    href="https://daringfireball.net/projects/markdown/basics"
+                                                >
+                                                    Markdown
+                                                </Link>
+                                                .<br />
+                                                <br />
+                                                Using Markdown you can bold text, create bulleted or numbered lists,
+                                                link to other website, embed external images and more.
+                                                <br />
+                                                <br />
+                                                On Clowdr, you can also use Markdown to embed YouTube videos, using the
+                                                same syntax as for images.
+                                            </FormHelperText>
+                                            <FormErrorMessage>{form.errors.text}</FormErrorMessage>
+                                        </FormControl>
+                                        <VStack maxW="40em" alignItems="flex-start" mb={10}>
+                                            <Heading as="h4" fontSize="md" textAlign="left">
+                                                Preview
+                                            </Heading>
+                                            <Text fontStyle="italic" fontSize="sm">
+                                                <InfoIcon mr={1} mb={1} />
+                                                Please note, as per any ordinary website, text will reflow automatically
+                                                to fit the size of the reader&apos;s screen.
+                                            </Text>
+                                            <Markdown>{field.value}</Markdown>
+                                        </VStack>
+                                    </HStack>
                                 )}
                             </Field>
                             {uploadAgreement && (
@@ -95,7 +150,7 @@ export default function UploadTextForm({
                                         <FormControl
                                             isInvalid={!!form.errors.agree && !!form.touched.agree}
                                             isRequired
-                                            mt={5}
+                                            mb={3}
                                         >
                                             <FormLabel htmlFor="agree">Upload agreement</FormLabel>
                                             <Text mb={4}>{uploadAgreement}</Text>
@@ -107,7 +162,7 @@ export default function UploadTextForm({
                                 </Field>
                             )}
                             <Button
-                                mt={4}
+                                my={4}
                                 colorScheme="purple"
                                 isLoading={props.isSubmitting}
                                 type="submit"

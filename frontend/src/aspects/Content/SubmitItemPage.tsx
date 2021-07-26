@@ -144,10 +144,25 @@ export default function SubmitItemPage({
             return <>No matching item found.</>;
         }
 
+        const existingData: any | null =
+            (dataElement?.content_ElementByAccessToken?.length
+                ? dataElement.content_ElementByAccessToken[0].data?.length
+                    ? dataElement.content_ElementByAccessToken[0].data[
+                          dataElement.content_ElementByAccessToken[0].data.length - 1
+                      ]?.data
+                    : undefined
+                : undefined) ?? null;
+
         switch (uploadableElement.typeName) {
             case Content_ElementType_Enum.Abstract:
             case Content_ElementType_Enum.Text:
-                return <UploadTextForm magicToken={magicToken} uploadAgreement={uploadAgreement} />;
+                return (
+                    <UploadTextForm
+                        magicToken={magicToken}
+                        uploadAgreement={uploadAgreement}
+                        existingText={existingData}
+                    />
+                );
             case Content_ElementType_Enum.ImageFile:
             case Content_ElementType_Enum.PaperFile:
             case Content_ElementType_Enum.PosterFile:
@@ -169,6 +184,7 @@ export default function SubmitItemPage({
                         magicToken={magicToken}
                         uploadAgreement={uploadAgreement}
                         handleFormSubmitted={formSubmitted}
+                        existingLink={existingData}
                     />
                 );
             case Content_ElementType_Enum.ImageUrl:
@@ -181,6 +197,7 @@ export default function SubmitItemPage({
                         magicToken={magicToken}
                         uploadAgreement={uploadAgreement}
                         handleFormSubmitted={formSubmitted}
+                        existingUrl={existingData}
                     />
                 );
             case Content_ElementType_Enum.VideoBroadcast:
@@ -202,7 +219,7 @@ export default function SubmitItemPage({
             default:
                 return <>Unrecognised upload type.</>;
         }
-    }, [formSubmitted, magicToken, uploadableElement, uploadAgreement]);
+    }, [uploadableElement, dataElement?.content_ElementByAccessToken, magicToken, uploadAgreement, formSubmitted]);
 
     return (
         <Center>
@@ -251,10 +268,6 @@ export default function SubmitItemPage({
                                                         <></>
                                                     )}
                                                     <ListItem>
-                                                        This video will be live streamed during the conference just
-                                                        prior to your Q&amp;A session.
-                                                    </ListItem>
-                                                    <ListItem>
                                                         Your conference organisers should have sent instructions
                                                         regarding the maximum duration of your video.
                                                     </ListItem>
@@ -285,10 +298,6 @@ export default function SubmitItemPage({
                                                         <></>
                                                     )}
                                                     <ListItem>
-                                                        This video will be made publicly available around the 11th of
-                                                        January.
-                                                    </ListItem>
-                                                    <ListItem>
                                                         Your conference organisers should have sent instructions
                                                         regarding the maximum duration of your video.
                                                     </ListItem>
@@ -296,7 +305,7 @@ export default function SubmitItemPage({
                                                 </UnorderedList>
                                             </Box>
                                         ) : undefined}
-                                        <Center>{form}</Center>
+                                        <Center w="100%">{form}</Center>
                                     </>
                                 )}
                                 <Divider />

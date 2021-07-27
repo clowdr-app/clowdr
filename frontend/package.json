@@ -102,6 +102,7 @@
         "socket.io-client": "^4.1.2",
         "srt-validator": "^3.2.4",
         "string.prototype.matchall": "^4.0.5",
+        "strip-bom": "^5.0.0",
         "styled-components": "^5.3.0",
         "styled-system": "^5.1.5",
         "subscriptions-transport-ws": "^0.9.19",

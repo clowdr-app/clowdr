@@ -1,6 +1,6 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { Button, Text } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router-dom";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import GenericErrorPage from "../Errors/GenericErrorPage";
@@ -19,7 +19,7 @@ export default function ProtectedRoute({
 } & RouteProps): JSX.Element {
     const { isAuthenticated, error, logout } = useAuth0();
     const { user } = useMaybeCurrentUser();
-    const returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-out";
+    const returnTo = useMemo(() => `${window.location.origin}/auth0/logged-out`, []);
 
     if (error) {
         return <Route {...args} component={() => <Redirect to="/" />} />;

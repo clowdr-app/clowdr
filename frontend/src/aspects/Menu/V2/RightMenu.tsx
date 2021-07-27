@@ -25,7 +25,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
     const maybeUser = useMaybeCurrentUser()?.user;
 
     const { logout } = useAuth0();
-    const logoutReturnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-out";
+    const logoutReturnTo = useMemo(() => `${window.location.origin}/auth0/logged-out`, []);
 
     const { setCurrentTab } = useRightSidebarCurrentTab();
 

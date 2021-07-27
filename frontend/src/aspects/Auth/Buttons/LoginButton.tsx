@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import MenuButton from "../../Menu/V2/MenuButton";
 
@@ -22,12 +22,12 @@ export default function LoginButton({
     const { loginWithRedirect } = useAuth0();
     const location = useLocation();
 
-    const redirectUri = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-in";
+    const redirectUri = useMemo(() => `${window.location.origin}/auth0/logged-in`, []);
     const opts = {
         redirectUri,
         login_hint: emailHint,
         appState: {
-            returnTo: redirectTo ?? location.pathname.startsWith("/logged-out") ? "/user" : location.pathname,
+            returnTo: redirectTo ?? location.pathname.endsWith("/logged-out") ? "/user" : location.pathname,
         },
     };
 

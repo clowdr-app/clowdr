@@ -1,11 +1,11 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem, Tooltip } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import FAIcon from "../../Icons/FAIcon";
 
 export default function LogoutButton({ asMenuItem }: { asMenuItem?: boolean }): JSX.Element {
     const { logout } = useAuth0();
-    const returnTo = import.meta.env.SNOWPACK_PUBLIC_AUTH_CALLBACK_URL + "/logged-out";
+    const returnTo = useMemo(() => `${window.location.origin}/auth0/logged-out`, []);
 
     return asMenuItem ? (
         <MenuItem size="sm" onClick={() => logout({ returnTo })}>

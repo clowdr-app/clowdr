@@ -4,10 +4,11 @@ to = "/index.html"
 status = 200
 
 [build]
-command = "cd shared && npm i && cd ../frontend && npm i && npm run build"
+command = "cd shared && npm ci && cd ../frontend && npm ci && npm run build"
 publish = "frontend/build"
 
 [build.environment]
 
-NPM_VERSION = "7.8"
-NODE_VERSION = "15.4"
+NPM_VERSION = "7.18"
+NODE_VERSION = "16.4"
+NODE_ENV = production

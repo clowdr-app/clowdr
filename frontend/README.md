@@ -101,7 +101,7 @@ The frontend can easily be deployed using Netlify:
 
 1. Connect to GitHub, select the relevant repo and branch
 1. Leave the base directory blank
-1. Build command: `cd shared && npm i && cd ../frontend && npm i && npm run build`
+1. Build command: `cd shared && npm ci && cd ../frontend && npm ci && npm run build`
 1. Publish directory: `frontend/build`
 1. Environment variables: As below
 

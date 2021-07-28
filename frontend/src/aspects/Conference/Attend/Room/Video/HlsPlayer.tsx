@@ -19,7 +19,7 @@ const VideoJSInner = React.forwardRef<
 ): JSX.Element {
     return (
         <div data-vjs-player {...props} style={{ position: "relative", ...(props.style ?? {}) }}>
-            <video ref={ref} className="video-js vjs-big-play-centered" />
+            <video ref={ref} className="video-js vjs-big-play-centered" crossOrigin="anonymous" />
         </div>
     );
 });

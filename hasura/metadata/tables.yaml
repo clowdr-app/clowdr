@@ -2013,13 +2013,6 @@
         table:
           schema: collection
           name: Tag
-  - name: uploadableElements
-    using:
-      foreign_key_constraint_on:
-        column: originatingDataId
-        table:
-          schema: content
-          name: UploadableElement
   insert_permissions:
   - role: user
     permission:
@@ -2219,9 +2212,6 @@
   - name: type
     using:
       foreign_key_constraint_on: typeName
-  - name: uploadableElement
-    using:
-      foreign_key_constraint_on: uploadableId
   array_relationships:
   - name: permissionGrants
     using:
@@ -2237,6 +2227,13 @@
         table:
           schema: analytics
           name: ContentElementStats
+  - name: uploaders
+    using:
+      foreign_key_constraint_on:
+        column: elementId
+        table:
+          schema: content
+          name: Uploader
   - name: youTubeUploads
     using:
       foreign_key_constraint_on:
@@ -2244,6 +2241,12 @@
         table:
           schema: video
           name: YouTubeUpload
+  computed_fields:
+  - name: itemTitle
+    definition:
+      function:
+        schema: content
+        name: Element_itemTitle
   insert_permissions:
   - role: user
     permission:
@@ -2270,15 +2273,14 @@
               _eq: X-Hasura-User-Id
       columns:
       - conferenceId
-      - itemId
-      - typeName
       - data
       - id
       - isHidden
+      - itemId
       - layoutData
       - name
       - originatingDataId
-      - uploadableId
+      - typeName
       backend_only: false
   select_permissions:
   - role: unauthenticated
@@ -2295,6 +2297,9 @@
       - originatingDataId
       - typeName
       - updated_at
+      - uploadsRemaining
+      computed_fields:
+      - itemTitle
       filter:
         _and:
         - _and:
@@ -2371,17 +2376,19 @@
     permission:
       columns:
       - conferenceId
-      - itemId
-      - typeName
       - created_at
       - data
       - id
       - isHidden
+      - itemId
       - layoutData
       - name
       - originatingDataId
-      - uploadableId
+      - typeName
       - updated_at
+      - uploadsRemaining
+      computed_fields:
+      - itemTitle
       filter:
         _and:
         - conference:
@@ -2468,14 +2475,14 @@
     permission:
       columns:
       - conferenceId
-      - itemId
-      - typeName
       - data
       - isHidden
+      - itemId
       - layoutData
       - name
       - originatingDataId
-      - uploadableId
+      - typeName
+      - uploadsRemaining
       filter:
         _and:
         - conference:
@@ -2540,15 +2547,16 @@
       update:
         columns:
         - isHidden
+        - uploadsRemaining
         - data
         - layoutData
+        - accessToken
         - name
         - typeName
         - conferenceId
         - id
         - itemId
         - originatingDataId
-        - uploadableId
     retry_conf:
       num_retries: 0
       interval_sec: 10
@@ -2557,36 +2565,6 @@
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
-- table:
-    schema: content
-    name: ElementByAccessToken
-  select_permissions:
-  - role: unauthenticated
-    permission:
-      columns:
-      - accessToken
-      - data
-      - id
-      - itemTitle
-      - layoutData
-      - name
-      - typeName
-      filter:
-        accessToken:
-          _eq: X-Hasura-Magic-Token
-  - role: user
-    permission:
-      columns:
-      - accessToken
-      - data
-      - id
-      - itemTitle
-      - layoutData
-      - name
-      - typeName
-      filter:
-        accessToken:
-          _eq: X-Hasura-Magic-Token
 - table:
     schema: content
     name: ElementPermissionGrant
@@ -2891,13 +2869,6 @@
         table:
           schema: analytics
           name: ContentItemStats
-  - name: uploadableElements
-    using:
-      foreign_key_constraint_on:
-        column: itemId
-        table:
-          schema: content
-          name: UploadableElement
   insert_permissions:
   - role: user
     permission:
@@ -3502,7 +3473,7 @@
       filter: {}
 - table:
     schema: content
-    name: UploadableElement
+    name: Uploader
   configuration:
     custom_root_fields: {}
     custom_column_names:
@@ -3514,415 +3485,7 @@
       foreign_key_constraint_on: conferenceId
   - name: element
     using:
-      manual_configuration:
-        remote_table:
-          schema: content
-          name: Element
-        insertion_order: null
-        column_mapping:
-          id: uploadableId
-  - name: item
-    using:
-      foreign_key_constraint_on: itemId
-  - name: originatingData
-    using:
-      foreign_key_constraint_on: originatingDataId
-  - name: type
-    using:
-      foreign_key_constraint_on: typeName
-  array_relationships:
-  - name: permissionGrants
-    using:
-      foreign_key_constraint_on:
-        column: entityId
-        table:
-          schema: content
-          name: UploadableElementPermissionGrant
-  - name: uploaders
-    using:
-      foreign_key_constraint_on:
-        column: uploadableElementId
-        table:
-          schema: content
-          name: Uploader
-  computed_fields:
-  - name: hasBeenUploaded
-    definition:
-      function:
-        schema: content
-        name: hasBeenUploaded
-    comment: ""
-  - name: itemTitle
-    definition:
-      function:
-        schema: content
-        name: UploadableElement_itemTitle
-    comment: ""
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
-            _table:
-              schema: public
-              name: FlatUserPermission
-      columns:
-      - accessToken
-      - conferenceId
-      - itemId
-      - typeName
-      - id
-      - isHidden
-      - name
-      - originatingDataId
-      - uploadsRemaining
-      backend_only: false
-  select_permissions:
-  - role: unauthenticated
-    permission:
-      columns:
-      - conferenceId
-      - itemId
-      - typeName
-      - id
-      - isHidden
-      - name
-      - originatingDataId
-      - updated_at
-      - uploadsRemaining
-      computed_fields:
-      - itemTitle
-      filter:
-        _or:
-        - _and:
-          - accessToken:
-              _is_null: false
-          - accessToken:
-              _eq: X-Hasura-Magic-Token
-        - conference:
-            groups:
-              _and:
-              - enabled:
-                  _eq: true
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      permissionName:
-                        _eq: CONFERENCE_VIEW
-              - includeUnauthenticated:
-                  _eq: true
-  - role: user
-    permission:
-      columns:
-      - conferenceId
-      - itemId
-      - typeName
-      - id
-      - isHidden
-      - name
-      - originatingDataId
-      - updated_at
-      - uploadsRemaining
-      computed_fields:
-      - hasBeenUploaded
-      - itemTitle
-      filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    _or:
-                    - permissionName:
-                        _eq: CONFERENCE_VIEW
-                    - permissionName:
-                        _eq: CONFERENCE_MANAGE_CONTENT
-            - _or:
-              - includeUnauthenticated:
-                  _eq: true
-              - groupRegistrants:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - accessToken
-      - itemId
-      - typeName
-      - isHidden
-      - name
-      - originatingDataId
-      - uploadsRemaining
-      filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_CONTENT
-            - _or:
-              - includeUnauthenticated:
-                  _eq: true
-              - groupRegistrants:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_CONTENT
-            - _or:
-              - includeUnauthenticated:
-                  _eq: true
-              - groupRegistrants:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-- table:
-    schema: content
-    name: UploadableElementPermissionGrant
-  object_relationships:
-  - name: conference
-    using:
-      foreign_key_constraint_on: conferenceSlug
-  - name: entity
-    using:
-      foreign_key_constraint_on: entityId
-  - name: group
-    using:
-      foreign_key_constraint_on: groupId
-  - name: permissionSet
-    using:
-      foreign_key_constraint_on: permissionSetId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        _or:
-        - _and:
-          - conferenceSlug:
-              _eq: X-Hasura-Conference-Slug
-          - permissionSet:
-              conference:
-                slug:
-                  _eq: X-Hasura-Conference-Slug
-          - _or:
-            - groupId:
-                _is_null: true
-            - group:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-          - _or:
-            - entityId:
-                _is_null: true
-            - entity:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_MANAGE_CONTENT
-              _table:
-                schema: public
-                name: FlatUserPermission
-        - conference:
-            createdBy:
-              _eq: X-Hasura-User-Id
-      set:
-        conferenceSlug: x-hasura-Conference-Slug
-      columns:
-      - entityId
-      - groupId
-      - id
-      - permissionSetId
-      backend_only: false
-  select_permissions:
-  - role: user
-    permission:
-      columns:
-      - conferenceSlug
-      - created_at
-      - updated_at
-      - entityId
-      - groupId
-      - id
-      - permissionSetId
-      filter:
-        _or:
-        - _and:
-          - conferenceSlug:
-              _eq: X-Hasura-Conference-Slug
-          - permissionSet:
-              conference:
-                slug:
-                  _eq: X-Hasura-Conference-Slug
-          - _or:
-            - groupId:
-                _is_null: true
-            - group:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-          - _or:
-            - entityId:
-                _is_null: true
-            - entity:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_MANAGE_CONTENT
-              _table:
-                schema: public
-                name: FlatUserPermission
-        - conference:
-            createdBy:
-              _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns: []
-      filter:
-        _or:
-        - _and:
-          - conferenceSlug:
-              _eq: X-Hasura-Conference-Slug
-          - permissionSet:
-              conference:
-                slug:
-                  _eq: X-Hasura-Conference-Slug
-          - _or:
-            - groupId:
-                _is_null: true
-            - group:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-          - _or:
-            - entityId:
-                _is_null: true
-            - entity:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_MANAGE_CONTENT
-              _table:
-                schema: public
-                name: FlatUserPermission
-        - conference:
-            createdBy:
-              _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - _and:
-          - conferenceSlug:
-              _eq: X-Hasura-Conference-Slug
-          - permissionSet:
-              conference:
-                slug:
-                  _eq: X-Hasura-Conference-Slug
-          - _or:
-            - groupId:
-                _is_null: true
-            - group:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-          - _or:
-            - entityId:
-                _is_null: true
-            - entity:
-                conference:
-                  slug:
-                    _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_MANAGE_CONTENT
-              _table:
-                schema: public
-                name: FlatUserPermission
-        - conference:
-            createdBy:
-              _eq: X-Hasura-User-Id
-- table:
-    schema: content
-    name: Uploader
-  configuration:
-    custom_root_fields: {}
-    custom_column_names:
-      updated_at: updatedAt
-      created_at: createdAt
-  object_relationships:
-  - name: conference
-    using:
-      foreign_key_constraint_on: conferenceId
-  - name: uploadableElement
-    using:
-      foreign_key_constraint_on: uploadableElementId
+      foreign_key_constraint_on: elementId
   insert_permissions:
   - role: user
     permission:
@@ -3946,10 +3509,10 @@
                       _eq: X-Hasura-User-Id
       columns:
       - conferenceId
+      - elementId
       - email
       - id
       - name
-      - uploadableElementId
       backend_only: false
   select_permissions:
   - role: user
@@ -3957,11 +3520,11 @@
       columns:
       - conferenceId
       - created_at
+      - elementId
       - email
       - emailsSentCount
       - id
       - name
-      - uploadableElementId
       - updated_at
       filter:
         conference:

@@ -132,7 +132,7 @@ export class ScheduleSyncService {
                     { now: now.getTime() }
                 );
 
-            if (!immediateDelayMillis) {
+            if (immediateDelayMillis === undefined) {
                 // First action can be synced as fixed schedule.
                 // Safe to start filler immediately as actions are >=40s away.
                 const fillerActions = fillerVideoScheduleActions?.();
@@ -356,6 +356,16 @@ export class ScheduleSyncService {
                 this.actionsMatch(localAction, candidateAction)
             );
             if (remoteMatches.length === 0) {
+                localAction.sequenceNumber =
+                    remoteCandidates.reduce(
+                        (acc, candidate) =>
+                            candidate.type === "event"
+                                ? candidate.sequenceNumber > acc
+                                    ? candidate.sequenceNumber
+                                    : acc
+                                : acc,
+                        -1
+                    ) + 1;
                 missingActions.push(localAction);
             }
         }
@@ -408,10 +418,11 @@ export class ScheduleSyncService {
     ): ScheduleAction[] {
         const immediate = startMode.mode === "immediate";
         const offsetMillis = startMode.mode === "immediate" ? startMode.now - localAction.startTime : 0;
+        const sequenceNumber = Math.round(localAction.sequenceNumber ?? 0);
         if (this.localScheduleService.isLive(localAction.roomModeName)) {
             return [
                 {
-                    ActionName: immediate ? `i/${uuidv4()}` : `e/${localAction.eventId}`,
+                    ActionName: immediate ? `i/${uuidv4()}` : `e/${localAction.eventId}/${sequenceNumber}`,
                     ScheduleActionStartSettings: immediate
                         ? {
                               ImmediateModeScheduleActionStartSettings: {},
@@ -444,9 +455,10 @@ export class ScheduleSyncService {
                     "Could not generate an action for prerecorded event because no video key was found"
                 );
             } else {
+                const immediateId = uuidv4();
                 return [
                     {
-                        ActionName: immediate ? `i/${uuidv4()}` : `e/${localAction.eventId}`,
+                        ActionName: immediate ? `i/${immediateId}` : `e/${localAction.eventId}/${sequenceNumber}`,
                         ScheduleActionStartSettings: immediate
                             ? {
                                   ImmediateModeScheduleActionStartSettings: {},
@@ -479,11 +491,13 @@ export class ScheduleSyncService {
                     ...(channelStackDetails.fillerVideoKey
                         ? [
                               {
-                                  ActionName: `ef/${localAction.eventId}`,
+                                  ActionName: `ef/${localAction.eventId}/${sequenceNumber}`,
                                   ScheduleActionStartSettings: {
                                       FollowModeScheduleActionStartSettings: {
                                           FollowPoint: FollowPoint.END,
-                                          ReferenceActionName: `e/${localAction.eventId}`,
+                                          ReferenceActionName: immediate
+                                              ? `i/${immediateId}`
+                                              : `e/${localAction.eventId}/${sequenceNumber}`,
                                       },
                                   },
                                   ScheduleActionSettings: {

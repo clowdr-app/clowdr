@@ -364,7 +364,7 @@ export class ChannelStackDataService {
                         }
                         delayedImmediateEvent: events(
                             where: {
-                                startTime: { _lt: $syncCutoff }
+                                startTime: { _gt: $now, _lt: $syncCutoff }
                                 intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
                             }
                             order_by: { startTime: desc_nulls_last }

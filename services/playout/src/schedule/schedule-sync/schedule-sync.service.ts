@@ -102,7 +102,8 @@ export class ScheduleSyncService {
         const fillerVideoScheduleActions = await this.getFillerVideoScheduleActions(channelStackDetails);
 
         const switchToFiller = async () => {
-            if (!fillerVideoScheduleActions) {
+            let scheduleActions: ScheduleAction[];
+            if (!fillerVideoScheduleActions || !(scheduleActions = fillerVideoScheduleActions()).length) {
                 this.logger.warn(
                     {
                         mediaLiveChannelId: channelStackDetails.mediaLiveChannelId,
@@ -135,15 +136,18 @@ export class ScheduleSyncService {
             if (immediateDelayMillis === undefined) {
                 // First action can be synced as fixed schedule.
                 // Safe to start filler immediately as actions are >=40s away.
-                const fillerActions = fillerVideoScheduleActions?.();
-                await this.mediaLiveService.updateSchedule(
-                    mediaLiveChannelId,
-                    [],
-                    (fillerActions ?? []).concat(scheduleActions)
+                this.logger.info(
+                    { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId },
+                    "Event not starting for a while, starting filler video."
                 );
+                await switchToFiller();
             } else if (immediateDelayMillis < 2000) {
                 // First action is immediate but has either started or just about to start.
                 // Execute immediately.
+                this.logger.info(
+                    { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId },
+                    "Event already in progress, starting immediately."
+                );
                 await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
             } else {
                 // First action has to be immediate, but we need to wait before triggering.
@@ -152,7 +156,7 @@ export class ScheduleSyncService {
                     try {
                         this.logger.info(
                             { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId },
-                            "Event starting soon, playing filler video."
+                            "Event starting soon, playing filler video first."
                         );
                         await switchToFiller();
                     } catch (err) {
@@ -171,6 +175,13 @@ export class ScheduleSyncService {
                     await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
                 }, immediateDelayMillis);
             }
+
+            // Trigger initial channel sync in case there are more actions before next regular sync
+            this.logger.info(
+                { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId },
+                "Syncing full channel schedule after startup."
+            );
+            await this.syncChannelSchedule(roomId);
         } else {
             this.logger.info(
                 { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId },
@@ -491,7 +502,9 @@ export class ScheduleSyncService {
                     ...(channelStackDetails.fillerVideoKey
                         ? [
                               {
-                                  ActionName: `ef/${localAction.eventId}/${sequenceNumber}`,
+                                  ActionName: immediate
+                                      ? `i/${uuidv4()}`
+                                      : `ef/${localAction.eventId}/${sequenceNumber}`,
                                   ScheduleActionStartSettings: {
                                       FollowModeScheduleActionStartSettings: {
                                           FollowPoint: FollowPoint.END,

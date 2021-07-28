@@ -2,7 +2,6 @@ import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import AmazonS3URI from "amazon-s3-uri";
-import { add } from "date-fns";
 import * as R from "ramda";
 import { ChannelStackDescription } from "../../channel-stack/channel-stack/channelStack";
 import {
@@ -11,7 +10,7 @@ import {
     ChannelStack_DetachDocument,
     ChannelStack_GetChannelStackCloudFormationStackArnDocument,
     ChannelStack_GetChannelStacksDocument,
-    ChannelStack_GetCurrentEventDocument,
+    ChannelStack_GetFirstSyncableEventDocument,
     CreateChannelStackDocument,
     FindChannelStacksByStackArnDocument,
     GetChannelStackByRoomDocument,
@@ -337,21 +336,50 @@ export class ChannelStackDataService {
         );
     }
 
-    public async getCurrentOrUpcomingEventByMediaLiveChannelId(
-        mediaLiveChannelId: string
+    public async getFirstSyncableEventByMediaLiveChannelId(
+        mediaLiveChannelId: string,
+        now: Date,
+        syncCutoff: Date
     ): Promise<{ eventId: string | null; roomId: string | null; conferenceId: string | null }> {
         gql`
-            query ChannelStack_GetCurrentEvent(
+            query ChannelStack_GetFirstSyncableEvent(
                 $mediaLiveChannelId: String!
                 $now: timestamptz!
-                $future: timestamptz!
+                $syncCutoff: timestamptz!
             ) {
                 video_ChannelStack(where: { mediaLiveChannelId: { _eq: $mediaLiveChannelId } }, limit: 1) {
                     id
                     conferenceId
                     room {
                         id
-                        events(where: { startTime: { _lte: $now }, endTime: { _gte: $future } }) {
+                        immediateEvent: events(
+                            where: {
+                                startTime: { _lte: $now }
+                                endTime: { _gte: $syncCutoff }
+                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                            }
+                            limit: 1
+                        ) {
+                            id
+                        }
+                        delayedImmediateEvent: events(
+                            where: {
+                                startTime: { _lt: $syncCutoff }
+                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                            }
+                            order_by: { startTime: desc_nulls_last }
+                            limit: 1
+                        ) {
+                            id
+                        }
+                        fixedEvent: events(
+                            where: {
+                                startTime: { _gte: $syncCutoff }
+                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                            }
+                            order_by: { startTime: asc_nulls_last }
+                            limit: 1
+                        ) {
                             id
                         }
                     }
@@ -359,15 +387,12 @@ export class ChannelStackDataService {
             }
         `;
 
-        const now = new Date();
-        const future = add(now, { seconds: 15 });
-
         const result = await this.graphQlService.apolloClient.query({
-            query: ChannelStack_GetCurrentEventDocument,
+            query: ChannelStack_GetFirstSyncableEventDocument,
             variables: {
                 mediaLiveChannelId,
                 now: now.toISOString(),
-                future: future.toISOString(),
+                syncCutoff: syncCutoff.toISOString(),
             },
         });
 
@@ -375,17 +400,33 @@ export class ChannelStackDataService {
             return { roomId: null, eventId: null, conferenceId: null };
         }
 
-        if (result.data.video_ChannelStack[0].room.events.length !== 1) {
+        if (result.data.video_ChannelStack[0].room.immediateEvent.length === 1) {
             return {
                 roomId: result.data.video_ChannelStack[0].room.id,
-                eventId: null,
+                eventId: result.data.video_ChannelStack[0].room.immediateEvent[0].id,
+                conferenceId: result.data.video_ChannelStack[0].conferenceId,
+            };
+        }
+
+        if (result.data.video_ChannelStack[0].room.delayedImmediateEvent.length === 1) {
+            return {
+                roomId: result.data.video_ChannelStack[0].room.id,
+                eventId: result.data.video_ChannelStack[0].room.delayedImmediateEvent[0].id,
+                conferenceId: result.data.video_ChannelStack[0].conferenceId,
+            };
+        }
+
+        if (result.data.video_ChannelStack[0].room.fixedEvent.length === 1) {
+            return {
+                roomId: result.data.video_ChannelStack[0].room.id,
+                eventId: result.data.video_ChannelStack[0].room.fixedEvent[0].id,
                 conferenceId: result.data.video_ChannelStack[0].conferenceId,
             };
         }
 
         return {
             roomId: result.data.video_ChannelStack[0].room.id,
-            eventId: result.data.video_ChannelStack[0].room.events[0].id,
+            eventId: null,
             conferenceId: result.data.video_ChannelStack[0].conferenceId,
         };
     }

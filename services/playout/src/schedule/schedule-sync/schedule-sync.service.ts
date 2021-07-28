@@ -1,4 +1,4 @@
-import { ChannelState, FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
+import { ChannelState, FollowPoint, InputTimecodeSource, ScheduleAction } from "@aws-sdk/client-medialive";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { add } from "date-fns";
 import * as R from "ramda";
@@ -37,12 +37,41 @@ export class ScheduleSyncService {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
+    private async getFillerVideoScheduleActions(
+        channelStackDetails: ChannelStackDetails
+    ): Promise<((uuid?: string) => ScheduleAction[]) | null> {
+        const fillerVideoKey = await this.channelStackDataService.getFillerVideoKey(channelStackDetails.conferenceId);
+
+        if (!fillerVideoKey) {
+            return null;
+        }
+
+        return (uuid) => [
+            {
+                ActionName: `i/${uuid ?? uuidv4()}`,
+                ScheduleActionSettings: {
+                    InputSwitchSettings: {
+                        InputAttachmentNameReference: channelStackDetails.loopingMp4InputAttachmentName,
+                        UrlPath: [fillerVideoKey],
+                    },
+                },
+                ScheduleActionStartSettings: {
+                    ImmediateModeScheduleActionStartSettings: {},
+                },
+            },
+        ];
+    }
+
     public async syncChannelOnStartup(mediaLiveChannelId: string): Promise<void> {
-        const {
-            eventId,
-            roomId,
-            conferenceId,
-        } = await this.channelStackDataService.getCurrentOrUpcomingEventByMediaLiveChannelId(mediaLiveChannelId);
+        const now = new Date();
+        const syncCutoff = this.syncCutoffTime(now);
+
+        const { eventId, roomId, conferenceId } =
+            await this.channelStackDataService.getFirstSyncableEventByMediaLiveChannelId(
+                mediaLiveChannelId,
+                now,
+                syncCutoff
+            );
 
         if (!roomId) {
             this.logger.error(
@@ -70,6 +99,22 @@ export class ScheduleSyncService {
             return;
         }
 
+        const fillerVideoScheduleActions = await this.getFillerVideoScheduleActions(channelStackDetails);
+
+        const switchToFiller = async () => {
+            if (!fillerVideoScheduleActions) {
+                this.logger.warn(
+                    {
+                        mediaLiveChannelId: channelStackDetails.mediaLiveChannelId,
+                        conferenceId: channelStackDetails.conferenceId,
+                    },
+                    "Conference does not have a filler video, skipping"
+                );
+            } else {
+                await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], fillerVideoScheduleActions());
+            }
+        };
+
         if (eventId) {
             this.logger.info({ eventId, mediaLiveChannelId }, "Found event to play on channel startup");
             const localScheduleAction = await this.localScheduleService.getEventScheduleData(eventId);
@@ -79,42 +124,64 @@ export class ScheduleSyncService {
                 return;
             }
 
-            const scheduleActions = this.convertLocalEventToScheduleActions(
-                localScheduleAction,
-                channelStackDetails,
-                0,
-                true
-            );
-            await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
-        } else {
-            this.logger.info("No event found to play on channel startup, playing filler video.");
-            const fillerVideoKey = await this.channelStackDataService.getFillerVideoKey(conferenceId);
-
-            if (!fillerVideoKey) {
-                this.logger.warn(
-                    { mediaLiveChannelId, conferenceId },
-                    "Conference does not have a filler video, skipping"
+            const { actions: scheduleActions, immediateDelayMillis } =
+                this.convertLocalEventWithCutoffToScheduleActions(
+                    localScheduleAction,
+                    channelStackDetails,
+                    syncCutoff.getTime(),
+                    { now: now.getTime() }
                 );
-                return;
+
+            if (!immediateDelayMillis) {
+                // First action can be synced as fixed schedule.
+                // Safe to start filler immediately as actions are >=40s away.
+                const fillerActions = fillerVideoScheduleActions?.();
+                await this.mediaLiveService.updateSchedule(
+                    mediaLiveChannelId,
+                    [],
+                    (fillerActions ?? []).concat(scheduleActions)
+                );
+            } else if (immediateDelayMillis < 2000) {
+                // First action is immediate but has either started or just about to start.
+                // Execute immediately.
+                await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
+            } else {
+                // First action has to be immediate, but we need to wait before triggering.
+                // Start the filler video if we have enough time
+                if (immediateDelayMillis > 25000) {
+                    try {
+                        this.logger.info(
+                            { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId },
+                            "Event starting soon, playing filler video."
+                        );
+                        await switchToFiller();
+                    } catch (err) {
+                        this.logger.warn(
+                            { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId },
+                            "Failed to play filler video while waiting for delayed immediate switch"
+                        );
+                    }
+                }
+                // Set the immediate switch to happen at the correct moment
+                setTimeout(async () => {
+                    this.logger.info(
+                        { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId, eventId },
+                        "Starting delayed event"
+                    );
+                    await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
+                }, immediateDelayMillis);
             }
-
-            const scheduleActions = [
-                {
-                    ActionName: `i/${uuidv4()}`,
-                    ScheduleActionSettings: {
-                        InputSwitchSettings: {
-                            InputAttachmentNameReference: channelStackDetails.loopingMp4InputAttachmentName,
-                            UrlPath: [fillerVideoKey],
-                        },
-                    },
-                    ScheduleActionStartSettings: {
-                        ImmediateModeScheduleActionStartSettings: {},
-                    },
-                },
-            ];
-
-            await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
+        } else {
+            this.logger.info(
+                { mediaLiveChannelId, conferenceId: channelStackDetails.conferenceId },
+                "No event found to play on channel startup, playing filler video."
+            );
+            await switchToFiller();
         }
+    }
+
+    private syncCutoffTime(now: Date | number): Date {
+        return add(now, { seconds: 40 });
     }
 
     public async fullScheduleSync(): Promise<void> {
@@ -187,7 +254,7 @@ export class ScheduleSyncService {
         }
 
         const now = Date.now();
-        const syncCutoffTime = add(now, { seconds: 20 }).getTime();
+        const syncCutoffTime = add(now, { seconds: 40 }).getTime();
 
         const remoteSchedule = await this.remoteScheduleService.getRemoteSchedule(channelDetails.mediaLiveChannelId);
 
@@ -294,24 +361,53 @@ export class ScheduleSyncService {
         }
 
         const adds = R.flatten(
-            missingActions.map((action) =>
-                this.convertLocalEventToScheduleActions(action, channelDetails, syncCutoffTime, false)
+            missingActions.map(
+                (action) =>
+                    this.convertLocalEventWithCutoffToScheduleActions(action, channelDetails, syncCutoffTime, false)
+                        .actions
             )
         );
 
         return { adds, deletes };
     }
 
-    public convertLocalEventToScheduleActions(
+    /**
+     * Convert a single local action to zero or more schedule actions, with awareness of the sync cutoff time.
+     * @param syncCutoffTime Fixed schedule actions can be synced if they start after this time.
+     * @param makeImmediateIfBeforeCutoff If true, actions starting before the cutoff are generated
+     * with immediate starts. If false, they are dropped entirely.
+     * @returns The corresponding ScheduleActions. If they are immediate, the `immediateDelayMillis` property
+     * indicates how long to wait before triggering them.
+     */
+    public convertLocalEventWithCutoffToScheduleActions(
         localAction: LocalScheduleAction,
         channelStackDetails: ChannelStackDetails,
         syncCutoffTime: number,
-        immediate: boolean
-    ): ScheduleAction[] {
-        if (!immediate && localAction.startTime <= syncCutoffTime) {
-            return [];
+        makeImmediateIfBeforeCutoff: false | { now: number }
+    ): { actions: ScheduleAction[]; immediateDelayMillis?: number } {
+        if (localAction.startTime <= syncCutoffTime) {
+            return makeImmediateIfBeforeCutoff
+                ? {
+                      actions: this.convertLocalEventToScheduleActions(localAction, channelStackDetails, {
+                          mode: "immediate",
+                          now: makeImmediateIfBeforeCutoff.now,
+                      }),
+                      immediateDelayMillis: Math.max(localAction.startTime - makeImmediateIfBeforeCutoff.now, 0),
+                  }
+                : { actions: [] };
         }
+        return {
+            actions: this.convertLocalEventToScheduleActions(localAction, channelStackDetails, { mode: "fixed" }),
+        };
+    }
 
+    public convertLocalEventToScheduleActions(
+        localAction: LocalScheduleAction,
+        channelStackDetails: ChannelStackDetails,
+        startMode: { mode: "fixed" } | { mode: "immediate"; now: number }
+    ): ScheduleAction[] {
+        const immediate = startMode.mode === "immediate";
+        const offsetMillis = startMode.mode === "immediate" ? startMode.now - localAction.startTime : 0;
         if (this.localScheduleService.isLive(localAction.roomModeName)) {
             return [
                 {
@@ -364,6 +460,19 @@ export class ScheduleSyncService {
                             InputSwitchSettings: {
                                 InputAttachmentNameReference: channelStackDetails.mp4InputAttachmentName,
                                 UrlPath: [videoKey],
+                                ...(immediate
+                                    ? {
+                                          InputClippingSettings: {
+                                              InputTimecodeSource: InputTimecodeSource.ZEROBASED,
+                                              StartTimecode: {
+                                                  Timecode:
+                                                      offsetMillis > 0
+                                                          ? `${new Date(offsetMillis).toISOString().substr(11, 8)}:00`
+                                                          : undefined,
+                                              },
+                                          },
+                                      }
+                                    : {}),
                             },
                         },
                     },

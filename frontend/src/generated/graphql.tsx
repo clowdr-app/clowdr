@@ -11534,12 +11534,10 @@ export type Content_UploadableElement_Bool_Exp = {
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly element?: Maybe<Content_Element_Bool_Exp>;
-  readonly hasBeenUploaded?: Maybe<Boolean_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly isHidden?: Maybe<Boolean_Comparison_Exp>;
   readonly item?: Maybe<Content_Item_Bool_Exp>;
   readonly itemId?: Maybe<Uuid_Comparison_Exp>;
-  readonly itemTitle?: Maybe<String_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
@@ -23486,7 +23484,6 @@ export type Registrant_Invitation_Bool_Exp = {
   readonly confirmationCode?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly emails?: Maybe<Email_Bool_Exp>;
-  readonly hash?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly inviteCode?: Maybe<Uuid_Comparison_Exp>;
   readonly invitedEmailAddress?: Maybe<String_Comparison_Exp>;
@@ -24370,7 +24367,6 @@ export type Registrant_Registrant_Bool_Exp = {
   readonly groupRegistrants?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
-  readonly inviteSent?: Maybe<Boolean_Comparison_Exp>;
   readonly profile?: Maybe<Registrant_Profile_Bool_Exp>;
   readonly programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
   readonly roomParticipants?: Maybe<Room_Participant_Bool_Exp>;
@@ -25761,6 +25757,7 @@ export type Room_Room = {
   readonly chatId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting>;
+  readonly colour: Scalars['String'];
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -26236,6 +26233,7 @@ export type Room_Room_Bool_Exp = {
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
+  readonly colour?: Maybe<String_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -26243,7 +26241,6 @@ export type Room_Room_Bool_Exp = {
   readonly currentModeName?: Maybe<Room_Mode_Enum_Comparison_Exp>;
   readonly events?: Maybe<Schedule_Event_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly isProgramRoom?: Maybe<Boolean_Comparison_Exp>;
   readonly livestreamDuration?: Maybe<Room_LivestreamDurations_Bool_Exp>;
   readonly managementMode?: Maybe<Room_ManagementMode_Bool_Exp>;
   readonly managementModeName?: Maybe<Room_ManagementMode_Enum_Comparison_Exp>;
@@ -26287,6 +26284,7 @@ export type Room_Room_Insert_Input = {
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
@@ -26319,6 +26317,7 @@ export type Room_Room_Max_Fields = {
   readonly __typename?: 'room_Room_max_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -26335,6 +26334,7 @@ export type Room_Room_Max_Fields = {
 export type Room_Room_Max_Order_By = {
   readonly capacity?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -26352,6 +26352,7 @@ export type Room_Room_Min_Fields = {
   readonly __typename?: 'room_Room_min_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -26368,6 +26369,7 @@ export type Room_Room_Min_Fields = {
 export type Room_Room_Min_Order_By = {
   readonly capacity?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -26412,6 +26414,7 @@ export type Room_Room_Order_By = {
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
@@ -26453,6 +26456,8 @@ export enum Room_Room_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
+  Colour = 'colour',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'created_at',
@@ -26483,6 +26488,7 @@ export type Room_Room_Set_Input = {
   readonly backendName?: Maybe<Room_Backend_Enum>;
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly currentModeName?: Maybe<Room_Mode_Enum>;
@@ -26557,6 +26563,8 @@ export enum Room_Room_Update_Column {
   Capacity = 'capacity',
   /** column name */
   ChatId = 'chatId',
+  /** column name */
+  Colour = 'colour',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -35724,6 +35732,16 @@ export type RegistrantEventsWithBackstagesQuery = { readonly __typename?: 'query
     & MyBackstages_EventFragment
   )> };
 
+export type ProfilePage_ItemsQueryVariables = Exact<{
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type ProfilePage_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<(
+    { readonly __typename?: 'content_Item' }
+    & SearchPanel_ItemFragment
+  )> };
+
 export type SelectRegistrantsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -41166,6 +41184,43 @@ export function useRegistrantEventsWithBackstagesLazyQuery(baseOptions?: Apollo.
 export type RegistrantEventsWithBackstagesQueryHookResult = ReturnType<typeof useRegistrantEventsWithBackstagesQuery>;
 export type RegistrantEventsWithBackstagesLazyQueryHookResult = ReturnType<typeof useRegistrantEventsWithBackstagesLazyQuery>;
 export type RegistrantEventsWithBackstagesQueryResult = Apollo.QueryResult<RegistrantEventsWithBackstagesQuery, RegistrantEventsWithBackstagesQueryVariables>;
+export const ProfilePage_ItemsDocument = gql`
+    query ProfilePage_Items($registrantId: uuid!) {
+  content_Item(
+    where: {itemPeople: {person: {registrantId: {_eq: $registrantId}}}}
+  ) {
+    ...SearchPanel_Item
+  }
+}
+    ${SearchPanel_ItemFragmentDoc}`;
+
+/**
+ * __useProfilePage_ItemsQuery__
+ *
+ * To run a query within a React component, call `useProfilePage_ItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProfilePage_ItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProfilePage_ItemsQuery({
+ *   variables: {
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useProfilePage_ItemsQuery(baseOptions: Apollo.QueryHookOptions<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>(ProfilePage_ItemsDocument, options);
+      }
+export function useProfilePage_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>(ProfilePage_ItemsDocument, options);
+        }
+export type ProfilePage_ItemsQueryHookResult = ReturnType<typeof useProfilePage_ItemsQuery>;
+export type ProfilePage_ItemsLazyQueryHookResult = ReturnType<typeof useProfilePage_ItemsLazyQuery>;
+export type ProfilePage_ItemsQueryResult = Apollo.QueryResult<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>;
 export const SelectRegistrantsDocument = gql`
     query SelectRegistrants($conferenceId: uuid!) {
   registrant_Registrant(

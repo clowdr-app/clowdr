@@ -35,6 +35,7 @@ import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
+import { useAsync } from "react-async-hook";
 import {
     Job_Queues_UploadYouTubeVideoJob_Insert_Input,
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
@@ -135,7 +136,15 @@ gql`
                 paperUrlElements: elements(where: { typeName: { _eq: PAPER_URL } }) {
                     ...UploadYouTubeVideos_Element
                 }
-                authors: itemPeople(where: { roleName: { _eq: "AUTHOR" } }) {
+                authors: itemPeople(where: { roleName: { _eq: "AUTHOR" } }, order_by: { priority: asc }) {
+                    id
+                    person {
+                        id
+                        name
+                        affiliation
+                    }
+                }
+                presenters: itemPeople(where: { roleName: { _eq: "PRESENTER" } }, order_by: { priority: asc }) {
                     id
                     person {
                         id
@@ -160,8 +169,72 @@ gql`
     }
 `;
 
+type FormValues = {
+    elementIds: string[];
+    registrantGoogleAccountId: string | null;
+    titleTemplate: string;
+    descriptionTemplate: string;
+    channelId: string | null;
+    playlistId: string | null;
+    videoPrivacyStatus: string;
+    titleCorrections: { [elementId: string]: string };
+    descriptionCorrections: { [elementId: string]: string };
+};
+
 function VideoIcon() {
     return <FAIcon icon="video" iconStyle="s" />;
+}
+
+function MetadataPreview({
+    compileTemplate,
+    elementId,
+    titleTemplate,
+    descriptionTemplate,
+}: {
+    compileTemplate: (
+        elementIds: string[],
+        titleTemplateString: string,
+        descriptionTemplateString: string
+    ) => Promise<{ [elementId: string]: { title: string; description: string } }>;
+    elementId: string;
+    titleTemplate: string;
+    descriptionTemplate: string;
+}): JSX.Element {
+    const { result, loading, error } = useAsync(async () => {
+        const result = await compileTemplate(
+            [elementId],
+            titleTemplate ?? "No title template found.",
+            descriptionTemplate ?? "No description template found."
+        );
+        return {
+            title: result[elementId]?.title ?? "Title could not be previewed",
+            description: result[elementId]?.description ?? "Description could not be previewed",
+        };
+    }, [elementId]);
+
+    return (
+        <>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverHeader>Preview</PopoverHeader>
+            <PopoverBody>
+                {loading ? <Spinner /> : undefined}
+                {error ? (
+                    <Text>
+                        An error occurred while loading the preview. ({error.name}: {error.message})
+                    </Text>
+                ) : undefined}
+                {result ? (
+                    <>
+                        <Heading as="h3" size="sm" textAlign="left">
+                            {result.title}
+                        </Heading>
+                        <Text whiteSpace="pre-wrap">{result.description}</Text>
+                    </>
+                ) : undefined}
+            </PopoverBody>
+        </>
+    );
 }
 
 export function UploadYouTubeVideos(): JSX.Element {
@@ -284,7 +357,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     ];
                 }
 
-                const fileName = element.name;
+                const elementName = element.name;
                 const itemTitle = element.item.title;
                 const itemShortTitle = element.item.shortTitle;
                 const abstractElement = element.item.abstractElements.length
@@ -355,9 +428,16 @@ export function UploadYouTubeVideos(): JSX.Element {
                     affiliation: author.person.affiliation ?? "",
                 }));
 
+                const presenters = element.item.presenters.map((presenter) => ({
+                    name: presenter.person.name,
+                    affiliation: presenter.person.affiliation ?? "",
+                }));
+
                 const view = {
-                    fileId: elementId,
-                    fileName,
+                    fileId: elementId, // deprecated
+                    elementId,
+                    fileName: elementName, // deprecated
+                    elementName,
                     itemId: element.item.id,
                     itemTitle,
                     abstract,
@@ -366,6 +446,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     paperLinks,
                     youTubeUploads,
                     authors,
+                    presenters,
                 };
 
                 return [
@@ -417,22 +498,22 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
         "clowdr-youTubeTitleTemplate",
-        "{{itemTitle}} ({{fileName}})",
+        "{{{itemTitle}}} ({{{fileName}}})",
         (x) => x,
         (x) => x
     );
     const [youTubeDescriptionTemplate, setYouTubeDescriptionTemplate] = useRestorableState(
         "clowdr-youTubeDescriptionTemplate-v2",
-        `{{#abstract}}{{abstract}}
+        `{{#abstract}}{{{abstract}}}
 
 {{/abstract}}
 {{#authors.length}}
-{{#authors}}{{name}}{{#affiliation}} ({{affiliation}}){{/affiliation}}, {{/authors}}
+{{#authors}}{{{name}}}{{#affiliation}} ({{{affiliation}}}){{/affiliation}}, {{/authors}}
 
 {{/authors.length}}
 {{#paperLinks.length}}
 {{#paperLinks}}{{#url}}
-* {{text}}: {{{url}}}
+* {{{text}}}: {{{url}}}
 {{/url}}{{/paperLinks}}
 
 {{/paperLinks.length}}
@@ -450,24 +531,14 @@ export function UploadYouTubeVideos(): JSX.Element {
         <>
             <HStack alignItems="flex-start">
                 <VStack alignItems="flex-start" flexGrow={1}>
-                    <Formik<{
-                        elementIds: string[];
-                        registrantGoogleAccountId: string | null;
-                        titleTemplate: string;
-                        descriptionTemplate: string;
-                        channelId: string | null;
-                        playlistId: string | null;
-                        videoPrivacyStatus: string;
-                        titleCorrections: { [elementId: string]: string };
-                        descriptionCorrections: { [elementId: string]: string };
-                    }>
+                    <Formik<FormValues>
                         initialValues={{
                             elementIds: [],
-                            registrantGoogleAccountId: null,
+                            registrantGoogleAccountId: "",
                             titleTemplate: youTubeTitleTemplate,
                             descriptionTemplate: youTubeDescriptionTemplate,
-                            channelId: null,
-                            playlistId: null,
+                            channelId: "",
+                            playlistId: "",
                             videoPrivacyStatus: "unlisted",
                             titleCorrections: {},
                             descriptionCorrections: {},
@@ -633,11 +704,39 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                                 ) : (
                                                                     <Spinner />
                                                                 )}
+                                                                <Popover isLazy>
+                                                                    <PopoverTrigger>
+                                                                        <Button
+                                                                            size="xs"
+                                                                            aria-label="preview title and description"
+                                                                            title="Preview title and description"
+                                                                            colorScheme="blue"
+                                                                            style={{ marginLeft: "auto" }}
+                                                                        >
+                                                                            <FAIcon
+                                                                                icon="file-alt"
+                                                                                iconStyle="r"
+                                                                                fontSize="xs"
+                                                                            />
+                                                                        </Button>
+                                                                    </PopoverTrigger>
+                                                                    <PopoverContent>
+                                                                        <MetadataPreview
+                                                                            elementId={id}
+                                                                            compileTemplate={compileTemplates}
+                                                                            titleTemplate={youTubeTitleTemplate}
+                                                                            descriptionTemplate={
+                                                                                youTubeDescriptionTemplate
+                                                                            }
+                                                                        />
+                                                                    </PopoverContent>
+                                                                </Popover>
+
                                                                 <Button
                                                                     size="xs"
                                                                     aria-label="remove video"
                                                                     colorScheme="red"
-                                                                    style={{ marginLeft: "auto" }}
+                                                                    style={{ marginLeft: "5px" }}
                                                                     onClick={() => {
                                                                         form.setFieldValue(
                                                                             field.name,
@@ -716,18 +815,19 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                 </Text>
                                                 <List fontSize="sm">
                                                     <ListItem>
-                                                        <Code>fileName</Code>: name of the file
+                                                        <Code>elementName</Code>: name of the element (i.e. the name
+                                                        given to the video itself)
                                                     </ListItem>
                                                     <ListItem>
-                                                        <Code>itemTitle</Code>: title of the content item this video
+                                                        <Code>itemTitle</Code>: title of the item this video element
                                                         belongs to
                                                     </ListItem>
                                                     <ListItem>
-                                                        <Code>itemShortTitle</Code>: short title of the content item
-                                                        this video belongs to
+                                                        <Code>itemShortTitle</Code>: short title of the item this video
+                                                        element belongs to
                                                     </ListItem>
                                                     <ListItem>
-                                                        <Code>abstract</Code>: the abstract text for the content item
+                                                        <Code>abstract</Code>: the abstract text for the item
                                                     </ListItem>
                                                     <ListItem>
                                                         <Code>paperUrls</Code>: list of URLs to papers
@@ -737,8 +837,13 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         <Code>url</Code>, <Code>text</Code>.
                                                     </ListItem>
                                                     <ListItem>
-                                                        <Code>authors</Code>: list of authors. Properties are{" "}
-                                                        <Code>name</Code>, <Code>affiliation</Code>.
+                                                        <Code>authors</Code>: list of authors. Sorted in priority order.
+                                                        Properties are <Code>name</Code>, <Code>affiliation</Code>.
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <Code>presenters</Code>: list of presenters. Sorted in priority
+                                                        order. Properties are <Code>name</Code>,{" "}
+                                                        <Code>affiliation</Code>.
                                                     </ListItem>
                                                     <ListItem>
                                                         <Code>youTubeUploads</Code>: list of previously uploaded YouTube
@@ -746,7 +851,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                         <Code>title</Code>.
                                                     </ListItem>
                                                     <ListItem>
-                                                        <Code>fileId</Code>: unique ID of the file
+                                                        <Code>elementId</Code>: unique ID of the element
                                                     </ListItem>
                                                     <ListItem>
                                                         <Code>itemId</Code>: unique ID of the item that contains this
@@ -755,9 +860,9 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                 </List>
                                                 <Text mt={2}>Example:</Text>
                                                 <Code display="block" whiteSpace="pre">
-                                                    {`{{abstract}}
+                                                    {`{{{abstract}}}
 {{#youTubeUploads}}
-    * {{title}}: {{{url}}}
+    * {{{title}}}: {{{url}}}
 {{/youTubeUploads}}`}
                                                 </Code>
                                             </PopoverBody>

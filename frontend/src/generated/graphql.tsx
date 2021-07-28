@@ -11534,10 +11534,12 @@ export type Content_UploadableElement_Bool_Exp = {
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly element?: Maybe<Content_Element_Bool_Exp>;
+  readonly hasBeenUploaded?: Maybe<Boolean_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly isHidden?: Maybe<Boolean_Comparison_Exp>;
   readonly item?: Maybe<Content_Item_Bool_Exp>;
   readonly itemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly itemTitle?: Maybe<String_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
@@ -23484,6 +23486,7 @@ export type Registrant_Invitation_Bool_Exp = {
   readonly confirmationCode?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly emails?: Maybe<Email_Bool_Exp>;
+  readonly hash?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly inviteCode?: Maybe<Uuid_Comparison_Exp>;
   readonly invitedEmailAddress?: Maybe<String_Comparison_Exp>;
@@ -24367,6 +24370,7 @@ export type Registrant_Registrant_Bool_Exp = {
   readonly groupRegistrants?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+  readonly inviteSent?: Maybe<Boolean_Comparison_Exp>;
   readonly profile?: Maybe<Registrant_Profile_Bool_Exp>;
   readonly programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
   readonly roomParticipants?: Maybe<Room_Participant_Bool_Exp>;
@@ -26239,6 +26243,7 @@ export type Room_Room_Bool_Exp = {
   readonly currentModeName?: Maybe<Room_Mode_Enum_Comparison_Exp>;
   readonly events?: Maybe<Schedule_Event_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly isProgramRoom?: Maybe<Boolean_Comparison_Exp>;
   readonly livestreamDuration?: Maybe<Room_LivestreamDurations_Bool_Exp>;
   readonly managementMode?: Maybe<Room_ManagementMode_Bool_Exp>;
   readonly managementModeName?: Maybe<Room_ManagementMode_Enum_Comparison_Exp>;
@@ -37263,7 +37268,7 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: '
       )>, readonly paperUrlElements: ReadonlyArray<(
         { readonly __typename?: 'content_Element' }
         & UploadYouTubeVideos_ElementFragment
-      )>, readonly authors: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> } }> };
+      )>, readonly authors: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }>, readonly presenters: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> } }> };
 
 export type UploadYouTubeVideos_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any };
 
@@ -40840,6 +40845,8 @@ export const ContinuationChoices_ContinuationsDocument = gql`
  * const { data, loading, error } = useContinuationChoices_ContinuationsQuery({
  *   variables: {
  *      fromId: // value for 'fromId'
+ *      nowStart: // value for 'nowStart'
+ *      nowEnd: // value for 'nowEnd'
  *   },
  * });
  */
@@ -46334,7 +46341,21 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
       paperUrlElements: elements(where: {typeName: {_eq: PAPER_URL}}) {
         ...UploadYouTubeVideos_Element
       }
-      authors: itemPeople(where: {roleName: {_eq: "AUTHOR"}}) {
+      authors: itemPeople(
+        where: {roleName: {_eq: "AUTHOR"}}
+        order_by: {priority: asc}
+      ) {
+        id
+        person {
+          id
+          name
+          affiliation
+        }
+      }
+      presenters: itemPeople(
+        where: {roleName: {_eq: "PRESENTER"}}
+        order_by: {priority: asc}
+      ) {
         id
         person {
           id

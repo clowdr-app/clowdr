@@ -11,20 +11,12 @@ import {
     HStack,
     Image,
     Link,
-    List,
-    ListItem,
     Spinner,
     VStack,
 } from "@chakra-ui/react";
-import * as R from "ramda";
-import React, { useMemo } from "react";
+import React from "react";
 import { Redirect } from "react-router-dom";
-import {
-    Permissions_Permission_Enum,
-    SearchPanel_ItemFragment,
-    useProfilePage_ItemsQuery,
-    useRegistrantByIdQuery,
-} from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageFailedToLoad from "../../../Errors/PageFailedToLoad";
@@ -38,8 +30,8 @@ import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 import { Registrant, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
-import SearchResult_Item from "../Search/SearchResult_Item";
 import RegistrantExtraInfo from "./RegistrantExtraInfo";
+import RegistrantItems from "./RegistrantItems";
 
 gql`
     query ProfilePage_Items($registrantId: uuid!) {
@@ -55,23 +47,6 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
     const maybeCurrentUser = useMaybeCurrentUser();
 
     const title = useTitle(`${registrant.displayName} at ${conference.shortName}`);
-    const itemsResponse = useProfilePage_ItemsQuery({
-        variables: {
-            registrantId: registrant.id,
-        },
-    });
-    const items = useMemo(
-        () =>
-            itemsResponse.data?.content_Item.length
-                ? R.groupBy<SearchPanel_ItemFragment>(
-                      (x) =>
-                          x.itemPeople.find((y) => y.person.registrantId === registrant.id)?.roleName.toUpperCase() ??
-                          "UNKNOWN",
-                      R.sortBy((x) => x.title, itemsResponse.data?.content_Item)
-                  )
-                : undefined,
-        [itemsResponse.data?.content_Item, registrant.id]
-    );
 
     return (
         <>
@@ -186,63 +161,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                 </HStack>
                 <Divider pt={4} />
                 <RegistrantExtraInfo pt={4} registrant={registrant} />
-                {items?.PRESENTER?.length ? (
-                    <>
-                        <Divider pt={4} />
-                        <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
-                            Presenter of:
-                        </Heading>
-                        <List pt={4} spacing={3} w="100%" px={2}>
-                            {items.PRESENTER.map((item) => (
-                                <ListItem key={item.id} w="100%">
-                                    <SearchResult_Item item={item} />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </>
-                ) : undefined}
-                {items?.AUTHOR?.length ? (
-                    <>
-                        <Divider pt={4} />
-                        <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
-                            Author of:
-                        </Heading>
-                        <List pt={4} spacing={3} w="100%" px={2}>
-                            {items.AUTHOR.map((item) => (
-                                <ListItem key={item.id} w="100%">
-                                    <SearchResult_Item item={item} />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </>
-                ) : undefined}
-                {items?.CHAIR?.length ? (
-                    <>
-                        <Divider pt={4} />
-                        <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
-                            Chair of:
-                        </Heading>
-                        <List pt={4} spacing={3} w="100%" px={2}>
-                            {items.CHAIR.map((item) => (
-                                <ListItem key={item.id} w="100%">
-                                    <SearchResult_Item item={item} />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </>
-                ) : undefined}
-                {items?.UNKNOWN?.length ? (
-                    <>
-                        <Divider pt={4} />
-                        <List pt={4} spacing={3} w="100%" px={2}>
-                            {items.UNKNOWN.map((item) => (
-                                <ListItem key={item.id} w="100%">
-                                    <SearchResult_Item item={item} />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </>
-                ) : undefined}
+                <RegistrantItems registrantId={registrant.id} />
             </VStack>
         </>
     );

@@ -38,7 +38,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useAsync } from "react-async-hook";
 import {
     Job_Queues_UploadYouTubeVideoJob_Insert_Input,
-    UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
     useUploadYouTubeVideos_GetElementsQuery,
     useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery,
@@ -48,7 +47,6 @@ import {
     Video_JobStatus_Enum,
 } from "../../../../generated/graphql";
 import { useRestorableState } from "../../../Generic/useRestorableState";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
@@ -57,9 +55,18 @@ import { ChooseElementModal } from "./ChooseElementModal";
 
 gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
-        job_queues_UploadYouTubeVideoJob(
-            where: { conferenceId: { _eq: $conferenceId }, jobStatusName: { _neq: COMPLETED } }
+        ongoing_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
+            where: { conferenceId: { _eq: $conferenceId }, jobStatusName: { _in: [NEW, IN_PROGRESS] } }
             order_by: { createdAt: desc }
+            limit: 100
+        ) {
+            ...UploadYouTubeVideos_UploadYouTubeVideoJob
+        }
+
+        recent_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
+            where: { conferenceId: { _eq: $conferenceId }, jobStatusName: { _nin: [NEW, IN_PROGRESS] } }
+            order_by: { createdAt: desc }
+            limit: 10
         ) {
             ...UploadYouTubeVideos_UploadYouTubeVideoJob
         }
@@ -529,7 +536,7 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     return (
         <>
-            <HStack alignItems="flex-start">
+            <HStack alignItems="stretch">
                 <VStack alignItems="flex-start" flexGrow={1}>
                     <Formik<FormValues>
                         initialValues={{
@@ -1188,35 +1195,62 @@ export function UploadYouTubeVideos(): JSX.Element {
                         }}
                     </Formik>
                 </VStack>
-                <ApolloQueryWrapper
-                    queryResult={existingJobsResult}
-                    getter={(result) => result.job_queues_UploadYouTubeVideoJob}
-                >
-                    {(jobs: readonly UploadYouTubeVideos_UploadYouTubeVideoJobFragment[]) => (
-                        <VStack display={jobs.length ? "block" : "none"} maxWidth="30em">
-                            <Heading as="h2" size="md" textAlign="left" mt={4} mb={2}>
-                                Upload jobs
-                            </Heading>
-                            <List>
-                                {jobs.length > 0 ? (
-                                    jobs.map((job) => (
-                                        <ListItem key={job.id}>
-                                            <HStack>
-                                                <Text data-jobid={job.id}>
-                                                    {job.element?.item.title ?? "Unknown item"} (
-                                                    {job.element?.name ?? "Unknown element"})
-                                                </Text>
-                                                <Box ml={2}>{jobStatus(job.jobStatusName)}</Box>
-                                            </HStack>
-                                        </ListItem>
-                                    ))
-                                ) : (
-                                    <Text>No upload jobs.</Text>
-                                )}
-                            </List>
-                        </VStack>
-                    )}
-                </ApolloQueryWrapper>
+                <VStack maxWidth="30em" alignItems="flex-start" bgColor="gray.100" px={8}>
+                    <Heading as="h2" size="md" textAlign="left" mt={8} mb={2}>
+                        Recent uploads
+                    </Heading>
+                    {existingJobsResult.loading ? <Spinner /> : undefined}
+                    {existingJobsResult.error ? <Text>Could not get recent uploads.</Text> : undefined}
+                    <Heading as="h3" size="sm" textAlign="left" mt={4}>
+                        Ongoing
+                    </Heading>
+                    <List>
+                        {existingJobsResult.data?.ongoing_UploadYouTubeVideoJob.length ? (
+                            existingJobsResult.data.ongoing_UploadYouTubeVideoJob.map((job) => (
+                                <ListItem key={job.id}>
+                                    <HStack>
+                                        <Text data-jobid={job.id}>
+                                            {job.element?.item.title ?? "Unknown item"} (
+                                            {job.element?.name ?? "Unknown element"})
+                                        </Text>
+                                        <Box ml={2}>{jobStatus(job.jobStatusName)}</Box>
+                                    </HStack>
+                                </ListItem>
+                            ))
+                        ) : (
+                            <Text fontStyle="italic" fontSize="sm">
+                                No upload jobs in progress.
+                            </Text>
+                        )}
+                    </List>
+                    <Heading as="h3" size="sm" textAlign="left" mt={4}>
+                        Past uploads
+                    </Heading>
+                    <List>
+                        {existingJobsResult.data?.recent_UploadYouTubeVideoJob.length ? (
+                            <>
+                                {existingJobsResult.data.recent_UploadYouTubeVideoJob.map((job) => (
+                                    <ListItem key={job.id}>
+                                        <HStack>
+                                            <Text data-jobid={job.id}>
+                                                {job.element?.item.title ?? "Unknown item"} (
+                                                {job.element?.name ?? "Unknown element"})
+                                            </Text>
+                                            <Box ml={2}>{jobStatus(job.jobStatusName)}</Box>
+                                        </HStack>
+                                    </ListItem>
+                                ))}
+                                {existingJobsResult.data.recent_UploadYouTubeVideoJob.length === 10 ? (
+                                    <Text>Only the 10 most recent jobs are shown.</Text>
+                                ) : undefined}
+                            </>
+                        ) : (
+                            <Text fontStyle="italic" fontSize="sm">
+                                You haven't uploaded anything yet.
+                            </Text>
+                        )}
+                    </List>
+                </VStack>
             </HStack>
         </>
     );

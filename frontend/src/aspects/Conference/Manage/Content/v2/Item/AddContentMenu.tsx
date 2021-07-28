@@ -10,7 +10,6 @@ import {
     Content_Element_Insert_Input,
     Content_UploadableElement_Insert_Input,
     useAddContentMenu_CreateElementMutation,
-    useAddContentMenu_CreateUploadableElementMutation,
 } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
 import { ElementBaseTemplates } from "../Element/Kinds/Templates";
@@ -19,12 +18,6 @@ gql`
     mutation AddContentMenu_CreateElement($object: content_Element_insert_input!) {
         insert_content_Element_one(object: $object) {
             ...ManageContent_Element
-        }
-    }
-
-    mutation AddContentMenu_CreateUploadableElement($object: content_UploadableElement_insert_input!) {
-        insert_content_UploadableElement_one(object: $object) {
-            ...ManageContent_UploadableElement
         }
     }
 `;
@@ -40,7 +33,6 @@ export function AddContentMenu({
     const conference = useConference();
 
     const [createElement] = useAddContentMenu_CreateElementMutation();
-    const [createUploadableElement] = useAddContentMenu_CreateUploadableElementMutation();
 
     const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = useMemo(
         () =>
@@ -192,7 +184,7 @@ export function AddContentMenu({
                 </MenuList>
             </Menu>
         ),
-        [contentTypeOptions, conference.id, itemId, createUploadableElement, onCreate, toast]
+        [contentTypeOptions, conference.id, itemId, onCreate, toast]
     );
 
     return (

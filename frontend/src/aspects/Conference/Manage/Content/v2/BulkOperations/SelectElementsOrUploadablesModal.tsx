@@ -45,29 +45,14 @@ gql`
             id
             title
         }
-    }
-
-    fragment SEoUM_Uploadable on content_UploadableElement {
-        id
-        name
-        typeName
-        hasBeenUploaded
         uploaders {
             id
         }
-        element {
-            id
-        }
-        itemId
-        itemTitle
     }
 
     query SEoUM_Infos($itemIds: [uuid!]!) {
-        content_Element(where: { itemId: { _in: $itemIds }, uploadableId: { _is_null: true } }) {
+        content_Element(where: { itemId: { _in: $itemIds } }) {
             ...SEoUM_Element
-        }
-        content_UploadableElement(where: { itemId: { _in: $itemIds } }) {
-            ...SEoUM_Uploadable
         }
     }
 `;

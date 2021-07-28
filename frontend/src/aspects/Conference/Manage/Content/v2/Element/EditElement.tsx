@@ -28,11 +28,8 @@ import {
     ManageContent_ElementFragment,
     ManageContent_ElementFragmentDoc,
     ManageContent_UploadableElementFragment,
-    ManageContent_UploadableElementFragmentDoc,
     useManageContent_DeleteElementMutation,
-    useManageContent_DeleteUploadableElementMutation,
     useManageContent_UpdateElementMutation,
-    useManageContent_UpdateUploadableElementMutation,
 } from "../../../../../../generated/graphql";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
@@ -48,23 +45,6 @@ gql`
     mutation ManageContent_UpdateElement($elementId: uuid!, $element: content_Element_set_input!) {
         update_content_Element_by_pk(pk_columns: { id: $elementId }, _set: $element) {
             ...ManageContent_Element
-        }
-    }
-`;
-
-gql`
-    mutation ManageContent_DeleteUploadableElement($uploadableElementId: uuid!) {
-        delete_content_UploadableElement_by_pk(id: $uploadableElementId) {
-            id
-        }
-    }
-
-    mutation ManageContent_UpdateUploadableElement(
-        $uploadableElementId: uuid!
-        $uploadableElement: content_UploadableElement_set_input!
-    ) {
-        update_content_UploadableElement_by_pk(pk_columns: { id: $uploadableElementId }, _set: $uploadableElement) {
-            ...ManageContent_UploadableElement
         }
     }
 `;
@@ -128,52 +108,6 @@ export function EditElement({
         },
     });
 
-    const [updateUploadableElement, updateUploadableElementResponse] = useManageContent_UpdateUploadableElementMutation(
-        {
-            update: (cache, response) => {
-                if (response.data?.update_content_UploadableElement_by_pk) {
-                    const data = response.data.update_content_UploadableElement_by_pk;
-                    cache.modify({
-                        fields: {
-                            content_UploadableElement(existingRefs: Reference[] = [], { readField }) {
-                                const newRef = cache.writeFragment({
-                                    data,
-                                    fragment: ManageContent_UploadableElementFragmentDoc,
-                                    fragmentName: "ManageContent_UploadableElement",
-                                });
-                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                    return existingRefs;
-                                }
-                                return [...existingRefs, newRef];
-                            },
-                        },
-                    });
-                }
-            },
-        }
-    );
-    const [deleteUploadableElement, deleteUploadableElementResponse] = useManageContent_DeleteUploadableElementMutation(
-        {
-            update: (cache, { data: _data }) => {
-                if (_data?.delete_content_UploadableElement_by_pk) {
-                    const data = _data.delete_content_UploadableElement_by_pk;
-                    cache.modify({
-                        fields: {
-                            content_UploadableElement(existingRefs: Reference[] = [], { readField }) {
-                                cache.evict({
-                                    id: data.id,
-                                    fieldName: "ManageContent_UploadableElementFragment",
-                                    broadcast: true,
-                                });
-                                return existingRefs.filter((ref) => data.id !== readField("id", ref));
-                            },
-                        },
-                    });
-                }
-            },
-        }
-    );
-
     const toast = useToast();
 
     const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
@@ -212,7 +146,11 @@ export function EditElement({
         [nextElement]
     );
 
-    const { isOpen: editPGs_IsOpen, onOpen: editPGs_OnOpen, onClose: editPGs_OnClose } = useDisclosure({
+    const {
+        isOpen: editPGs_IsOpen,
+        onOpen: editPGs_OnOpen,
+        onClose: editPGs_OnClose,
+    } = useDisclosure({
         defaultIsOpen: defaultOpenSecurity,
     });
     const editPGs_OnCloseFull = useCallback(() => {

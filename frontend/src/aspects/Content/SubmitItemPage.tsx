@@ -31,7 +31,7 @@ import UploadUrlForm from "./UploadUrlForm";
 
 gql`
     query GetElement($magicToken: String!) {
-        content_ElementByAccessToken(where: { accessToken: { _eq: $magicToken } }) {
+        content_Element(where: { accessToken: { _eq: $magicToken } }) {
             typeName
             data
             layoutData
@@ -42,12 +42,12 @@ gql`
     }
 
     query SelectUploadableItem($uploadableId: uuid!) {
-        content_UploadableElement(where: { id: { _eq: $uploadableId } }) {
+        content_Element(where: { id: { _eq: $uploadableId } }) {
             ...UploadableItemFields
         }
     }
 
-    fragment UploadableItemFields on content_UploadableElement {
+    fragment UploadableItemFields on content_Element {
         id
         typeName
         name

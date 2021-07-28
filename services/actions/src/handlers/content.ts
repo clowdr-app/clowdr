@@ -158,7 +158,7 @@ gql`
         }
     }
     query GetUploadersForElement($elementId: uuid!) {
-        content_Uploader(where: { uploadableElement: { element: { id: { _eq: $elementId } } } }) {
+        content_Uploader(where: { element: { id: { _eq: $elementId } } }) {
             name
             id
             email
@@ -166,7 +166,7 @@ gql`
     }
 
     query GetUploadableElement($elementId: uuid!) {
-        content_UploadableElement(where: { element: { id: { _eq: $elementId } } }) {
+        content_Element_by_pk(id: $elementId) {
             accessToken
             id
         }
@@ -401,7 +401,7 @@ The Clowdr team
 
 gql`
     query GetUploadAgreement($accessToken: String!) {
-        content_UploadableElement(where: { accessToken: { _eq: $accessToken } }) {
+        content_Element(where: { accessToken: { _eq: $accessToken } }) {
             conference {
                 configurations(where: { key: { _eq: "UPLOAD_AGREEMENT" } }) {
                     value

@@ -32,27 +32,25 @@ import { Element } from "../../../../Attend/Content/Element/Element";
 
 gql`
     query SubmissionsReviewModalData($itemIds: [uuid!]!) {
-        content_UploadableElement(where: { itemId: { _in: $itemIds } }) {
-            ...SubmissionsReviewModal_UploadableElement
+        content_Element(where: { itemId: { _in: $itemIds } }) {
+            ...SubmissionsReviewModal_Element
         }
     }
 
-    fragment SubmissionsReviewModal_UploadableElement on content_UploadableElement {
+    fragment SubmissionsReviewModal_Element on content_Element {
         id
         itemId
         typeName
         name
+        data
+        layoutData
         uploadsRemaining
         itemTitle
-        hasBeenUploaded
         uploaders {
             id
             email
             name
             emailsSentCount
-        }
-        element {
-            ...ElementData
         }
     }
 `;
@@ -108,9 +106,10 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
             ),
         [sortedUploadableElements]
     );
-    const uploadableElementsWithSubmissions = useMemo(() => sortedUploadableElements.filter((x) => x.hasBeenUploaded), [
-        sortedUploadableElements,
-    ]);
+    const uploadableElementsWithSubmissions = useMemo(
+        () => sortedUploadableElements.filter((x) => x.hasBeenUploaded),
+        [sortedUploadableElements]
+    );
 
     return (
         <ModalContent m={0}>

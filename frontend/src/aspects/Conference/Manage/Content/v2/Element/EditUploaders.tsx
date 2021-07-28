@@ -49,15 +49,15 @@ import { useConference } from "../../../../useConference";
 gql`
     fragment ManageContent_Uploader on content_Uploader {
         id
-        uploadableElementId
+        elementId
         email
         name
         emailsSentCount
         conferenceId
     }
 
-    query ManageContent_SelectUploaders($uploadableElementId: uuid!) {
-        content_Uploader(where: { uploadableElementId: { _eq: $uploadableElementId } }) {
+    query ManageContent_SelectUploaders($elementId: uuid!) {
+        content_Uploader(where: { elementId: { _eq: $elementId } }) {
             ...ManageContent_Uploader
         }
     }

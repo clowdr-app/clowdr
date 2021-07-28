@@ -61,23 +61,6 @@ gql`
         entityId
     }
 
-    fragment ElementSecurity_UploadablePG on content_UploadableElementPermissionGrant {
-        id
-        permissionSetId
-        conferenceSlug
-        groupId
-        entityId
-        entity {
-            id
-            element {
-                id
-                permissionGrants {
-                    ...ElementSecurity_ElementPG
-                }
-            }
-        }
-    }
-
     fragment ElementSecurity_PermissionSet on permissions_Role {
         id
         name
@@ -90,7 +73,7 @@ gql`
         includeUnauthenticated
     }
 
-    query ElementSecurity_SelectGrants($elementIds: [uuid!]!, $uploadableIds: [uuid!]!, $conferenceId: uuid!) {
+    query ElementSecurity_SelectGrants($elementIds: [uuid!]!, $conferenceId: uuid!) {
         content_ElementPermissionGrant(
             where: {
                 _or: [
@@ -101,16 +84,6 @@ gql`
         ) {
             ...ElementSecurity_ElementPG
         }
-        content_UploadableElementPermissionGrant(
-            where: {
-                _or: [
-                    { _and: [{ entityId: { _is_null: true } }, { conference: { id: { _eq: $conferenceId } } }] }
-                    { entityId: { _in: $uploadableIds } }
-                ]
-            }
-        ) {
-            ...ElementSecurity_UploadablePG
-        }
         permissions_Role(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ElementSecurity_PermissionSet
         }
@@ -119,10 +92,7 @@ gql`
         }
     }
 
-    mutation ElementSecurity_InsertGrants(
-        $elementGrants: [content_ElementPermissionGrant_insert_input!]!
-        $uploadableGrants: [content_UploadableElementPermissionGrant_insert_input!]!
-    ) {
+    mutation ElementSecurity_InsertGrants($elementGrants: [content_ElementPermissionGrant_insert_input!]!) {
         insert_content_ElementPermissionGrant(
             objects: $elementGrants
             on_conflict: { constraint: ElementPermissionGrant_permissionSetId_groupId_entityId_key, update_columns: [] }
@@ -131,26 +101,10 @@ gql`
                 ...ElementSecurity_ElementPG
             }
         }
-        insert_content_UploadableElementPermissionGrant(
-            objects: $uploadableGrants
-            on_conflict: {
-                constraint: UploadableElementPermissionGr_permissionSetId_groupId_entit_key
-                update_columns: []
-            }
-        ) {
-            returning {
-                ...ElementSecurity_UploadablePG
-            }
-        }
     }
 
-    mutation ElementSecurity_DeleteGrants($elementGrantIds: [uuid!]!, $uploadableGrantIds: [uuid!]!) {
+    mutation ElementSecurity_DeleteGrants($elementGrantIds: [uuid!]!) {
         delete_content_ElementPermissionGrant(where: { id: { _in: $elementGrantIds } }) {
-            returning {
-                id
-            }
-        }
-        delete_content_UploadableElementPermissionGrant(where: { id: { _in: $uploadableGrantIds } }) {
             returning {
                 id
             }
@@ -199,10 +153,13 @@ function EditElementsPermissionGrantsModalInner({
     const data: RowType[] = useMemo(
         () =>
             Object.values(
-                R.groupBy((x) => x.permissionSetId + "¦" + (x.groupId ?? "NULL"), [
-                    ...(grantsResponse.data?.content_ElementPermissionGrant ?? []),
-                    ...(grantsResponse.data?.content_UploadableElementPermissionGrant ?? []),
-                ])
+                R.groupBy(
+                    (x) => x.permissionSetId + "¦" + (x.groupId ?? "NULL"),
+                    [
+                        ...(grantsResponse.data?.content_ElementPermissionGrant ?? []),
+                        ...(grantsResponse.data?.content_UploadableElementPermissionGrant ?? []),
+                    ]
+                )
             ).map((xs) => ({
                 permissionSetId: xs[0].permissionSetId,
                 groupId: xs[0].groupId ?? null,
@@ -281,7 +238,7 @@ function EditElementsPermissionGrantsModalInner({
                 },
                 get: (data) => data.permissionSetId,
                 set: (record, value: string) => {
-                    record.permissionSetId = (value as any) as DeepWriteable<string | undefined>;
+                    record.permissionSetId = value as any as DeepWriteable<string | undefined>;
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 cell: function PermissionSetCell(props: CellProps<Partial<RowType>>) {

@@ -1,30 +1,13 @@
 import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
-import type {
-    Content_ElementType_Enum,
-    ManageContent_ElementFragment,
-    ManageContent_UploadableElementFragment,
-} from "../../../../../../../generated/graphql";
+import type { Content_ElementType_Enum, ManageContent_ElementFragment } from "../../../../../../../generated/graphql";
 
 export type ElementDescriptor = Omit<ManageContent_ElementFragment, "data" | "layoutData"> & {
     data: ElementDataBlob;
     layoutData: LayoutDataBlob | null | undefined;
 };
 
-export type ContentDescriptor =
-    | {
-          type: "required-only";
-          uploadableElement: ManageContent_UploadableElementFragment;
-      }
-    | {
-          type: "required-and-element";
-          uploadableElement: ManageContent_UploadableElementFragment;
-          element: ElementDescriptor;
-      }
-    | {
-          type: "element-only";
-          element: ElementDescriptor;
-      };
+export type ContentDescriptor = ElementDescriptor;
 
 export type RenderEditorProps = {
     data: ContentDescriptor;

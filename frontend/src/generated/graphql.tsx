@@ -8172,10 +8172,6 @@ export type Conference_OriginatingData = {
   /** An aggregate relationship */
   readonly tags_aggregate: Collection_Tag_Aggregate;
   readonly updatedAt: Scalars['timestamptz'];
-  /** An array relationship */
-  readonly uploadableElements: ReadonlyArray<Content_UploadableElement>;
-  /** An aggregate relationship */
-  readonly uploadableElements_aggregate: Content_UploadableElement_Aggregate;
 };
 
 
@@ -8304,26 +8300,6 @@ export type Conference_OriginatingDataTags_AggregateArgs = {
   where?: Maybe<Collection_Tag_Bool_Exp>;
 };
 
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataUploadableElementsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
-  where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataUploadableElements_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
-  where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
 /** aggregated selection of "conference.OriginatingData" */
 export type Conference_OriginatingData_Aggregate = {
   readonly __typename?: 'conference_OriginatingData_aggregate';
@@ -8383,7 +8359,6 @@ export type Conference_OriginatingData_Bool_Exp = {
   readonly sourceId?: Maybe<String_Comparison_Exp>;
   readonly tags?: Maybe<Collection_Tag_Bool_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly uploadableElements?: Maybe<Content_UploadableElement_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "conference.OriginatingData" */
@@ -8424,7 +8399,6 @@ export type Conference_OriginatingData_Insert_Input = {
   readonly sourceId?: Maybe<Scalars['String']>;
   readonly tags?: Maybe<Collection_Tag_Arr_Rel_Insert_Input>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableElements?: Maybe<Content_UploadableElement_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -8503,7 +8477,6 @@ export type Conference_OriginatingData_Order_By = {
   readonly sourceId?: Maybe<Order_By>;
   readonly tags_aggregate?: Maybe<Collection_Tag_Aggregate_Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadableElements_aggregate?: Maybe<Content_UploadableElement_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: conference_OriginatingData */
@@ -8760,6 +8733,7 @@ export enum Conference_PrepareJob_Update_Column {
 /** columns and relationships of "content.Element" */
 export type Content_Element = {
   readonly __typename?: 'content_Element';
+  readonly accessToken: Scalars['String'];
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -8770,6 +8744,8 @@ export type Content_Element = {
   /** An object relationship */
   readonly item: Content_Item;
   readonly itemId: Scalars['uuid'];
+  /** A computed field, executes function "content.Element_itemTitle" */
+  readonly itemTitle?: Maybe<Scalars['String']>;
   readonly layoutData?: Maybe<Scalars['jsonb']>;
   readonly name: Scalars['String'];
   /** An object relationship */
@@ -8789,9 +8765,11 @@ export type Content_Element = {
   readonly type: Content_ElementType;
   readonly typeName: Content_ElementType_Enum;
   readonly updatedAt: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly uploadableElement?: Maybe<Content_UploadableElement>;
-  readonly uploadableId?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  readonly uploaders: ReadonlyArray<Content_Uploader>;
+  /** An aggregate relationship */
+  readonly uploaders_aggregate: Content_Uploader_Aggregate;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
   /** An array relationship */
   readonly youTubeUploads: ReadonlyArray<Video_YouTubeUpload>;
   /** An aggregate relationship */
@@ -8852,6 +8830,26 @@ export type Content_ElementStats_AggregateArgs = {
 
 
 /** columns and relationships of "content.Element" */
+export type Content_ElementUploadersArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_Uploader_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_Uploader_Order_By>>;
+  where?: Maybe<Content_Uploader_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementUploaders_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_Uploader_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_Uploader_Order_By>>;
+  where?: Maybe<Content_Uploader_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Element" */
 export type Content_ElementYouTubeUploadsArgs = {
   distinct_on?: Maybe<ReadonlyArray<Video_YouTubeUpload_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -8869,115 +8867,6 @@ export type Content_ElementYouTubeUploads_AggregateArgs = {
   order_by?: Maybe<ReadonlyArray<Video_YouTubeUpload_Order_By>>;
   where?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
-
-/** columns and relationships of "content.ElementByAccessToken" */
-export type Content_ElementByAccessToken = {
-  readonly __typename?: 'content_ElementByAccessToken';
-  readonly accessToken?: Maybe<Scalars['String']>;
-  readonly data?: Maybe<Scalars['jsonb']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly itemTitle?: Maybe<Scalars['String']>;
-  readonly layoutData?: Maybe<Scalars['jsonb']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly typeName?: Maybe<Scalars['String']>;
-};
-
-
-/** columns and relationships of "content.ElementByAccessToken" */
-export type Content_ElementByAccessTokenDataArgs = {
-  path?: Maybe<Scalars['String']>;
-};
-
-
-/** columns and relationships of "content.ElementByAccessToken" */
-export type Content_ElementByAccessTokenLayoutDataArgs = {
-  path?: Maybe<Scalars['String']>;
-};
-
-/** aggregated selection of "content.ElementByAccessToken" */
-export type Content_ElementByAccessToken_Aggregate = {
-  readonly __typename?: 'content_ElementByAccessToken_aggregate';
-  readonly aggregate?: Maybe<Content_ElementByAccessToken_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<Content_ElementByAccessToken>;
-};
-
-/** aggregate fields of "content.ElementByAccessToken" */
-export type Content_ElementByAccessToken_Aggregate_Fields = {
-  readonly __typename?: 'content_ElementByAccessToken_aggregate_fields';
-  readonly count: Scalars['Int'];
-  readonly max?: Maybe<Content_ElementByAccessToken_Max_Fields>;
-  readonly min?: Maybe<Content_ElementByAccessToken_Min_Fields>;
-};
-
-
-/** aggregate fields of "content.ElementByAccessToken" */
-export type Content_ElementByAccessToken_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** Boolean expression to filter rows from the table "content.ElementByAccessToken". All fields are combined with a logical 'AND'. */
-export type Content_ElementByAccessToken_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Bool_Exp>>;
-  readonly _not?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Bool_Exp>>;
-  readonly accessToken?: Maybe<String_Comparison_Exp>;
-  readonly data?: Maybe<Jsonb_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly itemTitle?: Maybe<String_Comparison_Exp>;
-  readonly layoutData?: Maybe<Jsonb_Comparison_Exp>;
-  readonly name?: Maybe<String_Comparison_Exp>;
-  readonly typeName?: Maybe<String_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Content_ElementByAccessToken_Max_Fields = {
-  readonly __typename?: 'content_ElementByAccessToken_max_fields';
-  readonly accessToken?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly itemTitle?: Maybe<Scalars['String']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly typeName?: Maybe<Scalars['String']>;
-};
-
-/** aggregate min on columns */
-export type Content_ElementByAccessToken_Min_Fields = {
-  readonly __typename?: 'content_ElementByAccessToken_min_fields';
-  readonly accessToken?: Maybe<Scalars['String']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly itemTitle?: Maybe<Scalars['String']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly typeName?: Maybe<Scalars['String']>;
-};
-
-/** Ordering options when selecting data from "content.ElementByAccessToken". */
-export type Content_ElementByAccessToken_Order_By = {
-  readonly accessToken?: Maybe<Order_By>;
-  readonly data?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly itemTitle?: Maybe<Order_By>;
-  readonly layoutData?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly typeName?: Maybe<Order_By>;
-};
-
-/** select columns of table "content.ElementByAccessToken" */
-export enum Content_ElementByAccessToken_Select_Column {
-  /** column name */
-  AccessToken = 'accessToken',
-  /** column name */
-  Data = 'data',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  ItemTitle = 'itemTitle',
-  /** column name */
-  LayoutData = 'layoutData',
-  /** column name */
-  Name = 'name',
-  /** column name */
-  TypeName = 'typeName'
-}
 
 /** columns and relationships of "content.ElementPermissionGrant" */
 export type Content_ElementPermissionGrant = {
@@ -9405,9 +9294,17 @@ export type Content_Element_Aggregate = {
 /** aggregate fields of "content.Element" */
 export type Content_Element_Aggregate_Fields = {
   readonly __typename?: 'content_Element_aggregate_fields';
+  readonly avg?: Maybe<Content_Element_Avg_Fields>;
   readonly count: Scalars['Int'];
   readonly max?: Maybe<Content_Element_Max_Fields>;
   readonly min?: Maybe<Content_Element_Min_Fields>;
+  readonly stddev?: Maybe<Content_Element_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Content_Element_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Content_Element_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Content_Element_Sum_Fields>;
+  readonly var_pop?: Maybe<Content_Element_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Content_Element_Var_Samp_Fields>;
+  readonly variance?: Maybe<Content_Element_Variance_Fields>;
 };
 
 
@@ -9419,9 +9316,17 @@ export type Content_Element_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "content.Element" */
 export type Content_Element_Aggregate_Order_By = {
+  readonly avg?: Maybe<Content_Element_Avg_Order_By>;
   readonly count?: Maybe<Order_By>;
   readonly max?: Maybe<Content_Element_Max_Order_By>;
   readonly min?: Maybe<Content_Element_Min_Order_By>;
+  readonly stddev?: Maybe<Content_Element_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Content_Element_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Content_Element_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Content_Element_Sum_Order_By>;
+  readonly var_pop?: Maybe<Content_Element_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Content_Element_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Content_Element_Variance_Order_By>;
 };
 
 /** append existing jsonb value of filtered columns with new jsonb value */
@@ -9437,11 +9342,23 @@ export type Content_Element_Arr_Rel_Insert_Input = {
   readonly on_conflict?: Maybe<Content_Element_On_Conflict>;
 };
 
+/** aggregate avg on columns */
+export type Content_Element_Avg_Fields = {
+  readonly __typename?: 'content_Element_avg_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "content.Element" */
+export type Content_Element_Avg_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
 /** Boolean expression to filter rows from the table "content.Element". All fields are combined with a logical 'AND'. */
 export type Content_Element_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Content_Element_Bool_Exp>>;
   readonly _not?: Maybe<Content_Element_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Content_Element_Bool_Exp>>;
+  readonly accessToken?: Maybe<String_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -9450,6 +9367,7 @@ export type Content_Element_Bool_Exp = {
   readonly isHidden?: Maybe<Boolean_Comparison_Exp>;
   readonly item?: Maybe<Content_Item_Bool_Exp>;
   readonly itemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly itemTitle?: Maybe<String_Comparison_Exp>;
   readonly layoutData?: Maybe<Jsonb_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
@@ -9460,17 +9378,15 @@ export type Content_Element_Bool_Exp = {
   readonly type?: Maybe<Content_ElementType_Bool_Exp>;
   readonly typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly uploadableElement?: Maybe<Content_UploadableElement_Bool_Exp>;
-  readonly uploadableId?: Maybe<Uuid_Comparison_Exp>;
+  readonly uploaders?: Maybe<Content_Uploader_Bool_Exp>;
+  readonly uploadsRemaining?: Maybe<Int_Comparison_Exp>;
   readonly youTubeUploads?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "content.Element" */
 export enum Content_Element_Constraint {
   /** unique or primary key constraint */
-  ElementPkey = 'Element_pkey',
-  /** unique or primary key constraint */
-  ElementRequiredContentIdKey = 'Element_requiredContentId_key'
+  ElementPkey = 'Element_pkey'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -9491,8 +9407,14 @@ export type Content_Element_Delete_Key_Input = {
   readonly layoutData?: Maybe<Scalars['String']>;
 };
 
+/** input type for incrementing numeric columns in table "content.Element" */
+export type Content_Element_Inc_Input = {
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
 /** input type for inserting data into table "content.Element" */
 export type Content_Element_Insert_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
@@ -9511,14 +9433,15 @@ export type Content_Element_Insert_Input = {
   readonly type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
   readonly typeName?: Maybe<Content_ElementType_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableElement?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
-  readonly uploadableId?: Maybe<Scalars['uuid']>;
+  readonly uploaders?: Maybe<Content_Uploader_Arr_Rel_Insert_Input>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
   readonly youTubeUploads?: Maybe<Video_YouTubeUpload_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type Content_Element_Max_Fields = {
   readonly __typename?: 'content_Element_max_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -9526,11 +9449,12 @@ export type Content_Element_Max_Fields = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableId?: Maybe<Scalars['uuid']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
 };
 
 /** order by max() on columns of table "content.Element" */
 export type Content_Element_Max_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -9538,12 +9462,13 @@ export type Content_Element_Max_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadableId?: Maybe<Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Content_Element_Min_Fields = {
   readonly __typename?: 'content_Element_min_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -9551,11 +9476,12 @@ export type Content_Element_Min_Fields = {
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableId?: Maybe<Scalars['uuid']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
 };
 
 /** order by min() on columns of table "content.Element" */
 export type Content_Element_Min_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -9563,7 +9489,7 @@ export type Content_Element_Min_Order_By = {
   readonly name?: Maybe<Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadableId?: Maybe<Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "content.Element" */
@@ -9591,6 +9517,7 @@ export type Content_Element_On_Conflict = {
 
 /** Ordering options when selecting data from "content.Element". */
 export type Content_Element_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
@@ -9609,8 +9536,8 @@ export type Content_Element_Order_By = {
   readonly type?: Maybe<Content_ElementType_Order_By>;
   readonly typeName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadableElement?: Maybe<Content_UploadableElement_Order_By>;
-  readonly uploadableId?: Maybe<Order_By>;
+  readonly uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
   readonly youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
 };
 
@@ -9628,6 +9555,8 @@ export type Content_Element_Prepend_Input = {
 /** select columns of table "content.Element" */
 export enum Content_Element_Select_Column {
   /** column name */
+  AccessToken = 'accessToken',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
@@ -9650,11 +9579,12 @@ export enum Content_Element_Select_Column {
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  UploadableId = 'uploadableId'
+  UploadsRemaining = 'uploadsRemaining'
 }
 
 /** input type for updating data in table "content.Element" */
 export type Content_Element_Set_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly data?: Maybe<Scalars['jsonb']>;
@@ -9666,11 +9596,57 @@ export type Content_Element_Set_Input = {
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly typeName?: Maybe<Content_ElementType_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableId?: Maybe<Scalars['uuid']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type Content_Element_Stddev_Fields = {
+  readonly __typename?: 'content_Element_stddev_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "content.Element" */
+export type Content_Element_Stddev_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Content_Element_Stddev_Pop_Fields = {
+  readonly __typename?: 'content_Element_stddev_pop_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "content.Element" */
+export type Content_Element_Stddev_Pop_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Content_Element_Stddev_Samp_Fields = {
+  readonly __typename?: 'content_Element_stddev_samp_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "content.Element" */
+export type Content_Element_Stddev_Samp_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Content_Element_Sum_Fields = {
+  readonly __typename?: 'content_Element_sum_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "content.Element" */
+export type Content_Element_Sum_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** update columns of table "content.Element" */
 export enum Content_Element_Update_Column {
+  /** column name */
+  AccessToken = 'accessToken',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -9694,8 +9670,41 @@ export enum Content_Element_Update_Column {
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
-  UploadableId = 'uploadableId'
+  UploadsRemaining = 'uploadsRemaining'
 }
+
+/** aggregate var_pop on columns */
+export type Content_Element_Var_Pop_Fields = {
+  readonly __typename?: 'content_Element_var_pop_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "content.Element" */
+export type Content_Element_Var_Pop_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Content_Element_Var_Samp_Fields = {
+  readonly __typename?: 'content_Element_var_samp_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "content.Element" */
+export type Content_Element_Var_Samp_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Content_Element_Variance_Fields = {
+  readonly __typename?: 'content_Element_variance_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "content.Element" */
+export type Content_Element_Variance_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "content.Item" */
 export type Content_Item = {
@@ -9749,10 +9758,6 @@ export type Content_Item = {
   readonly type: Content_ItemType;
   readonly typeName: Content_ItemType_Enum;
   readonly updatedAt: Scalars['timestamptz'];
-  /** An array relationship */
-  readonly uploadableElements: ReadonlyArray<Content_UploadableElement>;
-  /** An aggregate relationship */
-  readonly uploadableElements_aggregate: Content_UploadableElement_Aggregate;
 };
 
 
@@ -9893,26 +9898,6 @@ export type Content_ItemStats_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Analytics_ContentItemStats_Order_By>>;
   where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
-};
-
-
-/** columns and relationships of "content.Item" */
-export type Content_ItemUploadableElementsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
-  where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-
-/** columns and relationships of "content.Item" */
-export type Content_ItemUploadableElements_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
-  where?: Maybe<Content_UploadableElement_Bool_Exp>;
 };
 
 /** columns and relationships of "content.ItemExhibition" */
@@ -10959,7 +10944,6 @@ export type Content_Item_Bool_Exp = {
   readonly type?: Maybe<Content_ItemType_Bool_Exp>;
   readonly typeName?: Maybe<Content_ItemType_Enum_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly uploadableElements?: Maybe<Content_UploadableElement_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "content.Item" */
@@ -10992,7 +10976,6 @@ export type Content_Item_Insert_Input = {
   readonly type?: Maybe<Content_ItemType_Obj_Rel_Insert_Input>;
   readonly typeName?: Maybe<Content_ItemType_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableElements?: Maybe<Content_UploadableElement_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -11092,7 +11075,6 @@ export type Content_Item_Order_By = {
   readonly type?: Maybe<Content_ItemType_Order_By>;
   readonly typeName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadableElements_aggregate?: Maybe<Content_UploadableElement_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: content_Item */
@@ -11157,681 +11139,6 @@ export enum Content_Item_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElement = {
-  readonly __typename?: 'content_UploadableElement';
-  readonly accessToken: Scalars['String'];
-  /** An object relationship */
-  readonly conference: Conference_Conference;
-  readonly conferenceId: Scalars['uuid'];
-  readonly createdAt: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly element?: Maybe<Content_Element>;
-  /** A computed field, executes function "content.hasBeenUploaded" */
-  readonly hasBeenUploaded?: Maybe<Scalars['Boolean']>;
-  readonly id: Scalars['uuid'];
-  readonly isHidden: Scalars['Boolean'];
-  /** An object relationship */
-  readonly item: Content_Item;
-  readonly itemId: Scalars['uuid'];
-  /** A computed field, executes function "content.UploadableElement_itemTitle" */
-  readonly itemTitle?: Maybe<Scalars['String']>;
-  readonly name: Scalars['String'];
-  /** An object relationship */
-  readonly originatingData?: Maybe<Conference_OriginatingData>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  /** An array relationship */
-  readonly permissionGrants: ReadonlyArray<Content_UploadableElementPermissionGrant>;
-  /** An aggregate relationship */
-  readonly permissionGrants_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
-  /** An object relationship */
-  readonly type: Content_ElementType;
-  readonly typeName: Content_ElementType_Enum;
-  readonly updatedAt: Scalars['timestamptz'];
-  /** An array relationship */
-  readonly uploaders: ReadonlyArray<Content_Uploader>;
-  /** An aggregate relationship */
-  readonly uploaders_aggregate: Content_Uploader_Aggregate;
-  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
-};
-
-
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElementPermissionGrantsArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
-  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElementPermissionGrants_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
-  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElementUploadersArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_Uploader_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_Uploader_Order_By>>;
-  where?: Maybe<Content_Uploader_Bool_Exp>;
-};
-
-
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElementUploaders_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_Uploader_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_Uploader_Order_By>>;
-  where?: Maybe<Content_Uploader_Bool_Exp>;
-};
-
-/** columns and relationships of "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant = {
-  readonly __typename?: 'content_UploadableElementPermissionGrant';
-  /** An object relationship */
-  readonly conference: Conference_Conference;
-  readonly conferenceSlug: Scalars['String'];
-  readonly created_at: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly entity?: Maybe<Content_UploadableElement>;
-  readonly entityId?: Maybe<Scalars['uuid']>;
-  /** An object relationship */
-  readonly group?: Maybe<Permissions_Group>;
-  readonly groupId?: Maybe<Scalars['uuid']>;
-  readonly id: Scalars['uuid'];
-  /** An object relationship */
-  readonly permissionSet: Permissions_Role;
-  readonly permissionSetId: Scalars['uuid'];
-  readonly updated_at: Scalars['timestamptz'];
-};
-
-/** aggregated selection of "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Aggregate = {
-  readonly __typename?: 'content_UploadableElementPermissionGrant_aggregate';
-  readonly aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<Content_UploadableElementPermissionGrant>;
-};
-
-/** aggregate fields of "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Aggregate_Fields = {
-  readonly __typename?: 'content_UploadableElementPermissionGrant_aggregate_fields';
-  readonly count: Scalars['Int'];
-  readonly max?: Maybe<Content_UploadableElementPermissionGrant_Max_Fields>;
-  readonly min?: Maybe<Content_UploadableElementPermissionGrant_Min_Fields>;
-};
-
-
-/** aggregate fields of "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Aggregate_Order_By = {
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<Content_UploadableElementPermissionGrant_Max_Order_By>;
-  readonly min?: Maybe<Content_UploadableElementPermissionGrant_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input>;
-  /** on conflict condition */
-  readonly on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "content.UploadableElementPermissionGrant". All fields are combined with a logical 'AND'. */
-export type Content_UploadableElementPermissionGrant_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Bool_Exp>>;
-  readonly _not?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Bool_Exp>>;
-  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
-  readonly conferenceSlug?: Maybe<String_Comparison_Exp>;
-  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly entity?: Maybe<Content_UploadableElement_Bool_Exp>;
-  readonly entityId?: Maybe<Uuid_Comparison_Exp>;
-  readonly group?: Maybe<Permissions_Group_Bool_Exp>;
-  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly permissionSet?: Maybe<Permissions_Role_Bool_Exp>;
-  readonly permissionSetId?: Maybe<Uuid_Comparison_Exp>;
-  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "content.UploadableElementPermissionGrant" */
-export enum Content_UploadableElementPermissionGrant_Constraint {
-  /** unique or primary key constraint */
-  UploadableElementPermissionGrPermissionSetIdGroupIdEntitKey = 'UploadableElementPermissionGr_permissionSetId_groupId_entit_key',
-  /** unique or primary key constraint */
-  UploadableElementPermissionGrantPkey = 'UploadableElementPermissionGrant_pkey'
-}
-
-/** input type for inserting data into table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Insert_Input = {
-  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
-  readonly conferenceSlug?: Maybe<Scalars['String']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly entity?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
-  readonly entityId?: Maybe<Scalars['uuid']>;
-  readonly group?: Maybe<Permissions_Group_Obj_Rel_Insert_Input>;
-  readonly groupId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly permissionSet?: Maybe<Permissions_Role_Obj_Rel_Insert_Input>;
-  readonly permissionSetId?: Maybe<Scalars['uuid']>;
-  readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate max on columns */
-export type Content_UploadableElementPermissionGrant_Max_Fields = {
-  readonly __typename?: 'content_UploadableElementPermissionGrant_max_fields';
-  readonly conferenceSlug?: Maybe<Scalars['String']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly entityId?: Maybe<Scalars['uuid']>;
-  readonly groupId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly permissionSetId?: Maybe<Scalars['uuid']>;
-  readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Max_Order_By = {
-  readonly conferenceSlug?: Maybe<Order_By>;
-  readonly created_at?: Maybe<Order_By>;
-  readonly entityId?: Maybe<Order_By>;
-  readonly groupId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly permissionSetId?: Maybe<Order_By>;
-  readonly updated_at?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Content_UploadableElementPermissionGrant_Min_Fields = {
-  readonly __typename?: 'content_UploadableElementPermissionGrant_min_fields';
-  readonly conferenceSlug?: Maybe<Scalars['String']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly entityId?: Maybe<Scalars['uuid']>;
-  readonly groupId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly permissionSetId?: Maybe<Scalars['uuid']>;
-  readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Min_Order_By = {
-  readonly conferenceSlug?: Maybe<Order_By>;
-  readonly created_at?: Maybe<Order_By>;
-  readonly entityId?: Maybe<Order_By>;
-  readonly groupId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly permissionSetId?: Maybe<Order_By>;
-  readonly updated_at?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Mutation_Response = {
-  readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Content_UploadableElementPermissionGrant>;
-};
-
-/** on conflict condition type for table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_On_Conflict = {
-  readonly constraint: Content_UploadableElementPermissionGrant_Constraint;
-  readonly update_columns?: ReadonlyArray<Content_UploadableElementPermissionGrant_Update_Column>;
-  readonly where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "content.UploadableElementPermissionGrant". */
-export type Content_UploadableElementPermissionGrant_Order_By = {
-  readonly conference?: Maybe<Conference_Conference_Order_By>;
-  readonly conferenceSlug?: Maybe<Order_By>;
-  readonly created_at?: Maybe<Order_By>;
-  readonly entity?: Maybe<Content_UploadableElement_Order_By>;
-  readonly entityId?: Maybe<Order_By>;
-  readonly group?: Maybe<Permissions_Group_Order_By>;
-  readonly groupId?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly permissionSet?: Maybe<Permissions_Role_Order_By>;
-  readonly permissionSetId?: Maybe<Order_By>;
-  readonly updated_at?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: content_UploadableElementPermissionGrant */
-export type Content_UploadableElementPermissionGrant_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "content.UploadableElementPermissionGrant" */
-export enum Content_UploadableElementPermissionGrant_Select_Column {
-  /** column name */
-  ConferenceSlug = 'conferenceSlug',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  EntityId = 'entityId',
-  /** column name */
-  GroupId = 'groupId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  PermissionSetId = 'permissionSetId',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** input type for updating data in table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Set_Input = {
-  readonly conferenceSlug?: Maybe<Scalars['String']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly entityId?: Maybe<Scalars['uuid']>;
-  readonly groupId?: Maybe<Scalars['uuid']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly permissionSetId?: Maybe<Scalars['uuid']>;
-  readonly updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** update columns of table "content.UploadableElementPermissionGrant" */
-export enum Content_UploadableElementPermissionGrant_Update_Column {
-  /** column name */
-  ConferenceSlug = 'conferenceSlug',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  EntityId = 'entityId',
-  /** column name */
-  GroupId = 'groupId',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  PermissionSetId = 'permissionSetId',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** aggregated selection of "content.UploadableElement" */
-export type Content_UploadableElement_Aggregate = {
-  readonly __typename?: 'content_UploadableElement_aggregate';
-  readonly aggregate?: Maybe<Content_UploadableElement_Aggregate_Fields>;
-  readonly nodes: ReadonlyArray<Content_UploadableElement>;
-};
-
-/** aggregate fields of "content.UploadableElement" */
-export type Content_UploadableElement_Aggregate_Fields = {
-  readonly __typename?: 'content_UploadableElement_aggregate_fields';
-  readonly avg?: Maybe<Content_UploadableElement_Avg_Fields>;
-  readonly count: Scalars['Int'];
-  readonly max?: Maybe<Content_UploadableElement_Max_Fields>;
-  readonly min?: Maybe<Content_UploadableElement_Min_Fields>;
-  readonly stddev?: Maybe<Content_UploadableElement_Stddev_Fields>;
-  readonly stddev_pop?: Maybe<Content_UploadableElement_Stddev_Pop_Fields>;
-  readonly stddev_samp?: Maybe<Content_UploadableElement_Stddev_Samp_Fields>;
-  readonly sum?: Maybe<Content_UploadableElement_Sum_Fields>;
-  readonly var_pop?: Maybe<Content_UploadableElement_Var_Pop_Fields>;
-  readonly var_samp?: Maybe<Content_UploadableElement_Var_Samp_Fields>;
-  readonly variance?: Maybe<Content_UploadableElement_Variance_Fields>;
-};
-
-
-/** aggregate fields of "content.UploadableElement" */
-export type Content_UploadableElement_Aggregate_FieldsCountArgs = {
-  columns?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  distinct?: Maybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "content.UploadableElement" */
-export type Content_UploadableElement_Aggregate_Order_By = {
-  readonly avg?: Maybe<Content_UploadableElement_Avg_Order_By>;
-  readonly count?: Maybe<Order_By>;
-  readonly max?: Maybe<Content_UploadableElement_Max_Order_By>;
-  readonly min?: Maybe<Content_UploadableElement_Min_Order_By>;
-  readonly stddev?: Maybe<Content_UploadableElement_Stddev_Order_By>;
-  readonly stddev_pop?: Maybe<Content_UploadableElement_Stddev_Pop_Order_By>;
-  readonly stddev_samp?: Maybe<Content_UploadableElement_Stddev_Samp_Order_By>;
-  readonly sum?: Maybe<Content_UploadableElement_Sum_Order_By>;
-  readonly var_pop?: Maybe<Content_UploadableElement_Var_Pop_Order_By>;
-  readonly var_samp?: Maybe<Content_UploadableElement_Var_Samp_Order_By>;
-  readonly variance?: Maybe<Content_UploadableElement_Variance_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "content.UploadableElement" */
-export type Content_UploadableElement_Arr_Rel_Insert_Input = {
-  readonly data: ReadonlyArray<Content_UploadableElement_Insert_Input>;
-  /** on conflict condition */
-  readonly on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type Content_UploadableElement_Avg_Fields = {
-  readonly __typename?: 'content_UploadableElement_avg_fields';
-  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Avg_Order_By = {
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "content.UploadableElement". All fields are combined with a logical 'AND'. */
-export type Content_UploadableElement_Bool_Exp = {
-  readonly _and?: Maybe<ReadonlyArray<Content_UploadableElement_Bool_Exp>>;
-  readonly _not?: Maybe<Content_UploadableElement_Bool_Exp>;
-  readonly _or?: Maybe<ReadonlyArray<Content_UploadableElement_Bool_Exp>>;
-  readonly accessToken?: Maybe<String_Comparison_Exp>;
-  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
-  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
-  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly element?: Maybe<Content_Element_Bool_Exp>;
-  readonly hasBeenUploaded?: Maybe<Boolean_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly isHidden?: Maybe<Boolean_Comparison_Exp>;
-  readonly item?: Maybe<Content_Item_Bool_Exp>;
-  readonly itemId?: Maybe<Uuid_Comparison_Exp>;
-  readonly itemTitle?: Maybe<String_Comparison_Exp>;
-  readonly name?: Maybe<String_Comparison_Exp>;
-  readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
-  readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
-  readonly permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-  readonly type?: Maybe<Content_ElementType_Bool_Exp>;
-  readonly typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
-  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly uploaders?: Maybe<Content_Uploader_Bool_Exp>;
-  readonly uploadsRemaining?: Maybe<Int_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "content.UploadableElement" */
-export enum Content_UploadableElement_Constraint {
-  /** unique or primary key constraint */
-  UploadableElementPkey = 'UploadableElement_pkey'
-}
-
-/** input type for incrementing numeric columns in table "content.UploadableElement" */
-export type Content_UploadableElement_Inc_Input = {
-  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
-};
-
-/** input type for inserting data into table "content.UploadableElement" */
-export type Content_UploadableElement_Insert_Input = {
-  readonly accessToken?: Maybe<Scalars['String']>;
-  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly isHidden?: Maybe<Scalars['Boolean']>;
-  readonly item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  readonly permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input>;
-  readonly type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
-  readonly typeName?: Maybe<Content_ElementType_Enum>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploaders?: Maybe<Content_Uploader_Arr_Rel_Insert_Input>;
-  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
-};
-
-/** aggregate max on columns */
-export type Content_UploadableElement_Max_Fields = {
-  readonly __typename?: 'content_UploadableElement_max_fields';
-  readonly accessToken?: Maybe<Scalars['String']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
-};
-
-/** order by max() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Max_Order_By = {
-  readonly accessToken?: Maybe<Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly itemId?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Content_UploadableElement_Min_Fields = {
-  readonly __typename?: 'content_UploadableElement_min_fields';
-  readonly accessToken?: Maybe<Scalars['String']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
-};
-
-/** order by min() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Min_Order_By = {
-  readonly accessToken?: Maybe<Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly itemId?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "content.UploadableElement" */
-export type Content_UploadableElement_Mutation_Response = {
-  readonly __typename?: 'content_UploadableElement_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Content_UploadableElement>;
-};
-
-/** input type for inserting object relation for remote table "content.UploadableElement" */
-export type Content_UploadableElement_Obj_Rel_Insert_Input = {
-  readonly data: Content_UploadableElement_Insert_Input;
-  /** on conflict condition */
-  readonly on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
-};
-
-/** on conflict condition type for table "content.UploadableElement" */
-export type Content_UploadableElement_On_Conflict = {
-  readonly constraint: Content_UploadableElement_Constraint;
-  readonly update_columns?: ReadonlyArray<Content_UploadableElement_Update_Column>;
-  readonly where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "content.UploadableElement". */
-export type Content_UploadableElement_Order_By = {
-  readonly accessToken?: Maybe<Order_By>;
-  readonly conference?: Maybe<Conference_Conference_Order_By>;
-  readonly conferenceId?: Maybe<Order_By>;
-  readonly createdAt?: Maybe<Order_By>;
-  readonly element?: Maybe<Content_Element_Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly isHidden?: Maybe<Order_By>;
-  readonly item?: Maybe<Content_Item_Order_By>;
-  readonly itemId?: Maybe<Order_By>;
-  readonly name?: Maybe<Order_By>;
-  readonly originatingData?: Maybe<Conference_OriginatingData_Order_By>;
-  readonly originatingDataId?: Maybe<Order_By>;
-  readonly permissionGrants_aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Order_By>;
-  readonly type?: Maybe<Content_ElementType_Order_By>;
-  readonly typeName?: Maybe<Order_By>;
-  readonly updatedAt?: Maybe<Order_By>;
-  readonly uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: content_UploadableElement */
-export type Content_UploadableElement_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
-};
-
-/** select columns of table "content.UploadableElement" */
-export enum Content_UploadableElement_Select_Column {
-  /** column name */
-  AccessToken = 'accessToken',
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IsHidden = 'isHidden',
-  /** column name */
-  ItemId = 'itemId',
-  /** column name */
-  Name = 'name',
-  /** column name */
-  OriginatingDataId = 'originatingDataId',
-  /** column name */
-  TypeName = 'typeName',
-  /** column name */
-  UpdatedAt = 'updatedAt',
-  /** column name */
-  UploadsRemaining = 'uploadsRemaining'
-}
-
-/** input type for updating data in table "content.UploadableElement" */
-export type Content_UploadableElement_Set_Input = {
-  readonly accessToken?: Maybe<Scalars['String']>;
-  readonly conferenceId?: Maybe<Scalars['uuid']>;
-  readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly isHidden?: Maybe<Scalars['Boolean']>;
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly originatingDataId?: Maybe<Scalars['uuid']>;
-  readonly typeName?: Maybe<Content_ElementType_Enum>;
-  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
-};
-
-/** aggregate stddev on columns */
-export type Content_UploadableElement_Stddev_Fields = {
-  readonly __typename?: 'content_UploadableElement_stddev_fields';
-  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Stddev_Order_By = {
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Content_UploadableElement_Stddev_Pop_Fields = {
-  readonly __typename?: 'content_UploadableElement_stddev_pop_fields';
-  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Stddev_Pop_Order_By = {
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Content_UploadableElement_Stddev_Samp_Fields = {
-  readonly __typename?: 'content_UploadableElement_stddev_samp_fields';
-  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Stddev_Samp_Order_By = {
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Content_UploadableElement_Sum_Fields = {
-  readonly __typename?: 'content_UploadableElement_sum_fields';
-  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Sum_Order_By = {
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** update columns of table "content.UploadableElement" */
-export enum Content_UploadableElement_Update_Column {
-  /** column name */
-  AccessToken = 'accessToken',
-  /** column name */
-  ConferenceId = 'conferenceId',
-  /** column name */
-  CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IsHidden = 'isHidden',
-  /** column name */
-  ItemId = 'itemId',
-  /** column name */
-  Name = 'name',
-  /** column name */
-  OriginatingDataId = 'originatingDataId',
-  /** column name */
-  TypeName = 'typeName',
-  /** column name */
-  UpdatedAt = 'updatedAt',
-  /** column name */
-  UploadsRemaining = 'uploadsRemaining'
-}
-
-/** aggregate var_pop on columns */
-export type Content_UploadableElement_Var_Pop_Fields = {
-  readonly __typename?: 'content_UploadableElement_var_pop_fields';
-  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Var_Pop_Order_By = {
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Content_UploadableElement_Var_Samp_Fields = {
-  readonly __typename?: 'content_UploadableElement_var_samp_fields';
-  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Var_Samp_Order_By = {
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Content_UploadableElement_Variance_Fields = {
-  readonly __typename?: 'content_UploadableElement_variance_fields';
-  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Variance_Order_By = {
-  readonly uploadsRemaining?: Maybe<Order_By>;
-};
-
 /** columns and relationships of "content.Uploader" */
 export type Content_Uploader = {
   readonly __typename?: 'content_Uploader';
@@ -11839,14 +11146,14 @@ export type Content_Uploader = {
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
   readonly createdAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly element: Content_Element;
+  readonly elementId: Scalars['uuid'];
   readonly email: Scalars['String'];
   readonly emailsSentCount: Scalars['Int'];
   readonly id: Scalars['uuid'];
   readonly name: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
-  /** An object relationship */
-  readonly uploadableElement: Content_UploadableElement;
-  readonly uploadableElementId: Scalars['uuid'];
 };
 
 /** aggregated selection of "content.Uploader" */
@@ -11920,19 +11227,19 @@ export type Content_Uploader_Bool_Exp = {
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly element?: Maybe<Content_Element_Bool_Exp>;
+  readonly elementId?: Maybe<Uuid_Comparison_Exp>;
   readonly email?: Maybe<String_Comparison_Exp>;
   readonly emailsSentCount?: Maybe<Int_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly uploadableElement?: Maybe<Content_UploadableElement_Bool_Exp>;
-  readonly uploadableElementId?: Maybe<Uuid_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "content.Uploader" */
 export enum Content_Uploader_Constraint {
   /** unique or primary key constraint */
-  UploaderEmailUploadableElementIdKey = 'Uploader_email_uploadableElementId_key',
+  UploaderElementIdEmailKey = 'Uploader_elementId_email_key',
   /** unique or primary key constraint */
   UploaderPkey = 'Uploader_pkey'
 }
@@ -11947,13 +11254,13 @@ export type Content_Uploader_Insert_Input = {
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
+  readonly elementId?: Maybe<Scalars['uuid']>;
   readonly email?: Maybe<Scalars['String']>;
   readonly emailsSentCount?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableElement?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
-  readonly uploadableElementId?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate max on columns */
@@ -11961,24 +11268,24 @@ export type Content_Uploader_Max_Fields = {
   readonly __typename?: 'content_Uploader_max_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly elementId?: Maybe<Scalars['uuid']>;
   readonly email?: Maybe<Scalars['String']>;
   readonly emailsSentCount?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableElementId?: Maybe<Scalars['uuid']>;
 };
 
 /** order by max() on columns of table "content.Uploader" */
 export type Content_Uploader_Max_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
+  readonly elementId?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
   readonly emailsSentCount?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadableElementId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -11986,24 +11293,24 @@ export type Content_Uploader_Min_Fields = {
   readonly __typename?: 'content_Uploader_min_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly elementId?: Maybe<Scalars['uuid']>;
   readonly email?: Maybe<Scalars['String']>;
   readonly emailsSentCount?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableElementId?: Maybe<Scalars['uuid']>;
 };
 
 /** order by min() on columns of table "content.Uploader" */
 export type Content_Uploader_Min_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
+  readonly elementId?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
   readonly emailsSentCount?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadableElementId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "content.Uploader" */
@@ -12034,13 +11341,13 @@ export type Content_Uploader_Order_By = {
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
+  readonly element?: Maybe<Content_Element_Order_By>;
+  readonly elementId?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
   readonly emailsSentCount?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
-  readonly uploadableElement?: Maybe<Content_UploadableElement_Order_By>;
-  readonly uploadableElementId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: content_Uploader */
@@ -12055,6 +11362,8 @@ export enum Content_Uploader_Select_Column {
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
+  ElementId = 'elementId',
+  /** column name */
   Email = 'email',
   /** column name */
   EmailsSentCount = 'emailsSentCount',
@@ -12063,21 +11372,19 @@ export enum Content_Uploader_Select_Column {
   /** column name */
   Name = 'name',
   /** column name */
-  UpdatedAt = 'updatedAt',
-  /** column name */
-  UploadableElementId = 'uploadableElementId'
+  UpdatedAt = 'updatedAt'
 }
 
 /** input type for updating data in table "content.Uploader" */
 export type Content_Uploader_Set_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly elementId?: Maybe<Scalars['uuid']>;
   readonly email?: Maybe<Scalars['String']>;
   readonly emailsSentCount?: Maybe<Scalars['Int']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
-  readonly uploadableElementId?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate stddev on columns */
@@ -12131,6 +11438,8 @@ export enum Content_Uploader_Update_Column {
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
+  ElementId = 'elementId',
+  /** column name */
   Email = 'email',
   /** column name */
   EmailsSentCount = 'emailsSentCount',
@@ -12139,9 +11448,7 @@ export enum Content_Uploader_Update_Column {
   /** column name */
   Name = 'name',
   /** column name */
-  UpdatedAt = 'updatedAt',
-  /** column name */
-  UploadableElementId = 'uploadableElementId'
+  UpdatedAt = 'updatedAt'
 }
 
 /** aggregate var_pop on columns */
@@ -14273,14 +13580,6 @@ export type Mutation_Root = {
   readonly delete_content_ItemType_by_pk?: Maybe<Content_ItemType>;
   /** delete single row from the table: "content.Item" */
   readonly delete_content_Item_by_pk?: Maybe<Content_Item>;
-  /** delete data from the table: "content.UploadableElement" */
-  readonly delete_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
-  /** delete data from the table: "content.UploadableElementPermissionGrant" */
-  readonly delete_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
-  /** delete single row from the table: "content.UploadableElementPermissionGrant" */
-  readonly delete_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
-  /** delete single row from the table: "content.UploadableElement" */
-  readonly delete_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
   /** delete data from the table: "content.Uploader" */
   readonly delete_content_Uploader?: Maybe<Content_Uploader_Mutation_Response>;
   /** delete single row from the table: "content.Uploader" */
@@ -14630,14 +13929,6 @@ export type Mutation_Root = {
   readonly insert_content_ItemType_one?: Maybe<Content_ItemType>;
   /** insert a single row into the table: "content.Item" */
   readonly insert_content_Item_one?: Maybe<Content_Item>;
-  /** insert data into the table: "content.UploadableElement" */
-  readonly insert_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
-  /** insert data into the table: "content.UploadableElementPermissionGrant" */
-  readonly insert_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
-  /** insert a single row into the table: "content.UploadableElementPermissionGrant" */
-  readonly insert_content_UploadableElementPermissionGrant_one?: Maybe<Content_UploadableElementPermissionGrant>;
-  /** insert a single row into the table: "content.UploadableElement" */
-  readonly insert_content_UploadableElement_one?: Maybe<Content_UploadableElement>;
   /** insert data into the table: "content.Uploader" */
   readonly insert_content_Uploader?: Maybe<Content_Uploader_Mutation_Response>;
   /** insert a single row into the table: "content.Uploader" */
@@ -14995,14 +14286,6 @@ export type Mutation_Root = {
   readonly update_content_ItemType_by_pk?: Maybe<Content_ItemType>;
   /** update single row of the table: "content.Item" */
   readonly update_content_Item_by_pk?: Maybe<Content_Item>;
-  /** update data of the table: "content.UploadableElement" */
-  readonly update_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
-  /** update data of the table: "content.UploadableElementPermissionGrant" */
-  readonly update_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
-  /** update single row of the table: "content.UploadableElementPermissionGrant" */
-  readonly update_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
-  /** update single row of the table: "content.UploadableElement" */
-  readonly update_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
   /** update data of the table: "content.Uploader" */
   readonly update_content_Uploader?: Maybe<Content_Uploader_Mutation_Response>;
   /** update single row of the table: "content.Uploader" */
@@ -15637,30 +14920,6 @@ export type Mutation_RootDelete_Content_ItemType_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Content_Item_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Content_UploadableElementArgs = {
-  where: Content_UploadableElement_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Content_UploadableElementPermissionGrantArgs = {
-  where: Content_UploadableElementPermissionGrant_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Content_UploadableElementPermissionGrant_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Content_UploadableElement_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -16779,34 +16038,6 @@ export type Mutation_RootInsert_Content_ItemType_OneArgs = {
 export type Mutation_RootInsert_Content_Item_OneArgs = {
   object: Content_Item_Insert_Input;
   on_conflict?: Maybe<Content_Item_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Content_UploadableElementArgs = {
-  objects: ReadonlyArray<Content_UploadableElement_Insert_Input>;
-  on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Content_UploadableElementPermissionGrantArgs = {
-  objects: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input>;
-  on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Content_UploadableElementPermissionGrant_OneArgs = {
-  object: Content_UploadableElementPermissionGrant_Insert_Input;
-  on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Content_UploadableElement_OneArgs = {
-  object: Content_UploadableElement_Insert_Input;
-  on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
 };
 
 
@@ -18066,6 +17297,7 @@ export type Mutation_RootUpdate_Content_ElementArgs = {
   _delete_at_path?: Maybe<Content_Element_Delete_At_Path_Input>;
   _delete_elem?: Maybe<Content_Element_Delete_Elem_Input>;
   _delete_key?: Maybe<Content_Element_Delete_Key_Input>;
+  _inc?: Maybe<Content_Element_Inc_Input>;
   _prepend?: Maybe<Content_Element_Prepend_Input>;
   _set?: Maybe<Content_Element_Set_Input>;
   where: Content_Element_Bool_Exp;
@@ -18106,6 +17338,7 @@ export type Mutation_RootUpdate_Content_Element_By_PkArgs = {
   _delete_at_path?: Maybe<Content_Element_Delete_At_Path_Input>;
   _delete_elem?: Maybe<Content_Element_Delete_Elem_Input>;
   _delete_key?: Maybe<Content_Element_Delete_Key_Input>;
+  _inc?: Maybe<Content_Element_Inc_Input>;
   _prepend?: Maybe<Content_Element_Prepend_Input>;
   _set?: Maybe<Content_Element_Set_Input>;
   pk_columns: Content_Element_Pk_Columns_Input;
@@ -18193,36 +17426,6 @@ export type Mutation_RootUpdate_Content_ItemType_By_PkArgs = {
 export type Mutation_RootUpdate_Content_Item_By_PkArgs = {
   _set?: Maybe<Content_Item_Set_Input>;
   pk_columns: Content_Item_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Content_UploadableElementArgs = {
-  _inc?: Maybe<Content_UploadableElement_Inc_Input>;
-  _set?: Maybe<Content_UploadableElement_Set_Input>;
-  where: Content_UploadableElement_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Content_UploadableElementPermissionGrantArgs = {
-  _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
-  where: Content_UploadableElementPermissionGrant_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Content_UploadableElementPermissionGrant_By_PkArgs = {
-  _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
-  pk_columns: Content_UploadableElementPermissionGrant_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Content_UploadableElement_By_PkArgs = {
-  _inc?: Maybe<Content_UploadableElement_Inc_Input>;
-  _set?: Maybe<Content_UploadableElement_Set_Input>;
-  pk_columns: Content_UploadableElement_Pk_Columns_Input;
 };
 
 
@@ -20556,10 +19759,6 @@ export type Query_Root = {
   readonly conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
   /** fetch data from the table: "content.Element" */
   readonly content_Element: ReadonlyArray<Content_Element>;
-  /** fetch data from the table: "content.ElementByAccessToken" */
-  readonly content_ElementByAccessToken: ReadonlyArray<Content_ElementByAccessToken>;
-  /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
-  readonly content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
   /** fetch data from the table: "content.ElementPermissionGrant" */
   readonly content_ElementPermissionGrant: ReadonlyArray<Content_ElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
@@ -20606,18 +19805,6 @@ export type Query_Root = {
   readonly content_Item_aggregate: Content_Item_Aggregate;
   /** fetch data from the table: "content.Item" using primary key columns */
   readonly content_Item_by_pk?: Maybe<Content_Item>;
-  /** fetch data from the table: "content.UploadableElement" */
-  readonly content_UploadableElement: ReadonlyArray<Content_UploadableElement>;
-  /** fetch data from the table: "content.UploadableElementPermissionGrant" */
-  readonly content_UploadableElementPermissionGrant: ReadonlyArray<Content_UploadableElementPermissionGrant>;
-  /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
-  readonly content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
-  /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
-  readonly content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
-  /** fetch aggregated fields from the table: "content.UploadableElement" */
-  readonly content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
-  /** fetch data from the table: "content.UploadableElement" using primary key columns */
-  readonly content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
   /** fetch data from the table: "content.Uploader" */
   readonly content_Uploader: ReadonlyArray<Content_Uploader>;
   /** fetch aggregated fields from the table: "content.Uploader" */
@@ -21691,24 +20878,6 @@ export type Query_RootContent_ElementArgs = {
 };
 
 
-export type Query_RootContent_ElementByAccessTokenArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Order_By>>;
-  where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
-};
-
-
-export type Query_RootContent_ElementByAccessToken_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Order_By>>;
-  where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
-};
-
-
 export type Query_RootContent_ElementPermissionGrantArgs = {
   distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21880,52 +21049,6 @@ export type Query_RootContent_Item_AggregateArgs = {
 
 
 export type Query_RootContent_Item_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootContent_UploadableElementArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
-  where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-
-export type Query_RootContent_UploadableElementPermissionGrantArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
-  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-
-export type Query_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
-  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-
-export type Query_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootContent_UploadableElement_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
-  where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-
-export type Query_RootContent_UploadableElement_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -25761,6 +24884,7 @@ export type Room_Room = {
   readonly chatId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting>;
+  readonly colour: Scalars['String'];
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -26236,6 +25360,7 @@ export type Room_Room_Bool_Exp = {
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
+  readonly colour?: Maybe<String_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -26287,6 +25412,7 @@ export type Room_Room_Insert_Input = {
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
@@ -26319,6 +25445,7 @@ export type Room_Room_Max_Fields = {
   readonly __typename?: 'room_Room_max_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -26335,6 +25462,7 @@ export type Room_Room_Max_Fields = {
 export type Room_Room_Max_Order_By = {
   readonly capacity?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -26352,6 +25480,7 @@ export type Room_Room_Min_Fields = {
   readonly __typename?: 'room_Room_min_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -26368,6 +25497,7 @@ export type Room_Room_Min_Fields = {
 export type Room_Room_Min_Order_By = {
   readonly capacity?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -26412,6 +25542,7 @@ export type Room_Room_Order_By = {
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
@@ -26453,6 +25584,8 @@ export enum Room_Room_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
+  Colour = 'colour',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'created_at',
@@ -26483,6 +25616,7 @@ export type Room_Room_Set_Input = {
   readonly backendName?: Maybe<Room_Backend_Enum>;
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly currentModeName?: Maybe<Room_Mode_Enum>;
@@ -26557,6 +25691,8 @@ export enum Room_Room_Update_Column {
   Capacity = 'capacity',
   /** column name */
   ChatId = 'chatId',
+  /** column name */
+  Colour = 'colour',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -29931,10 +29067,6 @@ export type Subscription_Root = {
   readonly conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
   /** fetch data from the table: "content.Element" */
   readonly content_Element: ReadonlyArray<Content_Element>;
-  /** fetch data from the table: "content.ElementByAccessToken" */
-  readonly content_ElementByAccessToken: ReadonlyArray<Content_ElementByAccessToken>;
-  /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
-  readonly content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
   /** fetch data from the table: "content.ElementPermissionGrant" */
   readonly content_ElementPermissionGrant: ReadonlyArray<Content_ElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
@@ -29981,18 +29113,6 @@ export type Subscription_Root = {
   readonly content_Item_aggregate: Content_Item_Aggregate;
   /** fetch data from the table: "content.Item" using primary key columns */
   readonly content_Item_by_pk?: Maybe<Content_Item>;
-  /** fetch data from the table: "content.UploadableElement" */
-  readonly content_UploadableElement: ReadonlyArray<Content_UploadableElement>;
-  /** fetch data from the table: "content.UploadableElementPermissionGrant" */
-  readonly content_UploadableElementPermissionGrant: ReadonlyArray<Content_UploadableElementPermissionGrant>;
-  /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
-  readonly content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
-  /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
-  readonly content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
-  /** fetch aggregated fields from the table: "content.UploadableElement" */
-  readonly content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
-  /** fetch data from the table: "content.UploadableElement" using primary key columns */
-  readonly content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
   /** fetch data from the table: "content.Uploader" */
   readonly content_Uploader: ReadonlyArray<Content_Uploader>;
   /** fetch aggregated fields from the table: "content.Uploader" */
@@ -31063,24 +30183,6 @@ export type Subscription_RootContent_ElementArgs = {
 };
 
 
-export type Subscription_RootContent_ElementByAccessTokenArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Order_By>>;
-  where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
-};
-
-
-export type Subscription_RootContent_ElementByAccessToken_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Order_By>>;
-  where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
-};
-
-
 export type Subscription_RootContent_ElementPermissionGrantArgs = {
   distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -31252,52 +30354,6 @@ export type Subscription_RootContent_Item_AggregateArgs = {
 
 
 export type Subscription_RootContent_Item_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootContent_UploadableElementArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
-  where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-
-export type Subscription_RootContent_UploadableElementPermissionGrantArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
-  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-
-export type Subscription_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElementPermissionGrant_Order_By>>;
-  where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-
-export type Subscription_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootContent_UploadableElement_AggregateArgs = {
-  distinct_on?: Maybe<ReadonlyArray<Content_UploadableElement_Select_Column>>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  order_by?: Maybe<ReadonlyArray<Content_UploadableElement_Order_By>>;
-  where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-
-export type Subscription_RootContent_UploadableElement_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -36338,7 +35394,7 @@ export type PreshowChecklistQueryVariables = Exact<{
 }>;
 
 
-export type PreshowChecklistQuery = { readonly __typename?: 'query_root', readonly requiredProgramPeopleNotLinkedToRegistrant: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly requiredProgramPeopleNotRegistered: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly submissionsNotReceived: ReadonlyArray<{ readonly __typename?: 'content_UploadableElement', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }>, readonly livestreamEventsWithoutRegisteredPresenter: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly livestreamEventsWithoutRegisteredChair: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithoutVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly zoomEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly allLiveEventsWithPeople: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeopleWithRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }>, readonly itemPeopleWithoutRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly personId: any }> }>, readonly emptyExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly emptyTags: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }>, readonly exhibitionEventsWithoutExhibition: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly exhibitionEventsWithoutDiscussionRooms: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> }>, readonly liveEventsWithoutContent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly overlappingEvents: ReadonlyArray<{ readonly __typename?: 'schedule_OverlappingEvents', readonly eventX?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly eventY?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any> }> }>, readonly shortEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly roomsWithStreams: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly livestreamDuration?: Maybe<{ readonly __typename?: 'room_LivestreamDurations', readonly sum?: Maybe<any> }> }>, readonly eventsWithNegativeDuration: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
+export type PreshowChecklistQuery = { readonly __typename?: 'query_root', readonly requiredProgramPeopleNotLinkedToRegistrant: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly requiredProgramPeopleNotRegistered: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly submissionsNotReceived: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }>, readonly livestreamEventsWithoutRegisteredPresenter: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly livestreamEventsWithoutRegisteredChair: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithoutVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly zoomEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly allLiveEventsWithPeople: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeopleWithRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }>, readonly itemPeopleWithoutRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly personId: any }> }>, readonly emptyExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly emptyTags: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }>, readonly exhibitionEventsWithoutExhibition: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly exhibitionEventsWithoutDiscussionRooms: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> }>, readonly liveEventsWithoutContent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly overlappingEvents: ReadonlyArray<{ readonly __typename?: 'schedule_OverlappingEvents', readonly eventX?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly eventY?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any> }> }>, readonly shortEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly roomsWithStreams: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly livestreamDuration?: Maybe<{ readonly __typename?: 'room_LivestreamDurations', readonly sum?: Maybe<any> }> }>, readonly eventsWithNegativeDuration: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
 
 export type ManageContent_ItemTagFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any };
 
@@ -36353,12 +35409,7 @@ export type ManageContent_OriginatingDataFragment = { readonly __typename?: 'con
 
 export type ManageContent_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string };
 
-export type ManageContent_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly isHidden: boolean, readonly updatedAt: any };
-
-export type ManageContent_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly conferenceId: any, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly hasBeenUploaded?: Maybe<boolean>, readonly element?: Maybe<(
-    { readonly __typename?: 'content_Element' }
-    & ManageContent_ElementFragment
-  )> };
+export type ManageContent_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly updatedAt: any, readonly conferenceId: any };
 
 export type ManageContent_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> };
 
@@ -36396,9 +35447,6 @@ export type ManageContent_SelectItemQuery = { readonly __typename?: 'query_root'
   )>, readonly content_Element: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
     & ManageContent_ElementFragment
-  )>, readonly content_UploadableElement: ReadonlyArray<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & ManageContent_UploadableElementFragment
   )> };
 
 export type ManageContent_SelectItemPeopleQueryVariables = Exact<{
@@ -36469,14 +35517,12 @@ export type ManageContent_SelectAllExhibitionsQuery = { readonly __typename?: 'q
     & ManageContent_ExhibitionFragment
   )> };
 
-export type UploaderInfoFragment = { readonly __typename?: 'content_Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly uploadableElementId: any };
+export type UploaderInfoFragment = { readonly __typename?: 'content_Uploader', readonly id: any, readonly conferenceId: any, readonly email: string, readonly emailsSentCount: number, readonly name: string, readonly elementId: any };
 
-export type UploadableElementInfoFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly typeName: Content_ElementType_Enum, readonly conferenceId: any, readonly itemId: any, readonly uploadsRemaining?: Maybe<number>, readonly originatingDataId?: Maybe<any>, readonly uploaders: ReadonlyArray<(
+export type ElementInfoFragment = { readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly uploaders: ReadonlyArray<(
     { readonly __typename?: 'content_Uploader' }
     & UploaderInfoFragment
   )> };
-
-export type ElementInfoFragment = { readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly uploadableId?: Maybe<any>, readonly originatingDataId?: Maybe<any> };
 
 export type OriginatingDataInfoFragment = { readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> };
 
@@ -36488,10 +35534,7 @@ export type ItemExhibitionInfoFragment = { readonly __typename?: 'content_ItemEx
 
 export type ItemPersonInfoFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly conferenceId: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string };
 
-export type ItemFullNestedInfoFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly uploadableElements: ReadonlyArray<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & UploadableElementInfoFragment
-  )>, readonly elements: ReadonlyArray<(
+export type ItemFullNestedInfoFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
     & ElementInfoFragment
   )>, readonly itemTags: ReadonlyArray<(
@@ -36622,7 +35665,6 @@ export type DeleteProgramPeopleMutation = { readonly __typename?: 'mutation_root
 
 export type UpdateItemMutationVariables = Exact<{
   newItems: ReadonlyArray<Content_Element_Insert_Input> | Content_Element_Insert_Input;
-  newUploadableItems: ReadonlyArray<Content_UploadableElement_Insert_Input> | Content_UploadableElement_Insert_Input;
   newGroupTags: ReadonlyArray<Content_ItemTag_Insert_Input> | Content_ItemTag_Insert_Input;
   newGroupExhibitions: ReadonlyArray<Content_ItemExhibition_Insert_Input> | Content_ItemExhibition_Insert_Input;
   groupId: Scalars['uuid'];
@@ -36631,7 +35673,6 @@ export type UpdateItemMutationVariables = Exact<{
   shortTitle?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   deleteItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-  deleteUploadableItemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   deleteGroupTagIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   deleteGroupExhibitionIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   newUploaders: ReadonlyArray<Content_Uploader_Insert_Input> | Content_Uploader_Insert_Input;
@@ -36644,9 +35685,6 @@ export type UpdateItemMutationVariables = Exact<{
 export type UpdateItemMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'content_Element' }
       & ElementInfoFragment
-    )> }>, readonly insert_content_UploadableElement?: Maybe<{ readonly __typename?: 'content_UploadableElement_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'content_UploadableElement' }
-      & UploadableElementInfoFragment
     )> }>, readonly insert_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'content_ItemTag' }
       & ItemTagInfoFragment
@@ -36662,7 +35700,7 @@ export type UpdateItemMutation = { readonly __typename?: 'mutation_root', readon
     )> }>, readonly update_content_Item_by_pk?: Maybe<(
     { readonly __typename?: 'content_Item' }
     & ItemFullNestedInfoFragment
-  )>, readonly delete_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any }> }>, readonly delete_content_UploadableElement?: Maybe<{ readonly __typename?: 'content_UploadableElement_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_UploadableElement', readonly id: any }> }>, readonly delete_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any }> }>, readonly delete_content_ItemExhibition?: Maybe<{ readonly __typename?: 'content_ItemExhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any }> }>, readonly delete_content_Uploader?: Maybe<{ readonly __typename?: 'content_Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> }>, readonly delete_content_ItemProgramPerson?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any }> }> };
+  )>, readonly delete_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any }> }>, readonly delete_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any }> }>, readonly delete_content_ItemExhibition?: Maybe<{ readonly __typename?: 'content_ItemExhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any }> }>, readonly delete_content_Uploader?: Maybe<{ readonly __typename?: 'content_Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> }>, readonly delete_content_ItemProgramPerson?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any }> }> };
 
 export type UpdateElementMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -36673,27 +35711,13 @@ export type UpdateElementMutationVariables = Exact<{
   isHidden: Scalars['Boolean'];
   originatingDataId?: Maybe<Scalars['uuid']>;
   uploadableId?: Maybe<Scalars['uuid']>;
+  uploadsRemaining?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type UpdateElementMutation = { readonly __typename?: 'mutation_root', readonly update_content_Element_by_pk?: Maybe<(
     { readonly __typename?: 'content_Element' }
     & ElementInfoFragment
-  )> };
-
-export type UpdateUploadableElementMutationVariables = Exact<{
-  id: Scalars['uuid'];
-  typeName: Content_ElementType_Enum;
-  name: Scalars['String'];
-  isHidden: Scalars['Boolean'];
-  uploadsRemaining?: Maybe<Scalars['Int']>;
-  originatingDataId?: Maybe<Scalars['uuid']>;
-}>;
-
-
-export type UpdateUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly update_content_UploadableElement_by_pk?: Maybe<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & UploadableElementInfoFragment
   )> };
 
 export type UpdateUploaderMutationVariables = Exact<{
@@ -36799,9 +35823,7 @@ export type CombineVideosModal_GetElementsQueryVariables = Exact<{
 
 export type CombineVideosModal_GetElementsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly createdAt: any, readonly itemId: any, readonly data: any, readonly name: string }> };
 
-export type SEoUm_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
-
-export type SEoUm_UploadableFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly hasBeenUploaded?: Maybe<boolean>, readonly itemId: any, readonly itemTitle?: Maybe<string>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }>, readonly element?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any }> };
+export type SEoUm_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string }, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> };
 
 export type SEoUm_InfosQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -36811,9 +35833,6 @@ export type SEoUm_InfosQueryVariables = Exact<{
 export type SEoUm_InfosQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
     & SEoUm_ElementFragment
-  )>, readonly content_UploadableElement: ReadonlyArray<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & SEoUm_UploadableFragment
   )> };
 
 export type ManageContent_DeleteElementMutationVariables = Exact<{
@@ -36834,28 +35853,10 @@ export type ManageContent_UpdateElementMutation = { readonly __typename?: 'mutat
     & ManageContent_ElementFragment
   )> };
 
-export type ManageContent_DeleteUploadableElementMutationVariables = Exact<{
-  uploadableElementId: Scalars['uuid'];
-}>;
-
-
-export type ManageContent_DeleteUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly delete_content_UploadableElement_by_pk?: Maybe<{ readonly __typename?: 'content_UploadableElement', readonly id: any }> };
-
-export type ManageContent_UpdateUploadableElementMutationVariables = Exact<{
-  uploadableElementId: Scalars['uuid'];
-  uploadableElement: Content_UploadableElement_Set_Input;
-}>;
-
-
-export type ManageContent_UpdateUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly update_content_UploadableElement_by_pk?: Maybe<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & ManageContent_UploadableElementFragment
-  )> };
-
-export type ManageContent_UploaderFragment = { readonly __typename?: 'content_Uploader', readonly id: any, readonly uploadableElementId: any, readonly email: string, readonly name: string, readonly emailsSentCount: number, readonly conferenceId: any };
+export type ManageContent_UploaderFragment = { readonly __typename?: 'content_Uploader', readonly id: any, readonly elementId: any, readonly email: string, readonly name: string, readonly emailsSentCount: number, readonly conferenceId: any };
 
 export type ManageContent_SelectUploadersQueryVariables = Exact<{
-  uploadableElementId: Scalars['uuid'];
+  elementId: Scalars['uuid'];
 }>;
 
 
@@ -36971,16 +35972,6 @@ export type AddContentMenu_CreateElementMutation = { readonly __typename?: 'muta
     & ManageContent_ElementFragment
   )> };
 
-export type AddContentMenu_CreateUploadableElementMutationVariables = Exact<{
-  object: Content_UploadableElement_Insert_Input;
-}>;
-
-
-export type AddContentMenu_CreateUploadableElementMutation = { readonly __typename?: 'mutation_root', readonly insert_content_UploadableElement_one?: Maybe<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & ManageContent_UploadableElementFragment
-  )> };
-
 export type Item_CreateRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   itemId: Scalars['uuid'];
@@ -37062,18 +36053,12 @@ export type ManageContent_DeleteTagsMutation = { readonly __typename?: 'mutation
 
 export type ElementSecurity_ElementPgFragment = { readonly __typename?: 'content_ElementPermissionGrant', readonly id: any, readonly permissionSetId: any, readonly conferenceSlug: string, readonly groupId?: Maybe<any>, readonly entityId?: Maybe<any> };
 
-export type ElementSecurity_UploadablePgFragment = { readonly __typename?: 'content_UploadableElementPermissionGrant', readonly id: any, readonly permissionSetId: any, readonly conferenceSlug: string, readonly groupId?: Maybe<any>, readonly entityId?: Maybe<any>, readonly entity?: Maybe<{ readonly __typename?: 'content_UploadableElement', readonly id: any, readonly element?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly permissionGrants: ReadonlyArray<(
-        { readonly __typename?: 'content_ElementPermissionGrant' }
-        & ElementSecurity_ElementPgFragment
-      )> }> }> };
-
 export type ElementSecurity_PermissionSetFragment = { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string };
 
 export type ElementSecurity_GroupFragment = { readonly __typename?: 'permissions_Group', readonly id: any, readonly name: string, readonly enabled: boolean, readonly includeUnauthenticated: boolean };
 
 export type ElementSecurity_SelectGrantsQueryVariables = Exact<{
   elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-  uploadableIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   conferenceId: Scalars['uuid'];
 }>;
 
@@ -37081,9 +36066,6 @@ export type ElementSecurity_SelectGrantsQueryVariables = Exact<{
 export type ElementSecurity_SelectGrantsQuery = { readonly __typename?: 'query_root', readonly content_ElementPermissionGrant: ReadonlyArray<(
     { readonly __typename?: 'content_ElementPermissionGrant' }
     & ElementSecurity_ElementPgFragment
-  )>, readonly content_UploadableElementPermissionGrant: ReadonlyArray<(
-    { readonly __typename?: 'content_UploadableElementPermissionGrant' }
-    & ElementSecurity_UploadablePgFragment
   )>, readonly permissions_Role: ReadonlyArray<(
     { readonly __typename?: 'permissions_Role' }
     & ElementSecurity_PermissionSetFragment
@@ -37094,25 +36076,20 @@ export type ElementSecurity_SelectGrantsQuery = { readonly __typename?: 'query_r
 
 export type ElementSecurity_InsertGrantsMutationVariables = Exact<{
   elementGrants: ReadonlyArray<Content_ElementPermissionGrant_Insert_Input> | Content_ElementPermissionGrant_Insert_Input;
-  uploadableGrants: ReadonlyArray<Content_UploadableElementPermissionGrant_Insert_Input> | Content_UploadableElementPermissionGrant_Insert_Input;
 }>;
 
 
 export type ElementSecurity_InsertGrantsMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_ElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<(
       { readonly __typename?: 'content_ElementPermissionGrant' }
       & ElementSecurity_ElementPgFragment
-    )> }>, readonly insert_content_UploadableElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<(
-      { readonly __typename?: 'content_UploadableElementPermissionGrant' }
-      & ElementSecurity_UploadablePgFragment
     )> }> };
 
 export type ElementSecurity_DeleteGrantsMutationVariables = Exact<{
   elementGrantIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-  uploadableGrantIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type ElementSecurity_DeleteGrantsMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_ElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ElementPermissionGrant', readonly id: any }> }>, readonly delete_content_UploadableElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_UploadableElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_UploadableElementPermissionGrant', readonly id: any }> }> };
+export type ElementSecurity_DeleteGrantsMutation = { readonly __typename?: 'mutation_root', readonly delete_content_ElementPermissionGrant?: Maybe<{ readonly __typename?: 'content_ElementPermissionGrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ElementPermissionGrant', readonly id: any }> }> };
 
 export type InsertSubmissionRequestEmailJobsMutationVariables = Exact<{
   objs: ReadonlyArray<Job_Queues_SubmissionRequestEmailJob_Insert_Input> | Job_Queues_SubmissionRequestEmailJob_Insert_Input;
@@ -37130,29 +36107,26 @@ export type SubmissionRequestsModalDataQueryVariables = Exact<{
 export type SubmissionRequestsModalDataQuery = { readonly __typename?: 'query_root', readonly conference_Configuration: ReadonlyArray<(
     { readonly __typename?: 'conference_Configuration' }
     & ConfigureEmailTemplates_ConferenceConfigurationFragment
-  )>, readonly content_UploadableElement: ReadonlyArray<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & SubmissionRequestsModal_UploadableElementFragment
+  )>, readonly content_Element: ReadonlyArray<(
+    { readonly __typename?: 'content_Element' }
+    & SubmissionRequestsModal_ElementFragment
   )> };
 
 export type SubmissionRequestsModal_ConferenceConfigurationFragment = { readonly __typename?: 'conference_Configuration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any };
 
-export type SubmissionRequestsModal_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly hasBeenUploaded?: Maybe<boolean>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string }> };
+export type SubmissionRequestsModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string }> };
 
 export type SubmissionsReviewModalDataQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type SubmissionsReviewModalDataQuery = { readonly __typename?: 'query_root', readonly content_UploadableElement: ReadonlyArray<(
-    { readonly __typename?: 'content_UploadableElement' }
-    & SubmissionsReviewModal_UploadableElementFragment
+export type SubmissionsReviewModalDataQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<(
+    { readonly __typename?: 'content_Element' }
+    & SubmissionsReviewModal_ElementFragment
   )> };
 
-export type SubmissionsReviewModal_UploadableElementFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly hasBeenUploaded?: Maybe<boolean>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string, readonly emailsSentCount: number }>, readonly element?: Maybe<(
-    { readonly __typename?: 'content_Element' }
-    & ElementDataFragment
-  )> };
+export type SubmissionsReviewModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string, readonly emailsSentCount: number }> };
 
 export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -38168,19 +37142,19 @@ export type GetElementQueryVariables = Exact<{
 }>;
 
 
-export type GetElementQuery = { readonly __typename?: 'query_root', readonly content_ElementByAccessToken: ReadonlyArray<{ readonly __typename?: 'content_ElementByAccessToken', readonly typeName?: Maybe<string>, readonly data?: Maybe<any>, readonly layoutData?: Maybe<any>, readonly name?: Maybe<string>, readonly id?: Maybe<any>, readonly itemTitle?: Maybe<string> }> };
+export type GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly id: any, readonly itemTitle?: Maybe<string> }> };
 
 export type SelectUploadableItemQueryVariables = Exact<{
   uploadableId: Scalars['uuid'];
 }>;
 
 
-export type SelectUploadableItemQuery = { readonly __typename?: 'query_root', readonly content_UploadableElement: ReadonlyArray<(
-    { readonly __typename?: 'content_UploadableElement' }
+export type SelectUploadableItemQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<(
+    { readonly __typename?: 'content_Element' }
     & UploadableItemFieldsFragment
   )> };
 
-export type UploadableItemFieldsFragment = { readonly __typename?: 'content_UploadableElement', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly conference: { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string } };
+export type UploadableItemFieldsFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly conference: { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string } };
 
 export type SubmitUploadableElementMutationVariables = Exact<{
   elementData: Scalars['jsonb'];
@@ -39327,29 +38301,17 @@ export const ManageContent_ItemFragmentDoc = gql`
 export const ManageContent_ElementFragmentDoc = gql`
     fragment ManageContent_Element on content_Element {
   id
+  itemId
   name
   typeName
   data
   layoutData
-  isHidden
-  updatedAt
-}
-    `;
-export const ManageContent_UploadableElementFragmentDoc = gql`
-    fragment ManageContent_UploadableElement on content_UploadableElement {
-  id
-  itemId
-  typeName
-  name
-  conferenceId
   uploadsRemaining
   isHidden
-  hasBeenUploaded
-  element {
-    ...ManageContent_Element
-  }
+  updatedAt
+  conferenceId
 }
-    ${ManageContent_ElementFragmentDoc}`;
+    `;
 export const ManageContent_ProgramPersonFragmentDoc = gql`
     fragment ManageContent_ProgramPerson on collection_ProgramPerson {
   id
@@ -39433,24 +38395,9 @@ export const UploaderInfoFragmentDoc = gql`
   email
   emailsSentCount
   name
-  uploadableElementId
+  elementId
 }
     `;
-export const UploadableElementInfoFragmentDoc = gql`
-    fragment UploadableElementInfo on content_UploadableElement {
-  id
-  name
-  isHidden
-  typeName
-  conferenceId
-  itemId
-  uploadsRemaining
-  uploaders {
-    ...UploaderInfo
-  }
-  originatingDataId
-}
-    ${UploaderInfoFragmentDoc}`;
 export const ElementInfoFragmentDoc = gql`
     fragment ElementInfo on content_Element {
   conferenceId
@@ -39461,10 +38408,13 @@ export const ElementInfoFragmentDoc = gql`
   isHidden
   layoutData
   name
-  uploadableId
   originatingDataId
+  uploadsRemaining
+  uploaders {
+    ...UploaderInfo
+  }
 }
-    `;
+    ${UploaderInfoFragmentDoc}`;
 export const ItemTagInfoFragmentDoc = gql`
     fragment ItemTagInfo on content_ItemTag {
   id
@@ -39499,9 +38449,6 @@ export const ItemFullNestedInfoFragmentDoc = gql`
   typeName
   title
   shortTitle
-  uploadableElements {
-    ...UploadableElementInfo
-  }
   elements {
     ...ElementInfo
   }
@@ -39523,8 +38470,7 @@ export const ItemFullNestedInfoFragmentDoc = gql`
     id
   }
 }
-    ${UploadableElementInfoFragmentDoc}
-${ElementInfoFragmentDoc}
+    ${ElementInfoFragmentDoc}
 ${ItemTagInfoFragmentDoc}
 ${ItemExhibitionInfoFragmentDoc}
 ${ItemPersonInfoFragmentDoc}`;
@@ -39557,28 +38503,15 @@ export const SEoUm_ElementFragmentDoc = gql`
     id
     title
   }
-}
-    `;
-export const SEoUm_UploadableFragmentDoc = gql`
-    fragment SEoUM_Uploadable on content_UploadableElement {
-  id
-  name
-  typeName
-  hasBeenUploaded
   uploaders {
     id
   }
-  element {
-    id
-  }
-  itemId
-  itemTitle
 }
     `;
 export const ManageContent_UploaderFragmentDoc = gql`
     fragment ManageContent_Uploader on content_Uploader {
   id
-  uploadableElementId
+  elementId
   email
   name
   emailsSentCount
@@ -39594,24 +38527,6 @@ export const ElementSecurity_ElementPgFragmentDoc = gql`
   entityId
 }
     `;
-export const ElementSecurity_UploadablePgFragmentDoc = gql`
-    fragment ElementSecurity_UploadablePG on content_UploadableElementPermissionGrant {
-  id
-  permissionSetId
-  conferenceSlug
-  groupId
-  entityId
-  entity {
-    id
-    element {
-      id
-      permissionGrants {
-        ...ElementSecurity_ElementPG
-      }
-    }
-  }
-}
-    ${ElementSecurity_ElementPgFragmentDoc}`;
 export const ElementSecurity_PermissionSetFragmentDoc = gql`
     fragment ElementSecurity_PermissionSet on permissions_Role {
   id
@@ -39634,15 +38549,13 @@ export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
   value
 }
     `;
-export const SubmissionRequestsModal_UploadableElementFragmentDoc = gql`
-    fragment SubmissionRequestsModal_UploadableElement on content_UploadableElement {
+export const SubmissionRequestsModal_ElementFragmentDoc = gql`
+    fragment SubmissionRequestsModal_Element on content_Element {
   id
   itemId
   typeName
   name
   uploadsRemaining
-  itemTitle
-  hasBeenUploaded
   uploaders {
     id
     email
@@ -39650,26 +38563,24 @@ export const SubmissionRequestsModal_UploadableElementFragmentDoc = gql`
   }
 }
     `;
-export const SubmissionsReviewModal_UploadableElementFragmentDoc = gql`
-    fragment SubmissionsReviewModal_UploadableElement on content_UploadableElement {
+export const SubmissionsReviewModal_ElementFragmentDoc = gql`
+    fragment SubmissionsReviewModal_Element on content_Element {
   id
   itemId
   typeName
   name
+  data
+  layoutData
   uploadsRemaining
   itemTitle
-  hasBeenUploaded
   uploaders {
     id
     email
     name
     emailsSentCount
   }
-  element {
-    ...ElementData
-  }
 }
-    ${ElementDataFragmentDoc}`;
+    `;
 export const ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc = gql`
     fragment ConfigureEmailTemplates_ConferenceConfiguration on conference_Configuration {
   id
@@ -40106,7 +39017,7 @@ export const PublicConferenceInfoFragmentDoc = gql`
 }
     ${GroupDataFragmentDoc}`;
 export const UploadableItemFieldsFragmentDoc = gql`
-    fragment UploadableItemFields on content_UploadableElement {
+    fragment UploadableItemFields on content_Element {
   id
   typeName
   name
@@ -43146,8 +42057,8 @@ export const PreshowChecklistDocument = gql`
     affiliation
     email
   }
-  submissionsNotReceived: content_UploadableElement(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {element: {}}}
+  submissionsNotReceived: content_Element(
+    where: {conferenceId: {_eq: $conferenceId}, data: {_eq: []}}
   ) {
     id
     name
@@ -43477,16 +42388,12 @@ export const ManageContent_SelectItemDocument = gql`
   content_Item_by_pk(id: $itemId) {
     ...ManageContent_ItemSecondary
   }
-  content_Element(where: {itemId: {_eq: $itemId}, uploadableId: {_is_null: true}}) {
+  content_Element(where: {itemId: {_eq: $itemId}}) {
     ...ManageContent_Element
-  }
-  content_UploadableElement(where: {itemId: {_eq: $itemId}}) {
-    ...ManageContent_UploadableElement
   }
 }
     ${ManageContent_ItemSecondaryFragmentDoc}
-${ManageContent_ElementFragmentDoc}
-${ManageContent_UploadableElementFragmentDoc}`;
+${ManageContent_ElementFragmentDoc}`;
 
 /**
  * __useManageContent_SelectItemQuery__
@@ -44154,15 +43061,10 @@ export type DeleteProgramPeopleMutationHookResult = ReturnType<typeof useDeleteP
 export type DeleteProgramPeopleMutationResult = Apollo.MutationResult<DeleteProgramPeopleMutation>;
 export type DeleteProgramPeopleMutationOptions = Apollo.BaseMutationOptions<DeleteProgramPeopleMutation, DeleteProgramPeopleMutationVariables>;
 export const UpdateItemDocument = gql`
-    mutation UpdateItem($newItems: [content_Element_insert_input!]!, $newUploadableItems: [content_UploadableElement_insert_input!]!, $newGroupTags: [content_ItemTag_insert_input!]!, $newGroupExhibitions: [content_ItemExhibition_insert_input!]!, $groupId: uuid!, $typeName: content_ItemType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteUploadableItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!, $deleteGroupExhibitionIds: [uuid!]!, $newUploaders: [content_Uploader_insert_input!]!, $deleteUploaderIds: [uuid!]!, $newGroupPeople: [content_ItemProgramPerson_insert_input!]!, $deleteGroupPeopleIds: [uuid!]!) {
+    mutation UpdateItem($newItems: [content_Element_insert_input!]!, $newGroupTags: [content_ItemTag_insert_input!]!, $newGroupExhibitions: [content_ItemExhibition_insert_input!]!, $groupId: uuid!, $typeName: content_ItemType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!, $deleteGroupExhibitionIds: [uuid!]!, $newUploaders: [content_Uploader_insert_input!]!, $deleteUploaderIds: [uuid!]!, $newGroupPeople: [content_ItemProgramPerson_insert_input!]!, $deleteGroupPeopleIds: [uuid!]!) {
   insert_content_Element(objects: $newItems) {
     returning {
       ...ElementInfo
-    }
-  }
-  insert_content_UploadableElement(objects: $newUploadableItems) {
-    returning {
-      ...UploadableElementInfo
     }
   }
   insert_content_ItemTag(objects: $newGroupTags) {
@@ -44196,11 +43098,6 @@ export const UpdateItemDocument = gql`
       id
     }
   }
-  delete_content_UploadableElement(where: {id: {_in: $deleteUploadableItemIds}}) {
-    returning {
-      id
-    }
-  }
   delete_content_ItemTag(
     where: {itemId: {_eq: $groupId}, tagId: {_in: $deleteGroupTagIds}}
   ) {
@@ -44225,7 +43122,6 @@ export const UpdateItemDocument = gql`
   }
 }
     ${ElementInfoFragmentDoc}
-${UploadableElementInfoFragmentDoc}
 ${ItemTagInfoFragmentDoc}
 ${ItemExhibitionInfoFragmentDoc}
 ${UploaderInfoFragmentDoc}
@@ -44247,7 +43143,6 @@ export type UpdateItemMutationFn = Apollo.MutationFunction<UpdateItemMutation, U
  * const [updateItemMutation, { data, loading, error }] = useUpdateItemMutation({
  *   variables: {
  *      newItems: // value for 'newItems'
- *      newUploadableItems: // value for 'newUploadableItems'
  *      newGroupTags: // value for 'newGroupTags'
  *      newGroupExhibitions: // value for 'newGroupExhibitions'
  *      groupId: // value for 'groupId'
@@ -44256,7 +43151,6 @@ export type UpdateItemMutationFn = Apollo.MutationFunction<UpdateItemMutation, U
  *      shortTitle: // value for 'shortTitle'
  *      title: // value for 'title'
  *      deleteItemIds: // value for 'deleteItemIds'
- *      deleteUploadableItemIds: // value for 'deleteUploadableItemIds'
  *      deleteGroupTagIds: // value for 'deleteGroupTagIds'
  *      deleteGroupExhibitionIds: // value for 'deleteGroupExhibitionIds'
  *      newUploaders: // value for 'newUploaders'
@@ -44274,10 +43168,10 @@ export type UpdateItemMutationHookResult = ReturnType<typeof useUpdateItemMutati
 export type UpdateItemMutationResult = Apollo.MutationResult<UpdateItemMutation>;
 export type UpdateItemMutationOptions = Apollo.BaseMutationOptions<UpdateItemMutation, UpdateItemMutationVariables>;
 export const UpdateElementDocument = gql`
-    mutation UpdateElement($id: uuid!, $typeName: content_ElementType_enum!, $layoutData: jsonb = null, $name: String!, $data: jsonb!, $isHidden: Boolean!, $originatingDataId: uuid = null, $uploadableId: uuid = null) {
+    mutation UpdateElement($id: uuid!, $typeName: content_ElementType_enum!, $layoutData: jsonb = null, $name: String!, $data: jsonb!, $isHidden: Boolean!, $originatingDataId: uuid = null, $uploadableId: uuid = null, $uploadsRemaining: Int = null) {
   update_content_Element_by_pk(
     pk_columns: {id: $id}
-    _set: {typeName: $typeName, layoutData: $layoutData, name: $name, data: $data, isHidden: $isHidden, originatingDataId: $originatingDataId, uploadableId: $uploadableId}
+    _set: {typeName: $typeName, layoutData: $layoutData, name: $name, data: $data, isHidden: $isHidden, originatingDataId: $originatingDataId, uploadsRemaining: $uploadsRemaining}
   ) {
     ...ElementInfo
   }
@@ -44306,6 +43200,7 @@ export type UpdateElementMutationFn = Apollo.MutationFunction<UpdateElementMutat
  *      isHidden: // value for 'isHidden'
  *      originatingDataId: // value for 'originatingDataId'
  *      uploadableId: // value for 'uploadableId'
+ *      uploadsRemaining: // value for 'uploadsRemaining'
  *   },
  * });
  */
@@ -44316,47 +43211,6 @@ export function useUpdateElementMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateElementMutationHookResult = ReturnType<typeof useUpdateElementMutation>;
 export type UpdateElementMutationResult = Apollo.MutationResult<UpdateElementMutation>;
 export type UpdateElementMutationOptions = Apollo.BaseMutationOptions<UpdateElementMutation, UpdateElementMutationVariables>;
-export const UpdateUploadableElementDocument = gql`
-    mutation UpdateUploadableElement($id: uuid!, $typeName: content_ElementType_enum!, $name: String!, $isHidden: Boolean!, $uploadsRemaining: Int = null, $originatingDataId: uuid = null) {
-  update_content_UploadableElement_by_pk(
-    pk_columns: {id: $id}
-    _set: {typeName: $typeName, name: $name, isHidden: $isHidden, originatingDataId: $originatingDataId, uploadsRemaining: $uploadsRemaining}
-  ) {
-    ...UploadableElementInfo
-  }
-}
-    ${UploadableElementInfoFragmentDoc}`;
-export type UpdateUploadableElementMutationFn = Apollo.MutationFunction<UpdateUploadableElementMutation, UpdateUploadableElementMutationVariables>;
-
-/**
- * __useUpdateUploadableElementMutation__
- *
- * To run a mutation, you first call `useUpdateUploadableElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateUploadableElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateUploadableElementMutation, { data, loading, error }] = useUpdateUploadableElementMutation({
- *   variables: {
- *      id: // value for 'id'
- *      typeName: // value for 'typeName'
- *      name: // value for 'name'
- *      isHidden: // value for 'isHidden'
- *      uploadsRemaining: // value for 'uploadsRemaining'
- *      originatingDataId: // value for 'originatingDataId'
- *   },
- * });
- */
-export function useUpdateUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUploadableElementMutation, UpdateUploadableElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateUploadableElementMutation, UpdateUploadableElementMutationVariables>(UpdateUploadableElementDocument, options);
-      }
-export type UpdateUploadableElementMutationHookResult = ReturnType<typeof useUpdateUploadableElementMutation>;
-export type UpdateUploadableElementMutationResult = Apollo.MutationResult<UpdateUploadableElementMutation>;
-export type UpdateUploadableElementMutationOptions = Apollo.BaseMutationOptions<UpdateUploadableElementMutation, UpdateUploadableElementMutationVariables>;
 export const UpdateUploaderDocument = gql`
     mutation UpdateUploader($id: uuid!, $email: String!, $name: String!) {
   update_content_Uploader_by_pk(
@@ -44715,17 +43569,11 @@ export type CombineVideosModal_GetElementsLazyQueryHookResult = ReturnType<typeo
 export type CombineVideosModal_GetElementsQueryResult = Apollo.QueryResult<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>;
 export const SEoUm_InfosDocument = gql`
     query SEoUM_Infos($itemIds: [uuid!]!) {
-  content_Element(
-    where: {itemId: {_in: $itemIds}, uploadableId: {_is_null: true}}
-  ) {
+  content_Element(where: {itemId: {_in: $itemIds}}) {
     ...SEoUM_Element
   }
-  content_UploadableElement(where: {itemId: {_in: $itemIds}}) {
-    ...SEoUM_Uploadable
-  }
 }
-    ${SEoUm_ElementFragmentDoc}
-${SEoUm_UploadableFragmentDoc}`;
+    ${SEoUm_ElementFragmentDoc}`;
 
 /**
  * __useSEoUm_InfosQuery__
@@ -44821,79 +43669,9 @@ export function useManageContent_UpdateElementMutation(baseOptions?: Apollo.Muta
 export type ManageContent_UpdateElementMutationHookResult = ReturnType<typeof useManageContent_UpdateElementMutation>;
 export type ManageContent_UpdateElementMutationResult = Apollo.MutationResult<ManageContent_UpdateElementMutation>;
 export type ManageContent_UpdateElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>;
-export const ManageContent_DeleteUploadableElementDocument = gql`
-    mutation ManageContent_DeleteUploadableElement($uploadableElementId: uuid!) {
-  delete_content_UploadableElement_by_pk(id: $uploadableElementId) {
-    id
-  }
-}
-    `;
-export type ManageContent_DeleteUploadableElementMutationFn = Apollo.MutationFunction<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>;
-
-/**
- * __useManageContent_DeleteUploadableElementMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteUploadableElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteUploadableElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteUploadableElementMutation, { data, loading, error }] = useManageContent_DeleteUploadableElementMutation({
- *   variables: {
- *      uploadableElementId: // value for 'uploadableElementId'
- *   },
- * });
- */
-export function useManageContent_DeleteUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>(ManageContent_DeleteUploadableElementDocument, options);
-      }
-export type ManageContent_DeleteUploadableElementMutationHookResult = ReturnType<typeof useManageContent_DeleteUploadableElementMutation>;
-export type ManageContent_DeleteUploadableElementMutationResult = Apollo.MutationResult<ManageContent_DeleteUploadableElementMutation>;
-export type ManageContent_DeleteUploadableElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteUploadableElementMutation, ManageContent_DeleteUploadableElementMutationVariables>;
-export const ManageContent_UpdateUploadableElementDocument = gql`
-    mutation ManageContent_UpdateUploadableElement($uploadableElementId: uuid!, $uploadableElement: content_UploadableElement_set_input!) {
-  update_content_UploadableElement_by_pk(
-    pk_columns: {id: $uploadableElementId}
-    _set: $uploadableElement
-  ) {
-    ...ManageContent_UploadableElement
-  }
-}
-    ${ManageContent_UploadableElementFragmentDoc}`;
-export type ManageContent_UpdateUploadableElementMutationFn = Apollo.MutationFunction<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>;
-
-/**
- * __useManageContent_UpdateUploadableElementMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateUploadableElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateUploadableElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateUploadableElementMutation, { data, loading, error }] = useManageContent_UpdateUploadableElementMutation({
- *   variables: {
- *      uploadableElementId: // value for 'uploadableElementId'
- *      uploadableElement: // value for 'uploadableElement'
- *   },
- * });
- */
-export function useManageContent_UpdateUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>(ManageContent_UpdateUploadableElementDocument, options);
-      }
-export type ManageContent_UpdateUploadableElementMutationHookResult = ReturnType<typeof useManageContent_UpdateUploadableElementMutation>;
-export type ManageContent_UpdateUploadableElementMutationResult = Apollo.MutationResult<ManageContent_UpdateUploadableElementMutation>;
-export type ManageContent_UpdateUploadableElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateUploadableElementMutation, ManageContent_UpdateUploadableElementMutationVariables>;
 export const ManageContent_SelectUploadersDocument = gql`
-    query ManageContent_SelectUploaders($uploadableElementId: uuid!) {
-  content_Uploader(where: {uploadableElementId: {_eq: $uploadableElementId}}) {
+    query ManageContent_SelectUploaders($elementId: uuid!) {
+  content_Uploader(where: {elementId: {_eq: $elementId}}) {
     ...ManageContent_Uploader
   }
 }
@@ -44911,7 +43689,7 @@ export const ManageContent_SelectUploadersDocument = gql`
  * @example
  * const { data, loading, error } = useManageContent_SelectUploadersQuery({
  *   variables: {
- *      uploadableElementId: // value for 'uploadableElementId'
+ *      elementId: // value for 'elementId'
  *   },
  * });
  */
@@ -45308,39 +44086,6 @@ export function useAddContentMenu_CreateElementMutation(baseOptions?: Apollo.Mut
 export type AddContentMenu_CreateElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateElementMutation>;
 export type AddContentMenu_CreateElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateElementMutation>;
 export type AddContentMenu_CreateElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
-export const AddContentMenu_CreateUploadableElementDocument = gql`
-    mutation AddContentMenu_CreateUploadableElement($object: content_UploadableElement_insert_input!) {
-  insert_content_UploadableElement_one(object: $object) {
-    ...ManageContent_UploadableElement
-  }
-}
-    ${ManageContent_UploadableElementFragmentDoc}`;
-export type AddContentMenu_CreateUploadableElementMutationFn = Apollo.MutationFunction<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>;
-
-/**
- * __useAddContentMenu_CreateUploadableElementMutation__
- *
- * To run a mutation, you first call `useAddContentMenu_CreateUploadableElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddContentMenu_CreateUploadableElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addContentMenuCreateUploadableElementMutation, { data, loading, error }] = useAddContentMenu_CreateUploadableElementMutation({
- *   variables: {
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useAddContentMenu_CreateUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>(AddContentMenu_CreateUploadableElementDocument, options);
-      }
-export type AddContentMenu_CreateUploadableElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateUploadableElementMutation>;
-export type AddContentMenu_CreateUploadableElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateUploadableElementMutation>;
-export type AddContentMenu_CreateUploadableElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateUploadableElementMutation, AddContentMenu_CreateUploadableElementMutationVariables>;
 export const Item_CreateRoomDocument = gql`
     mutation Item_CreateRoom($conferenceId: uuid!, $itemId: uuid!) {
   createItemRoom(conferenceId: $conferenceId, itemId: $itemId) {
@@ -45624,16 +44369,11 @@ export type ManageContent_DeleteTagsMutationHookResult = ReturnType<typeof useMa
 export type ManageContent_DeleteTagsMutationResult = Apollo.MutationResult<ManageContent_DeleteTagsMutation>;
 export type ManageContent_DeleteTagsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
 export const ElementSecurity_SelectGrantsDocument = gql`
-    query ElementSecurity_SelectGrants($elementIds: [uuid!]!, $uploadableIds: [uuid!]!, $conferenceId: uuid!) {
+    query ElementSecurity_SelectGrants($elementIds: [uuid!]!, $conferenceId: uuid!) {
   content_ElementPermissionGrant(
     where: {_or: [{_and: [{entityId: {_is_null: true}}, {conference: {id: {_eq: $conferenceId}}}]}, {entityId: {_in: $elementIds}}]}
   ) {
     ...ElementSecurity_ElementPG
-  }
-  content_UploadableElementPermissionGrant(
-    where: {_or: [{_and: [{entityId: {_is_null: true}}, {conference: {id: {_eq: $conferenceId}}}]}, {entityId: {_in: $uploadableIds}}]}
-  ) {
-    ...ElementSecurity_UploadablePG
   }
   permissions_Role(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ElementSecurity_PermissionSet
@@ -45643,7 +44383,6 @@ export const ElementSecurity_SelectGrantsDocument = gql`
   }
 }
     ${ElementSecurity_ElementPgFragmentDoc}
-${ElementSecurity_UploadablePgFragmentDoc}
 ${ElementSecurity_PermissionSetFragmentDoc}
 ${ElementSecurity_GroupFragmentDoc}`;
 
@@ -45660,7 +44399,6 @@ ${ElementSecurity_GroupFragmentDoc}`;
  * const { data, loading, error } = useElementSecurity_SelectGrantsQuery({
  *   variables: {
  *      elementIds: // value for 'elementIds'
- *      uploadableIds: // value for 'uploadableIds'
  *      conferenceId: // value for 'conferenceId'
  *   },
  * });
@@ -45677,7 +44415,7 @@ export type ElementSecurity_SelectGrantsQueryHookResult = ReturnType<typeof useE
 export type ElementSecurity_SelectGrantsLazyQueryHookResult = ReturnType<typeof useElementSecurity_SelectGrantsLazyQuery>;
 export type ElementSecurity_SelectGrantsQueryResult = Apollo.QueryResult<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>;
 export const ElementSecurity_InsertGrantsDocument = gql`
-    mutation ElementSecurity_InsertGrants($elementGrants: [content_ElementPermissionGrant_insert_input!]!, $uploadableGrants: [content_UploadableElementPermissionGrant_insert_input!]!) {
+    mutation ElementSecurity_InsertGrants($elementGrants: [content_ElementPermissionGrant_insert_input!]!) {
   insert_content_ElementPermissionGrant(
     objects: $elementGrants
     on_conflict: {constraint: ElementPermissionGrant_permissionSetId_groupId_entityId_key, update_columns: []}
@@ -45686,17 +44424,8 @@ export const ElementSecurity_InsertGrantsDocument = gql`
       ...ElementSecurity_ElementPG
     }
   }
-  insert_content_UploadableElementPermissionGrant(
-    objects: $uploadableGrants
-    on_conflict: {constraint: UploadableElementPermissionGr_permissionSetId_groupId_entit_key, update_columns: []}
-  ) {
-    returning {
-      ...ElementSecurity_UploadablePG
-    }
-  }
 }
-    ${ElementSecurity_ElementPgFragmentDoc}
-${ElementSecurity_UploadablePgFragmentDoc}`;
+    ${ElementSecurity_ElementPgFragmentDoc}`;
 export type ElementSecurity_InsertGrantsMutationFn = Apollo.MutationFunction<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>;
 
 /**
@@ -45713,7 +44442,6 @@ export type ElementSecurity_InsertGrantsMutationFn = Apollo.MutationFunction<Ele
  * const [elementSecurityInsertGrantsMutation, { data, loading, error }] = useElementSecurity_InsertGrantsMutation({
  *   variables: {
  *      elementGrants: // value for 'elementGrants'
- *      uploadableGrants: // value for 'uploadableGrants'
  *   },
  * });
  */
@@ -45725,15 +44453,8 @@ export type ElementSecurity_InsertGrantsMutationHookResult = ReturnType<typeof u
 export type ElementSecurity_InsertGrantsMutationResult = Apollo.MutationResult<ElementSecurity_InsertGrantsMutation>;
 export type ElementSecurity_InsertGrantsMutationOptions = Apollo.BaseMutationOptions<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>;
 export const ElementSecurity_DeleteGrantsDocument = gql`
-    mutation ElementSecurity_DeleteGrants($elementGrantIds: [uuid!]!, $uploadableGrantIds: [uuid!]!) {
+    mutation ElementSecurity_DeleteGrants($elementGrantIds: [uuid!]!) {
   delete_content_ElementPermissionGrant(where: {id: {_in: $elementGrantIds}}) {
-    returning {
-      id
-    }
-  }
-  delete_content_UploadableElementPermissionGrant(
-    where: {id: {_in: $uploadableGrantIds}}
-  ) {
     returning {
       id
     }
@@ -45756,7 +44477,6 @@ export type ElementSecurity_DeleteGrantsMutationFn = Apollo.MutationFunction<Ele
  * const [elementSecurityDeleteGrantsMutation, { data, loading, error }] = useElementSecurity_DeleteGrantsMutation({
  *   variables: {
  *      elementGrantIds: // value for 'elementGrantIds'
- *      uploadableGrantIds: // value for 'uploadableGrantIds'
  *   },
  * });
  */
@@ -45805,12 +44525,12 @@ export const SubmissionRequestsModalDataDocument = gql`
   conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {
     ...ConfigureEmailTemplates_ConferenceConfiguration
   }
-  content_UploadableElement(where: {itemId: {_in: $itemIds}}) {
-    ...SubmissionRequestsModal_UploadableElement
+  content_Element(where: {itemId: {_in: $itemIds}}) {
+    ...SubmissionRequestsModal_Element
   }
 }
     ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}
-${SubmissionRequestsModal_UploadableElementFragmentDoc}`;
+${SubmissionRequestsModal_ElementFragmentDoc}`;
 
 /**
  * __useSubmissionRequestsModalDataQuery__
@@ -45842,11 +44562,11 @@ export type SubmissionRequestsModalDataLazyQueryHookResult = ReturnType<typeof u
 export type SubmissionRequestsModalDataQueryResult = Apollo.QueryResult<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>;
 export const SubmissionsReviewModalDataDocument = gql`
     query SubmissionsReviewModalData($itemIds: [uuid!]!) {
-  content_UploadableElement(where: {itemId: {_in: $itemIds}}) {
-    ...SubmissionsReviewModal_UploadableElement
+  content_Element(where: {itemId: {_in: $itemIds}}) {
+    ...SubmissionsReviewModal_Element
   }
 }
-    ${SubmissionsReviewModal_UploadableElementFragmentDoc}`;
+    ${SubmissionsReviewModal_ElementFragmentDoc}`;
 
 /**
  * __useSubmissionsReviewModalDataQuery__
@@ -49557,7 +48277,7 @@ export type UpdateSubtitlesMutationResult = Apollo.MutationResult<UpdateSubtitle
 export type UpdateSubtitlesMutationOptions = Apollo.BaseMutationOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
 export const GetElementDocument = gql`
     query GetElement($magicToken: String!) {
-  content_ElementByAccessToken(where: {accessToken: {_eq: $magicToken}}) {
+  content_Element(where: {accessToken: {_eq: $magicToken}}) {
     typeName
     data
     layoutData
@@ -49597,7 +48317,7 @@ export type GetElementLazyQueryHookResult = ReturnType<typeof useGetElementLazyQ
 export type GetElementQueryResult = Apollo.QueryResult<GetElementQuery, GetElementQueryVariables>;
 export const SelectUploadableItemDocument = gql`
     query SelectUploadableItem($uploadableId: uuid!) {
-  content_UploadableElement(where: {id: {_eq: $uploadableId}}) {
+  content_Element(where: {id: {_eq: $uploadableId}}) {
     ...UploadableItemFields
   }
 }

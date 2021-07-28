@@ -123,8 +123,8 @@ gql`
         conference_Configuration(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ConfigureEmailTemplates_ConferenceConfiguration
         }
-        content_UploadableElement(where: { itemId: { _in: $itemIds } }) {
-            ...SubmissionRequestsModal_UploadableElement
+        content_Element(where: { itemId: { _in: $itemIds } }) {
+            ...SubmissionRequestsModal_Element
         }
     }
 
@@ -135,14 +135,12 @@ gql`
         value
     }
 
-    fragment SubmissionRequestsModal_UploadableElement on content_UploadableElement {
+    fragment SubmissionRequestsModal_Element on content_Element {
         id
         itemId
         typeName
         name
         uploadsRemaining
-        itemTitle
-        hasBeenUploaded
         uploaders {
             id
             email

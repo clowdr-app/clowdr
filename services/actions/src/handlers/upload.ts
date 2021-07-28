@@ -41,7 +41,7 @@ import { insertEmails } from "./email";
 
 gql`
     query UploadableElement($accessToken: String!) {
-        content_UploadableElement(where: { accessToken: { _eq: $accessToken } }) {
+        content_Element(where: { accessToken: { _eq: $accessToken } }) {
             ...UploadableElementFields
             conference {
                 configurations(where: { key: { _eq: "UPLOAD_CUTOFF_TIMESTAMP" } }) {
@@ -52,7 +52,7 @@ gql`
         }
     }
 
-    fragment UploadableElementPermissionGrantFields on content_UploadableElementPermissionGrant {
+    fragment UploadableElementPermissionGrantFields on content_ElementPermissionGrant {
         id
         permissionSetId
         groupId
@@ -60,21 +60,17 @@ gql`
         conferenceSlug
     }
 
-    fragment UploadableElementFields on content_UploadableElement {
+    fragment UploadableElementFields on content_Element {
         id
         typeName
         accessToken
         name
         uploadsRemaining
         isHidden
+        data
         conference {
             id
             name
-        }
-        element {
-            id
-            data
-            typeName
         }
         item {
             id
@@ -85,34 +81,34 @@ gql`
         }
     }
 
-    mutation CreateElement(
-        $conferenceId: uuid!
-        $itemId: uuid!
-        $typeName: content_ElementType_enum!
-        $data: jsonb!
-        $isHidden: Boolean!
-        $layoutData: jsonb = null
-        $name: String!
-        $uploadableElementId: uuid!
-        $grants: [content_ElementPermissionGrant_insert_input!]!
-    ) {
-        insert_content_Element_one(
-            object: {
-                conferenceId: $conferenceId
-                itemId: $itemId
-                typeName: $typeName
-                data: $data
-                isHidden: $isHidden
-                layoutData: $layoutData
-                name: $name
-                uploadableId: $uploadableElementId
-                permissionGrants: { data: $grants }
-            }
-            on_conflict: { constraint: Element_requiredContentId_key, update_columns: data }
-        ) {
-            id
-        }
-    }
+    # TODO: Update element, not create new
+    # mutation CreateElement(
+    #     $conferenceId: uuid!
+    #     $itemId: uuid!
+    #     $typeName: content_ElementType_enum!
+    #     $data: jsonb!
+    #     $isHidden: Boolean!
+    #     $layoutData: jsonb = null
+    #     $name: String!
+    #     $elementId: uuid!
+    #     $grants: [content_ElementPermissionGrant_insert_input!]!
+    # ) {
+    #     insert_content_Element_one(
+    #         object: {
+    #             conferenceId: $conferenceId
+    #             itemId: $itemId
+    #             typeName: $typeName
+    #             data: $data
+    #             isHidden: $isHidden
+    #             layoutData: $layoutData
+    #             name: $name
+    #             permissionGrants: { data: $grants }
+    #         }
+    #         on_conflict: { constraint: Element_requiredContentId_key, update_columns: data }
+    #     ) {
+    #         id
+    #     }
+    # }
 `;
 
 async function checkS3Url(
@@ -272,8 +268,8 @@ async function getItemByToken(magicToken: string): Promise<ItemByToken | { error
 }
 
 gql`
-    query GetUploaders($uploadableElementId: uuid!) {
-        content_Uploader(where: { uploadableElement: { id: { _eq: $uploadableElementId } } }) {
+    query GetUploaders($elementId: uuid!) {
+        content_Uploader(where: { elementId: { _eq: $elementId } }) {
             name
             id
             email
@@ -283,7 +279,7 @@ gql`
 `;
 
 async function sendSubmittedEmail(
-    uploadableElementId: string,
+    elementId: string,
     uploadableElementName: string,
     itemTitle: string,
     conferenceName: string
@@ -291,7 +287,7 @@ async function sendSubmittedEmail(
     const uploaders = await apolloClient.query({
         query: GetUploadersDocument,
         variables: {
-            uploadableElementId,
+            elementId,
         },
     });
 
@@ -445,10 +441,7 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
 
     gql`
         mutation SetUploadableElementUploadsRemaining($id: uuid!, $uploadsRemaining: Int!) {
-            update_content_UploadableElement_by_pk(
-                pk_columns: { id: $id }
-                _set: { uploadsRemaining: $uploadsRemaining }
-            ) {
+            update_content_Element_by_pk(pk_columns: { id: $id }, _set: { uploadsRemaining: $uploadsRemaining }) {
                 id
             }
         }
@@ -561,7 +554,7 @@ gql`
         email
         emailsSentCount
         name
-        uploadableElement {
+        element {
             ...UploadableElementFields
         }
     }

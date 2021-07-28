@@ -72,9 +72,7 @@ gql`
             email
         }
 
-        submissionsNotReceived: content_UploadableElement(
-            where: { conferenceId: { _eq: $conferenceId }, _not: { element: {} } }
-        ) {
+        submissionsNotReceived: content_Element(where: { conferenceId: { _eq: $conferenceId }, data: { _eq: [] } }) {
             id
             name
             typeName
@@ -596,11 +594,9 @@ export default function ChecklistPage(): JSX.Element {
         const nonsyncedEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
             (event) =>
                 event.item &&
-                ![
-                    ...event.item.itemPeopleWithRegistrant,
-                    ...event.item.itemPeopleWithoutRegistrant,
-                ].every((itemPerson) =>
-                    event.eventPeople.some((eventPerson) => eventPerson.personId === itemPerson.personId)
+                ![...event.item.itemPeopleWithRegistrant, ...event.item.itemPeopleWithoutRegistrant].every(
+                    (itemPerson) =>
+                        event.eventPeople.some((eventPerson) => eventPerson.personId === itemPerson.personId)
                 )
         );
         return (

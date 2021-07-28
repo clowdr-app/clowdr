@@ -35513,8 +35513,6 @@ export type ConferenceLandingPageItemQuery = { readonly __typename?: 'query_root
 
 export type ProgramPersonDataFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } };
 
-export type ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum };
-
 export type ItemElements_GetItemQueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
@@ -35524,6 +35522,8 @@ export type ItemElements_GetItemQuery = { readonly __typename?: 'query_root', re
     { readonly __typename?: 'content_Item' }
     & ItemElements_ItemDataFragment
   )> };
+
+export type ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum };
 
 export type ItemElements_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }

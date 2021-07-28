@@ -14,6 +14,7 @@ jobs:
         uses: GavinRay97/hasura-ci-cd-action@v1.3
         with:
           PATH_TO_HASURA_PROJECT_ROOT: ./hasura
+          HASURA_CLI_VERSION: v1.3.3
           HASURA_ENDPOINT: ${{ secrets.HASURA_ENDPOINT_MAIN }}
           HASURA_ADMIN_SECRET: ${{ secrets.HASURA_ADMIN_SECRET_MAIN }}
           HASURA_PERSONAL_ACCESS_TOKEN: ${{ secrets.HASURA_PERSONAL_ACCESS_TOKEN_MAIN }}

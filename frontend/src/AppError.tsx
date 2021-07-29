@@ -8,7 +8,7 @@ export function AppError(props: PropsWithChildren<FallbackProps>): JSX.Element {
         <VStack m="24px" maxHeight="calc(100vh - 48px)" overflowY="auto">
             <Text fontSize="1.2em">Sorry, Clowdr ran into a problem. Please try refreshing the page.</Text>
             <Text pb="6px">If you report this error, please include the following details:</Text>
-            <VStack alignItems="left" p="8px" bgColor="#eee" maxH="80vh" overflowY="auto">
+            <VStack alignItems="left" p="8px" bgColor="#eee" maxH="80vh" overflowY="auto" maxWidth="100%">
                 <Code>
                     {props.error.name}: {props.error.message}
                 </Code>

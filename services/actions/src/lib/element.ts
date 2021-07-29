@@ -24,6 +24,17 @@ gql`
     }
 `;
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function extractLatestVersion(data: any): Maybe<ElementVersionData> {
+    if (!is<ElementDataBlob>(data)) {
+        return null;
+    }
+
+    const latestVersion = R.last(data);
+
+    return latestVersion ?? null;
+}
+
 export async function getLatestVersion(
     elementId: string
 ): Promise<{ latestVersion: Maybe<ElementVersionData>; typeName: Content_ElementType_Enum }> {
@@ -38,13 +49,10 @@ export async function getLatestVersion(
         throw new Error("Could not find content item");
     }
 
-    if (!is<ElementDataBlob>(result.data.content_Element_by_pk.data)) {
-        return { latestVersion: null, typeName: result.data.content_Element_by_pk.typeName };
-    }
-
-    const latestVersion = R.last(result.data.content_Element_by_pk.data);
-
-    return { latestVersion: latestVersion ?? null, typeName: result.data.content_Element_by_pk.typeName };
+    return {
+        latestVersion: extractLatestVersion(result.data.content_Element_by_pk.data),
+        typeName: result.data.content_Element_by_pk.typeName,
+    };
 }
 
 export async function createNewVersionFromPreviewTranscode(

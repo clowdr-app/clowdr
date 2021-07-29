@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Badge,
@@ -30,6 +31,15 @@ import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 import { Registrant, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "./RegistrantExtraInfo";
+import RegistrantItems from "./RegistrantItems";
+
+gql`
+    query ProfilePage_Items($registrantId: uuid!) {
+        content_Item(where: { itemPeople: { person: { registrantId: { _eq: $registrantId } } } }) {
+            ...SearchPanel_Item
+        }
+    }
+`;
 
 function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.Element {
     const conference = useConference();
@@ -151,6 +161,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                 </HStack>
                 <Divider pt={4} />
                 <RegistrantExtraInfo pt={4} registrant={registrant} />
+                <RegistrantItems registrantId={registrant.id} />
             </VStack>
         </>
     );

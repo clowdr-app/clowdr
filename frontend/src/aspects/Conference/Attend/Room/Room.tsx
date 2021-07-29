@@ -561,7 +561,8 @@ function RoomInner({
     const shuffleRoomEndsAt = useMemo(
         () =>
             roomDetails.shuffleRooms.length
-                ? Date.parse(roomDetails.shuffleRooms[0].startedAt)
+                ? Date.parse(roomDetails.shuffleRooms[0].startedAt) +
+                  roomDetails.shuffleRooms[0].durationMinutes * 60 * 1000
                 : Number.POSITIVE_INFINITY,
         [roomDetails.shuffleRooms]
     );

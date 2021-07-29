@@ -26,8 +26,13 @@ export default function RoomTimeAlert({
 
     return (
         <>
-            {secondsUntilShuffleEnds <= 30 ? (
-                <Alert status="warning" pos="sticky" top={0} zIndex={1000}>
+            {secondsUntilShuffleEnds <= 60 ? (
+                <Alert
+                    status={secondsUntilShuffleEnds <= 3 ? "error" : secondsUntilShuffleEnds <= 30 ? "warning" : "info"}
+                    pos="sticky"
+                    top={0}
+                    zIndex={1000}
+                >
                     <AlertIcon />
                     <AlertDescription>
                         Shuffle room ends in{" "}

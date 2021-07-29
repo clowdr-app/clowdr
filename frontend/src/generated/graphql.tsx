@@ -11534,10 +11534,12 @@ export type Content_UploadableElement_Bool_Exp = {
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly element?: Maybe<Content_Element_Bool_Exp>;
+  readonly hasBeenUploaded?: Maybe<Boolean_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly isHidden?: Maybe<Boolean_Comparison_Exp>;
   readonly item?: Maybe<Content_Item_Bool_Exp>;
   readonly itemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly itemTitle?: Maybe<String_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
@@ -23484,6 +23486,7 @@ export type Registrant_Invitation_Bool_Exp = {
   readonly confirmationCode?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly emails?: Maybe<Email_Bool_Exp>;
+  readonly hash?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly inviteCode?: Maybe<Uuid_Comparison_Exp>;
   readonly invitedEmailAddress?: Maybe<String_Comparison_Exp>;
@@ -24367,6 +24370,7 @@ export type Registrant_Registrant_Bool_Exp = {
   readonly groupRegistrants?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+  readonly inviteSent?: Maybe<Boolean_Comparison_Exp>;
   readonly profile?: Maybe<Registrant_Profile_Bool_Exp>;
   readonly programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
   readonly roomParticipants?: Maybe<Room_Participant_Bool_Exp>;
@@ -26239,6 +26243,7 @@ export type Room_Room_Bool_Exp = {
   readonly currentModeName?: Maybe<Room_Mode_Enum_Comparison_Exp>;
   readonly events?: Maybe<Schedule_Event_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly isProgramRoom?: Maybe<Boolean_Comparison_Exp>;
   readonly livestreamDuration?: Maybe<Room_LivestreamDurations_Bool_Exp>;
   readonly managementMode?: Maybe<Room_ManagementMode_Bool_Exp>;
   readonly managementModeName?: Maybe<Room_ManagementMode_Enum_Comparison_Exp>;
@@ -35513,8 +35518,6 @@ export type ConferenceLandingPageItemQuery = { readonly __typename?: 'query_root
 
 export type ProgramPersonDataFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } };
 
-export type ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum };
-
 export type ItemElements_GetItemQueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
@@ -35524,6 +35527,8 @@ export type ItemElements_GetItemQuery = { readonly __typename?: 'query_root', re
     { readonly __typename?: 'content_Item' }
     & ItemElements_ItemDataFragment
   )> };
+
+export type ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum };
 
 export type ItemElements_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<(
     { readonly __typename?: 'content_Element' }
@@ -35717,6 +35722,16 @@ export type RegistrantEventsWithBackstagesQueryVariables = Exact<{
 export type RegistrantEventsWithBackstagesQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
     { readonly __typename?: 'schedule_Event' }
     & MyBackstages_EventFragment
+  )> };
+
+export type ProfilePage_ItemsQueryVariables = Exact<{
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type ProfilePage_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<(
+    { readonly __typename?: 'content_Item' }
+    & SearchPanel_ItemFragment
   )> };
 
 export type SelectRegistrantsQueryVariables = Exact<{
@@ -37221,7 +37236,10 @@ export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables = Exact<
 }>;
 
 
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = { readonly __typename?: 'query_root', readonly job_queues_UploadYouTubeVideoJob: ReadonlyArray<(
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = { readonly __typename?: 'query_root', readonly ongoing_UploadYouTubeVideoJob: ReadonlyArray<(
+    { readonly __typename?: 'job_queues_UploadYouTubeVideoJob' }
+    & UploadYouTubeVideos_UploadYouTubeVideoJobFragment
+  )>, readonly recent_UploadYouTubeVideoJob: ReadonlyArray<(
     { readonly __typename?: 'job_queues_UploadYouTubeVideoJob' }
     & UploadYouTubeVideos_UploadYouTubeVideoJobFragment
   )> };
@@ -37263,7 +37281,7 @@ export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: '
       )>, readonly paperUrlElements: ReadonlyArray<(
         { readonly __typename?: 'content_Element' }
         & UploadYouTubeVideos_ElementFragment
-      )>, readonly authors: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> } }> };
+      )>, readonly authors: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }>, readonly presenters: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> } }> };
 
 export type UploadYouTubeVideos_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any };
 
@@ -40840,6 +40858,8 @@ export const ContinuationChoices_ContinuationsDocument = gql`
  * const { data, loading, error } = useContinuationChoices_ContinuationsQuery({
  *   variables: {
  *      fromId: // value for 'fromId'
+ *      nowStart: // value for 'nowStart'
+ *      nowEnd: // value for 'nowEnd'
  *   },
  * });
  */
@@ -41159,6 +41179,43 @@ export function useRegistrantEventsWithBackstagesLazyQuery(baseOptions?: Apollo.
 export type RegistrantEventsWithBackstagesQueryHookResult = ReturnType<typeof useRegistrantEventsWithBackstagesQuery>;
 export type RegistrantEventsWithBackstagesLazyQueryHookResult = ReturnType<typeof useRegistrantEventsWithBackstagesLazyQuery>;
 export type RegistrantEventsWithBackstagesQueryResult = Apollo.QueryResult<RegistrantEventsWithBackstagesQuery, RegistrantEventsWithBackstagesQueryVariables>;
+export const ProfilePage_ItemsDocument = gql`
+    query ProfilePage_Items($registrantId: uuid!) {
+  content_Item(
+    where: {itemPeople: {person: {registrantId: {_eq: $registrantId}}}}
+  ) {
+    ...SearchPanel_Item
+  }
+}
+    ${SearchPanel_ItemFragmentDoc}`;
+
+/**
+ * __useProfilePage_ItemsQuery__
+ *
+ * To run a query within a React component, call `useProfilePage_ItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProfilePage_ItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProfilePage_ItemsQuery({
+ *   variables: {
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useProfilePage_ItemsQuery(baseOptions: Apollo.QueryHookOptions<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>(ProfilePage_ItemsDocument, options);
+      }
+export function useProfilePage_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>(ProfilePage_ItemsDocument, options);
+        }
+export type ProfilePage_ItemsQueryHookResult = ReturnType<typeof useProfilePage_ItemsQuery>;
+export type ProfilePage_ItemsLazyQueryHookResult = ReturnType<typeof useProfilePage_ItemsLazyQuery>;
+export type ProfilePage_ItemsQueryResult = Apollo.QueryResult<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>;
 export const SelectRegistrantsDocument = gql`
     query SelectRegistrants($conferenceId: uuid!) {
   registrant_Registrant(
@@ -46156,9 +46213,17 @@ export type ManageExport_DeleteRegistrantGoogleAccountMutationResult = Apollo.Mu
 export type ManageExport_DeleteRegistrantGoogleAccountMutationOptions = Apollo.BaseMutationOptions<ManageExport_DeleteRegistrantGoogleAccountMutation, ManageExport_DeleteRegistrantGoogleAccountMutationVariables>;
 export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
-  job_queues_UploadYouTubeVideoJob(
-    where: {conferenceId: {_eq: $conferenceId}, jobStatusName: {_neq: COMPLETED}}
+  ongoing_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
+    where: {conferenceId: {_eq: $conferenceId}, jobStatusName: {_in: [NEW, IN_PROGRESS]}}
     order_by: {createdAt: desc}
+    limit: 100
+  ) {
+    ...UploadYouTubeVideos_UploadYouTubeVideoJob
+  }
+  recent_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
+    where: {conferenceId: {_eq: $conferenceId}, jobStatusName: {_nin: [NEW, IN_PROGRESS]}}
+    order_by: {createdAt: desc}
+    limit: 10
   ) {
     ...UploadYouTubeVideos_UploadYouTubeVideoJob
   }
@@ -46334,7 +46399,21 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
       paperUrlElements: elements(where: {typeName: {_eq: PAPER_URL}}) {
         ...UploadYouTubeVideos_Element
       }
-      authors: itemPeople(where: {roleName: {_eq: "AUTHOR"}}) {
+      authors: itemPeople(
+        where: {roleName: {_eq: "AUTHOR"}}
+        order_by: {priority: asc}
+      ) {
+        id
+        person {
+          id
+          name
+          affiliation
+        }
+      }
+      presenters: itemPeople(
+        where: {roleName: {_eq: "PRESENTER"}}
+        order_by: {priority: asc}
+      ) {
         id
         person {
           id

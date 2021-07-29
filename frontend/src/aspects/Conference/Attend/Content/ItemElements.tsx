@@ -27,6 +27,14 @@ gql`
         }
     }
 
+    fragment ElementData on content_Element {
+        id
+        data
+        layoutData
+        name
+        typeName
+    }
+
     fragment ItemElements_ItemData on content_Item {
         id
         title

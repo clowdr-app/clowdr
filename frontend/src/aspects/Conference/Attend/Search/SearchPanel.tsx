@@ -1,42 +1,33 @@
 import { gql } from "@apollo/client";
 import {
     Button,
-    chakra,
     Divider,
     Flex,
     FormControl,
     Heading,
-    HStack,
     Input,
     InputGroup,
     InputLeftAddon,
     InputRightElement,
-    Link,
     List,
     ListItem,
     Select,
     Text,
     Tooltip,
-    useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import { format } from "date-fns";
-import * as R from "ramda";
 import React, { MutableRefObject } from "react";
-import { Link as ReactLink } from "react-router-dom";
 import {
     useSearchPanel_EventsLazyQuery,
     useSearchPanel_ItemsLazyQuery,
     useSearchPanel_PeopleLazyQuery,
 } from "../../../../generated/graphql";
-import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRestorableState } from "../../../Generic/useRestorableState";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
-import { PlainAuthorsList } from "../Content/AuthorList";
-// import ExhibitionNameList from "../Content/ExhibitionNameList";
-import TagList from "../Content/TagList";
-import { EventModeIcon } from "../Rooms/V2/EventHighlight";
+import SearchResult_Event from "./SearchResult_Event";
+import SearchResult_Item from "./SearchResult_Item";
+import SearchResult_Person from "./SearchResult_Person";
 
 gql`
     fragment SearchPanel_Item on content_Item {
@@ -211,9 +202,6 @@ export default function SearchPanel({
     const [fetchItemsQuery, itemsResponse] = useSearchPanel_ItemsLazyQuery();
     const [fetchPeopleQuery, peopleResponse] = useSearchPanel_PeopleLazyQuery();
 
-    const shadow = useColorModeValue("md", "light-md");
-    const bgColor = useColorModeValue("gray.200", "gray.600");
-
     return (
         <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center">
             <VStack maxW={400} spacing={3}>
@@ -317,77 +305,7 @@ export default function SearchPanel({
                     <List spacing={3} w="100%" px={2}>
                         {eventsResponse.data.schedule_Event.map((event) => (
                             <ListItem key={event.id} w="100%">
-                                <LinkButton
-                                    w="100%"
-                                    linkProps={{
-                                        w: "100%",
-                                    }}
-                                    py={2}
-                                    h="auto"
-                                    to={
-                                        event.item
-                                            ? `/conference/${conference.slug}/item/${event.item.id}`
-                                            : event.exhibition
-                                            ? `/conference/${conference.slug}/exhibition/${event.exhibition.id}`
-                                            : `/conference/${conference.slug}/room/${event.roomId}`
-                                    }
-                                    shadow={shadow}
-                                    size="md"
-                                >
-                                    <HStack w="100%" justifyContent="flex-start" alignItems="flex-start">
-                                        <EventModeIcon mode={event.intendedRoomModeName} fontSize="inherit" />
-                                        <VStack w="100%" justifyContent="flex-start" alignItems="flex-start">
-                                            <Text whiteSpace="normal" fontSize="sm">
-                                                Starts {format(new Date(event.startTime), "d MMMM HH:mm")}
-                                                <chakra.span ml={5} fontSize="xs">
-                                                    {event.endTime &&
-                                                        `Ends ${format(new Date(event.endTime), "HH:mm")}`}
-                                                </chakra.span>
-                                            </Text>
-                                            <Text whiteSpace="normal" pl={4} fontWeight="bold">
-                                                {event.name}
-                                                {event.item &&
-                                                event.item.title.trim().toLowerCase() !==
-                                                    event.name.trim().toLowerCase()
-                                                    ? `: ${event.item.title}`
-                                                    : ""}
-                                                {!event.item &&
-                                                event.exhibition &&
-                                                event.exhibition.name.trim().toLowerCase() !==
-                                                    event.name.trim().toLowerCase()
-                                                    ? `: ${event.exhibition.name}`
-                                                    : undefined}
-                                            </Text>
-                                            <Text whiteSpace="normal" pl={4} fontSize="sm">
-                                                In {event.room ? event.room.name : "a private room"}
-                                            </Text>
-                                            {event.item ? (
-                                                <PlainAuthorsList pl={4} fontSize="sm" people={event.item.itemPeople} />
-                                            ) : event.exhibition ? (
-                                                <PlainAuthorsList
-                                                    pl={4}
-                                                    fontSize="sm"
-                                                    people={R.flatten(
-                                                        event.exhibition.items.map((x) => x.item.itemPeople)
-                                                    )}
-                                                    sortByNameOnly
-                                                />
-                                            ) : undefined}
-                                            {event.item ? (
-                                                <TagList pl={4} tags={event.item.itemTags} noClick />
-                                            ) : event.exhibition ? (
-                                                <TagList
-                                                    pl={4}
-                                                    tags={R.flatten(event.exhibition.items.map((x) => x.item.itemTags))}
-                                                    noClick
-                                                />
-                                            ) : undefined}
-                                            {/* {event.item ? (
-                                                <ExhibitionNameList exhibitions={event.item.itemExhibitions} noClick />
-                                            ) : undefined} */}
-                                        </VStack>
-                                    </HStack>
-                                </LinkButton>
+                                <SearchResult_Event event={event} />
                             </ListItem>
                         ))}
                         {eventsResponse.data.schedule_Event.length === 0 ? <ListItem>No results</ListItem> : undefined}
@@ -400,39 +318,7 @@ export default function SearchPanel({
                     <List spacing={3} w="100%" px={2}>
                         {itemsResponse.data.content_Item.map((item) => (
                             <ListItem key={item.id} w="100%">
-                                <LinkButton
-                                    w="100%"
-                                    linkProps={{
-                                        w: "100%",
-                                    }}
-                                    py={2}
-                                    h="auto"
-                                    to={`/conference/${conference.slug}/item/${item.id}`}
-                                    shadow={shadow}
-                                    size="md"
-                                >
-                                    <VStack w="100%" justifyContent="flex-start" alignItems="flex-start">
-                                        <Text whiteSpace="normal" w="100%">
-                                            {item.title}
-                                        </Text>
-                                        {item.itemPeople.length ? (
-                                            <Text pl={4} fontSize="xs" whiteSpace="normal" w="100%">
-                                                {item.itemPeople
-                                                    .reduce<string>(
-                                                        (acc, itemPerson) =>
-                                                            `${acc}, ${itemPerson.person.name} ${
-                                                                itemPerson.person.affiliation
-                                                                    ? ` (${itemPerson.person.affiliation})`
-                                                                    : ""
-                                                            }`,
-                                                        ""
-                                                    )
-                                                    .substr(2)}
-                                            </Text>
-                                        ) : undefined}
-                                        <TagList pl={4} tags={item.itemTags} noClick />
-                                    </VStack>
-                                </LinkButton>
+                                <SearchResult_Item item={item} />
                             </ListItem>
                         ))}
                         {itemsResponse.data.content_Item.length === 0 ? <ListItem>No results</ListItem> : undefined}
@@ -445,54 +331,7 @@ export default function SearchPanel({
                     <List spacing={3} w="100%" overflowY="auto" flex="0 1 100%" px={2}>
                         {peopleResponse.data.collection_ProgramPerson.map((person) => (
                             <ListItem key={person.id} w="100%">
-                                <VStack
-                                    w="100%"
-                                    py={2}
-                                    h="auto"
-                                    shadow={shadow}
-                                    bgColor={bgColor}
-                                    justifyContent="flex-start"
-                                    alignItems="flex-start"
-                                    pl={4}
-                                >
-                                    <Text whiteSpace="normal">
-                                        <FAIcon iconStyle="s" icon="user" mr={2} mb={1} />
-                                        {person.registrantId ? (
-                                            <>
-                                                <Link
-                                                    as={ReactLink}
-                                                    to={`/conference/${conference.slug}/profile/view/${person.registrantId}`}
-                                                >
-                                                    {person.name}
-                                                    {person.affiliation ? ` (${person.affiliation})` : ""}
-                                                </Link>
-                                                <FAIcon iconStyle="s" icon="hand-pointer" ml={2} mb={1} fontSize="xs" />
-                                            </>
-                                        ) : (
-                                            <>
-                                                {person.name}
-                                                {person.affiliation ? ` (${person.affiliation})` : ""}
-                                            </>
-                                        )}
-                                    </Text>
-                                    {person.itemPeople.length ? (
-                                        <List w="100%" pl={9}>
-                                            {person.itemPeople.map((itemPerson) => (
-                                                <ListItem key={itemPerson.id}>
-                                                    <HStack alignItems="flex-start">
-                                                        <FAIcon iconStyle="s" icon="tag" fontSize="xs" mt={1} />
-                                                        <Link
-                                                            as={ReactLink}
-                                                            to={`/conference/${conference.slug}/item/${itemPerson.item.id}`}
-                                                        >
-                                                            {itemPerson.item.title.trim()}
-                                                        </Link>
-                                                    </HStack>
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    ) : undefined}
-                                </VStack>
+                                <SearchResult_Person person={person} />
                             </ListItem>
                         ))}
                         {peopleResponse.data.collection_ProgramPerson.length === 0 ? (

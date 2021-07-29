@@ -29,6 +29,7 @@ import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 import { Registrant, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "../Profile/RegistrantExtraInfo";
+import RegistrantItems from "../Profile/RegistrantItems";
 
 export default function ProfileModal({
     registrant,
@@ -81,9 +82,9 @@ export default function ProfileModal({
 
     return (
         <Portal>
-            <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="inside">
+            <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="inside" size="xl">
                 <ModalOverlay />
-                <ModalContent maxW={350} pb={4}>
+                <ModalContent px={2} pb={4}>
                     <ModalHeader>
                         {registrant ? (
                             <>
@@ -171,6 +172,11 @@ export default function ProfileModal({
                                     </Box>
                                 ) : undefined}
                                 <RegistrantExtraInfo registrant={registrant} mb={4} px={2} maxW="100%" />
+                                {registrant ? (
+                                    <VStack spacing={0} w="100%">
+                                        <RegistrantItems registrantId={registrant.id} />
+                                    </VStack>
+                                ) : undefined}
                             </VStack>
                         ) : (
                             <Spinner label="Loading registrant profile, please wait" />

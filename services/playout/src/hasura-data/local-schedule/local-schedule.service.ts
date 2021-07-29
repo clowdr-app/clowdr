@@ -32,6 +32,7 @@ export interface LocalScheduleAction {
     videoData: VideoBroadcastBlob | null;
     startTime: number;
     endTime: number;
+    sequenceNumber?: number;
 }
 
 @Injectable()

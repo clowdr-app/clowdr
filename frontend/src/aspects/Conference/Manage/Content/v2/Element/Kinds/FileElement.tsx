@@ -1,5 +1,5 @@
 import { Box, Center, Heading, Image } from "@chakra-ui/react";
-import { ElementBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import React from "react";
@@ -8,20 +8,6 @@ import { Content_ElementType_Enum } from "../../../../../../../generated/graphql
 import { ExternalLinkButton } from "../../../../../../Chakra/LinkButton";
 import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 import UploadFileForm_Element from "./UploadFileForm_Element";
-
-function createDefaultFile(
-    type: Content_ElementType_Enum.ImageFile | Content_ElementType_Enum.PaperFile | Content_ElementType_Enum.PosterFile
-): ElementVersionData {
-    return {
-        createdAt: new Date().getTime(),
-        createdBy: "user",
-        data: {
-            type,
-            baseType: ElementBaseType.File,
-            s3Url: "",
-        },
-    };
-}
 
 export const FileElementTemplate: ElementBaseTemplate = {
     supported: true,
@@ -75,7 +61,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
         if (data.data.length === 0) {
             data = {
                 ...data,
-                data: [createDefaultFile(data.typeName)],
+                data: [],
             };
             setTimeout(() => update(data), 0);
         }

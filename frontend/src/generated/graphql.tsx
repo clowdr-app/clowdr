@@ -8868,6 +8868,178 @@ export type Content_ElementYouTubeUploads_AggregateArgs = {
   where?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
+/** columns and relationships of "content.ElementByAccessToken" */
+export type Content_ElementByAccessToken = {
+  readonly __typename?: 'content_ElementByAccessToken';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemTitle?: Maybe<Scalars['String']>;
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+
+/** columns and relationships of "content.ElementByAccessToken" */
+export type Content_ElementByAccessTokenDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "content.ElementByAccessToken" */
+export type Content_ElementByAccessTokenLayoutDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "content.ElementByAccessToken" */
+export type Content_ElementByAccessToken_Aggregate = {
+  readonly __typename?: 'content_ElementByAccessToken_aggregate';
+  readonly aggregate?: Maybe<Content_ElementByAccessToken_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Content_ElementByAccessToken>;
+};
+
+/** aggregate fields of "content.ElementByAccessToken" */
+export type Content_ElementByAccessToken_Aggregate_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_aggregate_fields';
+  readonly avg?: Maybe<Content_ElementByAccessToken_Avg_Fields>;
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Content_ElementByAccessToken_Max_Fields>;
+  readonly min?: Maybe<Content_ElementByAccessToken_Min_Fields>;
+  readonly stddev?: Maybe<Content_ElementByAccessToken_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Content_ElementByAccessToken_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Content_ElementByAccessToken_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Content_ElementByAccessToken_Sum_Fields>;
+  readonly var_pop?: Maybe<Content_ElementByAccessToken_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Content_ElementByAccessToken_Var_Samp_Fields>;
+  readonly variance?: Maybe<Content_ElementByAccessToken_Variance_Fields>;
+};
+
+
+/** aggregate fields of "content.ElementByAccessToken" */
+export type Content_ElementByAccessToken_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Content_ElementByAccessToken_Avg_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_avg_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "content.ElementByAccessToken". All fields are combined with a logical 'AND'. */
+export type Content_ElementByAccessToken_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Bool_Exp>>;
+  readonly _not?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Bool_Exp>>;
+  readonly accessToken?: Maybe<String_Comparison_Exp>;
+  readonly data?: Maybe<Jsonb_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly itemTitle?: Maybe<String_Comparison_Exp>;
+  readonly layoutData?: Maybe<Jsonb_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly typeName?: Maybe<String_Comparison_Exp>;
+  readonly uploadsRemaining?: Maybe<Int_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Content_ElementByAccessToken_Max_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_max_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemTitle?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate min on columns */
+export type Content_ElementByAccessToken_Min_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_min_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemTitle?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** Ordering options when selecting data from "content.ElementByAccessToken". */
+export type Content_ElementByAccessToken_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
+  readonly data?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly itemTitle?: Maybe<Order_By>;
+  readonly layoutData?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly typeName?: Maybe<Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** select columns of table "content.ElementByAccessToken" */
+export enum Content_ElementByAccessToken_Select_Column {
+  /** column name */
+  AccessToken = 'accessToken',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ItemTitle = 'itemTitle',
+  /** column name */
+  LayoutData = 'layoutData',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  TypeName = 'typeName',
+  /** column name */
+  UploadsRemaining = 'uploadsRemaining'
+}
+
+/** aggregate stddev on columns */
+export type Content_ElementByAccessToken_Stddev_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_stddev_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Content_ElementByAccessToken_Stddev_Pop_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_stddev_pop_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Content_ElementByAccessToken_Stddev_Samp_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_stddev_samp_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate sum on columns */
+export type Content_ElementByAccessToken_Sum_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_sum_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate var_pop on columns */
+export type Content_ElementByAccessToken_Var_Pop_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_var_pop_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Content_ElementByAccessToken_Var_Samp_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_var_samp_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Content_ElementByAccessToken_Variance_Fields = {
+  readonly __typename?: 'content_ElementByAccessToken_variance_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
 /** columns and relationships of "content.ElementPermissionGrant" */
 export type Content_ElementPermissionGrant = {
   readonly __typename?: 'content_ElementPermissionGrant';
@@ -19759,6 +19931,10 @@ export type Query_Root = {
   readonly conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
   /** fetch data from the table: "content.Element" */
   readonly content_Element: ReadonlyArray<Content_Element>;
+  /** fetch data from the table: "content.ElementByAccessToken" */
+  readonly content_ElementByAccessToken: ReadonlyArray<Content_ElementByAccessToken>;
+  /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
+  readonly content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
   /** fetch data from the table: "content.ElementPermissionGrant" */
   readonly content_ElementPermissionGrant: ReadonlyArray<Content_ElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
@@ -20875,6 +21051,24 @@ export type Query_RootContent_ElementArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_Element_Order_By>>;
   where?: Maybe<Content_Element_Bool_Exp>;
+};
+
+
+export type Query_RootContent_ElementByAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
+};
+
+
+export type Query_RootContent_ElementByAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
 };
 
 
@@ -29067,6 +29261,10 @@ export type Subscription_Root = {
   readonly conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
   /** fetch data from the table: "content.Element" */
   readonly content_Element: ReadonlyArray<Content_Element>;
+  /** fetch data from the table: "content.ElementByAccessToken" */
+  readonly content_ElementByAccessToken: ReadonlyArray<Content_ElementByAccessToken>;
+  /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
+  readonly content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
   /** fetch data from the table: "content.ElementPermissionGrant" */
   readonly content_ElementPermissionGrant: ReadonlyArray<Content_ElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
@@ -30180,6 +30378,24 @@ export type Subscription_RootContent_ElementArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_Element_Order_By>>;
   where?: Maybe<Content_Element_Bool_Exp>;
+};
+
+
+export type Subscription_RootContent_ElementByAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootContent_ElementByAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
 };
 
 
@@ -35710,7 +35926,6 @@ export type UpdateElementMutationVariables = Exact<{
   data: Scalars['jsonb'];
   isHidden: Scalars['Boolean'];
   originatingDataId?: Maybe<Scalars['uuid']>;
-  uploadableId?: Maybe<Scalars['uuid']>;
   uploadsRemaining?: Maybe<Scalars['Int']>;
 }>;
 
@@ -37142,19 +37357,7 @@ export type GetElementQueryVariables = Exact<{
 }>;
 
 
-export type GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly id: any, readonly itemTitle?: Maybe<string> }> };
-
-export type SelectUploadableItemQueryVariables = Exact<{
-  uploadableId: Scalars['uuid'];
-}>;
-
-
-export type SelectUploadableItemQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<(
-    { readonly __typename?: 'content_Element' }
-    & UploadableItemFieldsFragment
-  )> };
-
-export type UploadableItemFieldsFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly itemTitle?: Maybe<string>, readonly conference: { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string } };
+export type GetElementQuery = { readonly __typename?: 'query_root', readonly content_ElementByAccessToken: ReadonlyArray<{ readonly __typename?: 'content_ElementByAccessToken', readonly typeName?: Maybe<string>, readonly data?: Maybe<any>, readonly layoutData?: Maybe<any>, readonly name?: Maybe<string>, readonly id?: Maybe<any>, readonly itemTitle?: Maybe<string>, readonly uploadsRemaining?: Maybe<number> }> };
 
 export type SubmitUploadableElementMutationVariables = Exact<{
   elementData: Scalars['jsonb'];
@@ -39019,19 +39222,6 @@ export const PublicConferenceInfoFragmentDoc = gql`
   }
 }
     ${GroupDataFragmentDoc}`;
-export const UploadableItemFieldsFragmentDoc = gql`
-    fragment UploadableItemFields on content_Element {
-  id
-  typeName
-  name
-  uploadsRemaining
-  conference {
-    id
-    name
-  }
-  itemTitle
-}
-    `;
 export const MinimalEventInfoFragmentDoc = gql`
     fragment MinimalEventInfo on schedule_Event {
   id
@@ -43171,7 +43361,7 @@ export type UpdateItemMutationHookResult = ReturnType<typeof useUpdateItemMutati
 export type UpdateItemMutationResult = Apollo.MutationResult<UpdateItemMutation>;
 export type UpdateItemMutationOptions = Apollo.BaseMutationOptions<UpdateItemMutation, UpdateItemMutationVariables>;
 export const UpdateElementDocument = gql`
-    mutation UpdateElement($id: uuid!, $typeName: content_ElementType_enum!, $layoutData: jsonb = null, $name: String!, $data: jsonb!, $isHidden: Boolean!, $originatingDataId: uuid = null, $uploadableId: uuid = null, $uploadsRemaining: Int = null) {
+    mutation UpdateElement($id: uuid!, $typeName: content_ElementType_enum!, $layoutData: jsonb = null, $name: String!, $data: jsonb!, $isHidden: Boolean!, $originatingDataId: uuid = null, $uploadsRemaining: Int = null) {
   update_content_Element_by_pk(
     pk_columns: {id: $id}
     _set: {typeName: $typeName, layoutData: $layoutData, name: $name, data: $data, isHidden: $isHidden, originatingDataId: $originatingDataId, uploadsRemaining: $uploadsRemaining}
@@ -43202,7 +43392,6 @@ export type UpdateElementMutationFn = Apollo.MutationFunction<UpdateElementMutat
  *      data: // value for 'data'
  *      isHidden: // value for 'isHidden'
  *      originatingDataId: // value for 'originatingDataId'
- *      uploadableId: // value for 'uploadableId'
  *      uploadsRemaining: // value for 'uploadsRemaining'
  *   },
  * });
@@ -48280,13 +48469,14 @@ export type UpdateSubtitlesMutationResult = Apollo.MutationResult<UpdateSubtitle
 export type UpdateSubtitlesMutationOptions = Apollo.BaseMutationOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
 export const GetElementDocument = gql`
     query GetElement($magicToken: String!) {
-  content_Element(where: {accessToken: {_eq: $magicToken}}) {
+  content_ElementByAccessToken(where: {accessToken: {_eq: $magicToken}}) {
     typeName
     data
     layoutData
     name
     id
     itemTitle
+    uploadsRemaining
   }
 }
     `;
@@ -48318,41 +48508,6 @@ export function useGetElementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetElementQueryHookResult = ReturnType<typeof useGetElementQuery>;
 export type GetElementLazyQueryHookResult = ReturnType<typeof useGetElementLazyQuery>;
 export type GetElementQueryResult = Apollo.QueryResult<GetElementQuery, GetElementQueryVariables>;
-export const SelectUploadableItemDocument = gql`
-    query SelectUploadableItem($uploadableId: uuid!) {
-  content_Element(where: {id: {_eq: $uploadableId}}) {
-    ...UploadableItemFields
-  }
-}
-    ${UploadableItemFieldsFragmentDoc}`;
-
-/**
- * __useSelectUploadableItemQuery__
- *
- * To run a query within a React component, call `useSelectUploadableItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectUploadableItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectUploadableItemQuery({
- *   variables: {
- *      uploadableId: // value for 'uploadableId'
- *   },
- * });
- */
-export function useSelectUploadableItemQuery(baseOptions: Apollo.QueryHookOptions<SelectUploadableItemQuery, SelectUploadableItemQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectUploadableItemQuery, SelectUploadableItemQueryVariables>(SelectUploadableItemDocument, options);
-      }
-export function useSelectUploadableItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectUploadableItemQuery, SelectUploadableItemQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectUploadableItemQuery, SelectUploadableItemQueryVariables>(SelectUploadableItemDocument, options);
-        }
-export type SelectUploadableItemQueryHookResult = ReturnType<typeof useSelectUploadableItemQuery>;
-export type SelectUploadableItemLazyQueryHookResult = ReturnType<typeof useSelectUploadableItemLazyQuery>;
-export type SelectUploadableItemQueryResult = Apollo.QueryResult<SelectUploadableItemQuery, SelectUploadableItemQueryVariables>;
 export const SubmitUploadableElementDocument = gql`
     mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!) {
   submitUploadableElement(data: $elementData, magicToken: $magicToken) {

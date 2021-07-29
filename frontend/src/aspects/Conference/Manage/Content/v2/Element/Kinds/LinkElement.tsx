@@ -1,7 +1,6 @@
 import { FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
 import {
     ElementBaseType,
-    ElementVersionData,
     LinkBlob,
     LinkButtonBlob,
     PaperLinkBlob,
@@ -12,25 +11,6 @@ import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
 import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
-
-function createDefaultLink(
-    type:
-        | Content_ElementType_Enum.Link
-        | Content_ElementType_Enum.LinkButton
-        | Content_ElementType_Enum.PaperLink
-        | Content_ElementType_Enum.VideoLink
-): ElementVersionData {
-    return {
-        createdAt: new Date().getTime(),
-        createdBy: "user",
-        data: {
-            type,
-            baseType: ElementBaseType.Link,
-            text: "",
-            url: "",
-        },
-    };
-}
 
 interface LinkElementVersionData {
     createdAt: number;
@@ -116,7 +96,7 @@ export const LinkElementTemplate: ElementBaseTemplate = {
         if (data.data.length === 0) {
             data = {
                 ...data,
-                data: [createDefaultLink(data.typeName)],
+                data: [],
             };
             setTimeout(() => update(data), 0);
         }

@@ -1,5 +1,5 @@
 import { Textarea, useToast } from "@chakra-ui/react";
-import { AbstractBlob, ElementBaseType, ElementVersionData, TextBlob } from "@clowdr-app/shared-types/build/content";
+import { AbstractBlob, ElementBaseType, TextBlob } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -7,20 +7,6 @@ import { Content_ElementType_Enum } from "../../../../../../../generated/graphql
 import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
 
 // TODO: Use Markdown editor instead of textarea
-
-function createDefaultText(
-    type: Content_ElementType_Enum.Abstract | Content_ElementType_Enum.Text
-): ElementVersionData {
-    return {
-        createdAt: new Date().getTime(),
-        createdBy: "user",
-        data: {
-            type,
-            baseType: ElementBaseType.Text,
-            text: "",
-        },
-    };
-}
 
 interface TextElementVersionData {
     createdAt: number;
@@ -65,7 +51,7 @@ export const TextElementTemplate: ElementBaseTemplate = {
         if (data.data.length === 0) {
             data = {
                 ...data,
-                data: [createDefaultText(data.typeName)],
+                data: [],
             };
             setTimeout(() => update(data), 0);
         }

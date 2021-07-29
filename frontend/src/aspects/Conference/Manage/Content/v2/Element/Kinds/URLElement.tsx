@@ -1,7 +1,6 @@
 import { FormControl, FormLabel, Input, Text, useToast } from "@chakra-ui/react";
 import {
     ElementBaseType,
-    ElementVersionData,
     ImageUrlBlob,
     PaperUrlBlob,
     PosterUrlBlob,
@@ -13,25 +12,6 @@ import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
 import type { ElementBaseTemplate, RenderEditorProps } from "./Types";
-
-function createDefaultURL(
-    type:
-        | Content_ElementType_Enum.ImageUrl
-        | Content_ElementType_Enum.PaperUrl
-        | Content_ElementType_Enum.VideoUrl
-        | Content_ElementType_Enum.PosterUrl
-        | Content_ElementType_Enum.Zoom
-): ElementVersionData {
-    return {
-        createdAt: new Date().getTime(),
-        createdBy: "user",
-        data: {
-            type,
-            baseType: ElementBaseType.URL,
-            url: "",
-        },
-    };
-}
 
 interface UrlElementVersionData {
     createdAt: number;
@@ -128,7 +108,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
         if (data.data.length === 0) {
             data = {
                 ...data,
-                data: [createDefaultURL(data.typeName)],
+                data: [],
             };
             setTimeout(() => update(data), 0);
         }

@@ -223,7 +223,7 @@ export default function UploadFileForm_Subtitles({
             >
                 {({ dirty, isSubmitting, isValid }) => (
                     <>
-                        <Heading as="h3" fontSize="lg" mb={4}>
+                        <Heading as="h3" fontSize="lg" pt={4} mb={4}>
                             Upload new subtitles
                         </Heading>
                         <UnsavedChangesWarning hasUnsavedChanges={dirty} />

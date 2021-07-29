@@ -1,5 +1,5 @@
 import { Heading } from "@chakra-ui/react";
-import { ElementBaseType, ElementVersionData } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
 import React from "react";
@@ -11,28 +11,6 @@ import { RefreshSubtitles } from "./RefreshSubtitles";
 import type { RenderEditorProps, SupportedElementBaseTemplate } from "./Types";
 import UploadFileForm_Element from "./UploadFileForm_Element";
 import UploadFileForm_Subtitles from "./UploadFileForm_Subtitles";
-
-function createDefaultVideo(
-    type:
-        | Content_ElementType_Enum.VideoBroadcast
-        | Content_ElementType_Enum.VideoCountdown
-        | Content_ElementType_Enum.VideoFile
-        | Content_ElementType_Enum.VideoFiller
-        | Content_ElementType_Enum.VideoPrepublish
-        | Content_ElementType_Enum.VideoSponsorsFiller
-        | Content_ElementType_Enum.VideoTitles
-): ElementVersionData {
-    return {
-        createdAt: new Date().getTime(),
-        createdBy: "user",
-        data: {
-            type,
-            baseType: ElementBaseType.Video,
-            s3Url: "",
-            subtitles: {},
-        },
-    };
-}
 
 function s3UrlToHttpUrl(s3Url: string): string {
     const { bucket, key } = AmazonS3Uri(s3Url);
@@ -101,7 +79,7 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
         if (data.data.length === 0) {
             data = {
                 ...data,
-                data: [createDefaultVideo(data.typeName)],
+                data: [],
             };
             setTimeout(() => update(data), 0);
         }
@@ -112,8 +90,8 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
         }
         return (
             <>
-                <VideoElement elementId={data.id} title={data.name} videoElementData={latestVersion.data} />
-                <Heading as="h3" fontSize="lg" mb={4}>
+                <VideoElement elementId={data.id} videoElementData={latestVersion.data} />
+                <Heading as="h3" fontSize="lg" pt={8} mb={4}>
                     Upload new video
                 </Heading>
                 <UploadFileForm_Element
@@ -122,7 +100,7 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
                     onElementChange={(newElement) => {
                         const newData = {
                             ...data,
-                            element: newElement,
+                            ...newElement,
                         };
                         update(newData);
                     }}

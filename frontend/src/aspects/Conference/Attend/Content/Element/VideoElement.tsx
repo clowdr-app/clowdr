@@ -40,7 +40,11 @@ export function VideoElement({
         return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
     }, [videoElementData.s3Url, videoElementData.transcode?.s3Url]);
 
-    const { result: subtitlesUrl, loading, error } = useAsync(async () => {
+    const {
+        result: subtitlesUrl,
+        loading,
+        error,
+    } = useAsync(async () => {
         if (!videoElementData.subtitles["en_US"] || !videoElementData.subtitles["en_US"].s3Url?.length) {
             return undefined;
         } else {
@@ -144,13 +148,11 @@ export function VideoElement({
     return (
         <>
             {title ? (
-                <Heading as="h3" fontSize="2xl" mb={2} color="gray.50">
-                    {title === "Livestream broadcast video" || title === "Pre-published video" ? "Presentation" : title}
+                <Heading as="h3" fontSize="2xl" mb={2}>
+                    {title}
                 </Heading>
             ) : undefined}
-            {!videoURL && !loading ? (
-                <Text mb={2}>Video not currently available. Please come back later.</Text>
-            ) : undefined}
+            {!videoURL && !loading ? <Text mb={2}>Video not yet uploaded.</Text> : undefined}
             {player}
         </>
     );

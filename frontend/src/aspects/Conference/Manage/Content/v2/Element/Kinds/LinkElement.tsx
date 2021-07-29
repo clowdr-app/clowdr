@@ -45,7 +45,7 @@ export const LinkElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.PaperLink,
         Content_ElementType_Enum.VideoLink,
     ],
-    createDefault: (type, required, conferenceId, itemId) => {
+    createDefault: (type, conferenceId, itemId) => {
         assert(
             type === Content_ElementType_Enum.Link ||
                 type === Content_ElementType_Enum.LinkButton ||
@@ -62,195 +62,159 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                 : type === Content_ElementType_Enum.VideoLink
                 ? "Link to video"
                 : "Link";
-        if (required) {
-            return {
-                type: "required-only",
-                uploadableElement: {
-                    __typename: "content_UploadableElement",
-                    conferenceId,
-                    itemId,
-                    id: uuidv4(),
-                    name,
-                    isHidden: false,
-                    typeName: type,
-                    uploaders: [],
-                    uploadsRemaining: 3,
-                },
-            };
-        } else {
-            return {
-                type: "element-only",
-                element: {
-                    __typename: "content_Element",
-                    updatedAt: new Date().toISOString(),
-                    conferenceId,
-                    itemId,
-                    id: uuidv4(),
-                    name,
-                    typeName: type,
-                    isHidden: false,
-                    data: [],
-                    layoutData: null,
-                },
-            };
-        }
+
+        return {
+            __typename: "content_Element",
+            updatedAt: new Date().toISOString(),
+            conferenceId,
+            itemId,
+            id: uuidv4(),
+            name,
+            typeName: type,
+            isHidden: false,
+            data: [],
+            layoutData: null,
+            uploadsRemaining: 3,
+        };
     },
     renderEditor: function LinkElementEditor({ data, update }: RenderEditorProps) {
         const toast = useToast();
         const [text, setText] = useState<string | null>(null);
         const [url, setUrl] = useState<string | null>(null);
 
-        if (data.type === "element-only" || data.type === "required-and-element") {
-            if (
-                !(
-                    data.element.typeName === Content_ElementType_Enum.Link ||
-                    data.element.typeName === Content_ElementType_Enum.LinkButton ||
-                    data.element.typeName === Content_ElementType_Enum.PaperLink ||
-                    data.element.typeName === Content_ElementType_Enum.VideoLink
-                )
-            ) {
-                return <>Link Element Template mistakenly used for type {data.type}.</>;
-            }
-
-            const textPlaceholder =
-                data.element.typeName === Content_ElementType_Enum.LinkButton
-                    ? "Button text"
-                    : data.element.typeName === Content_ElementType_Enum.PaperLink
-                    ? "Paper title"
-                    : data.element.typeName === Content_ElementType_Enum.VideoLink
-                    ? "Video title"
-                    : "Link title";
-            const textLabel = textPlaceholder;
-
-            const urlLabel = "URL";
-            const urlPlaceholder =
-                data.element.typeName === Content_ElementType_Enum.LinkButton
-                    ? "https://www.example.org"
-                    : data.element.typeName === Content_ElementType_Enum.PaperLink
-                    ? "https://archive.org/..."
-                    : data.element.typeName === Content_ElementType_Enum.VideoLink
-                    ? "https://youtube.com/..."
-                    : "https://www.example.org";
-
-            if (data.element.data.length === 0) {
-                data = {
-                    ...data,
-                    element: {
-                        ...data.element,
-                        data: [createDefaultLink(data.element.typeName)],
-                    },
-                };
-                setTimeout(() => update(data), 0);
-            }
-
-            const latestVersion = data.element.data[data.element.data.length - 1] as LinkElementVersionData;
-            if (latestVersion.data.baseType !== ElementBaseType.Link) {
-                return <>Link Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
-            }
-            return (
-                <>
-                    <FormControl>
-                        <FormLabel>{textLabel}</FormLabel>
-                        <Input
-                            type="text"
-                            placeholder={textPlaceholder}
-                            value={text ?? latestVersion.data.text}
-                            onChange={(ev) => {
-                                setText(ev.target.value);
-                            }}
-                            onBlur={(ev) => {
-                                try {
-                                    assert(data.type !== "required-only");
-                                    if (ev.target.value === latestVersion.data.text) {
-                                        return;
-                                    }
-                                    const oldElementIdx = data.element.data.indexOf(latestVersion);
-                                    const newData = {
-                                        ...data,
-                                        element: {
-                                            ...data.element,
-                                            data: data.element.data.map((version, idx) => {
-                                                return idx === oldElementIdx
-                                                    ? {
-                                                          ...version,
-                                                          data: {
-                                                              ...version.data,
-                                                              text: ev.target.value,
-                                                          },
-                                                      }
-                                                    : version;
-                                            }),
-                                        },
-                                    };
-                                    update(newData);
-                                    setText(null);
-                                } catch (e) {
-                                    console.error("Error saving link text", e);
-                                    toast({
-                                        status: "error",
-                                        title: "Error saving link text",
-                                        description: e.message,
-                                    });
-                                }
-                            }}
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>{urlLabel}</FormLabel>
-                        <Input
-                            type="url"
-                            placeholder={urlPlaceholder}
-                            value={url ?? latestVersion.data.url}
-                            onChange={(ev) => {
-                                setUrl(ev.target.value);
-                            }}
-                            onBlur={(ev) => {
-                                try {
-                                    assert(data.type !== "required-only");
-                                    if (ev.target.value === latestVersion.data.url) {
-                                        return;
-                                    }
-                                    const oldElementIdx = data.element.data.indexOf(latestVersion);
-                                    const newData = {
-                                        ...data,
-                                        element: {
-                                            ...data.element,
-                                            data: data.element.data.map((version, idx) => {
-                                                return idx === oldElementIdx
-                                                    ? {
-                                                          ...version,
-                                                          data: {
-                                                              ...version.data,
-                                                              url: ev.target.value,
-                                                          },
-                                                      }
-                                                    : version;
-                                            }),
-                                        },
-                                    };
-                                    update(newData);
-                                    setUrl(null);
-                                } catch (e) {
-                                    console.error("Error saving link URL", e);
-                                    toast({
-                                        status: "error",
-                                        title: "Error saving link URL",
-                                        description: e.message,
-                                    });
-                                }
-                            }}
-                        />
-                    </FormControl>
-                </>
-            );
+        if (
+            !(
+                data.typeName === Content_ElementType_Enum.Link ||
+                data.typeName === Content_ElementType_Enum.LinkButton ||
+                data.typeName === Content_ElementType_Enum.PaperLink ||
+                data.typeName === Content_ElementType_Enum.VideoLink
+            )
+        ) {
+            return <>Link Element Template mistakenly used for type {data.typeName}.</>;
         }
-        return data.uploadableElement.hasBeenUploaded ? (
-            <>A link has been uploaded but you do not have permission to view it.</>
-        ) : (
-            <>No link uploaded yet.</>
+
+        const textPlaceholder =
+            data.typeName === Content_ElementType_Enum.LinkButton
+                ? "Button text"
+                : data.typeName === Content_ElementType_Enum.PaperLink
+                ? "Paper title"
+                : data.typeName === Content_ElementType_Enum.VideoLink
+                ? "Video title"
+                : "Link title";
+        const textLabel = textPlaceholder;
+
+        const urlLabel = "URL";
+        const urlPlaceholder =
+            data.typeName === Content_ElementType_Enum.LinkButton
+                ? "https://www.example.org"
+                : data.typeName === Content_ElementType_Enum.PaperLink
+                ? "https://archive.org/..."
+                : data.typeName === Content_ElementType_Enum.VideoLink
+                ? "https://youtube.com/..."
+                : "https://www.example.org";
+
+        if (data.data.length === 0) {
+            data = {
+                ...data,
+                data: [createDefaultLink(data.typeName)],
+            };
+            setTimeout(() => update(data), 0);
+        }
+
+        const latestVersion = data.data[data.data.length - 1] as LinkElementVersionData;
+        if (latestVersion.data.baseType !== ElementBaseType.Link) {
+            return <>Link Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
+        }
+        return (
+            <>
+                <FormControl>
+                    <FormLabel>{textLabel}</FormLabel>
+                    <Input
+                        type="text"
+                        placeholder={textPlaceholder}
+                        value={text ?? latestVersion.data.text}
+                        onChange={(ev) => {
+                            setText(ev.target.value);
+                        }}
+                        onBlur={(ev) => {
+                            try {
+                                if (ev.target.value === latestVersion.data.text) {
+                                    return;
+                                }
+                                const oldElementIdx = data.data.indexOf(latestVersion);
+                                const newData = {
+                                    ...data,
+                                    data: data.data.map((version, idx) => {
+                                        return idx === oldElementIdx
+                                            ? {
+                                                  ...version,
+                                                  data: {
+                                                      ...version.data,
+                                                      text: ev.target.value,
+                                                  },
+                                              }
+                                            : version;
+                                    }),
+                                };
+                                update(newData);
+                                setText(null);
+                            } catch (e) {
+                                console.error("Error saving link text", e);
+                                toast({
+                                    status: "error",
+                                    title: "Error saving link text",
+                                    description: e.message,
+                                });
+                            }
+                        }}
+                    />
+                </FormControl>
+                <FormControl>
+                    <FormLabel>{urlLabel}</FormLabel>
+                    <Input
+                        type="url"
+                        placeholder={urlPlaceholder}
+                        value={url ?? latestVersion.data.url}
+                        onChange={(ev) => {
+                            setUrl(ev.target.value);
+                        }}
+                        onBlur={(ev) => {
+                            try {
+                                if (ev.target.value === latestVersion.data.url) {
+                                    return;
+                                }
+                                const oldElementIdx = data.data.indexOf(latestVersion);
+                                const newData = {
+                                    ...data,
+                                    data: data.data.map((version, idx) => {
+                                        return idx === oldElementIdx
+                                            ? {
+                                                  ...version,
+                                                  data: {
+                                                      ...version.data,
+                                                      url: ev.target.value,
+                                                  },
+                                              }
+                                            : version;
+                                    }),
+                                };
+                                update(newData);
+                                setUrl(null);
+                            } catch (e) {
+                                console.error("Error saving link URL", e);
+                                toast({
+                                    status: "error",
+                                    title: "Error saving link URL",
+                                    description: e.message,
+                                });
+                            }
+                        }}
+                    />
+                </FormControl>
+            </>
         );
     },
     renderEditorHeading: function LinkElementEditorHeading(data) {
-        return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;
+        return <>{data.name}</>;
     },
 };

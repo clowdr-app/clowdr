@@ -30,7 +30,7 @@ function copyAuthorsToUploaders(
     people: Map<string, ProgramPersonDescriptor>
 ): void {
     groups.forEach((group) => {
-        group.uploadableElements.forEach((uploadableElement) => {
+        group.elements.forEach((uploadableElement) => {
             group.people.forEach((groupPerson) => {
                 const person = people.get(groupPerson.personId);
                 assert(
@@ -53,7 +53,7 @@ function copyAuthorsToUploaders(
                             emailsSentCount: 0,
                             id: uuidv4(),
                             name: person.name,
-                            uploadableId: uploadableElement.id,
+                            elementId: uploadableElement.id,
                             isNew: true,
                         });
                     }
@@ -80,9 +80,8 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
     const [mergedPeopleMap, setMergedPeopleMap] = useState<Map<string, ProgramPersonDescriptor>>();
     const [mergedExhibitionsMap, setMergedExhibitionsMap] = useState<Map<string, ExhibitionDescriptor>>();
     const [mergedTagsMap, setMergedTagsMap] = useState<Map<string, TagDescriptor>>();
-    const [mergedOriginatingDatasMap, setMergedOriginatingDatasMap] = useState<
-        Map<string, OriginatingDataDescriptor>
-    >();
+    const [mergedOriginatingDatasMap, setMergedOriginatingDatasMap] =
+        useState<Map<string, OriginatingDataDescriptor>>();
     const [changes, setChanges] = useState<ChangeSummary[]>([]);
     const [error, setError] = useState<string | null>(null);
 

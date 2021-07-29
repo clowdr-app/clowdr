@@ -122,11 +122,11 @@ export default function SubmitItemPage({
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");
 
     const uploadableElement = useMemo(() => {
-        if (!data?.content_UploadableElement || data.content_UploadableElement.length !== 1) {
+        if (!data?.content_Element || data.content_Element.length !== 1) {
             return null;
         }
 
-        return data.content_UploadableElement[0];
+        return data.content_Element[0];
     }, [data]);
 
     const title = useTitle(uploadableElement?.itemTitle ? `Submit ${uploadableElement.itemTitle}` : "Clowdr");
@@ -145,11 +145,9 @@ export default function SubmitItemPage({
         }
 
         const existingData: any | null =
-            (dataElement?.content_ElementByAccessToken?.length
-                ? dataElement.content_ElementByAccessToken[0].data?.length
-                    ? dataElement.content_ElementByAccessToken[0].data[
-                          dataElement.content_ElementByAccessToken[0].data.length - 1
-                      ]?.data
+            (dataElement?.content_Element?.length
+                ? dataElement.content_Element[0].data?.length
+                    ? dataElement.content_Element[0].data[dataElement.content_Element[0].data.length - 1]?.data
                     : undefined
                 : undefined) ?? null;
 
@@ -219,7 +217,7 @@ export default function SubmitItemPage({
             default:
                 return <>Unrecognised upload type.</>;
         }
-    }, [uploadableElement, dataElement?.content_ElementByAccessToken, magicToken, uploadAgreement, formSubmitted]);
+    }, [uploadableElement, dataElement?.content_Element, magicToken, uploadAgreement, formSubmitted]);
 
     return (
         <Center>

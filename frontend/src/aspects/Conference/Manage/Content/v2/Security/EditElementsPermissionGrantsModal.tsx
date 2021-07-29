@@ -17,8 +17,6 @@ import React, { LegacyRef, useMemo } from "react";
 import {
     ElementSecurity_ElementPgFragment,
     ElementSecurity_ElementPgFragmentDoc,
-    ElementSecurity_UploadablePgFragment,
-    ElementSecurity_UploadablePgFragmentDoc,
     useElementSecurity_DeleteGrantsMutation,
     useElementSecurity_InsertGrantsMutation,
     useElementSecurity_SelectGrantsQuery,
@@ -45,10 +43,6 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     elementIds: string[];
-    uploadableIds: {
-        uploadableId: string;
-        elementId?: string;
-    }[];
     treatEmptyAsAny?: boolean;
 }
 
@@ -116,7 +110,6 @@ type RowType = {
     permissionSetId: string;
     groupId: string | null;
     elements: ElementSecurity_ElementPgFragment[];
-    uploadables: ElementSecurity_UploadablePgFragment[];
 };
 
 export function EditElementsPermissionGrantsModal({ isOpen, onClose, ...props }: Props): JSX.Element {
@@ -138,14 +131,12 @@ export function EditElementsPermissionGrantsModal({ isOpen, onClose, ...props }:
 
 function EditElementsPermissionGrantsModalInner({
     elementIds,
-    uploadableIds,
     treatEmptyAsAny = false,
 }: Omit<Props, "isOpen" | "onClose">): JSX.Element {
     const conference = useConference();
     const grantsResponse = useElementSecurity_SelectGrantsQuery({
         variables: {
             elementIds,
-            uploadableIds: uploadableIds.map((x) => x.uploadableId),
             conferenceId: conference.id,
         },
         fetchPolicy: "network-only",
@@ -155,10 +146,7 @@ function EditElementsPermissionGrantsModalInner({
             Object.values(
                 R.groupBy(
                     (x) => x.permissionSetId + "¦" + (x.groupId ?? "NULL"),
-                    [
-                        ...(grantsResponse.data?.content_ElementPermissionGrant ?? []),
-                        ...(grantsResponse.data?.content_UploadableElementPermissionGrant ?? []),
-                    ]
+                    grantsResponse.data?.content_ElementPermissionGrant ?? []
                 )
             ).map((xs) => ({
                 permissionSetId: xs[0].permissionSetId,
@@ -166,14 +154,8 @@ function EditElementsPermissionGrantsModalInner({
                 elements: xs.filter(
                     (x) => x.__typename === "content_ElementPermissionGrant"
                 ) as ElementSecurity_ElementPgFragment[],
-                uploadables: xs.filter(
-                    (x) => x.__typename === "content_UploadableElementPermissionGrant"
-                ) as ElementSecurity_UploadablePgFragment[],
             })),
-        [
-            grantsResponse.data?.content_ElementPermissionGrant,
-            grantsResponse.data?.content_UploadableElementPermissionGrant,
-        ]
+        [grantsResponse.data?.content_ElementPermissionGrant]
     );
 
     const permissionSets = useMemo(
@@ -323,41 +305,8 @@ function EditElementsPermissionGrantsModalInner({
                     return <Text>{props.value}</Text>;
                 },
             },
-            {
-                id: "uploadables",
-                header: function UploadablesHeader(props: ColumnHeaderProps<RowType>) {
-                    return props.isInCreate ? (
-                        <FormLabel>Uploadables</FormLabel>
-                    ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Uploadables{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
-                        </Button>
-                    );
-                },
-                get: (data) => {
-                    const uploadables = data.uploadables;
-                    if (uploadables) {
-                        if (uploadables.some((x) => !x.entityId)) {
-                            return "Any";
-                        } else if (uploadables.length === 0) {
-                            if (uploadableIds.length === 0) {
-                                return "All of selected";
-                            } else {
-                                return "None of selected";
-                            }
-                        }
-                        return uploadableIds.every((id) => uploadables.some((x) => x.entityId === id.uploadableId))
-                            ? "All of selected"
-                            : "Some of selected";
-                    }
-                    return "All of selected";
-                },
-                cell: function GroupCell(props: CellProps<Partial<RowType>>) {
-                    return <Text>{props.value}</Text>;
-                },
-            },
         ],
-        [elementIds, uploadableIds, groupOptions, groups, permissionSetOptions, permissionSets]
+        [elementIds, groupOptions, groups, permissionSetOptions, permissionSets]
     );
 
     const [insertGrants, insertGrantsResponse] = useElementSecurity_InsertGrantsMutation({
@@ -373,16 +322,6 @@ function EditElementsPermissionGrantsModalInner({
                         });
                     }
                 }
-                if (response.data.insert_content_UploadableElementPermissionGrant) {
-                    const datas = response.data.insert_content_UploadableElementPermissionGrant.returning;
-                    for (const data of datas) {
-                        cache.writeFragment({
-                            data,
-                            fragment: ElementSecurity_UploadablePgFragmentDoc,
-                            fragmentName: "ElementSecurity_UploadablePG",
-                        });
-                    }
-                }
             }
         },
     });
@@ -390,10 +329,7 @@ function EditElementsPermissionGrantsModalInner({
         update: (cache, response) => {
             if (response.data) {
                 const dataE = response.data.delete_content_ElementPermissionGrant;
-                const dataU = response.data.delete_content_UploadableElementPermissionGrant;
-
                 const deletedIdsE = dataE?.returning.map((x) => x.id) ?? [];
-                const deletedIdsU = dataU?.returning.map((x) => x.id) ?? [];
 
                 cache.modify({
                     fields: {
@@ -406,16 +342,6 @@ function EditElementsPermissionGrantsModalInner({
                                 });
                             });
                             return existingRefs.filter((ref) => !deletedIdsE.includes(readField("id", ref)));
-                        },
-                        content_UploadableElementPermissionGrant(existingRefs: Reference[] = [], { readField }) {
-                            deletedIdsU.forEach((x) => {
-                                cache.evict({
-                                    id: x.id,
-                                    fieldName: "ElementSecurity_UploadablePG",
-                                    broadcast: true,
-                                });
-                            });
-                            return existingRefs.filter((ref) => !deletedIdsU.includes(readField("id", ref)));
                         },
                     },
                 });
@@ -443,7 +369,7 @@ function EditElementsPermissionGrantsModalInner({
                                 insertGrants({
                                     variables: {
                                         elementGrants:
-                                            treatEmptyAsAny && elementIds.length === 0 && uploadableIds.length === 0
+                                            treatEmptyAsAny && elementIds.length === 0
                                                 ? [
                                                       {
                                                           entityId: null,
@@ -451,31 +377,8 @@ function EditElementsPermissionGrantsModalInner({
                                                           permissionSetId: record.permissionSetId,
                                                       },
                                                   ]
-                                                : [
-                                                      ...elementIds.map((elementId) => ({
-                                                          entityId: elementId,
-                                                          groupId: record.groupId,
-                                                          permissionSetId: record.permissionSetId,
-                                                      })),
-                                                      ...uploadableIds
-                                                          .filter((x) => x.elementId)
-                                                          .map((uploadableId) => ({
-                                                              entityId: uploadableId.elementId,
-                                                              groupId: record.groupId,
-                                                              permissionSetId: record.permissionSetId,
-                                                          })),
-                                                  ],
-                                        uploadableGrants:
-                                            treatEmptyAsAny && elementIds.length === 0 && uploadableIds.length === 0
-                                                ? [
-                                                      {
-                                                          entityId: null,
-                                                          groupId: record.groupId,
-                                                          permissionSetId: record.permissionSetId,
-                                                      },
-                                                  ]
-                                                : uploadableIds.map((uploadableId) => ({
-                                                      entityId: uploadableId.uploadableId,
+                                                : elementIds.map((elementId) => ({
+                                                      entityId: elementId,
                                                       groupId: record.groupId,
                                                       permissionSetId: record.permissionSetId,
                                                   })),
@@ -501,7 +404,6 @@ function EditElementsPermissionGrantsModalInner({
                                 });
                                 const elementGrantIds = R.flatten(
                                     data.map((row) => {
-                                        const ids = [];
                                         if (
                                             keyPairs.some(
                                                 (pair) =>
@@ -509,65 +411,20 @@ function EditElementsPermissionGrantsModalInner({
                                                     pair.groupId === row.groupId
                                             )
                                         ) {
-                                            ids.push(
-                                                ...row.elements
-                                                    .filter(
-                                                        (grant) =>
-                                                            (!grant.entityId && elementIds.length === 0) ||
-                                                            (grant.entityId && elementIds.includes(grant.entityId))
-                                                    )
-                                                    .map((x) => x.id)
-                                            );
-                                        }
-                                        const uploadablesElementGrants = R.flatten(
-                                            row.uploadables
-                                                .map((x) => x.entity?.element?.permissionGrants)
-                                                .filter((x) => !!x) as ElementSecurity_ElementPgFragment[][]
-                                        );
-                                        ids.push(
-                                            uploadablesElementGrants
+                                            return row.elements
                                                 .filter(
                                                     (grant) =>
-                                                        keyPairs.some(
-                                                            (pair) =>
-                                                                pair.permissionSetId === grant.permissionSetId &&
-                                                                pair.groupId === grant.groupId
-                                                        ) &&
-                                                        ((!grant.entityId && elementIds.length === 0) ||
-                                                            (grant.entityId && elementIds.includes(grant.entityId)))
+                                                        (!grant.entityId && elementIds.length === 0) ||
+                                                        (grant.entityId && elementIds.includes(grant.entityId))
                                                 )
-                                                .map((x) => x.id)
-                                        );
-                                        return ids;
-                                    })
-                                );
-                                const uploadableGrantIds = R.flatten(
-                                    data.map((row) => {
-                                        const ids = [];
-                                        if (
-                                            keyPairs.some(
-                                                (pair) =>
-                                                    pair.permissionSetId === row.permissionSetId &&
-                                                    pair.groupId === row.groupId
-                                            )
-                                        ) {
-                                            ids.push(
-                                                ...row.uploadables
-                                                    .filter(
-                                                        (grant) =>
-                                                            (!grant.entityId && uploadableIds.length === 0) ||
-                                                            (grant.entityId && uploadableIds.includes(grant.entityId))
-                                                    )
-                                                    .map((x) => x.id)
-                                            );
+                                                .map((x) => x.id);
                                         }
-                                        return ids;
+                                        return [];
                                     })
                                 );
                                 deleteGrants({
                                     variables: {
                                         elementGrantIds,
-                                        uploadableGrantIds,
                                     },
                                 });
                             },

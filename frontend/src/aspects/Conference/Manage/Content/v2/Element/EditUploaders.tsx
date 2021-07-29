@@ -34,8 +34,8 @@ import {
 import * as R from "ramda";
 import React, { useRef, useState } from "react";
 import {
-    ManageContent_UpdateUploadableElementMutation,
-    ManageContent_UpdateUploadableElementMutationVariables,
+    ManageContent_UpdateElementMutation,
+    ManageContent_UpdateElementMutationVariables,
     ManageContent_UploaderFragment,
     ManageContent_UploaderFragmentDoc,
     useManageContent_DeleteUploadersMutation,
@@ -86,27 +86,27 @@ gql`
 `;
 
 export function EditUploaders({
-    uploadableElementId,
+    elementId,
     uploadsRemaining,
     isUpdatingUploadable,
     updateUploadableElement,
     openSendSubmissionRequests,
 }: {
-    uploadableElementId: string;
+    elementId: string;
     uploadsRemaining: number | null;
     isUpdatingUploadable: boolean;
     updateUploadableElement: (
         options?: MutationFunctionOptions<
-            ManageContent_UpdateUploadableElementMutation,
-            ManageContent_UpdateUploadableElementMutationVariables
+            ManageContent_UpdateElementMutation,
+            ManageContent_UpdateElementMutationVariables
         >
-    ) => Promise<FetchResult<ManageContent_UpdateUploadableElementMutation>>;
+    ) => Promise<FetchResult<ManageContent_UpdateElementMutation>>;
     openSendSubmissionRequests: (uploaderIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
     const uploadersResponse = useManageContent_SelectUploadersQuery({
         variables: {
-            uploadableElementId: uploadableElementId,
+            elementId,
         },
     });
 
@@ -230,7 +230,7 @@ export function EditUploaders({
                                                                 conferenceId: conference.id,
                                                                 email: addUploader_Email,
                                                                 name: addUploader_Name,
-                                                                uploadableElementId,
+                                                                elementId,
                                                             },
                                                         ],
                                                     },
@@ -279,8 +279,8 @@ export function EditUploaders({
                                     if (newVal !== uploadsRemaining) {
                                         updateUploadableElement({
                                             variables: {
-                                                uploadableElementId,
-                                                uploadableElement: {
+                                                elementId,
+                                                element: {
                                                     uploadsRemaining: newVal,
                                                 },
                                             },

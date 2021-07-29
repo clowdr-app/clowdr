@@ -39,7 +39,7 @@ import React, { useMemo, useState } from "react";
 import {
     Content_ElementType_Enum,
     SubmissionRequestsModal_ConferenceConfigurationFragment,
-    SubmissionRequestsModal_UploadableElementFragment,
+    SubmissionRequestsModal_ElementFragment,
     useInsertSubmissionRequestEmailJobsMutation,
     useSubmissionRequestsModalDataQuery,
 } from "../../../../../../generated/graphql";
@@ -138,8 +138,10 @@ gql`
     fragment SubmissionRequestsModal_Element on content_Element {
         id
         itemId
+        itemTitle
         typeName
         name
+        data
         uploadsRemaining
         uploaders {
             id
@@ -191,10 +193,10 @@ function SendSubmissionRequestsModalLazyInner({
         <ApolloQueryWrapper queryResult={result} getter={(result) => result}>
             {({
                 conference_Configuration,
-                content_UploadableElement,
+                content_Element,
             }: {
                 conference_Configuration: readonly SubmissionRequestsModal_ConferenceConfigurationFragment[];
-                content_UploadableElement: readonly SubmissionRequestsModal_UploadableElementFragment[];
+                content_Element: readonly SubmissionRequestsModal_ElementFragment[];
             }) => {
                 const conferenceConfiguration =
                     conference_Configuration.find(
@@ -212,7 +214,7 @@ function SendSubmissionRequestsModalLazyInner({
                 return (
                     <SendSubmissionRequestsModalInner
                         onClose={onClose}
-                        uploadableElements={content_UploadableElement}
+                        uploadableElements={content_Element}
                         existingTemplate={existingTemplate}
                         uploaderIds={uploaderIds}
                     />
@@ -229,7 +231,7 @@ export function SendSubmissionRequestsModalInner({
     uploaderIds: filterToUploaderIds,
 }: {
     onClose: () => void;
-    uploadableElements: readonly SubmissionRequestsModal_UploadableElementFragment[];
+    uploadableElements: readonly SubmissionRequestsModal_ElementFragment[];
     existingTemplate: EmailTemplate_BaseConfig;
     uploaderIds: string[] | null;
 }): JSX.Element {
@@ -245,7 +247,7 @@ export function SendSubmissionRequestsModalInner({
                         : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id));
                 return (
                     (!selectedType || upElement.typeName === selectedType) &&
-                    (!onlyReminders || !upElement.hasBeenUploaded) &&
+                    (!onlyReminders || !upElement.data?.length) &&
                     filteredUploaders.length > 0
                 );
             }),

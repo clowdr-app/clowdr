@@ -23,12 +23,7 @@ export type ElementBaseTemplate =
 export type SupportedElementBaseTemplate = {
     supported: true;
     allowCreate: Content_ElementType_Enum[];
-    createDefault: (
-        itemType: Content_ElementType_Enum,
-        required: boolean,
-        conferenceId: string,
-        itemId: string
-    ) => ContentDescriptor;
+    createDefault: (itemType: Content_ElementType_Enum, conferenceId: string, itemId: string) => ContentDescriptor;
     renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
     renderEditor: (props: RenderEditorProps) => JSX.Element;
 };

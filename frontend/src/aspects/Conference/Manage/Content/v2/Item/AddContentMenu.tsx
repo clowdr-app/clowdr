@@ -8,7 +8,6 @@ import React, { useMemo } from "react";
 import {
     Content_ElementType_Enum,
     Content_Element_Insert_Input,
-    Content_UploadableElement_Insert_Input,
     useAddContentMenu_CreateElementMutation,
 } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
@@ -58,139 +57,56 @@ export function AddContentMenu({
         []
     );
 
-    const menu = useMemo(
-        () => (
-            <Menu size="sm">
-                <MenuButton size="sm" m={1} mb={2} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
-                    Add element
-                </MenuButton>
-                <MenuList maxH="30vh" overflowY="auto">
-                    {contentTypeOptions.map((typeOpt) => (
-                        <MenuItem
-                            key={typeOpt.value}
-                            onClick={async () => {
-                                try {
-                                    const template = ElementBaseTemplates[ElementBaseTypes[typeOpt.value]];
-                                    assert(template.supported);
-                                    const newContent = template.createDefault(
-                                        typeOpt.value,
-                                        false,
-                                        conference.id,
-                                        itemId
-                                    );
-                                    assert(newContent.type === "element-only");
-                                    const obj: Content_Element_Insert_Input = {
-                                        conferenceId: conference.id,
-                                        itemId,
-                                        data: newContent.element.data,
-                                        typeName: newContent.element.typeName,
-                                        name: newContent.element.name,
-                                        isHidden: newContent.element.isHidden,
-                                        layoutData: {
-                                            contentType: newContent.element.typeName,
-                                            wide: false,
-                                            hidden: false,
-                                        } as LayoutDataBlob,
-                                    };
-                                    const result = await createElement({
-                                        variables: {
-                                            object: obj,
-                                        },
-                                    });
-                                    if (result.data?.insert_content_Element_one?.id) {
-                                        onCreate(result.data?.insert_content_Element_one?.id);
-                                    }
-                                } catch (e) {
-                                    console.error("Could not create new ContenItem", e);
-                                    toast({
-                                        status: "error",
-                                        title: "Could not create new content",
-                                        description: e.message,
-                                    });
-                                }
-                            }}
-                        >
-                            {typeOpt.label}
-                        </MenuItem>
-                    ))}
-                </MenuList>
-            </Menu>
-        ),
-        [contentTypeOptions, conference.id, itemId, createElement, onCreate, toast]
-    );
-
-    const uploadableMenu = useMemo(
-        () => (
-            <Menu size="sm">
-                <MenuButton size="sm" m={1} mb={2} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
-                    Add uploadable
-                </MenuButton>
-                <MenuList maxH="30vh" overflowY="auto">
-                    {contentTypeOptions
-                        .filter(
-                            (x) =>
-                                x.value !== Content_ElementType_Enum.ContentGroupList &&
-                                x.value !== Content_ElementType_Enum.WholeSchedule &&
-                                x.value !== Content_ElementType_Enum.LiveProgramRooms &&
-                                x.value !== Content_ElementType_Enum.ActiveSocialRooms &&
-                                x.value !== Content_ElementType_Enum.Divider &&
-                                x.value !== Content_ElementType_Enum.SponsorBooths &&
-                                x.value !== Content_ElementType_Enum.ExploreProgramButton &&
-                                x.value !== Content_ElementType_Enum.ExploreScheduleButton
-                        )
-                        .map((typeOpt) => (
-                            <MenuItem
-                                key={typeOpt.value}
-                                onClick={async () => {
-                                    try {
-                                        const template = ElementBaseTemplates[ElementBaseTypes[typeOpt.value]];
-                                        assert(template.supported);
-                                        const newContent = template.createDefault(
-                                            typeOpt.value,
-                                            true,
-                                            conference.id,
-                                            itemId
-                                        );
-                                        assert(newContent.type === "required-only");
-                                        const obj: Content_UploadableElement_Insert_Input = {
-                                            conferenceId: conference.id,
-                                            itemId,
-                                            isHidden: newContent.uploadableElement.isHidden,
-                                            typeName: newContent.uploadableElement.typeName,
-                                            name: newContent.uploadableElement.name,
-                                            uploadsRemaining: newContent.uploadableElement.uploadsRemaining,
-                                        };
-                                        const result = await createUploadableElement({
-                                            variables: {
-                                                object: obj,
-                                            },
-                                        });
-                                        if (result.data?.insert_content_UploadableElement_one?.id) {
-                                            onCreate(result.data?.insert_content_UploadableElement_one?.id);
-                                        }
-                                    } catch (e) {
-                                        console.error("Could not create new ContenItem", e);
-                                        toast({
-                                            status: "error",
-                                            title: "Could not create new content",
-                                            description: e.message,
-                                        });
-                                    }
-                                }}
-                            >
-                                {typeOpt.label}
-                            </MenuItem>
-                        ))}
-                </MenuList>
-            </Menu>
-        ),
-        [contentTypeOptions, conference.id, itemId, onCreate, toast]
-    );
-
     return (
-        <>
-            {menu}
-            {uploadableMenu}
-        </>
+        <Menu size="sm">
+            <MenuButton size="sm" m={1} mb={2} flex="0 0 auto" as={Button} rightIcon={<ChevronDownIcon />}>
+                Add element
+            </MenuButton>
+            <MenuList maxH="30vh" overflowY="auto">
+                {contentTypeOptions.map((typeOpt) => (
+                    <MenuItem
+                        key={typeOpt.value}
+                        onClick={async () => {
+                            try {
+                                const template = ElementBaseTemplates[ElementBaseTypes[typeOpt.value]];
+                                assert(template.supported);
+                                const newContent = template.createDefault(typeOpt.value, conference.id, itemId);
+                                const obj: Content_Element_Insert_Input = {
+                                    conferenceId: conference.id,
+                                    itemId,
+                                    data: newContent.data,
+                                    typeName: newContent.typeName,
+                                    name: newContent.name,
+                                    isHidden: newContent.isHidden,
+                                    uploadsRemaining: newContent.uploadsRemaining,
+                                    layoutData: {
+                                        contentType: newContent.typeName,
+                                        wide: false,
+                                        hidden: false,
+                                    } as LayoutDataBlob,
+                                };
+                                const result = await createElement({
+                                    variables: {
+                                        object: obj,
+                                    },
+                                });
+                                if (result.data?.insert_content_Element_one?.id) {
+                                    onCreate(result.data?.insert_content_Element_one?.id);
+                                }
+                            } catch (e) {
+                                console.error("Could not create new ContenItem", e);
+                                toast({
+                                    status: "error",
+                                    title: "Could not create new content",
+                                    description: e.message,
+                                });
+                            }
+                        }}
+                    >
+                        {typeOpt.label}
+                    </MenuItem>
+                ))}
+            </MenuList>
+        </Menu>
     );
 }

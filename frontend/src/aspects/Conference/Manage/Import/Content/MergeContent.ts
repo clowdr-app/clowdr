@@ -7,7 +7,6 @@ import type {
     IntermediaryItemPersonDescriptor,
     IntermediaryPersonDescriptor,
     IntermediaryTagDescriptor,
-    IntermediaryUploadableElementDescriptor,
     IntermediaryUploaderDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
@@ -18,7 +17,6 @@ import type {
     ItemExhibitionDescriptor,
     ItemPersonDescriptor,
     ProgramPersonDescriptor,
-    UploadableElementDescriptor,
     UploaderDescriptor,
 } from "../../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
@@ -47,7 +45,6 @@ import {
 type Context = {
     idMaps: {
         Uploader: IdMap;
-        UploadableElement: IdMap;
         Element: IdMap;
         ItemPerson: IdMap;
         ItemExhibition: IdMap;
@@ -104,7 +101,7 @@ function mergeUploader(
 }
 
 function convertUploader(
-    uploadableId: string
+    elementId: string
 ): (context: Context, element: IntermediaryUploaderDescriptor | UploaderDescriptor) => UploaderDescriptor {
     return (_context, element) => {
         const result = {
@@ -118,15 +115,13 @@ function convertUploader(
             result.emailsSentCount = 0;
         }
 
-        result.uploadableId = uploadableId;
+        result.elementId = elementId;
 
         return result;
     };
 }
 
-function mergeUploaders(
-    uploadableId: string
-): (
+function mergeUploaders(elementId: string): (
     context: Context,
     elements1: UploaderDescriptor[],
     elements2: (IntermediaryUploaderDescriptor | UploaderDescriptor)[]
@@ -141,29 +136,30 @@ function mergeUploaders(
             elements1,
             elements2,
             findUploader,
-            convertUploader(uploadableId),
+            convertUploader(elementId),
             mergeUploader
         );
     };
 }
 
-function mergeUploadableElement(
+function mergeElement(
     context: Context,
-    element1: UploadableElementDescriptor,
-    element2: UploadableElementDescriptor
+    element1: ElementDescriptor,
+    element2: ElementDescriptor
 ): {
     changes: ChangeSummary[];
-    result: UploadableElementDescriptor;
+    result: ElementDescriptor;
 } {
     const changes: ChangeSummary[] = [];
-    const result = {} as UploadableElementDescriptor;
+    const result = {} as ElementDescriptor;
 
-    mergeIdInPlace("UploadableElement", context, changes, result, element1, element2);
+    mergeIdInPlace("Element", context, changes, result, element1, element2);
     mergeIsNewInPlace(context, result, element1, element2);
     mergeOriginatingDataIdInPlace(context, changes, result, element1, element2);
     mergeFieldInPlace(context, changes, result, "name", element1, element2);
     mergeFieldInPlace(context, changes, result, "typeName", element1, element2);
     mergeFieldInPlace(context, changes, result, "isHidden", element1, element2);
+    mergeFieldInPlace(context, changes, result, "data", element1, element2);
     mergeFieldInPlace(context, changes, result, "uploadsRemaining", element1, element2, true, (_ctx, x, y) => {
         if (x !== null) {
             if (y !== null) {
@@ -212,89 +208,6 @@ function mergeUploadableElement(
     mergeFieldInPlace(context, changes, result, "uploaders", element1, element2, true, mergeUploaders(result.id));
 
     changes.push({
-        location: "UploadableElement",
-        type: "MERGE",
-        description: "Merged two matching required elements.",
-        importData: [element1, element2],
-        newData: result,
-    });
-
-    return {
-        result,
-        changes,
-    };
-}
-
-function convertUploadableElement(
-    context: Context,
-    element: IntermediaryUploadableElementDescriptor | UploadableElementDescriptor
-): UploadableElementDescriptor {
-    const result = {
-        id: element.id ?? uuidv4(),
-        isNew: ("isNew" in element && element.isNew) || !element.id,
-
-        name: element.name,
-        typeName: element.typeName,
-        isHidden: "isHidden" in element && element.isHidden,
-        uploadsRemaining: element.uploadsRemaining,
-        uploaders: [],
-    } as UploadableElementDescriptor;
-
-    const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, element);
-    if (origDataIdx !== undefined) {
-        result.originatingDataId = context.originatingDatas[origDataIdx].id;
-    }
-
-    const uploaderConverter = convertUploader(result.id);
-    if (element.uploaders) {
-        for (const uploader of element.uploaders) {
-            result.uploaders.push(uploaderConverter(context, uploader));
-        }
-    }
-
-    return result;
-}
-
-function mergeUploadableElements(
-    context: Context,
-    elements1: UploadableElementDescriptor[],
-    elements2: (IntermediaryUploadableElementDescriptor | UploadableElementDescriptor)[]
-): {
-    changes: ChangeSummary[];
-    result: UploadableElementDescriptor[];
-} {
-    return mergeLists(
-        context,
-        "UploadableElement",
-        elements1,
-        elements2,
-        findExistingNamedItem("UploadableElement"),
-        convertUploadableElement,
-        mergeUploadableElement
-    );
-}
-
-function mergeElement(
-    context: Context,
-    element1: ElementDescriptor,
-    element2: ElementDescriptor
-): {
-    changes: ChangeSummary[];
-    result: ElementDescriptor;
-} {
-    const changes: ChangeSummary[] = [];
-    const result = {} as ElementDescriptor;
-
-    mergeIdInPlace("Element", context, changes, result, element1, element2);
-    mergeIsNewInPlace(context, result, element1, element2);
-    mergeOriginatingDataIdInPlace(context, changes, result, element1, element2);
-    mergeFieldInPlace(context, changes, result, "name", element1, element2);
-    mergeFieldInPlace(context, changes, result, "typeName", element1, element2);
-    mergeFieldInPlace(context, changes, result, "isHidden", element1, element2);
-    mergeFieldInPlace(context, changes, result, "data", element1, element2);
-    mergeFieldInPlace(context, changes, result, "uploadableId", element1, element2);
-
-    changes.push({
         location: "Element",
         type: "MERGE",
         description: "Merged two matching elements.",
@@ -310,8 +223,7 @@ function mergeElement(
 
 function convertElement(
     context: Context,
-    element: IntermediaryElementDescriptor | ElementDescriptor,
-    uploadableElements: UploadableElementDescriptor[]
+    element: IntermediaryElementDescriptor | ElementDescriptor
 ): ElementDescriptor {
     const result = {
         id: element.id ?? uuidv4(),
@@ -322,18 +234,13 @@ function convertElement(
         data: element.data,
         isHidden: element.isHidden,
         layoutData: "layoutData" in element ? element.layoutData : undefined,
-        uploadableId: "uploadableId" in element ? element.uploadableId : undefined,
+        uploadsRemaining: element.uploadsRemaining,
+        uploaders: [],
     } as ElementDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, element);
     if (origDataIdx !== undefined) {
         result.originatingDataId = context.originatingDatas[origDataIdx].id;
-    }
-
-    if (!result.uploadableId) {
-        result.uploadableId = uploadableElements.find(
-            (x) => x.typeName === result.typeName && x.name === result.name
-        )?.id;
     }
 
     return result;
@@ -342,8 +249,7 @@ function convertElement(
 function mergeElements(
     context: Context,
     elements1: ElementDescriptor[],
-    elements2: (IntermediaryElementDescriptor | ElementDescriptor)[],
-    uploadableElements: UploadableElementDescriptor[]
+    elements2: (IntermediaryElementDescriptor | ElementDescriptor)[]
 ): {
     changes: ChangeSummary[];
     result: ElementDescriptor[];
@@ -354,7 +260,7 @@ function mergeElements(
         elements1,
         elements2,
         findExistingNamedItem("Element"),
-        (a, b) => convertElement(a, b, uploadableElements),
+        (a, b) => convertElement(a, b),
         mergeElement
     );
 }
@@ -585,15 +491,9 @@ function convertItem(context: Context, item: IntermediaryItemDescriptor | ItemDe
         result.originatingDataId = context.originatingDatas[origDataIdx].id;
     }
 
-    if (item.uploadableElements) {
-        for (const x of item.uploadableElements) {
-            result.uploadableElements.push(convertUploadableElement(context, x));
-        }
-    }
-
     if (item.elements) {
         for (const x of item.elements) {
-            result.elements.push(convertElement(context, x, result.uploadableElements));
+            result.elements.push(convertElement(context, x));
         }
     }
 
@@ -645,11 +545,7 @@ function mergeItem(
     mergeOriginatingDataIdInPlace(context, changes, result, item1, item2);
     mergeFieldInPlace(context, changes, result, "title", item1, item2);
     mergeFieldInPlace(context, changes, result, "typeName", item1, item2);
-    mergeFieldInPlace(context, changes, result, "uploadableElements", item1, item2, true, mergeUploadableElements);
-    result.uploadableElements = result.uploadableElements.filter((x) => !!x.typeName);
-    mergeFieldInPlace(context, changes, result, "elements", item1, item2, true, (a, b, c) =>
-        mergeElements(a, b, c, result.uploadableElements)
-    );
+    mergeFieldInPlace(context, changes, result, "elements", item1, item2, true, mergeElements);
     mergeFieldInPlace(context, changes, result, "tagIds", item1, item2, true, (_ctx, items1, items2, _prefer) => {
         const tagIdsMerged = new Set(items1);
         items2.forEach((id) => tagIdsMerged.add(id));
@@ -1190,12 +1086,6 @@ export default function mergeContent(
         }
 
         item.elements.forEach((element) => {
-            if (element.originatingDataId) {
-                unusedOriginatingDataIds.delete(element.originatingDataId);
-            }
-        });
-
-        item.uploadableElements.forEach((element) => {
             if (element.originatingDataId) {
                 unusedOriginatingDataIds.delete(element.originatingDataId);
             }

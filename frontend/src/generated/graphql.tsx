@@ -35823,7 +35823,7 @@ export type CombineVideosModal_GetElementsQueryVariables = Exact<{
 
 export type CombineVideosModal_GetElementsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly createdAt: any, readonly itemId: any, readonly data: any, readonly name: string }> };
 
-export type SEoUm_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string }, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> };
+export type SEoUm_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly data: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string }, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> };
 
 export type SEoUm_InfosQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -36114,7 +36114,7 @@ export type SubmissionRequestsModalDataQuery = { readonly __typename?: 'query_ro
 
 export type SubmissionRequestsModal_ConferenceConfigurationFragment = { readonly __typename?: 'conference_Configuration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any };
 
-export type SubmissionRequestsModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly uploadsRemaining?: Maybe<number>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string }> };
+export type SubmissionRequestsModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly itemTitle?: Maybe<string>, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly uploadsRemaining?: Maybe<number>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string }> };
 
 export type SubmissionsReviewModalDataQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -38499,6 +38499,7 @@ export const SEoUm_ElementFragmentDoc = gql`
   name
   typeName
   itemId
+  data
   item {
     id
     title
@@ -38553,8 +38554,10 @@ export const SubmissionRequestsModal_ElementFragmentDoc = gql`
     fragment SubmissionRequestsModal_Element on content_Element {
   id
   itemId
+  itemTitle
   typeName
   name
+  data
   uploadsRemaining
   uploaders {
     id

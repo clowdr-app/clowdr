@@ -1024,7 +1024,6 @@ export default function ManageContentV2(): JSX.Element {
                 isOpen={editPGs_IsOpen}
                 onClose={editPGs_OnCloseFull}
                 elementIds={[]}
-                uploadableIds={[]}
                 treatEmptyAsAny={true}
             />
         </RequireAtLeastOnePermissionWrapper>

@@ -196,14 +196,11 @@ async function trySendTranscriptionEmail(elementId: string) {
             },
         });
 
-        if (uploadableElementResult.data.content_UploadableElement.length !== 1) {
-            // TODO: handle the >1 case
-            throw new Error(
-                `Could not find a single required item (found ${uploadableElementResult.data.content_UploadableElement.length}) for content item`
-            );
+        if (!uploadableElementResult.data.content_Element_by_pk) {
+            throw new Error("Could not find the specified element");
         }
 
-        const uploadableElement = uploadableElementResult.data.content_UploadableElement[0];
+        const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
 
         const element = elementDetails.data.content_Element_by_pk;
         if (!element) {
@@ -285,13 +282,12 @@ async function trySendTranscriptionFailedEmail(elementId: string, elementName: s
         },
     });
 
-    if (uploadableElementResult.data.content_UploadableElement.length !== 1) {
-        // TODO: handle the >1 case
-        console.error(`Could not find a single required item for content item ${elementId}`);
+    if (!uploadableElementResult.data.content_Element_by_pk) {
+        console.error("Could not find the specified element");
         return;
     }
 
-    const uploadableElement = uploadableElementResult.data.content_UploadableElement[0];
+    const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
 
     const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
@@ -354,13 +350,12 @@ async function trySendTranscodeFailedEmail(elementId: string, elementName: strin
         },
     });
 
-    if (uploadableElementResult.data.content_UploadableElement.length !== 1) {
-        // TODO: handle the >1 case
-        console.error(`Could not find a single required item for content item ${elementId}`);
+    if (!uploadableElementResult.data.content_Element_by_pk) {
+        console.error("Could not find the specified element");
         return;
     }
 
-    const uploadableElement = uploadableElementResult.data.content_UploadableElement[0];
+    const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
 
     const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
@@ -424,12 +419,12 @@ export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Pr
     }
 
     if (
-        result.data.content_UploadableElement.length === 1 &&
-        result.data.content_UploadableElement[0].conference.configurations.length === 1 &&
-        "text" in result.data.content_UploadableElement[0].conference.configurations[0].value
+        result.data.content_Element.length === 1 &&
+        result.data.content_Element[0].conference.configurations.length === 1 &&
+        "text" in result.data.content_Element[0].conference.configurations[0].value
     ) {
         return {
-            agreementText: result.data.content_UploadableElement[0].conference.configurations[0].value.text,
+            agreementText: result.data.content_Element[0].conference.configurations[0].value.text,
         };
     }
 

@@ -332,7 +332,7 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
 
     const latestVersion = extractLatestVersion(uploadableElement.id);
 
-    if (newVersionData.type !== latestVersion?.data.type) {
+    if (latestVersion && newVersionData.type !== latestVersion.data.type) {
         return {
             success: false,
             message: "An item of a different type has already been uploaded.",

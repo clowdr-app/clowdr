@@ -7,8 +7,7 @@ This service is based on Heroku, Websockets using Sockets.io, and Redis. It prov
 1. You should have already configured and started the Docker services. Open [http://localhost:15672](http://localhost:15672) in a web browser and log in with the default username and password, both `admin`.
 1. Now, create the user that the realtime service will use to access RabbitMQ. Go to the _Admin_ tab and add a new user with username `services/realtime` and password `1234`. Click the username of the newly-created user, and then click the _Set Permission_ button. This gives the user unrestricted read/write access.
    - You can choose a different username and password, but you will need to update the `RABBITMQ_USERNAME` and `RABBITMQ_PASSWORD` in `.env` to match.
-1. Update realtime/.env file
-   - SECRET_FOR_SUMMARY and SECRET_FOR_FLUSHING needs to match PRESENCE_SUMMARY_SECRET and PRESENCE_FLUSH_SECRET in hasura/.env
+
 
 ## Heroku
 

@@ -81,6 +81,14 @@ export function EditElementInner(props: {
         );
     }, [descriptors, itemTemplate, itemType, updateElement]);
 
+    const readableTypeName = useMemo(
+        () =>
+            props.element.typeName
+                .split("_")
+                .map((x) => x[0] + x.substr(1).toLowerCase())
+                .reduce((acc, x) => `${acc} ${x}`),
+        [props.element.typeName]
+    );
     return (
         <>
             {updateElementResponse.error ? (
@@ -90,6 +98,7 @@ export function EditElementInner(props: {
                     <AlertDescription>{updateElementResponse.error.message}</AlertDescription>
                 </Alert>
             ) : undefined}
+            <Text fontSize="sm">Type: {readableTypeName}</Text>
             <EditUploaders
                 openSendSubmissionRequests={props.openSendSubmissionRequests}
                 elementId={props.element.id}

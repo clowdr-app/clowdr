@@ -2,9 +2,7 @@ import type { ItemFullNestedInfoFragment, SelectAllContentQuery } from "../../..
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
 import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "./Types";
 
-export function convertContentToDescriptors(
-    allContent: SelectAllContentQuery
-): {
+export function convertContentToDescriptors(allContent: SelectAllContentQuery): {
     items: Map<string, ItemDescriptor>;
     people: Map<string, ProgramPersonDescriptor>;
     tags: Map<string, TagDescriptor>;
@@ -79,23 +77,15 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
             typeName: item.typeName,
             data: Array.isArray(item.data) ? [...item.data] : { ...item.data },
             layoutData: item.layoutData,
-            uploadableId: item.uploadableId,
             originatingDataId: item.originatingDataId,
-        })),
-        uploadableElements: group.uploadableElements.map((item) => ({
-            id: item.id,
-            name: item.name,
-            typeName: item.typeName,
             uploadsRemaining: item.uploadsRemaining,
-            isHidden: item.isHidden,
             uploaders: item.uploaders.map((uploader) => ({
                 id: uploader.id,
                 email: uploader.email,
                 emailsSentCount: uploader.emailsSentCount,
                 name: uploader.name,
-                uploadableId: uploader.uploadableElementId,
+                elementId: uploader.elementId,
             })),
-            originatingDataId: item.originatingDataId,
         })),
         people: group.itemPeople.map((groupPerson) => ({
             conferenceId: groupPerson.conferenceId,
@@ -132,14 +122,6 @@ export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
             layoutData: item.layoutData,
             name: item.name,
             typeName: item.typeName,
-            uploadableId: item.uploadableId,
-            originatingDataId: item.originatingDataId,
-        })),
-        uploadableElements: group.uploadableElements.map((item) => ({
-            id: item.id,
-            name: item.name,
-            typeName: item.typeName,
-            isHidden: item.isHidden,
             originatingDataId: item.originatingDataId,
             uploadsRemaining: item.uploadsRemaining,
             uploaders: item.uploaders.map((uploader) => ({
@@ -147,7 +129,7 @@ export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
                 email: uploader.email,
                 emailsSentCount: uploader.emailsSentCount,
                 name: uploader.name,
-                uploadableId: uploader.uploadableId,
+                elementId: uploader.elementId,
             })),
         })),
         people: group.people.map((groupPerson) => ({

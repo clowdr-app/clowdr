@@ -25,34 +25,32 @@ import {
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import {
-    SubmissionsReviewModal_UploadableElementFragment,
+    SubmissionsReviewModal_ElementFragment,
     useSubmissionsReviewModalDataQuery,
 } from "../../../../../../generated/graphql";
 import { Element } from "../../../../Attend/Content/Element/Element";
 
 gql`
     query SubmissionsReviewModalData($itemIds: [uuid!]!) {
-        content_UploadableElement(where: { itemId: { _in: $itemIds } }) {
-            ...SubmissionsReviewModal_UploadableElement
+        content_Element(where: { itemId: { _in: $itemIds } }) {
+            ...SubmissionsReviewModal_Element
         }
     }
 
-    fragment SubmissionsReviewModal_UploadableElement on content_UploadableElement {
+    fragment SubmissionsReviewModal_Element on content_Element {
         id
         itemId
         typeName
         name
+        data
+        layoutData
         uploadsRemaining
         itemTitle
-        hasBeenUploaded
         uploaders {
             id
             email
             name
             emailsSentCount
-        }
-        element {
-            ...ElementData
         }
     }
 `;
@@ -82,35 +80,34 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
     });
     const sortedUploadableElements = useMemo(
         () =>
-            uploadableElementsResponse.data?.content_UploadableElement
-                ? R.sortBy((x) => x.itemTitle ?? "", uploadableElementsResponse.data.content_UploadableElement)
+            uploadableElementsResponse.data?.content_Element
+                ? R.sortBy((x) => x.itemTitle ?? "", uploadableElementsResponse.data.content_Element)
                 : [],
-        [uploadableElementsResponse.data?.content_UploadableElement]
+        [uploadableElementsResponse.data?.content_Element]
     );
 
     const uploadableElementsNoUploaders = useMemo(
-        () => sortedUploadableElements.filter((x) => x.uploaders.length === 0 && !x.hasBeenUploaded),
+        () => sortedUploadableElements.filter((x) => x.uploaders.length === 0 && !x.data?.length),
         [sortedUploadableElements]
     );
     const uploadableElementsNoSentRequests = useMemo(
         () =>
             sortedUploadableElements.filter(
-                (x) =>
-                    x.uploaders.length !== 0 && x.uploaders.every((z) => z.emailsSentCount === 0) && !x.hasBeenUploaded
+                (x) => x.uploaders.length !== 0 && x.uploaders.every((z) => z.emailsSentCount === 0) && !x.data?.length
             ),
         [sortedUploadableElements]
     );
     const uploadableElementsWithSendRequestsNoSubmissions = useMemo(
         () =>
             sortedUploadableElements.filter(
-                (x) =>
-                    x.uploaders.length !== 0 && x.uploaders.some((z) => z.emailsSentCount !== 0) && !x.hasBeenUploaded
+                (x) => x.uploaders.length !== 0 && x.uploaders.some((z) => z.emailsSentCount !== 0) && !x.data?.length
             ),
         [sortedUploadableElements]
     );
-    const uploadableElementsWithSubmissions = useMemo(() => sortedUploadableElements.filter((x) => x.hasBeenUploaded), [
-        sortedUploadableElements,
-    ]);
+    const uploadableElementsWithSubmissions = useMemo(
+        () => sortedUploadableElements.filter((x) => !!x.data?.length),
+        [sortedUploadableElements]
+    );
 
     return (
         <ModalContent m={0}>
@@ -244,12 +241,12 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
 function DeferredElement({
     uploadableElement,
 }: {
-    uploadableElement: SubmissionsReviewModal_UploadableElementFragment;
+    uploadableElement: SubmissionsReviewModal_ElementFragment;
 }): JSX.Element {
     const { isOpen, onOpen } = useDisclosure();
     return isOpen ? (
-        uploadableElement.element ? (
-            <Element element={uploadableElement.element} />
+        uploadableElement ? (
+            <Element element={uploadableElement} />
         ) : (
             <Box p={2}>This element has been submitted but you do not have permission to access it.</Box>
         )

@@ -128,6 +128,9 @@ export interface IntermediaryElementDescriptor {
     isHidden?: boolean;
     name?: string;
     data?: ElementDataBlob;
+    uploadsRemaining?: number;
+
+    uploaders?: Array<IntermediaryUploaderDescriptor>;
 }
 
 export interface IntermediaryUploaderDescriptor {
@@ -135,16 +138,6 @@ export interface IntermediaryUploaderDescriptor {
 
     email?: string;
     name?: string;
-}
-
-export interface IntermediaryUploadableElementDescriptor {
-    id?: string;
-    originatingDataSourceId?: string;
-    typeName?: ElementType_Enum;
-    name?: string;
-    uploadsRemaining?: number;
-
-    uploaders?: Array<IntermediaryUploaderDescriptor>;
 }
 
 export interface IntermediaryItemPersonDescriptor {
@@ -169,7 +162,6 @@ export interface IntermediaryItemDescriptor {
     title?: string;
     typeName?: ItemType_Enum;
     elements?: Array<IntermediaryElementDescriptor>;
-    uploadableElements?: Array<IntermediaryUploadableElementDescriptor>;
     tagNames?: Array<string>;
     exhibitionNames?: Array<string>;
     people?: Array<IntermediaryItemPersonDescriptor>;

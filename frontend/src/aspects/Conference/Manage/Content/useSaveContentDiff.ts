@@ -1,7 +1,6 @@
 import { ApolloError, gql } from "@apollo/client";
 import assert from "assert";
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import {
     Collection_Exhibition_Insert_Input,
     Collection_ProgramPerson_Insert_Input,
@@ -11,7 +10,6 @@ import {
     Content_ItemExhibition_Insert_Input,
     Content_ItemProgramPerson_Insert_Input,
     Content_Item_Insert_Input,
-    Content_UploadableElement_Insert_Input,
     Content_Uploader_Constraint,
     Content_Uploader_Insert_Input,
     Content_Uploader_Update_Column,
@@ -33,7 +31,6 @@ import {
     useUpdateItemMutation,
     useUpdatePersonMutation,
     useUpdateTagMutation,
-    useUpdateUploadableElementMutation,
     useUpdateUploaderMutation,
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
@@ -47,7 +44,6 @@ import type {
     ItemExhibitionDescriptor,
     ItemPersonDescriptor,
     ProgramPersonDescriptor,
-    UploadableElementDescriptor,
     UploaderDescriptor,
 } from "./Types";
 
@@ -58,21 +54,7 @@ gql`
         email
         emailsSentCount
         name
-        uploadableElementId
-    }
-
-    fragment UploadableElementInfo on content_UploadableElement {
-        id
-        name
-        isHidden
-        typeName
-        conferenceId
-        itemId
-        uploadsRemaining
-        uploaders {
-            ...UploaderInfo
-        }
-        originatingDataId
+        elementId
     }
 
     fragment ElementInfo on content_Element {
@@ -84,8 +66,11 @@ gql`
         isHidden
         layoutData
         name
-        uploadableId
         originatingDataId
+        uploadsRemaining
+        uploaders {
+            ...UploaderInfo
+        }
     }
 
     fragment OriginatingDataInfo on conference_OriginatingData {
@@ -135,9 +120,6 @@ gql`
         typeName
         title
         shortTitle
-        uploadableElements {
-            ...UploadableElementInfo
-        }
         elements {
             ...ElementInfo
         }
@@ -278,7 +260,6 @@ gql`
 
     mutation UpdateItem(
         $newItems: [content_Element_insert_input!]!
-        $newUploadableItems: [content_UploadableElement_insert_input!]!
         $newGroupTags: [content_ItemTag_insert_input!]!
         $newGroupExhibitions: [content_ItemExhibition_insert_input!]!
         $groupId: uuid!
@@ -287,7 +268,6 @@ gql`
         $shortTitle: String = null
         $title: String!
         $deleteItemIds: [uuid!]!
-        $deleteUploadableItemIds: [uuid!]!
         $deleteGroupTagIds: [uuid!]!
         $deleteGroupExhibitionIds: [uuid!]!
         $newUploaders: [content_Uploader_insert_input!]!
@@ -298,11 +278,6 @@ gql`
         insert_content_Element(objects: $newItems) {
             returning {
                 ...ElementInfo
-            }
-        }
-        insert_content_UploadableElement(objects: $newUploadableItems) {
-            returning {
-                ...UploadableElementInfo
             }
         }
         insert_content_ItemTag(objects: $newGroupTags) {
@@ -332,11 +307,6 @@ gql`
             ...ItemFullNestedInfo
         }
         delete_content_Element(where: { id: { _in: $deleteItemIds } }) {
-            returning {
-                id
-            }
-        }
-        delete_content_UploadableElement(where: { id: { _in: $deleteUploadableItemIds } }) {
             returning {
                 id
             }
@@ -371,7 +341,7 @@ gql`
         $data: jsonb!
         $isHidden: Boolean!
         $originatingDataId: uuid = null
-        $uploadableId: uuid = null
+        $uploadsRemaining: Int = null
     ) {
         update_content_Element_by_pk(
             pk_columns: { id: $id }
@@ -382,32 +352,10 @@ gql`
                 data: $data
                 isHidden: $isHidden
                 originatingDataId: $originatingDataId
-                uploadableId: $uploadableId
-            }
-        ) {
-            ...ElementInfo
-        }
-    }
-
-    mutation UpdateUploadableElement(
-        $id: uuid!
-        $typeName: content_ElementType_enum!
-        $name: String!
-        $isHidden: Boolean!
-        $uploadsRemaining: Int = null
-        $originatingDataId: uuid = null
-    ) {
-        update_content_UploadableElement_by_pk(
-            pk_columns: { id: $id }
-            _set: {
-                typeName: $typeName
-                name: $name
-                isHidden: $isHidden
-                originatingDataId: $originatingDataId
                 uploadsRemaining: $uploadsRemaining
             }
         ) {
-            ...UploadableElementInfo
+            ...ElementInfo
         }
     }
 
@@ -564,12 +512,15 @@ export function useSaveContentDiff():
     const [insertElementsMutation] = useInsertElementsMutation();
     const [updateItemMutation] = useUpdateItemMutation();
     const [updateElementMutation] = useUpdateElementMutation();
-    const [updateUploadableElementMutation] = useUpdateUploadableElementMutation();
     const [updateUploaderMutation] = useUpdateUploaderMutation();
     const [updateGroupPersonMutation] = useUpdateGroupPersonMutation();
     const [updateGroupExhibitionMutation] = useUpdateGroupExhibitionMutation();
 
-    const { loading: loadingContent, error: errorContent, data: allContent } = useSelectAllContentQuery({
+    const {
+        loading: loadingContent,
+        error: errorContent,
+        data: allContent,
+    } = useSelectAllContentQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -758,27 +709,25 @@ export function useSaveContentDiff():
                     }
 
                     const updateTagResultsArr: [string, boolean][] = await Promise.all(
-                        Array.from(updatedTags.values()).map(
-                            async (tag): Promise<[string, boolean]> => {
-                                let ok = false;
-                                try {
-                                    await updateTagMutation({
-                                        variables: {
-                                            id: tag.id,
-                                            colour: tag.colour,
-                                            name: tag.name,
-                                            originatingDataId: tag.originatingDataId,
-                                            priority: tag.priority,
-                                        },
-                                    });
-                                    ok = true;
-                                } catch (e) {
-                                    console.error("Error updating tag", e);
-                                    ok = false;
-                                }
-                                return [tag.id, ok];
+                        Array.from(updatedTags.values()).map(async (tag): Promise<[string, boolean]> => {
+                            let ok = false;
+                            try {
+                                await updateTagMutation({
+                                    variables: {
+                                        id: tag.id,
+                                        colour: tag.colour,
+                                        name: tag.name,
+                                        originatingDataId: tag.originatingDataId,
+                                        priority: tag.priority,
+                                    },
+                                });
+                                ok = true;
+                            } catch (e) {
+                                console.error("Error updating tag", e);
+                                ok = false;
                             }
-                        )
+                            return [tag.id, ok];
+                        })
                     );
                     for (const [key, val] of updateTagResultsArr) {
                         tagResults.set(key, val);
@@ -824,28 +773,26 @@ export function useSaveContentDiff():
                     }
 
                     const updateProgramPersonResultsArr: [string, boolean][] = await Promise.all(
-                        Array.from(updatedPeople.values()).map(
-                            async (person): Promise<[string, boolean]> => {
-                                let ok = false;
-                                try {
-                                    await updatePersonMutation({
-                                        variables: {
-                                            id: person.id,
-                                            affiliation: person.affiliation,
-                                            email: person.email,
-                                            name: person.name,
-                                            originatingDataId: person.originatingDataId,
-                                            registrantId: person.registrantId,
-                                        },
-                                    });
-                                    ok = true;
-                                } catch (e) {
-                                    console.error("Error updating content person", e);
-                                    ok = false;
-                                }
-                                return [person.id, ok];
+                        Array.from(updatedPeople.values()).map(async (person): Promise<[string, boolean]> => {
+                            let ok = false;
+                            try {
+                                await updatePersonMutation({
+                                    variables: {
+                                        id: person.id,
+                                        affiliation: person.affiliation,
+                                        email: person.email,
+                                        name: person.name,
+                                        originatingDataId: person.originatingDataId,
+                                        registrantId: person.registrantId,
+                                    },
+                                });
+                                ok = true;
+                            } catch (e) {
+                                console.error("Error updating content person", e);
+                                ok = false;
                             }
-                        )
+                            return [person.id, ok];
+                        })
                     );
                     for (const [key, val] of updateProgramPersonResultsArr) {
                         peopleResults.set(key, val);
@@ -871,26 +818,24 @@ export function useSaveContentDiff():
                     }
 
                     const updateExhibitionResultsArr: [string, boolean][] = await Promise.all(
-                        Array.from(updatedExhibitions.values()).map(
-                            async (exhibition): Promise<[string, boolean]> => {
-                                let ok = false;
-                                try {
-                                    await updateExhibitionMutation({
-                                        variables: {
-                                            id: exhibition.id,
-                                            name: exhibition.name,
-                                            colour: exhibition.colour,
-                                            priority: exhibition.priority,
-                                        },
-                                    });
-                                    ok = true;
-                                } catch (e) {
-                                    console.error("Error updating exhibition", e);
-                                    ok = false;
-                                }
-                                return [exhibition.id, ok];
+                        Array.from(updatedExhibitions.values()).map(async (exhibition): Promise<[string, boolean]> => {
+                            let ok = false;
+                            try {
+                                await updateExhibitionMutation({
+                                    variables: {
+                                        id: exhibition.id,
+                                        name: exhibition.name,
+                                        colour: exhibition.colour,
+                                        priority: exhibition.priority,
+                                    },
+                                });
+                                ok = true;
+                            } catch (e) {
+                                console.error("Error updating exhibition", e);
+                                ok = false;
                             }
-                        )
+                            return [exhibition.id, ok];
+                        })
                     );
                     for (const [key, val] of updateExhibitionResultsArr) {
                         exhibitionResults.set(key, val);
@@ -913,38 +858,16 @@ export function useSaveContentDiff():
                                         },
                                         typeName: group.typeName,
                                         elements: {
-                                            data: group.elements
-                                                .filter((x) => !x.uploadableId)
-                                                .map((item) => {
-                                                    const itemResult: Content_Element_Insert_Input = {
-                                                        id: item.id,
-                                                        conferenceId: conference.id,
-                                                        typeName: item.typeName,
-                                                        data: item.data,
-                                                        layoutData: item.layoutData,
-                                                        name: item.name,
-                                                        isHidden: item.isHidden,
-                                                        originatingDataId: item.originatingDataId,
-                                                    };
-                                                    return itemResult;
-                                                }),
-                                        },
-                                        uploadableElements: {
-                                            data: group.uploadableElements.map((item) => {
-                                                const element = group.elements.find((x) => x.uploadableId === item.id);
-                                                if (element) {
-                                                    elementsToPostInsert.push({
-                                                        ...element,
-                                                        itemId: group.id,
-                                                    });
-                                                }
-                                                const itemResult: Content_UploadableElement_Insert_Input = {
+                                            data: group.elements.map((item) => {
+                                                const itemResult: Content_Element_Insert_Input = {
                                                     id: item.id,
                                                     conferenceId: conference.id,
-                                                    accessToken: uuidv4(),
+                                                    typeName: item.typeName,
+                                                    data: item.data,
+                                                    layoutData: item.layoutData,
                                                     name: item.name,
                                                     isHidden: item.isHidden,
-                                                    typeName: item.typeName,
+                                                    originatingDataId: item.originatingDataId,
                                                     uploadsRemaining: item.uploadsRemaining,
                                                     uploaders: {
                                                         data: item.uploaders.map(
@@ -957,11 +880,10 @@ export function useSaveContentDiff():
                                                         ),
                                                         on_conflict: {
                                                             constraint:
-                                                                Content_Uploader_Constraint.UploaderEmailUploadableElementIdKey,
+                                                                Content_Uploader_Constraint.UploaderElementIdEmailKey,
                                                             update_columns: [Content_Uploader_Update_Column.Name],
                                                         },
                                                     },
-                                                    originatingDataId: item.originatingDataId,
                                                 };
                                                 return itemResult;
                                             }),
@@ -1010,9 +932,24 @@ export function useSaveContentDiff():
                                         layoutData: item.layoutData,
                                         name: item.name,
                                         isHidden: item.isHidden,
-                                        uploadableId: item.uploadableId,
                                         originatingDataId: item.originatingDataId,
                                         itemId: item.itemId,
+                                        uploadsRemaining: item.uploadsRemaining,
+                                        uploaders: {
+                                            data:
+                                                item.uploaders?.data.map(
+                                                    (uploader): Content_Uploader_Insert_Input => ({
+                                                        conferenceId: conference.id,
+                                                        email: uploader.email,
+                                                        id: uploader.id,
+                                                        name: uploader.name,
+                                                    })
+                                                ) ?? [],
+                                            on_conflict: {
+                                                constraint: Content_Uploader_Constraint.UploaderElementIdEmailKey,
+                                                update_columns: [Content_Uploader_Update_Column.Name],
+                                            },
+                                        },
                                     })),
                                 },
                             });
@@ -1037,345 +974,232 @@ export function useSaveContentDiff():
                 }
 
                 const updateGroupResultsArr: [string, boolean][] = await Promise.all(
-                    Array.from(updatedGroups.values()).map(
-                        async (group): Promise<[string, boolean]> => {
-                            let ok = false;
-                            try {
-                                const newItems = new Map<string, ElementDescriptor>();
-                                const updatedItems = new Map<string, ElementDescriptor>();
-                                const deleteItemKeys = new Set<string>();
-                                const newItemsForUploadables = new Map<string, ElementDescriptor[]>();
+                    Array.from(updatedGroups.values()).map(async (group): Promise<[string, boolean]> => {
+                        let ok = false;
+                        try {
+                            const newItems = new Map<string, ElementDescriptor>();
+                            const updatedItems = new Map<string, ElementDescriptor>();
+                            const deleteItemKeys = new Set<string>();
 
-                                const newUploadableItems = new Map<string, UploadableElementDescriptor>();
-                                const updatedUploadableItems = new Map<string, UploadableElementDescriptor>();
-                                const deleteUploadableItemKeys = new Set<string>();
+                            const newGroupTags = new Set<string>();
+                            const deleteGroupTagKeys = new Set<string>();
 
-                                const newGroupTags = new Set<string>();
-                                const deleteGroupTagKeys = new Set<string>();
+                            const newUploaders = new Map<string, UploaderDescriptor>();
+                            const updatedUploaders = new Map<string, UploaderDescriptor>();
+                            const deleteUploaderKeys = new Set<string>();
 
-                                const newUploaders = new Map<string, UploaderDescriptor>();
-                                const updatedUploaders = new Map<string, UploaderDescriptor>();
-                                const deleteUploaderKeys = new Set<string>();
+                            const newGroupPersons = new Map<string, ItemPersonDescriptor>();
+                            const updatedGroupPersons = new Map<string, ItemPersonDescriptor>();
+                            const deleteGroupPersonKeys = new Set<string>();
 
-                                const newGroupPersons = new Map<string, ItemPersonDescriptor>();
-                                const updatedGroupPersons = new Map<string, ItemPersonDescriptor>();
-                                const deleteGroupPersonKeys = new Set<string>();
+                            const newGroupExhibitions = new Map<string, ItemExhibitionDescriptor>();
+                            const updatedGroupExhibitions = new Map<string, ItemExhibitionDescriptor>();
+                            const deleteGroupExhibitionKeys = new Set<string>();
 
-                                const newGroupExhibitions = new Map<string, ItemExhibitionDescriptor>();
-                                const updatedGroupExhibitions = new Map<string, ItemExhibitionDescriptor>();
-                                const deleteGroupExhibitionKeys = new Set<string>();
+                            const existingGroup = original.items.get(group.id);
+                            assert(existingGroup);
 
-                                const existingGroup = original.items.get(group.id);
-                                assert(existingGroup);
+                            for (const item of group.elements) {
+                                if (item.isNew) {
+                                    newItems.set(item.id, item);
+                                } else {
+                                    updatedItems.set(item.id, item);
 
-                                for (const item of group.uploadableElements) {
-                                    if (item.isNew) {
-                                        newUploadableItems.set(item.id, item);
-                                    } else {
-                                        updatedUploadableItems.set(item.id, item);
-
-                                        for (const uploader of item.uploaders) {
-                                            if (uploader.isNew) {
-                                                newUploaders.set(uploader.id, { ...uploader, uploadableId: item.id });
-                                            } else {
-                                                updatedUploaders.set(uploader.id, {
-                                                    ...uploader,
-                                                    uploadableId: item.id,
-                                                });
-                                            }
-                                        }
-                                    }
-                                }
-                                for (const existingItem of existingGroup.uploadableElements) {
-                                    if (!updatedUploadableItems.has(existingItem.id)) {
-                                        deleteUploadableItemKeys.add(existingItem.id);
-                                    }
-
-                                    for (const existingUploader of existingItem.uploaders) {
-                                        if (!updatedUploaders.has(existingUploader.id)) {
-                                            deleteUploaderKeys.add(existingUploader.id);
-                                        }
-                                    }
-                                }
-
-                                for (const item of group.elements) {
-                                    if (item.isNew) {
-                                        if (item.uploadableId) {
-                                            const uploadable =
-                                                newUploadableItems.get(item.uploadableId) ??
-                                                updatedUploadableItems.get(item.uploadableId);
-                                            if (!uploadable) {
-                                                throw new Error(
-                                                    "Could not find uploadable for new element: " +
-                                                        JSON.stringify(
-                                                            {
-                                                                elementId: item.id,
-                                                                uploadableId: item.uploadableId,
-                                                            },
-                                                            null,
-                                                            2
-                                                        )
-                                                );
-                                            } else if (!uploadable.isNew) {
-                                                throw new Error(
-                                                    "Cannot add new element to existing uploadable: " +
-                                                        JSON.stringify(
-                                                            {
-                                                                elementId: item.id,
-                                                                uploadableId: item.uploadableId,
-                                                            },
-                                                            null,
-                                                            2
-                                                        )
-                                                );
-                                            } else {
-                                                const existing = newItemsForUploadables.get(item.uploadableId);
-                                                if (existing) {
-                                                    existing.push(item);
-                                                } else {
-                                                    newItemsForUploadables.set(item.uploadableId, [item]);
-                                                }
-                                            }
+                                    for (const uploader of item.uploaders) {
+                                        if (uploader.isNew) {
+                                            newUploaders.set(uploader.id, { ...uploader, elementId: item.id });
                                         } else {
-                                            newItems.set(item.id, item);
+                                            updatedUploaders.set(uploader.id, {
+                                                ...uploader,
+                                                elementId: item.id,
+                                            });
                                         }
-                                    } else {
-                                        updatedItems.set(item.id, item);
                                     }
                                 }
-                                for (const existingItem of existingGroup.elements) {
-                                    if (!updatedItems.has(existingItem.id)) {
-                                        deleteItemKeys.add(existingItem.id);
+                            }
+                            for (const existingItem of existingGroup.elements) {
+                                if (!updatedItems.has(existingItem.id)) {
+                                    deleteItemKeys.add(existingItem.id);
+                                }
+
+                                for (const existingUploader of existingItem.uploaders) {
+                                    if (!updatedUploaders.has(existingUploader.id)) {
+                                        deleteUploaderKeys.add(existingUploader.id);
                                     }
                                 }
+                            }
 
-                                for (const tagId of group.tagIds) {
-                                    if (!existingGroup.tagIds.has(tagId)) {
-                                        newGroupTags.add(tagId);
-                                    }
+                            for (const tagId of group.tagIds) {
+                                if (!existingGroup.tagIds.has(tagId)) {
+                                    newGroupTags.add(tagId);
                                 }
-                                for (const tagId of existingGroup.tagIds) {
-                                    if (!group.tagIds.has(tagId)) {
-                                        deleteGroupTagKeys.add(tagId);
-                                    }
+                            }
+                            for (const tagId of existingGroup.tagIds) {
+                                if (!group.tagIds.has(tagId)) {
+                                    deleteGroupTagKeys.add(tagId);
                                 }
+                            }
 
-                                for (const groupPerson of group.people) {
-                                    if (groupPerson.isNew) {
-                                        newGroupPersons.set(groupPerson.id, groupPerson);
-                                    } else {
-                                        updatedGroupPersons.set(groupPerson.id, groupPerson);
-                                    }
+                            for (const groupPerson of group.people) {
+                                if (groupPerson.isNew) {
+                                    newGroupPersons.set(groupPerson.id, groupPerson);
+                                } else {
+                                    updatedGroupPersons.set(groupPerson.id, groupPerson);
                                 }
-                                for (const existingGroupPerson of existingGroup.people) {
-                                    if (!updatedGroupPersons.has(existingGroupPerson.id)) {
-                                        deleteGroupPersonKeys.add(existingGroupPerson.id);
-                                    }
+                            }
+                            for (const existingGroupPerson of existingGroup.people) {
+                                if (!updatedGroupPersons.has(existingGroupPerson.id)) {
+                                    deleteGroupPersonKeys.add(existingGroupPerson.id);
                                 }
+                            }
 
-                                for (const groupExhibition of group.exhibitions) {
-                                    if (groupExhibition.isNew) {
-                                        newGroupExhibitions.set(groupExhibition.id, groupExhibition);
-                                    } else {
-                                        updatedGroupExhibitions.set(groupExhibition.id, groupExhibition);
-                                    }
+                            for (const groupExhibition of group.exhibitions) {
+                                if (groupExhibition.isNew) {
+                                    newGroupExhibitions.set(groupExhibition.id, groupExhibition);
+                                } else {
+                                    updatedGroupExhibitions.set(groupExhibition.id, groupExhibition);
                                 }
-                                for (const existingGroupExhibition of existingGroup.exhibitions) {
-                                    if (!updatedGroupExhibitions.has(existingGroupExhibition.id)) {
-                                        deleteGroupExhibitionKeys.add(existingGroupExhibition.id);
-                                    }
+                            }
+                            for (const existingGroupExhibition of existingGroup.exhibitions) {
+                                if (!updatedGroupExhibitions.has(existingGroupExhibition.id)) {
+                                    deleteGroupExhibitionKeys.add(existingGroupExhibition.id);
                                 }
+                            }
 
-                                if (updatedItems.size > 0) {
-                                    await Promise.all(
-                                        Array.from(updatedItems.values()).map(async (item) => {
-                                            await updateElementMutation({
-                                                variables: {
-                                                    typeName: item.typeName,
-                                                    data: item.data,
-                                                    id: item.id,
-                                                    layoutData: item.layoutData,
-                                                    name: item.name,
-                                                    isHidden: item.isHidden,
-                                                    uploadableId: item.uploadableId,
-                                                    originatingDataId: item.originatingDataId,
-                                                },
-                                            });
-                                        })
-                                    );
-                                }
-
-                                if (updatedUploadableItems.size > 0) {
-                                    await Promise.all(
-                                        Array.from(updatedUploadableItems.values()).map(async (item) => {
-                                            await updateUploadableElementMutation({
-                                                variables: {
-                                                    typeName: item.typeName,
-                                                    id: item.id,
-                                                    name: item.name,
-                                                    isHidden: item.isHidden,
-                                                    uploadsRemaining: item.uploadsRemaining,
-                                                    originatingDataId: item.originatingDataId,
-                                                },
-                                            });
-                                        })
-                                    );
-                                }
-
-                                if (updatedUploaders.size > 0) {
-                                    await Promise.all(
-                                        Array.from(updatedUploaders.values()).map(async (uploader) => {
-                                            await updateUploaderMutation({
-                                                variables: {
-                                                    id: uploader.id,
-                                                    name: uploader.name,
-                                                    email: uploader.email,
-                                                },
-                                            });
-                                        })
-                                    );
-                                }
-
-                                if (updatedGroupPersons.size > 0) {
-                                    await Promise.all(
-                                        Array.from(updatedGroupPersons.values()).map(async (groupPerson) => {
-                                            await updateGroupPersonMutation({
-                                                variables: {
-                                                    id: groupPerson.id,
-                                                    priority: groupPerson.priority,
-                                                    roleName: groupPerson.roleName,
-                                                },
-                                            });
-                                        })
-                                    );
-                                }
-
-                                if (updatedGroupExhibitions.size > 0) {
-                                    await Promise.all(
-                                        Array.from(updatedGroupExhibitions.values()).map(async (groupExhibition) => {
-                                            await updateGroupExhibitionMutation({
-                                                variables: {
-                                                    id: groupExhibition.id,
-                                                    priority: groupExhibition.priority,
-                                                    layout: groupExhibition.layout,
-                                                },
-                                            });
-                                        })
-                                    );
-                                }
-
-                                await updateItemMutation({
-                                    variables: {
-                                        typeName: group.typeName,
-                                        deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
-                                        deleteItemIds: Array.from(deleteItemKeys.values()),
-                                        deleteUploadableItemIds: Array.from(deleteUploadableItemKeys.values()),
-                                        deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
-                                        deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
-                                        deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
-                                        groupId: group.id,
-                                        newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
-                                            itemId: group.id,
-                                            tagId,
-                                        })),
-                                        newItems: Array.from(newItems.values()).map((item) => ({
-                                            conferenceId: conference.id,
-                                            itemId: group.id,
-                                            typeName: item.typeName,
-                                            data: item.data,
-                                            id: item.id,
-                                            layoutData: item.layoutData,
-                                            isHidden: item.isHidden,
-                                            name: item.name,
-                                            uploadableId: item.uploadableId,
-                                            originatingDataId: item.originatingDataId,
-                                        })),
-                                        newUploadableItems: Array.from(newUploadableItems.values()).map((item) => {
-                                            const elements = newItemsForUploadables.get(item.id) ?? [];
-                                            if (elements.length > 1) {
-                                                throw new Error(
-                                                    "Cannot create more than one element for the same uploadable! Uploadable id: " +
-                                                        item.id +
-                                                        "; Element ids: " +
-                                                        JSON.stringify(elements, null, 2)
-                                                );
-                                            }
-                                            return {
-                                                accessToken: uuidv4(),
-                                                conferenceId: conference.id,
-                                                itemId: group.id,
+                            if (updatedItems.size > 0) {
+                                await Promise.all(
+                                    Array.from(updatedItems.values()).map(async (item) => {
+                                        await updateElementMutation({
+                                            variables: {
                                                 typeName: item.typeName,
+                                                data: item.data,
                                                 id: item.id,
+                                                layoutData: item.layoutData,
                                                 name: item.name,
                                                 isHidden: item.isHidden,
-                                                uploadsRemaining: item.uploadsRemaining,
                                                 originatingDataId: item.originatingDataId,
-                                                uploaders: {
-                                                    data: item.uploaders.map(
-                                                        (uploader): Content_Uploader_Insert_Input => ({
-                                                            id: uploader.id,
-                                                            email: uploader.email,
-                                                            name: uploader.name,
-                                                            conferenceId: conference.id,
-                                                        })
-                                                    ),
-                                                },
-                                                element:
-                                                    elements.length === 1
-                                                        ? {
-                                                              data: {
-                                                                  conferenceId: conference.id,
-                                                                  data: elements[0].data,
-                                                                  isHidden: elements[0].isHidden,
-                                                                  itemId: group.id,
-                                                                  layoutData: elements[0].layoutData,
-                                                                  name: elements[0].name,
-                                                                  originatingDataId: elements[0].originatingDataId,
-                                                                  typeName: elements[0].typeName,
-                                                              },
-                                                          }
-                                                        : undefined,
-                                            };
-                                        }),
-                                        newUploaders: Array.from(newUploaders.values()).map((uploader) => ({
-                                            conferenceId: conference.id,
-                                            email: uploader.email,
-                                            id: uploader.id,
-                                            name: uploader.name,
-                                            uploadableElementId: uploader.uploadableId,
-                                        })),
-                                        newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
-                                            conferenceId: conference.id,
-                                            id: groupPerson.id,
-                                            personId: groupPerson.personId,
-                                            priority: groupPerson.priority,
-                                            roleName: groupPerson.roleName,
-                                            itemId: group.id,
-                                        })),
-                                        newGroupExhibitions: Array.from(newGroupExhibitions.values()).map(
-                                            (groupExhibition) => ({
-                                                conferenceId: conference.id,
+                                                uploadsRemaining: item.uploadsRemaining,
+                                            },
+                                        });
+                                    })
+                                );
+                            }
+
+                            if (updatedUploaders.size > 0) {
+                                await Promise.all(
+                                    Array.from(updatedUploaders.values()).map(async (uploader) => {
+                                        await updateUploaderMutation({
+                                            variables: {
+                                                id: uploader.id,
+                                                name: uploader.name,
+                                                email: uploader.email,
+                                            },
+                                        });
+                                    })
+                                );
+                            }
+
+                            if (updatedGroupPersons.size > 0) {
+                                await Promise.all(
+                                    Array.from(updatedGroupPersons.values()).map(async (groupPerson) => {
+                                        await updateGroupPersonMutation({
+                                            variables: {
+                                                id: groupPerson.id,
+                                                priority: groupPerson.priority,
+                                                roleName: groupPerson.roleName,
+                                            },
+                                        });
+                                    })
+                                );
+                            }
+
+                            if (updatedGroupExhibitions.size > 0) {
+                                await Promise.all(
+                                    Array.from(updatedGroupExhibitions.values()).map(async (groupExhibition) => {
+                                        await updateGroupExhibitionMutation({
+                                            variables: {
                                                 id: groupExhibition.id,
-                                                exhibitionId: groupExhibition.exhibitionId,
                                                 priority: groupExhibition.priority,
                                                 layout: groupExhibition.layout,
-                                                itemId: group.id,
-                                            })
-                                        ),
-                                        originatingDataId: group.originatingDataId,
-                                        shortTitle: group.shortTitle,
-                                        title: group.title,
-                                    },
-                                });
-
-                                ok = true;
-                            } catch (e) {
-                                console.error("Error updating content group", e, group);
-                                ok = false;
+                                            },
+                                        });
+                                    })
+                                );
                             }
-                            return [group.id, ok];
+
+                            await updateItemMutation({
+                                variables: {
+                                    typeName: group.typeName,
+                                    deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
+                                    deleteItemIds: Array.from(deleteItemKeys.values()),
+                                    deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
+                                    deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
+                                    deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
+                                    groupId: group.id,
+                                    newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
+                                        itemId: group.id,
+                                        tagId,
+                                    })),
+                                    newItems: Array.from(newItems.values()).map((item) => ({
+                                        conferenceId: conference.id,
+                                        itemId: group.id,
+                                        typeName: item.typeName,
+                                        data: item.data,
+                                        id: item.id,
+                                        layoutData: item.layoutData,
+                                        isHidden: item.isHidden,
+                                        name: item.name,
+                                        originatingDataId: item.originatingDataId,
+                                        uploadsRemaining: item.uploadsRemaining,
+                                        uploaders: {
+                                            data: item.uploaders.map(
+                                                (uploader): Content_Uploader_Insert_Input => ({
+                                                    id: uploader.id,
+                                                    email: uploader.email,
+                                                    name: uploader.name,
+                                                    conferenceId: conference.id,
+                                                })
+                                            ),
+                                        },
+                                    })),
+                                    newUploaders: Array.from(newUploaders.values()).map((uploader) => ({
+                                        conferenceId: conference.id,
+                                        email: uploader.email,
+                                        id: uploader.id,
+                                        name: uploader.name,
+                                        elementId: uploader.elementId,
+                                    })),
+                                    newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
+                                        conferenceId: conference.id,
+                                        id: groupPerson.id,
+                                        personId: groupPerson.personId,
+                                        priority: groupPerson.priority,
+                                        roleName: groupPerson.roleName,
+                                        itemId: group.id,
+                                    })),
+                                    newGroupExhibitions: Array.from(newGroupExhibitions.values()).map(
+                                        (groupExhibition) => ({
+                                            conferenceId: conference.id,
+                                            id: groupExhibition.id,
+                                            exhibitionId: groupExhibition.exhibitionId,
+                                            priority: groupExhibition.priority,
+                                            layout: groupExhibition.layout,
+                                            itemId: group.id,
+                                        })
+                                    ),
+                                    originatingDataId: group.originatingDataId,
+                                    shortTitle: group.shortTitle,
+                                    title: group.title,
+                                },
+                            });
+
+                            ok = true;
+                        } catch (e) {
+                            console.error("Error updating content group", e, group);
+                            ok = false;
                         }
-                    )
+                        return [group.id, ok];
+                    })
                 );
                 for (const [key, val] of updateGroupResultsArr) {
                     groupResults.set(key, val);

@@ -1,0 +1,9 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE OR REPLACE FUNCTION content."Element_itemTitle"(i_row content."Element")
+--  RETURNS text
+--  LANGUAGE sql
+--  STABLE
+-- AS $function$
+--   SELECT "title" FROM "content"."Item" WHERE id = i_row."itemId" LIMIT 1
+-- $function$;

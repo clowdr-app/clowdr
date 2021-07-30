@@ -38,10 +38,6 @@ export function CombineVideosModal({
     elementsByItem: {
         itemId: string;
         elementIds: string[];
-        uploadables: {
-            uploadableId: string;
-            elementId?: string;
-        }[];
     }[];
 }): JSX.Element {
     return (
@@ -109,22 +105,9 @@ function ModalInner({
     elementsByItem: {
         itemId: string;
         elementIds: string[];
-        uploadables: {
-            uploadableId: string;
-            elementId?: string;
-        }[];
     }[];
 }): JSX.Element {
-    const elementIds_Flat = useMemo(
-        () =>
-            R.flatten(
-                elementsByItem.map((x) => [
-                    ...x.elementIds,
-                    ...x.uploadables.filter((y) => !!y.elementId).map((y) => y.elementId),
-                ])
-            ),
-        [elementsByItem]
-    );
+    const elementIds_Flat = useMemo(() => R.flatten(elementsByItem.map((x) => x.elementIds)), [elementsByItem]);
     const itemIds = useMemo(() => elementsByItem.map((x) => x.itemId), [elementsByItem]);
 
     const conference = useConference();

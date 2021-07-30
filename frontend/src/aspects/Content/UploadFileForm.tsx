@@ -18,18 +18,18 @@ import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { UploadableItemFieldsFragment, useSubmitUploadableElementMutation } from "../../generated/graphql";
+import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 
 export default function UploadFileForm({
-    uploadableElement,
+    elementId,
     magicToken,
     allowedFileTypes,
     uploadAgreement,
     handleFormSubmitted,
 }: {
-    uploadableElement: UploadableItemFieldsFragment;
+    elementId: string;
     magicToken: string;
     allowedFileTypes: string[];
     uploadAgreement?: string;
@@ -42,7 +42,7 @@ export default function UploadFileForm({
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "required-content-item-upload",
             meta: {
-                uploadableId: uploadableElement.id,
+                uploadableId: elementId,
             },
             allowMultipleUploads: false,
             restrictions: {
@@ -58,7 +58,7 @@ export default function UploadFileForm({
             companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
         });
         return uppy;
-    }, [allowedFileTypes, uploadableElement.id]);
+    }, [allowedFileTypes, elementId]);
 
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;

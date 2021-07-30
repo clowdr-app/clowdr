@@ -24,21 +24,11 @@ export type ElementDescriptor = {
     typeName: Content_ElementType_Enum;
     isHidden: boolean;
     layoutData: LayoutDataBlob | null;
-    uploadableId?: string | null;
+    elementId?: string | null;
     name: string;
     data: ElementDataBlob;
     originatingDataId?: string;
-};
-
-export type UploadableElementDescriptor = {
-    isNew?: boolean;
-
-    id: string;
-    typeName: Content_ElementType_Enum;
-    name: string;
-    isHidden: boolean;
     uploaders: UploaderDescriptor[];
-    originatingDataId?: string;
     uploadsRemaining?: number | null;
 };
 
@@ -49,23 +39,8 @@ export type UploaderDescriptor = {
     email: string;
     emailsSentCount: number;
     name: string;
-    uploadableId: string;
+    elementId: string;
 };
-
-export type ContentDescriptor =
-    | {
-          type: "required-only";
-          uploadableElement: UploadableElementDescriptor;
-      }
-    | {
-          type: "required-and-element";
-          uploadableElement: UploadableElementDescriptor;
-          element: ElementDescriptor;
-      }
-    | {
-          type: "element-only";
-          element: ElementDescriptor;
-      };
 
 export type ProgramPersonDescriptor = {
     isNew?: boolean;
@@ -110,7 +85,6 @@ export type ItemDescriptor = {
     typeName: Content_ItemType_Enum;
     tagIds: Set<string>;
     elements: ElementDescriptor[];
-    uploadableElements: UploadableElementDescriptor[];
     people: ItemPersonDescriptor[];
     exhibitions: ItemExhibitionDescriptor[];
     originatingDataId?: string;
@@ -120,8 +94,8 @@ export type ItemDescriptor = {
 };
 
 export type RenderEditorProps = {
-    data: ContentDescriptor;
-    update: (updated: ContentDescriptor) => void;
+    data: ElementDescriptor;
+    update: (updated: ElementDescriptor) => void;
 };
 
 export type ElementBaseTemplate =
@@ -132,7 +106,7 @@ export type ElementBaseTemplate =
 
 export type SupportedElementBaseTemplate = {
     supported: true;
-    createDefault: (itemType: Content_ElementType_Enum, required: boolean) => ContentDescriptor;
-    renderEditorHeading: (data: ContentDescriptor) => JSX.Element;
+    createDefault: (itemType: Content_ElementType_Enum, required: boolean) => ElementDescriptor;
+    renderEditorHeading: (data: ElementDescriptor) => JSX.Element;
     renderEditor: (props: RenderEditorProps) => JSX.Element;
 };

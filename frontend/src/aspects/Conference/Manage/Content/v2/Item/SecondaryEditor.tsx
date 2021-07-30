@@ -24,7 +24,6 @@ import {
     Content_ItemType_Enum,
     ManageContent_ElementFragment,
     ManageContent_ItemSecondaryFragment,
-    ManageContent_UploadableElementFragment,
     useManageContent_SelectItemQuery,
 } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
@@ -200,14 +199,12 @@ function SecondaryEditorInner({
                     rooms: [],
                     ...result.content_Item_by_pk,
                     elements: result.content_Element,
-                    uploadableElements: result.content_UploadableElement,
                 })}
                 queryResult={itemResponse}
             >
                 {(
                     result: Partial<ManageContent_ItemSecondaryFragment> & {
                         elements: readonly ManageContent_ElementFragment[];
-                        uploadableElements: readonly ManageContent_UploadableElementFragment[];
                     }
                 ) => (
                     <EditElements

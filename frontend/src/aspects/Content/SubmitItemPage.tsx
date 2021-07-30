@@ -15,12 +15,7 @@ import {
 import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
 import React, { useCallback, useMemo } from "react";
-import {
-    Content_ElementType_Enum,
-    useGetElementQuery,
-    useGetUploadAgreementQuery,
-    useSelectUploadableItemQuery,
-} from "../../generated/graphql";
+import { Content_ElementType_Enum, useGetElementQuery, useGetUploadAgreementQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 import { useTitle } from "../Utils/useTitle";
 import UploadedElement from "./UploadedElement";
@@ -38,25 +33,8 @@ gql`
             name
             id
             itemTitle
+            uploadsRemaining
         }
-    }
-
-    query SelectUploadableItem($uploadableId: uuid!) {
-        content_UploadableElement(where: { id: { _eq: $uploadableId } }) {
-            ...UploadableItemFields
-        }
-    }
-
-    fragment UploadableItemFields on content_UploadableElement {
-        id
-        typeName
-        name
-        uploadsRemaining
-        conference {
-            id
-            name
-        }
-        itemTitle
     }
 
     mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!) {
@@ -73,25 +51,7 @@ gql`
     }
 `;
 
-export default function SubmitItemPage({
-    magicToken,
-    uploadableId,
-}: {
-    magicToken: string;
-    uploadableId: string;
-}): JSX.Element {
-    const { loading, error, data, refetch } = useSelectUploadableItemQuery({
-        fetchPolicy: "network-only",
-        context: {
-            headers: {
-                "x-hasura-magic-token": magicToken,
-                "SEND-WITHOUT-AUTH": true,
-            },
-        },
-        variables: {
-            uploadableId,
-        },
-    });
+export default function SubmitItemPage({ magicToken }: { magicToken: string }): JSX.Element {
     const {
         loading: uploadAgreementLoading,
         error: uploadAgreementError,
@@ -107,14 +67,9 @@ export default function SubmitItemPage({
             },
         },
     });
-    useQueryErrorToast(error, false, "SubmitItemPage -- upload agreement");
+    useQueryErrorToast(uploadAgreementError, false, "SubmitItemPage -- upload agreement");
 
-    const {
-        loading: loadingElement,
-        error: errorElement,
-        data: dataElement,
-        refetch: refetchElement,
-    } = useGetElementQuery({
+    const { loading, error, data, refetch } = useGetElementQuery({
         variables: {
             magicToken,
         },
@@ -129,11 +84,11 @@ export default function SubmitItemPage({
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");
 
     const uploadableElement = useMemo(() => {
-        if (!data?.content_UploadableElement || data.content_UploadableElement.length !== 1) {
+        if (!data?.content_ElementByAccessToken || data.content_ElementByAccessToken.length !== 1) {
             return null;
         }
 
-        return data.content_UploadableElement[0];
+        return data.content_ElementByAccessToken[0];
     }, [data]);
 
     const title = useTitle(uploadableElement?.itemTitle ? `Submit ${uploadableElement.itemTitle}` : "Clowdr");
@@ -152,11 +107,9 @@ export default function SubmitItemPage({
         }
 
         const existingData: any | null =
-            (dataElement?.content_ElementByAccessToken?.length
-                ? dataElement.content_ElementByAccessToken[0].data?.length
-                    ? dataElement.content_ElementByAccessToken[0].data[
-                          dataElement.content_ElementByAccessToken[0].data.length - 1
-                      ]?.data
+            (uploadableElement
+                ? uploadableElement.data?.length
+                    ? uploadableElement.data[uploadableElement.data.length - 1]?.data
                     : undefined
                 : undefined) ?? null;
 
@@ -176,7 +129,7 @@ export default function SubmitItemPage({
                 return (
                     <UploadFileForm
                         magicToken={magicToken}
-                        uploadableElement={uploadableElement}
+                        elementId={uploadableElement.id}
                         allowedFileTypes={[".pdf", ".png", ".jpg"]}
                         uploadAgreement={uploadAgreement}
                         handleFormSubmitted={formSubmitted}
@@ -217,7 +170,7 @@ export default function SubmitItemPage({
                 return (
                     <UploadFileForm
                         magicToken={magicToken}
-                        uploadableElement={uploadableElement}
+                        elementId={uploadableElement.id}
                         allowedFileTypes={[".mp4", ".mkv", ".webm"]}
                         uploadAgreement={uploadAgreement}
                         handleFormSubmitted={formSubmitted}
@@ -226,7 +179,7 @@ export default function SubmitItemPage({
             default:
                 return <>Unrecognised upload type.</>;
         }
-    }, [uploadableElement, dataElement?.content_ElementByAccessToken, magicToken, uploadAgreement, formSubmitted]);
+    }, [uploadableElement, magicToken, uploadAgreement, formSubmitted]);
 
     return (
         <Center>
@@ -322,10 +275,10 @@ export default function SubmitItemPage({
                                     </Heading>
                                     <UploadedElement
                                         magicToken={magicToken}
-                                        data={dataElement}
-                                        error={!!errorElement}
-                                        loading={loadingElement}
-                                        refetch={refetchElement}
+                                        data={data}
+                                        error={!!error}
+                                        loading={loading}
+                                        refetch={refetch}
                                     />
                                 </VStack>
                             </>

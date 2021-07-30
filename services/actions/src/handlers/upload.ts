@@ -9,7 +9,6 @@ import {
     Content_ElementType_Enum,
     ElementBaseType,
     ElementBlob,
-    ElementDataBlob,
     ElementVersionData,
     VideoElementBlob,
 } from "@clowdr-app/shared-types/build/content";
@@ -21,7 +20,6 @@ import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
 import {
-    CreateElementDocument,
     ElementAddNewVersionDocument,
     Email_Insert_Input,
     GetUploadersDocument,
@@ -35,13 +33,13 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
 import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
-import { getLatestVersion } from "../lib/element";
+import { extractLatestVersion } from "../lib/element";
 import { callWithRetry } from "../utils";
 import { insertEmails } from "./email";
 
 gql`
     query UploadableElement($accessToken: String!) {
-        content_UploadableElement(where: { accessToken: { _eq: $accessToken } }) {
+        content_Element(where: { accessToken: { _eq: $accessToken } }) {
             ...UploadableElementFields
             conference {
                 configurations(where: { key: { _eq: "UPLOAD_CUTOFF_TIMESTAMP" } }) {
@@ -52,7 +50,7 @@ gql`
         }
     }
 
-    fragment UploadableElementPermissionGrantFields on content_UploadableElementPermissionGrant {
+    fragment UploadableElementPermissionGrantFields on content_ElementPermissionGrant {
         id
         permissionSetId
         groupId
@@ -60,21 +58,17 @@ gql`
         conferenceSlug
     }
 
-    fragment UploadableElementFields on content_UploadableElement {
+    fragment UploadableElementFields on content_Element {
         id
         typeName
         accessToken
         name
         uploadsRemaining
         isHidden
+        data
         conference {
             id
             name
-        }
-        element {
-            id
-            data
-            typeName
         }
         item {
             id
@@ -82,35 +76,6 @@ gql`
         }
         permissionGrants {
             ...UploadableElementPermissionGrantFields
-        }
-    }
-
-    mutation CreateElement(
-        $conferenceId: uuid!
-        $itemId: uuid!
-        $typeName: content_ElementType_enum!
-        $data: jsonb!
-        $isHidden: Boolean!
-        $layoutData: jsonb = null
-        $name: String!
-        $uploadableElementId: uuid!
-        $grants: [content_ElementPermissionGrant_insert_input!]!
-    ) {
-        insert_content_Element_one(
-            object: {
-                conferenceId: $conferenceId
-                itemId: $itemId
-                typeName: $typeName
-                data: $data
-                isHidden: $isHidden
-                layoutData: $layoutData
-                name: $name
-                uploadableId: $uploadableElementId
-                permissionGrants: { data: $grants }
-            }
-            on_conflict: { constraint: Element_requiredContentId_key, update_columns: data }
-        ) {
-            id
         }
     }
 `;
@@ -253,27 +218,27 @@ async function getItemByToken(magicToken: string): Promise<ItemByToken | { error
         },
     });
 
-    if (response.data.content_UploadableElement.length !== 1) {
+    if (response.data.content_Element.length !== 1) {
         return {
-            error: "Could not find a required item that matched the request.",
+            error: "Could not find an element that matched the request.",
         };
     }
 
-    const uploadableElement = response.data.content_UploadableElement[0];
+    const element = response.data.content_Element[0];
 
-    const result: ItemByToken = { uploadableElement };
+    const result: ItemByToken = { uploadableElement: element };
 
-    if (uploadableElement.conference.configurations.length === 1) {
+    if (element.conference.configurations.length === 1) {
         // UPLOAD_CUTOFF_TIMESTAMP is specified in epoch milliseconds
-        result.uploadCutoffTimestamp = new Date(parseInt(uploadableElement.conference.configurations[0].value));
+        result.uploadCutoffTimestamp = new Date(parseInt(element.conference.configurations[0].value));
     }
 
     return result;
 }
 
 gql`
-    query GetUploaders($uploadableElementId: uuid!) {
-        content_Uploader(where: { uploadableElement: { id: { _eq: $uploadableElementId } } }) {
+    query GetUploaders($elementId: uuid!) {
+        content_Uploader(where: { elementId: { _eq: $elementId } }) {
             name
             id
             email
@@ -283,7 +248,7 @@ gql`
 `;
 
 async function sendSubmittedEmail(
-    uploadableElementId: string,
+    elementId: string,
     uploadableElementName: string,
     itemTitle: string,
     conferenceName: string
@@ -291,7 +256,7 @@ async function sendSubmittedEmail(
     const uploaders = await apolloClient.query({
         query: GetUploadersDocument,
         variables: {
-            uploadableElementId,
+            elementId,
         },
     });
 
@@ -358,34 +323,35 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
         };
     }
 
-    if (!uploadableElement.element) {
+    if (newVersionData.type !== uploadableElement.typeName) {
+        return {
+            success: false,
+            message: "Uploaded item type does not match required type.",
+        };
+    }
+
+    const latestVersion = extractLatestVersion(uploadableElement.id);
+
+    if (latestVersion && newVersionData.type !== latestVersion.data.type) {
+        return {
+            success: false,
+            message: "An item of a different type has already been uploaded.",
+        };
+    } else {
         try {
-            const data: ElementDataBlob = [
-                {
-                    createdAt: Date.now(),
-                    createdBy: "user",
-                    data: newVersionData,
-                },
-            ];
+            const newVersion: ElementVersionData = {
+                createdAt: Date.now(),
+                createdBy: "user",
+                data: newVersionData,
+            };
+
             await apolloClient.mutate({
-                mutation: CreateElementDocument,
+                mutation: ElementAddNewVersionDocument,
                 variables: {
-                    conferenceId: uploadableElement.conference.id,
-                    itemId: uploadableElement.item.id,
-                    typeName: uploadableElement.typeName,
-                    data,
-                    isHidden: uploadableElement.isHidden,
-                    layoutData: null,
-                    name: uploadableElement.name,
-                    uploadableElementId: uploadableElement.id,
-                    grants: itemByToken.uploadableElement.permissionGrants.map((grant) => ({
-                        conferenceSlug: grant.conferenceSlug,
-                        groupId: grant.groupId,
-                        permissionSetId: grant.permissionSetId,
-                    })),
+                    id: uploadableElement.id,
+                    newVersion,
                 },
             });
-
             await sendSubmittedEmail(
                 uploadableElement.id,
                 uploadableElement.name,
@@ -393,62 +359,17 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
                 uploadableElement.conference.name
             );
         } catch (e) {
-            console.error("Failed to save new content item", e);
+            console.error("Failed to save new version of content item", e);
             return {
                 success: false,
-                message: "Failed to save new item.",
+                message: "Failed to save new version of content item",
             };
-        }
-    } else if (uploadableElement.element.typeName !== uploadableElement.typeName) {
-        return {
-            success: false,
-            message: "An item of a different type has already been uploaded.",
-        };
-    } else {
-        const { latestVersion } = await getLatestVersion(uploadableElement.element.id);
-
-        if (newVersionData.type !== latestVersion?.data.type) {
-            return {
-                success: false,
-                message: "An item of a different type has already been uploaded.",
-            };
-        } else {
-            try {
-                const newVersion: ElementVersionData = {
-                    createdAt: Date.now(),
-                    createdBy: "user",
-                    data: newVersionData,
-                };
-
-                await apolloClient.mutate({
-                    mutation: ElementAddNewVersionDocument,
-                    variables: {
-                        id: uploadableElement.element.id,
-                        newVersion,
-                    },
-                });
-                await sendSubmittedEmail(
-                    uploadableElement.id,
-                    uploadableElement.name,
-                    uploadableElement.item.title,
-                    uploadableElement.conference.name
-                );
-            } catch (e) {
-                console.error("Failed to save new version of content item", e);
-                return {
-                    success: false,
-                    message: "Failed to save new version of content item",
-                };
-            }
         }
     }
 
     gql`
         mutation SetUploadableElementUploadsRemaining($id: uuid!, $uploadsRemaining: Int!) {
-            update_content_UploadableElement_by_pk(
-                pk_columns: { id: $id }
-                _set: { uploadsRemaining: $uploadsRemaining }
-            ) {
+            update_content_Element_by_pk(pk_columns: { id: $id }, _set: { uploadsRemaining: $uploadsRemaining }) {
                 id
             }
         }
@@ -481,14 +402,14 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
 
     const uploadableElement = itemByToken.uploadableElement;
 
-    if (!uploadableElement.element) {
+    if (!uploadableElement) {
         return {
             message: "No matching content item",
             success: false,
         };
     }
 
-    const { latestVersion } = await getLatestVersion(uploadableElement.element.id);
+    const latestVersion = extractLatestVersion(uploadableElement.data);
 
     if (!latestVersion) {
         return {
@@ -532,7 +453,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
         await apolloClient.mutate({
             mutation: ElementAddNewVersionDocument,
             variables: {
-                id: uploadableElement.element.id,
+                id: uploadableElement.id,
                 newVersion,
             },
         });
@@ -561,7 +482,7 @@ gql`
         email
         emailsSentCount
         name
-        uploadableElement {
+        element {
             ...UploadableElementFields
         }
     }
@@ -665,7 +586,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
 
     const emails = new Map<string, { email: Email_Insert_Input; uploaderId: string; jobId: string }[]>();
     for (const job of jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning) {
-        const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.uploadableElement.typeName);
+        const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.element.typeName);
 
         let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
             job.uploader.conference.id,
@@ -676,14 +597,14 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
             emailTemplates = null;
         }
 
-        const uploadLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${job.uploader.uploadableElement.id}/${job.uploader.uploadableElement.accessToken}`;
+        const uploadLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
 
         const view: EmailView_SubmissionRequest = {
             uploader: {
                 name: job.uploader.name,
             },
             file: {
-                name: job.uploader.uploadableElement.name,
+                name: job.uploader.element.name,
                 typeName: contentTypeFriendlyName,
             },
             conference: {
@@ -691,7 +612,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                 shortName: job.uploader.conference.shortName,
             },
             item: {
-                title: job.uploader.uploadableElement.item.title,
+                title: job.uploader.element.item.title,
             },
             uploadLink,
         };

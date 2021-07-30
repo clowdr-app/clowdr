@@ -37,7 +37,11 @@ gql`
         endAt
         maxRegistrantsPerRoom
         name
-        queueEntries(distinct_on: [registrantId], order_by: { registrantId: asc, id: desc }) {
+        queueEntries(
+            where: { isExpired: { _eq: false } }
+            distinct_on: [registrantId]
+            order_by: { registrantId: asc, id: desc }
+        ) {
             ...PrefetchShuffleQueueEntryData
         }
         roomDurationMinutes
@@ -61,6 +65,7 @@ gql`
 
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
         id
+        isExpired
         shuffleRoom {
             id
             roomId
@@ -124,6 +129,7 @@ function QueuedShufflePeriodBox({
         skip: true,
     });
     const [allocatedRoomId, setAllocatedRoomId] = useState<string | null>(null);
+    const [isExpired, setIsExpired] = useState<boolean>(false);
     useQueryErrorToast(liveEntry.error, true, "WaitingPage:useMyShuffleQueueEntryQuery");
     useEffect(() => {
         if (isWaitingForAllocatedRoom && !liveEntry.data?.room_ShuffleQueueEntry_by_pk?.shuffleRoom) {
@@ -132,6 +138,7 @@ function QueuedShufflePeriodBox({
                     id: lastEntry.id,
                 });
                 setAllocatedRoomId(data.data.room_ShuffleQueueEntry_by_pk?.shuffleRoom?.roomId ?? null);
+                setIsExpired(data.data.room_ShuffleQueueEntry_by_pk?.isExpired ?? false);
             })();
         }
     }, [isWaitingForAllocatedRoom, lastEntry.id, liveEntry, now5s]);
@@ -187,6 +194,18 @@ function QueuedShufflePeriodBox({
                 </>
             );
         }
+    } else if (isExpired) {
+        return (
+            <>
+                <Text>
+                    No rooms are available at the moment. There are either not enough people active in the queue or the
+                    available rooms are full.
+                </Text>
+                <Button isLoading={isJoining} onClick={joinShuffleQueue}>
+                    Rejoin the queue
+                </Button>
+            </>
+        );
     } else {
         const joinedQueueAt = Date.parse(lastEntry.created_at);
         const timeWaiting = now - joinedQueueAt;
@@ -326,7 +345,7 @@ export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment
                 </Heading>
                 {button}
                 {numberOfQueued > 0 ? <Text>{numberOfQueued} people queued</Text> : undefined}
-                {numberOfQueued > 0 ? <Text>{numberInRooms} allocated to rooms</Text> : undefined}
+                {numberInRooms > 0 ? <Text>{numberInRooms} allocated to rooms</Text> : undefined}
             </VStack>
         </GridItem>
     );

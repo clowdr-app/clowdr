@@ -3,6 +3,7 @@ import {
     ActiveShufflePeriodFragment,
     ActiveShuffleRoomFragment,
     AddPeopleToExistingShuffleRoomDocument,
+    ExpireShuffleQueueEntriesDocument,
     InsertManagedRoomDocument,
     InsertShuffleRoomDocument,
     Room_PersonRole_Enum,
@@ -53,7 +54,7 @@ gql`
         waitRoomMaxDurationSeconds
         algorithm
         unallocatedQueueEntries: queueEntries(
-            where: { allocatedShuffleRoomId: { _is_null: true } }
+            where: { allocatedShuffleRoomId: { _is_null: true }, isExpired: { _eq: false } }
             order_by: { id: asc }
         ) {
             ...UnallocatedShuffleQueueEntry
@@ -86,6 +87,18 @@ gql`
         update_room_ShuffleQueueEntry(
             where: { id: { _in: $queueEntryIds }, allocatedShuffleRoomId: { _is_null: true } }
             _set: { allocatedShuffleRoomId: $shuffleRoomId }
+        ) {
+            affected_rows
+            returning {
+                id
+            }
+        }
+    }
+
+    mutation ExpireShuffleQueueEntries($queueEntryIds: [bigint!]!) {
+        update_room_ShuffleQueueEntry(
+            where: { id: { _in: $queueEntryIds }, allocatedShuffleRoomId: { _is_null: true } }
+            _set: { isExpired: true }
         ) {
             affected_rows
             returning {
@@ -347,6 +360,24 @@ async function attemptToMatchEntries(
             }
         }
     }
+
+    // Expire unallocated entries that have been waiting too long
+    const now = Date.now();
+    const expiredIds: string[] = [];
+    unallocatedQueueEntries.forEach((entry) => {
+        const enteredAt = Date.parse(entry.created_at);
+        const expiresAt = enteredAt + activePeriod.waitRoomMaxDurationSeconds * 1000;
+        if (expiresAt < now) {
+            // Unmatched and past the time limit.
+            expiredIds.push(entry.id);
+        }
+    });
+    await apolloClient.mutate({
+        mutation: ExpireShuffleQueueEntriesDocument,
+        variables: {
+            queueEntryIds: expiredIds,
+        },
+    });
 }
 
 async function processShufflePeriod(period: ActiveShufflePeriodFragment, entryIds: number[]) {

@@ -26598,6 +26598,7 @@ export type Room_ShuffleQueueEntry = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['bigint'];
+  readonly isExpired: Scalars['Boolean'];
   /** An object relationship */
   readonly registrant: Registrant_Registrant;
   readonly registrantId: Scalars['uuid'];
@@ -26682,6 +26683,7 @@ export type Room_ShuffleQueueEntry_Bool_Exp = {
   readonly allocatedShuffleRoomId?: Maybe<Int_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Bigint_Comparison_Exp>;
+  readonly isExpired?: Maybe<Boolean_Comparison_Exp>;
   readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
@@ -26709,6 +26711,7 @@ export type Room_ShuffleQueueEntry_Insert_Input = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['bigint']>;
+  readonly isExpired?: Maybe<Scalars['Boolean']>;
   readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
@@ -26780,6 +26783,7 @@ export type Room_ShuffleQueueEntry_Order_By = {
   readonly allocatedShuffleRoomId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly isExpired?: Maybe<Order_By>;
   readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
   readonly registrantId?: Maybe<Order_By>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
@@ -26802,6 +26806,8 @@ export enum Room_ShuffleQueueEntry_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  IsExpired = 'isExpired',
+  /** column name */
   RegistrantId = 'registrantId',
   /** column name */
   ShufflePeriodId = 'shufflePeriodId',
@@ -26814,6 +26820,7 @@ export type Room_ShuffleQueueEntry_Set_Input = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['bigint']>;
+  readonly isExpired?: Maybe<Scalars['Boolean']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -26879,6 +26886,8 @@ export enum Room_ShuffleQueueEntry_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
+  /** column name */
+  IsExpired = 'isExpired',
   /** column name */
   RegistrantId = 'registrantId',
   /** column name */
@@ -35041,6 +35050,13 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
+export type GetRoomVonageSessionIdQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomVonageSessionIdQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly publicVonageSessionId?: Maybe<string> }> };
+
 export type Registrant_RegistrantCreateRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   name: Scalars['String'];
@@ -37548,7 +37564,7 @@ export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePer
 
 export type PrefetchShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> };
 
-export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
+export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly isExpired: boolean, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
 
 export type MyShuffleQueueEntryQueryVariables = Exact<{
   id: Scalars['bigint'];
@@ -37982,6 +37998,7 @@ export const ShufflePeriodDataFragmentDoc = gql`
   maxRegistrantsPerRoom
   name
   queueEntries(
+    where: {isExpired: {_eq: false}}
     distinct_on: [registrantId]
     order_by: {registrantId: asc, id: desc}
   ) {
@@ -39305,6 +39322,7 @@ export const RoomParticipantDetailsFragmentDoc = gql`
 export const SubdShuffleQueueEntryDataFragmentDoc = gql`
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
   id
+  isExpired
   shuffleRoom {
     id
     roomId
@@ -40466,6 +40484,42 @@ export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookO
 export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+export const GetRoomVonageSessionIdDocument = gql`
+    query GetRoomVonageSessionId($roomId: uuid!) {
+  room_Room_by_pk(id: $roomId) {
+    id
+    publicVonageSessionId
+  }
+}
+    `;
+
+/**
+ * __useGetRoomVonageSessionIdQuery__
+ *
+ * To run a query within a React component, call `useGetRoomVonageSessionIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomVonageSessionIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomVonageSessionIdQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomVonageSessionIdQuery(baseOptions: Apollo.QueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
+      }
+export function useGetRoomVonageSessionIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
+        }
+export type GetRoomVonageSessionIdQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdQuery>;
+export type GetRoomVonageSessionIdLazyQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdLazyQuery>;
+export type GetRoomVonageSessionIdQueryResult = Apollo.QueryResult<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>;
 export const Registrant_RegistrantCreateRoomDocument = gql`
     mutation registrant_RegistrantCreateRoom($conferenceId: uuid!, $name: String!, $managementModeName: room_ManagementMode_enum!) {
   insert_room_Room_one(

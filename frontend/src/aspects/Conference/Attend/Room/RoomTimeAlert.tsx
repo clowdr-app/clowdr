@@ -26,7 +26,7 @@ export default function RoomTimeAlert({
 
     return (
         <>
-            {secondsUntilShuffleEnds <= 60 ? (
+            {secondsUntilShuffleEnds <= 24 * 60 * 60 * 1000 ? (
                 <Alert
                     status={secondsUntilShuffleEnds <= 3 ? "error" : secondsUntilShuffleEnds <= 30 ? "warning" : "info"}
                     pos="sticky"

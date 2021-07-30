@@ -10,6 +10,7 @@ import {
     Room_ShuffleAlgorithm_Enum,
     SelectActiveShufflePeriodsDocument,
     SelectShufflePeriodDocument,
+    SetAutoPinOnManagedRoomDocument,
     SetShuffleRoomsEndedDocument,
     UnallocatedShuffleQueueEntryFragment,
 } from "../generated/graphql";
@@ -142,6 +143,12 @@ gql`
         }
     }
 
+    mutation SetAutoPinOnManagedRoom($roomId: uuid!) {
+        update_chat_Chat(where: { rooms: { id: { _eq: $roomId } } }, _set: { enableAutoPin: true }) {
+            affected_rows
+        }
+    }
+
     mutation SetShuffleRoomsEnded($ids: [bigint!]!) {
         update_room_ShuffleRoom(where: { id: { _in: $ids } }, _set: { isEnded: true }) {
             affected_rows
@@ -223,6 +230,13 @@ async function allocateToNewRoom(
     if (!shuffleRoom.data?.insert_room_ShuffleRoom_one?.id) {
         throw new Error("Could not insert a new shuffle room! ShuffleRoom came back null.");
     }
+
+    await apolloClient.mutate({
+        mutation: SetAutoPinOnManagedRoomDocument,
+        variables: {
+            roomId: shuffleRoom.data.insert_room_ShuffleRoom_one.id,
+        },
+    });
 
     const newRoom: ShuffleRoomAllocationInfo = {
         durationMinutes,

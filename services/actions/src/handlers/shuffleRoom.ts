@@ -215,6 +215,13 @@ async function allocateToNewRoom(
         throw new Error("Could not insert a new managed room for shuffle space! Room came back null.");
     }
 
+    await apolloClient.mutate({
+        mutation: SetAutoPinOnManagedRoomDocument,
+        variables: {
+            roomId: managedRoom.data.insert_room_Room_one.id,
+        },
+    });
+
     const startedAt = new Date().toISOString();
     const shuffleRoom = await apolloClient.mutate({
         mutation: InsertShuffleRoomDocument,
@@ -230,13 +237,6 @@ async function allocateToNewRoom(
     if (!shuffleRoom.data?.insert_room_ShuffleRoom_one?.id) {
         throw new Error("Could not insert a new shuffle room! ShuffleRoom came back null.");
     }
-
-    await apolloClient.mutate({
-        mutation: SetAutoPinOnManagedRoomDocument,
-        variables: {
-            roomId: shuffleRoom.data.insert_room_ShuffleRoom_one.id,
-        },
-    });
 
     const newRoom: ShuffleRoomAllocationInfo = {
         durationMinutes,

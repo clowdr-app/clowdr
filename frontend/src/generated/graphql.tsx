@@ -26697,7 +26697,7 @@ export enum Room_ShuffleQueueEntry_Constraint {
   /** unique or primary key constraint */
   ShuffleQueueEntryPkey = 'ShuffleQueueEntry_pkey',
   /** unique or primary key constraint */
-  IndexIswaiting = 'index_iswaiting'
+  RoomShuffleQueueEntryIsWaiting = 'room_ShuffleQueueEntry_isWaiting'
 }
 
 /** input type for incrementing numeric columns in table "room.ShuffleQueueEntry" */
@@ -39138,7 +39138,7 @@ export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     }
   }
   waitingEntries: queueEntries_aggregate(
-    where: {allocatedShuffleRoomId: {_is_null: true}}
+    where: {allocatedShuffleRoomId: {_is_null: true}, isExpired: {_eq: false}}
   ) {
     aggregate {
       count

@@ -45,7 +45,9 @@ gql`
                 count
             }
         }
-        waitingEntries: queueEntries_aggregate(where: { allocatedShuffleRoomId: { _is_null: true } }) {
+        waitingEntries: queueEntries_aggregate(
+            where: { allocatedShuffleRoomId: { _is_null: true }, isExpired: { _eq: false } }
+        ) {
             aggregate {
                 count
             }

@@ -114,9 +114,10 @@ export const URLElementTemplate: ElementBaseTemplate = {
         }
 
         const latestVersion = data.data[data.data.length - 1] as UrlElementVersionData;
-        if (latestVersion.data.baseType !== ElementBaseType.URL) {
+        if (latestVersion && latestVersion.data.baseType !== ElementBaseType.URL) {
             return <>URL Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
         }
+
         return (
             <>
                 {notice}
@@ -125,13 +126,13 @@ export const URLElementTemplate: ElementBaseTemplate = {
                     <Input
                         type="url"
                         placeholder={urlPlaceholder}
-                        value={url ?? latestVersion.data.url}
+                        value={url ?? latestVersion?.data.url ?? ""}
                         onChange={(ev) => {
                             setUrl(ev.target.value);
                         }}
                         onBlur={(ev) => {
                             try {
-                                if (ev.target.value === latestVersion.data.url) {
+                                if (ev.target.value === latestVersion?.data.url) {
                                     return;
                                 }
                                 const oldElementIdx = data.data.indexOf(latestVersion);

@@ -37,7 +37,7 @@ gql`
         endAt
         maxRegistrantsPerRoom
         name
-        queueEntries(distinct_on: [registrantId], order_by: { registrantId: asc, id: desc }) {
+        queueEntries(distinct_on: [registrantId], order_by: [{ registrantId: asc }, { id: desc }]) {
             ...PrefetchShuffleQueueEntryData
         }
         roomDurationMinutes

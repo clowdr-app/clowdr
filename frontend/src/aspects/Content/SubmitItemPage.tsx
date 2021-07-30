@@ -61,6 +61,11 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
         variables: {
             magicToken,
         },
+        context: {
+            headers: {
+                "SEND-WITHOUT-AUTH": true,
+            },
+        },
     });
     useQueryErrorToast(uploadAgreementError, false, "SubmitItemPage -- upload agreement");
 
@@ -71,6 +76,7 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
         context: {
             headers: {
                 "x-hasura-magic-token": magicToken,
+                "SEND-WITHOUT-AUTH": true,
             },
         },
         fetchPolicy: "network-only",

@@ -25,13 +25,12 @@ import type { SubtitleDetails } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { Suspense, useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import srtValidator, { SrtValidationError } from "srt-validator";
 import { useFilePicker, Validator } from "use-file-picker";
 import useFetch from "use-http";
 import { useUpdateSubtitlesMutation } from "../../generated/graphql";
-import TranscriptEditor from "../../TranscriptEditor";
 import { DownloadButton } from "../Chakra/LinkButton";
 import { FAIcon } from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
@@ -51,6 +50,8 @@ class ValidationError extends Error {
         this.name = "ValidationError";
     }
 }
+
+const LazyTranscriptEditor = React.lazy(() => import("../../TranscriptEditor"));
 
 export default function EditSubtitles({
     videoS3URL,
@@ -272,12 +273,14 @@ export default function EditSubtitles({
                         </VStack>
                     </HStack>
                     <Box color="black">
-                        <TranscriptEditor
-                            srtTranscript={subtitlesData}
-                            mediaUrl={videoUrl}
-                            handleSaveEditor={saveSubtitles}
-                            handleChange={() => setHasUnsavedChanges(true)}
-                        />
+                        <Suspense fallback={<Spinner />}>
+                            <LazyTranscriptEditor
+                                srtTranscript={subtitlesData}
+                                mediaUrl={videoUrl}
+                                handleSaveEditor={saveSubtitles}
+                                handleChange={() => setHasUnsavedChanges(true)}
+                            />
+                        </Suspense>
                     </Box>
                 </>
             ) : undefined}

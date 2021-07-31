@@ -8,7 +8,7 @@
         "npm": "^7.8.x"
     },
     "scripts": {
-        "build": "npm run build-shared && npm run gql-cdg && npm run build-this && npm run-script copy-resources",
+        "build": "npm run build-shared && npm run build-this && npm run-script copy-resources",
         "build-this": "ttsc",
         "build-shared": "npm run --prefix=../../ --workspace=shared build",
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",

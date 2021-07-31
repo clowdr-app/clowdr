@@ -5,7 +5,7 @@
     "main": "build/server.js",
     "scripts": {
         "prebuild": "rimraf build",
-        "build": "npm run build-shared && npm run gql-cdg && nest build",
+        "build": "npm run build-shared && nest build",
         "build-shared": "npm run --prefix=../../ --workspace=shared build",
         "gql-cdg": "npx --no-install -p @graphql-codegen/cli graphql-codegen -- --config codegen.js",
         "start": "nest start",

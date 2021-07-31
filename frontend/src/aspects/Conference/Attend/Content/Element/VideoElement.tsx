@@ -148,7 +148,7 @@ export function VideoElement({
     return (
         <>
             {title ? (
-                <Heading as="h3" fontSize="2xl" mb={2}>
+                <Heading as="h3" fontSize="2xl" mb={2} color="gray.50">
                     {title}
                 </Heading>
             ) : undefined}

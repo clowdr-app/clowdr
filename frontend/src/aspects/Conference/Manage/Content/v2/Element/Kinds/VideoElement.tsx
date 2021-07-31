@@ -85,12 +85,15 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
         }
 
         const latestVersion = data.data[data.data.length - 1];
-        if (latestVersion.data.baseType !== ElementBaseType.Video) {
+        if (latestVersion && latestVersion.data.baseType !== ElementBaseType.Video) {
             return <>Video Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
         }
+
         return (
             <>
-                <VideoElement elementId={data.id} videoElementData={latestVersion.data} />
+                {latestVersion?.data.baseType === ElementBaseType.Video ? (
+                    <VideoElement elementId={data.id} videoElementData={latestVersion.data} />
+                ) : undefined}
                 <Heading as="h3" fontSize="lg" pt={8} mb={4}>
                     Upload new video
                 </Heading>
@@ -127,7 +130,8 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
                         update(newData);
                     }}
                 />
-                {latestVersion.data.subtitles["en_US"]?.s3Url ? (
+                {latestVersion?.data.baseType === ElementBaseType.Video &&
+                latestVersion.data.subtitles["en_US"]?.s3Url ? (
                     <DownloadButton to={s3UrlToHttpUrl(latestVersion.data.subtitles["en_US"].s3Url)} size="sm" ml={2}>
                         Download .SRT file
                     </DownloadButton>

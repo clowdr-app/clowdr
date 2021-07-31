@@ -46,7 +46,7 @@ gql`
                 item: { itemTags: { tag: { id: { _eq: $tagId } } } }
                 name: { _ilike: $name }
             }
-            order_by: { item: { title: asc }, name: asc }
+            order_by: [{ item: { title: asc } }, { name: asc }]
         ) {
             id
             name

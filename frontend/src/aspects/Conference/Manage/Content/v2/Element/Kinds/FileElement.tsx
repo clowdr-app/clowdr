@@ -67,9 +67,10 @@ export const FileElementTemplate: ElementBaseTemplate = {
         }
 
         const latestVersion = data.data[data.data.length - 1];
-        if (latestVersion.data.baseType !== ElementBaseType.File) {
+        if (latestVersion && latestVersion.data.baseType !== ElementBaseType.File) {
             return <>File Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
         }
+
         let imageSrc = undefined;
         if (latestVersion && latestVersion.data.baseType === ElementBaseType.File && latestVersion.data.s3Url !== "") {
             try {

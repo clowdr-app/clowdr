@@ -687,6 +687,7 @@ export type GetGoogleOAuthUrlOutput = {
 export type GetUploadAgreementOutput = {
   readonly __typename?: 'GetUploadAgreementOutput';
   readonly agreementText?: Maybe<Scalars['String']>;
+  readonly agreementUrl?: Maybe<Scalars['String']>;
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -7736,6 +7737,119 @@ export type Conference_ConfigurationValueArgs = {
   path?: Maybe<Scalars['String']>;
 };
 
+/** columns and relationships of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey = {
+  readonly __typename?: 'conference_ConfigurationKey';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate = {
+  readonly __typename?: 'conference_ConfigurationKey_aggregate';
+  readonly aggregate?: Maybe<Conference_ConfigurationKey_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Conference_ConfigurationKey>;
+};
+
+/** aggregate fields of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate_Fields = {
+  readonly __typename?: 'conference_ConfigurationKey_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Conference_ConfigurationKey_Max_Fields>;
+  readonly min?: Maybe<Conference_ConfigurationKey_Min_Fields>;
+};
+
+
+/** aggregate fields of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "conference.ConfigurationKey". All fields are combined with a logical 'AND'. */
+export type Conference_ConfigurationKey_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Bool_Exp>>;
+  readonly _not?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Bool_Exp>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Constraint {
+  /** unique or primary key constraint */
+  ConfigurationKeyPkey = 'ConfigurationKey_pkey'
+}
+
+/** input type for inserting data into table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Conference_ConfigurationKey_Max_Fields = {
+  readonly __typename?: 'conference_ConfigurationKey_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Conference_ConfigurationKey_Min_Fields = {
+  readonly __typename?: 'conference_ConfigurationKey_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Mutation_Response = {
+  readonly __typename?: 'conference_ConfigurationKey_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Conference_ConfigurationKey>;
+};
+
+/** on conflict condition type for table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_On_Conflict = {
+  readonly constraint: Conference_ConfigurationKey_Constraint;
+  readonly update_columns?: ReadonlyArray<Conference_ConfigurationKey_Update_Column>;
+  readonly where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "conference.ConfigurationKey". */
+export type Conference_ConfigurationKey_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: conference_ConfigurationKey */
+export type Conference_ConfigurationKey_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 /** aggregated selection of "conference.Configuration" */
 export type Conference_Configuration_Aggregate = {
   readonly __typename?: 'conference_Configuration_aggregate';
@@ -13706,6 +13820,10 @@ export type Mutation_Root = {
   readonly delete_conference_Conference_by_pk?: Maybe<Conference_Conference>;
   /** delete data from the table: "conference.Configuration" */
   readonly delete_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+  /** delete data from the table: "conference.ConfigurationKey" */
+  readonly delete_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+  /** delete single row from the table: "conference.ConfigurationKey" */
+  readonly delete_conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
   /** delete single row from the table: "conference.Configuration" */
   readonly delete_conference_Configuration_by_pk?: Maybe<Conference_Configuration>;
   /** delete data from the table: "conference.DemoCode" */
@@ -14055,6 +14173,10 @@ export type Mutation_Root = {
   readonly insert_conference_Conference_one?: Maybe<Conference_Conference>;
   /** insert data into the table: "conference.Configuration" */
   readonly insert_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+  /** insert data into the table: "conference.ConfigurationKey" */
+  readonly insert_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+  /** insert a single row into the table: "conference.ConfigurationKey" */
+  readonly insert_conference_ConfigurationKey_one?: Maybe<Conference_ConfigurationKey>;
   /** insert a single row into the table: "conference.Configuration" */
   readonly insert_conference_Configuration_one?: Maybe<Conference_Configuration>;
   /** insert data into the table: "conference.DemoCode" */
@@ -14412,6 +14534,10 @@ export type Mutation_Root = {
   readonly update_conference_Conference_by_pk?: Maybe<Conference_Conference>;
   /** update data of the table: "conference.Configuration" */
   readonly update_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+  /** update data of the table: "conference.ConfigurationKey" */
+  readonly update_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+  /** update single row of the table: "conference.ConfigurationKey" */
+  readonly update_conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
   /** update single row of the table: "conference.Configuration" */
   readonly update_conference_Configuration_by_pk?: Maybe<Conference_Configuration>;
   /** update data of the table: "conference.DemoCode" */
@@ -14955,6 +15081,18 @@ export type Mutation_RootDelete_Conference_Conference_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Conference_ConfigurationArgs = {
   where: Conference_Configuration_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_ConfigurationKeyArgs = {
+  where: Conference_ConfigurationKey_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -16049,6 +16187,20 @@ export type Mutation_RootInsert_Conference_Conference_OneArgs = {
 export type Mutation_RootInsert_Conference_ConfigurationArgs = {
   objects: ReadonlyArray<Conference_Configuration_Insert_Input>;
   on_conflict?: Maybe<Conference_Configuration_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_ConfigurationKeyArgs = {
+  objects: ReadonlyArray<Conference_ConfigurationKey_Insert_Input>;
+  on_conflict?: Maybe<Conference_ConfigurationKey_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_ConfigurationKey_OneArgs = {
+  object: Conference_ConfigurationKey_Insert_Input;
+  on_conflict?: Maybe<Conference_ConfigurationKey_On_Conflict>;
 };
 
 
@@ -17396,6 +17548,20 @@ export type Mutation_RootUpdate_Conference_ConfigurationArgs = {
   _prepend?: Maybe<Conference_Configuration_Prepend_Input>;
   _set?: Maybe<Conference_Configuration_Set_Input>;
   where: Conference_Configuration_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_ConfigurationKeyArgs = {
+  _set?: Maybe<Conference_ConfigurationKey_Set_Input>;
+  where: Conference_ConfigurationKey_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_ConfigurationKey_By_PkArgs = {
+  _set?: Maybe<Conference_ConfigurationKey_Set_Input>;
+  pk_columns: Conference_ConfigurationKey_Pk_Columns_Input;
 };
 
 
@@ -19907,6 +20073,12 @@ export type Query_Root = {
   readonly conference_Conference_by_pk?: Maybe<Conference_Conference>;
   /** fetch data from the table: "conference.Configuration" */
   readonly conference_Configuration: ReadonlyArray<Conference_Configuration>;
+  /** fetch data from the table: "conference.ConfigurationKey" */
+  readonly conference_ConfigurationKey: ReadonlyArray<Conference_ConfigurationKey>;
+  /** fetch aggregated fields from the table: "conference.ConfigurationKey" */
+  readonly conference_ConfigurationKey_aggregate: Conference_ConfigurationKey_Aggregate;
+  /** fetch data from the table: "conference.ConfigurationKey" using primary key columns */
+  readonly conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
   /** fetch aggregated fields from the table: "conference.Configuration" */
   readonly conference_Configuration_aggregate: Conference_Configuration_Aggregate;
   /** fetch data from the table: "conference.Configuration" using primary key columns */
@@ -20959,6 +21131,29 @@ export type Query_RootConference_ConfigurationArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Conference_Configuration_Order_By>>;
   where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+
+export type Query_RootConference_ConfigurationKeyArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Order_By>>;
+  where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+
+export type Query_RootConference_ConfigurationKey_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Order_By>>;
+  where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+
+export type Query_RootConference_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -29246,6 +29441,12 @@ export type Subscription_Root = {
   readonly conference_Conference_by_pk?: Maybe<Conference_Conference>;
   /** fetch data from the table: "conference.Configuration" */
   readonly conference_Configuration: ReadonlyArray<Conference_Configuration>;
+  /** fetch data from the table: "conference.ConfigurationKey" */
+  readonly conference_ConfigurationKey: ReadonlyArray<Conference_ConfigurationKey>;
+  /** fetch aggregated fields from the table: "conference.ConfigurationKey" */
+  readonly conference_ConfigurationKey_aggregate: Conference_ConfigurationKey_Aggregate;
+  /** fetch data from the table: "conference.ConfigurationKey" using primary key columns */
+  readonly conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
   /** fetch aggregated fields from the table: "conference.Configuration" */
   readonly conference_Configuration_aggregate: Conference_Configuration_Aggregate;
   /** fetch data from the table: "conference.Configuration" using primary key columns */
@@ -30295,6 +30496,29 @@ export type Subscription_RootConference_ConfigurationArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Conference_Configuration_Order_By>>;
   where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+
+export type Subscription_RootConference_ConfigurationKeyArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Order_By>>;
+  where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+
+export type Subscription_RootConference_ConfigurationKey_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Order_By>>;
+  where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+
+export type Subscription_RootConference_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -31873,6 +32097,8 @@ export enum System_ConfigurationKey_Enum {
   CookiePolicyLatestRevisionTimestamp = 'COOKIE_POLICY_LATEST_REVISION_TIMESTAMP',
   /** The URL to the host cookie policy. Note: If self hosting Clowdr, this must be your organisation's cookie policy - you cannot legally reuse, rely on or copy Clowdr's cookie policy. */
   CookiePolicyUrl = 'COOKIE_POLICY_URL',
+  /** A string representing the full frontend host URL for the app. */
+  DefaultFrontendHost = 'DEFAULT_FRONTEND_HOST',
   /** Default backend platform for video rooms */
   DefaultVideoRoomBackend = 'DEFAULT_VIDEO_ROOM_BACKEND',
   /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
@@ -44957,7 +45183,7 @@ export const ChooseElementByTagModal_GetVideoElementsDocument = gql`
     query ChooseElementByTagModal_GetVideoElements($tagId: uuid!, $name: String!) {
   content_Element(
     where: {typeName: {_in: [VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}, item: {itemTags: {tag: {id: {_eq: $tagId}}}}, name: {_ilike: $name}}
-    order_by: {item: {title: asc}, name: asc}
+    order_by: [{item: {title: asc}}, {name: asc}]
   ) {
     id
     name
@@ -47714,7 +47940,7 @@ export const SelectWholeScheduleDocument = gql`
   }
   schedule_Event(
     where: {conferenceId: {_eq: $conferenceId}}
-    order_by: {startTime: asc, endTime: asc}
+    order_by: [{startTime: asc}, {endTime: asc}]
   ) {
     ...EventInfo
   }

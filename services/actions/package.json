@@ -4,7 +4,7 @@
     "description": "Action handlers",
     "main": "build/server.js",
     "scripts": {
-        "build": "npm run build-shared && npm run gql-cdg && npm run build-this",
+        "build": "npm run build-shared && npm run build-this",
         "build-this": "ttsc",
         "build-shared": "npm run --prefix=../../ --workspace=shared build",
         "start": "node build/server.js",

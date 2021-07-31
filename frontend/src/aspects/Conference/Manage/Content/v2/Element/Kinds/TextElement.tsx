@@ -57,20 +57,21 @@ export const TextElementTemplate: ElementBaseTemplate = {
         }
 
         const latestVersion = data.data[data.data.length - 1] as TextElementVersionData;
-        if (latestVersion.data.baseType !== ElementBaseType.Text) {
+        if (latestVersion && latestVersion.data.baseType !== ElementBaseType.Text) {
             return <>Text Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
         }
+
         return (
             <Textarea
                 transition="none"
                 placeholder={placeholder}
-                value={text ?? latestVersion.data.text}
+                value={text ?? latestVersion?.data.text ?? ""}
                 onChange={(ev) => {
                     setText(ev.target.value);
                 }}
                 onBlur={(ev) => {
                     try {
-                        if (ev.target.value === latestVersion.data.text) {
+                        if (ev.target.value === latestVersion?.data.text) {
                             return;
                         }
                         const oldElementIdx = data.data.indexOf(latestVersion);

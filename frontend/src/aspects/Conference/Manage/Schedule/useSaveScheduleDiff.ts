@@ -92,7 +92,10 @@ gql`
         room_Room(where: { conferenceId: { _eq: $conferenceId } }) {
             ...RoomInfo
         }
-        schedule_Event(where: { conferenceId: { _eq: $conferenceId } }, order_by: { startTime: asc, endTime: asc }) {
+        schedule_Event(
+            where: { conferenceId: { _eq: $conferenceId } }
+            order_by: [{ startTime: asc }, { endTime: asc }]
+        ) {
             ...EventInfo
         }
         conference_OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -300,7 +303,11 @@ export function useSaveScheduleDiff():
     const [insertEventMutation] = useInsertEventMutation();
     const [updateEventMutation] = useUpdateEventMutation();
 
-    const { loading: loadingContent, error: errorContent, data: wholeSchedule } = useSelectWholeScheduleQuery({
+    const {
+        loading: loadingContent,
+        error: errorContent,
+        data: wholeSchedule,
+    } = useSelectWholeScheduleQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -474,25 +481,23 @@ export function useSaveScheduleDiff():
                     }
 
                     const updateTagResultsArr: [string, boolean][] = await Promise.all(
-                        Array.from(updatedTags.values()).map(
-                            async (tag): Promise<[string, boolean]> => {
-                                let ok = false;
-                                try {
-                                    await updateTagMutation({
-                                        variables: {
-                                            id: tag.id,
-                                            colour: tag.colour,
-                                            name: tag.name,
-                                            originatingDataId: tag.originatingDataId,
-                                        },
-                                    });
-                                    ok = true;
-                                } catch (_e) {
-                                    ok = false;
-                                }
-                                return [tag.id, ok];
+                        Array.from(updatedTags.values()).map(async (tag): Promise<[string, boolean]> => {
+                            let ok = false;
+                            try {
+                                await updateTagMutation({
+                                    variables: {
+                                        id: tag.id,
+                                        colour: tag.colour,
+                                        name: tag.name,
+                                        originatingDataId: tag.originatingDataId,
+                                    },
+                                });
+                                ok = true;
+                            } catch (_e) {
+                                ok = false;
                             }
-                        )
+                            return [tag.id, ok];
+                        })
                     );
                     for (const [key, val] of updateTagResultsArr) {
                         tagResults.set(key, val);
@@ -538,26 +543,24 @@ export function useSaveScheduleDiff():
                     }
 
                     const updateRoomResultsArr: [string, boolean][] = await Promise.all(
-                        Array.from(updatedRooms.values()).map(
-                            async (room): Promise<[string, boolean]> => {
-                                let ok = false;
-                                try {
-                                    await updateRoomMutation({
-                                        variables: {
-                                            id: room.id,
-                                            name: room.name,
-                                            capacity: room.capacity,
-                                            originatingDataId: room.originatingDataId,
-                                            priority: room.priority,
-                                        },
-                                    });
-                                    ok = true;
-                                } catch (_e) {
-                                    ok = false;
-                                }
-                                return [room.id, ok];
+                        Array.from(updatedRooms.values()).map(async (room): Promise<[string, boolean]> => {
+                            let ok = false;
+                            try {
+                                await updateRoomMutation({
+                                    variables: {
+                                        id: room.id,
+                                        name: room.name,
+                                        capacity: room.capacity,
+                                        originatingDataId: room.originatingDataId,
+                                        priority: room.priority,
+                                    },
+                                });
+                                ok = true;
+                            } catch (_e) {
+                                ok = false;
                             }
-                        )
+                            return [room.id, ok];
+                        })
                     );
                     for (const [key, val] of updateRoomResultsArr) {
                         roomResults.set(key, val);
@@ -619,53 +622,51 @@ export function useSaveScheduleDiff():
                 }
 
                 const updateEventResultsArr: [string, boolean][] = await Promise.all(
-                    Array.from(updatedEvents.values()).map(
-                        async (event): Promise<[string, boolean]> => {
-                            let ok = false;
-                            try {
-                                const newEventTags = new Set<string>();
-                                const deleteEventTagKeys = new Set<string>();
+                    Array.from(updatedEvents.values()).map(async (event): Promise<[string, boolean]> => {
+                        let ok = false;
+                        try {
+                            const newEventTags = new Set<string>();
+                            const deleteEventTagKeys = new Set<string>();
 
-                                const existingEvent = original.events.get(event.id);
-                                assert(existingEvent);
+                            const existingEvent = original.events.get(event.id);
+                            assert(existingEvent);
 
-                                for (const tagId of event.tagIds) {
-                                    if (!existingEvent.tagIds.has(tagId)) {
-                                        newEventTags.add(tagId);
-                                    }
+                            for (const tagId of event.tagIds) {
+                                if (!existingEvent.tagIds.has(tagId)) {
+                                    newEventTags.add(tagId);
                                 }
-                                for (const tagId of existingEvent.tagIds) {
-                                    if (!event.tagIds.has(tagId)) {
-                                        deleteEventTagKeys.add(tagId);
-                                    }
-                                }
-
-                                await updateEventMutation({
-                                    variables: {
-                                        eventId: event.id,
-                                        originatingDataId: event.originatingDataId,
-                                        roomId: event.roomId,
-                                        intendedRoomModeName: event.intendedRoomModeName,
-                                        itemId: event.itemId,
-                                        exhibitionId: event.exhibitionId,
-                                        name: event.name,
-                                        startTime: new Date(event.startTime).toISOString(),
-                                        durationSeconds: event.durationSeconds,
-                                        deleteEventTagIds: Array.from(deleteEventTagKeys.values()),
-                                        newEventTags: Array.from(newEventTags.values()).map((tagId) => ({
-                                            eventId: event.id,
-                                            tagId,
-                                        })),
-                                    },
-                                });
-
-                                ok = true;
-                            } catch (e) {
-                                ok = false;
                             }
-                            return [event.id, ok];
+                            for (const tagId of existingEvent.tagIds) {
+                                if (!event.tagIds.has(tagId)) {
+                                    deleteEventTagKeys.add(tagId);
+                                }
+                            }
+
+                            await updateEventMutation({
+                                variables: {
+                                    eventId: event.id,
+                                    originatingDataId: event.originatingDataId,
+                                    roomId: event.roomId,
+                                    intendedRoomModeName: event.intendedRoomModeName,
+                                    itemId: event.itemId,
+                                    exhibitionId: event.exhibitionId,
+                                    name: event.name,
+                                    startTime: new Date(event.startTime).toISOString(),
+                                    durationSeconds: event.durationSeconds,
+                                    deleteEventTagIds: Array.from(deleteEventTagKeys.values()),
+                                    newEventTags: Array.from(newEventTags.values()).map((tagId) => ({
+                                        eventId: event.id,
+                                        tagId,
+                                    })),
+                                },
+                            });
+
+                            ok = true;
+                        } catch (e) {
+                            ok = false;
                         }
-                    )
+                        return [event.id, ok];
+                    })
                 );
                 for (const [key, val] of updateEventResultsArr) {
                     eventResults.set(key, val);

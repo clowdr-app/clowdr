@@ -102,9 +102,10 @@ export const LinkElementTemplate: ElementBaseTemplate = {
         }
 
         const latestVersion = data.data[data.data.length - 1] as LinkElementVersionData;
-        if (latestVersion.data.baseType !== ElementBaseType.Link) {
+        if (latestVersion && latestVersion.data.baseType !== ElementBaseType.Link) {
             return <>Link Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
         }
+
         return (
             <>
                 <FormControl>
@@ -112,13 +113,13 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                     <Input
                         type="text"
                         placeholder={textPlaceholder}
-                        value={text ?? latestVersion.data.text}
+                        value={text ?? latestVersion?.data.text ?? ""}
                         onChange={(ev) => {
                             setText(ev.target.value);
                         }}
                         onBlur={(ev) => {
                             try {
-                                if (ev.target.value === latestVersion.data.text) {
+                                if (ev.target.value === latestVersion?.data.text) {
                                     return;
                                 }
                                 const oldElementIdx = data.data.indexOf(latestVersion);
@@ -154,13 +155,13 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                     <Input
                         type="url"
                         placeholder={urlPlaceholder}
-                        value={url ?? latestVersion.data.url}
+                        value={url ?? latestVersion?.data.url ?? ""}
                         onChange={(ev) => {
                             setUrl(ev.target.value);
                         }}
                         onBlur={(ev) => {
                             try {
-                                if (ev.target.value === latestVersion.data.url) {
+                                if (ev.target.value === latestVersion?.data.url) {
                                     return;
                                 }
                                 const oldElementIdx = data.data.indexOf(latestVersion);

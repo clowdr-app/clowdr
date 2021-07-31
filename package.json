@@ -4,7 +4,7 @@
     "description": "Development setup",
     "main": "index.js",
     "scripts": {
-        "heroku-postbuild": "cd shared && npm ci && cd ../services/realtime && npm ci && npm run build && cd ../../services/actions && npm ci && npm run build && cd ../../services/playout && npm ci && npm run build",
+        "heroku-postbuild": "node ./.scripts/heroku/build.js",
         "run-services-actions": "npx foreman start --procfile ./Procfile -p 3001",
         "run-services-realtime": "npx foreman start --procfile ./Realtime.Procfile -p 3002",
         "run-services-playout": "npx foreman start --procfile ./Playout.Procfile -p 3003",

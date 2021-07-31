@@ -1,0 +1,6 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- DROP INDEX IF EXISTS "room"."index_iswaiting";
+-- DROP INDEX IF EXISTS "room"."room_ShuffleQueueEntry_isWaiting";
+--
+-- CREATE UNIQUE INDEX "room_ShuffleQueueEntry_isWaiting" ON "room"."ShuffleQueueEntry" ("shufflePeriodId", "registrantId", ("allocatedShuffleRoomId" IS NULL), "isExpired") WHERE "allocatedShuffleRoomId" IS NULL AND NOT "isExpired";

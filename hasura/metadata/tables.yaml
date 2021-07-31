@@ -6694,6 +6694,7 @@
       - allocatedShuffleRoomId
       - created_at
       - id
+      - isExpired
       - registrantId
       - shufflePeriodId
       - updated_at

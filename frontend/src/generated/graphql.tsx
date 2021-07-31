@@ -687,6 +687,7 @@ export type GetGoogleOAuthUrlOutput = {
 export type GetUploadAgreementOutput = {
   readonly __typename?: 'GetUploadAgreementOutput';
   readonly agreementText?: Maybe<Scalars['String']>;
+  readonly agreementUrl?: Maybe<Scalars['String']>;
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -7736,6 +7737,119 @@ export type Conference_ConfigurationValueArgs = {
   path?: Maybe<Scalars['String']>;
 };
 
+/** columns and relationships of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey = {
+  readonly __typename?: 'conference_ConfigurationKey';
+  readonly description: Scalars['String'];
+  readonly name: Scalars['String'];
+};
+
+/** aggregated selection of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate = {
+  readonly __typename?: 'conference_ConfigurationKey_aggregate';
+  readonly aggregate?: Maybe<Conference_ConfigurationKey_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Conference_ConfigurationKey>;
+};
+
+/** aggregate fields of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate_Fields = {
+  readonly __typename?: 'conference_ConfigurationKey_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Conference_ConfigurationKey_Max_Fields>;
+  readonly min?: Maybe<Conference_ConfigurationKey_Min_Fields>;
+};
+
+
+/** aggregate fields of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "conference.ConfigurationKey". All fields are combined with a logical 'AND'. */
+export type Conference_ConfigurationKey_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Bool_Exp>>;
+  readonly _not?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Bool_Exp>>;
+  readonly description?: Maybe<String_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Constraint {
+  /** unique or primary key constraint */
+  ConfigurationKeyPkey = 'ConfigurationKey_pkey'
+}
+
+/** input type for inserting data into table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Insert_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Conference_ConfigurationKey_Max_Fields = {
+  readonly __typename?: 'conference_ConfigurationKey_max_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Conference_ConfigurationKey_Min_Fields = {
+  readonly __typename?: 'conference_ConfigurationKey_min_fields';
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Mutation_Response = {
+  readonly __typename?: 'conference_ConfigurationKey_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Conference_ConfigurationKey>;
+};
+
+/** on conflict condition type for table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_On_Conflict = {
+  readonly constraint: Conference_ConfigurationKey_Constraint;
+  readonly update_columns?: ReadonlyArray<Conference_ConfigurationKey_Update_Column>;
+  readonly where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "conference.ConfigurationKey". */
+export type Conference_ConfigurationKey_Order_By = {
+  readonly description?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: conference_ConfigurationKey */
+export type Conference_ConfigurationKey_Pk_Columns_Input = {
+  readonly name: Scalars['String'];
+};
+
+/** select columns of table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Select_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Set_Input = {
+  readonly description?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Update_Column {
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Name = 'name'
+}
+
 /** aggregated selection of "conference.Configuration" */
 export type Conference_Configuration_Aggregate = {
   readonly __typename?: 'conference_Configuration_aggregate';
@@ -13706,6 +13820,10 @@ export type Mutation_Root = {
   readonly delete_conference_Conference_by_pk?: Maybe<Conference_Conference>;
   /** delete data from the table: "conference.Configuration" */
   readonly delete_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+  /** delete data from the table: "conference.ConfigurationKey" */
+  readonly delete_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+  /** delete single row from the table: "conference.ConfigurationKey" */
+  readonly delete_conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
   /** delete single row from the table: "conference.Configuration" */
   readonly delete_conference_Configuration_by_pk?: Maybe<Conference_Configuration>;
   /** delete data from the table: "conference.DemoCode" */
@@ -14055,6 +14173,10 @@ export type Mutation_Root = {
   readonly insert_conference_Conference_one?: Maybe<Conference_Conference>;
   /** insert data into the table: "conference.Configuration" */
   readonly insert_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+  /** insert data into the table: "conference.ConfigurationKey" */
+  readonly insert_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+  /** insert a single row into the table: "conference.ConfigurationKey" */
+  readonly insert_conference_ConfigurationKey_one?: Maybe<Conference_ConfigurationKey>;
   /** insert a single row into the table: "conference.Configuration" */
   readonly insert_conference_Configuration_one?: Maybe<Conference_Configuration>;
   /** insert data into the table: "conference.DemoCode" */
@@ -14412,6 +14534,10 @@ export type Mutation_Root = {
   readonly update_conference_Conference_by_pk?: Maybe<Conference_Conference>;
   /** update data of the table: "conference.Configuration" */
   readonly update_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+  /** update data of the table: "conference.ConfigurationKey" */
+  readonly update_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+  /** update single row of the table: "conference.ConfigurationKey" */
+  readonly update_conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
   /** update single row of the table: "conference.Configuration" */
   readonly update_conference_Configuration_by_pk?: Maybe<Conference_Configuration>;
   /** update data of the table: "conference.DemoCode" */
@@ -14955,6 +15081,18 @@ export type Mutation_RootDelete_Conference_Conference_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Conference_ConfigurationArgs = {
   where: Conference_Configuration_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_ConfigurationKeyArgs = {
+  where: Conference_ConfigurationKey_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -16049,6 +16187,20 @@ export type Mutation_RootInsert_Conference_Conference_OneArgs = {
 export type Mutation_RootInsert_Conference_ConfigurationArgs = {
   objects: ReadonlyArray<Conference_Configuration_Insert_Input>;
   on_conflict?: Maybe<Conference_Configuration_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_ConfigurationKeyArgs = {
+  objects: ReadonlyArray<Conference_ConfigurationKey_Insert_Input>;
+  on_conflict?: Maybe<Conference_ConfigurationKey_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_ConfigurationKey_OneArgs = {
+  object: Conference_ConfigurationKey_Insert_Input;
+  on_conflict?: Maybe<Conference_ConfigurationKey_On_Conflict>;
 };
 
 
@@ -17396,6 +17548,20 @@ export type Mutation_RootUpdate_Conference_ConfigurationArgs = {
   _prepend?: Maybe<Conference_Configuration_Prepend_Input>;
   _set?: Maybe<Conference_Configuration_Set_Input>;
   where: Conference_Configuration_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_ConfigurationKeyArgs = {
+  _set?: Maybe<Conference_ConfigurationKey_Set_Input>;
+  where: Conference_ConfigurationKey_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_ConfigurationKey_By_PkArgs = {
+  _set?: Maybe<Conference_ConfigurationKey_Set_Input>;
+  pk_columns: Conference_ConfigurationKey_Pk_Columns_Input;
 };
 
 
@@ -19907,6 +20073,12 @@ export type Query_Root = {
   readonly conference_Conference_by_pk?: Maybe<Conference_Conference>;
   /** fetch data from the table: "conference.Configuration" */
   readonly conference_Configuration: ReadonlyArray<Conference_Configuration>;
+  /** fetch data from the table: "conference.ConfigurationKey" */
+  readonly conference_ConfigurationKey: ReadonlyArray<Conference_ConfigurationKey>;
+  /** fetch aggregated fields from the table: "conference.ConfigurationKey" */
+  readonly conference_ConfigurationKey_aggregate: Conference_ConfigurationKey_Aggregate;
+  /** fetch data from the table: "conference.ConfigurationKey" using primary key columns */
+  readonly conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
   /** fetch aggregated fields from the table: "conference.Configuration" */
   readonly conference_Configuration_aggregate: Conference_Configuration_Aggregate;
   /** fetch data from the table: "conference.Configuration" using primary key columns */
@@ -20959,6 +21131,29 @@ export type Query_RootConference_ConfigurationArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Conference_Configuration_Order_By>>;
   where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+
+export type Query_RootConference_ConfigurationKeyArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Order_By>>;
+  where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+
+export type Query_RootConference_ConfigurationKey_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Order_By>>;
+  where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+
+export type Query_RootConference_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -25078,6 +25273,7 @@ export type Room_Room = {
   readonly chatId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting>;
+  readonly colour: Scalars['String'];
   /** An object relationship */
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
@@ -25553,6 +25749,7 @@ export type Room_Room_Bool_Exp = {
   readonly chat?: Maybe<Chat_Chat_Bool_Exp>;
   readonly chatId?: Maybe<Uuid_Comparison_Exp>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
+  readonly colour?: Maybe<String_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -25604,6 +25801,7 @@ export type Room_Room_Insert_Input = {
   readonly chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   readonly chatId?: Maybe<Scalars['uuid']>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
@@ -25636,6 +25834,7 @@ export type Room_Room_Max_Fields = {
   readonly __typename?: 'room_Room_max_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -25652,6 +25851,7 @@ export type Room_Room_Max_Fields = {
 export type Room_Room_Max_Order_By = {
   readonly capacity?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -25669,6 +25869,7 @@ export type Room_Room_Min_Fields = {
   readonly __typename?: 'room_Room_min_fields';
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -25685,6 +25886,7 @@ export type Room_Room_Min_Fields = {
 export type Room_Room_Min_Order_By = {
   readonly capacity?: Maybe<Order_By>;
   readonly chatId?: Maybe<Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
@@ -25729,6 +25931,7 @@ export type Room_Room_Order_By = {
   readonly chat?: Maybe<Chat_Chat_Order_By>;
   readonly chatId?: Maybe<Order_By>;
   readonly chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
+  readonly colour?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
@@ -25770,6 +25973,8 @@ export enum Room_Room_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
+  Colour = 'colour',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'created_at',
@@ -25800,6 +26005,7 @@ export type Room_Room_Set_Input = {
   readonly backendName?: Maybe<Room_Backend_Enum>;
   readonly capacity?: Maybe<Scalars['Int']>;
   readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly colour?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly currentModeName?: Maybe<Room_Mode_Enum>;
@@ -25874,6 +26080,8 @@ export enum Room_Room_Update_Column {
   Capacity = 'capacity',
   /** column name */
   ChatId = 'chatId',
+  /** column name */
+  Colour = 'colour',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
@@ -26585,6 +26793,7 @@ export type Room_ShuffleQueueEntry = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['bigint'];
+  readonly isExpired: Scalars['Boolean'];
   /** An object relationship */
   readonly registrant: Registrant_Registrant;
   readonly registrantId: Scalars['uuid'];
@@ -26669,6 +26878,7 @@ export type Room_ShuffleQueueEntry_Bool_Exp = {
   readonly allocatedShuffleRoomId?: Maybe<Int_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Bigint_Comparison_Exp>;
+  readonly isExpired?: Maybe<Boolean_Comparison_Exp>;
   readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
@@ -26682,7 +26892,7 @@ export enum Room_ShuffleQueueEntry_Constraint {
   /** unique or primary key constraint */
   ShuffleQueueEntryPkey = 'ShuffleQueueEntry_pkey',
   /** unique or primary key constraint */
-  IndexIswaiting = 'index_iswaiting'
+  RoomShuffleQueueEntryIsWaiting = 'room_ShuffleQueueEntry_isWaiting'
 }
 
 /** input type for incrementing numeric columns in table "room.ShuffleQueueEntry" */
@@ -26696,6 +26906,7 @@ export type Room_ShuffleQueueEntry_Insert_Input = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['bigint']>;
+  readonly isExpired?: Maybe<Scalars['Boolean']>;
   readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
@@ -26767,6 +26978,7 @@ export type Room_ShuffleQueueEntry_Order_By = {
   readonly allocatedShuffleRoomId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly isExpired?: Maybe<Order_By>;
   readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
   readonly registrantId?: Maybe<Order_By>;
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
@@ -26789,6 +27001,8 @@ export enum Room_ShuffleQueueEntry_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  IsExpired = 'isExpired',
+  /** column name */
   RegistrantId = 'registrantId',
   /** column name */
   ShufflePeriodId = 'shufflePeriodId',
@@ -26801,6 +27015,7 @@ export type Room_ShuffleQueueEntry_Set_Input = {
   readonly allocatedShuffleRoomId?: Maybe<Scalars['Int']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['bigint']>;
+  readonly isExpired?: Maybe<Scalars['Boolean']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -26866,6 +27081,8 @@ export enum Room_ShuffleQueueEntry_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
+  /** column name */
+  IsExpired = 'isExpired',
   /** column name */
   RegistrantId = 'registrantId',
   /** column name */
@@ -29224,6 +29441,12 @@ export type Subscription_Root = {
   readonly conference_Conference_by_pk?: Maybe<Conference_Conference>;
   /** fetch data from the table: "conference.Configuration" */
   readonly conference_Configuration: ReadonlyArray<Conference_Configuration>;
+  /** fetch data from the table: "conference.ConfigurationKey" */
+  readonly conference_ConfigurationKey: ReadonlyArray<Conference_ConfigurationKey>;
+  /** fetch aggregated fields from the table: "conference.ConfigurationKey" */
+  readonly conference_ConfigurationKey_aggregate: Conference_ConfigurationKey_Aggregate;
+  /** fetch data from the table: "conference.ConfigurationKey" using primary key columns */
+  readonly conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
   /** fetch aggregated fields from the table: "conference.Configuration" */
   readonly conference_Configuration_aggregate: Conference_Configuration_Aggregate;
   /** fetch data from the table: "conference.Configuration" using primary key columns */
@@ -30273,6 +30496,29 @@ export type Subscription_RootConference_ConfigurationArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Conference_Configuration_Order_By>>;
   where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+
+export type Subscription_RootConference_ConfigurationKeyArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Order_By>>;
+  where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+
+export type Subscription_RootConference_ConfigurationKey_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Order_By>>;
+  where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+
+export type Subscription_RootConference_ConfigurationKey_By_PkArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -31851,6 +32097,8 @@ export enum System_ConfigurationKey_Enum {
   CookiePolicyLatestRevisionTimestamp = 'COOKIE_POLICY_LATEST_REVISION_TIMESTAMP',
   /** The URL to the host cookie policy. Note: If self hosting Clowdr, this must be your organisation's cookie policy - you cannot legally reuse, rely on or copy Clowdr's cookie policy. */
   CookiePolicyUrl = 'COOKIE_POLICY_URL',
+  /** A string representing the full frontend host URL for the app. */
+  DefaultFrontendHost = 'DEFAULT_FRONTEND_HOST',
   /** Default backend platform for video rooms */
   DefaultVideoRoomBackend = 'DEFAULT_VIDEO_ROOM_BACKEND',
   /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
@@ -35028,6 +35276,13 @@ export type GetRoomVonageTokenMutationVariables = Exact<{
 
 export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
 
+export type GetRoomVonageSessionIdQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomVonageSessionIdQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly publicVonageSessionId?: Maybe<string> }> };
+
 export type Registrant_RegistrantCreateRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   name: Scalars['String'];
@@ -37535,7 +37790,7 @@ export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePer
 
 export type PrefetchShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> };
 
-export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
+export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly isExpired: boolean, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
 
 export type MyShuffleQueueEntryQueryVariables = Exact<{
   id: Scalars['bigint'];
@@ -37969,8 +38224,9 @@ export const ShufflePeriodDataFragmentDoc = gql`
   maxRegistrantsPerRoom
   name
   queueEntries(
+    where: {isExpired: {_eq: false}}
     distinct_on: [registrantId]
-    order_by: [{registrantId: asc}, {id: desc}]
+    order_by: {registrantId: asc, id: desc}
   ) {
     ...PrefetchShuffleQueueEntryData
   }
@@ -39108,7 +39364,7 @@ export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     }
   }
   waitingEntries: queueEntries_aggregate(
-    where: {allocatedShuffleRoomId: {_is_null: true}}
+    where: {allocatedShuffleRoomId: {_is_null: true}, isExpired: {_eq: false}}
   ) {
     aggregate {
       count
@@ -39292,6 +39548,7 @@ export const RoomParticipantDetailsFragmentDoc = gql`
 export const SubdShuffleQueueEntryDataFragmentDoc = gql`
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
   id
+  isExpired
   shuffleRoom {
     id
     roomId
@@ -40453,6 +40710,42 @@ export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookO
 export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
 export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+export const GetRoomVonageSessionIdDocument = gql`
+    query GetRoomVonageSessionId($roomId: uuid!) {
+  room_Room_by_pk(id: $roomId) {
+    id
+    publicVonageSessionId
+  }
+}
+    `;
+
+/**
+ * __useGetRoomVonageSessionIdQuery__
+ *
+ * To run a query within a React component, call `useGetRoomVonageSessionIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomVonageSessionIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomVonageSessionIdQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomVonageSessionIdQuery(baseOptions: Apollo.QueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
+      }
+export function useGetRoomVonageSessionIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
+        }
+export type GetRoomVonageSessionIdQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdQuery>;
+export type GetRoomVonageSessionIdLazyQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdLazyQuery>;
+export type GetRoomVonageSessionIdQueryResult = Apollo.QueryResult<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>;
 export const Registrant_RegistrantCreateRoomDocument = gql`
     mutation registrant_RegistrantCreateRoom($conferenceId: uuid!, $name: String!, $managementModeName: room_ManagementMode_enum!) {
   insert_room_Room_one(

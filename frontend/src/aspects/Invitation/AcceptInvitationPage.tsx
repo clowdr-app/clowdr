@@ -238,8 +238,8 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                             </HStack>
                             <VStack alignItems="flex-start">
                                 <Text fontSize="lg">
-                                    <chakra.span fontWeight="bold">Sign up to a Clowdr account</chakra.span> or log into
-                                    an existing one.
+                                    <chakra.span fontWeight="bold">Sign up for a Clowdr account</chakra.span> or log
+                                    into an existing one.
                                 </Text>
                                 <Text fontSize="sm">
                                     When you sign up you will be asked to confirm your email address.

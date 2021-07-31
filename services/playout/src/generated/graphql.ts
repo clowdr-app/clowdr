@@ -681,6 +681,7 @@ export type GetGoogleOAuthUrlOutput = {
 export type GetUploadAgreementOutput = {
     __typename?: "GetUploadAgreementOutput";
     agreementText?: Maybe<Scalars["String"]>;
+    agreementUrl?: Maybe<Scalars["String"]>;
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -7624,6 +7625,118 @@ export type Conference_ConfigurationValueArgs = {
     path?: Maybe<Scalars["String"]>;
 };
 
+/** columns and relationships of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey = {
+    __typename?: "conference_ConfigurationKey";
+    description: Scalars["String"];
+    name: Scalars["String"];
+};
+
+/** aggregated selection of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate = {
+    __typename?: "conference_ConfigurationKey_aggregate";
+    aggregate?: Maybe<Conference_ConfigurationKey_Aggregate_Fields>;
+    nodes: Array<Conference_ConfigurationKey>;
+};
+
+/** aggregate fields of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate_Fields = {
+    __typename?: "conference_ConfigurationKey_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Conference_ConfigurationKey_Max_Fields>;
+    min?: Maybe<Conference_ConfigurationKey_Min_Fields>;
+};
+
+/** aggregate fields of "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Conference_ConfigurationKey_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "conference.ConfigurationKey". All fields are combined with a logical 'AND'. */
+export type Conference_ConfigurationKey_Bool_Exp = {
+    _and?: Maybe<Array<Conference_ConfigurationKey_Bool_Exp>>;
+    _not?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+    _or?: Maybe<Array<Conference_ConfigurationKey_Bool_Exp>>;
+    description?: Maybe<String_Comparison_Exp>;
+    name?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Constraint {
+    /** unique or primary key constraint */
+    ConfigurationKeyPkey = "ConfigurationKey_pkey",
+}
+
+/** input type for inserting data into table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Insert_Input = {
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Conference_ConfigurationKey_Max_Fields = {
+    __typename?: "conference_ConfigurationKey_max_fields";
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Conference_ConfigurationKey_Min_Fields = {
+    __typename?: "conference_ConfigurationKey_min_fields";
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** response of any mutation on the table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Mutation_Response = {
+    __typename?: "conference_ConfigurationKey_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Conference_ConfigurationKey>;
+};
+
+/** on conflict condition type for table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_On_Conflict = {
+    constraint: Conference_ConfigurationKey_Constraint;
+    update_columns?: Array<Conference_ConfigurationKey_Update_Column>;
+    where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "conference.ConfigurationKey". */
+export type Conference_ConfigurationKey_Order_By = {
+    description?: Maybe<Order_By>;
+    name?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: conference_ConfigurationKey */
+export type Conference_ConfigurationKey_Pk_Columns_Input = {
+    name: Scalars["String"];
+};
+
+/** select columns of table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Select_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
+
+/** input type for updating data in table "conference.ConfigurationKey" */
+export type Conference_ConfigurationKey_Set_Input = {
+    description?: Maybe<Scalars["String"]>;
+    name?: Maybe<Scalars["String"]>;
+};
+
+/** update columns of table "conference.ConfigurationKey" */
+export enum Conference_ConfigurationKey_Update_Column {
+    /** column name */
+    Description = "description",
+    /** column name */
+    Name = "name",
+}
+
 /** aggregated selection of "conference.Configuration" */
 export type Conference_Configuration_Aggregate = {
     __typename?: "conference_Configuration_aggregate";
@@ -8058,10 +8171,6 @@ export type Conference_OriginatingData = {
     /** An aggregate relationship */
     tags_aggregate: Collection_Tag_Aggregate;
     updatedAt: Scalars["timestamptz"];
-    /** An array relationship */
-    uploadableElements: Array<Content_UploadableElement>;
-    /** An aggregate relationship */
-    uploadableElements_aggregate: Content_UploadableElement_Aggregate;
 };
 
 /** columns and relationships of "conference.OriginatingData" */
@@ -8177,24 +8286,6 @@ export type Conference_OriginatingDataTags_AggregateArgs = {
     where?: Maybe<Collection_Tag_Bool_Exp>;
 };
 
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataUploadableElementsArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-/** columns and relationships of "conference.OriginatingData" */
-export type Conference_OriginatingDataUploadableElements_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
 /** aggregated selection of "conference.OriginatingData" */
 export type Conference_OriginatingData_Aggregate = {
     __typename?: "conference_OriginatingData_aggregate";
@@ -8253,7 +8344,6 @@ export type Conference_OriginatingData_Bool_Exp = {
     sourceId?: Maybe<String_Comparison_Exp>;
     tags?: Maybe<Collection_Tag_Bool_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-    uploadableElements?: Maybe<Content_UploadableElement_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "conference.OriginatingData" */
@@ -8294,7 +8384,6 @@ export type Conference_OriginatingData_Insert_Input = {
     sourceId?: Maybe<Scalars["String"]>;
     tags?: Maybe<Collection_Tag_Arr_Rel_Insert_Input>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableElements?: Maybe<Content_UploadableElement_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -8373,7 +8462,6 @@ export type Conference_OriginatingData_Order_By = {
     sourceId?: Maybe<Order_By>;
     tags_aggregate?: Maybe<Collection_Tag_Aggregate_Order_By>;
     updatedAt?: Maybe<Order_By>;
-    uploadableElements_aggregate?: Maybe<Content_UploadableElement_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: conference_OriginatingData */
@@ -8627,6 +8715,7 @@ export enum Conference_PrepareJob_Update_Column {
 /** columns and relationships of "content.Element" */
 export type Content_Element = {
     __typename?: "content_Element";
+    accessToken: Scalars["String"];
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
@@ -8637,6 +8726,8 @@ export type Content_Element = {
     /** An object relationship */
     item: Content_Item;
     itemId: Scalars["uuid"];
+    /** A computed field, executes function "content.Element_itemTitle" */
+    itemTitle?: Maybe<Scalars["String"]>;
     layoutData?: Maybe<Scalars["jsonb"]>;
     name: Scalars["String"];
     /** An object relationship */
@@ -8656,9 +8747,11 @@ export type Content_Element = {
     type: Content_ElementType;
     typeName: Content_ElementType_Enum;
     updatedAt: Scalars["timestamptz"];
-    /** An object relationship */
-    uploadableElement?: Maybe<Content_UploadableElement>;
-    uploadableId?: Maybe<Scalars["uuid"]>;
+    /** An array relationship */
+    uploaders: Array<Content_Uploader>;
+    /** An aggregate relationship */
+    uploaders_aggregate: Content_Uploader_Aggregate;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
     /** An array relationship */
     youTubeUploads: Array<Video_YouTubeUpload>;
     /** An aggregate relationship */
@@ -8712,6 +8805,24 @@ export type Content_ElementStats_AggregateArgs = {
 };
 
 /** columns and relationships of "content.Element" */
+export type Content_ElementUploadersArgs = {
+    distinct_on?: Maybe<Array<Content_Uploader_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_Uploader_Order_By>>;
+    where?: Maybe<Content_Uploader_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementUploaders_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_Uploader_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_Uploader_Order_By>>;
+    where?: Maybe<Content_Uploader_Bool_Exp>;
+};
+
+/** columns and relationships of "content.Element" */
 export type Content_ElementYouTubeUploadsArgs = {
     distinct_on?: Maybe<Array<Video_YouTubeUpload_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -8739,6 +8850,7 @@ export type Content_ElementByAccessToken = {
     layoutData?: Maybe<Scalars["jsonb"]>;
     name?: Maybe<Scalars["String"]>;
     typeName?: Maybe<Scalars["String"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
 };
 
 /** columns and relationships of "content.ElementByAccessToken" */
@@ -8761,15 +8873,29 @@ export type Content_ElementByAccessToken_Aggregate = {
 /** aggregate fields of "content.ElementByAccessToken" */
 export type Content_ElementByAccessToken_Aggregate_Fields = {
     __typename?: "content_ElementByAccessToken_aggregate_fields";
+    avg?: Maybe<Content_ElementByAccessToken_Avg_Fields>;
     count: Scalars["Int"];
     max?: Maybe<Content_ElementByAccessToken_Max_Fields>;
     min?: Maybe<Content_ElementByAccessToken_Min_Fields>;
+    stddev?: Maybe<Content_ElementByAccessToken_Stddev_Fields>;
+    stddev_pop?: Maybe<Content_ElementByAccessToken_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Content_ElementByAccessToken_Stddev_Samp_Fields>;
+    sum?: Maybe<Content_ElementByAccessToken_Sum_Fields>;
+    var_pop?: Maybe<Content_ElementByAccessToken_Var_Pop_Fields>;
+    var_samp?: Maybe<Content_ElementByAccessToken_Var_Samp_Fields>;
+    variance?: Maybe<Content_ElementByAccessToken_Variance_Fields>;
 };
 
 /** aggregate fields of "content.ElementByAccessToken" */
 export type Content_ElementByAccessToken_Aggregate_FieldsCountArgs = {
     columns?: Maybe<Array<Content_ElementByAccessToken_Select_Column>>;
     distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** aggregate avg on columns */
+export type Content_ElementByAccessToken_Avg_Fields = {
+    __typename?: "content_ElementByAccessToken_avg_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
 };
 
 /** Boolean expression to filter rows from the table "content.ElementByAccessToken". All fields are combined with a logical 'AND'. */
@@ -8784,6 +8910,7 @@ export type Content_ElementByAccessToken_Bool_Exp = {
     layoutData?: Maybe<Jsonb_Comparison_Exp>;
     name?: Maybe<String_Comparison_Exp>;
     typeName?: Maybe<String_Comparison_Exp>;
+    uploadsRemaining?: Maybe<Int_Comparison_Exp>;
 };
 
 /** aggregate max on columns */
@@ -8794,6 +8921,7 @@ export type Content_ElementByAccessToken_Max_Fields = {
     itemTitle?: Maybe<Scalars["String"]>;
     name?: Maybe<Scalars["String"]>;
     typeName?: Maybe<Scalars["String"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
 };
 
 /** aggregate min on columns */
@@ -8804,6 +8932,7 @@ export type Content_ElementByAccessToken_Min_Fields = {
     itemTitle?: Maybe<Scalars["String"]>;
     name?: Maybe<Scalars["String"]>;
     typeName?: Maybe<Scalars["String"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
 };
 
 /** Ordering options when selecting data from "content.ElementByAccessToken". */
@@ -8815,6 +8944,7 @@ export type Content_ElementByAccessToken_Order_By = {
     layoutData?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     typeName?: Maybe<Order_By>;
+    uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** select columns of table "content.ElementByAccessToken" */
@@ -8833,7 +8963,51 @@ export enum Content_ElementByAccessToken_Select_Column {
     Name = "name",
     /** column name */
     TypeName = "typeName",
+    /** column name */
+    UploadsRemaining = "uploadsRemaining",
 }
+
+/** aggregate stddev on columns */
+export type Content_ElementByAccessToken_Stddev_Fields = {
+    __typename?: "content_ElementByAccessToken_stddev_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Content_ElementByAccessToken_Stddev_Pop_Fields = {
+    __typename?: "content_ElementByAccessToken_stddev_pop_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Content_ElementByAccessToken_Stddev_Samp_Fields = {
+    __typename?: "content_ElementByAccessToken_stddev_samp_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Content_ElementByAccessToken_Sum_Fields = {
+    __typename?: "content_ElementByAccessToken_sum_fields";
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate var_pop on columns */
+export type Content_ElementByAccessToken_Var_Pop_Fields = {
+    __typename?: "content_ElementByAccessToken_var_pop_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Content_ElementByAccessToken_Var_Samp_Fields = {
+    __typename?: "content_ElementByAccessToken_var_samp_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Content_ElementByAccessToken_Variance_Fields = {
+    __typename?: "content_ElementByAccessToken_variance_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
 
 /** columns and relationships of "content.ElementPermissionGrant" */
 export type Content_ElementPermissionGrant = {
@@ -9259,9 +9433,17 @@ export type Content_Element_Aggregate = {
 /** aggregate fields of "content.Element" */
 export type Content_Element_Aggregate_Fields = {
     __typename?: "content_Element_aggregate_fields";
+    avg?: Maybe<Content_Element_Avg_Fields>;
     count: Scalars["Int"];
     max?: Maybe<Content_Element_Max_Fields>;
     min?: Maybe<Content_Element_Min_Fields>;
+    stddev?: Maybe<Content_Element_Stddev_Fields>;
+    stddev_pop?: Maybe<Content_Element_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Content_Element_Stddev_Samp_Fields>;
+    sum?: Maybe<Content_Element_Sum_Fields>;
+    var_pop?: Maybe<Content_Element_Var_Pop_Fields>;
+    var_samp?: Maybe<Content_Element_Var_Samp_Fields>;
+    variance?: Maybe<Content_Element_Variance_Fields>;
 };
 
 /** aggregate fields of "content.Element" */
@@ -9272,9 +9454,17 @@ export type Content_Element_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "content.Element" */
 export type Content_Element_Aggregate_Order_By = {
+    avg?: Maybe<Content_Element_Avg_Order_By>;
     count?: Maybe<Order_By>;
     max?: Maybe<Content_Element_Max_Order_By>;
     min?: Maybe<Content_Element_Min_Order_By>;
+    stddev?: Maybe<Content_Element_Stddev_Order_By>;
+    stddev_pop?: Maybe<Content_Element_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Content_Element_Stddev_Samp_Order_By>;
+    sum?: Maybe<Content_Element_Sum_Order_By>;
+    var_pop?: Maybe<Content_Element_Var_Pop_Order_By>;
+    var_samp?: Maybe<Content_Element_Var_Samp_Order_By>;
+    variance?: Maybe<Content_Element_Variance_Order_By>;
 };
 
 /** append existing jsonb value of filtered columns with new jsonb value */
@@ -9290,11 +9480,23 @@ export type Content_Element_Arr_Rel_Insert_Input = {
     on_conflict?: Maybe<Content_Element_On_Conflict>;
 };
 
+/** aggregate avg on columns */
+export type Content_Element_Avg_Fields = {
+    __typename?: "content_Element_avg_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "content.Element" */
+export type Content_Element_Avg_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
 /** Boolean expression to filter rows from the table "content.Element". All fields are combined with a logical 'AND'. */
 export type Content_Element_Bool_Exp = {
     _and?: Maybe<Array<Content_Element_Bool_Exp>>;
     _not?: Maybe<Content_Element_Bool_Exp>;
     _or?: Maybe<Array<Content_Element_Bool_Exp>>;
+    accessToken?: Maybe<String_Comparison_Exp>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -9303,6 +9505,7 @@ export type Content_Element_Bool_Exp = {
     isHidden?: Maybe<Boolean_Comparison_Exp>;
     item?: Maybe<Content_Item_Bool_Exp>;
     itemId?: Maybe<Uuid_Comparison_Exp>;
+    itemTitle?: Maybe<String_Comparison_Exp>;
     layoutData?: Maybe<Jsonb_Comparison_Exp>;
     name?: Maybe<String_Comparison_Exp>;
     originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
@@ -9313,8 +9516,8 @@ export type Content_Element_Bool_Exp = {
     type?: Maybe<Content_ElementType_Bool_Exp>;
     typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-    uploadableElement?: Maybe<Content_UploadableElement_Bool_Exp>;
-    uploadableId?: Maybe<Uuid_Comparison_Exp>;
+    uploaders?: Maybe<Content_Uploader_Bool_Exp>;
+    uploadsRemaining?: Maybe<Int_Comparison_Exp>;
     youTubeUploads?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
@@ -9322,8 +9525,6 @@ export type Content_Element_Bool_Exp = {
 export enum Content_Element_Constraint {
     /** unique or primary key constraint */
     ElementPkey = "Element_pkey",
-    /** unique or primary key constraint */
-    ElementRequiredContentIdKey = "Element_requiredContentId_key",
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -9344,8 +9545,14 @@ export type Content_Element_Delete_Key_Input = {
     layoutData?: Maybe<Scalars["String"]>;
 };
 
+/** input type for incrementing numeric columns in table "content.Element" */
+export type Content_Element_Inc_Input = {
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
 /** input type for inserting data into table "content.Element" */
 export type Content_Element_Insert_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
@@ -9364,14 +9571,15 @@ export type Content_Element_Insert_Input = {
     type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
     typeName?: Maybe<Content_ElementType_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableElement?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
-    uploadableId?: Maybe<Scalars["uuid"]>;
+    uploaders?: Maybe<Content_Uploader_Arr_Rel_Insert_Input>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
     youTubeUploads?: Maybe<Video_YouTubeUpload_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type Content_Element_Max_Fields = {
     __typename?: "content_Element_max_fields";
+    accessToken?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -9379,11 +9587,12 @@ export type Content_Element_Max_Fields = {
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableId?: Maybe<Scalars["uuid"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
 };
 
 /** order by max() on columns of table "content.Element" */
 export type Content_Element_Max_Order_By = {
+    accessToken?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -9391,12 +9600,13 @@ export type Content_Element_Max_Order_By = {
     name?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    uploadableId?: Maybe<Order_By>;
+    uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Content_Element_Min_Fields = {
     __typename?: "content_Element_min_fields";
+    accessToken?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -9404,11 +9614,12 @@ export type Content_Element_Min_Fields = {
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableId?: Maybe<Scalars["uuid"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
 };
 
 /** order by min() on columns of table "content.Element" */
 export type Content_Element_Min_Order_By = {
+    accessToken?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -9416,7 +9627,7 @@ export type Content_Element_Min_Order_By = {
     name?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    uploadableId?: Maybe<Order_By>;
+    uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "content.Element" */
@@ -9444,6 +9655,7 @@ export type Content_Element_On_Conflict = {
 
 /** Ordering options when selecting data from "content.Element". */
 export type Content_Element_Order_By = {
+    accessToken?: Maybe<Order_By>;
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
@@ -9462,8 +9674,8 @@ export type Content_Element_Order_By = {
     type?: Maybe<Content_ElementType_Order_By>;
     typeName?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    uploadableElement?: Maybe<Content_UploadableElement_Order_By>;
-    uploadableId?: Maybe<Order_By>;
+    uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
+    uploadsRemaining?: Maybe<Order_By>;
     youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
 };
 
@@ -9481,6 +9693,8 @@ export type Content_Element_Prepend_Input = {
 /** select columns of table "content.Element" */
 export enum Content_Element_Select_Column {
     /** column name */
+    AccessToken = "accessToken",
+    /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "createdAt",
@@ -9503,11 +9717,12 @@ export enum Content_Element_Select_Column {
     /** column name */
     UpdatedAt = "updatedAt",
     /** column name */
-    UploadableId = "uploadableId",
+    UploadsRemaining = "uploadsRemaining",
 }
 
 /** input type for updating data in table "content.Element" */
 export type Content_Element_Set_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     data?: Maybe<Scalars["jsonb"]>;
@@ -9519,11 +9734,57 @@ export type Content_Element_Set_Input = {
     originatingDataId?: Maybe<Scalars["uuid"]>;
     typeName?: Maybe<Content_ElementType_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableId?: Maybe<Scalars["uuid"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate stddev on columns */
+export type Content_Element_Stddev_Fields = {
+    __typename?: "content_Element_stddev_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "content.Element" */
+export type Content_Element_Stddev_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Content_Element_Stddev_Pop_Fields = {
+    __typename?: "content_Element_stddev_pop_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "content.Element" */
+export type Content_Element_Stddev_Pop_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Content_Element_Stddev_Samp_Fields = {
+    __typename?: "content_Element_stddev_samp_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "content.Element" */
+export type Content_Element_Stddev_Samp_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Content_Element_Sum_Fields = {
+    __typename?: "content_Element_sum_fields";
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "content.Element" */
+export type Content_Element_Sum_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** update columns of table "content.Element" */
 export enum Content_Element_Update_Column {
+    /** column name */
+    AccessToken = "accessToken",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -9547,8 +9808,41 @@ export enum Content_Element_Update_Column {
     /** column name */
     UpdatedAt = "updatedAt",
     /** column name */
-    UploadableId = "uploadableId",
+    UploadsRemaining = "uploadsRemaining",
 }
+
+/** aggregate var_pop on columns */
+export type Content_Element_Var_Pop_Fields = {
+    __typename?: "content_Element_var_pop_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "content.Element" */
+export type Content_Element_Var_Pop_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Content_Element_Var_Samp_Fields = {
+    __typename?: "content_Element_var_samp_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "content.Element" */
+export type Content_Element_Var_Samp_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Content_Element_Variance_Fields = {
+    __typename?: "content_Element_variance_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "content.Element" */
+export type Content_Element_Variance_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "content.Item" */
 export type Content_Item = {
@@ -9602,10 +9896,6 @@ export type Content_Item = {
     type: Content_ItemType;
     typeName: Content_ItemType_Enum;
     updatedAt: Scalars["timestamptz"];
-    /** An array relationship */
-    uploadableElements: Array<Content_UploadableElement>;
-    /** An aggregate relationship */
-    uploadableElements_aggregate: Content_UploadableElement_Aggregate;
 };
 
 /** columns and relationships of "content.Item" */
@@ -9732,24 +10022,6 @@ export type Content_ItemStats_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Analytics_ContentItemStats_Order_By>>;
     where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
-};
-
-/** columns and relationships of "content.Item" */
-export type Content_ItemUploadableElementsArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-/** columns and relationships of "content.Item" */
-export type Content_ItemUploadableElements_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
 };
 
 /** columns and relationships of "content.ItemExhibition" */
@@ -10790,7 +11062,6 @@ export type Content_Item_Bool_Exp = {
     type?: Maybe<Content_ItemType_Bool_Exp>;
     typeName?: Maybe<Content_ItemType_Enum_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-    uploadableElements?: Maybe<Content_UploadableElement_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "content.Item" */
@@ -10823,7 +11094,6 @@ export type Content_Item_Insert_Input = {
     type?: Maybe<Content_ItemType_Obj_Rel_Insert_Input>;
     typeName?: Maybe<Content_ItemType_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableElements?: Maybe<Content_UploadableElement_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -10923,7 +11193,6 @@ export type Content_Item_Order_By = {
     type?: Maybe<Content_ItemType_Order_By>;
     typeName?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    uploadableElements_aggregate?: Maybe<Content_UploadableElement_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: content_Item */
@@ -10988,673 +11257,6 @@ export enum Content_Item_Update_Column {
     UpdatedAt = "updatedAt",
 }
 
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElement = {
-    __typename?: "content_UploadableElement";
-    accessToken: Scalars["String"];
-    /** An object relationship */
-    conference: Conference_Conference;
-    conferenceId: Scalars["uuid"];
-    createdAt: Scalars["timestamptz"];
-    /** An object relationship */
-    element?: Maybe<Content_Element>;
-    /** A computed field, executes function "content.hasBeenUploaded" */
-    hasBeenUploaded?: Maybe<Scalars["Boolean"]>;
-    id: Scalars["uuid"];
-    isHidden: Scalars["Boolean"];
-    /** An object relationship */
-    item: Content_Item;
-    itemId: Scalars["uuid"];
-    /** A computed field, executes function "content.UploadableElement_itemTitle" */
-    itemTitle?: Maybe<Scalars["String"]>;
-    name: Scalars["String"];
-    /** An object relationship */
-    originatingData?: Maybe<Conference_OriginatingData>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    /** An array relationship */
-    permissionGrants: Array<Content_UploadableElementPermissionGrant>;
-    /** An aggregate relationship */
-    permissionGrants_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
-    /** An object relationship */
-    type: Content_ElementType;
-    typeName: Content_ElementType_Enum;
-    updatedAt: Scalars["timestamptz"];
-    /** An array relationship */
-    uploaders: Array<Content_Uploader>;
-    /** An aggregate relationship */
-    uploaders_aggregate: Content_Uploader_Aggregate;
-    uploadsRemaining?: Maybe<Scalars["Int"]>;
-};
-
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElementPermissionGrantsArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
-    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElementPermissionGrants_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
-    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElementUploadersArgs = {
-    distinct_on?: Maybe<Array<Content_Uploader_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_Uploader_Order_By>>;
-    where?: Maybe<Content_Uploader_Bool_Exp>;
-};
-
-/** columns and relationships of "content.UploadableElement" */
-export type Content_UploadableElementUploaders_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_Uploader_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_Uploader_Order_By>>;
-    where?: Maybe<Content_Uploader_Bool_Exp>;
-};
-
-/** columns and relationships of "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant = {
-    __typename?: "content_UploadableElementPermissionGrant";
-    /** An object relationship */
-    conference: Conference_Conference;
-    conferenceSlug: Scalars["String"];
-    created_at: Scalars["timestamptz"];
-    /** An object relationship */
-    entity?: Maybe<Content_UploadableElement>;
-    entityId?: Maybe<Scalars["uuid"]>;
-    /** An object relationship */
-    group?: Maybe<Permissions_Group>;
-    groupId?: Maybe<Scalars["uuid"]>;
-    id: Scalars["uuid"];
-    /** An object relationship */
-    permissionSet: Permissions_Role;
-    permissionSetId: Scalars["uuid"];
-    updated_at: Scalars["timestamptz"];
-};
-
-/** aggregated selection of "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Aggregate = {
-    __typename?: "content_UploadableElementPermissionGrant_aggregate";
-    aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Fields>;
-    nodes: Array<Content_UploadableElementPermissionGrant>;
-};
-
-/** aggregate fields of "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Aggregate_Fields = {
-    __typename?: "content_UploadableElementPermissionGrant_aggregate_fields";
-    count: Scalars["Int"];
-    max?: Maybe<Content_UploadableElementPermissionGrant_Max_Fields>;
-    min?: Maybe<Content_UploadableElementPermissionGrant_Min_Fields>;
-};
-
-/** aggregate fields of "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Aggregate_Order_By = {
-    count?: Maybe<Order_By>;
-    max?: Maybe<Content_UploadableElementPermissionGrant_Max_Order_By>;
-    min?: Maybe<Content_UploadableElementPermissionGrant_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input = {
-    data: Array<Content_UploadableElementPermissionGrant_Insert_Input>;
-    /** on conflict condition */
-    on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "content.UploadableElementPermissionGrant". All fields are combined with a logical 'AND'. */
-export type Content_UploadableElementPermissionGrant_Bool_Exp = {
-    _and?: Maybe<Array<Content_UploadableElementPermissionGrant_Bool_Exp>>;
-    _not?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-    _or?: Maybe<Array<Content_UploadableElementPermissionGrant_Bool_Exp>>;
-    conference?: Maybe<Conference_Conference_Bool_Exp>;
-    conferenceSlug?: Maybe<String_Comparison_Exp>;
-    created_at?: Maybe<Timestamptz_Comparison_Exp>;
-    entity?: Maybe<Content_UploadableElement_Bool_Exp>;
-    entityId?: Maybe<Uuid_Comparison_Exp>;
-    group?: Maybe<Permissions_Group_Bool_Exp>;
-    groupId?: Maybe<Uuid_Comparison_Exp>;
-    id?: Maybe<Uuid_Comparison_Exp>;
-    permissionSet?: Maybe<Permissions_Role_Bool_Exp>;
-    permissionSetId?: Maybe<Uuid_Comparison_Exp>;
-    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "content.UploadableElementPermissionGrant" */
-export enum Content_UploadableElementPermissionGrant_Constraint {
-    /** unique or primary key constraint */
-    UploadableElementPermissionGrPermissionSetIdGroupIdEntitKey = "UploadableElementPermissionGr_permissionSetId_groupId_entit_key",
-    /** unique or primary key constraint */
-    UploadableElementPermissionGrantPkey = "UploadableElementPermissionGrant_pkey",
-}
-
-/** input type for inserting data into table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Insert_Input = {
-    conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
-    conferenceSlug?: Maybe<Scalars["String"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    entity?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
-    entityId?: Maybe<Scalars["uuid"]>;
-    group?: Maybe<Permissions_Group_Obj_Rel_Insert_Input>;
-    groupId?: Maybe<Scalars["uuid"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    permissionSet?: Maybe<Permissions_Role_Obj_Rel_Insert_Input>;
-    permissionSetId?: Maybe<Scalars["uuid"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** aggregate max on columns */
-export type Content_UploadableElementPermissionGrant_Max_Fields = {
-    __typename?: "content_UploadableElementPermissionGrant_max_fields";
-    conferenceSlug?: Maybe<Scalars["String"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    entityId?: Maybe<Scalars["uuid"]>;
-    groupId?: Maybe<Scalars["uuid"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    permissionSetId?: Maybe<Scalars["uuid"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** order by max() on columns of table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Max_Order_By = {
-    conferenceSlug?: Maybe<Order_By>;
-    created_at?: Maybe<Order_By>;
-    entityId?: Maybe<Order_By>;
-    groupId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    permissionSetId?: Maybe<Order_By>;
-    updated_at?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Content_UploadableElementPermissionGrant_Min_Fields = {
-    __typename?: "content_UploadableElementPermissionGrant_min_fields";
-    conferenceSlug?: Maybe<Scalars["String"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    entityId?: Maybe<Scalars["uuid"]>;
-    groupId?: Maybe<Scalars["uuid"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    permissionSetId?: Maybe<Scalars["uuid"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** order by min() on columns of table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Min_Order_By = {
-    conferenceSlug?: Maybe<Order_By>;
-    created_at?: Maybe<Order_By>;
-    entityId?: Maybe<Order_By>;
-    groupId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    permissionSetId?: Maybe<Order_By>;
-    updated_at?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Mutation_Response = {
-    __typename?: "content_UploadableElementPermissionGrant_mutation_response";
-    /** number of rows affected by the mutation */
-    affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    returning: Array<Content_UploadableElementPermissionGrant>;
-};
-
-/** on conflict condition type for table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_On_Conflict = {
-    constraint: Content_UploadableElementPermissionGrant_Constraint;
-    update_columns?: Array<Content_UploadableElementPermissionGrant_Update_Column>;
-    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "content.UploadableElementPermissionGrant". */
-export type Content_UploadableElementPermissionGrant_Order_By = {
-    conference?: Maybe<Conference_Conference_Order_By>;
-    conferenceSlug?: Maybe<Order_By>;
-    created_at?: Maybe<Order_By>;
-    entity?: Maybe<Content_UploadableElement_Order_By>;
-    entityId?: Maybe<Order_By>;
-    group?: Maybe<Permissions_Group_Order_By>;
-    groupId?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    permissionSet?: Maybe<Permissions_Role_Order_By>;
-    permissionSetId?: Maybe<Order_By>;
-    updated_at?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: content_UploadableElementPermissionGrant */
-export type Content_UploadableElementPermissionGrant_Pk_Columns_Input = {
-    id: Scalars["uuid"];
-};
-
-/** select columns of table "content.UploadableElementPermissionGrant" */
-export enum Content_UploadableElementPermissionGrant_Select_Column {
-    /** column name */
-    ConferenceSlug = "conferenceSlug",
-    /** column name */
-    CreatedAt = "created_at",
-    /** column name */
-    EntityId = "entityId",
-    /** column name */
-    GroupId = "groupId",
-    /** column name */
-    Id = "id",
-    /** column name */
-    PermissionSetId = "permissionSetId",
-    /** column name */
-    UpdatedAt = "updated_at",
-}
-
-/** input type for updating data in table "content.UploadableElementPermissionGrant" */
-export type Content_UploadableElementPermissionGrant_Set_Input = {
-    conferenceSlug?: Maybe<Scalars["String"]>;
-    created_at?: Maybe<Scalars["timestamptz"]>;
-    entityId?: Maybe<Scalars["uuid"]>;
-    groupId?: Maybe<Scalars["uuid"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    permissionSetId?: Maybe<Scalars["uuid"]>;
-    updated_at?: Maybe<Scalars["timestamptz"]>;
-};
-
-/** update columns of table "content.UploadableElementPermissionGrant" */
-export enum Content_UploadableElementPermissionGrant_Update_Column {
-    /** column name */
-    ConferenceSlug = "conferenceSlug",
-    /** column name */
-    CreatedAt = "created_at",
-    /** column name */
-    EntityId = "entityId",
-    /** column name */
-    GroupId = "groupId",
-    /** column name */
-    Id = "id",
-    /** column name */
-    PermissionSetId = "permissionSetId",
-    /** column name */
-    UpdatedAt = "updated_at",
-}
-
-/** aggregated selection of "content.UploadableElement" */
-export type Content_UploadableElement_Aggregate = {
-    __typename?: "content_UploadableElement_aggregate";
-    aggregate?: Maybe<Content_UploadableElement_Aggregate_Fields>;
-    nodes: Array<Content_UploadableElement>;
-};
-
-/** aggregate fields of "content.UploadableElement" */
-export type Content_UploadableElement_Aggregate_Fields = {
-    __typename?: "content_UploadableElement_aggregate_fields";
-    avg?: Maybe<Content_UploadableElement_Avg_Fields>;
-    count: Scalars["Int"];
-    max?: Maybe<Content_UploadableElement_Max_Fields>;
-    min?: Maybe<Content_UploadableElement_Min_Fields>;
-    stddev?: Maybe<Content_UploadableElement_Stddev_Fields>;
-    stddev_pop?: Maybe<Content_UploadableElement_Stddev_Pop_Fields>;
-    stddev_samp?: Maybe<Content_UploadableElement_Stddev_Samp_Fields>;
-    sum?: Maybe<Content_UploadableElement_Sum_Fields>;
-    var_pop?: Maybe<Content_UploadableElement_Var_Pop_Fields>;
-    var_samp?: Maybe<Content_UploadableElement_Var_Samp_Fields>;
-    variance?: Maybe<Content_UploadableElement_Variance_Fields>;
-};
-
-/** aggregate fields of "content.UploadableElement" */
-export type Content_UploadableElement_Aggregate_FieldsCountArgs = {
-    columns?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    distinct?: Maybe<Scalars["Boolean"]>;
-};
-
-/** order by aggregate values of table "content.UploadableElement" */
-export type Content_UploadableElement_Aggregate_Order_By = {
-    avg?: Maybe<Content_UploadableElement_Avg_Order_By>;
-    count?: Maybe<Order_By>;
-    max?: Maybe<Content_UploadableElement_Max_Order_By>;
-    min?: Maybe<Content_UploadableElement_Min_Order_By>;
-    stddev?: Maybe<Content_UploadableElement_Stddev_Order_By>;
-    stddev_pop?: Maybe<Content_UploadableElement_Stddev_Pop_Order_By>;
-    stddev_samp?: Maybe<Content_UploadableElement_Stddev_Samp_Order_By>;
-    sum?: Maybe<Content_UploadableElement_Sum_Order_By>;
-    var_pop?: Maybe<Content_UploadableElement_Var_Pop_Order_By>;
-    var_samp?: Maybe<Content_UploadableElement_Var_Samp_Order_By>;
-    variance?: Maybe<Content_UploadableElement_Variance_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "content.UploadableElement" */
-export type Content_UploadableElement_Arr_Rel_Insert_Input = {
-    data: Array<Content_UploadableElement_Insert_Input>;
-    /** on conflict condition */
-    on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type Content_UploadableElement_Avg_Fields = {
-    __typename?: "content_UploadableElement_avg_fields";
-    uploadsRemaining?: Maybe<Scalars["Float"]>;
-};
-
-/** order by avg() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Avg_Order_By = {
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "content.UploadableElement". All fields are combined with a logical 'AND'. */
-export type Content_UploadableElement_Bool_Exp = {
-    _and?: Maybe<Array<Content_UploadableElement_Bool_Exp>>;
-    _not?: Maybe<Content_UploadableElement_Bool_Exp>;
-    _or?: Maybe<Array<Content_UploadableElement_Bool_Exp>>;
-    accessToken?: Maybe<String_Comparison_Exp>;
-    conference?: Maybe<Conference_Conference_Bool_Exp>;
-    conferenceId?: Maybe<Uuid_Comparison_Exp>;
-    createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-    element?: Maybe<Content_Element_Bool_Exp>;
-    id?: Maybe<Uuid_Comparison_Exp>;
-    isHidden?: Maybe<Boolean_Comparison_Exp>;
-    item?: Maybe<Content_Item_Bool_Exp>;
-    itemId?: Maybe<Uuid_Comparison_Exp>;
-    name?: Maybe<String_Comparison_Exp>;
-    originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
-    originatingDataId?: Maybe<Uuid_Comparison_Exp>;
-    permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-    type?: Maybe<Content_ElementType_Bool_Exp>;
-    typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
-    updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-    uploaders?: Maybe<Content_Uploader_Bool_Exp>;
-    uploadsRemaining?: Maybe<Int_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "content.UploadableElement" */
-export enum Content_UploadableElement_Constraint {
-    /** unique or primary key constraint */
-    UploadableElementPkey = "UploadableElement_pkey",
-}
-
-/** input type for incrementing numeric columns in table "content.UploadableElement" */
-export type Content_UploadableElement_Inc_Input = {
-    uploadsRemaining?: Maybe<Scalars["Int"]>;
-};
-
-/** input type for inserting data into table "content.UploadableElement" */
-export type Content_UploadableElement_Insert_Input = {
-    accessToken?: Maybe<Scalars["String"]>;
-    conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
-    id?: Maybe<Scalars["uuid"]>;
-    isHidden?: Maybe<Scalars["Boolean"]>;
-    item?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
-    itemId?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-    originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    permissionGrants?: Maybe<Content_UploadableElementPermissionGrant_Arr_Rel_Insert_Input>;
-    type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
-    typeName?: Maybe<Content_ElementType_Enum>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploaders?: Maybe<Content_Uploader_Arr_Rel_Insert_Input>;
-    uploadsRemaining?: Maybe<Scalars["Int"]>;
-};
-
-/** aggregate max on columns */
-export type Content_UploadableElement_Max_Fields = {
-    __typename?: "content_UploadableElement_max_fields";
-    accessToken?: Maybe<Scalars["String"]>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    itemId?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadsRemaining?: Maybe<Scalars["Int"]>;
-};
-
-/** order by max() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Max_Order_By = {
-    accessToken?: Maybe<Order_By>;
-    conferenceId?: Maybe<Order_By>;
-    createdAt?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    itemId?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
-    originatingDataId?: Maybe<Order_By>;
-    updatedAt?: Maybe<Order_By>;
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Content_UploadableElement_Min_Fields = {
-    __typename?: "content_UploadableElement_min_fields";
-    accessToken?: Maybe<Scalars["String"]>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    itemId?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadsRemaining?: Maybe<Scalars["Int"]>;
-};
-
-/** order by min() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Min_Order_By = {
-    accessToken?: Maybe<Order_By>;
-    conferenceId?: Maybe<Order_By>;
-    createdAt?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    itemId?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
-    originatingDataId?: Maybe<Order_By>;
-    updatedAt?: Maybe<Order_By>;
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** response of any mutation on the table "content.UploadableElement" */
-export type Content_UploadableElement_Mutation_Response = {
-    __typename?: "content_UploadableElement_mutation_response";
-    /** number of rows affected by the mutation */
-    affected_rows: Scalars["Int"];
-    /** data from the rows affected by the mutation */
-    returning: Array<Content_UploadableElement>;
-};
-
-/** input type for inserting object relation for remote table "content.UploadableElement" */
-export type Content_UploadableElement_Obj_Rel_Insert_Input = {
-    data: Content_UploadableElement_Insert_Input;
-    /** on conflict condition */
-    on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
-};
-
-/** on conflict condition type for table "content.UploadableElement" */
-export type Content_UploadableElement_On_Conflict = {
-    constraint: Content_UploadableElement_Constraint;
-    update_columns?: Array<Content_UploadableElement_Update_Column>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "content.UploadableElement". */
-export type Content_UploadableElement_Order_By = {
-    accessToken?: Maybe<Order_By>;
-    conference?: Maybe<Conference_Conference_Order_By>;
-    conferenceId?: Maybe<Order_By>;
-    createdAt?: Maybe<Order_By>;
-    element?: Maybe<Content_Element_Order_By>;
-    id?: Maybe<Order_By>;
-    isHidden?: Maybe<Order_By>;
-    item?: Maybe<Content_Item_Order_By>;
-    itemId?: Maybe<Order_By>;
-    name?: Maybe<Order_By>;
-    originatingData?: Maybe<Conference_OriginatingData_Order_By>;
-    originatingDataId?: Maybe<Order_By>;
-    permissionGrants_aggregate?: Maybe<Content_UploadableElementPermissionGrant_Aggregate_Order_By>;
-    type?: Maybe<Content_ElementType_Order_By>;
-    typeName?: Maybe<Order_By>;
-    updatedAt?: Maybe<Order_By>;
-    uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** primary key columns input for table: content_UploadableElement */
-export type Content_UploadableElement_Pk_Columns_Input = {
-    id: Scalars["uuid"];
-};
-
-/** select columns of table "content.UploadableElement" */
-export enum Content_UploadableElement_Select_Column {
-    /** column name */
-    AccessToken = "accessToken",
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Id = "id",
-    /** column name */
-    IsHidden = "isHidden",
-    /** column name */
-    ItemId = "itemId",
-    /** column name */
-    Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
-    TypeName = "typeName",
-    /** column name */
-    UpdatedAt = "updatedAt",
-    /** column name */
-    UploadsRemaining = "uploadsRemaining",
-}
-
-/** input type for updating data in table "content.UploadableElement" */
-export type Content_UploadableElement_Set_Input = {
-    accessToken?: Maybe<Scalars["String"]>;
-    conferenceId?: Maybe<Scalars["uuid"]>;
-    createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    isHidden?: Maybe<Scalars["Boolean"]>;
-    itemId?: Maybe<Scalars["uuid"]>;
-    name?: Maybe<Scalars["String"]>;
-    originatingDataId?: Maybe<Scalars["uuid"]>;
-    typeName?: Maybe<Content_ElementType_Enum>;
-    updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadsRemaining?: Maybe<Scalars["Int"]>;
-};
-
-/** aggregate stddev on columns */
-export type Content_UploadableElement_Stddev_Fields = {
-    __typename?: "content_UploadableElement_stddev_fields";
-    uploadsRemaining?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Stddev_Order_By = {
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Content_UploadableElement_Stddev_Pop_Fields = {
-    __typename?: "content_UploadableElement_stddev_pop_fields";
-    uploadsRemaining?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_pop() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Stddev_Pop_Order_By = {
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Content_UploadableElement_Stddev_Samp_Fields = {
-    __typename?: "content_UploadableElement_stddev_samp_fields";
-    uploadsRemaining?: Maybe<Scalars["Float"]>;
-};
-
-/** order by stddev_samp() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Stddev_Samp_Order_By = {
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Content_UploadableElement_Sum_Fields = {
-    __typename?: "content_UploadableElement_sum_fields";
-    uploadsRemaining?: Maybe<Scalars["Int"]>;
-};
-
-/** order by sum() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Sum_Order_By = {
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** update columns of table "content.UploadableElement" */
-export enum Content_UploadableElement_Update_Column {
-    /** column name */
-    AccessToken = "accessToken",
-    /** column name */
-    ConferenceId = "conferenceId",
-    /** column name */
-    CreatedAt = "createdAt",
-    /** column name */
-    Id = "id",
-    /** column name */
-    IsHidden = "isHidden",
-    /** column name */
-    ItemId = "itemId",
-    /** column name */
-    Name = "name",
-    /** column name */
-    OriginatingDataId = "originatingDataId",
-    /** column name */
-    TypeName = "typeName",
-    /** column name */
-    UpdatedAt = "updatedAt",
-    /** column name */
-    UploadsRemaining = "uploadsRemaining",
-}
-
-/** aggregate var_pop on columns */
-export type Content_UploadableElement_Var_Pop_Fields = {
-    __typename?: "content_UploadableElement_var_pop_fields";
-    uploadsRemaining?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_pop() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Var_Pop_Order_By = {
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Content_UploadableElement_Var_Samp_Fields = {
-    __typename?: "content_UploadableElement_var_samp_fields";
-    uploadsRemaining?: Maybe<Scalars["Float"]>;
-};
-
-/** order by var_samp() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Var_Samp_Order_By = {
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Content_UploadableElement_Variance_Fields = {
-    __typename?: "content_UploadableElement_variance_fields";
-    uploadsRemaining?: Maybe<Scalars["Float"]>;
-};
-
-/** order by variance() on columns of table "content.UploadableElement" */
-export type Content_UploadableElement_Variance_Order_By = {
-    uploadsRemaining?: Maybe<Order_By>;
-};
-
 /** columns and relationships of "content.Uploader" */
 export type Content_Uploader = {
     __typename?: "content_Uploader";
@@ -11662,14 +11264,14 @@ export type Content_Uploader = {
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
     createdAt: Scalars["timestamptz"];
+    /** An object relationship */
+    element: Content_Element;
+    elementId: Scalars["uuid"];
     email: Scalars["String"];
     emailsSentCount: Scalars["Int"];
     id: Scalars["uuid"];
     name: Scalars["String"];
     updatedAt: Scalars["timestamptz"];
-    /** An object relationship */
-    uploadableElement: Content_UploadableElement;
-    uploadableElementId: Scalars["uuid"];
 };
 
 /** aggregated selection of "content.Uploader" */
@@ -11742,19 +11344,19 @@ export type Content_Uploader_Bool_Exp = {
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+    element?: Maybe<Content_Element_Bool_Exp>;
+    elementId?: Maybe<Uuid_Comparison_Exp>;
     email?: Maybe<String_Comparison_Exp>;
     emailsSentCount?: Maybe<Int_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     name?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
-    uploadableElement?: Maybe<Content_UploadableElement_Bool_Exp>;
-    uploadableElementId?: Maybe<Uuid_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "content.Uploader" */
 export enum Content_Uploader_Constraint {
     /** unique or primary key constraint */
-    UploaderEmailUploadableElementIdKey = "Uploader_email_uploadableElementId_key",
+    UploaderElementIdEmailKey = "Uploader_elementId_email_key",
     /** unique or primary key constraint */
     UploaderPkey = "Uploader_pkey",
 }
@@ -11769,13 +11371,13 @@ export type Content_Uploader_Insert_Input = {
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
+    element?: Maybe<Content_Element_Obj_Rel_Insert_Input>;
+    elementId?: Maybe<Scalars["uuid"]>;
     email?: Maybe<Scalars["String"]>;
     emailsSentCount?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableElement?: Maybe<Content_UploadableElement_Obj_Rel_Insert_Input>;
-    uploadableElementId?: Maybe<Scalars["uuid"]>;
 };
 
 /** aggregate max on columns */
@@ -11783,24 +11385,24 @@ export type Content_Uploader_Max_Fields = {
     __typename?: "content_Uploader_max_fields";
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
+    elementId?: Maybe<Scalars["uuid"]>;
     email?: Maybe<Scalars["String"]>;
     emailsSentCount?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableElementId?: Maybe<Scalars["uuid"]>;
 };
 
 /** order by max() on columns of table "content.Uploader" */
 export type Content_Uploader_Max_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
+    elementId?: Maybe<Order_By>;
     email?: Maybe<Order_By>;
     emailsSentCount?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    uploadableElementId?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -11808,24 +11410,24 @@ export type Content_Uploader_Min_Fields = {
     __typename?: "content_Uploader_min_fields";
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
+    elementId?: Maybe<Scalars["uuid"]>;
     email?: Maybe<Scalars["String"]>;
     emailsSentCount?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableElementId?: Maybe<Scalars["uuid"]>;
 };
 
 /** order by min() on columns of table "content.Uploader" */
 export type Content_Uploader_Min_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
+    elementId?: Maybe<Order_By>;
     email?: Maybe<Order_By>;
     emailsSentCount?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    uploadableElementId?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "content.Uploader" */
@@ -11856,13 +11458,13 @@ export type Content_Uploader_Order_By = {
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
+    element?: Maybe<Content_Element_Order_By>;
+    elementId?: Maybe<Order_By>;
     email?: Maybe<Order_By>;
     emailsSentCount?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
-    uploadableElement?: Maybe<Content_UploadableElement_Order_By>;
-    uploadableElementId?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: content_Uploader */
@@ -11877,6 +11479,8 @@ export enum Content_Uploader_Select_Column {
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
+    ElementId = "elementId",
+    /** column name */
     Email = "email",
     /** column name */
     EmailsSentCount = "emailsSentCount",
@@ -11886,20 +11490,18 @@ export enum Content_Uploader_Select_Column {
     Name = "name",
     /** column name */
     UpdatedAt = "updatedAt",
-    /** column name */
-    UploadableElementId = "uploadableElementId",
 }
 
 /** input type for updating data in table "content.Uploader" */
 export type Content_Uploader_Set_Input = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
+    elementId?: Maybe<Scalars["uuid"]>;
     email?: Maybe<Scalars["String"]>;
     emailsSentCount?: Maybe<Scalars["Int"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
-    uploadableElementId?: Maybe<Scalars["uuid"]>;
 };
 
 /** aggregate stddev on columns */
@@ -11953,6 +11555,8 @@ export enum Content_Uploader_Update_Column {
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
+    ElementId = "elementId",
+    /** column name */
     Email = "email",
     /** column name */
     EmailsSentCount = "emailsSentCount",
@@ -11962,8 +11566,6 @@ export enum Content_Uploader_Update_Column {
     Name = "name",
     /** column name */
     UpdatedAt = "updatedAt",
-    /** column name */
-    UploadableElementId = "uploadableElementId",
 }
 
 /** aggregate var_pop on columns */
@@ -14035,6 +13637,10 @@ export type Mutation_Root = {
     delete_conference_Conference_by_pk?: Maybe<Conference_Conference>;
     /** delete data from the table: "conference.Configuration" */
     delete_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+    /** delete data from the table: "conference.ConfigurationKey" */
+    delete_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+    /** delete single row from the table: "conference.ConfigurationKey" */
+    delete_conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
     /** delete single row from the table: "conference.Configuration" */
     delete_conference_Configuration_by_pk?: Maybe<Conference_Configuration>;
     /** delete data from the table: "conference.DemoCode" */
@@ -14081,14 +13687,6 @@ export type Mutation_Root = {
     delete_content_ItemType_by_pk?: Maybe<Content_ItemType>;
     /** delete single row from the table: "content.Item" */
     delete_content_Item_by_pk?: Maybe<Content_Item>;
-    /** delete data from the table: "content.UploadableElement" */
-    delete_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
-    /** delete data from the table: "content.UploadableElementPermissionGrant" */
-    delete_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
-    /** delete single row from the table: "content.UploadableElementPermissionGrant" */
-    delete_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
-    /** delete single row from the table: "content.UploadableElement" */
-    delete_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
     /** delete data from the table: "content.Uploader" */
     delete_content_Uploader?: Maybe<Content_Uploader_Mutation_Response>;
     /** delete single row from the table: "content.Uploader" */
@@ -14237,6 +13835,10 @@ export type Mutation_Root = {
     delete_schedule_EventTag_by_pk?: Maybe<Schedule_EventTag>;
     /** delete single row from the table: "schedule.Event" */
     delete_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** delete data from the table: "schedule.StarredEvent" */
+    delete_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
+    /** delete single row from the table: "schedule.StarredEvent" */
+    delete_schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
     /** delete data from the table: "system.Configuration" */
     delete_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** delete data from the table: "system.ConfigurationKey" */
@@ -14388,6 +13990,10 @@ export type Mutation_Root = {
     insert_conference_Conference_one?: Maybe<Conference_Conference>;
     /** insert data into the table: "conference.Configuration" */
     insert_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+    /** insert data into the table: "conference.ConfigurationKey" */
+    insert_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+    /** insert a single row into the table: "conference.ConfigurationKey" */
+    insert_conference_ConfigurationKey_one?: Maybe<Conference_ConfigurationKey>;
     /** insert a single row into the table: "conference.Configuration" */
     insert_conference_Configuration_one?: Maybe<Conference_Configuration>;
     /** insert data into the table: "conference.DemoCode" */
@@ -14434,14 +14040,6 @@ export type Mutation_Root = {
     insert_content_ItemType_one?: Maybe<Content_ItemType>;
     /** insert a single row into the table: "content.Item" */
     insert_content_Item_one?: Maybe<Content_Item>;
-    /** insert data into the table: "content.UploadableElement" */
-    insert_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
-    /** insert data into the table: "content.UploadableElementPermissionGrant" */
-    insert_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
-    /** insert a single row into the table: "content.UploadableElementPermissionGrant" */
-    insert_content_UploadableElementPermissionGrant_one?: Maybe<Content_UploadableElementPermissionGrant>;
-    /** insert a single row into the table: "content.UploadableElement" */
-    insert_content_UploadableElement_one?: Maybe<Content_UploadableElement>;
     /** insert data into the table: "content.Uploader" */
     insert_content_Uploader?: Maybe<Content_Uploader_Mutation_Response>;
     /** insert a single row into the table: "content.Uploader" */
@@ -14590,6 +14188,10 @@ export type Mutation_Root = {
     insert_schedule_EventTag_one?: Maybe<Schedule_EventTag>;
     /** insert a single row into the table: "schedule.Event" */
     insert_schedule_Event_one?: Maybe<Schedule_Event>;
+    /** insert data into the table: "schedule.StarredEvent" */
+    insert_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
+    /** insert a single row into the table: "schedule.StarredEvent" */
+    insert_schedule_StarredEvent_one?: Maybe<Schedule_StarredEvent>;
     /** insert data into the table: "system.Configuration" */
     insert_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** insert data into the table: "system.ConfigurationKey" */
@@ -14749,6 +14351,10 @@ export type Mutation_Root = {
     update_conference_Conference_by_pk?: Maybe<Conference_Conference>;
     /** update data of the table: "conference.Configuration" */
     update_conference_Configuration?: Maybe<Conference_Configuration_Mutation_Response>;
+    /** update data of the table: "conference.ConfigurationKey" */
+    update_conference_ConfigurationKey?: Maybe<Conference_ConfigurationKey_Mutation_Response>;
+    /** update single row of the table: "conference.ConfigurationKey" */
+    update_conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
     /** update single row of the table: "conference.Configuration" */
     update_conference_Configuration_by_pk?: Maybe<Conference_Configuration>;
     /** update data of the table: "conference.DemoCode" */
@@ -14795,14 +14401,6 @@ export type Mutation_Root = {
     update_content_ItemType_by_pk?: Maybe<Content_ItemType>;
     /** update single row of the table: "content.Item" */
     update_content_Item_by_pk?: Maybe<Content_Item>;
-    /** update data of the table: "content.UploadableElement" */
-    update_content_UploadableElement?: Maybe<Content_UploadableElement_Mutation_Response>;
-    /** update data of the table: "content.UploadableElementPermissionGrant" */
-    update_content_UploadableElementPermissionGrant?: Maybe<Content_UploadableElementPermissionGrant_Mutation_Response>;
-    /** update single row of the table: "content.UploadableElementPermissionGrant" */
-    update_content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
-    /** update single row of the table: "content.UploadableElement" */
-    update_content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
     /** update data of the table: "content.Uploader" */
     update_content_Uploader?: Maybe<Content_Uploader_Mutation_Response>;
     /** update single row of the table: "content.Uploader" */
@@ -14951,6 +14549,10 @@ export type Mutation_Root = {
     update_schedule_EventTag_by_pk?: Maybe<Schedule_EventTag>;
     /** update single row of the table: "schedule.Event" */
     update_schedule_Event_by_pk?: Maybe<Schedule_Event>;
+    /** update data of the table: "schedule.StarredEvent" */
+    update_schedule_StarredEvent?: Maybe<Schedule_StarredEvent_Mutation_Response>;
+    /** update single row of the table: "schedule.StarredEvent" */
+    update_schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
     /** update data of the table: "system.Configuration" */
     update_system_Configuration?: Maybe<System_Configuration_Mutation_Response>;
     /** update data of the table: "system.ConfigurationKey" */
@@ -15251,6 +14853,16 @@ export type Mutation_RootDelete_Conference_ConfigurationArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Conference_ConfigurationKeyArgs = {
+    where: Conference_ConfigurationKey_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Conference_ConfigurationKey_By_PkArgs = {
+    name: Scalars["String"];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Conference_Configuration_By_PkArgs = {
     id: Scalars["uuid"];
 };
@@ -15362,26 +14974,6 @@ export type Mutation_RootDelete_Content_ItemType_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Content_Item_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Content_UploadableElementArgs = {
-    where: Content_UploadableElement_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Content_UploadableElementPermissionGrantArgs = {
-    where: Content_UploadableElementPermissionGrant_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Content_UploadableElementPermissionGrant_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-/** mutation root */
-export type Mutation_RootDelete_Content_UploadableElement_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -15752,6 +15344,16 @@ export type Mutation_RootDelete_Schedule_EventTag_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Schedule_Event_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_StarredEventArgs = {
+    where: Schedule_StarredEvent_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Schedule_StarredEvent_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -16180,6 +15782,18 @@ export type Mutation_RootInsert_Conference_ConfigurationArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Conference_ConfigurationKeyArgs = {
+    objects: Array<Conference_ConfigurationKey_Insert_Input>;
+    on_conflict?: Maybe<Conference_ConfigurationKey_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Conference_ConfigurationKey_OneArgs = {
+    object: Conference_ConfigurationKey_Insert_Input;
+    on_conflict?: Maybe<Conference_ConfigurationKey_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Conference_Configuration_OneArgs = {
     object: Conference_Configuration_Insert_Input;
     on_conflict?: Maybe<Conference_Configuration_On_Conflict>;
@@ -16315,30 +15929,6 @@ export type Mutation_RootInsert_Content_ItemType_OneArgs = {
 export type Mutation_RootInsert_Content_Item_OneArgs = {
     object: Content_Item_Insert_Input;
     on_conflict?: Maybe<Content_Item_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Content_UploadableElementArgs = {
-    objects: Array<Content_UploadableElement_Insert_Input>;
-    on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Content_UploadableElementPermissionGrantArgs = {
-    objects: Array<Content_UploadableElementPermissionGrant_Insert_Input>;
-    on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Content_UploadableElementPermissionGrant_OneArgs = {
-    object: Content_UploadableElementPermissionGrant_Insert_Input;
-    on_conflict?: Maybe<Content_UploadableElementPermissionGrant_On_Conflict>;
-};
-
-/** mutation root */
-export type Mutation_RootInsert_Content_UploadableElement_OneArgs = {
-    object: Content_UploadableElement_Insert_Input;
-    on_conflict?: Maybe<Content_UploadableElement_On_Conflict>;
 };
 
 /** mutation root */
@@ -16783,6 +16373,18 @@ export type Mutation_RootInsert_Schedule_EventTag_OneArgs = {
 export type Mutation_RootInsert_Schedule_Event_OneArgs = {
     object: Schedule_Event_Insert_Input;
     on_conflict?: Maybe<Schedule_Event_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_StarredEventArgs = {
+    objects: Array<Schedule_StarredEvent_Insert_Input>;
+    on_conflict?: Maybe<Schedule_StarredEvent_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Schedule_StarredEvent_OneArgs = {
+    object: Schedule_StarredEvent_Insert_Input;
+    on_conflict?: Maybe<Schedule_StarredEvent_On_Conflict>;
 };
 
 /** mutation root */
@@ -17354,6 +16956,18 @@ export type Mutation_RootUpdate_Conference_ConfigurationArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Conference_ConfigurationKeyArgs = {
+    _set?: Maybe<Conference_ConfigurationKey_Set_Input>;
+    where: Conference_ConfigurationKey_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Conference_ConfigurationKey_By_PkArgs = {
+    _set?: Maybe<Conference_ConfigurationKey_Set_Input>;
+    pk_columns: Conference_ConfigurationKey_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Conference_Configuration_By_PkArgs = {
     _append?: Maybe<Conference_Configuration_Append_Input>;
     _delete_at_path?: Maybe<Conference_Configuration_Delete_At_Path_Input>;
@@ -17416,6 +17030,7 @@ export type Mutation_RootUpdate_Content_ElementArgs = {
     _delete_at_path?: Maybe<Content_Element_Delete_At_Path_Input>;
     _delete_elem?: Maybe<Content_Element_Delete_Elem_Input>;
     _delete_key?: Maybe<Content_Element_Delete_Key_Input>;
+    _inc?: Maybe<Content_Element_Inc_Input>;
     _prepend?: Maybe<Content_Element_Prepend_Input>;
     _set?: Maybe<Content_Element_Set_Input>;
     where: Content_Element_Bool_Exp;
@@ -17451,6 +17066,7 @@ export type Mutation_RootUpdate_Content_Element_By_PkArgs = {
     _delete_at_path?: Maybe<Content_Element_Delete_At_Path_Input>;
     _delete_elem?: Maybe<Content_Element_Delete_Elem_Input>;
     _delete_key?: Maybe<Content_Element_Delete_Key_Input>;
+    _inc?: Maybe<Content_Element_Inc_Input>;
     _prepend?: Maybe<Content_Element_Prepend_Input>;
     _set?: Maybe<Content_Element_Set_Input>;
     pk_columns: Content_Element_Pk_Columns_Input;
@@ -17528,32 +17144,6 @@ export type Mutation_RootUpdate_Content_ItemType_By_PkArgs = {
 export type Mutation_RootUpdate_Content_Item_By_PkArgs = {
     _set?: Maybe<Content_Item_Set_Input>;
     pk_columns: Content_Item_Pk_Columns_Input;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Content_UploadableElementArgs = {
-    _inc?: Maybe<Content_UploadableElement_Inc_Input>;
-    _set?: Maybe<Content_UploadableElement_Set_Input>;
-    where: Content_UploadableElement_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Content_UploadableElementPermissionGrantArgs = {
-    _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
-    where: Content_UploadableElementPermissionGrant_Bool_Exp;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Content_UploadableElementPermissionGrant_By_PkArgs = {
-    _set?: Maybe<Content_UploadableElementPermissionGrant_Set_Input>;
-    pk_columns: Content_UploadableElementPermissionGrant_Pk_Columns_Input;
-};
-
-/** mutation root */
-export type Mutation_RootUpdate_Content_UploadableElement_By_PkArgs = {
-    _inc?: Maybe<Content_UploadableElement_Inc_Input>;
-    _set?: Maybe<Content_UploadableElement_Set_Input>;
-    pk_columns: Content_UploadableElement_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -18096,6 +17686,18 @@ export type Mutation_RootUpdate_Schedule_Event_By_PkArgs = {
     _inc?: Maybe<Schedule_Event_Inc_Input>;
     _set?: Maybe<Schedule_Event_Set_Input>;
     pk_columns: Schedule_Event_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_StarredEventArgs = {
+    _set?: Maybe<Schedule_StarredEvent_Set_Input>;
+    where: Schedule_StarredEvent_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Schedule_StarredEvent_By_PkArgs = {
+    _set?: Maybe<Schedule_StarredEvent_Set_Input>;
+    pk_columns: Schedule_StarredEvent_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -19732,6 +19334,12 @@ export type Query_Root = {
     conference_Conference_by_pk?: Maybe<Conference_Conference>;
     /** fetch data from the table: "conference.Configuration" */
     conference_Configuration: Array<Conference_Configuration>;
+    /** fetch data from the table: "conference.ConfigurationKey" */
+    conference_ConfigurationKey: Array<Conference_ConfigurationKey>;
+    /** fetch aggregated fields from the table: "conference.ConfigurationKey" */
+    conference_ConfigurationKey_aggregate: Conference_ConfigurationKey_Aggregate;
+    /** fetch data from the table: "conference.ConfigurationKey" using primary key columns */
+    conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
     /** fetch aggregated fields from the table: "conference.Configuration" */
     conference_Configuration_aggregate: Conference_Configuration_Aggregate;
     /** fetch data from the table: "conference.Configuration" using primary key columns */
@@ -19806,18 +19414,6 @@ export type Query_Root = {
     content_Item_aggregate: Content_Item_Aggregate;
     /** fetch data from the table: "content.Item" using primary key columns */
     content_Item_by_pk?: Maybe<Content_Item>;
-    /** fetch data from the table: "content.UploadableElement" */
-    content_UploadableElement: Array<Content_UploadableElement>;
-    /** fetch data from the table: "content.UploadableElementPermissionGrant" */
-    content_UploadableElementPermissionGrant: Array<Content_UploadableElementPermissionGrant>;
-    /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
-    content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
-    /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
-    content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
-    /** fetch aggregated fields from the table: "content.UploadableElement" */
-    content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
-    /** fetch data from the table: "content.UploadableElement" using primary key columns */
-    content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
     /** fetch data from the table: "content.Uploader" */
     content_Uploader: Array<Content_Uploader>;
     /** fetch aggregated fields from the table: "content.Uploader" */
@@ -20054,6 +19650,12 @@ export type Query_Root = {
     schedule_OverlappingEvents: Array<Schedule_OverlappingEvents>;
     /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
     schedule_OverlappingEvents_aggregate: Schedule_OverlappingEvents_Aggregate;
+    /** fetch data from the table: "schedule.StarredEvent" */
+    schedule_StarredEvent: Array<Schedule_StarredEvent>;
+    /** fetch aggregated fields from the table: "schedule.StarredEvent" */
+    schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
+    /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
+    schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
     /** fetch data from the table: "system.Configuration" */
     system_Configuration: Array<System_Configuration>;
     /** fetch data from the table: "system.ConfigurationKey" */
@@ -20710,6 +20312,26 @@ export type Query_RootConference_ConfigurationArgs = {
     where?: Maybe<Conference_Configuration_Bool_Exp>;
 };
 
+export type Query_RootConference_ConfigurationKeyArgs = {
+    distinct_on?: Maybe<Array<Conference_ConfigurationKey_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Conference_ConfigurationKey_Order_By>>;
+    where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+export type Query_RootConference_ConfigurationKey_AggregateArgs = {
+    distinct_on?: Maybe<Array<Conference_ConfigurationKey_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Conference_ConfigurationKey_Order_By>>;
+    where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+export type Query_RootConference_ConfigurationKey_By_PkArgs = {
+    name: Scalars["String"];
+};
+
 export type Query_RootConference_Configuration_AggregateArgs = {
     distinct_on?: Maybe<Array<Conference_Configuration_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -20955,46 +20577,6 @@ export type Query_RootContent_Item_AggregateArgs = {
 };
 
 export type Query_RootContent_Item_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-export type Query_RootContent_UploadableElementArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-export type Query_RootContent_UploadableElementPermissionGrantArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
-    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-export type Query_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
-    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-export type Query_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-export type Query_RootContent_UploadableElement_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-export type Query_RootContent_UploadableElement_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -21790,6 +21372,26 @@ export type Query_RootSchedule_OverlappingEvents_AggregateArgs = {
     where?: Maybe<Schedule_OverlappingEvents_Bool_Exp>;
 };
 
+export type Query_RootSchedule_StarredEventArgs = {
+    distinct_on?: Maybe<Array<Schedule_StarredEvent_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_StarredEvent_Order_By>>;
+    where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+export type Query_RootSchedule_StarredEvent_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_StarredEvent_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_StarredEvent_Order_By>>;
+    where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+export type Query_RootSchedule_StarredEvent_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
 export type Query_RootSystem_ConfigurationArgs = {
     distinct_on?: Maybe<Array<System_Configuration_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -22369,6 +21971,7 @@ export type Registrant_Invitation_Bool_Exp = {
     confirmationCode?: Maybe<Uuid_Comparison_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     emails?: Maybe<Email_Bool_Exp>;
+    hash?: Maybe<String_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     inviteCode?: Maybe<Uuid_Comparison_Exp>;
     invitedEmailAddress?: Maybe<String_Comparison_Exp>;
@@ -23239,6 +22842,7 @@ export type Registrant_Registrant_Bool_Exp = {
     groupRegistrants?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+    inviteSent?: Maybe<Boolean_Comparison_Exp>;
     profile?: Maybe<Registrant_Profile_Bool_Exp>;
     programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
     roomParticipants?: Maybe<Room_Participant_Bool_Exp>;
@@ -24617,6 +24221,7 @@ export type Room_Room = {
     chatId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     chimeMeeting?: Maybe<Room_ChimeMeeting>;
+    colour: Scalars["String"];
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
@@ -25076,6 +24681,7 @@ export type Room_Room_Bool_Exp = {
     chat?: Maybe<Chat_Chat_Bool_Exp>;
     chatId?: Maybe<Uuid_Comparison_Exp>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
+    colour?: Maybe<String_Comparison_Exp>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -25083,6 +24689,7 @@ export type Room_Room_Bool_Exp = {
     currentModeName?: Maybe<Room_Mode_Enum_Comparison_Exp>;
     events?: Maybe<Schedule_Event_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
+    isProgramRoom?: Maybe<Boolean_Comparison_Exp>;
     livestreamDuration?: Maybe<Room_LivestreamDurations_Bool_Exp>;
     managementMode?: Maybe<Room_ManagementMode_Bool_Exp>;
     managementModeName?: Maybe<Room_ManagementMode_Enum_Comparison_Exp>;
@@ -25126,6 +24733,7 @@ export type Room_Room_Insert_Input = {
     chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
     chatId?: Maybe<Scalars["uuid"]>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
+    colour?: Maybe<Scalars["String"]>;
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
@@ -25158,6 +24766,7 @@ export type Room_Room_Max_Fields = {
     __typename?: "room_Room_max_fields";
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
+    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -25174,6 +24783,7 @@ export type Room_Room_Max_Fields = {
 export type Room_Room_Max_Order_By = {
     capacity?: Maybe<Order_By>;
     chatId?: Maybe<Order_By>;
+    colour?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -25191,6 +24801,7 @@ export type Room_Room_Min_Fields = {
     __typename?: "room_Room_min_fields";
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
+    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -25207,6 +24818,7 @@ export type Room_Room_Min_Fields = {
 export type Room_Room_Min_Order_By = {
     capacity?: Maybe<Order_By>;
     chatId?: Maybe<Order_By>;
+    colour?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -25251,6 +24863,7 @@ export type Room_Room_Order_By = {
     chat?: Maybe<Chat_Chat_Order_By>;
     chatId?: Maybe<Order_By>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
+    colour?: Maybe<Order_By>;
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
@@ -25292,6 +24905,8 @@ export enum Room_Room_Select_Column {
     /** column name */
     ChatId = "chatId",
     /** column name */
+    Colour = "colour",
+    /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
@@ -25322,6 +24937,7 @@ export type Room_Room_Set_Input = {
     backendName?: Maybe<Room_Backend_Enum>;
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
+    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     currentModeName?: Maybe<Room_Mode_Enum>;
@@ -25396,6 +25012,8 @@ export enum Room_Room_Update_Column {
     Capacity = "capacity",
     /** column name */
     ChatId = "chatId",
+    /** column name */
+    Colour = "colour",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -26101,6 +25719,7 @@ export type Room_ShuffleQueueEntry = {
     allocatedShuffleRoomId?: Maybe<Scalars["Int"]>;
     created_at: Scalars["timestamptz"];
     id: Scalars["bigint"];
+    isExpired: Scalars["Boolean"];
     /** An object relationship */
     registrant: Registrant_Registrant;
     registrantId: Scalars["uuid"];
@@ -26184,6 +25803,7 @@ export type Room_ShuffleQueueEntry_Bool_Exp = {
     allocatedShuffleRoomId?: Maybe<Int_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
     id?: Maybe<Bigint_Comparison_Exp>;
+    isExpired?: Maybe<Boolean_Comparison_Exp>;
     registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: Maybe<Uuid_Comparison_Exp>;
     shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
@@ -26197,7 +25817,7 @@ export enum Room_ShuffleQueueEntry_Constraint {
     /** unique or primary key constraint */
     ShuffleQueueEntryPkey = "ShuffleQueueEntry_pkey",
     /** unique or primary key constraint */
-    IndexIswaiting = "index_iswaiting",
+    RoomShuffleQueueEntryIsWaiting = "room_ShuffleQueueEntry_isWaiting",
 }
 
 /** input type for incrementing numeric columns in table "room.ShuffleQueueEntry" */
@@ -26211,6 +25831,7 @@ export type Room_ShuffleQueueEntry_Insert_Input = {
     allocatedShuffleRoomId?: Maybe<Scalars["Int"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["bigint"]>;
+    isExpired?: Maybe<Scalars["Boolean"]>;
     registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: Maybe<Scalars["uuid"]>;
     shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
@@ -26282,6 +25903,7 @@ export type Room_ShuffleQueueEntry_Order_By = {
     allocatedShuffleRoomId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    isExpired?: Maybe<Order_By>;
     registrant?: Maybe<Registrant_Registrant_Order_By>;
     registrantId?: Maybe<Order_By>;
     shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
@@ -26304,6 +25926,8 @@ export enum Room_ShuffleQueueEntry_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
+    IsExpired = "isExpired",
+    /** column name */
     RegistrantId = "registrantId",
     /** column name */
     ShufflePeriodId = "shufflePeriodId",
@@ -26316,6 +25940,7 @@ export type Room_ShuffleQueueEntry_Set_Input = {
     allocatedShuffleRoomId?: Maybe<Scalars["Int"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["bigint"]>;
+    isExpired?: Maybe<Scalars["Boolean"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     shufflePeriodId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -26381,6 +26006,8 @@ export enum Room_ShuffleQueueEntry_Update_Column {
     CreatedAt = "created_at",
     /** column name */
     Id = "id",
+    /** column name */
+    IsExpired = "isExpired",
     /** column name */
     RegistrantId = "registrantId",
     /** column name */
@@ -28393,6 +28020,163 @@ export enum Schedule_OverlappingEvents_Select_Column {
     YId = "yId",
 }
 
+/** columns and relationships of "schedule.StarredEvent" */
+export type Schedule_StarredEvent = {
+    __typename?: "schedule_StarredEvent";
+    created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    event: Schedule_Event;
+    eventId: Scalars["uuid"];
+    id: Scalars["uuid"];
+    /** An object relationship */
+    registrant?: Maybe<Registrant_Registrant>;
+    registrantId: Scalars["uuid"];
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Aggregate = {
+    __typename?: "schedule_StarredEvent_aggregate";
+    aggregate?: Maybe<Schedule_StarredEvent_Aggregate_Fields>;
+    nodes: Array<Schedule_StarredEvent>;
+};
+
+/** aggregate fields of "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Aggregate_Fields = {
+    __typename?: "schedule_StarredEvent_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Schedule_StarredEvent_Max_Fields>;
+    min?: Maybe<Schedule_StarredEvent_Min_Fields>;
+};
+
+/** aggregate fields of "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Schedule_StarredEvent_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "schedule.StarredEvent". All fields are combined with a logical 'AND'. */
+export type Schedule_StarredEvent_Bool_Exp = {
+    _and?: Maybe<Array<Schedule_StarredEvent_Bool_Exp>>;
+    _not?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+    _or?: Maybe<Array<Schedule_StarredEvent_Bool_Exp>>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    event?: Maybe<Schedule_Event_Bool_Exp>;
+    eventId?: Maybe<Uuid_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
+    registrantId?: Maybe<Uuid_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "schedule.StarredEvent" */
+export enum Schedule_StarredEvent_Constraint {
+    /** unique or primary key constraint */
+    StarredEventEventIdRegistrantIdKey = "StarredEvent_eventId_registrantId_key",
+    /** unique or primary key constraint */
+    StarredEventPkey = "StarredEvent_pkey",
+}
+
+/** input type for inserting data into table "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Insert_Input = {
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    event?: Maybe<Schedule_Event_Obj_Rel_Insert_Input>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Schedule_StarredEvent_Max_Fields = {
+    __typename?: "schedule_StarredEvent_max_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Schedule_StarredEvent_Min_Fields = {
+    __typename?: "schedule_StarredEvent_min_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Mutation_Response = {
+    __typename?: "schedule_StarredEvent_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Schedule_StarredEvent>;
+};
+
+/** on conflict condition type for table "schedule.StarredEvent" */
+export type Schedule_StarredEvent_On_Conflict = {
+    constraint: Schedule_StarredEvent_Constraint;
+    update_columns?: Array<Schedule_StarredEvent_Update_Column>;
+    where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "schedule.StarredEvent". */
+export type Schedule_StarredEvent_Order_By = {
+    created_at?: Maybe<Order_By>;
+    event?: Maybe<Schedule_Event_Order_By>;
+    eventId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    registrant?: Maybe<Registrant_Registrant_Order_By>;
+    registrantId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: schedule_StarredEvent */
+export type Schedule_StarredEvent_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "schedule.StarredEvent" */
+export enum Schedule_StarredEvent_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EventId = "eventId",
+    /** column name */
+    Id = "id",
+    /** column name */
+    RegistrantId = "registrantId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "schedule.StarredEvent" */
+export type Schedule_StarredEvent_Set_Input = {
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    eventId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "schedule.StarredEvent" */
+export enum Schedule_StarredEvent_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EventId = "eventId",
+    /** column name */
+    Id = "id",
+    /** column name */
+    RegistrantId = "registrantId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
 export type Subscription_Root = {
     __typename?: "subscription_root";
     /** fetch data from the table: "Email" */
@@ -28559,6 +28343,12 @@ export type Subscription_Root = {
     conference_Conference_by_pk?: Maybe<Conference_Conference>;
     /** fetch data from the table: "conference.Configuration" */
     conference_Configuration: Array<Conference_Configuration>;
+    /** fetch data from the table: "conference.ConfigurationKey" */
+    conference_ConfigurationKey: Array<Conference_ConfigurationKey>;
+    /** fetch aggregated fields from the table: "conference.ConfigurationKey" */
+    conference_ConfigurationKey_aggregate: Conference_ConfigurationKey_Aggregate;
+    /** fetch data from the table: "conference.ConfigurationKey" using primary key columns */
+    conference_ConfigurationKey_by_pk?: Maybe<Conference_ConfigurationKey>;
     /** fetch aggregated fields from the table: "conference.Configuration" */
     conference_Configuration_aggregate: Conference_Configuration_Aggregate;
     /** fetch data from the table: "conference.Configuration" using primary key columns */
@@ -28633,18 +28423,6 @@ export type Subscription_Root = {
     content_Item_aggregate: Content_Item_Aggregate;
     /** fetch data from the table: "content.Item" using primary key columns */
     content_Item_by_pk?: Maybe<Content_Item>;
-    /** fetch data from the table: "content.UploadableElement" */
-    content_UploadableElement: Array<Content_UploadableElement>;
-    /** fetch data from the table: "content.UploadableElementPermissionGrant" */
-    content_UploadableElementPermissionGrant: Array<Content_UploadableElementPermissionGrant>;
-    /** fetch aggregated fields from the table: "content.UploadableElementPermissionGrant" */
-    content_UploadableElementPermissionGrant_aggregate: Content_UploadableElementPermissionGrant_Aggregate;
-    /** fetch data from the table: "content.UploadableElementPermissionGrant" using primary key columns */
-    content_UploadableElementPermissionGrant_by_pk?: Maybe<Content_UploadableElementPermissionGrant>;
-    /** fetch aggregated fields from the table: "content.UploadableElement" */
-    content_UploadableElement_aggregate: Content_UploadableElement_Aggregate;
-    /** fetch data from the table: "content.UploadableElement" using primary key columns */
-    content_UploadableElement_by_pk?: Maybe<Content_UploadableElement>;
     /** fetch data from the table: "content.Uploader" */
     content_Uploader: Array<Content_Uploader>;
     /** fetch aggregated fields from the table: "content.Uploader" */
@@ -28879,6 +28657,12 @@ export type Subscription_Root = {
     schedule_OverlappingEvents: Array<Schedule_OverlappingEvents>;
     /** fetch aggregated fields from the table: "schedule.OverlappingEvents" */
     schedule_OverlappingEvents_aggregate: Schedule_OverlappingEvents_Aggregate;
+    /** fetch data from the table: "schedule.StarredEvent" */
+    schedule_StarredEvent: Array<Schedule_StarredEvent>;
+    /** fetch aggregated fields from the table: "schedule.StarredEvent" */
+    schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
+    /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
+    schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
     /** fetch data from the table: "system.Configuration" */
     system_Configuration: Array<System_Configuration>;
     /** fetch data from the table: "system.ConfigurationKey" */
@@ -29534,6 +29318,26 @@ export type Subscription_RootConference_ConfigurationArgs = {
     where?: Maybe<Conference_Configuration_Bool_Exp>;
 };
 
+export type Subscription_RootConference_ConfigurationKeyArgs = {
+    distinct_on?: Maybe<Array<Conference_ConfigurationKey_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Conference_ConfigurationKey_Order_By>>;
+    where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+export type Subscription_RootConference_ConfigurationKey_AggregateArgs = {
+    distinct_on?: Maybe<Array<Conference_ConfigurationKey_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Conference_ConfigurationKey_Order_By>>;
+    where?: Maybe<Conference_ConfigurationKey_Bool_Exp>;
+};
+
+export type Subscription_RootConference_ConfigurationKey_By_PkArgs = {
+    name: Scalars["String"];
+};
+
 export type Subscription_RootConference_Configuration_AggregateArgs = {
     distinct_on?: Maybe<Array<Conference_Configuration_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29779,46 +29583,6 @@ export type Subscription_RootContent_Item_AggregateArgs = {
 };
 
 export type Subscription_RootContent_Item_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-export type Subscription_RootContent_UploadableElementArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-export type Subscription_RootContent_UploadableElementPermissionGrantArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
-    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-export type Subscription_RootContent_UploadableElementPermissionGrant_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElementPermissionGrant_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElementPermissionGrant_Order_By>>;
-    where?: Maybe<Content_UploadableElementPermissionGrant_Bool_Exp>;
-};
-
-export type Subscription_RootContent_UploadableElementPermissionGrant_By_PkArgs = {
-    id: Scalars["uuid"];
-};
-
-export type Subscription_RootContent_UploadableElement_AggregateArgs = {
-    distinct_on?: Maybe<Array<Content_UploadableElement_Select_Column>>;
-    limit?: Maybe<Scalars["Int"]>;
-    offset?: Maybe<Scalars["Int"]>;
-    order_by?: Maybe<Array<Content_UploadableElement_Order_By>>;
-    where?: Maybe<Content_UploadableElement_Bool_Exp>;
-};
-
-export type Subscription_RootContent_UploadableElement_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -30610,6 +30374,26 @@ export type Subscription_RootSchedule_OverlappingEvents_AggregateArgs = {
     where?: Maybe<Schedule_OverlappingEvents_Bool_Exp>;
 };
 
+export type Subscription_RootSchedule_StarredEventArgs = {
+    distinct_on?: Maybe<Array<Schedule_StarredEvent_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_StarredEvent_Order_By>>;
+    where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_StarredEvent_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_StarredEvent_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_StarredEvent_Order_By>>;
+    where?: Maybe<Schedule_StarredEvent_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_StarredEvent_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
 export type Subscription_RootSystem_ConfigurationArgs = {
     distinct_on?: Maybe<Array<System_Configuration_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -30932,6 +30716,8 @@ export enum System_ConfigurationKey_Enum {
     CookiePolicyLatestRevisionTimestamp = "COOKIE_POLICY_LATEST_REVISION_TIMESTAMP",
     /** The URL to the host cookie policy. Note: If self hosting Clowdr, this must be your organisation's cookie policy - you cannot legally reuse, rely on or copy Clowdr's cookie policy. */
     CookiePolicyUrl = "COOKIE_POLICY_URL",
+    /** A string representing the full frontend host URL for the app. */
+    DefaultFrontendHost = "DEFAULT_FRONTEND_HOST",
     /** Default backend platform for video rooms */
     DefaultVideoRoomBackend = "DEFAULT_VIDEO_ROOM_BACKEND",
     /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
@@ -33972,18 +33758,22 @@ export type ChannelStack_GetChannelStacksQuery = { __typename?: "query_root" } &
     >;
 };
 
-export type ChannelStack_GetCurrentEventQueryVariables = Exact<{
+export type ChannelStack_GetFirstSyncableEventQueryVariables = Exact<{
     mediaLiveChannelId: Scalars["String"];
     now: Scalars["timestamptz"];
-    future: Scalars["timestamptz"];
+    syncCutoff: Scalars["timestamptz"];
 }>;
 
-export type ChannelStack_GetCurrentEventQuery = { __typename?: "query_root" } & {
+export type ChannelStack_GetFirstSyncableEventQuery = { __typename?: "query_root" } & {
     video_ChannelStack: Array<
         { __typename?: "video_ChannelStack" } & Pick<Video_ChannelStack, "id" | "conferenceId"> & {
                 room?: Maybe<
                     { __typename?: "room_Room" } & Pick<Room_Room, "id"> & {
-                            events: Array<{ __typename?: "schedule_Event" } & Pick<Schedule_Event, "id">>;
+                            immediateEvent: Array<{ __typename?: "schedule_Event" } & Pick<Schedule_Event, "id">>;
+                            delayedImmediateEvent: Array<
+                                { __typename?: "schedule_Event" } & Pick<Schedule_Event, "id">
+                            >;
+                            fixedEvent: Array<{ __typename?: "schedule_Event" } & Pick<Schedule_Event, "id">>;
                         }
                 >;
             }
@@ -36225,16 +36015,16 @@ export const ChannelStack_GetChannelStacksDocument: DocumentNode<
         },
     ],
 };
-export const ChannelStack_GetCurrentEventDocument: DocumentNode<
-    ChannelStack_GetCurrentEventQuery,
-    ChannelStack_GetCurrentEventQueryVariables
+export const ChannelStack_GetFirstSyncableEventDocument: DocumentNode<
+    ChannelStack_GetFirstSyncableEventQuery,
+    ChannelStack_GetFirstSyncableEventQueryVariables
 > = {
     kind: "Document",
     definitions: [
         {
             kind: "OperationDefinition",
             operation: "query",
-            name: { kind: "Name", value: "ChannelStack_GetCurrentEvent" },
+            name: { kind: "Name", value: "ChannelStack_GetFirstSyncableEvent" },
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
@@ -36251,7 +36041,7 @@ export const ChannelStack_GetCurrentEventDocument: DocumentNode<
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "future" } },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "syncCutoff" } },
                     type: {
                         kind: "NonNullType",
                         type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
@@ -36311,6 +36101,7 @@ export const ChannelStack_GetCurrentEventDocument: DocumentNode<
                                             { kind: "Field", name: { kind: "Name", value: "id" } },
                                             {
                                                 kind: "Field",
+                                                alias: { kind: "Name", value: "immediateEvent" },
                                                 name: { kind: "Name", value: "events" },
                                                 arguments: [
                                                     {
@@ -36352,8 +36143,41 @@ export const ChannelStack_GetCurrentEventDocument: DocumentNode<
                                                                                     kind: "Variable",
                                                                                     name: {
                                                                                         kind: "Name",
-                                                                                        value: "future",
+                                                                                        value: "syncCutoff",
                                                                                     },
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: {
+                                                                        kind: "Name",
+                                                                        value: "intendedRoomModeName",
+                                                                    },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_in" },
+                                                                                value: {
+                                                                                    kind: "ListValue",
+                                                                                    values: [
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "PRERECORDED",
+                                                                                        },
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "Q_AND_A",
+                                                                                        },
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "PRESENTATION",
+                                                                                        },
+                                                                                    ],
                                                                                 },
                                                                             },
                                                                         ],
@@ -36361,6 +36185,216 @@ export const ChannelStack_GetCurrentEventDocument: DocumentNode<
                                                                 },
                                                             ],
                                                         },
+                                                    },
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "limit" },
+                                                        value: { kind: "IntValue", value: "1" },
+                                                    },
+                                                ],
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                    ],
+                                                },
+                                            },
+                                            {
+                                                kind: "Field",
+                                                alias: { kind: "Name", value: "delayedImmediateEvent" },
+                                                name: { kind: "Name", value: "events" },
+                                                arguments: [
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "where" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "startTime" },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_gt" },
+                                                                                value: {
+                                                                                    kind: "Variable",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "now",
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_lt" },
+                                                                                value: {
+                                                                                    kind: "Variable",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "syncCutoff",
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: {
+                                                                        kind: "Name",
+                                                                        value: "intendedRoomModeName",
+                                                                    },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_in" },
+                                                                                value: {
+                                                                                    kind: "ListValue",
+                                                                                    values: [
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "PRERECORDED",
+                                                                                        },
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "Q_AND_A",
+                                                                                        },
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "PRESENTATION",
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "order_by" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "startTime" },
+                                                                    value: {
+                                                                        kind: "EnumValue",
+                                                                        value: "desc_nulls_last",
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "limit" },
+                                                        value: { kind: "IntValue", value: "1" },
+                                                    },
+                                                ],
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                    ],
+                                                },
+                                            },
+                                            {
+                                                kind: "Field",
+                                                alias: { kind: "Name", value: "fixedEvent" },
+                                                name: { kind: "Name", value: "events" },
+                                                arguments: [
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "where" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "startTime" },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_gte" },
+                                                                                value: {
+                                                                                    kind: "Variable",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "syncCutoff",
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: {
+                                                                        kind: "Name",
+                                                                        value: "intendedRoomModeName",
+                                                                    },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_in" },
+                                                                                value: {
+                                                                                    kind: "ListValue",
+                                                                                    values: [
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "PRERECORDED",
+                                                                                        },
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "Q_AND_A",
+                                                                                        },
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "PRESENTATION",
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "order_by" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "startTime" },
+                                                                    value: {
+                                                                        kind: "EnumValue",
+                                                                        value: "asc_nulls_last",
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: "Argument",
+                                                        name: { kind: "Name", value: "limit" },
+                                                        value: { kind: "IntValue", value: "1" },
                                                     },
                                                 ],
                                                 selectionSet: {

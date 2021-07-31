@@ -30,7 +30,11 @@ async function exec(command, args, cwd, accumulateData) {
         });
 
         ls.on("close", (code) => {
-            resolve(code, stdOutData);
+            if (code !== 0) {
+                reject(error, stdErrData);
+            } else {
+                resolve(code, stdOutData);
+            }
         });
     });
 }

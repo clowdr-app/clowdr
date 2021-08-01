@@ -19,6 +19,7 @@ export const router = express.Router();
 
 router.use(
     cors({
+        // TODO: CORS_ORIGIN
         origin: "*",
     })
 );

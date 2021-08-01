@@ -49,6 +49,7 @@ assert(
 );
 
 export const app: express.Application = express();
+// TODO: CORS
 
 app.use("/companion", companionRouter);
 app.use("/mediaConvert", mediaConvertRouter);

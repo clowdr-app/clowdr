@@ -70,6 +70,7 @@ type SubmitUpdatedSubtitlesOutput = {
 
 type GetUploadAgreementOutput = {
     agreementText?: Maybe<string>;
+    agreementUrl?: Maybe<string>;
 };
 
 type ConferencePrepareOutput = {

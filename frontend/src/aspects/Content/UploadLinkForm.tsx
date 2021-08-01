@@ -1,27 +1,20 @@
-import {
-    Button,
-    Checkbox,
-    FormControl,
-    FormErrorMessage,
-    FormHelperText,
-    FormLabel,
-    Input,
-    Text,
-    useToast,
-} from "@chakra-ui/react";
+import { Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, useToast } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
 import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
+import UploadAgreementField from "./UploadAgreementField";
 
 export default function UploadLinkForm({
     magicToken,
-    uploadAgreement,
+    uploadAgreementText,
+    uploadAgreementUrl,
     handleFormSubmitted,
     existingLink,
 }: {
     magicToken: string;
-    uploadAgreement?: string;
+    uploadAgreementText?: string;
+    uploadAgreementUrl?: string;
     handleFormSubmitted?: () => Promise<void>;
     existingLink: {
         text: string;
@@ -116,32 +109,10 @@ export default function UploadLinkForm({
                                     </FormControl>
                                 )}
                             </Field>
-                            {uploadAgreement && (
-                                <Field
-                                    name="agree"
-                                    validate={(inValue: string | null | undefined) => {
-                                        let error;
-                                        if (!inValue) {
-                                            error = "Must agree to terms";
-                                        }
-                                        return error;
-                                    }}
-                                >
-                                    {({ form, field }: FieldProps<string>) => (
-                                        <FormControl
-                                            isInvalid={!!form.errors.agree && !!form.touched.agree}
-                                            isRequired
-                                            mt={5}
-                                        >
-                                            <FormLabel htmlFor="agree">Upload agreement</FormLabel>
-                                            <Text mb={4}>{uploadAgreement}</Text>
-                                            <Checkbox {...field} id="agree" />
-                                            <FormHelperText>I agree to the upload conditions.</FormHelperText>
-                                            <FormErrorMessage>{form.errors.agree}</FormErrorMessage>
-                                        </FormControl>
-                                    )}
-                                </Field>
-                            )}
+                            <UploadAgreementField
+                                uploadAgreementText={uploadAgreementText}
+                                uploadAgreementUrl={uploadAgreementUrl}
+                            />
                             <Button
                                 mt={4}
                                 colorScheme="purple"

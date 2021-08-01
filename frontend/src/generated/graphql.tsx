@@ -37634,7 +37634,7 @@ export type GetUploadAgreementQueryVariables = Exact<{
 }>;
 
 
-export type GetUploadAgreementQuery = { readonly __typename?: 'query_root', readonly getUploadAgreement?: Maybe<{ readonly __typename?: 'GetUploadAgreementOutput', readonly agreementText?: Maybe<string> }> };
+export type GetUploadAgreementQuery = { readonly __typename?: 'query_root', readonly getUploadAgreement?: Maybe<{ readonly __typename?: 'GetUploadAgreementOutput', readonly agreementText?: Maybe<string>, readonly agreementUrl?: Maybe<string> }> };
 
 export type GetForceUserRefreshConfigQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -48850,6 +48850,7 @@ export const GetUploadAgreementDocument = gql`
     query GetUploadAgreement($magicToken: String!) {
   getUploadAgreement(magicToken: $magicToken) {
     agreementText
+    agreementUrl
   }
 }
     `;

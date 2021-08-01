@@ -422,12 +422,23 @@ export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Pr
 
     if (
         result.data.content_Element.length === 1 &&
-        result.data.content_Element[0].conference.configurations.length === 1 &&
-        "text" in result.data.content_Element[0].conference.configurations[0].value
+        result.data.content_Element[0].conference.configurations.length === 1
     ) {
-        return {
-            agreementText: result.data.content_Element[0].conference.configurations[0].value.text,
-        };
+        const value = result.data.content_Element[0].conference.configurations[0].value;
+        if ("text" in value && "url" in value) {
+            return {
+                agreementText: value.text,
+                agreementUrl: value.url,
+            };
+        } else if ("text" in value) {
+            return {
+                agreementText: value.text,
+            };
+        } else if ("url" in value) {
+            return {
+                agreementUrl: value.url,
+            };
+        }
     }
 
     return {};

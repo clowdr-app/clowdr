@@ -7725,8 +7725,7 @@ export type Conference_Configuration = {
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
   readonly createdAt: Scalars['timestamptz'];
-  readonly id: Scalars['uuid'];
-  readonly key: Scalars['String'];
+  readonly key: Conference_ConfigurationKey_Enum;
   readonly updatedAt: Scalars['timestamptz'];
   readonly value: Scalars['jsonb'];
 };
@@ -7780,6 +7779,40 @@ export enum Conference_ConfigurationKey_Constraint {
   /** unique or primary key constraint */
   ConfigurationKeyPkey = 'ConfigurationKey_pkey'
 }
+
+export enum Conference_ConfigurationKey_Enum {
+  /** A list of videos to be used as the background for title/sponsor slides. */
+  BackgroundVideos = 'BACKGROUND_VIDEOS',
+  /** A string representing the app version. Changing this causes the user's browsers to refresh. */
+  ClowdrAppVersion = 'CLOWDR_APP_VERSION',
+  EmailTemplateSubmissionRequest = 'EMAIL_TEMPLATE_SUBMISSION_REQUEST',
+  EmailTemplateSubtitlesGenerated = 'EMAIL_TEMPLATE_SUBTITLES_GENERATED',
+  /** List of S3 URLs. */
+  FillerVideos = 'FILLER_VIDEOS',
+  /** A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration. */
+  FrontendHost = 'FRONTEND_HOST',
+  /** An image to be displayed if AWS MediaLive loses input. */
+  InputLossSlate = 'INPUT_LOSS_SLATE',
+  /** A string representing a valid URL for users to register for the conference. */
+  RegistrationUrl = 'REGISTRATION_URL',
+  /** A string representing a valid email address for contacting the conference organisers. */
+  SupportAddress = 'SUPPORT_ADDRESS',
+  /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
+  TechSupportAddress = 'TECH_SUPPORT_ADDRESS',
+  /** Text of the upload agreement or a URL to one. */
+  UploadAgreement = 'UPLOAD_AGREEMENT',
+  /** The time in milliseconds since the UNIX epoch, as a string. */
+  UploadCutoffTimestamp = 'UPLOAD_CUTOFF_TIMESTAMP'
+}
+
+/** Boolean expression to compare columns of type "conference_ConfigurationKey_enum". All fields are combined with logical 'AND'. */
+export type Conference_ConfigurationKey_Enum_Comparison_Exp = {
+  readonly _eq?: Maybe<Conference_ConfigurationKey_Enum>;
+  readonly _in?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Enum>>;
+  readonly _is_null?: Maybe<Scalars['Boolean']>;
+  readonly _neq?: Maybe<Conference_ConfigurationKey_Enum>;
+  readonly _nin?: Maybe<ReadonlyArray<Conference_ConfigurationKey_Enum>>;
+};
 
 /** input type for inserting data into table "conference.ConfigurationKey" */
 export type Conference_ConfigurationKey_Insert_Input = {
@@ -7899,16 +7932,13 @@ export type Conference_Configuration_Bool_Exp = {
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly key?: Maybe<String_Comparison_Exp>;
+  readonly key?: Maybe<Conference_ConfigurationKey_Enum_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly value?: Maybe<Jsonb_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "conference.Configuration" */
 export enum Conference_Configuration_Constraint {
-  /** unique or primary key constraint */
-  ConfigurationConferenceIdKeyKey = 'Configuration_conferenceId_key_key',
   /** unique or primary key constraint */
   ConfigurationPkey = 'Configuration_pkey'
 }
@@ -7933,8 +7963,7 @@ export type Conference_Configuration_Insert_Input = {
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly key?: Maybe<Scalars['String']>;
+  readonly key?: Maybe<Conference_ConfigurationKey_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly value?: Maybe<Scalars['jsonb']>;
 };
@@ -7944,8 +7973,6 @@ export type Conference_Configuration_Max_Fields = {
   readonly __typename?: 'conference_Configuration_max_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly key?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -7953,8 +7980,6 @@ export type Conference_Configuration_Max_Fields = {
 export type Conference_Configuration_Max_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly key?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -7963,8 +7988,6 @@ export type Conference_Configuration_Min_Fields = {
   readonly __typename?: 'conference_Configuration_min_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly key?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -7972,8 +7995,6 @@ export type Conference_Configuration_Min_Fields = {
 export type Conference_Configuration_Min_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
-  readonly key?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
 
@@ -7998,7 +8019,6 @@ export type Conference_Configuration_Order_By = {
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
-  readonly id?: Maybe<Order_By>;
   readonly key?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly value?: Maybe<Order_By>;
@@ -8006,7 +8026,8 @@ export type Conference_Configuration_Order_By = {
 
 /** primary key columns input for table: conference_Configuration */
 export type Conference_Configuration_Pk_Columns_Input = {
-  readonly id: Scalars['uuid'];
+  readonly conferenceId: Scalars['uuid'];
+  readonly key: Conference_ConfigurationKey_Enum;
 };
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
@@ -8021,8 +8042,6 @@ export enum Conference_Configuration_Select_Column {
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
-  Id = 'id',
-  /** column name */
   Key = 'key',
   /** column name */
   UpdatedAt = 'updatedAt',
@@ -8034,8 +8053,7 @@ export enum Conference_Configuration_Select_Column {
 export type Conference_Configuration_Set_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly key?: Maybe<Scalars['String']>;
+  readonly key?: Maybe<Conference_ConfigurationKey_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly value?: Maybe<Scalars['jsonb']>;
 };
@@ -8046,8 +8064,6 @@ export enum Conference_Configuration_Update_Column {
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
-  /** column name */
-  Id = 'id',
   /** column name */
   Key = 'key',
   /** column name */
@@ -15098,7 +15114,8 @@ export type Mutation_RootDelete_Conference_ConfigurationKey_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Conference_Configuration_By_PkArgs = {
-  id: Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+  key: Conference_ConfigurationKey_Enum;
 };
 
 
@@ -21167,7 +21184,8 @@ export type Query_RootConference_Configuration_AggregateArgs = {
 
 
 export type Query_RootConference_Configuration_By_PkArgs = {
-  id: Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+  key: Conference_ConfigurationKey_Enum;
 };
 
 
@@ -30532,7 +30550,8 @@ export type Subscription_RootConference_Configuration_AggregateArgs = {
 
 
 export type Subscription_RootConference_Configuration_By_PkArgs = {
-  id: Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+  key: Conference_ConfigurationKey_Enum;
 };
 
 
@@ -35755,15 +35774,16 @@ export type ConferenceConfiguration_GetConferenceConfigurationsQuery = { readonl
     & ConferenceConfiguration_ConferenceConfigurationsFragment
   )> };
 
-export type ConferenceConfiguration_ConferenceConfigurationsFragment = { readonly __typename?: 'conference_Configuration', readonly id: any, readonly key: string, readonly value: any };
+export type ConferenceConfiguration_ConferenceConfigurationsFragment = { readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any };
 
 export type Conference_Configuration_UpdateConferenceConfigurationsMutationVariables = Exact<{
-  conferenceConfigurationId: Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
+  key: Conference_ConfigurationKey_Enum;
   value: Scalars['jsonb'];
 }>;
 
 
-export type Conference_Configuration_UpdateConferenceConfigurationsMutation = { readonly __typename?: 'mutation_root', readonly update_conference_Configuration_by_pk?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly id: any }> };
+export type Conference_Configuration_UpdateConferenceConfigurationsMutation = { readonly __typename?: 'mutation_root', readonly update_conference_Configuration_by_pk?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
 
 export type EventVonageControls_GetEventsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -36569,7 +36589,7 @@ export type SubmissionRequestsModalDataQuery = { readonly __typename?: 'query_ro
     & SubmissionRequestsModal_ElementFragment
   )> };
 
-export type SubmissionRequestsModal_ConferenceConfigurationFragment = { readonly __typename?: 'conference_Configuration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any };
+export type SubmissionRequestsModal_ConferenceConfigurationFragment = { readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any };
 
 export type SubmissionRequestsModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly itemTitle?: Maybe<string>, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly uploadsRemaining?: Maybe<number>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string }> };
 
@@ -36595,16 +36615,16 @@ export type ConfigureEmailTemplates_GetConferenceConfigurationsQuery = { readonl
     & ConfigureEmailTemplates_ConferenceConfigurationFragment
   )> };
 
-export type ConfigureEmailTemplates_ConferenceConfigurationFragment = { readonly __typename?: 'conference_Configuration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any };
+export type ConfigureEmailTemplates_ConferenceConfigurationFragment = { readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any };
 
 export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables = Exact<{
   value: Scalars['jsonb'];
   conferenceId: Scalars['uuid'];
-  key: Scalars['String'];
+  key: Conference_ConfigurationKey_Enum;
 }>;
 
 
-export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutation = { readonly __typename?: 'mutation_root', readonly insert_conference_Configuration_one?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly id: any }> };
+export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutation = { readonly __typename?: 'mutation_root', readonly insert_conference_Configuration_one?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
 
 export type ChooseElementByTagModal_GetTagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37571,7 +37591,7 @@ export type AuthdConferenceInfoFragment = { readonly __typename?: 'conference_Co
     & RegistrantDataFragment
   )> };
 
-export type PublicConferenceInfoFragment = { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly id: any, readonly key: string, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly id: any, readonly key: string, readonly value: any }>, readonly publicGroups: ReadonlyArray<(
+export type PublicConferenceInfoFragment = { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<(
     { readonly __typename?: 'permissions_Group' }
     & GroupDataFragment
   )> };
@@ -37621,7 +37641,7 @@ export type GetForceUserRefreshConfigQueryVariables = Exact<{
 }>;
 
 
-export type GetForceUserRefreshConfigQuery = { readonly __typename?: 'query_root', readonly conference_Configuration: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly id: any, readonly conferenceId: any, readonly key: string, readonly value: any }> };
+export type GetForceUserRefreshConfigQuery = { readonly __typename?: 'query_root', readonly conference_Configuration_by_pk?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
 
 export type GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables = Exact<{
   code: Scalars['String'];
@@ -38599,7 +38619,7 @@ export const SearchPanel_PersonFragmentDoc = gql`
     `;
 export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
     fragment ConferenceConfiguration_ConferenceConfigurations on conference_Configuration {
-  id
+  conferenceId
   key
   value
 }
@@ -38990,7 +39010,6 @@ export const ElementSecurity_GroupFragmentDoc = gql`
     `;
 export const SubmissionRequestsModal_ConferenceConfigurationFragmentDoc = gql`
     fragment SubmissionRequestsModal_ConferenceConfiguration on conference_Configuration {
-  id
   conferenceId
   key
   value
@@ -39032,7 +39051,6 @@ export const SubmissionsReviewModal_ElementFragmentDoc = gql`
     `;
 export const ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc = gql`
     fragment ConfigureEmailTemplates_ConferenceConfiguration on conference_Configuration {
-  id
   conferenceId
   key
   value
@@ -39448,13 +39466,13 @@ export const PublicConferenceInfoFragmentDoc = gql`
   shortName
   slug
   createdBy
-  supportAddress: configurations(where: {key: {_eq: "SUPPORT_ADDRESS"}}) {
-    id
+  supportAddress: configurations(where: {key: {_eq: SUPPORT_ADDRESS}}) {
+    conferenceId
     key
     value
   }
-  registrationURL: configurations(where: {key: {_eq: "REGISTRATION_URL"}}) {
-    id
+  registrationURL: configurations(where: {key: {_eq: REGISTRATION_URL}}) {
+    conferenceId
     key
     value
   }
@@ -42207,12 +42225,14 @@ export type ConferenceConfiguration_GetConferenceConfigurationsQueryHookResult =
 export type ConferenceConfiguration_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useConferenceConfiguration_GetConferenceConfigurationsLazyQuery>;
 export type ConferenceConfiguration_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>;
 export const Conference_Configuration_UpdateConferenceConfigurationsDocument = gql`
-    mutation conference_Configuration_UpdateConferenceConfigurations($conferenceConfigurationId: uuid!, $value: jsonb!) {
+    mutation conference_Configuration_UpdateConferenceConfigurations($conferenceId: uuid!, $key: conference_ConfigurationKey_enum!, $value: jsonb!) {
   update_conference_Configuration_by_pk(
-    pk_columns: {id: $conferenceConfigurationId}
+    pk_columns: {conferenceId: $conferenceId, key: $key}
     _set: {value: $value}
   ) {
-    id
+    conferenceId
+    key
+    value
   }
 }
     `;
@@ -42231,7 +42251,8 @@ export type Conference_Configuration_UpdateConferenceConfigurationsMutationFn = 
  * @example
  * const [conferenceConfigurationUpdateConferenceConfigurationsMutation, { data, loading, error }] = useConference_Configuration_UpdateConferenceConfigurationsMutation({
  *   variables: {
- *      conferenceConfigurationId: // value for 'conferenceConfigurationId'
+ *      conferenceId: // value for 'conferenceId'
+ *      key: // value for 'key'
  *      value: // value for 'value'
  *   },
  * });
@@ -45103,12 +45124,14 @@ export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryHookResult =
 export type ConfigureEmailTemplates_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useConfigureEmailTemplates_GetConferenceConfigurationsLazyQuery>;
 export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>;
 export const ConfigureEmailTemplates_UpdateConferenceConfigurationDocument = gql`
-    mutation ConfigureEmailTemplates_UpdateConferenceConfiguration($value: jsonb!, $conferenceId: uuid!, $key: String!) {
+    mutation ConfigureEmailTemplates_UpdateConferenceConfiguration($value: jsonb!, $conferenceId: uuid!, $key: conference_ConfigurationKey_enum!) {
   insert_conference_Configuration_one(
     object: {value: $value, conferenceId: $conferenceId, key: $key}
-    on_conflict: {constraint: Configuration_conferenceId_key_key, update_columns: value}
+    on_conflict: {constraint: Configuration_pkey, update_columns: value}
   ) {
-    id
+    conferenceId
+    key
+    value
   }
 }
     `;
@@ -48860,10 +48883,10 @@ export type GetUploadAgreementLazyQueryHookResult = ReturnType<typeof useGetUplo
 export type GetUploadAgreementQueryResult = Apollo.QueryResult<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>;
 export const GetForceUserRefreshConfigDocument = gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
-  conference_Configuration(
-    where: {conferenceId: {_eq: $conferenceId}, key: {_eq: "CLOWDR_APP_VERSION"}}
+  conference_Configuration_by_pk(
+    conferenceId: $conferenceId
+    key: CLOWDR_APP_VERSION
   ) {
-    id
     conferenceId
     key
     value

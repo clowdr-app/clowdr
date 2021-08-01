@@ -1,6 +1,5 @@
 import { gql } from "@apollo/client/core";
 import {
-    ConferenceConfigurationKey,
     EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
@@ -10,6 +9,7 @@ import assert from "assert";
 import Mustache from "mustache";
 import R from "ramda";
 import {
+    Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
     Email_Insert_Input,
     GetElementDetailsDocument,
@@ -211,7 +211,7 @@ async function trySendTranscriptionEmail(elementId: string) {
 
         let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
             element.conference.id,
-            ConferenceConfigurationKey.EmailTemplate_SubtitlesGenerated
+            Conference_ConfigurationKey_Enum.EmailTemplateSubtitlesGenerated
         );
 
         if (!isEmailTemplate_BaseConfig(emailTemplates)) {
@@ -398,7 +398,9 @@ gql`
     query GetUploadAgreement($accessToken: String!) {
         content_Element(where: { accessToken: { _eq: $accessToken } }) {
             conference {
-                configurations(where: { key: { _eq: "UPLOAD_AGREEMENT" } }) {
+                configurations(where: { key: { _eq: UPLOAD_AGREEMENT } }) {
+                    conferenceId
+                    key
                     value
                 }
             }

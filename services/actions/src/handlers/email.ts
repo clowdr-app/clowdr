@@ -17,16 +17,14 @@ import { callWithRetry } from "../utils";
 gql`
     query ConferenceEmailConfiguration($conferenceId: uuid, $includeConferenceFields: Boolean!) {
         support: conference_Configuration(
-            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: "SUPPORT_ADDRESS" } }
+            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: SUPPORT_ADDRESS } }
         ) @include(if: $includeConferenceFields) {
-            id
             key
             value
         }
         techSupport: conference_Configuration(
-            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: "TECH_SUPPORT_ADDRESS" } }
+            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: TECH_SUPPORT_ADDRESS } }
         ) @include(if: $includeConferenceFields) {
-            id
             key
             value
         }
@@ -91,7 +89,7 @@ export async function insertEmails(
             };
         });
 
-    console.log(`Queuing ${emails.length} emails to send`);
+    console.log(`Queuing ${emailsToInsert.length} emails to send`);
     const r = await apolloClient.mutate({
         mutation: InsertEmailsDocument,
         variables: {

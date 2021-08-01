@@ -28,7 +28,6 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import {
-    ConferenceConfigurationKey,
     EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
@@ -37,6 +36,7 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import {
+    Conference_ConfigurationKey_Enum,
     Content_ElementType_Enum,
     SubmissionRequestsModal_ConferenceConfigurationFragment,
     SubmissionRequestsModal_ElementFragment,
@@ -129,7 +129,6 @@ gql`
     }
 
     fragment SubmissionRequestsModal_ConferenceConfiguration on conference_Configuration {
-        id
         conferenceId
         key
         value
@@ -200,7 +199,7 @@ function SendSubmissionRequestsModalLazyInner({
             }) => {
                 const conferenceConfiguration =
                     conference_Configuration.find(
-                        (c) => c.key === ConferenceConfigurationKey.EmailTemplate_SubmissionRequest
+                        (c) => c.key === Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
                     ) ?? null;
 
                 let existingTemplate: EmailTemplate_BaseConfig = {

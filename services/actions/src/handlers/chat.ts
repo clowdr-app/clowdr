@@ -15,8 +15,8 @@ gql`
                     shortName
                     slug
 
-                    configurations(where: { key: { _eq: "SUPPORT_ADDRESS" } }) {
-                        id
+                    supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
+                        conferenceId
                         key
                         value
                     }
@@ -39,11 +39,11 @@ export async function handleFlagInserted(data: Payload<FlagData>): Promise<void>
         assert(response.data?.chat_Message.length, "Chat message not retrieved");
 
         const conference = response.data.chat_Message[0].chat.conference;
-        if (conference.configurations.length > 0) {
+        if (conference.supportAddress.length > 0) {
             await insertEmails(
                 [
                     {
-                        emailAddress: conference.configurations[0].value,
+                        emailAddress: conference.supportAddress[0].value,
                         reason: "chat_moderation_report",
                         subject: "[HIGH PRIORITY] Chat message reported in " + conference.shortName,
                         htmlContents: `<p>Dear ${conference.shortName} support,</p>

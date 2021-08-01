@@ -21,8 +21,7 @@ import { useRestorableState } from "../Generic/useRestorableState";
 
 gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
-        conference_Configuration(where: { conferenceId: { _eq: $conferenceId }, key: { _eq: "CLOWDR_APP_VERSION" } }) {
-            id
+        conference_Configuration_by_pk(conferenceId: $conferenceId, key: CLOWDR_APP_VERSION) {
             conferenceId
             key
             value
@@ -66,8 +65,8 @@ export default function ForceUserRefresh(): JSX.Element {
 
     useEffect(() => {
         try {
-            if (!query.loading && !query.error && query.data && query.data.conference_Configuration.length > 0) {
-                const config = query.data.conference_Configuration[0];
+            if (!query.loading && !query.error && query.data && query.data.conference_Configuration_by_pk) {
+                const config = query.data.conference_Configuration_by_pk;
                 if (config.value && config.value !== "") {
                     const latestVersion = config.value;
                     if (version !== latestVersion) {

@@ -48,13 +48,13 @@ gql`
         slug
         createdBy
 
-        supportAddress: configurations(where: { key: { _eq: "SUPPORT_ADDRESS" } }) {
-            id
+        supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
+            conferenceId
             key
             value
         }
-        registrationURL: configurations(where: { key: { _eq: "REGISTRATION_URL" } }) {
-            id
+        registrationURL: configurations(where: { key: { _eq: REGISTRATION_URL } }) {
+            conferenceId
             key
             value
         }

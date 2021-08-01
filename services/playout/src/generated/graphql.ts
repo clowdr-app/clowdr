@@ -7614,8 +7614,7 @@ export type Conference_Configuration = {
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
     createdAt: Scalars["timestamptz"];
-    id: Scalars["uuid"];
-    key: Scalars["String"];
+    key: Conference_ConfigurationKey_Enum;
     updatedAt: Scalars["timestamptz"];
     value: Scalars["jsonb"];
 };
@@ -7667,6 +7666,40 @@ export enum Conference_ConfigurationKey_Constraint {
     /** unique or primary key constraint */
     ConfigurationKeyPkey = "ConfigurationKey_pkey",
 }
+
+export enum Conference_ConfigurationKey_Enum {
+    /** A list of videos to be used as the background for title/sponsor slides. */
+    BackgroundVideos = "BACKGROUND_VIDEOS",
+    /** A string representing the app version. Changing this causes the user's browsers to refresh. */
+    ClowdrAppVersion = "CLOWDR_APP_VERSION",
+    EmailTemplateSubmissionRequest = "EMAIL_TEMPLATE_SUBMISSION_REQUEST",
+    EmailTemplateSubtitlesGenerated = "EMAIL_TEMPLATE_SUBTITLES_GENERATED",
+    /** List of S3 URLs. */
+    FillerVideos = "FILLER_VIDEOS",
+    /** A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration. */
+    FrontendHost = "FRONTEND_HOST",
+    /** An image to be displayed if AWS MediaLive loses input. */
+    InputLossSlate = "INPUT_LOSS_SLATE",
+    /** A string representing a valid URL for users to register for the conference. */
+    RegistrationUrl = "REGISTRATION_URL",
+    /** A string representing a valid email address for contacting the conference organisers. */
+    SupportAddress = "SUPPORT_ADDRESS",
+    /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
+    TechSupportAddress = "TECH_SUPPORT_ADDRESS",
+    /** Text of the upload agreement or a URL to one. */
+    UploadAgreement = "UPLOAD_AGREEMENT",
+    /** The time in milliseconds since the UNIX epoch, as a string. */
+    UploadCutoffTimestamp = "UPLOAD_CUTOFF_TIMESTAMP",
+}
+
+/** Boolean expression to compare columns of type "conference_ConfigurationKey_enum". All fields are combined with logical 'AND'. */
+export type Conference_ConfigurationKey_Enum_Comparison_Exp = {
+    _eq?: Maybe<Conference_ConfigurationKey_Enum>;
+    _in?: Maybe<Array<Conference_ConfigurationKey_Enum>>;
+    _is_null?: Maybe<Scalars["Boolean"]>;
+    _neq?: Maybe<Conference_ConfigurationKey_Enum>;
+    _nin?: Maybe<Array<Conference_ConfigurationKey_Enum>>;
+};
 
 /** input type for inserting data into table "conference.ConfigurationKey" */
 export type Conference_ConfigurationKey_Insert_Input = {
@@ -7785,16 +7818,13 @@ export type Conference_Configuration_Bool_Exp = {
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-    id?: Maybe<Uuid_Comparison_Exp>;
-    key?: Maybe<String_Comparison_Exp>;
+    key?: Maybe<Conference_ConfigurationKey_Enum_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
     value?: Maybe<Jsonb_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "conference.Configuration" */
 export enum Conference_Configuration_Constraint {
-    /** unique or primary key constraint */
-    ConfigurationConferenceIdKeyKey = "Configuration_conferenceId_key_key",
     /** unique or primary key constraint */
     ConfigurationPkey = "Configuration_pkey",
 }
@@ -7819,8 +7849,7 @@ export type Conference_Configuration_Insert_Input = {
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    key?: Maybe<Scalars["String"]>;
+    key?: Maybe<Conference_ConfigurationKey_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     value?: Maybe<Scalars["jsonb"]>;
 };
@@ -7830,8 +7859,6 @@ export type Conference_Configuration_Max_Fields = {
     __typename?: "conference_Configuration_max_fields";
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    key?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -7839,8 +7866,6 @@ export type Conference_Configuration_Max_Fields = {
 export type Conference_Configuration_Max_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    key?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
 
@@ -7849,8 +7874,6 @@ export type Conference_Configuration_Min_Fields = {
     __typename?: "conference_Configuration_min_fields";
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    key?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -7858,8 +7881,6 @@ export type Conference_Configuration_Min_Fields = {
 export type Conference_Configuration_Min_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    key?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
 
@@ -7884,7 +7905,6 @@ export type Conference_Configuration_Order_By = {
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
     key?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
     value?: Maybe<Order_By>;
@@ -7892,7 +7912,8 @@ export type Conference_Configuration_Order_By = {
 
 /** primary key columns input for table: conference_Configuration */
 export type Conference_Configuration_Pk_Columns_Input = {
-    id: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
 };
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
@@ -7907,8 +7928,6 @@ export enum Conference_Configuration_Select_Column {
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
-    Id = "id",
-    /** column name */
     Key = "key",
     /** column name */
     UpdatedAt = "updatedAt",
@@ -7920,8 +7939,7 @@ export enum Conference_Configuration_Select_Column {
 export type Conference_Configuration_Set_Input = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    key?: Maybe<Scalars["String"]>;
+    key?: Maybe<Conference_ConfigurationKey_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     value?: Maybe<Scalars["jsonb"]>;
 };
@@ -7932,8 +7950,6 @@ export enum Conference_Configuration_Update_Column {
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "createdAt",
-    /** column name */
-    Id = "id",
     /** column name */
     Key = "key",
     /** column name */
@@ -14864,7 +14880,8 @@ export type Mutation_RootDelete_Conference_ConfigurationKey_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Conference_Configuration_By_PkArgs = {
-    id: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
 };
 
 /** mutation root */
@@ -20341,7 +20358,8 @@ export type Query_RootConference_Configuration_AggregateArgs = {
 };
 
 export type Query_RootConference_Configuration_By_PkArgs = {
-    id: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
 };
 
 export type Query_RootConference_DemoCodeArgs = {
@@ -29347,7 +29365,8 @@ export type Subscription_RootConference_Configuration_AggregateArgs = {
 };
 
 export type Subscription_RootConference_Configuration_By_PkArgs = {
-    id: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
 };
 
 export type Subscription_RootConference_DemoCodeArgs = {
@@ -33781,13 +33800,13 @@ export type ChannelStack_GetFirstSyncableEventQuery = { __typename?: "query_root
 };
 
 export type ConferenceConfiguration_GetConfigurationValueQueryVariables = Exact<{
-    key: Scalars["String"];
+    key: Conference_ConfigurationKey_Enum;
     conferenceId: Scalars["uuid"];
 }>;
 
 export type ConferenceConfiguration_GetConfigurationValueQuery = { __typename?: "query_root" } & {
-    conference_Configuration: Array<
-        { __typename?: "conference_Configuration" } & Pick<Conference_Configuration, "id" | "value">
+    conference_Configuration_by_pk?: Maybe<
+        { __typename?: "conference_Configuration" } & Pick<Conference_Configuration, "conferenceId" | "key" | "value">
     >;
 };
 
@@ -33963,7 +33982,7 @@ export type VonageService_CreateEventVonageSessionMutation = { __typename?: "mut
     >;
 };
 
-export const LocalSchedule_EventDetailsFragmentDoc: DocumentNode<LocalSchedule_EventDetailsFragment, unknown> = {
+export const LocalSchedule_EventDetailsFragmentDoc = {
     kind: "Document",
     definitions: [
         {
@@ -34060,8 +34079,8 @@ export const LocalSchedule_EventDetailsFragmentDoc: DocumentNode<LocalSchedule_E
             },
         },
     ],
-};
-export const LocalSchedule_EventFragmentDoc: DocumentNode<LocalSchedule_EventFragment, unknown> = {
+} as unknown as DocumentNode<LocalSchedule_EventDetailsFragment, unknown>;
+export const LocalSchedule_EventFragmentDoc = {
     kind: "Document",
     definitions: [
         {
@@ -34121,11 +34140,8 @@ export const LocalSchedule_EventFragmentDoc: DocumentNode<LocalSchedule_EventFra
             },
         },
     ],
-};
-export const GetRoomsNeedingChannelStackDocument: DocumentNode<
-    GetRoomsNeedingChannelStackQuery,
-    GetRoomsNeedingChannelStackQueryVariables
-> = {
+} as unknown as DocumentNode<LocalSchedule_EventFragment, unknown>;
+export const GetRoomsNeedingChannelStackDocument = {
     kind: "Document",
     definitions: [
         {
@@ -34397,11 +34413,8 @@ export const GetRoomsNeedingChannelStackDocument: DocumentNode<
             },
         },
     ],
-};
-export const GetObsoleteChannelStacksDocument: DocumentNode<
-    GetObsoleteChannelStacksQuery,
-    GetObsoleteChannelStacksQueryVariables
-> = {
+} as unknown as DocumentNode<GetRoomsNeedingChannelStackQuery, GetRoomsNeedingChannelStackQueryVariables>;
+export const GetObsoleteChannelStacksDocument = {
     kind: "Document",
     definitions: [
         {
@@ -34577,11 +34590,8 @@ export const GetObsoleteChannelStacksDocument: DocumentNode<
             },
         },
     ],
-};
-export const ChannelStatus_UpdatedMediaLiveChannelStatusesDocument: DocumentNode<
-    ChannelStatus_UpdatedMediaLiveChannelStatusesMutation,
-    ChannelStatus_UpdatedMediaLiveChannelStatusesMutationVariables
-> = {
+} as unknown as DocumentNode<GetObsoleteChannelStacksQuery, GetObsoleteChannelStacksQueryVariables>;
+export const ChannelStatus_UpdatedMediaLiveChannelStatusesDocument = {
     kind: "Document",
     definitions: [
         {
@@ -34658,11 +34668,11 @@ export const ChannelStatus_UpdatedMediaLiveChannelStatusesDocument: DocumentNode
             },
         },
     ],
-};
-export const CreateChannelStackCreateJobDocument: DocumentNode<
-    CreateChannelStackCreateJobMutation,
-    CreateChannelStackCreateJobMutationVariables
-> = {
+} as unknown as DocumentNode<
+    ChannelStatus_UpdatedMediaLiveChannelStatusesMutation,
+    ChannelStatus_UpdatedMediaLiveChannelStatusesMutationVariables
+>;
+export const CreateChannelStackCreateJobDocument = {
     kind: "Document",
     definitions: [
         {
@@ -34735,11 +34745,8 @@ export const CreateChannelStackCreateJobDocument: DocumentNode<
             },
         },
     ],
-};
-export const GetChannelStackCreateJobDocument: DocumentNode<
-    GetChannelStackCreateJobQuery,
-    GetChannelStackCreateJobQueryVariables
-> = {
+} as unknown as DocumentNode<CreateChannelStackCreateJobMutation, CreateChannelStackCreateJobMutationVariables>;
+export const GetChannelStackCreateJobDocument = {
     kind: "Document",
     definitions: [
         {
@@ -34778,11 +34785,8 @@ export const GetChannelStackCreateJobDocument: DocumentNode<
             },
         },
     ],
-};
-export const FailChannelStackCreateJobDocument: DocumentNode<
-    FailChannelStackCreateJobMutation,
-    FailChannelStackCreateJobMutationVariables
-> = {
+} as unknown as DocumentNode<GetChannelStackCreateJobQuery, GetChannelStackCreateJobQueryVariables>;
+export const FailChannelStackCreateJobDocument = {
     kind: "Document",
     definitions: [
         {
@@ -34851,11 +34855,8 @@ export const FailChannelStackCreateJobDocument: DocumentNode<
             },
         },
     ],
-};
-export const CompleteChannelStackCreateJobDocument: DocumentNode<
-    CompleteChannelStackCreateJobMutation,
-    CompleteChannelStackCreateJobMutationVariables
-> = {
+} as unknown as DocumentNode<FailChannelStackCreateJobMutation, FailChannelStackCreateJobMutationVariables>;
+export const CompleteChannelStackCreateJobDocument = {
     kind: "Document",
     definitions: [
         {
@@ -34914,11 +34915,8 @@ export const CompleteChannelStackCreateJobDocument: DocumentNode<
             },
         },
     ],
-};
-export const FindChannelStackCreateJobByLogicalResourceIdDocument: DocumentNode<
-    FindChannelStackCreateJobByLogicalResourceIdQuery,
-    FindChannelStackCreateJobByLogicalResourceIdQueryVariables
-> = {
+} as unknown as DocumentNode<CompleteChannelStackCreateJobMutation, CompleteChannelStackCreateJobMutationVariables>;
+export const FindChannelStackCreateJobByLogicalResourceIdDocument = {
     kind: "Document",
     definitions: [
         {
@@ -34979,11 +34977,11 @@ export const FindChannelStackCreateJobByLogicalResourceIdDocument: DocumentNode<
             },
         },
     ],
-};
-export const FindPotentiallyStuckChannelStackCreateJobsDocument: DocumentNode<
-    FindPotentiallyStuckChannelStackCreateJobsQuery,
-    FindPotentiallyStuckChannelStackCreateJobsQueryVariables
-> = {
+} as unknown as DocumentNode<
+    FindChannelStackCreateJobByLogicalResourceIdQuery,
+    FindChannelStackCreateJobByLogicalResourceIdQueryVariables
+>;
+export const FindPotentiallyStuckChannelStackCreateJobsDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35064,11 +35062,11 @@ export const FindPotentiallyStuckChannelStackCreateJobsDocument: DocumentNode<
             },
         },
     ],
-};
-export const ChannelStackSync_GetChannelStackDeleteJobsDocument: DocumentNode<
-    ChannelStackSync_GetChannelStackDeleteJobsQuery,
-    ChannelStackSync_GetChannelStackDeleteJobsQueryVariables
-> = {
+} as unknown as DocumentNode<
+    FindPotentiallyStuckChannelStackCreateJobsQuery,
+    FindPotentiallyStuckChannelStackCreateJobsQueryVariables
+>;
+export const ChannelStackSync_GetChannelStackDeleteJobsDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35119,11 +35117,11 @@ export const ChannelStackSync_GetChannelStackDeleteJobsDocument: DocumentNode<
             },
         },
     ],
-};
-export const ChannelStackSync_GetStuckChannelStackDeleteJobsDocument: DocumentNode<
-    ChannelStackSync_GetStuckChannelStackDeleteJobsQuery,
-    ChannelStackSync_GetStuckChannelStackDeleteJobsQueryVariables
-> = {
+} as unknown as DocumentNode<
+    ChannelStackSync_GetChannelStackDeleteJobsQuery,
+    ChannelStackSync_GetChannelStackDeleteJobsQueryVariables
+>;
+export const ChannelStackSync_GetStuckChannelStackDeleteJobsDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35201,11 +35199,11 @@ export const ChannelStackSync_GetStuckChannelStackDeleteJobsDocument: DocumentNo
             },
         },
     ],
-};
-export const ChannelStack_CompleteChannelStackDeleteJobDocument: DocumentNode<
-    ChannelStack_CompleteChannelStackDeleteJobMutation,
-    ChannelStack_CompleteChannelStackDeleteJobMutationVariables
-> = {
+} as unknown as DocumentNode<
+    ChannelStackSync_GetStuckChannelStackDeleteJobsQuery,
+    ChannelStackSync_GetStuckChannelStackDeleteJobsQueryVariables
+>;
+export const ChannelStack_CompleteChannelStackDeleteJobDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35294,11 +35292,11 @@ export const ChannelStack_CompleteChannelStackDeleteJobDocument: DocumentNode<
             },
         },
     ],
-};
-export const GetChannelStackByRoomDocument: DocumentNode<
-    GetChannelStackByRoomQuery,
-    GetChannelStackByRoomQueryVariables
-> = {
+} as unknown as DocumentNode<
+    ChannelStack_CompleteChannelStackDeleteJobMutation,
+    ChannelStack_CompleteChannelStackDeleteJobMutationVariables
+>;
+export const GetChannelStackByRoomDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35361,333 +35359,254 @@ export const GetChannelStackByRoomDocument: DocumentNode<
             },
         },
     ],
-};
-export const CreateChannelStackDocument: DocumentNode<CreateChannelStackMutation, CreateChannelStackMutationVariables> =
-    {
-        kind: "Document",
-        definitions: [
-            {
-                kind: "OperationDefinition",
-                operation: "mutation",
-                name: { kind: "Name", value: "CreateChannelStack" },
-                variableDefinitions: [
+} as unknown as DocumentNode<GetChannelStackByRoomQuery, GetChannelStackByRoomQueryVariables>;
+export const CreateChannelStackDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "CreateChannelStack" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cloudFrontDistributionId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mediaPackageChannelId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mp4InputId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpAInputId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpAInputUri" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputUri" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "endpointUri" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cloudFrontDomain" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mp4InputAttachmentName" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "loopingMp4InputAttachmentName" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpAInputAttachmentName" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputAttachmentName" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "channelStackCreateJobId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
                     {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "cloudFormationStackArn" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "cloudFrontDistributionId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "mediaLiveChannelId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "mediaPackageChannelId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "mp4InputId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "rtmpAInputId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "rtmpAInputUri" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputUri" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "endpointUri" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "cloudFrontDomain" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "mp4InputAttachmentName" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "loopingMp4InputAttachmentName" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "rtmpAInputAttachmentName" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputAttachmentName" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "channelStackCreateJobId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
-                        },
-                    },
-                    {
-                        kind: "VariableDefinition",
-                        variable: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
-                        type: {
-                            kind: "NonNullType",
-                            type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_video_ChannelStack_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "cloudFormationStackArn" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "cloudFormationStackArn" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "cloudFrontDistributionId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "cloudFrontDistributionId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mediaPackageChannelId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "mediaPackageChannelId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mp4InputId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "mp4InputId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpAInputId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "rtmpAInputId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpAInputUri" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "rtmpAInputUri" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpBInputId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpBInputUri" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "rtmpBInputUri" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "endpointUri" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "endpointUri" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "cloudFrontDomain" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "cloudFrontDomain" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mp4InputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "mp4InputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "loopingMp4InputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "loopingMp4InputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpAInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpAInputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpBInputAttachmentName" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpBInputAttachmentName" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "channelStackCreateJobId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "channelStackCreateJobId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "roomId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
                         },
                     },
                 ],
-                selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                        {
-                            kind: "Field",
-                            name: { kind: "Name", value: "insert_video_ChannelStack_one" },
-                            arguments: [
-                                {
-                                    kind: "Argument",
-                                    name: { kind: "Name", value: "object" },
-                                    value: {
-                                        kind: "ObjectValue",
-                                        fields: [
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "cloudFormationStackArn" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "cloudFormationStackArn" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "cloudFrontDistributionId" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "cloudFrontDistributionId" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "mediaLiveChannelId" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "mediaLiveChannelId" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "mediaPackageChannelId" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "mediaPackageChannelId" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "mp4InputId" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "mp4InputId" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "rtmpAInputId" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "rtmpAInputId" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "rtmpAInputUri" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "rtmpAInputUri" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "rtmpBInputId" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "rtmpBInputId" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "rtmpBInputUri" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "rtmpBInputUri" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "endpointUri" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "endpointUri" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "cloudFrontDomain" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "cloudFrontDomain" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "mp4InputAttachmentName" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "mp4InputAttachmentName" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "loopingMp4InputAttachmentName" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "loopingMp4InputAttachmentName" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "rtmpAInputAttachmentName" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "rtmpAInputAttachmentName" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "rtmpBInputAttachmentName" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "rtmpBInputAttachmentName" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "conferenceId" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "conferenceId" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "channelStackCreateJobId" },
-                                                value: {
-                                                    kind: "Variable",
-                                                    name: { kind: "Name", value: "channelStackCreateJobId" },
-                                                },
-                                            },
-                                            {
-                                                kind: "ObjectField",
-                                                name: { kind: "Name", value: "roomId" },
-                                                value: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
-                                            },
-                                        ],
-                                    },
-                                },
-                            ],
-                            selectionSet: {
-                                kind: "SelectionSet",
-                                selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
-                            },
-                        },
-                    ],
-                },
             },
-        ],
-    };
-export const ChannelStack_DeleteDocument: DocumentNode<
-    ChannelStack_DeleteMutation,
-    ChannelStack_DeleteMutationVariables
-> = {
+        },
+    ],
+} as unknown as DocumentNode<CreateChannelStackMutation, CreateChannelStackMutationVariables>;
+export const ChannelStack_DeleteDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35726,11 +35645,8 @@ export const ChannelStack_DeleteDocument: DocumentNode<
             },
         },
     ],
-};
-export const FindChannelStacksByStackArnDocument: DocumentNode<
-    FindChannelStacksByStackArnQuery,
-    FindChannelStacksByStackArnQueryVariables
-> = {
+} as unknown as DocumentNode<ChannelStack_DeleteMutation, ChannelStack_DeleteMutationVariables>;
+export const FindChannelStacksByStackArnDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35787,11 +35703,8 @@ export const FindChannelStacksByStackArnDocument: DocumentNode<
             },
         },
     ],
-};
-export const ChannelStack_DetachDocument: DocumentNode<
-    ChannelStack_DetachMutation,
-    ChannelStack_DetachMutationVariables
-> = {
+} as unknown as DocumentNode<FindChannelStacksByStackArnQuery, FindChannelStacksByStackArnQueryVariables>;
+export const ChannelStack_DetachDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35850,11 +35763,8 @@ export const ChannelStack_DetachDocument: DocumentNode<
             },
         },
     ],
-};
-export const ChannelStack_GetChannelStackCloudFormationStackArnDocument: DocumentNode<
-    ChannelStack_GetChannelStackCloudFormationStackArnQuery,
-    ChannelStack_GetChannelStackCloudFormationStackArnQueryVariables
-> = {
+} as unknown as DocumentNode<ChannelStack_DetachMutation, ChannelStack_DetachMutationVariables>;
+export const ChannelStack_GetChannelStackCloudFormationStackArnDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35893,11 +35803,11 @@ export const ChannelStack_GetChannelStackCloudFormationStackArnDocument: Documen
             },
         },
     ],
-};
-export const ChannelStack_CreateChannelStackDeleteJobDocument: DocumentNode<
-    ChannelStack_CreateChannelStackDeleteJobMutation,
-    ChannelStack_CreateChannelStackDeleteJobMutationVariables
-> = {
+} as unknown as DocumentNode<
+    ChannelStack_GetChannelStackCloudFormationStackArnQuery,
+    ChannelStack_GetChannelStackCloudFormationStackArnQueryVariables
+>;
+export const ChannelStack_CreateChannelStackDeleteJobDocument = {
     kind: "Document",
     definitions: [
         {
@@ -35963,11 +35873,11 @@ export const ChannelStack_CreateChannelStackDeleteJobDocument: DocumentNode<
             },
         },
     ],
-};
-export const ChannelStack_GetChannelStacksDocument: DocumentNode<
-    ChannelStack_GetChannelStacksQuery,
-    ChannelStack_GetChannelStacksQueryVariables
-> = {
+} as unknown as DocumentNode<
+    ChannelStack_CreateChannelStackDeleteJobMutation,
+    ChannelStack_CreateChannelStackDeleteJobMutationVariables
+>;
+export const ChannelStack_GetChannelStacksDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36014,11 +35924,8 @@ export const ChannelStack_GetChannelStacksDocument: DocumentNode<
             },
         },
     ],
-};
-export const ChannelStack_GetFirstSyncableEventDocument: DocumentNode<
-    ChannelStack_GetFirstSyncableEventQuery,
-    ChannelStack_GetFirstSyncableEventQueryVariables
-> = {
+} as unknown as DocumentNode<ChannelStack_GetChannelStacksQuery, ChannelStack_GetChannelStacksQueryVariables>;
+export const ChannelStack_GetFirstSyncableEventDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36414,11 +36321,8 @@ export const ChannelStack_GetFirstSyncableEventDocument: DocumentNode<
             },
         },
     ],
-};
-export const ConferenceConfiguration_GetConfigurationValueDocument: DocumentNode<
-    ConferenceConfiguration_GetConfigurationValueQuery,
-    ConferenceConfiguration_GetConfigurationValueQueryVariables
-> = {
+} as unknown as DocumentNode<ChannelStack_GetFirstSyncableEventQuery, ChannelStack_GetFirstSyncableEventQueryVariables>;
+export const ConferenceConfiguration_GetConfigurationValueDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36429,7 +36333,10 @@ export const ConferenceConfiguration_GetConfigurationValueDocument: DocumentNode
                 {
                     kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "key" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "conference_ConfigurationKey_enum" } },
+                    },
                 },
                 {
                     kind: "VariableDefinition",
@@ -36442,56 +36349,24 @@ export const ConferenceConfiguration_GetConfigurationValueDocument: DocumentNode
                 selections: [
                     {
                         kind: "Field",
-                        name: { kind: "Name", value: "conference_Configuration" },
+                        name: { kind: "Name", value: "conference_Configuration_by_pk" },
                         arguments: [
                             {
                                 kind: "Argument",
-                                name: { kind: "Name", value: "where" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "key" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "key" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "conferenceId" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "conferenceId" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                },
+                                name: { kind: "Name", value: "conferenceId" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "key" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "key" } },
                             },
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "key" } },
                                 { kind: "Field", name: { kind: "Name", value: "value" } },
                             ],
                         },
@@ -36500,11 +36375,11 @@ export const ConferenceConfiguration_GetConfigurationValueDocument: DocumentNode
             },
         },
     ],
-};
-export const ContentElement_GetElementDocument: DocumentNode<
-    ContentElement_GetElementQuery,
-    ContentElement_GetElementQueryVariables
-> = {
+} as unknown as DocumentNode<
+    ConferenceConfiguration_GetConfigurationValueQuery,
+    ConferenceConfiguration_GetConfigurationValueQueryVariables
+>;
+export const ContentElement_GetElementDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36544,11 +36419,8 @@ export const ContentElement_GetElementDocument: DocumentNode<
             },
         },
     ],
-};
-export const ImmediateSwitch_CompleteDocument: DocumentNode<
-    ImmediateSwitch_CompleteMutation,
-    ImmediateSwitch_CompleteMutationVariables
-> = {
+} as unknown as DocumentNode<ContentElement_GetElementQuery, ContentElement_GetElementQueryVariables>;
+export const ImmediateSwitch_CompleteDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36618,11 +36490,8 @@ export const ImmediateSwitch_CompleteDocument: DocumentNode<
             },
         },
     ],
-};
-export const ImmediateSwitch_FailDocument: DocumentNode<
-    ImmediateSwitch_FailMutation,
-    ImmediateSwitch_FailMutationVariables
-> = {
+} as unknown as DocumentNode<ImmediateSwitch_CompleteMutation, ImmediateSwitch_CompleteMutationVariables>;
+export const ImmediateSwitch_FailDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36689,11 +36558,8 @@ export const ImmediateSwitch_FailDocument: DocumentNode<
             },
         },
     ],
-};
-export const ScheduleService_GetRoomsWithBroadcastEventsDocument: DocumentNode<
-    ScheduleService_GetRoomsWithBroadcastEventsQuery,
-    ScheduleService_GetRoomsWithBroadcastEventsQueryVariables
-> = {
+} as unknown as DocumentNode<ImmediateSwitch_FailMutation, ImmediateSwitch_FailMutationVariables>;
+export const ScheduleService_GetRoomsWithBroadcastEventsDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36786,11 +36652,11 @@ export const ScheduleService_GetRoomsWithBroadcastEventsDocument: DocumentNode<
             },
         },
     ],
-};
-export const LocalSchedule_GetEventScheduleDocument: DocumentNode<
-    LocalSchedule_GetEventScheduleQuery,
-    LocalSchedule_GetEventScheduleQueryVariables
-> = {
+} as unknown as DocumentNode<
+    ScheduleService_GetRoomsWithBroadcastEventsQuery,
+    ScheduleService_GetRoomsWithBroadcastEventsQueryVariables
+>;
+export const LocalSchedule_GetEventScheduleDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36829,11 +36695,8 @@ export const LocalSchedule_GetEventScheduleDocument: DocumentNode<
         },
         ...LocalSchedule_EventDetailsFragmentDoc.definitions,
     ],
-};
-export const LocalSchedule_GetScheduleDocument: DocumentNode<
-    LocalSchedule_GetScheduleQuery,
-    LocalSchedule_GetScheduleQueryVariables
-> = {
+} as unknown as DocumentNode<LocalSchedule_GetEventScheduleQuery, LocalSchedule_GetEventScheduleQueryVariables>;
+export const LocalSchedule_GetScheduleDocument = {
     kind: "Document",
     definitions: [
         {
@@ -36934,11 +36797,8 @@ export const LocalSchedule_GetScheduleDocument: DocumentNode<
         },
         ...LocalSchedule_EventDetailsFragmentDoc.definitions,
     ],
-};
-export const ScheduleService_UpdateRtmpInputsDocument: DocumentNode<
-    ScheduleService_UpdateRtmpInputsMutation,
-    ScheduleService_UpdateRtmpInputsMutationVariables
-> = {
+} as unknown as DocumentNode<LocalSchedule_GetScheduleQuery, LocalSchedule_GetScheduleQueryVariables>;
+export const ScheduleService_UpdateRtmpInputsDocument = {
     kind: "Document",
     definitions: [
         {
@@ -37100,11 +36960,11 @@ export const ScheduleService_UpdateRtmpInputsDocument: DocumentNode<
             },
         },
     ],
-};
-export const LocalSchedule_GetRoomsWithEventsStartingDocument: DocumentNode<
-    LocalSchedule_GetRoomsWithEventsStartingQuery,
-    LocalSchedule_GetRoomsWithEventsStartingQueryVariables
-> = {
+} as unknown as DocumentNode<
+    ScheduleService_UpdateRtmpInputsMutation,
+    ScheduleService_UpdateRtmpInputsMutationVariables
+>;
+export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
     kind: "Document",
     definitions: [
         {
@@ -37289,11 +37149,11 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument: DocumentNode<
             },
         },
     ],
-};
-export const LocalSchedule_GetRoomsWithoutEventsDocument: DocumentNode<
-    LocalSchedule_GetRoomsWithoutEventsQuery,
-    LocalSchedule_GetRoomsWithoutEventsQueryVariables
-> = {
+} as unknown as DocumentNode<
+    LocalSchedule_GetRoomsWithEventsStartingQuery,
+    LocalSchedule_GetRoomsWithEventsStartingQueryVariables
+>;
+export const LocalSchedule_GetRoomsWithoutEventsDocument = {
     kind: "Document",
     definitions: [
         {
@@ -37581,11 +37441,11 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument: DocumentNode<
             },
         },
     ],
-};
-export const LocalSchedule_GetEventDocument: DocumentNode<
-    LocalSchedule_GetEventQuery,
-    LocalSchedule_GetEventQueryVariables
-> = {
+} as unknown as DocumentNode<
+    LocalSchedule_GetRoomsWithoutEventsQuery,
+    LocalSchedule_GetRoomsWithoutEventsQueryVariables
+>;
+export const LocalSchedule_GetEventDocument = {
     kind: "Document",
     definitions: [
         {
@@ -37624,11 +37484,8 @@ export const LocalSchedule_GetEventDocument: DocumentNode<
         },
         ...LocalSchedule_EventFragmentDoc.definitions,
     ],
-};
-export const VonageService_FindEventsWithMissingVonageSessionDocument: DocumentNode<
-    VonageService_FindEventsWithMissingVonageSessionQuery,
-    VonageService_FindEventsWithMissingVonageSessionQueryVariables
-> = {
+} as unknown as DocumentNode<LocalSchedule_GetEventQuery, LocalSchedule_GetEventQueryVariables>;
+export const VonageService_FindEventsWithMissingVonageSessionDocument = {
     kind: "Document",
     definitions: [
         {
@@ -37698,11 +37555,11 @@ export const VonageService_FindEventsWithMissingVonageSessionDocument: DocumentN
             },
         },
     ],
-};
-export const VonageService_CreateEventVonageSessionDocument: DocumentNode<
-    VonageService_CreateEventVonageSessionMutation,
-    VonageService_CreateEventVonageSessionMutationVariables
-> = {
+} as unknown as DocumentNode<
+    VonageService_FindEventsWithMissingVonageSessionQuery,
+    VonageService_FindEventsWithMissingVonageSessionQueryVariables
+>;
+export const VonageService_CreateEventVonageSessionDocument = {
     kind: "Document",
     definitions: [
         {
@@ -37786,4 +37643,7 @@ export const VonageService_CreateEventVonageSessionDocument: DocumentNode<
             },
         },
     ],
-};
+} as unknown as DocumentNode<
+    VonageService_CreateEventVonageSessionMutation,
+    VonageService_CreateEventVonageSessionMutationVariables
+>;

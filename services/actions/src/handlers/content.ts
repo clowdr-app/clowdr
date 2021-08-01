@@ -207,7 +207,7 @@ async function trySendTranscriptionEmail(elementId: string) {
             throw new Error("Could not find Element while sending");
         }
 
-        const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
+        const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
         let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
             element.conference.id,
@@ -289,7 +289,7 @@ async function trySendTranscriptionFailedEmail(elementId: string, elementName: s
 
     const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
 
-    const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
+    const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
     const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
@@ -357,7 +357,7 @@ async function trySendTranscodeFailedEmail(elementId: string, elementName: strin
 
     const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
 
-    const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
+    const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
     const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>

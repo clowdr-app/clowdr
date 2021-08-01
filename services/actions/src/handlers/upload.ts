@@ -598,7 +598,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
             emailTemplates = null;
         }
 
-        const uploadLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
+        const uploadLink = `{[FRONTEND_HOST]}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
 
         const view: EmailView_SubmissionRequest = {
             uploader: {

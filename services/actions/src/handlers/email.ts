@@ -36,6 +36,17 @@ gql`
             key
             value
         }
+
+        frontendHost: conference_Configuration(
+            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: FRONTEND_HOST } }
+        ) @include(if: $includeConferenceFields) {
+            key
+            value
+        }
+        defaultFrontendHost: system_Configuration_by_pk(key: DEFAULT_FRONTEND_HOST) {
+            key
+            value
+        }
     }
 
     mutation InsertEmails($objects: [Email_insert_input!]!) {
@@ -61,6 +72,9 @@ export async function insertEmails(
     const techSupportAddress = configResponse.data.techSupport?.length
         ? configResponse?.data.techSupport[0].value
         : undefined;
+    const frontendHost = configResponse.data.frontendHost?.length
+        ? configResponse.data.frontendHost[0].value
+        : configResponse.data.defaultFrontendHost?.value ?? "Error: Host not configured";
 
     const hostOrganisationName = configResponse.data.hostOrganisationName?.value;
     const stopEmailsAddress = configResponse.data.stopEmails?.value;
@@ -81,7 +95,8 @@ export async function insertEmails(
     const emailsToInsert = emails
         .filter((email) => email.htmlContents)
         .map((email) => {
-            const htmlContents = email.htmlContents as string;
+            const initialHtmlContents = email.htmlContents as string;
+            const htmlContents = initialHtmlContents.replace(/\{\[FRONTEND_HOST\]\}/g, frontendHost);
             return {
                 ...email,
                 htmlContents: htmlContents + "\n" + addedHTML,

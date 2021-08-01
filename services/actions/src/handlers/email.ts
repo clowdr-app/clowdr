@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import { htmlToText } from "html-to-text";
+import wcmatch from "wildcard-match";
 import {
     ConferenceEmailConfigurationDocument,
     Email_Insert_Input,
@@ -47,6 +48,10 @@ gql`
             key
             value
         }
+        allowEmailsToDomains: system_Configuration_by_pk(key: ALLOW_EMAILS_TO_DOMAINS) {
+            key
+            value
+        }
     }
 
     mutation InsertEmails($objects: [Email_insert_input!]!) {
@@ -75,6 +80,23 @@ export async function insertEmails(
     const frontendHost = configResponse.data.frontendHost?.length
         ? configResponse.data.frontendHost[0].value
         : configResponse.data.defaultFrontendHost?.value ?? "Error: Host not configured";
+    let allowedDomains: string[] = configResponse.data.allowEmailsToDomains?.value;
+    if (!allowedDomains) {
+        allowedDomains = [];
+        console.error("Error! Allowed domains is misconfigured - value is not defined");
+    }
+    if (!(allowedDomains instanceof Array)) {
+        allowedDomains = [];
+        console.error("Error! Allowed domains is misconfigured - value is not an array");
+    }
+    if (!allowedDomains.every((x) => typeof x === "string")) {
+        allowedDomains = [];
+        console.error("Error! Allowed domains is misconfigured - array elements are not strings");
+    }
+    if (allowedDomains.length === 0) {
+        console.error("Error! Allowed domains is misconfigured - array is empty");
+    }
+    const allowedDomainMatches = allowedDomains.map((x) => wcmatch(x));
 
     const hostOrganisationName = configResponse.data.hostOrganisationName?.value;
     const stopEmailsAddress = configResponse.data.stopEmails?.value;
@@ -93,7 +115,12 @@ export async function insertEmails(
     const addedText = htmlToText(addedHTML);
 
     const emailsToInsert = emails
-        .filter((email) => email.htmlContents)
+        .filter(
+            (email) =>
+                !!email.htmlContents &&
+                email.emailAddress &&
+                allowedDomainMatches.some((f) => email.emailAddress && f(email.emailAddress))
+        )
         .map((email) => {
             const initialHtmlContents = email.htmlContents as string;
             const htmlContents = initialHtmlContents.replace(/\{\[FRONTEND_HOST\]\}/g, frontendHost);
@@ -103,6 +130,11 @@ export async function insertEmails(
                 plainTextContents: (email.plainTextContents ?? htmlToText(htmlContents)) + "\n" + addedText,
             };
         });
+    if (emailsToInsert.length < emails.length) {
+        console.info(
+            `${emailsToInsert.length} of ${emails.length} are being sent. Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly.`
+        );
+    }
 
     console.log(`Queuing ${emailsToInsert.length} emails to send`);
     const r = await apolloClient.mutate({

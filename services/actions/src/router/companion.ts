@@ -14,13 +14,13 @@ assert(
 );
 assert(process.env.AWS_REGION, "AWS_REGION environment variable not provided.");
 assert(process.env.AWS_CONTENT_BUCKET_ID, "AWS_CONTENT_BUCKET_ID environment variable not provided.");
+assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
 export const router = express.Router();
 
 router.use(
     cors({
-        // TODO: CORS_ORIGIN
-        origin: "*",
+        origin: process.env.CORS_ORIGIN.split(","),
     })
 );
 router.use(json());

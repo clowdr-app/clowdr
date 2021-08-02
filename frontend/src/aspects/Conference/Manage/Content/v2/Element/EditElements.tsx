@@ -17,7 +17,6 @@ import React, { useMemo } from "react";
 import type {
     ManageContent_ElementFragment,
     ManageContent_ItemSecondaryFragment,
-    ManageContent_UploadableElementFragment,
 } from "../../../../../../generated/graphql";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { EditItemPeoplePanel } from "../Item/EditItemPeople";
@@ -26,7 +25,6 @@ import { EditElement } from "./EditElement";
 export function EditElements({
     itemId,
     elements,
-    uploadableElements,
     originatingData,
     refetchElements,
     defaultOpenSecurityForId,
@@ -40,17 +38,13 @@ export function EditElements({
     openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
 } & Partial<ManageContent_ItemSecondaryFragment> & {
         elements: readonly ManageContent_ElementFragment[];
-        uploadableElements: readonly ManageContent_UploadableElementFragment[];
     }): JSX.Element {
     const sortedElements = useMemo(() => {
-        const sortedElements: (ManageContent_ElementFragment | ManageContent_UploadableElementFragment)[] = [
-            ...elements,
-            ...uploadableElements,
-        ];
+        const sortedElements: ManageContent_ElementFragment[] = [...elements];
 
         sortedElements.sort((a, b) => {
-            const layoutA = "layoutData" in a ? a.layoutData : "element" in a ? a.element?.layoutData : undefined;
-            const layoutB = "layoutData" in b ? b.layoutData : "element" in b ? b.element?.layoutData : undefined;
+            const layoutA = a.layoutData;
+            const layoutB = b.layoutData;
 
             if (layoutA && layoutB) {
                 if (!("priority" in layoutA) && !("priority" in layoutB)) {
@@ -75,7 +69,7 @@ export function EditElements({
         });
 
         return sortedElements;
-    }, [elements, uploadableElements]);
+    }, [elements]);
 
     const bgColor = useColorModeValue("gray.100", "gray.800");
 

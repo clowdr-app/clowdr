@@ -56,7 +56,15 @@ export default function LeftMenu(): JSX.Element {
         schedule_OnClose();
         socialise_OnClose();
         myBackstages_OnClose();
-    }, [location.pathname, liveNow_OnClose, schedule_OnClose, socialise_OnClose, myBackstages_OnClose]);
+        myStarredEvents_OnClose();
+    }, [
+        location.pathname,
+        liveNow_OnClose,
+        schedule_OnClose,
+        socialise_OnClose,
+        myBackstages_OnClose,
+        myStarredEvents_OnClose,
+    ]);
 
     const roomParticipants = useRoomParticipants();
 

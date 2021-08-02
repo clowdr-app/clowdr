@@ -1,4 +1,5 @@
 import assert from "assert";
+import cors from "cors";
 import express from "express";
 import path from "path";
 import { router as chatRouter } from "../http-routers/chat";
@@ -14,6 +15,11 @@ assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
 const PORT = process.env.PORT || 3002;
 const server = express();
+server.use(
+    cors({
+        origin: process.env.CORS_ORIGIN.split(","),
+    })
+);
 
 server.use(presenceRouter);
 server.use("/test", testRouter);

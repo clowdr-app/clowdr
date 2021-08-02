@@ -11,6 +11,7 @@ import {
     CompleteUploadYouTubeVideoJobDocument,
     CreateYouTubeUploadDocument,
     FailUploadYouTubeVideoJobDocument,
+    GoogleOAuth_ConferenceConfig_FrontendHostDocument,
     Google_CreateRegistrantGoogleAccountDocument,
     MarkAndSelectNewUploadYouTubeVideoJobsDocument,
     SelectNewUploadYouTubeVideoJobsDocument,
@@ -24,11 +25,37 @@ import { createOAuth2Client, GoogleIdToken } from "../lib/googleAuth";
 import { callWithRetry } from "../utils";
 import { handleRefreshYouTubeData } from "./registrantGoogleAccount";
 
-assert(process.env.FRONTEND_DOMAIN, "FRONTEND_DOMAIN environment variable not provided.");
-process.env.FRONTEND_PROTOCOL =
-    process.env.FRONTEND_PROTOCOL || (process.env.FRONTEND_DOMAIN.startsWith("localhost") ? "http" : "https");
+gql`
+    query GoogleOAuth_ConferenceConfig_FrontendHost($registrantId: uuid!) {
+        registrant: registrant_Registrant_by_pk(id: $registrantId) {
+            conference {
+                frontendHost: configurations(where: { key: { _eq: FRONTEND_HOST } }) {
+                    value
+                }
+            }
+        }
+
+        defaultFrontendHost: system_Configuration_by_pk(key: DEFAULT_FRONTEND_HOST) {
+            key
+            value
+        }
+    }
+`;
 
 export async function handleGetGoogleOAuthUrl(params: getGoogleOAuthUrlArgs): Promise<GetGoogleOAuthUrlOutput> {
+    const configResponse = await apolloClient.query({
+        query: GoogleOAuth_ConferenceConfig_FrontendHostDocument,
+        variables: {
+            registrantId: params.registrantId,
+        },
+    });
+    const frontendHost = configResponse.data.registrant?.conference.frontendHost?.length
+        ? configResponse.data.registrant?.conference.frontendHost[0].value
+        : configResponse.data.defaultFrontendHost?.value;
+    if (!frontendHost) {
+        throw new Error("Frontend host not configured!");
+    }
+
     const oauth2Client = createOAuth2Client();
 
     const url = oauth2Client.generateAuthUrl({
@@ -37,7 +64,7 @@ export async function handleGetGoogleOAuthUrl(params: getGoogleOAuthUrlArgs): Pr
         include_granted_scopes: true,
         state: params.registrantId,
         prompt: "select_account",
-        redirect_uri: `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/googleoauth`,
+        redirect_uri: `${frontendHost}/googleoauth`,
     });
 
     return {
@@ -77,13 +104,26 @@ export async function handleSubmitGoogleOAuthToken(
         const validRegistrant = await registrantBelongsToUser(params.state, userId);
         assert(validRegistrant, "Registrant does not belong to the user");
 
+        const configResponse = await apolloClient.query({
+            query: GoogleOAuth_ConferenceConfig_FrontendHostDocument,
+            variables: {
+                registrantId: validRegistrant.id,
+            },
+        });
+        const frontendHost = configResponse.data.registrant?.conference.frontendHost?.length
+            ? configResponse.data.registrant?.conference.frontendHost[0].value
+            : configResponse.data.defaultFrontendHost?.value;
+        if (!frontendHost) {
+            throw new Error("Frontend host not configured!");
+        }
+
         const oauth2Client = createOAuth2Client();
 
         console.log(params.code);
         const token = await oauth2Client.getToken({
             code: params.code,
             client_id: process.env.GOOGLE_CLIENT_ID,
-            redirect_uri: `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/googleoauth`,
+            redirect_uri: `${frontendHost}/googleoauth`,
         });
 
         if (!token.tokens.id_token) {

@@ -1,0 +1,1 @@
+INSERT INTO "conference"."ConfigurationKey"("name", "description") VALUES (E'TECH_SUPPORT_ADDRESS', E'A string representing a valid email address for contacting the service hosting company for technical support related to the conference.');

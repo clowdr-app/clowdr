@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import { htmlToText } from "html-to-text";
+import wcmatch from "wildcard-match";
 import {
     ConferenceEmailConfigurationDocument,
     Email_Insert_Input,
@@ -17,16 +18,14 @@ import { callWithRetry } from "../utils";
 gql`
     query ConferenceEmailConfiguration($conferenceId: uuid, $includeConferenceFields: Boolean!) {
         support: conference_Configuration(
-            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: "SUPPORT_ADDRESS" } }
+            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: SUPPORT_ADDRESS } }
         ) @include(if: $includeConferenceFields) {
-            id
             key
             value
         }
         techSupport: conference_Configuration(
-            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: "TECH_SUPPORT_ADDRESS" } }
+            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: TECH_SUPPORT_ADDRESS } }
         ) @include(if: $includeConferenceFields) {
-            id
             key
             value
         }
@@ -35,6 +34,21 @@ gql`
             value
         }
         stopEmails: system_Configuration_by_pk(key: STOP_EMAILS_CONTACT_EMAIL_ADDRESS) {
+            key
+            value
+        }
+
+        frontendHost: conference_Configuration(
+            where: { conferenceId: { _eq: $conferenceId }, key: { _eq: FRONTEND_HOST } }
+        ) @include(if: $includeConferenceFields) {
+            key
+            value
+        }
+        defaultFrontendHost: system_Configuration_by_pk(key: DEFAULT_FRONTEND_HOST) {
+            key
+            value
+        }
+        allowEmailsToDomains: system_Configuration_by_pk(key: ALLOW_EMAILS_TO_DOMAINS) {
             key
             value
         }
@@ -63,6 +77,26 @@ export async function insertEmails(
     const techSupportAddress = configResponse.data.techSupport?.length
         ? configResponse?.data.techSupport[0].value
         : undefined;
+    const frontendHost = configResponse.data.frontendHost?.length
+        ? configResponse.data.frontendHost[0].value
+        : configResponse.data.defaultFrontendHost?.value ?? "Error: Host not configured";
+    let allowedDomains: string[] = configResponse.data.allowEmailsToDomains?.value;
+    if (!allowedDomains) {
+        allowedDomains = [];
+        console.error("Error! Allowed domains is misconfigured - value is not defined");
+    }
+    if (!(allowedDomains instanceof Array)) {
+        allowedDomains = [];
+        console.error("Error! Allowed domains is misconfigured - value is not an array");
+    }
+    if (!allowedDomains.every((x) => typeof x === "string")) {
+        allowedDomains = [];
+        console.error("Error! Allowed domains is misconfigured - array elements are not strings");
+    }
+    if (allowedDomains.length === 0) {
+        console.error("Error! Allowed domains is misconfigured - array is empty");
+    }
+    const allowedDomainMatches = allowedDomains.map((x) => wcmatch(x));
 
     const hostOrganisationName = configResponse.data.hostOrganisationName?.value;
     const stopEmailsAddress = configResponse.data.stopEmails?.value;
@@ -81,17 +115,28 @@ export async function insertEmails(
     const addedText = htmlToText(addedHTML);
 
     const emailsToInsert = emails
-        .filter((email) => email.htmlContents)
+        .filter(
+            (email) =>
+                !!email.htmlContents &&
+                email.emailAddress &&
+                allowedDomainMatches.some((f) => email.emailAddress && f(email.emailAddress))
+        )
         .map((email) => {
-            const htmlContents = email.htmlContents as string;
+            const initialHtmlContents = email.htmlContents as string;
+            const htmlContents = initialHtmlContents.replace(/\{\[FRONTEND_HOST\]\}/g, frontendHost);
             return {
                 ...email,
                 htmlContents: htmlContents + "\n" + addedHTML,
                 plainTextContents: (email.plainTextContents ?? htmlToText(htmlContents)) + "\n" + addedText,
             };
         });
+    if (emailsToInsert.length < emails.length) {
+        console.info(
+            `${emailsToInsert.length} of ${emails.length} are being sent. Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly.`
+        );
+    }
 
-    console.log(`Queuing ${emails.length} emails to send`);
+    console.log(`Queuing ${emailsToInsert.length} emails to send`);
     const r = await apolloClient.mutate({
         mutation: InsertEmailsDocument,
         variables: {

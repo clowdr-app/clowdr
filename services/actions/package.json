@@ -4,7 +4,7 @@
     "description": "Action handlers",
     "main": "build/server.js",
     "scripts": {
-        "build": "npm run build-shared && npm run gql-cdg && npm run build-this",
+        "build": "npm run build-shared && npm run build-this",
         "build-this": "ttsc",
         "build-shared": "npm run --prefix=../../ --workspace=shared build",
         "start": "node build/server.js",
@@ -101,6 +101,7 @@
         "typescript": "^4.3.5",
         "typescript-is": "^0.18.3",
         "uuid": "^8.3.2",
+        "wildcard-match": "^5.1.2",
         "word-wrap": "^1.2.3"
     },
     "devDependencies": {

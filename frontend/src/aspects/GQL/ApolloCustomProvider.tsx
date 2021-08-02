@@ -99,6 +99,9 @@ async function createApolloClient(
             registrant_Profile: {
                 keyFields: ["registrantId"],
             },
+            conference_Configuration: {
+                keyFields: ["key", "conferenceId"],
+            },
         },
     });
 

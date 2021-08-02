@@ -222,7 +222,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                     fontWeight="thin"
                     marginBottom="2rem"
                 >
-                    Welcome to Clowdr
+                    Sign up to Clowdr
                 </Heading>
                 <Heading as="h2" fontSize="2.25rem" lineHeight="2.75rem" fontWeight="thin">
                     You&apos;re almost ready to join your conference.
@@ -238,11 +238,8 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                             </HStack>
                             <VStack alignItems="flex-start">
                                 <Text fontSize="lg">
-                                    <chakra.span fontWeight="bold">Sign up to a Clowdr account</chakra.span> or log into
-                                    an existing one.
-                                </Text>
-                                <Text fontSize="sm">
-                                    When you sign up you will be asked to confirm your email address.
+                                    <chakra.span fontWeight="bold">Sign up for a Clowdr account</chakra.span> or log
+                                    into an existing one.
                                 </Text>
                             </VStack>
                         </HStack>
@@ -260,7 +257,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                                     Use your invite code
                                 </Text>
                                 <Text fontSize="sm">
-                                    After confirming your email address, you&apos;ll be asked for your invite code.
+                                    After confirming your email address, you may be asked for your invite code.
                                 </Text>
                             </VStack>
                         </HStack>

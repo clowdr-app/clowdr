@@ -16,7 +16,7 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.Divider,
         Content_ElementType_Enum.SponsorBooths,
     ],
-    createDefault: (type, _required) => {
+    createDefault: (type, conferenceId, itemId) => {
         assert(
             type === Content_ElementType_Enum.ContentGroupList ||
                 type === Content_ElementType_Enum.WholeSchedule ||
@@ -34,39 +34,37 @@ export const ComponentElementTemplate: ElementBaseTemplate = {
             .split("_")
             .reduce((acc, x) => `${acc} ${x}`);
         return {
-            type: "element-only",
-            element: {
-                __typename: "content_Element",
-                updatedAt: new Date().toISOString(),
-                id: uuidv4(),
-                name: nameStr[0].toUpperCase() + nameStr.substr(1),
-                typeName: type,
-                isHidden: false,
-                data: [],
-                layoutData: null,
-            },
+            __typename: "content_Element",
+            conferenceId,
+            itemId,
+            updatedAt: new Date().toISOString(),
+            id: uuidv4(),
+            name: nameStr[0].toUpperCase() + nameStr.substr(1),
+            typeName: type,
+            isHidden: false,
+            data: [],
+            layoutData: null,
+            uploadsRemaining: null,
         };
     },
     renderEditor: function LinkElementEditor({ data }: RenderEditorProps) {
-        if (data.type === "element-only" || data.type === "required-and-element") {
-            if (
-                !(
-                    data.element.typeName === Content_ElementType_Enum.ContentGroupList ||
-                    data.element.typeName === Content_ElementType_Enum.WholeSchedule ||
-                    data.element.typeName === Content_ElementType_Enum.LiveProgramRooms ||
-                    data.element.typeName === Content_ElementType_Enum.ActiveSocialRooms ||
-                    data.element.typeName === Content_ElementType_Enum.Divider ||
-                    data.element.typeName === Content_ElementType_Enum.SponsorBooths ||
-                    data.element.typeName === Content_ElementType_Enum.ExploreProgramButton ||
-                    data.element.typeName === Content_ElementType_Enum.ExploreScheduleButton
-                )
-            ) {
-                return <>Component Element Template mistakenly used for type {data.type}.</>;
-            }
+        if (
+            !(
+                data.typeName === Content_ElementType_Enum.ContentGroupList ||
+                data.typeName === Content_ElementType_Enum.WholeSchedule ||
+                data.typeName === Content_ElementType_Enum.LiveProgramRooms ||
+                data.typeName === Content_ElementType_Enum.ActiveSocialRooms ||
+                data.typeName === Content_ElementType_Enum.Divider ||
+                data.typeName === Content_ElementType_Enum.SponsorBooths ||
+                data.typeName === Content_ElementType_Enum.ExploreProgramButton ||
+                data.typeName === Content_ElementType_Enum.ExploreScheduleButton
+            )
+        ) {
+            return <>Component Element Template mistakenly used for type {data.typeName}.</>;
         }
         return <></>;
     },
     renderEditorHeading: function LinkElementEditorHeading(data) {
-        return <>{data.type === "element-only" ? data.element.name : data.uploadableElement.name}</>;
+        return <>{data.name}</>;
     },
 };

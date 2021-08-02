@@ -3,12 +3,14 @@ import {
     ActiveShufflePeriodFragment,
     ActiveShuffleRoomFragment,
     AddPeopleToExistingShuffleRoomDocument,
+    ExpireShuffleQueueEntriesDocument,
     InsertManagedRoomDocument,
     InsertShuffleRoomDocument,
     Room_PersonRole_Enum,
     Room_ShuffleAlgorithm_Enum,
     SelectActiveShufflePeriodsDocument,
     SelectShufflePeriodDocument,
+    SetAutoPinOnManagedRoomDocument,
     SetShuffleRoomsEndedDocument,
     UnallocatedShuffleQueueEntryFragment,
 } from "../generated/graphql";
@@ -53,7 +55,7 @@ gql`
         waitRoomMaxDurationSeconds
         algorithm
         unallocatedQueueEntries: queueEntries(
-            where: { allocatedShuffleRoomId: { _is_null: true } }
+            where: { allocatedShuffleRoomId: { _is_null: true }, isExpired: { _eq: false } }
             order_by: { id: asc }
         ) {
             ...UnallocatedShuffleQueueEntry
@@ -94,6 +96,18 @@ gql`
         }
     }
 
+    mutation ExpireShuffleQueueEntries($queueEntryIds: [bigint!]!) {
+        update_room_ShuffleQueueEntry(
+            where: { id: { _in: $queueEntryIds }, allocatedShuffleRoomId: { _is_null: true } }
+            _set: { isExpired: true }
+        ) {
+            affected_rows
+            returning {
+                id
+            }
+        }
+    }
+
     mutation InsertShuffleRoom(
         $durationMinutes: Int!
         $reshuffleUponEnd: Boolean!
@@ -126,6 +140,12 @@ gql`
             }
         ) {
             id
+        }
+    }
+
+    mutation SetAutoPinOnManagedRoom($roomId: uuid!) {
+        update_chat_Chat(where: { rooms: { id: { _eq: $roomId } } }, _set: { enableAutoPin: true }) {
+            affected_rows
         }
     }
 
@@ -194,6 +214,13 @@ async function allocateToNewRoom(
     if (!managedRoom.data?.insert_room_Room_one) {
         throw new Error("Could not insert a new managed room for shuffle space! Room came back null.");
     }
+
+    await apolloClient.mutate({
+        mutation: SetAutoPinOnManagedRoomDocument,
+        variables: {
+            roomId: managedRoom.data.insert_room_Room_one.id,
+        },
+    });
 
     const startedAt = new Date().toISOString();
     const shuffleRoom = await apolloClient.mutate({
@@ -347,6 +374,24 @@ async function attemptToMatchEntries(
             }
         }
     }
+
+    // Expire unallocated entries that have been waiting too long
+    const now = Date.now();
+    const expiredIds: string[] = [];
+    unallocatedQueueEntries.forEach((entry) => {
+        const enteredAt = Date.parse(entry.created_at);
+        const expiresAt = enteredAt + activePeriod.waitRoomMaxDurationSeconds * 1000;
+        if (expiresAt < now) {
+            // Unmatched and past the time limit.
+            expiredIds.push(entry.id);
+        }
+    });
+    await apolloClient.mutate({
+        mutation: ExpireShuffleQueueEntriesDocument,
+        variables: {
+            queueEntryIds: expiredIds,
+        },
+    });
 }
 
 async function processShufflePeriod(period: ActiveShufflePeriodFragment, entryIds: number[]) {

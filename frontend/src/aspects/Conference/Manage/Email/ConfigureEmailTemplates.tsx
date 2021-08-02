@@ -17,7 +17,6 @@ import {
     Textarea,
 } from "@chakra-ui/react";
 import {
-    ConferenceConfigurationKey,
     EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
@@ -28,6 +27,7 @@ import {
 } from "@clowdr-app/shared-types/build/email";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
+    Conference_ConfigurationKey_Enum,
     ConfigureEmailTemplates_ConferenceConfigurationFragment,
     ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc,
     useConfigureEmailTemplates_GetConferenceConfigurationsQuery,
@@ -44,7 +44,6 @@ gql`
     }
 
     fragment ConfigureEmailTemplates_ConferenceConfiguration on conference_Configuration {
-        id
         conferenceId
         key
         value
@@ -53,13 +52,15 @@ gql`
     mutation ConfigureEmailTemplates_UpdateConferenceConfiguration(
         $value: jsonb!
         $conferenceId: uuid!
-        $key: String!
+        $key: conference_ConfigurationKey_enum!
     ) {
         insert_conference_Configuration_one(
             object: { value: $value, conferenceId: $conferenceId, key: $key }
-            on_conflict: { constraint: Configuration_conferenceId_key_key, update_columns: value }
+            on_conflict: { constraint: Configuration_pkey, update_columns: value }
         ) {
-            id
+            conferenceId
+            key
+            value
         }
     }
 `;
@@ -95,32 +96,30 @@ export function ConfigureEmailTemplatesInner({
     const emailTemplateConfig_SubtitlesGenerated = useMemo<EmailTemplate_BaseConfig | null>(() => {
         const conferenceConfiguration =
             conferenceConfigurations.find(
-                (c) => c.key === ConferenceConfigurationKey.EmailTemplate_SubtitlesGenerated
+                (c) => c.key === Conference_ConfigurationKey_Enum.EmailTemplateSubtitlesGenerated
             ) ?? null;
         if (!conferenceConfiguration || !isEmailTemplate_BaseConfig(conferenceConfiguration.value)) {
             return null;
         }
-        return (conferenceConfiguration.value as unknown) as EmailTemplate_BaseConfig;
+        return conferenceConfiguration.value as unknown as EmailTemplate_BaseConfig;
     }, [conferenceConfigurations]);
 
     const emailTemplateConfig_SubmissionRequest = useMemo<EmailTemplate_BaseConfig | null>(() => {
         const conferenceConfiguration =
             conferenceConfigurations.find(
-                (c) => c.key === ConferenceConfigurationKey.EmailTemplate_SubmissionRequest
+                (c) => c.key === Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
             ) ?? null;
         if (!conferenceConfiguration || !isEmailTemplate_BaseConfig(conferenceConfiguration.value)) {
             return null;
         }
-        return (conferenceConfiguration.value as unknown) as EmailTemplate_BaseConfig;
+        return conferenceConfiguration.value as unknown as EmailTemplate_BaseConfig;
     }, [conferenceConfigurations]);
 
-    const [
-        updateConferenceConfiguration,
-        updateConferenceConfigurationResponse,
-    ] = useConfigureEmailTemplates_UpdateConferenceConfigurationMutation();
+    const [updateConferenceConfiguration, updateConferenceConfigurationResponse] =
+        useConfigureEmailTemplates_UpdateConferenceConfigurationMutation();
 
     const update = useCallback(
-        (key: string) => (newValue: EmailTemplate_BaseConfig) => {
+        (key: Conference_ConfigurationKey_Enum) => (newValue: EmailTemplate_BaseConfig) => {
             updateConferenceConfiguration({
                 variables: {
                     conferenceId: conference.id,
@@ -129,9 +128,7 @@ export function ConfigureEmailTemplatesInner({
                 },
                 update: (cache, { data: _data }) => {
                     if (_data?.insert_conference_Configuration_one) {
-                        const data = _data.insert_conference_Configuration_one;
                         const item: ConfigureEmailTemplates_ConferenceConfigurationFragment = {
-                            id: data.id,
                             conferenceId: conference.id,
                             key,
                             __typename: "conference_Configuration",
@@ -166,7 +163,7 @@ export function ConfigureEmailTemplatesInner({
                         <EmailTemplateForm
                             templateConfig={emailTemplateConfig_SubmissionRequest}
                             templateDefaults={EMAIL_TEMPLATE_SUBMISSION_REQUEST}
-                            update={update(ConferenceConfigurationKey.EmailTemplate_SubmissionRequest)}
+                            update={update(Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest)}
                         />
                     </AccordionPanel>
                 </AccordionItem>
@@ -183,7 +180,7 @@ export function ConfigureEmailTemplatesInner({
                         <EmailTemplateForm
                             templateConfig={emailTemplateConfig_SubtitlesGenerated}
                             templateDefaults={EMAIL_TEMPLATE_SUBTITLES_GENERATED}
-                            update={update(ConferenceConfigurationKey.EmailTemplate_SubtitlesGenerated)}
+                            update={update(Conference_ConfigurationKey_Enum.EmailTemplateSubtitlesGenerated)}
                         />
                     </AccordionPanel>
                 </AccordionItem>

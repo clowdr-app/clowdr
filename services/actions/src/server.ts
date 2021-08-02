@@ -1,5 +1,6 @@
 import assert from "assert";
 import { json } from "body-parser";
+import cors from "cors";
 import express, { Request, Response } from "express";
 import { AuthenticatedRequest } from "./checkScopes";
 import {
@@ -41,18 +42,21 @@ if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN environment variable not provided.");
     assert(process.env.AUTH0_AUDIENCE, "AUTH0_AUDIENCE environment variable not provided.");
     assert(process.env.AUTH0_ISSUER_DOMAIN, "AUTH0_ISSUER_DOMAIN environment variable not provided.");
-
-    assert(process.env.FRONTEND_DOMAIN, "FRONTEND_DOMAIN environment variable not provided.");
-    process.env.FRONTEND_PROTOCOL =
-        process.env.FRONTEND_PROTOCOL || (process.env.FRONTEND_DOMAIN.startsWith("localhost") ? "http" : "https");
 }
 
 assert(
     process.env.EVENT_SECRET,
     "EVENT_SECRET (x-hasura-event-secret custom session variable) environment variable not provided."
 );
+assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
 export const app: express.Application = express();
+
+app.use(
+    cors({
+        origin: process.env.CORS_ORIGIN.split(","),
+    })
+);
 
 app.use("/companion", companionRouter);
 app.use("/mediaConvert", mediaConvertRouter);

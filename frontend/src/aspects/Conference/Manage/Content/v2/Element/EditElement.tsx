@@ -23,16 +23,12 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
     ManageContent_ElementFragment,
     ManageContent_ElementFragmentDoc,
-    ManageContent_UploadableElementFragment,
-    ManageContent_UploadableElementFragmentDoc,
     useManageContent_DeleteElementMutation,
-    useManageContent_DeleteUploadableElementMutation,
     useManageContent_UpdateElementMutation,
-    useManageContent_UpdateUploadableElementMutation,
 } from "../../../../../../generated/graphql";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
@@ -52,23 +48,6 @@ gql`
     }
 `;
 
-gql`
-    mutation ManageContent_DeleteUploadableElement($uploadableElementId: uuid!) {
-        delete_content_UploadableElement_by_pk(id: $uploadableElementId) {
-            id
-        }
-    }
-
-    mutation ManageContent_UpdateUploadableElement(
-        $uploadableElementId: uuid!
-        $uploadableElement: content_UploadableElement_set_input!
-    ) {
-        update_content_UploadableElement_by_pk(pk_columns: { id: $uploadableElementId }, _set: $uploadableElement) {
-            ...ManageContent_UploadableElement
-        }
-    }
-`;
-
 export function EditElement({
     element,
     idx,
@@ -78,10 +57,10 @@ export function EditElement({
     defaultOpenSecurity,
     openSendSubmissionRequests,
 }: {
-    element: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
+    element: ManageContent_ElementFragment | ManageContent_ElementFragment;
     idx: number;
-    previousElement?: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
-    nextElement?: ManageContent_ElementFragment | ManageContent_UploadableElementFragment;
+    previousElement?: ManageContent_ElementFragment | ManageContent_ElementFragment;
+    nextElement?: ManageContent_ElementFragment | ManageContent_ElementFragment;
     refetchElements: () => void;
     defaultOpenSecurity: boolean;
     openSendSubmissionRequests: (uploaderIds: string[]) => void;
@@ -128,52 +107,6 @@ export function EditElement({
         },
     });
 
-    const [updateUploadableElement, updateUploadableElementResponse] = useManageContent_UpdateUploadableElementMutation(
-        {
-            update: (cache, response) => {
-                if (response.data?.update_content_UploadableElement_by_pk) {
-                    const data = response.data.update_content_UploadableElement_by_pk;
-                    cache.modify({
-                        fields: {
-                            content_UploadableElement(existingRefs: Reference[] = [], { readField }) {
-                                const newRef = cache.writeFragment({
-                                    data,
-                                    fragment: ManageContent_UploadableElementFragmentDoc,
-                                    fragmentName: "ManageContent_UploadableElement",
-                                });
-                                if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                    return existingRefs;
-                                }
-                                return [...existingRefs, newRef];
-                            },
-                        },
-                    });
-                }
-            },
-        }
-    );
-    const [deleteUploadableElement, deleteUploadableElementResponse] = useManageContent_DeleteUploadableElementMutation(
-        {
-            update: (cache, { data: _data }) => {
-                if (_data?.delete_content_UploadableElement_by_pk) {
-                    const data = _data.delete_content_UploadableElement_by_pk;
-                    cache.modify({
-                        fields: {
-                            content_UploadableElement(existingRefs: Reference[] = [], { readField }) {
-                                cache.evict({
-                                    id: data.id,
-                                    fieldName: "ManageContent_UploadableElementFragment",
-                                    broadcast: true,
-                                });
-                                return existingRefs.filter((ref) => data.id !== readField("id", ref));
-                            },
-                        },
-                    });
-                }
-            },
-        }
-    );
-
     const toast = useToast();
 
     const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
@@ -186,33 +119,11 @@ export function EditElement({
     } = useDisclosure();
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    const actualElement = useMemo(
-        () =>
-            "layoutData" in element ? element : "element" in element && element.element ? element.element : undefined,
-        [element]
-    );
-    const actualPreviousElement = useMemo(
-        () =>
-            previousElement &&
-            ("layoutData" in previousElement
-                ? previousElement
-                : "element" in previousElement && previousElement.element
-                ? previousElement.element
-                : undefined),
-        [previousElement]
-    );
-    const actualNextElement = useMemo(
-        () =>
-            nextElement &&
-            ("layoutData" in nextElement
-                ? nextElement
-                : "element" in nextElement && nextElement.element
-                ? nextElement.element
-                : undefined),
-        [nextElement]
-    );
-
-    const { isOpen: editPGs_IsOpen, onOpen: editPGs_OnOpen, onClose: editPGs_OnClose } = useDisclosure({
+    const {
+        isOpen: editPGs_IsOpen,
+        onOpen: editPGs_OnOpen,
+        onClose: editPGs_OnClose,
+    } = useDisclosure({
         defaultIsOpen: defaultOpenSecurity,
     });
     const editPGs_OnCloseFull = useCallback(() => {
@@ -237,26 +148,26 @@ export function EditElement({
                                 }
                             }}
                         >
-                            {actualElement ? (
+                            {element ? (
                                 <ButtonGroup mr={2}>
                                     <Tooltip label="Move element up">
                                         <Button
                                             size="xs"
-                                            isDisabled={!actualPreviousElement}
+                                            isDisabled={!previousElement}
                                             onClick={(ev) => {
                                                 ev.stopPropagation();
 
-                                                if (actualPreviousElement) {
+                                                if (previousElement) {
                                                     const layoutDataA: LayoutDataBlob = {
-                                                        contentType: actualElement.typeName,
+                                                        contentType: element.typeName,
                                                         wide: false,
                                                         hidden: false,
-                                                        ...actualElement.layoutData,
+                                                        ...element.layoutData,
                                                         priority: idx - 1,
                                                     };
                                                     updateElement({
                                                         variables: {
-                                                            elementId: actualElement.id,
+                                                            elementId: element.id,
                                                             element: {
                                                                 layoutData: layoutDataA,
                                                             },
@@ -264,15 +175,15 @@ export function EditElement({
                                                     });
 
                                                     const layoutDataB: LayoutDataBlob = {
-                                                        contentType: actualPreviousElement.typeName,
+                                                        contentType: previousElement.typeName,
                                                         wide: false,
                                                         hidden: false,
-                                                        ...actualPreviousElement.layoutData,
+                                                        ...previousElement.layoutData,
                                                         priority: idx,
                                                     };
                                                     updateElement({
                                                         variables: {
-                                                            elementId: actualPreviousElement.id,
+                                                            elementId: previousElement.id,
                                                             element: {
                                                                 layoutData: layoutDataB,
                                                             },
@@ -292,21 +203,21 @@ export function EditElement({
                                     <Tooltip label="Move element down">
                                         <Button
                                             size="xs"
-                                            isDisabled={!actualNextElement}
+                                            isDisabled={!nextElement}
                                             onClick={(ev) => {
                                                 ev.stopPropagation();
 
-                                                if (actualNextElement) {
+                                                if (nextElement) {
                                                     const layoutDataA: LayoutDataBlob = {
-                                                        contentType: actualElement.typeName,
+                                                        contentType: element.typeName,
                                                         wide: false,
                                                         hidden: false,
-                                                        ...actualElement.layoutData,
+                                                        ...element.layoutData,
                                                         priority: idx + 1,
                                                     };
                                                     updateElement({
                                                         variables: {
-                                                            elementId: actualElement.id,
+                                                            elementId: element.id,
                                                             element: {
                                                                 layoutData: layoutDataA,
                                                             },
@@ -314,15 +225,15 @@ export function EditElement({
                                                     });
 
                                                     const layoutDataB: LayoutDataBlob = {
-                                                        contentType: actualNextElement.typeName,
+                                                        contentType: nextElement.typeName,
                                                         wide: false,
                                                         hidden: false,
-                                                        ...actualNextElement.layoutData,
+                                                        ...nextElement.layoutData,
                                                         priority: idx,
                                                     };
                                                     updateElement({
                                                         variables: {
-                                                            elementId: actualNextElement.id,
+                                                            elementId: nextElement.id,
                                                             element: {
                                                                 layoutData: layoutDataB,
                                                             },
@@ -343,61 +254,43 @@ export function EditElement({
                             ) : undefined}
                             <Tooltip
                                 label={
-                                    (actualElement ? actualElement.isHidden : element.isHidden)
+                                    element.isHidden
                                         ? "Show this element to attendees."
                                         : "Hide this element from attendees."
                                 }
                             >
                                 <Button
                                     aria-label={
-                                        (actualElement ? actualElement.isHidden : element.isHidden)
+                                        element.isHidden
                                             ? "Show this element to attendees."
                                             : "Hide this element from attendees."
                                     }
                                     mr={4}
                                     size="xs"
-                                    isLoading={updateElementResponse.loading || updateUploadableElementResponse.loading}
+                                    isLoading={updateElementResponse.loading}
                                     onClick={(ev) => {
                                         ev.stopPropagation();
 
-                                        const isHidden = !(actualElement ? actualElement.isHidden : element.isHidden);
-                                        if (actualElement) {
-                                            updateElement({
-                                                variables: {
-                                                    elementId: actualElement.id,
-                                                    element: { isHidden },
+                                        const isHidden = !element.isHidden;
+                                        updateElement({
+                                            variables: {
+                                                elementId: element.id,
+                                                element: { isHidden },
+                                            },
+                                            optimisticResponse: {
+                                                update_content_Element_by_pk: {
+                                                    ...element,
+                                                    isHidden,
+                                                    __typename: "content_Element",
                                                 },
-                                                optimisticResponse: {
-                                                    update_content_Element_by_pk: {
-                                                        ...actualElement,
-                                                        isHidden,
-                                                        __typename: "content_Element",
-                                                    },
-                                                },
-                                            });
-                                        }
-
-                                        if (!("layoutData" in element)) {
-                                            updateUploadableElement({
-                                                variables: {
-                                                    uploadableElementId: element.id,
-                                                    uploadableElement: { isHidden },
-                                                },
-                                            });
-                                        }
+                                            },
+                                        });
                                     }}
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
                                     }}
                                 >
-                                    <FAIcon
-                                        iconStyle="s"
-                                        icon={
-                                            !(actualElement ? actualElement.isHidden : element.isHidden)
-                                                ? "eye"
-                                                : "eye-slash"
-                                        }
-                                    />
+                                    <FAIcon iconStyle="s" icon={element.isHidden ? "eye" : "eye-slash"} />
                                 </Button>
                             </Tooltip>
                             <HStack textAlign="left" mr={2} minW="auto" w="auto">
@@ -429,35 +322,19 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Save element name"
                                                 mx={2}
-                                                isLoading={
-                                                    updateElementResponse.loading ||
-                                                    updateUploadableElementResponse.loading
-                                                }
+                                                isLoading={updateElementResponse.loading}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
 
-                                                    if (actualElement) {
-                                                        updateElement({
-                                                            variables: {
-                                                                elementId: actualElement.id,
-                                                                element: {
-                                                                    name: newName,
-                                                                },
+                                                    updateElement({
+                                                        variables: {
+                                                            elementId: element.id,
+                                                            element: {
+                                                                name: newName,
                                                             },
-                                                        });
-                                                    }
-
-                                                    if (!("layoutData" in element)) {
-                                                        updateUploadableElement({
-                                                            variables: {
-                                                                uploadableElementId: element.id,
-                                                                uploadableElement: {
-                                                                    name: newName,
-                                                                },
-                                                            },
-                                                        });
-                                                    }
+                                                        },
+                                                    });
                                                 }}
                                                 onKeyUp={(ev) => {
                                                     ev.stopPropagation();
@@ -472,10 +349,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Discard name changes"
                                                 mx={2}
-                                                isLoading={
-                                                    updateElementResponse.loading ||
-                                                    updateUploadableElementResponse.loading
-                                                }
+                                                isLoading={updateElementResponse.loading}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
@@ -505,10 +379,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Edit element name"
                                                 mx={2}
-                                                isLoading={
-                                                    updateElementResponse.loading ||
-                                                    updateUploadableElementResponse.loading
-                                                }
+                                                isLoading={updateElementResponse.loading}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(true);
@@ -553,7 +424,7 @@ export function EditElement({
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
                                     }}
-                                    isLoading={deleteElementResponse.loading || deleteUploadableElementResponse.loading}
+                                    isLoading={deleteElementResponse.loading}
                                     ml={2}
                                 />
                             </Tooltip>
@@ -562,12 +433,7 @@ export function EditElement({
                         <AccordionPanel pb={4}>
                             {isExpanded ? (
                                 <EditElementInner
-                                    element={actualElement ?? null}
-                                    uploadableElement={
-                                        (!("layoutData" in element)
-                                            ? (element as ManageContent_UploadableElementFragment)
-                                            : null) as any
-                                    }
+                                    element={element}
                                     openSendSubmissionRequests={openSendSubmissionRequests}
                                 />
                             ) : undefined}
@@ -597,19 +463,11 @@ export function EditElement({
                                 colorScheme="red"
                                 onClick={async () => {
                                     try {
-                                        if ("layoutData" in element) {
-                                            await deleteElement({
-                                                variables: {
-                                                    elementId: element.id,
-                                                },
-                                            });
-                                        } else {
-                                            await deleteUploadableElement({
-                                                variables: {
-                                                    uploadableElementId: element.id,
-                                                },
-                                            });
-                                        }
+                                        await deleteElement({
+                                            variables: {
+                                                elementId: element.id,
+                                            },
+                                        });
                                         confirmDelete_OnClose();
                                     } catch (e) {
                                         toast({
@@ -629,17 +487,7 @@ export function EditElement({
             <EditElementsPermissionGrantsModal
                 isOpen={editPGs_IsOpen}
                 onClose={editPGs_OnCloseFull}
-                elementIds={"layoutData" in element ? [element.id] : []}
-                uploadableIds={
-                    !("layoutData" in element)
-                        ? [
-                              {
-                                  elementId: (element as ManageContent_UploadableElementFragment).element?.id,
-                                  uploadableId: element.id,
-                              },
-                          ]
-                        : []
-                }
+                elementIds={[element.id]}
             />
         </>
     );

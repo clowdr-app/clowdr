@@ -106,26 +106,15 @@ gql`
 
     fragment ManageContent_Element on content_Element {
         id
+        itemId
         name
         typeName
         data
         layoutData
-        isHidden
-        updatedAt
-    }
-
-    fragment ManageContent_UploadableElement on content_UploadableElement {
-        id
-        itemId
-        typeName
-        name
-        conferenceId
         uploadsRemaining
         isHidden
-        hasBeenUploaded
-        element {
-            ...ManageContent_Element
-        }
+        updatedAt
+        conferenceId
     }
 
     fragment ManageContent_ProgramPerson on collection_ProgramPerson {
@@ -167,11 +156,8 @@ gql`
         content_Item_by_pk(id: $itemId) {
             ...ManageContent_ItemSecondary
         }
-        content_Element(where: { itemId: { _eq: $itemId }, uploadableId: { _is_null: true } }) {
+        content_Element(where: { itemId: { _eq: $itemId } }) {
             ...ManageContent_Element
-        }
-        content_UploadableElement(where: { itemId: { _eq: $itemId } }) {
-            ...ManageContent_UploadableElement
         }
     }
 
@@ -1038,7 +1024,6 @@ export default function ManageContentV2(): JSX.Element {
                 isOpen={editPGs_IsOpen}
                 onClose={editPGs_OnCloseFull}
                 elementIds={[]}
-                uploadableIds={[]}
                 treatEmptyAsAny={true}
             />
         </RequireAtLeastOnePermissionWrapper>

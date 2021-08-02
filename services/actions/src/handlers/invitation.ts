@@ -188,18 +188,16 @@ async function sendInviteEmails(
                 if (sendType) {
                     const htmlContents = `<p>Dear ${registrant.displayName},</p>
 
-<p>You are invited to attend ${registrant.conference.name} on Clowdr: the virtual
-conferencing platform. Please use the link and invite code below to create
-your profile and access the conference.</p>
+<p>Sign up to Clowdr to attend ${registrant.conference.name}. Please use the link and invite code below to create
+your account and access the conference.</p>
 
 <p>
-<a href="${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${registrant.invitation.inviteCode}">Click here to accept your invitation</a></p>
+<a href="{[FRONTEND_HOST]}/invitation/accept/${registrant.invitation.inviteCode}">Click here to join the conference</a></p>
 
 <p>If you are asked for an invitation code, enter ${registrant.invitation.inviteCode}</p>
 
 <p>We hope you enjoy your conference,<br />
 The Clowdr team</p>`;
-                    // Or enter it on the Clowdr home page at ${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}
 
                     const plainTextContents = htmlToText(htmlContents);
 
@@ -207,7 +205,7 @@ The Clowdr team</p>`;
                         emailAddress: registrant.invitation.invitedEmailAddress,
                         invitationId: registrant.invitation.id,
                         reason: "invite",
-                        subject: `Clowdr: ${sendType === "REPEAT" ? "[Reminder] " : ""}Your invitation to ${
+                        subject: `Clowdr: ${sendType === "REPEAT" ? "[Reminder] " : ""}Join Clowdr to attend ${
                             registrant.conference.shortName
                         }`,
                         htmlContents,
@@ -325,22 +323,18 @@ export async function invitationConfirmCurrentHandler(
     args: invitationConfirmCurrentArgs,
     userId: string
 ): Promise<ConfirmInvitationOutput> {
-    return confirmUser(
-        args.inviteCode,
-        userId,
-        async (invitation, user): Promise<true | string> => {
-            return !invitation.invitedEmailAddress
-                ? "No invited email address"
-                : !user.email
-                ? "User does not have an email address"
-                : invitation.registrant.userId
-                ? `Invitation already used${invitation.registrant.userId === user.id ? " (same user)" : ""}`
-                : true;
-            // Dead code
-            // TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
-            // TODO: Re-instate if using extra confirm-email step: && invitation.invitedEmailAddress.toLowerCase() === user.email.toLowerCase()
-        }
-    );
+    return confirmUser(args.inviteCode, userId, async (invitation, user): Promise<true | string> => {
+        return !invitation.invitedEmailAddress
+            ? "No invited email address"
+            : !user.email
+            ? "User does not have an email address"
+            : invitation.registrant.userId
+            ? `Invitation already used${invitation.registrant.userId === user.id ? " (same user)" : ""}`
+            : true;
+        // Dead code
+        // TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
+        // TODO: Re-instate if using extra confirm-email step: && invitation.invitedEmailAddress.toLowerCase() === user.email.toLowerCase()
+    });
 }
 
 // Dead function
@@ -402,7 +396,7 @@ please enter the confirmation code shown below. If this was not you, please
 contact your conference organiser.</p>
 
 <p>Confirmation code: ${externalConfirmationCode}<br />
-Page to enter the code: <a href="${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}">${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/invitation/accept/${invitation.inviteCode}</a><br />
+Page to enter the code: <a href="{[FRONTEND_HOST]}/invitation/accept/${invitation.inviteCode}">{[FRONTEND_HOST]}/invitation/accept/${invitation.inviteCode}</a><br />
 (You will need to be logged in as ${user.email} in order to enter the confirmation code.)</p>
 
 <p>We hope you enjoy your conference,<br/>

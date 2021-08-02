@@ -1,18 +1,21 @@
 import { gql } from "@apollo/client/core";
 import { is } from "typescript-is";
-import { GetConfigurationValueDocument } from "../generated/graphql";
+import { Conference_ConfigurationKey_Enum, GetConfigurationValueDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
 gql`
-    query GetConfigurationValue($key: String!, $conferenceId: uuid!) {
-        conference_Configuration(where: { key: { _eq: $key }, conferenceId: { _eq: $conferenceId } }) {
-            id
+    query GetConfigurationValue($key: conference_ConfigurationKey_enum!, $conferenceId: uuid!) {
+        conference_Configuration_by_pk(conferenceId: $conferenceId, key: $key) {
+            key
             value
         }
     }
 `;
 
-export async function getConferenceConfiguration<T = any>(conferenceId: string, key: string): Promise<any | null> {
+export async function getConferenceConfiguration<T = any>(
+    conferenceId: string,
+    key: Conference_ConfigurationKey_Enum
+): Promise<any | null> {
     const result = await apolloClient.query({
         query: GetConfigurationValueDocument,
         variables: {
@@ -21,8 +24,8 @@ export async function getConferenceConfiguration<T = any>(conferenceId: string, 
         },
     });
 
-    if (result.data.conference_Configuration.length > 0 && is<T>(result.data.conference_Configuration[0].value)) {
-        return result.data.conference_Configuration[0].value;
+    if (result.data?.conference_Configuration_by_pk && is<T>(result.data.conference_Configuration_by_pk)) {
+        return result.data.conference_Configuration_by_pk;
     } else {
         return null;
     }

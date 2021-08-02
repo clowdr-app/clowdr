@@ -144,7 +144,7 @@ export default function Routing({ confSlug }: { confSlug?: string }): JSX.Elemen
                         token: string;
                         id: string;
                     }>
-                ) => <SubmitItemPage magicToken={props.match.params.token} uploadableId={props.match.params.id} />}
+                ) => <SubmitItemPage magicToken={props.match.params.token} />}
             />
 
             <Route exact path="/googleoauth" component={GoogleOAuthRedirect} />

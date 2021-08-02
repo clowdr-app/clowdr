@@ -139,3 +139,39 @@ A string representing a valid URL for users to register for the conference.
 ```json
 "https://www.example.org/register"
 ```
+
+### Key
+
+`FRONTEND_HOST`
+
+### Value
+
+A string representing the full frontend host URL for the conference.
+If not provided, this defaults to the system configuration.
+
+### Example
+
+```json
+"https://app.clowdr.org"
+```
+
+## Upload agreements
+
+### Key
+
+`UPLOAD_AGREEMENT`
+
+### Value
+
+A JSON object representing the text of, or url to, the agreement users must accept
+when making an upload to the conference.
+
+### Example
+
+```json
+{ "text": "The text of the agreement" }
+```
+
+```json
+{ "url": "https://The.URL.of.the.agreement.example.org/" }
+```

@@ -1,0 +1,1 @@
+INSERT INTO "conference"."ConfigurationKey"("name", "description") VALUES (E'FRONTEND_HOST', E'A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration.');

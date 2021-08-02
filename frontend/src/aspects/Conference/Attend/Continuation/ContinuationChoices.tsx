@@ -207,16 +207,17 @@ function ContinuationChoices_Inner({
         }
         return {
             displayChoice:
-                (!isActiveChoice &&
+                choices.length > 0 &&
+                ((!isActiveChoice &&
                     (now < endTime || selectedOptionId === null) &&
                     now > endTime - passiveChoice_RevealThreshholdMs &&
                     now < endTime + passiveChoice_HideThreshholdMs) ||
-                (isActiveChoice &&
-                    now > endTime - activeChoice_RevealThreshholdMs &&
-                    now < endTime + activeChoice_HideThreshholdMs),
+                    (isActiveChoice &&
+                        now > endTime - activeChoice_RevealThreshholdMs &&
+                        now < endTime + activeChoice_HideThreshholdMs)),
             timeRemaining: endTime - now,
         };
-    }, [from, isActiveChoice, now, selectedOptionId]);
+    }, [from, isActiveChoice, now, selectedOptionId, choices.length]);
 
     const [activateChoice, setActivateChoice] = useState<boolean>(false);
     const [activatedChoice, setActivatedChoice] = useState<boolean | string>(false);

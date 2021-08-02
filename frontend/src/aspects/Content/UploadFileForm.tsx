@@ -1,38 +1,30 @@
-import {
-    Button,
-    Checkbox,
-    FormControl,
-    FormErrorMessage,
-    FormHelperText,
-    FormLabel,
-    ListItem,
-    Text,
-    UnorderedList,
-    useToast,
-} from "@chakra-ui/react";
+import { Button, FormControl, FormHelperText, ListItem, UnorderedList, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
-import { Field, FieldProps, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { UploadableItemFieldsFragment, useSubmitUploadableElementMutation } from "../../generated/graphql";
+import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
+import UploadAgreementField from "./UploadAgreementField";
 
 export default function UploadFileForm({
-    uploadableElement,
+    elementId,
     magicToken,
     allowedFileTypes,
-    uploadAgreement,
+    uploadAgreementText,
+    uploadAgreementUrl,
     handleFormSubmitted,
 }: {
-    uploadableElement: UploadableItemFieldsFragment;
+    elementId: string;
     magicToken: string;
     allowedFileTypes: string[];
-    uploadAgreement?: string;
+    uploadAgreementText?: string;
+    uploadAgreementUrl?: string;
     handleFormSubmitted?: () => Promise<void>;
 }): JSX.Element {
     const toast = useToast();
@@ -42,7 +34,7 @@ export default function UploadFileForm({
         const uppy = Uppy<Uppy.StrictTypes>({
             id: "required-content-item-upload",
             meta: {
-                uploadableId: uploadableElement.id,
+                uploadableId: elementId,
             },
             allowMultipleUploads: false,
             restrictions: {
@@ -58,7 +50,7 @@ export default function UploadFileForm({
             companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
         });
         return uppy;
-    }, [allowedFileTypes, uploadableElement.id]);
+    }, [allowedFileTypes, elementId]);
 
     const updateFiles = useCallback(() => {
         const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;
@@ -159,7 +151,7 @@ export default function UploadFileForm({
                     }
                 }}
             >
-                {({ dirty, ...props }) => (
+                {({ dirty, isSubmitting, isValid }) => (
                     <>
                         <UnsavedChangesWarning hasUnsavedChanges={dirty} />
                         <Form style={{ width: "100%" }}>
@@ -177,38 +169,16 @@ export default function UploadFileForm({
                                     </ListItem>
                                 ))}
                             </UnorderedList>
-                            {uploadAgreement && (
-                                <Field
-                                    name="agree"
-                                    validate={(inValue: string | null | undefined) => {
-                                        let error;
-                                        if (!inValue) {
-                                            error = "Must agree to terms";
-                                        }
-                                        return error;
-                                    }}
-                                >
-                                    {({ form, field }: FieldProps<string>) => (
-                                        <FormControl
-                                            isInvalid={!!form.errors.agree && !!form.touched.agree}
-                                            isRequired
-                                            mb={4}
-                                        >
-                                            <FormLabel htmlFor="agree">Upload agreement</FormLabel>
-                                            <Text mb={4}>{uploadAgreement}</Text>
-                                            <Checkbox {...field} id="agree" />
-                                            <FormHelperText>I agree to the upload conditions.</FormHelperText>
-                                            <FormErrorMessage>{form.errors.agree}</FormErrorMessage>
-                                        </FormControl>
-                                    )}
-                                </Field>
-                            )}
+                            <UploadAgreementField
+                                uploadAgreementText={uploadAgreementText}
+                                uploadAgreementUrl={uploadAgreementUrl}
+                            />
                             <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
                             <Button
                                 colorScheme="purple"
-                                isLoading={props.isSubmitting}
+                                isLoading={isSubmitting}
                                 type="submit"
-                                isDisabled={!props.isValid || files.length !== 1}
+                                isDisabled={!isValid || files.length !== 1}
                             >
                                 Upload
                             </Button>

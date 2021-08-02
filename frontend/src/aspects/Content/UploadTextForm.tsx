@@ -1,7 +1,6 @@
 import { InfoIcon } from "@chakra-ui/icons";
 import {
     Button,
-    Checkbox,
     FormControl,
     FormErrorMessage,
     FormHelperText,
@@ -19,14 +18,17 @@ import React from "react";
 import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
 import { Markdown } from "../Text/Markdown";
+import UploadAgreementField from "./UploadAgreementField";
 
 export default function UploadTextForm({
     magicToken,
-    uploadAgreement,
+    uploadAgreementText,
+    uploadAgreementUrl,
     existingText,
 }: {
     magicToken: string;
-    uploadAgreement?: string;
+    uploadAgreementText?: string;
+    uploadAgreementUrl?: string;
     existingText: { text: string } | null;
 }): JSX.Element {
     const toast = useToast();
@@ -135,32 +137,10 @@ export default function UploadTextForm({
                                     </HStack>
                                 )}
                             </Field>
-                            {uploadAgreement && (
-                                <Field
-                                    name="agree"
-                                    validate={(inValue: string | null | undefined) => {
-                                        let error;
-                                        if (!inValue) {
-                                            error = "Must agree to terms";
-                                        }
-                                        return error;
-                                    }}
-                                >
-                                    {({ form, field }: FieldProps<string>) => (
-                                        <FormControl
-                                            isInvalid={!!form.errors.agree && !!form.touched.agree}
-                                            isRequired
-                                            mb={3}
-                                        >
-                                            <FormLabel htmlFor="agree">Upload agreement</FormLabel>
-                                            <Text mb={4}>{uploadAgreement}</Text>
-                                            <Checkbox {...field} id="agree" />
-                                            <FormHelperText>I agree to the upload conditions.</FormHelperText>
-                                            <FormErrorMessage>{form.errors.agree}</FormErrorMessage>
-                                        </FormControl>
-                                    )}
-                                </Field>
-                            )}
+                            <UploadAgreementField
+                                uploadAgreementText={uploadAgreementText}
+                                uploadAgreementUrl={uploadAgreementUrl}
+                            />
                             <Button
                                 my={4}
                                 colorScheme="purple"

@@ -52,10 +52,6 @@ export function BulkOperationMenu({
         elementsByItem: {
             itemId: string;
             elementIds: string[];
-            uploadables: {
-                uploadableId: string;
-                elementId?: string;
-            }[];
         }[];
         restrictToTypes: Content_ElementType_Enum[] | null;
     } | null>(null);
@@ -366,7 +362,6 @@ export function BulkOperationMenu({
                     setActiveOperation(null);
                 }}
                 elementIds={R.flatten(activeOperation?.elementsByItem.map((x) => x.elementIds) ?? [])}
-                uploadableIds={R.flatten(activeOperation?.elementsByItem.map((x) => x.uploadables) ?? [])}
             />
             <CombineVideosModal
                 isOpen={activeOperation?.operation === "COMBINE_VIDEOS" && activeOperation?.step === "ACT"}

@@ -95,7 +95,8 @@ const presetJSONata_CSVQuery_Content = `
                             "baseType": "text",
                             "text": $."Abstract?"
                         }
-                    }]
+                    }],
+                    "uploadsRemaining": $."Is abstract uploadable" = "Yes" ? 3 : 0
                 }
             ] 
             ~> $append($."Link to webpage - name?" != "" ? [{
@@ -111,7 +112,8 @@ const presetJSONata_CSVQuery_Content = `
                         "text": $."Link to webpage - name?",
                         "url": $."Link to webpage - url?"
                     }
-                }]
+                }],
+                "uploadsRemaining": 3
             }] : [])
             ~> $append($."Link to PDF - name?" != "" ? [{
                 "typeName": "PAPER_LINK",
@@ -126,7 +128,8 @@ const presetJSONata_CSVQuery_Content = `
                         "text": $."Link to PDF - name?",
                         "url": $."Link to PDF - URL?"
                     }
-                }]
+                }],
+                "uploadsRemaining": 3
             }] : [])
             ~> $append($."Zoom URL?" != "" ? [{
                 "typeName": "ZOOM",
@@ -140,31 +143,35 @@ const presetJSONata_CSVQuery_Content = `
                         "baseType": "url",
                         "url": $."Zoom URL?"
                     }
-                }]
-            }] : []),
-            "uploadableElements": ($."Video 1 (Name)" != "" ? [{
+                }],
+                "uploadsRemaining": 3
+            }] : [])
+            ~> $append($."Video 1 (Name)" != "" ? [{
                 "typeName": "VIDEO_BROADCAST",
+                "isHidden": false,
                 "name": $."Video 1 (Name)",
+                "data": [],
                 "uploadsRemaining": 3
             }] : [])
             ~> $append($."Video 2 (Name)" != "" ? [{
                 "typeName": "VIDEO_BROADCAST",
+                "isHidden": false,
                 "name": $."Video 2 (Name)",
+                "data": [],
                 "uploadsRemaining": 3
             }] : [])
             ~> $append($."Slides?" != "" ? [{
                 "typeName": "PAPER_FILE",
+                "isHidden": false,
                 "name": $."Slides?",
+                "data": [],
                 "uploadsRemaining": 3
             }] : [])
             ~> $append($."Uploadable PDF name?" != "" ? [{
                 "typeName": "PAPER_FILE",
+                "isHidden": false,
                 "name": $."Uploadable PDF name?",
-                "uploadsRemaining": 3
-            }] : [])
-            ~> $append($."Is abstract uploadable" = "Yes" ? [{
-                "typeName": "ABSTRACT",
-                "name": "Abstract",
+                "data": [],
                 "uploadsRemaining": 3
             }] : []),
             "tagNames": ($."Tag 1?" != "" ? [$."Tag 1?"] : [])

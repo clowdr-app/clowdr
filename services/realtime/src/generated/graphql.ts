@@ -24239,7 +24239,6 @@ export type Room_Room = {
     chatId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     chimeMeeting?: Maybe<Room_ChimeMeeting>;
-    colour: Scalars["String"];
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
@@ -24699,7 +24698,6 @@ export type Room_Room_Bool_Exp = {
     chat?: Maybe<Chat_Chat_Bool_Exp>;
     chatId?: Maybe<Uuid_Comparison_Exp>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
-    colour?: Maybe<String_Comparison_Exp>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -24751,7 +24749,6 @@ export type Room_Room_Insert_Input = {
     chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
     chatId?: Maybe<Scalars["uuid"]>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
-    colour?: Maybe<Scalars["String"]>;
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
@@ -24784,7 +24781,6 @@ export type Room_Room_Max_Fields = {
     __typename?: "room_Room_max_fields";
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
-    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -24801,7 +24797,6 @@ export type Room_Room_Max_Fields = {
 export type Room_Room_Max_Order_By = {
     capacity?: Maybe<Order_By>;
     chatId?: Maybe<Order_By>;
-    colour?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -24819,7 +24814,6 @@ export type Room_Room_Min_Fields = {
     __typename?: "room_Room_min_fields";
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
-    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -24836,7 +24830,6 @@ export type Room_Room_Min_Fields = {
 export type Room_Room_Min_Order_By = {
     capacity?: Maybe<Order_By>;
     chatId?: Maybe<Order_By>;
-    colour?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -24881,7 +24874,6 @@ export type Room_Room_Order_By = {
     chat?: Maybe<Chat_Chat_Order_By>;
     chatId?: Maybe<Order_By>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
-    colour?: Maybe<Order_By>;
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
@@ -24923,8 +24915,6 @@ export enum Room_Room_Select_Column {
     /** column name */
     ChatId = "chatId",
     /** column name */
-    Colour = "colour",
-    /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
@@ -24955,7 +24945,6 @@ export type Room_Room_Set_Input = {
     backendName?: Maybe<Room_Backend_Enum>;
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
-    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     currentModeName?: Maybe<Room_Mode_Enum>;
@@ -25030,8 +25019,6 @@ export enum Room_Room_Update_Column {
     Capacity = "capacity",
     /** column name */
     ChatId = "chatId",
-    /** column name */
-    Colour = "colour",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -30735,8 +30722,6 @@ export enum System_ConfigurationKey_Enum {
     CookiePolicyLatestRevisionTimestamp = "COOKIE_POLICY_LATEST_REVISION_TIMESTAMP",
     /** The URL to the host cookie policy. Note: If self hosting Clowdr, this must be your organisation's cookie policy - you cannot legally reuse, rely on or copy Clowdr's cookie policy. */
     CookiePolicyUrl = "COOKIE_POLICY_URL",
-    /** A string representing the full frontend host URL for the app. */
-    DefaultFrontendHost = "DEFAULT_FRONTEND_HOST",
     /** Default backend platform for video rooms */
     DefaultVideoRoomBackend = "DEFAULT_VIDEO_ROOM_BACKEND",
     /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
@@ -33871,7 +33856,7 @@ export type InsertReadUpToIndexMutation = { __typename?: "mutation_root" } & {
     >;
 };
 
-export const EmptyQueryDocument = {
+export const EmptyQueryDocument: DocumentNode<EmptyQueryQuery, EmptyQueryQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -33893,8 +33878,11 @@ export const EmptyQueryDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<EmptyQueryQuery, EmptyQueryQueryVariables>;
-export const FlagInserted_GetModeratorsDocument = {
+};
+export const FlagInserted_GetModeratorsDocument: DocumentNode<
+    FlagInserted_GetModeratorsQuery,
+    FlagInserted_GetModeratorsQueryVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -34105,8 +34093,8 @@ export const FlagInserted_GetModeratorsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<FlagInserted_GetModeratorsQuery, FlagInserted_GetModeratorsQueryVariables>;
-export const ChatInfoDocument = {
+};
+export const ChatInfoDocument: DocumentNode<ChatInfoQuery, ChatInfoQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -34208,8 +34196,8 @@ export const ChatInfoDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<ChatInfoQuery, ChatInfoQueryVariables>;
-export const PinsDocument = {
+};
+export const PinsDocument: DocumentNode<PinsQuery, PinsQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -34269,8 +34257,11 @@ export const PinsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<PinsQuery, PinsQueryVariables>;
-export const PushNotificationSubscriptionsDocument = {
+};
+export const PushNotificationSubscriptionsDocument: DocumentNode<
+    PushNotificationSubscriptionsQuery,
+    PushNotificationSubscriptionsQueryVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -34332,8 +34323,8 @@ export const PushNotificationSubscriptionsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<PushNotificationSubscriptionsQuery, PushNotificationSubscriptionsQueryVariables>;
-export const ReadUpToIndexDocument = {
+};
+export const ReadUpToIndexDocument: DocumentNode<ReadUpToIndexQuery, ReadUpToIndexQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -34425,8 +34416,8 @@ export const ReadUpToIndexDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<ReadUpToIndexQuery, ReadUpToIndexQueryVariables>;
-export const RegistrantInfoDocument = {
+};
+export const RegistrantInfoDocument: DocumentNode<RegistrantInfoQuery, RegistrantInfoQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -34466,8 +34457,8 @@ export const RegistrantInfoDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<RegistrantInfoQuery, RegistrantInfoQueryVariables>;
-export const EventInfoDocument = {
+};
+export const EventInfoDocument: DocumentNode<EventInfoQuery, EventInfoQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -34556,8 +34547,8 @@ export const EventInfoDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<EventInfoQuery, EventInfoQueryVariables>;
-export const SubscriptionsDocument = {
+};
+export const SubscriptionsDocument: DocumentNode<SubscriptionsQuery, SubscriptionsQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -34617,8 +34608,8 @@ export const SubscriptionsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<SubscriptionsQuery, SubscriptionsQueryVariables>;
-export const UserPermissionsDocument = {
+};
+export const UserPermissionsDocument: DocumentNode<UserPermissionsQuery, UserPermissionsQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -34679,8 +34670,11 @@ export const UserPermissionsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<UserPermissionsQuery, UserPermissionsQueryVariables>;
-export const GetUserConferenceSlugsDocument = {
+};
+export const GetUserConferenceSlugsDocument: DocumentNode<
+    GetUserConferenceSlugsQuery,
+    GetUserConferenceSlugsQueryVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -34891,8 +34885,11 @@ export const GetUserConferenceSlugsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<GetUserConferenceSlugsQuery, GetUserConferenceSlugsQueryVariables>;
-export const GetExistingProgramPersonDocument = {
+};
+export const GetExistingProgramPersonDocument: DocumentNode<
+    GetExistingProgramPersonQuery,
+    GetExistingProgramPersonQueryVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -35036,8 +35033,11 @@ export const GetExistingProgramPersonDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<GetExistingProgramPersonQuery, GetExistingProgramPersonQueryVariables>;
-export const InsertEventParticipantDocument = {
+};
+export const InsertEventParticipantDocument: DocumentNode<
+    InsertEventParticipantMutation,
+    InsertEventParticipantMutationVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -35119,8 +35119,11 @@ export const InsertEventParticipantDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<InsertEventParticipantMutation, InsertEventParticipantMutationVariables>;
-export const DeletePushNotificationSubscriptionDocument = {
+};
+export const DeletePushNotificationSubscriptionDocument: DocumentNode<
+    DeletePushNotificationSubscriptionMutation,
+    DeletePushNotificationSubscriptionMutationVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -35156,11 +35159,8 @@ export const DeletePushNotificationSubscriptionDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<
-    DeletePushNotificationSubscriptionMutation,
-    DeletePushNotificationSubscriptionMutationVariables
->;
-export const VapidKeysDocument = {
+};
+export const VapidKeysDocument: DocumentNode<VapidKeysQuery, VapidKeysQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -35212,8 +35212,8 @@ export const VapidKeysDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<VapidKeysQuery, VapidKeysQueryVariables>;
-export const SetVapidKeysDocument = {
+};
+export const SetVapidKeysDocument: DocumentNode<SetVapidKeysMutation, SetVapidKeysMutationVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -35316,8 +35316,8 @@ export const SetVapidKeysDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<SetVapidKeysMutation, SetVapidKeysMutationVariables>;
-export const SelectViewCountsDocument = {
+};
+export const SelectViewCountsDocument: DocumentNode<SelectViewCountsQuery, SelectViewCountsQueryVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -35554,8 +35554,8 @@ export const SelectViewCountsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<SelectViewCountsQuery, SelectViewCountsQueryVariables>;
-export const InsertViewCountsDocument = {
+};
+export const InsertViewCountsDocument: DocumentNode<InsertViewCountsMutation, InsertViewCountsMutationVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -35733,82 +35733,86 @@ export const InsertViewCountsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<InsertViewCountsMutation, InsertViewCountsMutationVariables>;
-export const InsertChatMessagesDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "mutation",
-            name: { kind: "Name", value: "InsertChatMessages" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "objects" } },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "ListType",
-                            type: {
-                                kind: "NonNullType",
-                                type: { kind: "NamedType", name: { kind: "Name", value: "chat_Message_insert_input" } },
-                            },
-                        },
-                    },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
+};
+export const InsertChatMessagesDocument: DocumentNode<InsertChatMessagesMutation, InsertChatMessagesMutationVariables> =
+    {
+        kind: "Document",
+        definitions: [
+            {
+                kind: "OperationDefinition",
+                operation: "mutation",
+                name: { kind: "Name", value: "InsertChatMessages" },
+                variableDefinitions: [
                     {
-                        kind: "Field",
-                        name: { kind: "Name", value: "insert_chat_Message" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "objects" },
-                                value: { kind: "Variable", name: { kind: "Name", value: "objects" } },
-                            },
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "on_conflict" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "constraint" },
-                                            value: { kind: "EnumValue", value: "Message_sId_key" },
-                                        },
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "update_columns" },
-                                            value: { kind: "ListValue", values: [] },
-                                        },
-                                    ],
-                                },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "returning" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
+                        kind: "VariableDefinition",
+                        variable: { kind: "Variable", name: { kind: "Name", value: "objects" } },
+                        type: {
+                            kind: "NonNullType",
+                            type: {
+                                kind: "ListType",
+                                type: {
+                                    kind: "NonNullType",
+                                    type: {
+                                        kind: "NamedType",
+                                        name: { kind: "Name", value: "chat_Message_insert_input" },
                                     },
                                 },
-                            ],
+                            },
                         },
                     },
                 ],
+                selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                        {
+                            kind: "Field",
+                            name: { kind: "Name", value: "insert_chat_Message" },
+                            arguments: [
+                                {
+                                    kind: "Argument",
+                                    name: { kind: "Name", value: "objects" },
+                                    value: { kind: "Variable", name: { kind: "Name", value: "objects" } },
+                                },
+                                {
+                                    kind: "Argument",
+                                    name: { kind: "Name", value: "on_conflict" },
+                                    value: {
+                                        kind: "ObjectValue",
+                                        fields: [
+                                            {
+                                                kind: "ObjectField",
+                                                name: { kind: "Name", value: "constraint" },
+                                                value: { kind: "EnumValue", value: "Message_sId_key" },
+                                            },
+                                            {
+                                                kind: "ObjectField",
+                                                name: { kind: "Name", value: "update_columns" },
+                                                value: { kind: "ListValue", values: [] },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                            selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                    {
+                                        kind: "Field",
+                                        name: { kind: "Name", value: "returning" },
+                                        selectionSet: {
+                                            kind: "SelectionSet",
+                                            selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
             },
-        },
-    ],
-} as unknown as DocumentNode<InsertChatMessagesMutation, InsertChatMessagesMutationVariables>;
-export const UpdateChatMessageDocument = {
+        ],
+    };
+export const UpdateChatMessageDocument: DocumentNode<UpdateChatMessageMutation, UpdateChatMessageMutationVariables> = {
     kind: "Document",
     definitions: [
         {
@@ -35887,84 +35891,88 @@ export const UpdateChatMessageDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<UpdateChatMessageMutation, UpdateChatMessageMutationVariables>;
-export const DeleteChatMessagesDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "mutation",
-            name: { kind: "Name", value: "DeleteChatMessages" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "messageIds" } },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "ListType",
-                            type: {
-                                kind: "NonNullType",
-                                type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
-                            },
-                        },
-                    },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
+};
+export const DeleteChatMessagesDocument: DocumentNode<DeleteChatMessagesMutation, DeleteChatMessagesMutationVariables> =
+    {
+        kind: "Document",
+        definitions: [
+            {
+                kind: "OperationDefinition",
+                operation: "mutation",
+                name: { kind: "Name", value: "DeleteChatMessages" },
+                variableDefinitions: [
                     {
-                        kind: "Field",
-                        name: { kind: "Name", value: "delete_chat_Message" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "where" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "sId" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_in" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "messageIds" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                    ],
+                        kind: "VariableDefinition",
+                        variable: { kind: "Variable", name: { kind: "Name", value: "messageIds" } },
+                        type: {
+                            kind: "NonNullType",
+                            type: {
+                                kind: "ListType",
+                                type: {
+                                    kind: "NonNullType",
+                                    type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
                                 },
                             },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "returning" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
-                                    },
-                                },
-                            ],
                         },
                     },
                 ],
+                selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                        {
+                            kind: "Field",
+                            name: { kind: "Name", value: "delete_chat_Message" },
+                            arguments: [
+                                {
+                                    kind: "Argument",
+                                    name: { kind: "Name", value: "where" },
+                                    value: {
+                                        kind: "ObjectValue",
+                                        fields: [
+                                            {
+                                                kind: "ObjectField",
+                                                name: { kind: "Name", value: "sId" },
+                                                value: {
+                                                    kind: "ObjectValue",
+                                                    fields: [
+                                                        {
+                                                            kind: "ObjectField",
+                                                            name: { kind: "Name", value: "_in" },
+                                                            value: {
+                                                                kind: "Variable",
+                                                                name: { kind: "Name", value: "messageIds" },
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                            selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                    {
+                                        kind: "Field",
+                                        name: { kind: "Name", value: "returning" },
+                                        selectionSet: {
+                                            kind: "SelectionSet",
+                                            selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
             },
-        },
-    ],
-} as unknown as DocumentNode<DeleteChatMessagesMutation, DeleteChatMessagesMutationVariables>;
-export const InsertChatReactionsDocument = {
+        ],
+    };
+export const InsertChatReactionsDocument: DocumentNode<
+    InsertChatReactionsMutation,
+    InsertChatReactionsMutationVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -36040,88 +36048,95 @@ export const InsertChatReactionsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<InsertChatReactionsMutation, InsertChatReactionsMutationVariables>;
-export const UpdateChatReactionDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "mutation",
-            name: { kind: "Name", value: "UpdateChatReaction" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "reactionId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
-                },
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "object" } },
-                    type: {
-                        kind: "NonNullType",
-                        type: { kind: "NamedType", name: { kind: "Name", value: "chat_Reaction_set_input" } },
-                    },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
+};
+export const UpdateChatReactionDocument: DocumentNode<UpdateChatReactionMutation, UpdateChatReactionMutationVariables> =
+    {
+        kind: "Document",
+        definitions: [
+            {
+                kind: "OperationDefinition",
+                operation: "mutation",
+                name: { kind: "Name", value: "UpdateChatReaction" },
+                variableDefinitions: [
                     {
-                        kind: "Field",
-                        name: { kind: "Name", value: "update_chat_Reaction" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "where" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "sId" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "reactionId" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "_set" },
-                                value: { kind: "Variable", name: { kind: "Name", value: "object" } },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "returning" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
-                                    },
-                                },
-                            ],
+                        kind: "VariableDefinition",
+                        variable: { kind: "Variable", name: { kind: "Name", value: "reactionId" } },
+                        type: {
+                            kind: "NonNullType",
+                            type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } },
+                        },
+                    },
+                    {
+                        kind: "VariableDefinition",
+                        variable: { kind: "Variable", name: { kind: "Name", value: "object" } },
+                        type: {
+                            kind: "NonNullType",
+                            type: { kind: "NamedType", name: { kind: "Name", value: "chat_Reaction_set_input" } },
                         },
                     },
                 ],
+                selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                        {
+                            kind: "Field",
+                            name: { kind: "Name", value: "update_chat_Reaction" },
+                            arguments: [
+                                {
+                                    kind: "Argument",
+                                    name: { kind: "Name", value: "where" },
+                                    value: {
+                                        kind: "ObjectValue",
+                                        fields: [
+                                            {
+                                                kind: "ObjectField",
+                                                name: { kind: "Name", value: "sId" },
+                                                value: {
+                                                    kind: "ObjectValue",
+                                                    fields: [
+                                                        {
+                                                            kind: "ObjectField",
+                                                            name: { kind: "Name", value: "_eq" },
+                                                            value: {
+                                                                kind: "Variable",
+                                                                name: { kind: "Name", value: "reactionId" },
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                                {
+                                    kind: "Argument",
+                                    name: { kind: "Name", value: "_set" },
+                                    value: { kind: "Variable", name: { kind: "Name", value: "object" } },
+                                },
+                            ],
+                            selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                    {
+                                        kind: "Field",
+                                        name: { kind: "Name", value: "returning" },
+                                        selectionSet: {
+                                            kind: "SelectionSet",
+                                            selections: [{ kind: "Field", name: { kind: "Name", value: "sId" } }],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
             },
-        },
-    ],
-} as unknown as DocumentNode<UpdateChatReactionMutation, UpdateChatReactionMutationVariables>;
-export const DeleteChatReactionsDocument = {
+        ],
+    };
+export const DeleteChatReactionsDocument: DocumentNode<
+    DeleteChatReactionsMutation,
+    DeleteChatReactionsMutationVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -36196,8 +36211,11 @@ export const DeleteChatReactionsDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<DeleteChatReactionsMutation, DeleteChatReactionsMutationVariables>;
-export const RegistrantIdsFromChatsAndUsersDocument = {
+};
+export const RegistrantIdsFromChatsAndUsersDocument: DocumentNode<
+    RegistrantIdsFromChatsAndUsersQuery,
+    RegistrantIdsFromChatsAndUsersQueryVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -36318,8 +36336,11 @@ export const RegistrantIdsFromChatsAndUsersDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<RegistrantIdsFromChatsAndUsersQuery, RegistrantIdsFromChatsAndUsersQueryVariables>;
-export const InsertReadUpToIndexDocument = {
+};
+export const InsertReadUpToIndexDocument: DocumentNode<
+    InsertReadUpToIndexMutation,
+    InsertReadUpToIndexMutationVariables
+> = {
     kind: "Document",
     definitions: [
         {
@@ -36389,4 +36410,4 @@ export const InsertReadUpToIndexDocument = {
             },
         },
     ],
-} as unknown as DocumentNode<InsertReadUpToIndexMutation, InsertReadUpToIndexMutationVariables>;
+};

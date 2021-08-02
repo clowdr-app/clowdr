@@ -35,7 +35,7 @@ export class ConferenceConfigurationService {
             },
         });
 
-        return result.data.conference_Configuration.length > 0 ? result.data.conference_Configuration[0].value : null;
+        return result.data.conference_Configuration_by_pk ? result.data.conference_Configuration_by_pk.value : null;
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-types
@@ -52,13 +52,13 @@ export class ConferenceConfigurationService {
             },
         });
 
-        if (result.data.conference_Configuration.length > 0) {
-            const transformed = plainToClass(cls, result.data.conference_Configuration[0].value);
+        if (result.data.conference_Configuration_by_pk) {
+            const transformed = plainToClass(cls, result.data.conference_Configuration_by_pk.value);
             const errors = await validate(transformed);
             if (errors.length > 1) {
                 return null;
             } else {
-                return result.data.conference_Configuration[0].value;
+                return result.data.conference_Configuration_by_pk.value;
             }
         } else {
             return null;
